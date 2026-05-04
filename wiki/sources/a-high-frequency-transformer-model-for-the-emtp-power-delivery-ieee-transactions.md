@@ -58,15 +58,15 @@ sources: ["EMT_Doc/01/Morched 等 - 1993 - A High Frequency Transformer Model fo
 
 ## 使用的方法
 
-- [[methods/vector-fitting|有理函数逼近]]
-- [[methods/nodal-analysis|节点导纳矩阵法]]
+- [[vector-fitting|有理函数逼近]]
+- [[nodal-analysis|节点导纳矩阵法]]
 - [[多端口π型等效电路|多端口π型等效电路]]
 - [[rlc网络综合|RLC网络综合]]
-- [[methods/modal-analysis|模态分解]]
+- [[modal-analysis|模态分解]]
 
 ## 涉及的模型
 
-- [[models/transformer-model|电力变压器]]
+- [[transformer-model|电力变压器]]
 - [[多相多绕组变压器|多相多绕组变压器]]
 - [[铁芯非线性模型|铁芯非线性模型]]
 - [[内部绕组分布参数模型|内部绕组分布参数模型]]
@@ -75,7 +75,7 @@ sources: ["EMT_Doc/01/Morched 等 - 1993 - A High Frequency Transformer Model fo
 
 - [[高频建模|高频建模]]
 - [[频率相关特性|频率相关特性]]
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[变压器端口等效|变压器端口等效]]
 - [[杂散电容与损耗建模|杂散电容与损耗建模]]
 

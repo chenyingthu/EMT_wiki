@@ -62,7 +62,7 @@ sources: ["EMT_Doc/17/Xiong 等 - 2020 - Electromechanical-electromagnetic trans
 ## 使用的方法
 
 
-- [[topics/electromechanical-electromagnetic-hybrid-simulation|机电-电磁暂态混合仿真]]
+- [[electromechanical-electromagnetic-hybrid-simulation|机电-电磁暂态混合仿真]]
 - [[网络分割与戴维南等值|网络分割与戴维南等值]]
 - [[用户自定义建模-udm|用户自定义建模(UDM)]]
 - [[阶跃响应与故障对比测试|阶跃响应与故障对比测试]]
@@ -73,19 +73,19 @@ sources: ["EMT_Doc/17/Xiong 等 - 2020 - Electromechanical-electromagnetic trans
 
 - [[vsc-hvdc|VSC-HVDC]]
 - [[lcc-model|LCC]]
-- [[models/transformer-model|换流变压器]]
+- [[transformer-model|换流变压器]]
 - [[交直流滤波器|交直流滤波器]]
-- [[models/dc-rlc-filter|平波电抗器]]
-- [[models/transmission-line-model|直流输电线路]]
+- [[dc-rlc-filter|平波电抗器]]
+- [[transmission-line-model|直流输电线路]]
 - [[500kv-1000kv交流电网|500kV/1000kV交流电网]]
 
 
 ## 相关主题
 
 
-- [[topics/co-simulation|混合仿真]]
+- [[co-simulation|混合仿真]]
 - [[特高压直流分层接入|特高压直流分层接入]]
-- [[sources/适用于交直流混联电网的ch-mmc电磁暂态快速仿真模型-15|交直流混联电网]]
+- [[适用于交直流混联电网的ch-mmc电磁暂态快速仿真模型-15|交直流混联电网]]
 - [[机电-电磁暂态接口|机电-电磁暂态接口]]
 - [[换相失败预防控制|换相失败预防控制]]
 - [[仿真效率与精度评估|仿真效率与精度评估]]

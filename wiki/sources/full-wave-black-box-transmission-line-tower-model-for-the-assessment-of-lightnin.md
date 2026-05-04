@@ -58,7 +58,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/j.epsr.2021.107399.pdf.pdf"]
 
 ## 使用的方法
 
-- [[methods/finite-element-method|有限元法(FEM)]]
+- [[finite-element-method|有限元法(FEM)]]
 - [[全波频域麦克斯韦方程求解|全波频域麦克斯韦方程求解]]
 - [[vector-fitting|矢量拟合]]
 - [[多端口网络建模|多端口网络建模]]
@@ -76,10 +76,10 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/j.epsr.2021.107399.pdf.pdf"]
 ## 相关主题
 
 - [[雷击反击闪络评估|雷击反击闪络评估]]
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[频率相关土壤建模|频率相关土壤建模]]
-- [[topics/network-equivalent|网络等值]]
-- [[topics/grounding-lightning-overvoltage|防雷保护]]
+- [[network-equivalent|网络等值]]
+- [[grounding-lightning-overvoltage|防雷保护]]
 - [[暂态过电压分析|暂态过电压分析]]
 
 ## 主要发现

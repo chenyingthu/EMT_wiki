@@ -58,23 +58,23 @@ sources: ["EMT_Doc/09/Ebrahimi和Jatskevich - 2023 - Average-Value Model for Vol
 
 ## 使用的方法
 
-- [[methods/average-value-model|平均值建模]]
+- [[average-value-model|平均值建模]]
 - [[直接接口技术|直接接口技术]]
-- [[methods/nodal-analysis|节点分析法]]
-- [[models/coordinate-transformation-model|dq坐标变换]]
+- [[nodal-analysis|节点分析法]]
+- [[coordinate-transformation-model|dq坐标变换]]
 
 ## 涉及的模型
 
 - [[vsc-model|VSC]]
 - [[交直流系统|交直流系统]]
-- [[methods/nodal-analysis|戴维南等效电路]]
+- [[nodal-analysis|戴维南等效电路]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[methods/multirate-method|大时间步长仿真]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[multirate-method|大时间步长仿真]]
 - [[vsc-model|VSC]]
-- [[methods/numerical-integration|数值稳定性]]
+- [[numerical-integration|数值稳定性]]
 
 ## 主要发现
 

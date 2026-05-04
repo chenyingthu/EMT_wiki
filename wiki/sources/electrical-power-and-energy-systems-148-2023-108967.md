@@ -62,20 +62,20 @@ Electrical Power and Energy Systems 148 (2023) 108967 0142-0615/© 2023 Elsevier
 - [[网格图法|网格图法]]
 - [[蒙特卡洛法|蒙特卡洛法]]
 - [[镜像法|镜像法]]
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 
 ## 涉及的模型
 
 - [[y型复合杆塔|Y型复合杆塔]]
 - [[引下线模型|引下线模型]]
 - [[避雷线与相导线|避雷线与相导线]]
-- [[models/grounding-system-model|接地系统]]
-- [[models/grounding-system-model|频变土壤模型]]
+- [[grounding-system-model|接地系统]]
+- [[grounding-system-model|频变土壤模型]]
 
 ## 相关主题
 
 - [[雷电暂态响应|雷电暂态响应]]
-- [[topics/grounding-lightning-overvoltage|防雷保护]]
+- [[grounding-lightning-overvoltage|防雷保护]]
 - [[反击闪络率|反击闪络率]]
 - [[波阻抗计算|波阻抗计算]]
 - [[经验公式|经验公式]]

@@ -62,7 +62,7 @@ sources: ["EMT_Doc/34/j.epsr.2021.107292.pdf.pdf"]
 
 ## 涉及的模型
 
-- [[test-systems/ieee-39-bus-system|IEEE 39节点系统]]
+- [[ieee-39-bus-system|IEEE 39节点系统]]
 
 ## 相关主题
 

@@ -58,37 +58,37 @@ sources: ["EMT_Doc/16/Filizadeh 等 - 2025 - Electromagnetic Transient Modeling 
 
 ## 使用的方法
 
-- [[topics/parallel-computing|并行计算]]
+- [[parallel-computing|并行计算]]
 - [[传播延迟模型|传播延迟模型]]
 - [[块对角矩阵求解|块对角矩阵求解]]
-- [[methods/average-value-model|补偿法]]
+- [[average-value-model|补偿法]]
 - [[节点与状态空间联合分析|节点与状态空间联合分析]]
-- [[topics/dynamic-phasor|动态相量法]]
-- [[methods/multirate-method|多速率仿真]]
+- [[dynamic-phasor|动态相量法]]
+- [[multirate-method|多速率仿真]]
 - [[混合协同仿真|混合协同仿真]]
 - [[自动初始化|自动初始化]]
 
 ## 涉及的模型
 
-- [[models/transmission-line-model|输电线路]]
-- [[models/cable-model|电缆]]
-- [[models/synchronous-machine-model|同步发电机]]
-- [[topics/power-electronics|电力电子变流器]]
+- [[transmission-line-model|输电线路]]
+- [[cable-model|电缆]]
+- [[synchronous-machine-model|同步发电机]]
+- [[power-electronics|电力电子变流器]]
 - [[lcc-model|LCC]]
 - [[mmc-model|MMC]]
 - [[vsc-hvdc|VSC-HVDC]]
-- [[topics/wind-farm-modeling|风电场]]
-- [[topics/pv-power-plant|光伏电站]]
+- [[wind-farm-modeling|风电场]]
+- [[pv-power-plant|光伏电站]]
 
 ## 相关主题
 
-- [[topics/large-scale-grid-simulation|大规模电网仿真]]
-- [[topics/parallel-computing|并行计算]]
+- [[large-scale-grid-simulation|大规模电网仿真]]
+- [[parallel-computing|并行计算]]
 - [[混合协同仿真|混合协同仿真]]
-- [[methods/multirate-method|多速率仿真]]
-- [[topics/dynamic-phasor|动态相量建模]]
+- [[multirate-method|多速率仿真]]
+- [[dynamic-phasor|动态相量建模]]
 - [[逆变器型资源|逆变器型资源]]
-- [[topics/parallel-computing|网络解耦]]
+- [[parallel-computing|网络解耦]]
 - [[自动初始化|自动初始化]]
 
 ## 主要发现

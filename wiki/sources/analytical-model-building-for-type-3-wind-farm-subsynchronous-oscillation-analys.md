@@ -60,7 +60,7 @@ sources: ["EMT_Doc/09/Fan和Miao - 2021 - Analytical model building for Type-3 w
 
 - [[dq坐标系解析建模|dq坐标系解析建模]]
 - [[模块化建模|模块化建模]]
-- [[methods/state-space-method|状态空间法]]
+- [[state-space-method|状态空间法]]
 - [[数值摄动线性化|数值摄动线性化]]
 - [[小信号特征值分析|小信号特征值分析]]
 - [[大信号时域仿真|大信号时域仿真]]
@@ -68,7 +68,7 @@ sources: ["EMT_Doc/09/Fan和Miao - 2021 - Analytical model building for Type-3 w
 ## 涉及的模型
 
 - [[dfig-model|DFIG]]
-- [[topics/dynamic-phasor|锁相环(PLL)]]
+- [[dynamic-phasor|锁相环(PLL)]]
 - [[转子侧变流器-rsc|转子侧变流器(RSC)]]
 - [[网侧变流器-gsc|网侧变流器(GSC)]]
 - [[串联补偿输电线路|串联补偿输电线路]]
@@ -77,11 +77,11 @@ sources: ["EMT_Doc/09/Fan和Miao - 2021 - Analytical model building for Type-3 w
 ## 相关主题
 
 - [[次同步谐振-ssr|次同步谐振(SSR)]]
-- [[topics/wind-farm-modeling|风电场建模]]
+- [[wind-farm-modeling|风电场建模]]
 - [[动态建模|动态建模]]
 - [[弱电网稳定性|弱电网稳定性]]
 - [[变流器控制|变流器控制]]
-- [[methods/small-signal-analysis|小信号稳定性分析]]
+- [[small-signal-analysis|小信号稳定性分析]]
 
 ## 主要发现
 

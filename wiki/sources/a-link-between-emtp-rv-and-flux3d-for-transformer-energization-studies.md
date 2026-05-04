@@ -55,7 +55,7 @@ sources: ["EMT_Doc/02/Dennetière 等 - 2009 - A link between EMTP-RV and FLUX3D
 
 ## 使用的方法
 
-- [[methods/finite-element-method|有限元法(FEM)]]
+- [[finite-element-method|有限元法(FEM)]]
 - [[电路-磁场耦合|电路-磁场耦合]]
 - [[动态链接库-dll-接口|动态链接库(DLL)接口]]
 - [[牛顿-拉夫逊迭代法|牛顿-拉夫逊迭代法]]
@@ -68,15 +68,15 @@ sources: ["EMT_Doc/02/Dennetière 等 - 2009 - A link between EMTP-RV and FLUX3D
 - [[铁芯|铁芯]]
 - [[绕组|绕组]]
 - [[rl阻抗|RL阻抗]]
-- [[methods/nodal-analysis|戴维南等效电路]]
+- [[nodal-analysis|戴维南等效电路]]
 - [[三维有限元变压器模型|三维有限元变压器模型]]
 
 ## 相关主题
 
 - [[变压器空载合闸|变压器空载合闸]]
-- [[methods/switch-modeling|开关暂态]]
+- [[switch-modeling|开关暂态]]
 - [[铁磁饱和|铁磁饱和]]
-- [[topics/co-simulation|混合仿真]]
+- [[co-simulation|混合仿真]]
 - [[铁芯详细建模|铁芯详细建模]]
 - [[励磁涌流|励磁涌流]]
 - [[机电应力分析|机电应力分析]]

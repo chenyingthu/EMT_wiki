@@ -76,8 +76,8 @@ sources: ["EMT_Doc/13&14/files/j.epsr.2021.107290.pdf.pdf"]
 
 ## 相关主题
 
-- [[topics/load-modeling|负荷建模]]
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[load-modeling|负荷建模]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[电压暂降|电压暂降]]
 - [[元件聚合|元件聚合]]
 - [[商业与居民负荷|商业与居民负荷]]

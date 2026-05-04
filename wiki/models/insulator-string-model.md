@@ -127,6 +127,8 @@ $$U_{50} = 600 \cdot d \quad (\text{kV/m}, \text{负极性})$$
 - [[switching-transient]] - 操作过电压分析
 - [[surge-arrester-model]] - 避雷器模型
 - [[grounding-system-model]] - 接地系统模型
+- [[ieee-14-bus-system]] - IEEE 14节点测试系统
+- [[emt-simulation]] - EMT仿真基础
 
 ## 开放问题
 

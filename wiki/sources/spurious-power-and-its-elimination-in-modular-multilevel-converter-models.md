@@ -60,7 +60,7 @@ MMC在EMT仿真中常用AEM（Arm Equivalent Model）和AVM（Average Value Mode
 
 - [[numerical-integration]]
 - [[nodal-analysis]]
-- [[methods/state-space-method]]
+- [[state-space-method]]
 
 ## 涉及的模型
 
@@ -70,9 +70,9 @@ MMC在EMT仿真中常用AEM（Arm Equivalent Model）和AVM（Average Value Mode
 
 ## 相关主题
 
-- [[models/mmc-model]]
+- [[mmc-model]]
 - [[vsc-hvdc]]
-- [[topics/vsc-hvdc]]
+- [[vsc-hvdc]]
 
 ## 主要发现
 

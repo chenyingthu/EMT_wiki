@@ -58,29 +58,29 @@ sources: ["EMT_Doc/10/Mudunkotuwa和Filizadeh - 2018 - Co-simulation of electric
 
 ## 使用的方法
 
-- [[topics/dynamic-phasor|动态相量法]]
-- [[methods/multirate-method|多速率仿真]]
+- [[dynamic-phasor|动态相量法]]
+- [[multirate-method|多速率仿真]]
 - [[傅里叶级数展开|傅里叶级数展开]]
-- [[methods/numerical-integration|梯形积分法]]
-- [[methods/nodal-analysis|节点导纳矩阵法]]
+- [[numerical-integration|梯形积分法]]
+- [[nodal-analysis|节点导纳矩阵法]]
 - [[接口数据映射算法|接口数据映射算法]]
 
 ## 涉及的模型
 
-- [[test-systems/ieee-118-bus-system|IEEE 118节点系统]]
-- [[topics/wind-farm-modeling|风电场]]
-- [[topics/power-electronics|电力电子变流器]]
-- [[topics/transmission-network|输电网络]]
+- [[ieee-118-bus-system|IEEE 118节点系统]]
+- [[wind-farm-modeling|风电场]]
+- [[power-electronics|电力电子变流器]]
+- [[transmission-network|输电网络]]
 - [[旋转电机|旋转电机]]
 
 ## 相关主题
 
-- [[topics/co-simulation|混合仿真]]
-- [[methods/multirate-method|多速率仿真]]
-- [[topics/parallel-computing|网络分区]]
-- [[methods/harmonic-analysis-methods|谐波分析]]
-- [[methods/numerical-integration|数值稳定性]]
-- [[topics/wind-farm-modeling|风电场建模]]
+- [[co-simulation|混合仿真]]
+- [[multirate-method|多速率仿真]]
+- [[parallel-computing|网络分区]]
+- [[harmonic-analysis-methods|谐波分析]]
+- [[numerical-integration|数值稳定性]]
+- [[wind-farm-modeling|风电场建模]]
 
 ## 主要发现
 

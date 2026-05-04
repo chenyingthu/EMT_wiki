@@ -55,23 +55,23 @@ sources: ["EMT_Doc/04/tpwrd.2005.855448.pdf.pdf"]
 
 ## 使用的方法
 
-- [[methods/finite-element-method|有限元法(FEM)]]
+- [[finite-element-method|有限元法(FEM)]]
 - [[数值积分-高斯-勒让德-拉盖尔-洛巴托|数值积分(高斯-勒让德/拉盖尔/洛巴托)]]
 - [[carson公式|Carson公式]]
 - [[频域阻抗计算|频域阻抗计算]]
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 
 ## 涉及的模型
 
-- [[models/transmission-line-model|架空输电线路]]
+- [[transmission-line-model|架空输电线路]]
 - [[多层大地模型|多层大地模型]]
 - [[单回-双回线路|单回/双回线路]]
 - [[acsr导线|ACSR导线]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态分析]]
-- [[topics/frequency-dependent-modeling|频率相关建模]]
+- [[emt-simulation|电磁暂态分析]]
+- [[frequency-dependent-modeling|频率相关建模]]
 - [[非均匀大地建模|非均匀大地建模]]
 - [[输电线路参数计算|输电线路参数计算]]
 - [[不对称故障暂态响应|不对称故障暂态响应]]

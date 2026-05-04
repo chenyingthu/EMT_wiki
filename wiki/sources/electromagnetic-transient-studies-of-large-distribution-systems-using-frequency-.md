@@ -61,24 +61,24 @@ Electromagnetic transient studies of large distribution systems using frequency 
 - [[频域分析法|频域分析法]]
 - [[多相节点分析|多相节点分析]]
 - [[kron降阶法|Kron降阶法]]
-- [[methods/numerical-integration|数值拉普拉斯变换]]
-- [[methods/modal-analysis|模态分解]]
+- [[numerical-integration|数值拉普拉斯变换]]
+- [[modal-analysis|模态分解]]
 
 ## 涉及的模型
 
 - [[分布参数线路|分布参数线路]]
 - [[集中参数线路|集中参数线路]]
-- [[models/transformer-model|变压器]]
-- [[models/circuit-breaker-model|断路器]]
+- [[transformer-model|变压器]]
+- [[circuit-breaker-model|断路器]]
 - [[架空线|架空线]]
-- [[models/cable-model|地下电缆]]
+- [[cable-model|地下电缆]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态分析]]
+- [[emt-simulation|电磁暂态分析]]
 - [[配电网建模|配电网建模]]
 - [[频域建模|频域建模]]
-- [[topics/network-equivalent|网络等值]]
+- [[network-equivalent|网络等值]]
 - [[故障暂态分析|故障暂态分析]]
 - [[开关操作仿真|开关操作仿真]]
 

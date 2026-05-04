@@ -58,24 +58,24 @@ sources: ["EMT_Doc/16/Gomez - 2025 - Electromagnetic Transient Model Reconstruct
 
 ## 使用的方法
 
-- [[methods/numerical-integration|数值拉普拉斯变换]]
+- [[numerical-integration|数值拉普拉斯变换]]
 - [[二端口导纳模型|二端口导纳模型]]
 - [[最小范数最小二乘法|最小范数最小二乘法]]
 - [[黑盒建模|黑盒建模]]
 
 ## 涉及的模型
 
-- [[models/transmission-line-model|输电线路]]
+- [[transmission-line-model|输电线路]]
 - [[混合架空-电缆线路|混合架空-电缆线路]]
 - [[频率相关模型|频率相关模型]]
 - [[二端口线路模型|二端口线路模型]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[topics/frequency-dependent-modeling|频率相关建模]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[frequency-dependent-modeling|频率相关建模]]
 - [[测量驱动建模|测量驱动建模]]
-- [[methods/wideband-modeling|宽频建模]]
+- [[wideband-modeling|宽频建模]]
 - [[线路模型重构|线路模型重构]]
 
 ## 主要发现

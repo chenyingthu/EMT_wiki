@@ -58,19 +58,19 @@ sources: ["EMT_Doc/27&28/Modelling of circuit breakers in the electromagnetic tr
 
 ## 使用的方法
 
-- [[methods/numerical-integration|梯形积分法]]
-- [[methods/nodal-analysis|节点分析法]]
-- [[methods/average-value-model|补偿法]]
+- [[numerical-integration|梯形积分法]]
+- [[nodal-analysis|节点分析法]]
+- [[average-value-model|补偿法]]
 - [[预测校正迭代法|预测校正迭代法]]
 - [[参数估计|参数估计]]
 
 ## 涉及的模型
 
-- [[models/circuit-breaker-model|断路器]]
+- [[circuit-breaker-model|断路器]]
 - [[动态电弧模型|动态电弧模型]]
 - [[vsc-hvdc|VSC-HVDC]]
-- [[models/transformer-model|变压器]]
-- [[models/synchronous-machine-model|同步电机]]
+- [[transformer-model|变压器]]
+- [[synchronous-machine-model|同步电机]]
 
 ## 相关主题
 

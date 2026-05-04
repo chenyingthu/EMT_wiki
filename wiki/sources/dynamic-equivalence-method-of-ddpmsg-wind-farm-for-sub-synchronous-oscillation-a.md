@@ -61,14 +61,14 @@ sources: ["EMT_Doc/13&14/files/pesgm41954.2020.9281733.pdf.pdf"]
 - [[质量阈值-qt-聚类算法|质量阈值(QT)聚类算法]]
 - [[参数聚合等值法|参数聚合等值法]]
 - [[小信号模态分析|小信号模态分析]]
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 
 ## 涉及的模型
 
 - [[直驱永磁同步发电机-ddpmsg|直驱永磁同步发电机(DDPMSG)]]
-- [[topics/wind-farm-modeling|风电场]]
+- [[wind-farm-modeling|风电场]]
 - [[网侧变流器及控制系统|网侧变流器及控制系统]]
-- [[topics/dynamic-phasor|锁相环(PLL)]]
+- [[dynamic-phasor|锁相环(PLL)]]
 
 ## 相关主题
 

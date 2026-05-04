@@ -59,7 +59,7 @@ sources: ["EMT_Doc/32/j.epsr.2014.03.016.pdf.pdf"]
 ## 使用的方法
 
 - [[导体细分法|导体细分法]]
-- [[models/transmission-line-model|通用线路模型]]
+- [[transmission-line-model|通用线路模型]]
 - [[电缆常数法|电缆常数法]]
 - [[几何平均距离法|几何平均距离法]]
 - [[频变参数拟合|频变参数拟合]]
@@ -69,14 +69,14 @@ sources: ["EMT_Doc/32/j.epsr.2014.03.016.pdf.pdf"]
 - [[高压xlpe电缆|高压XLPE电缆]]
 - [[金属屏蔽层|金属屏蔽层]]
 - [[半导电层|半导电层]]
-- [[models/transmission-line-model|通用线路模型]]
+- [[transmission-line-model|通用线路模型]]
 - [[大地回路|大地回路]]
 
 ## 相关主题
 
 - [[邻近效应建模|邻近效应建模]]
-- [[topics/frequency-dependent-modeling|频率相关建模]]
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[frequency-dependent-modeling|频率相关建模]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[电缆参数计算|电缆参数计算]]
 - [[护套间模态传播|护套间模态传播]]
 

@@ -58,25 +58,25 @@ sources: ["EMT_Doc/26/Yao 等 - 2008 - Modeling and simulation of VSC-HVDC with 
 
 ## 使用的方法
 
-- [[topics/dynamic-phasor|动态相量法]]
+- [[dynamic-phasor|动态相量法]]
 - [[时变傅里叶级数|时变傅里叶级数]]
-- [[methods/switching-function-method|开关函数法]]
+- [[switching-function-method|开关函数法]]
 - [[平均值近似|平均值近似]]
 
 ## 涉及的模型
 
 - [[vsc-model|VSC]]
 - [[电压源型换流器|电压源型换流器]]
-- [[models/transmission-line-model|直流输电线路]]
+- [[transmission-line-model|直流输电线路]]
 - [[直流电容|直流电容]]
 - [[换流电抗|换流电抗]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[topics/dynamic-phasor|动态相量建模]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[dynamic-phasor|动态相量建模]]
 - [[暂态过程分析|暂态过程分析]]
-- [[methods/model-order-reduction|模型降阶]]
+- [[model-order-reduction|模型降阶]]
 - [[高频开关简化|高频开关简化]]
 
 ## 主要发现

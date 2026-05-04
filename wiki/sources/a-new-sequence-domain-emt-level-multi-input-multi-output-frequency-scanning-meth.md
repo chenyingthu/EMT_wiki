@@ -62,12 +62,12 @@ sources: ["EMT_Doc/02/Meng 等 - 2023 - A new sequence domain EMT-level multi-in
 - [[阻抗稳定性分析|阻抗稳定性分析]]
 - [[耦合序域扫描|耦合序域扫描]]
 - [[多输入多输出建模|多输入多输出建模]]
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 
 ## 涉及的模型
 
 - [[全功率变流器风电场|全功率变流器风电场]]
-- [[models/grid-side-converter|网侧变流器]]
+- [[grid-side-converter|网侧变流器]]
 - [[锁相环控制模型|锁相环控制模型]]
 - [[弱电网戴维南等效模型|弱电网戴维南等效模型]]
 

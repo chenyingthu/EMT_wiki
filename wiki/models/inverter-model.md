@@ -216,7 +216,7 @@ $$P = P_0 - \frac{1}{R}(f - f_0)$$
 模拟同步机励磁系统：
 $$E = E_0 + K_q(Q^* - Q) + K_v(V^* - V)$$
 
-- [[test-systems/virtual-synchronous-generator-converter]] - 虚拟同步机
+- [[virtual-synchronous-generator-converter]] - 虚拟同步机
 - `grid-forming-control` - 构网型控制
 
 ### 直接功率控制(DPC)

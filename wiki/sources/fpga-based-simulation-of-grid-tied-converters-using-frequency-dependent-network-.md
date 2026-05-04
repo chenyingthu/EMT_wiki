@@ -58,29 +58,29 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/Hajizadeh 等 - 2026 - FPGA-based si
 
 ## 使用的方法
 
-- [[sources/电磁机电暂态混合仿真中的频率相关网络等值|频率相关网络等值]]
+- [[电磁机电暂态混合仿真中的频率相关网络等值|频率相关网络等值]]
 - [[状态空间方程|状态空间方程]]
 - [[向后欧拉法|向后欧拉法]]
 - [[高层次综合|高层次综合]]
 - [[定制浮点运算|定制浮点运算]]
-- [[methods/vector-fitting|有理函数拟合]]
+- [[vector-fitting|有理函数拟合]]
 
 ## 涉及的模型
 
 - [[statcom|STATCOM]]
 - [[vsc-model|VSC]]
 - [[并网变流器|并网变流器]]
-- [[models/transmission-line-model|输电线路]]
-- [[topics/load-modeling|负荷]]
+- [[transmission-line-model|输电线路]]
+- [[load-modeling|负荷]]
 - [[fdne-model|FDNE]]
 
 ## 相关主题
 
-- [[topics/real-time-simulation|实时仿真]]
-- [[topics/real-time-simulation|超实时仿真]]
-- [[methods/fpga-real-time-simulation|FPGA硬件加速]]
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[methods/hil-simulation|硬件在环]]
+- [[real-time-simulation|实时仿真]]
+- [[real-time-simulation|超实时仿真]]
+- [[fpga-real-time-simulation|FPGA硬件加速]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[hil-simulation|硬件在环]]
 - [[资源优化|资源优化]]
 
 ## 主要发现

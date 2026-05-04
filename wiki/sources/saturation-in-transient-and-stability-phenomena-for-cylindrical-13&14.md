@@ -59,16 +59,16 @@ sources: ["EMT_Doc/13&14/files/pesgm.2012.6344723.pdf.pdf"]
 ## 使用的方法
 
 - [[numerical-integration]]
-- [[methods/state-space-method]]
+- [[state-space-method]]
 - [[nodal-analysis]]
 
 ## 涉及的模型
 
-- [[models/synchronous-machine-model]]
+- [[synchronous-machine-model]]
 
 ## 相关主题
 
-- [[models/synchronous-machine-model]]
+- [[synchronous-machine-model]]
 - [[network-equivalent]]
 
 ## 主要发现

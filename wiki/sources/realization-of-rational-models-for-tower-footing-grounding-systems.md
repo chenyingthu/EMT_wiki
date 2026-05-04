@@ -59,18 +59,18 @@ sources: ["EMT_Doc/33/Lima 等 - 2026 - Realization of rational models for tower
 ## 使用的方法
 
 - [[nodal-analysis]]
-- [[methods/passivity-enforcement]]
+- [[passivity-enforcement]]
 
 ## 涉及的模型
 
-- [[models/fdne-model]]
+- [[fdne-model]]
 - [[network-equivalent]]
-- [[models/transmission-line-model]]
+- [[transmission-line-model]]
 
 ## 相关主题
 
-- [[methods/harmonic-analysis-methods]]
-- [[topics/frequency-dependent-modeling]]
+- [[harmonic-analysis-methods]]
+- [[frequency-dependent-modeling]]
 
 ## 主要发现
 

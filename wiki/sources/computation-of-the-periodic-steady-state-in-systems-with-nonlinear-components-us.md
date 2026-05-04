@@ -67,17 +67,17 @@ sources: ["EMT_Doc/11/Computation_of_the_periodic_steady_state_in_systems_with_n
 
 ## 涉及的模型
 
-- [[models/transmission-line-model|输电线路]]
+- [[transmission-line-model|输电线路]]
 - [[非线性负载|非线性负载]]
-- [[models/transformer-model|非线性电感]]
+- [[transformer-model|非线性电感]]
 - [[线性网络|线性网络]]
 
 ## 相关主题
 
 - [[周期稳态计算|周期稳态计算]]
-- [[methods/harmonic-analysis-methods|谐波分析]]
+- [[harmonic-analysis-methods|谐波分析]]
 - [[电磁暂态初始化|电磁暂态初始化]]
-- [[topics/co-simulation|混合仿真]]
+- [[co-simulation|混合仿真]]
 - [[非线性系统求解|非线性系统求解]]
 
 ## 主要发现

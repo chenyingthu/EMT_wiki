@@ -58,33 +58,33 @@ sources: ["EMT_Doc/24/TPWRD.2008.2002889.pdf.pdf"]
 
 ## 使用的方法
 
-- [[topics/co-simulation|混合仿真]]
-- [[methods/network-partitioning|网络分割]]
-- [[topics/parallel-computing|并行计算]]
+- [[co-simulation|混合仿真]]
+- [[network-partitioning|网络分割]]
+- [[parallel-computing|并行计算]]
 - [[多速率积分|多速率积分]]
 - [[频率平移|频率平移]]
 - [[数据交换协议|数据交换协议]]
-- [[topics/network-equivalent|网络等值]]
+- [[network-equivalent|网络等值]]
 
 ## 涉及的模型
 
-- [[models/synchronous-machine-model|同步电机]]
-- [[models/transmission-line-model|输电线路]]
+- [[synchronous-machine-model|同步电机]]
+- [[transmission-line-model|输电线路]]
 - [[vsc-hvdc|VSC-HVDC]]
 - [[facts装置|FACTS装置]]
-- [[models/transmission-line-model|集中参数模型]]
+- [[transmission-line-model|集中参数模型]]
 - [[分布参数模型|分布参数模型]]
 
 ## 相关主题
 
-- [[topics/co-simulation|混合仿真]]
-- [[topics/transient-stability-analysis|暂态稳定]]
-- [[topics/emt-simulation|电磁暂态]]
-- [[topics/co-simulation|接口技术]]
-- [[topics/parallel-computing|并行计算]]
-- [[methods/network-partitioning|网络分割]]
+- [[co-simulation|混合仿真]]
+- [[transient-stability-analysis|暂态稳定]]
+- [[emt-simulation|电磁暂态]]
+- [[co-simulation|接口技术]]
+- [[parallel-computing|并行计算]]
+- [[network-partitioning|网络分割]]
 - [[频率自适应建模|频率自适应建模]]
-- [[methods/multirate-method|多速率仿真]]
+- [[multirate-method|多速率仿真]]
 
 ## 主要发现
 

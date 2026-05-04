@@ -58,29 +58,29 @@ CISS的实现前提是可获得GVSC平均值模型及外环控制参数。它以
 
 ## 使用的方法
 
-- [[methods/power-flow-calculation|潮流计算]]
+- [[power-flow-calculation|潮流计算]]
 - [[稳态分析|稳态分析]]
 - [[时域初始化|时域初始化]]
-- [[methods/average-value-model|平均值模型]]
+- [[average-value-model|平均值模型]]
 - [[解耦接口法|解耦接口法]]
 
 ## 涉及的模型
 
 - [[vsc-model|VSC]]
-- [[topics/hybrid-acdc-network|多端直流系统]]
-- [[methods/average-value-model|平均值模型]]
+- [[hybrid-acdc-network|多端直流系统]]
+- [[average-value-model|平均值模型]]
 - [[风电场模型|风电场模型]]
-- [[models/transformer-model|变压器]]
-- [[models/arm-reactor|电抗器]]
+- [[transformer-model|变压器]]
+- [[arm-reactor|电抗器]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[系统初始化|系统初始化]]
-- [[topics/hybrid-acdc-network|多端直流电网]]
-- [[methods/grid-forming-control|构网型控制]]
+- [[hybrid-acdc-network|多端直流电网]]
+- [[grid-forming-control|构网型控制]]
 - [[黑盒模型|黑盒模型]]
-- [[topics/hybrid-acdc-system|交直流混合系统]]
+- [[hybrid-acdc-system|交直流混合系统]]
 
 ## 主要发现
 

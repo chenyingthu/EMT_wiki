@@ -59,7 +59,7 @@ sources: ["EMT_Doc/17/Yu 等 - 2024 - Electromechanical Transient Modeling of th
 ## 使用的方法
 
 - [[迭代潮流计算|迭代潮流计算]]
-- [[topics/electromechanical-transient|机电暂态建模]]
+- [[electromechanical-transient|机电暂态建模]]
 - [[正序基波相量法|正序基波相量法]]
 - [[用户自定义模型|用户自定义模型]]
 - [[虚拟同步机控制|虚拟同步机控制]]
@@ -68,13 +68,13 @@ sources: ["EMT_Doc/17/Yu 等 - 2024 - Electromechanical Transient Modeling of th
 
 - [[m3c|M3C]]
 - [[低频交流系统|低频交流系统]]
-- [[models/transformer-model|换流变压器]]
+- [[transformer-model|换流变压器]]
 - [[新英格兰39节点系统|新英格兰39节点系统]]
-- [[methods/virtual-synchronous-generator|虚拟同步机]]
+- [[virtual-synchronous-generator|虚拟同步机]]
 
 ## 相关主题
 
-- [[topics/electromechanical-transient|机电暂态建模]]
+- [[electromechanical-transient|机电暂态建模]]
 - [[低频交流输电|低频交流输电]]
 - [[混合系统潮流计算|混合系统潮流计算]]
 - [[电力系统稳定性|电力系统稳定性]]

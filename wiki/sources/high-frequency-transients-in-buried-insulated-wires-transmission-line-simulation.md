@@ -58,9 +58,9 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/Alipio 等 - 2024 - High-frequency t
 
 ## 使用的方法
 
-- [[topics/transmission-line-theory|传输线理论]]
+- [[transmission-line-theory|传输线理论]]
 - [[频域节点导纳矩阵法|频域节点导纳矩阵法]]
-- [[methods/numerical-inverse-laplace-transform|数值拉普拉斯逆变换]]
+- [[numerical-inverse-laplace-transform|数值拉普拉斯逆变换]]
 - [[准tem近似|准TEM近似]]
 - [[冲击电压测试|冲击电压测试]]
 
@@ -73,9 +73,9 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/Alipio 等 - 2024 - High-frequency t
 
 ## 相关主题
 
-- [[topics/emt-simulation|高频暂态分析]]
+- [[emt-simulation|高频暂态分析]]
 - [[地回路参数计算|地回路参数计算]]
-- [[models/cable-model|地下电缆建模]]
+- [[cable-model|地下电缆建模]]
 - [[实验验证|实验验证]]
 - [[频率相关特性|频率相关特性]]
 

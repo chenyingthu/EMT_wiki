@@ -58,28 +58,28 @@ sources: ["EMT_Doc/30/j.epsr.2021.107317.pdf.pdf"]
 
 ## 使用的方法
 
-- [[methods/numerical-integration|数值拉普拉斯变换]]
+- [[numerical-integration|数值拉普拉斯变换]]
 - [[kron网络降阶|Kron网络降阶]]
 - [[长卷积计算|长卷积计算]]
 - [[多相qmf滤波器组|多相QMF滤波器组]]
 - [[并行处理算法|并行处理算法]]
 - [[分段线性化建模|分段线性化建模]]
-- [[methods/nodal-analysis|节点分析法]]
+- [[nodal-analysis|节点分析法]]
 
 ## 涉及的模型
 
 - [[17节点测试电网|17节点测试电网]]
-- [[models/ideal-switch-model|理想开关模型]]
+- [[ideal-switch-model|理想开关模型]]
 - [[辅助电压电流源|辅助电压电流源]]
 - [[分段线性非线性元件|分段线性非线性元件]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[topics/parallel-computing|并行计算]]
-- [[topics/real-time-simulation|超实时仿真]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[parallel-computing|并行计算]]
+- [[real-time-simulation|超实时仿真]]
 - [[网络等值降阶|网络等值降阶]]
-- [[methods/fpga-real-time-simulation|FPGA硬件加速]]
+- [[fpga-real-time-simulation|FPGA硬件加速]]
 - [[统计性暂态分析|统计性暂态分析]]
 
 ## 主要发现

@@ -69,7 +69,7 @@ sources: ["EMT_Doc/17/González 等 - 2015 - EMTP model of a bidirectional multi
 - [[固态变压器-sst|固态变压器(SST)]]
 - [[三电平npc变换器|三电平NPC变换器]]
 - [[双有源桥-dab-变换器|双有源桥(DAB)变换器]]
-- [[models/transformer-model|高频隔离变压器]]
+- [[transformer-model|高频隔离变压器]]
 - [[四桥臂逆变器|四桥臂逆变器]]
 - [[配电网架空线路|配电网架空线路]]
 
@@ -78,7 +78,7 @@ sources: ["EMT_Doc/17/González 等 - 2015 - EMTP model of a bidirectional multi
 - [[配电网建模|配电网建模]]
 - [[电能质量分析|电能质量分析]]
 - [[双向功率流动|双向功率流动]]
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[电压暂降与不平衡抑制|电压暂降与不平衡抑制]]
 - [[固态变压器|固态变压器]]
 

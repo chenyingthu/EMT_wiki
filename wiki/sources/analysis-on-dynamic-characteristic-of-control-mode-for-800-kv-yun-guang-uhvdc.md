@@ -62,7 +62,7 @@ sources: ["EMT_Doc/07&08/Analysis on dynamic characteristic of control mode for 
 ## 使用的方法
 
 
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[pi控制|PI控制]]
 - [[低压限流控制-vdcol|低压限流控制(VDCOL)]]
 - [[详细换流器建模|详细换流器建模]]
@@ -72,8 +72,8 @@ sources: ["EMT_Doc/07&08/Analysis on dynamic characteristic of control mode for 
 
 
 - [[12脉动换流器|12脉动换流器]]
-- [[models/transformer-model|换流变压器]]
-- [[models/dc-rlc-filter|平波电抗器]]
+- [[transformer-model|换流变压器]]
+- [[dc-rlc-filter|平波电抗器]]
 - [[分布参数直流输电线路|分布参数直流输电线路]]
 - [[交直流滤波器|交直流滤波器]]
 

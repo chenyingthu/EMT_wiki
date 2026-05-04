@@ -58,9 +58,9 @@ sources: ["EMT_Doc/07&08/Hu et al. - 2016 - Analysis on non-characteristic harmo
 
 ## 使用的方法
 
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[双重傅里叶级数分析|双重傅里叶级数分析]]
-- [[methods/fft|快速傅里叶变换]]
+- [[fft|快速傅里叶变换]]
 - [[spwm调制分析|SPWM调制分析]]
 
 ## 涉及的模型

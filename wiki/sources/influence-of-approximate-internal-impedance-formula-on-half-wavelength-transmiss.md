@@ -62,18 +62,18 @@ sources: ["EMT_Doc/24/Rojas Varela 等 - 2025 - Influence of Approximate Interna
 - [[双曲余切近似公式|双曲余切近似公式]]
 - [[carson大地返回阻抗模型|Carson大地返回阻抗模型]]
 - [[统计开关操作分析|统计开关操作分析]]
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 
 ## 涉及的模型
 
-- [[models/transmission-line-model|架空输电线路]]
+- [[transmission-line-model|架空输电线路]]
 - [[半波长输电线路|半波长输电线路]]
 - [[多分裂导线模型|多分裂导线模型]]
 - [[高波阻抗负载线路|高波阻抗负载线路]]
 
 ## 相关主题
 
-- [[topics/frequency-dependent-modeling|频率相关建模]]
+- [[frequency-dependent-modeling|频率相关建模]]
 - [[波阻抗负载计算|波阻抗负载计算]]
 - [[暂态过电压分析|暂态过电压分析]]
 - [[长距离输电|长距离输电]]

@@ -66,7 +66,7 @@ sources: ["EMT_Doc/10/Li 等 - 2020 - Characteristics and Optimal Configuration 
 - [[等值电路法|等值电路法]]
 - [[解析计算|解析计算]]
 - [[多目标优化|多目标优化]]
-- [[entities/pscad-emtdc|PSCAD/EMTDC电磁暂态仿真]]
+- [[pscad-emtdc|PSCAD/EMTDC电磁暂态仿真]]
 
 
 ## 涉及的模型
@@ -77,7 +77,7 @@ sources: ["EMT_Doc/10/Li 等 - 2020 - Characteristics and Optimal Configuration 
 - [[直流电抗器|直流电抗器]]
 - [[电容型限流器|电容型限流器]]
 - [[混合式直流断路器|混合式直流断路器]]
-- [[models/transmission-line-model|直流输电线路]]
+- [[transmission-line-model|直流输电线路]]
 
 
 ## 相关主题
@@ -85,9 +85,9 @@ sources: ["EMT_Doc/10/Li 等 - 2020 - Characteristics and Optimal Configuration 
 
 - [[直流电网故障抑制|直流电网故障抑制]]
 - [[限流器优化配置|限流器优化配置]]
-- [[topics/vsc-hvdc|柔性直流输电]]
+- [[vsc-hvdc|柔性直流输电]]
 - [[直流断路器配合|直流断路器配合]]
-- [[topics/emt-simulation|电磁暂态分析]]
+- [[emt-simulation|电磁暂态分析]]
 
 
 ## 主要发现

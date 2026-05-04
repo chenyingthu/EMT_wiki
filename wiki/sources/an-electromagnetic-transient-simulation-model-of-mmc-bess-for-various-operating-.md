@@ -62,7 +62,7 @@ sources: ["EMT_Doc/07&08/An Electromagnetic Transient Simulation Model of MMC-BE
 - [[pscad辅助开关与插值算法|PSCAD辅助开关与插值算法]]
 - [[补充决策公式|补充决策公式]]
 - [[加速计算方法|加速计算方法]]
-- [[methods/nodal-analysis|节点分析法]]
+- [[nodal-analysis|节点分析法]]
 
 ## 涉及的模型
 
@@ -74,7 +74,7 @@ sources: ["EMT_Doc/07&08/An Electromagnetic Transient Simulation Model of MMC-BE
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[换流器闭锁状态|换流器闭锁状态]]
 - [[电池断开仿真|电池断开仿真]]
 - [[交直流故障分析|交直流故障分析]]

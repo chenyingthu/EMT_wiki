@@ -60,25 +60,25 @@ sources: ["EMT_Doc/07&08/An Inverter Model Simulating Accurate Harmonics With Lo
 
 - [[时间平均法-tam|时间平均法(TAM)]]
 - [[电压插值法|电压插值法]]
-- [[methods/numerical-integration|梯形积分法]]
-- [[methods/numerical-integration|后向欧拉法]]
+- [[numerical-integration|梯形积分法]]
+- [[numerical-integration|后向欧拉法]]
 - [[电路平均模型|电路平均模型]]
-- [[methods/switch-modeling|开关模型]]
+- [[switch-modeling|开关模型]]
 
 ## 涉及的模型
 
-- [[models/gfl-inverter-model|并网逆变器]]
+- [[gfl-inverter-model|并网逆变器]]
 - [[半桥逆变器|半桥逆变器]]
 - [[逆变器桥臂等效电路|逆变器桥臂等效电路]]
 - [[pwm调制模型|PWM调制模型]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[methods/harmonic-analysis-methods|谐波分析]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[harmonic-analysis-methods|谐波分析]]
 - [[离线仿真加速|离线仿真加速]]
 - [[电力电子变换器建模|电力电子变换器建模]]
-- [[methods/multirate-method|大时间步长仿真]]
+- [[multirate-method|大时间步长仿真]]
 
 ## 主要发现
 

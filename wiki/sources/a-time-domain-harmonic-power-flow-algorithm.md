@@ -56,10 +56,10 @@ sources: ["EMT_Doc/04/tpwrd.2010.2043547.pdf.pdf"]
 ## 使用的方法
 
 - [[打靶法|打靶法]]
-- [[methods/nodal-analysis|牛顿-拉夫逊法]]
+- [[nodal-analysis|牛顿-拉夫逊法]]
 - [[灵敏度电路分析|灵敏度电路分析]]
 - [[时域谐波潮流算法|时域谐波潮流算法]]
-- [[methods/fft|快速傅里叶变换]]
+- [[fft|快速傅里叶变换]]
 
 ## 涉及的模型
 
@@ -70,8 +70,8 @@ sources: ["EMT_Doc/04/tpwrd.2010.2043547.pdf.pdf"]
 
 ## 相关主题
 
-- [[methods/harmonic-analysis-methods|谐波分析]]
-- [[methods/power-flow-calculation|潮流计算]]
+- [[harmonic-analysis-methods|谐波分析]]
+- [[power-flow-calculation|潮流计算]]
 - [[时域稳态仿真|时域稳态仿真]]
 - [[emt初始化|EMT初始化]]
 - [[非正弦稳态|非正弦稳态]]

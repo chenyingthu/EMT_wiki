@@ -62,28 +62,28 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/Zhang 等 - 2012 - Frequency depende
 ## 使用的方法
 
 
-- [[methods/vector-fitting|矢量拟合]]
+- [[vector-fitting|矢量拟合]]
 - [[频变网络等值|频变网络等值]]
-- [[methods/passivity-enforcement|无源性强制]]
+- [[passivity-enforcement|无源性强制]]
 - [[高斯消元法|高斯消元法]]
-- [[methods/vector-fitting|有理函数拟合]]
+- [[vector-fitting|有理函数拟合]]
 
 
 ## 涉及的模型
 
 
-- [[test-systems/ieee-39-bus-system|IEEE 39节点系统]]
-- [[methods/nodal-analysis|节点导纳矩阵]]
+- [[ieee-39-bus-system|IEEE 39节点系统]]
+- [[nodal-analysis|节点导纳矩阵]]
 - [[频变网络等值模型|频变网络等值模型]]
 
 
 ## 相关主题
 
 
-- [[topics/electromechanical-electromagnetic-hybrid-simulation|机电-电磁混合仿真]]
-- [[topics/frequency-dependent-modeling|频率相关建模]]
-- [[topics/network-equivalent|网络等值]]
-- [[methods/passivity-enforcement|无源性保证]]
+- [[electromechanical-electromagnetic-hybrid-simulation|机电-电磁混合仿真]]
+- [[frequency-dependent-modeling|频率相关建模]]
+- [[network-equivalent|网络等值]]
+- [[passivity-enforcement|无源性保证]]
 - [[接口波形畸变|接口波形畸变]]
 
 

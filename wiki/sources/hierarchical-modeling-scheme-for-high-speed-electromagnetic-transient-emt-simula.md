@@ -61,23 +61,23 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/tpel.2021.3061421.pdf.pdf"]
 - [[分层建模|分层建模]]
 - [[广义诺顿等效|广义诺顿等效]]
 - [[递归节点消去|递归节点消去]]
-- [[methods/numerical-integration|梯形积分法]]
-- [[methods/nodal-analysis|节点分析法]]
+- [[numerical-integration|梯形积分法]]
+- [[nodal-analysis|节点分析法]]
 - [[双端口等效建模|双端口等效建模]]
 
 ## 涉及的模型
 
-- [[topics/power-electronics|电力电子变压器]]
+- [[power-electronics|电力电子变压器]]
 - [[级联h桥双有源桥|级联H桥双有源桥]]
 - [[功率模块|功率模块]]
-- [[models/transformer-model|高频隔离变压器]]
+- [[transformer-model|高频隔离变压器]]
 - [[中压直流系统|中压直流系统]]
 
 ## 相关主题
 
 - [[高速电磁暂态仿真|高速电磁暂态仿真]]
-- [[topics/network-equivalent|网络等值]]
-- [[methods/model-order-reduction|模型降阶]]
+- [[network-equivalent|网络等值]]
+- [[model-order-reduction|模型降阶]]
 - [[电力电子化配电系统|电力电子化配电系统]]
 - [[大规模节点消去|大规模节点消去]]
 

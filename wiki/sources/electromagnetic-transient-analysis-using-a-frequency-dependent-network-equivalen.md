@@ -74,12 +74,12 @@ sources: ["EMT_Doc/15/Electromagnetic transient analysis using a frequency depen
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态分析]]
+- [[emt-simulation|电磁暂态分析]]
 - [[动态等值与降阶建模|动态等值与降阶建模]]
 - [[风电并网仿真|风电并网仿真]]
 - [[故障暂态分析|故障暂态分析]]
 - [[parameter-identification|参数辨识]]
-- [[topics/large-scale-system-simulation|计算效率优化]]
+- [[large-scale-system-simulation|计算效率优化]]
 
 ## 主要发现
 

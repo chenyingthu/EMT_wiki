@@ -58,8 +58,8 @@ sources: ["EMT_Doc/02/Rupasinghe 等 - 2023 - A multi-solver framework for co-si
 
 ## 使用的方法
 
-- [[methods/multirate-method|多速率仿真]]
-- [[topics/dynamic-phasor|动态相量法]]
+- [[multirate-method|多速率仿真]]
+- [[dynamic-phasor|动态相量法]]
 - [[频率自适应暂态仿真|频率自适应暂态仿真]]
 - [[暂态稳定求解|暂态稳定求解]]
 - [[协同仿真接口技术|协同仿真接口技术]]
@@ -67,18 +67,18 @@ sources: ["EMT_Doc/02/Rupasinghe 等 - 2023 - A multi-solver framework for co-si
 ## 涉及的模型
 
 - [[mmc-model|MMC]]
-- [[topics/power-electronics|电力电子变换器]]
-- [[methods/average-value-model|平均值模型]]
+- [[power-electronics|电力电子变换器]]
+- [[average-value-model|平均值模型]]
 - [[118节点测试系统|118节点测试系统]]
 
 ## 相关主题
 
-- [[topics/co-simulation|协同仿真]]
-- [[methods/multirate-method|多速率仿真]]
+- [[co-simulation|协同仿真]]
+- [[multirate-method|多速率仿真]]
 - [[频率自适应仿真|频率自适应仿真]]
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[topics/transient-stability-analysis|暂态稳定]]
-- [[topics/parallel-computing|网络分区]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[transient-stability-analysis|暂态稳定]]
+- [[parallel-computing|网络分区]]
 
 ## 主要发现
 

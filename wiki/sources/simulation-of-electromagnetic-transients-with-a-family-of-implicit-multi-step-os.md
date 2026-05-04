@@ -63,13 +63,13 @@ sources: ["EMT_Doc/35/Melgoza-Vázquez - 2026 - Simulation of electromagnetic tr
 
 ## 涉及的模型
 
-- [[topics/large-scale-power-system|电力系统]]
+- [[large-scale-power-system|电力系统]]
 - [[感性支路|感性支路]]
 
 ## 相关主题
 
 - [[numerical-integration]]
-- [[methods/harmonic-analysis-methods]]
+- [[harmonic-analysis-methods]]
 
 ## 主要发现
 

@@ -74,12 +74,12 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/Fast electromagnetic transient simul
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[sources/适用于交直流混联电网的ch-mmc电磁暂态快速仿真模型-15|快速仿真]]
-- [[topics/co-simulation|混合仿真]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[适用于交直流混联电网的ch-mmc电磁暂态快速仿真模型-15|快速仿真]]
+- [[co-simulation|混合仿真]]
 - [[环流抑制|环流抑制]]
 - [[电压均衡控制|电压均衡控制]]
-- [[topics/vsc-hvdc|直流输电]]
+- [[vsc-hvdc|直流输电]]
 
 ## 主要发现
 

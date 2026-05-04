@@ -61,7 +61,7 @@ sources: ["EMT_Doc/13&14/files/DQ_Admittance_Model_Extraction_for_IBRs_via_Gauss
 - [[高斯脉冲激励|高斯脉冲激励]]
 - [[系统辨识|系统辨识]]
 - [[工具变量法|工具变量法]]
-- [[methods/frequency-scanning|频率扫描法]]
+- [[frequency-scanning|频率扫描法]]
 - [[线性调频信号注入|线性调频信号注入]]
 
 ## 涉及的模型
@@ -69,14 +69,14 @@ sources: ["EMT_Doc/13&14/files/DQ_Admittance_Model_Extraction_for_IBRs_via_Gauss
 - [[type-4风电机组|Type-4风电机组]]
 - [[dq导纳模型|dq导纳模型]]
 - [[永磁同步发电机|永磁同步发电机]]
-- [[models/grid-side-converter|网侧变流器]]
+- [[grid-side-converter|网侧变流器]]
 - [[逆变器并网资源|逆变器并网资源]]
 
 ## 相关主题
 
 - [[导纳模型提取|导纳模型提取]]
-- [[methods/small-signal-analysis|稳定性分析]]
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[small-signal-analysis|稳定性分析]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[系统辨识|系统辨识]]
 - [[风电机组建模|风电机组建模]]
 

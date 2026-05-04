@@ -58,10 +58,10 @@ sources: ["EMT_Doc/27&28/New model for overhead lossy multiconductor transmissio
 
 ## 使用的方法
 
-- [[methods/characteristic-method|特征线法]]
+- [[characteristic-method|特征线法]]
 - [[瞬态电阻矩阵|瞬态电阻矩阵]]
-- [[methods/vector-fitting|有理函数拟合]]
-- [[methods/modal-analysis|模态变换]]
+- [[vector-fitting|有理函数拟合]]
+- [[modal-analysis|模态变换]]
 - [[卷积积分|卷积积分]]
 
 ## 涉及的模型
@@ -72,10 +72,10 @@ sources: ["EMT_Doc/27&28/New model for overhead lossy multiconductor transmissio
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态分析]]
-- [[topics/frequency-dependent-modeling|频率相关建模]]
-- [[topics/emt-simulation|时域仿真]]
-- [[models/transmission-line-model|输电线路建模]]
+- [[emt-simulation|电磁暂态分析]]
+- [[frequency-dependent-modeling|频率相关建模]]
+- [[emt-simulation|时域仿真]]
+- [[transmission-line-model|输电线路建模]]
 
 ## 主要发现
 

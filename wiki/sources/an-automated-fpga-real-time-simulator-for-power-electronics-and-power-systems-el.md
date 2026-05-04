@@ -58,7 +58,7 @@ sources: ["EMT_Doc/06/j.epsr.2016.07.022.pdf.pdf"]
 
 ## 使用的方法
 
-- [[methods/nodal-analysis|改进增广节点分析法(MANA)]]
+- [[nodal-analysis|改进增广节点分析法(MANA)]]
 - [[固定导纳矩阵节点法-famnm|固定导纳矩阵节点法(FAMNM)]]
 - [[后向欧拉积分法|后向欧拉积分法]]
 - [[稀疏矩阵向量乘法器|稀疏矩阵向量乘法器]]
@@ -74,10 +74,10 @@ sources: ["EMT_Doc/06/j.epsr.2016.07.022.pdf.pdf"]
 
 ## 相关主题
 
-- [[topics/real-time-simulation|实时仿真]]
+- [[real-time-simulation|实时仿真]]
 - [[硬件在环-hil|硬件在环(HIL)]]
-- [[methods/fpga-real-time-simulation|FPGA并行计算]]
-- [[topics/emt-simulation|电磁暂态分析]]
+- [[fpga-real-time-simulation|FPGA并行计算]]
+- [[emt-simulation|电磁暂态分析]]
 - [[自动化求解器生成|自动化求解器生成]]
 
 ## 主要发现

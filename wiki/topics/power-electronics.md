@@ -112,7 +112,7 @@ created: "2026-05-02"
 
 ### 新能源
 - **光伏**: 光伏逆变器
-- [[test-systems/pv-inverter-test-system]] - 光伏逆变器
+- [[pv-inverter-test-system]] - 光伏逆变器
 - **风电**: 风电变流器
 - `wind-converter` - 风电变流器
 - **储能**: 储能变流器
@@ -120,7 +120,7 @@ created: "2026-05-02"
 
 ### 直流输电
 - **HVDC**: 高压直流
-- [[test-systems/cigre-hvdc-benchmark]] - 高压直流
+- [[cigre-hvdc-benchmark]] - 高压直流
 - **柔性直流**: VSC-HVDC
 - [[vsc-hvdc]] - 柔性直流
 - [[mtdc-model]] - 多端直流

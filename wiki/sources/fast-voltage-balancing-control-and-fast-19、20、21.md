@@ -59,7 +59,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/tpwrd.2014.2351397.pdf.pdf"]
 ## 使用的方法
 
 - [[平均比较法|平均比较法]]
-- [[methods/numerical-integration|梯形积分法]]
+- [[numerical-integration|梯形积分法]]
 - [[最近电平控制|最近电平控制]]
 - [[混合仿真建模|混合仿真建模]]
 - [[开关线性化建模|开关线性化建模]]
@@ -67,17 +67,17 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/tpwrd.2014.2351397.pdf.pdf"]
 ## 涉及的模型
 
 - [[mmc-model|MMC]]
-- [[models/mmc-model|半桥子模块]]
-- [[models/detailed-switch-model|详细开关模型]]
+- [[mmc-model|半桥子模块]]
+- [[detailed-switch-model|详细开关模型]]
 - [[快速数值模型|快速数值模型]]
 - [[混合仿真模型|混合仿真模型]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[topics/vsc-hvdc|高压直流输电]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[vsc-hvdc|高压直流输电]]
 - [[电压均衡控制|电压均衡控制]]
-- [[sources/适用于交直流混联电网的ch-mmc电磁暂态快速仿真模型-15|快速仿真]]
+- [[适用于交直流混联电网的ch-mmc电磁暂态快速仿真模型-15|快速仿真]]
 - [[pscad建模|PSCAD建模]]
 
 ## 主要发现

@@ -58,12 +58,12 @@ sources: ["EMT_Doc/06/Chindu和Kulkarni - 2023 - An Automatable Approach for Sma
 
 ## 使用的方法
 
-- [[methods/companion-circuit|伴随电路法]]
-- [[methods/nodal-analysis|节点分析法]]
-- [[methods/numerical-integration|梯形积分法]]
+- [[companion-circuit|伴随电路法]]
+- [[nodal-analysis|节点分析法]]
+- [[numerical-integration|梯形积分法]]
 - [[lu分解|LU分解]]
 - [[采样数据建模|采样数据建模]]
-- [[methods/eigenvalue-analysis|特征值分析]]
+- [[eigenvalue-analysis|特征值分析]]
 - [[颤振消除校正|颤振消除校正]]
 
 ## 涉及的模型
@@ -76,11 +76,11 @@ sources: ["EMT_Doc/06/Chindu和Kulkarni - 2023 - An Automatable Approach for Sma
 
 ## 相关主题
 
-- [[methods/small-signal-analysis|小信号稳定性分析]]
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[small-signal-analysis|小信号稳定性分析]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[电力电子化电力系统|电力电子化电力系统]]
 - [[采样数据建模|采样数据建模]]
-- [[methods/state-space-method|状态空间模型]]
+- [[state-space-method|状态空间模型]]
 - [[自动化建模|自动化建模]]
 
 ## 主要发现

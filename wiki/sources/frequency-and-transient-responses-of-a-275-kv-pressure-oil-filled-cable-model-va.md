@@ -60,10 +60,10 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/Liu 等 - 2026 - Frequency and trans
 
 - [[lcd技术|LCD技术]]
 - [[mom-so理论|MoM-SO理论]]
-- [[methods/modal-analysis|模态分析]]
+- [[modal-analysis|模态分析]]
 - [[克罗恩降阶|克罗恩降阶]]
 - [[宽频电缆模型|宽频电缆模型]]
-- [[topics/frequency-dependent-modeling|频变参数建模]]
+- [[frequency-dependent-modeling|频变参数建模]]
 
 ## 涉及的模型
 
@@ -75,7 +75,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/Liu 等 - 2026 - Frequency and trans
 ## 相关主题
 
 - [[频率响应分析|频率响应分析]]
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[模型验证|模型验证]]
 - [[邻近效应|邻近效应]]
 - [[偏心效应|偏心效应]]

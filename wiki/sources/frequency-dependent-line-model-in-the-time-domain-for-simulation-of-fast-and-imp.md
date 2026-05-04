@@ -59,25 +59,25 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/j.ijepes.2016.01.051.pdf.pdf"]
 ## 使用的方法
 
 - [[transmission-line-model|Bergeron线路模型]]
-- [[methods/vector-fitting|矢量拟合]]
+- [[vector-fitting|矢量拟合]]
 - [[级联电路建模|级联电路建模]]
 - [[状态矩阵法|状态矩阵法]]
-- [[methods/numerical-integration|数值拉普拉斯变换]]
+- [[numerical-integration|数值拉普拉斯变换]]
 
 ## 涉及的模型
 
-- [[models/transmission-line-model|输电线路]]
+- [[transmission-line-model|输电线路]]
 - [[transmission-line-model|Bergeron线路模型]]
-- [[models/transmission-line-model|集中参数模型]]
-- [[models/transmission-line-model|频变线路模型]]
+- [[transmission-line-model|集中参数模型]]
+- [[transmission-line-model|频变线路模型]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[topics/frequency-dependent-modeling|频率相关建模]]
-- [[topics/emt-simulation|时域分析]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[frequency-dependent-modeling|频率相关建模]]
+- [[emt-simulation|时域分析]]
 - [[冲击暂态仿真|冲击暂态仿真]]
-- [[models/transmission-line-model|输电线路建模]]
+- [[transmission-line-model|输电线路建模]]
 
 ## 主要发现
 

@@ -74,10 +74,10 @@ sources: ["EMT_Doc/16/Martins-Britto 等 - 2026 - Electromagnetic transient mode
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[过电压分析|过电压分析]]
 - [[大地导电效应建模|大地导电效应建模]]
-- [[models/transmission-line-model|波传播特性]]
+- [[transmission-line-model|波传播特性]]
 - [[分层土壤建模|分层土壤建模]]
 
 ## 主要发现

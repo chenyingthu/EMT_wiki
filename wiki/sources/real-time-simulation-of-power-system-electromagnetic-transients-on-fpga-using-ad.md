@@ -58,21 +58,21 @@ sources: ["EMT_Doc/32/Ma 等 - 2023 - Real-Time Simulation of Power System Elect
 
 ## 使用的方法
 
-- [[topics/real-time-simulation]]
-- [[topics/parallel-computing]]
+- [[real-time-simulation]]
+- [[parallel-computing]]
 - [[numerical-integration]]
 
 ## 涉及的模型
 
-- [[models/synchronous-machine-model]]
+- [[synchronous-machine-model]]
 - [[mmc-model]]
-- [[models/transmission-line-model]]
+- [[transmission-line-model]]
 
 ## 相关主题
 
-- [[topics/real-time-simulation]]
-- [[topics/vsc-hvdc]]
-- [[models/synchronous-machine-model]]
+- [[real-time-simulation]]
+- [[vsc-hvdc]]
+- [[synchronous-machine-model]]
 
 ## 主要发现
 

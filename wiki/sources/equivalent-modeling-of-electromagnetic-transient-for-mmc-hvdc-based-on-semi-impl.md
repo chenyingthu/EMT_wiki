@@ -58,26 +58,26 @@ sources: ["EMT_Doc/18/Zhao 等 - 2021 - Equivalent modeling of electromagnetic t
 
 ## 使用的方法
 
-- [[methods/nodal-analysis|戴维南等效]]
+- [[nodal-analysis|戴维南等效]]
 - [[嵌套迭代|嵌套迭代]]
-- [[models/ideal-switch-model|理想开关模型]]
-- [[methods/numerical-integration|梯形积分法]]
+- [[ideal-switch-model|理想开关模型]]
+- [[numerical-integration|梯形积分法]]
 - [[滞回比较触发|滞回比较触发]]
 
 ## 涉及的模型
 
 - [[混合式制动电阻变换器|混合式制动电阻变换器]]
-- [[models/mmc-model|子模块]]
+- [[mmc-model|子模块]]
 - [[vsc-model|VSC]]
 - [[集中制动电阻|集中制动电阻]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[methods/average-value-model|等效建模]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[average-value-model|等效建模]]
 - [[柔性直流送出系统|柔性直流送出系统]]
 - [[功率盈余控制|功率盈余控制]]
-- [[topics/parallel-computing|仿真加速]]
+- [[parallel-computing|仿真加速]]
 
 ## 主要发现
 

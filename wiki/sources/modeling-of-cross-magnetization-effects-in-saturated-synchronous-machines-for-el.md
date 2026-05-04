@@ -60,21 +60,21 @@ sources: ["EMT_Doc/26/Dehkordi 等 - 2026 - Modeling of cross-magnetization effe
 
 - [[耦合电路法|耦合电路法]]
 - [[dq0双反应理论|dq0双反应理论]]
-- [[topics/real-time-simulation|实时数字仿真]]
+- [[real-time-simulation|实时数字仿真]]
 - [[磁动势幅值与角度评估法|磁动势幅值与角度评估法]]
 
 ## 涉及的模型
 
-- [[models/synchronous-machine-model|同步电机]]
+- [[synchronous-machine-model|同步电机]]
 - [[凸极同步发电机|凸极同步发电机]]
 - [[隐极同步发电机|隐极同步发电机]]
 - [[电磁暂态等效电路|电磁暂态等效电路]]
 
 ## 相关主题
 
-- [[models/transformer-model|磁饱和建模]]
+- [[transformer-model|磁饱和建模]]
 - [[交叉磁化效应|交叉磁化效应]]
-- [[topics/real-time-simulation|实时仿真]]
+- [[real-time-simulation|实时仿真]]
 - [[电磁暂态程序|电磁暂态程序]]
 - [[发电机带载能力分析|发电机带载能力分析]]
 

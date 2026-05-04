@@ -62,7 +62,7 @@ sources: ["EMT_Doc/32/Zhang 等 - 2023 - Real-Time HIL Emulation of DRM With Mac
 - [[门控循环单元-gru|门控循环单元(GRU)]]
 - [[电磁暂态-emt-建模|电磁暂态(EMT)建模]]
 - [[物理特征神经网络-pfnn|物理特征神经网络(PFNN)]]
-- [[methods/fpga-real-time-simulation|FPGA并行计算]]
+- [[fpga-real-time-simulation|FPGA并行计算]]
 - [[硬件在环-hil-仿真|硬件在环(HIL)仿真]]
 
 ## 涉及的模型
@@ -74,10 +74,10 @@ sources: ["EMT_Doc/32/Zhang 等 - 2023 - Real-Time HIL Emulation of DRM With Mac
 
 ## 相关主题
 
-- [[topics/real-time-simulation|实时仿真]]
-- [[methods/hil-simulation|硬件在环]]
+- [[real-time-simulation|实时仿真]]
+- [[hil-simulation|硬件在环]]
 - [[机器学习加速建模|机器学习加速建模]]
-- [[methods/multirate-method|变步长仿真]]
+- [[multirate-method|变步长仿真]]
 - [[fpga并行架构|FPGA并行架构]]
 - [[功率器件级建模|功率器件级建模]]
 

@@ -55,7 +55,7 @@ sources: ["EMT_Doc/04/TPWRD.2008.2007021.pdf.pdf"]
 
 ## 使用的方法
 
-- [[topics/emt-simulation|时域仿真]]
+- [[emt-simulation|时域仿真]]
 - [[emtp建模|EMTP建模]]
 - [[电弧长度时变建模|电弧长度时变建模]]
 - [[三相不平衡分析|三相不平衡分析]]

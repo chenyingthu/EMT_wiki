@@ -60,7 +60,7 @@ sources: ["EMT_Doc/13&14/files/TPWRD.2013.2268857.pdf.pdf"]
 
 - [[对偶原理|对偶原理]]
 - [[三维有限元仿真|三维有限元仿真]]
-- [[entities/atp-emtp|EMTP电磁暂态仿真]]
+- [[atp-emtp|EMTP电磁暂态仿真]]
 - [[非线性电感建模|非线性电感建模]]
 
 ## 涉及的模型
@@ -75,7 +75,7 @@ sources: ["EMT_Doc/13&14/files/TPWRD.2013.2268857.pdf.pdf"]
 - [[低频暂态计算|低频暂态计算]]
 - [[变压器建模|变压器建模]]
 - [[励磁涌流|励磁涌流]]
-- [[topics/ferroresonance|铁磁谐振]]
+- [[ferroresonance|铁磁谐振]]
 - [[地磁感应电流|地磁感应电流]]
 - [[深度饱和特性|深度饱和特性]]
 

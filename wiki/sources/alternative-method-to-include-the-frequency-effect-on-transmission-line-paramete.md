@@ -58,24 +58,24 @@ sources: ["EMT_Doc/06/Pascoalato 等 - 2024 - Alternative method to include the 
 
 ## 使用的方法
 
-- [[methods/state-space-method|状态空间法]]
-- [[models/transmission-line-model|集中参数模型]]
+- [[state-space-method|状态空间法]]
+- [[transmission-line-model|集中参数模型]]
 - [[π型电路级联|π型电路级联]]
 - [[频变参数拟合|频变参数拟合]]
 - [[直接时域仿真|直接时域仿真]]
 
 ## 涉及的模型
 
-- [[models/transmission-line-model|输电线路]]
+- [[transmission-line-model|输电线路]]
 - [[频变集中参数模型-fdlpm|频变集中参数模型(FDLPM)]]
 - [[π型等效电路|π型等效电路]]
 - [[rl并联支路|RL并联支路]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[topics/frequency-dependent-modeling|频率相关建模]]
-- [[models/transmission-line-model|输电线路建模]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[frequency-dependent-modeling|频率相关建模]]
+- [[transmission-line-model|输电线路建模]]
 - [[雷击过电压分析|雷击过电压分析]]
 - [[投切暂态分析|投切暂态分析]]
 

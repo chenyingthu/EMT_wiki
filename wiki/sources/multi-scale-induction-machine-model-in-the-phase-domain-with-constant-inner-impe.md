@@ -59,24 +59,24 @@ sources: ["EMT_Doc/27&28/Multi-Scale Induction Machine Model in the Phase Domain
 ## 使用的方法
 
 - [[解析信号法|解析信号法]]
-- [[topics/dynamic-phasor|动态相量法]]
-- [[methods/nodal-analysis|相域建模]]
-- [[methods/norton-equivalent|诺顿等效]]
-- [[methods/hilbert-transform|希尔伯特变换]]
-- [[topics/co-simulation|多尺度仿真]]
+- [[dynamic-phasor|动态相量法]]
+- [[nodal-analysis|相域建模]]
+- [[norton-equivalent|诺顿等效]]
+- [[hilbert-transform|希尔伯特变换]]
+- [[co-simulation|多尺度仿真]]
 
 ## 涉及的模型
 
-- [[models/induction-machine-model|感应电机]]
+- [[induction-machine-model|感应电机]]
 - [[电力系统网络|电力系统网络]]
 - [[定转子绕组|定转子绕组]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态]]
-- [[topics/electromechanical-transient|机电暂态]]
-- [[topics/co-simulation|多尺度仿真]]
-- [[topics/dynamic-phasor|动态相量建模]]
+- [[emt-simulation|电磁暂态]]
+- [[electromechanical-transient|机电暂态]]
+- [[co-simulation|多尺度仿真]]
+- [[dynamic-phasor|动态相量建模]]
 - [[频率自适应仿真|频率自适应仿真]]
 
 ## 主要发现

@@ -60,18 +60,18 @@ sources: ["EMT_Doc/37/Liu 等 - 2022 - The Averaged-value Model of a Flexible Po
 
 - [[average-value-model]]
 - [[nodal-analysis]]
-- [[methods/state-space-method]]
+- [[state-space-method]]
 
 ## 涉及的模型
 
 - [[mmc-model]]
-- [[models/transformer-model]]
+- [[transformer-model]]
 
 ## 相关主题
 
-- [[models/mmc-model]]
-- [[topics/vsc-hvdc]]
-- [[models/transformer-model]]
+- [[mmc-model]]
+- [[vsc-hvdc]]
+- [[transformer-model]]
 
 ## 主要发现
 

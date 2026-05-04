@@ -63,13 +63,13 @@ sources: ["EMT_Doc/39/Bak 等 - 2018 - Vacuum circuit breaker modelling for the 
 
 ## 涉及的模型
 
-- [[models/cable-model]]
-- [[topics/wind-farm-modeling]]
+- [[cable-model]]
+- [[wind-farm-modeling]]
 
 ## 相关主题
 
-- [[models/cable-model]]
-- [[topics/wind-farm-modeling]]
+- [[cable-model]]
+- [[wind-farm-modeling]]
 
 ## 主要发现
 

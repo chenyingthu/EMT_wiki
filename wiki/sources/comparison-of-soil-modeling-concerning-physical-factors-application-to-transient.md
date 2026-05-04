@@ -58,7 +58,7 @@ sources: ["EMT_Doc/10/Azevedo 等 - 2024 - Comparison of soil modeling concernin
 
 ## 使用的方法
 
-- [[methods/vector-fitting|矩量法(MoM)]]
+- [[vector-fitting|矩量法(MoM)]]
 - [[全波电磁仿真|全波电磁仿真]]
 - [[atp电磁暂态仿真|ATP电磁暂态仿真]]
 - [[集中参数电路模型|集中参数电路模型]]
@@ -67,11 +67,11 @@ sources: ["EMT_Doc/10/Azevedo 等 - 2024 - Comparison of soil modeling concernin
 
 ## 涉及的模型
 
-- [[models/dfig-model|风力发电机]]
-- [[models/grounding-system-model|接地系统]]
+- [[dfig-model|风力发电机]]
+- [[grounding-system-model|接地系统]]
 - [[机舱与塔基|机舱与塔基]]
-- [[topics/grounding-lightning-overvoltage|雷电流源]]
-- [[models/grounding-system-model|频变土壤模型]]
+- [[grounding-lightning-overvoltage|雷电流源]]
+- [[grounding-system-model|频变土壤模型]]
 - [[archie孔隙模型|Archie孔隙模型]]
 
 ## 相关主题

@@ -58,19 +58,19 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/JESTPE.2014.2315833.pdf.pdf"]
 
 ## 使用的方法
 
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[methods/nodal-analysis|戴维南等效电路]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[nodal-analysis|戴维南等效电路]]
 - [[两态电阻模型|两态电阻模型]]
 - [[广义电路理论|广义电路理论]]
-- [[methods/nodal-analysis|节点分析法]]
+- [[nodal-analysis|节点分析法]]
 
 ## 涉及的模型
 
 - [[mmc-model|MMC]]
 - [[半桥-全桥子模块|半桥/全桥子模块]]
 - [[vsc-model|VSC]]
-- [[topics/hybrid-acdc-network|多端直流电网]]
-- [[models/arm-reactor|桥臂电抗器]]
+- [[hybrid-acdc-network|多端直流电网]]
+- [[arm-reactor|桥臂电抗器]]
 
 ## 相关主题
 

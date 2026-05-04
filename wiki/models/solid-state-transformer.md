@@ -95,7 +95,7 @@ $m_1$、$m_2$为PWM调制比，$n$为高频变压器变比。
 - [[mmc-model]] - MMC换流器（输入级）
 - [[vsc-model]] - VSC换流器（输出级）
 - [[transformer-model]] - 传统变压器模型
-- [[test-systems/ieee-14-bus-system]] - IEEE 14节点测试系统
+- [[ieee-14-bus-system]] - IEEE 14节点测试系统
 - [[emt-simulation]] - EMT仿真基础
 - [[transmission-line-model]]
 - [[synchronous-machine-model]]

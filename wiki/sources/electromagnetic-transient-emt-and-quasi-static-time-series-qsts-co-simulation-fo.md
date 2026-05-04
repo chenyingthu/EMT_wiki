@@ -58,16 +58,16 @@ Electromagnetic transient (EMT) and quasi static time series (QSTS) Co-simulatio
 
 ## 使用的方法
 
-- [[topics/co-simulation|联合仿真]]
+- [[co-simulation|联合仿真]]
 - [[准静态时间序列分析|准静态时间序列分析]]
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[戴维南等效提取|戴维南等效提取]]
 - [[com接口通信|COM接口通信]]
 - [[时序潮流计算|时序潮流计算]]
 
 ## 涉及的模型
 
-- [[topics/pv-power-plant|光伏系统]]
+- [[pv-power-plant|光伏系统]]
 - [[电力电子发电机|电力电子发电机]]
 - [[ieee-13节点测试馈线|IEEE 13节点测试馈线]]
 - [[电能质量改善装置|电能质量改善装置]]
@@ -75,7 +75,7 @@ Electromagnetic transient (EMT) and quasi static time series (QSTS) Co-simulatio
 
 ## 相关主题
 
-- [[topics/co-simulation|混合仿真]]
+- [[co-simulation|混合仿真]]
 - [[可再生能源并网|可再生能源并网]]
 - [[电能质量分析|电能质量分析]]
 - [[配电网仿真|配电网仿真]]

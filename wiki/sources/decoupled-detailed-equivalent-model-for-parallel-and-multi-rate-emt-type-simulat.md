@@ -58,25 +58,25 @@ sources: ["EMT_Doc/12/Decoupled_Detailed_Equivalent_Model_for_Parallel_and_Multi
 
 ## 使用的方法
 
-- [[methods/multirate-method|多速率仿真]]
+- [[multirate-method|多速率仿真]]
 - [[开关插值技术|开关插值技术]]
-- [[methods/nodal-analysis|节点分析法]]
+- [[nodal-analysis|节点分析法]]
 - [[混合并行计算|混合并行计算]]
-- [[methods/average-value-model|等效电路建模]]
+- [[average-value-model|等效电路建模]]
 
 ## 涉及的模型
 
 - [[mmc-model|MMC]]
-- [[topics/energy-storage|BESS]]
-- [[models/mmc-model|子模块]]
-- [[models/dc-dc-converter|DC-DC变换器]]
-- [[methods/average-value-model|详细等效模型]]
+- [[energy-storage|BESS]]
+- [[mmc-model|子模块]]
+- [[dc-dc-converter|DC-DC变换器]]
+- [[average-value-model|详细等效模型]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[topics/parallel-computing|并行计算]]
-- [[methods/multirate-method|多速率仿真]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[parallel-computing|并行计算]]
+- [[multirate-method|多速率仿真]]
 - [[mmc-model|MMC]]
 - [[储能系统集成|储能系统集成]]
 - [[开关事件补偿|开关事件补偿]]

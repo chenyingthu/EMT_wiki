@@ -61,7 +61,7 @@ sources: ["EMT_Doc/04/Chen 等 - 2022 - A Testing Tool for Converter-Dominated P
 - [[随机微分方程-sde|随机微分方程(SDE)]]
 - [[动态伴随电路法|动态伴随电路法]]
 - [[milstein数值积分格式|Milstein数值积分格式]]
-- [[methods/nodal-analysis|节点导纳矩阵法]]
+- [[nodal-analysis|节点导纳矩阵法]]
 - [[矩阵分解加速技术|矩阵分解加速技术]]
 
 ## 涉及的模型
@@ -75,7 +75,7 @@ sources: ["EMT_Doc/04/Chen 等 - 2022 - A Testing Tool for Converter-Dominated P
 
 - [[随机电磁暂态仿真|随机电磁暂态仿真]]
 - [[参数不确定性建模|参数不确定性建模]]
-- [[methods/numerical-integration|数值稳定性分析]]
+- [[numerical-integration|数值稳定性分析]]
 - [[变流器主导电力系统|变流器主导电力系统]]
 - [[emtp框架集成|EMTP框架集成]]
 

@@ -60,7 +60,7 @@ sources: ["EMT_Doc/26/Sun和Kong - 2008 - Modeling and simulation analysis of VS
 
 ## 使用的方法
 
-- [[topics/dynamic-phasor|动态相量法]]
+- [[dynamic-phasor|动态相量法]]
 - [[时变傅里叶级数展开|时变傅里叶级数展开]]
 - [[开关函数建模|开关函数建模]]
 - [[高次项忽略与模型简化|高次项忽略与模型简化]]
@@ -69,17 +69,17 @@ sources: ["EMT_Doc/26/Sun和Kong - 2008 - Modeling and simulation analysis of VS
 
 - [[vsc-hvdc系统|VSC-HVDC系统]]
 - [[电压源换流器-vsc|电压源换流器(VSC)]]
-- [[methods/switching-function-method|开关函数模型]]
-- [[sources/2728一种用于lcc-hvdc系统小干扰稳定性分析的改进动态相量模型|动态相量模型]]
+- [[switching-function-method|开关函数模型]]
+- [[2728一种用于lcc-hvdc系统小干扰稳定性分析的改进动态相量模型|动态相量模型]]
 - [[详细时域模型|详细时域模型]]
 - [[变压器与直流电容-线路|变压器与直流电容/线路]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[topics/electromechanical-transient|机电暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[electromechanical-transient|机电暂态仿真]]
 - [[电力系统混合仿真|电力系统混合仿真]]
-- [[topics/vsc-hvdc|高压直流输电]]
+- [[vsc-hvdc|高压直流输电]]
 - [[电力电子装置建模|电力电子装置建模]]
 
 ## 主要发现

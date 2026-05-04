@@ -61,7 +61,7 @@ sources: ["EMT_Doc/26/Gustavsen和Vernay - 2020 - Measurement-based frequency-de
 - [[导纳扫频测量|导纳扫频测量]]
 - [[特征值缩放|特征值缩放]]
 - [[模态揭示变换|模态揭示变换]]
-- [[methods/vector-fitting|矢量拟合]]
+- [[vector-fitting|矢量拟合]]
 - [[黑盒建模|黑盒建模]]
 
 ## 涉及的模型
@@ -73,8 +73,8 @@ sources: ["EMT_Doc/26/Gustavsen和Vernay - 2020 - Measurement-based frequency-de
 
 ## 相关主题
 
-- [[topics/frequency-dependent-modeling|频率相关建模]]
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[frequency-dependent-modeling|频率相关建模]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[绝缘配合研究|绝缘配合研究]]
 - [[宽频黑盒建模|宽频黑盒建模]]
 - [[换相过电压分析|换相过电压分析]]

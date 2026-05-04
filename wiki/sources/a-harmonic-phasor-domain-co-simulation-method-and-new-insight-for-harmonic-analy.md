@@ -59,23 +59,23 @@ sources: ["EMT_Doc/01/Shu 等 - 2021 - A Harmonic Phasor Domain Cosimulation Met
 ## 使用的方法
 
 - [[谐波相量法|谐波相量法]]
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[topics/co-simulation|协同仿真]]
-- [[methods/nodal-analysis|节点分析法]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[co-simulation|协同仿真]]
+- [[nodal-analysis|节点分析法]]
 - [[解耦时序协调|解耦时序协调]]
 
 ## 涉及的模型
 
 - [[vsc-model|VSC]]
 - [[mmc-model|MMC]]
-- [[topics/large-scale-grid-simulation|交流电网]]
-- [[topics/hybrid-acdc-network|直流电网]]
-- [[models/transmission-line-model|输电线路]]
+- [[large-scale-grid-simulation|交流电网]]
+- [[hybrid-acdc-network|直流电网]]
+- [[transmission-line-model|输电线路]]
 
 ## 相关主题
 
-- [[methods/harmonic-analysis-methods|谐波分析]]
-- [[topics/hybrid-acdc-network|交直流电网]]
+- [[harmonic-analysis-methods|谐波分析]]
+- [[hybrid-acdc-network|交直流电网]]
 - [[vsc-model|VSC]]
 - [[宽频带振荡|宽频带振荡]]
 - [[大规模电网建模|大规模电网建模]]

@@ -59,10 +59,10 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/j.epsr.2015.05.019.pdf.pdf"]
 ## 使用的方法
 
 - [[transmission-line-model|Bergeron线路模型]]
-- [[methods/vector-fitting|矢量拟合]]
+- [[vector-fitting|矢量拟合]]
 - [[模态解耦|模态解耦]]
 - [[时域状态方程法|时域状态方程法]]
-- [[methods/vector-fitting|有理函数逼近]]
+- [[vector-fitting|有理函数逼近]]
 
 ## 涉及的模型
 
@@ -73,11 +73,11 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/j.epsr.2015.05.019.pdf.pdf"]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[models/transmission-line-model|输电线路建模]]
-- [[topics/frequency-dependent-modeling|频率相关建模]]
-- [[topics/emt-simulation|时域分析]]
-- [[methods/modal-analysis|模态变换]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[transmission-line-model|输电线路建模]]
+- [[frequency-dependent-modeling|频率相关建模]]
+- [[emt-simulation|时域分析]]
+- [[modal-analysis|模态变换]]
 
 ## 主要发现
 

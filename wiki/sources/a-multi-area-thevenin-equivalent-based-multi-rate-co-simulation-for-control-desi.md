@@ -68,16 +68,16 @@ sources: ["EMT_Doc/02/Li 等 - 2020 - A multi-area Thevenin equivalent based mul
 
 - [[lcc-model|LCC]]
 - [[vsc-hvdc|VSC-HVDC]]
-- [[topics/hybrid-acdc-network|交直流电网]]
-- [[models/transmission-line-model|输电线路]]
+- [[hybrid-acdc-network|交直流电网]]
+- [[transmission-line-model|输电线路]]
 - [[戴维南等效模型|戴维南等效模型]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[换相失败抑制|换相失败抑制]]
-- [[topics/network-equivalent|网络等值]]
-- [[methods/multirate-method|多速率仿真]]
+- [[network-equivalent|网络等值]]
+- [[multirate-method|多速率仿真]]
 - [[弱交流系统|弱交流系统]]
 - [[控制策略设计|控制策略设计]]
 

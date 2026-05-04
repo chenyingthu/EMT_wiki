@@ -58,7 +58,7 @@ sources: ["EMT_Doc/18/Noda 等 - 2004 - Error in propagation velocity due to sta
 
 ## 使用的方法
 
-- [[methods/fdtd|有限差分时域法(FDTD)]]
+- [[fdtd|有限差分时域法(FDTD)]]
 - [[阶梯近似算法-sca|阶梯近似算法(SCA)]]
 - [[麦克斯韦方程直接求解|麦克斯韦方程直接求解]]
 - [[高斯脉冲激励|高斯脉冲激励]]
@@ -73,7 +73,7 @@ sources: ["EMT_Doc/18/Noda 等 - 2004 - Error in propagation velocity due to sta
 
 - [[浪涌仿真|浪涌仿真]]
 - [[波速误差分析|波速误差分析]]
-- [[topics/emt-simulation|电磁暂态分析]]
+- [[emt-simulation|电磁暂态分析]]
 - [[空间离散化误差|空间离散化误差]]
 - [[快速暂态现象|快速暂态现象]]
 

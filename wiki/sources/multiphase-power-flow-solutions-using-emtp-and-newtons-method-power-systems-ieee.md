@@ -58,7 +58,7 @@ sources: ["EMT_Doc/27&28/Multiphase power flow solutions using EMTP and Newtons 
 
 ## 使用的方法
 
-- [[methods/nodal-analysis|牛顿-拉夫逊法]]
+- [[nodal-analysis|牛顿-拉夫逊法]]
 - [[支路电流法|支路电流法]]
 - [[直角坐标法|直角坐标法]]
 - [[雅可比矩阵构建|雅可比矩阵构建]]
@@ -66,18 +66,18 @@ sources: ["EMT_Doc/27&28/Multiphase power flow solutions using EMTP and Newtons 
 
 ## 涉及的模型
 
-- [[models/synchronous-machine-model|同步电机]]
+- [[synchronous-machine-model|同步电机]]
 - [[pq负荷|PQ负荷]]
-- [[sources/一种用于电磁暂态仿真的两电平电压源型换流器解耦模型|电压源]]
+- [[一种用于电磁暂态仿真的两电平电压源型换流器解耦模型|电压源]]
 - [[电流源|电流源]]
-- [[models/transmission-line-model|输电线路]]
-- [[models/transformer-model|变压器]]
+- [[transmission-line-model|输电线路]]
+- [[transformer-model|变压器]]
 
 ## 相关主题
 
 - [[多相潮流计算|多相潮流计算]]
 - [[不平衡系统分析|不平衡系统分析]]
-- [[topics/steady-state-initialization|稳态初始化]]
+- [[steady-state-initialization|稳态初始化]]
 - [[emtp集成|EMTP集成]]
 - [[大型输电网络|大型输电网络]]
 

@@ -58,24 +58,24 @@ sources: ["EMT_Doc/07&08/Analyses of the modifications in the 蟺 circuits for i
 
 ## 使用的方法
 
-- [[methods/state-space-method|状态变量法]]
-- [[methods/numerical-integration|梯形积分法]]
-- [[methods/characteristic-method|特征线法]]
+- [[state-space-method|状态变量法]]
+- [[numerical-integration|梯形积分法]]
+- [[characteristic-method|特征线法]]
 - [[π型电路级联|π型电路级联]]
 - [[并联rl支路拟合|并联RL支路拟合]]
 
 ## 涉及的模型
 
-- [[models/transmission-line-model|输电线路]]
+- [[transmission-line-model|输电线路]]
 - [[频变π型电路|频变π型电路]]
 - [[并联rl等效模块|并联RL等效模块]]
-- [[methods/state-space-method|状态空间模型]]
+- [[state-space-method|状态空间模型]]
 
 ## 相关主题
 
-- [[topics/frequency-dependent-modeling|频率相关建模]]
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[methods/numerical-integration|数值振荡抑制]]
+- [[frequency-dependent-modeling|频率相关建模]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[numerical-integration|数值振荡抑制]]
 - [[线路参数等值|线路参数等值]]
 - [[emtp算法|EMTP算法]]
 

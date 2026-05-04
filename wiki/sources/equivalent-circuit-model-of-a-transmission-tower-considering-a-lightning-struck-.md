@@ -58,8 +58,8 @@ sources: ["EMT_Doc/17/Yamanaka 等 - 2021 - Equivalent Circuit Model of a Transm
 
 ## 使用的方法
 
-- [[methods/fdtd|有限差分时域法(FDTD)]]
-- [[methods/average-value-model|等效电路建模]]
+- [[fdtd|有限差分时域法(FDTD)]]
+- [[average-value-model|等效电路建模]]
 - [[细线近似法|细线近似法]]
 - [[阶梯近似法|阶梯近似法]]
 - [[emt型电路分析|EMT型电路分析]]
@@ -76,7 +76,7 @@ sources: ["EMT_Doc/17/Yamanaka 等 - 2021 - Equivalent Circuit Model of a Transm
 
 - [[雷击过电压|雷击过电压]]
 - [[反击闪络|反击闪络]]
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[三维电磁场分析|三维电磁场分析]]
 - [[杆塔防雷建模|杆塔防雷建模]]
 

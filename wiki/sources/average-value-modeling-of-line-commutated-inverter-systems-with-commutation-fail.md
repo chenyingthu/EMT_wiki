@@ -68,16 +68,16 @@ sources: ["EMT_Doc/09/Hong 等 - 2022 - Average-Value Modeling of Line-Commutate
 - [[lcc-model|LCC]]
 - [[六脉冲晶闸管逆变器|六脉冲晶闸管逆变器]]
 - [[vsc-hvdc|VSC-HVDC]]
-- [[models/dc-rlc-filter|平波电抗器]]
-- [[models/transmission-line-model|输电线路]]
-- [[methods/nodal-analysis|戴维南等效电路]]
+- [[dc-rlc-filter|平波电抗器]]
+- [[transmission-line-model|输电线路]]
+- [[nodal-analysis|戴维南等效电路]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[换相失败|换相失败]]
 - [[传统高压直流输电|传统高压直流输电]]
-- [[topics/large-scale-system-simulation|系统级仿真]]
+- [[large-scale-system-simulation|系统级仿真]]
 - [[交流电压跌落|交流电压跌落]]
 - [[故障检测|故障检测]]
 

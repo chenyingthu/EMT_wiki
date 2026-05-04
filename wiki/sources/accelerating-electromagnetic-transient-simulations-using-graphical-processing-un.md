@@ -61,27 +61,27 @@ sources: ["EMT_Doc/05/Aluthge 等 - 2026 - Accelerating electromagnetic transien
 - [[klu分解|KLU分解]]
 - [[cholesky分解|Cholesky分解]]
 - [[woodbury公式|Woodbury公式]]
-- [[methods/average-value-model|补偿法]]
+- [[average-value-model|补偿法]]
 - [[gpu稀疏求解|GPU稀疏求解]]
-- [[methods/nodal-analysis|节点分析法]]
+- [[nodal-analysis|节点分析法]]
 
 ## 涉及的模型
 
-- [[test-systems/ieee-39-bus-system|IEEE 39节点系统]]
-- [[models/transformer-model|变压器]]
-- [[models/synchronous-machine-model|同步发电机]]
+- [[ieee-39-bus-system|IEEE 39节点系统]]
+- [[transformer-model|变压器]]
+- [[synchronous-machine-model|同步发电机]]
 - [[π型输电线路|π型输电线路]]
 - [[逆变器接口电源|逆变器接口电源]]
 - [[电力电子换流器|电力电子换流器]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[methods/gpu-accelerated-simulation|GPU并行加速]]
-- [[topics/large-scale-grid-simulation|大规模电网仿真]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[gpu-accelerated-simulation|GPU并行加速]]
+- [[large-scale-grid-simulation|大规模电网仿真]]
 - [[高频开关动态|高频开关动态]]
-- [[methods/sparse-matrix-solver|稀疏矩阵求解]]
-- [[topics/renewable-energy-integration|新能源并网]]
+- [[sparse-matrix-solver|稀疏矩阵求解]]
+- [[renewable-energy-integration|新能源并网]]
 
 ## 主要发现
 

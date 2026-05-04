@@ -59,8 +59,8 @@ sources: ["EMT_Doc/24/Jalili-Marandi 等 - 2009 - Interfacing Techniques for Tra
 ## 使用的方法
 
 - [[混合仿真接口技术|混合仿真接口技术]]
-- [[methods/network-partitioning|网络分割]]
-- [[topics/parallel-computing|并行计算]]
+- [[network-partitioning|网络分割]]
+- [[parallel-computing|并行计算]]
 - [[多速率积分|多速率积分]]
 - [[频移法|频移法]]
 - [[时间步长同步|时间步长同步]]
@@ -68,24 +68,24 @@ sources: ["EMT_Doc/24/Jalili-Marandi 等 - 2009 - Interfacing Techniques for Tra
 
 ## 涉及的模型
 
-- [[models/synchronous-machine-model|同步电机]]
-- [[models/transmission-line-model|输电线路]]
+- [[synchronous-machine-model|同步电机]]
+- [[transmission-line-model|输电线路]]
 - [[vsc-hvdc|VSC-HVDC]]
 - [[facts装置|FACTS装置]]
-- [[topics/power-electronics|电力电子变换器]]
+- [[power-electronics|电力电子变换器]]
 - [[集中参数元件|集中参数元件]]
 - [[分布参数线路|分布参数线路]]
 
 ## 相关主题
 
-- [[topics/co-simulation|混合仿真]]
-- [[topics/electromechanical-transient|暂态稳定分析]]
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[topics/co-simulation|接口技术]]
-- [[topics/parallel-computing|并行计算]]
-- [[methods/network-partitioning|网络分割]]
+- [[co-simulation|混合仿真]]
+- [[electromechanical-transient|暂态稳定分析]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[co-simulation|接口技术]]
+- [[parallel-computing|并行计算]]
+- [[network-partitioning|网络分割]]
 - [[频率自适应建模|频率自适应建模]]
-- [[topics/large-scale-grid-simulation|大规模电网仿真]]
+- [[large-scale-grid-simulation|大规模电网仿真]]
 
 ## 主要发现
 

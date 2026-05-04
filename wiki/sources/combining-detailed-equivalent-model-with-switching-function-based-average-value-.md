@@ -58,8 +58,8 @@ MMC-HVDC的EMT仿真既要覆盖大量子模块的快速开关暂态，又要在
 
 ## 使用的方法
 
-- [[methods/switching-function-method|开关函数法]]
-- [[methods/average-value-model|平均值建模]]
+- [[switching-function-method|开关函数法]]
+- [[average-value-model|平均值建模]]
 - [[详细等效建模|详细等效建模]]
 - [[统一桥臂等效电路|统一桥臂等效电路]]
 - [[实时仿真技术|实时仿真技术]]
@@ -78,11 +78,11 @@ MMC-HVDC的EMT仿真既要覆盖大量子模块的快速开关暂态，又要在
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[topics/real-time-simulation|实时仿真]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[real-time-simulation|实时仿真]]
 - [[mmc-model|MMC]]
-- [[methods/average-value-model|平均值模型]]
-- [[methods/average-value-model|详细等效模型]]
+- [[average-value-model|平均值模型]]
+- [[average-value-model|详细等效模型]]
 - [[动态仿真|动态仿真]]
 - [[功率器件损耗建模|功率器件损耗建模]]
 

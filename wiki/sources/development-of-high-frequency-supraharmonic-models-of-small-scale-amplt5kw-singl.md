@@ -74,7 +74,7 @@ Development of high frequency (Supraharmonic) models of small-scale (< 5 kW), si
 
 - [[超谐波分析|超谐波分析]]
 - [[高频电磁暂态建模|高频电磁暂态建模]]
-- [[topics/power-quality|电能质量]]
+- [[power-quality|电能质量]]
 - [[配电网并网设备|配电网并网设备]]
 - [[黑箱等效|黑箱等效]]
 

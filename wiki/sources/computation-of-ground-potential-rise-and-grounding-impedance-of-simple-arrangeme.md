@@ -58,7 +58,7 @@ sources: ["EMT_Doc/11/De Araújo 等 - 2021 - Computation of ground potential ri
 
 ## 使用的方法
 
-- [[methods/vector-fitting|矩量法(MoM)]]
+- [[vector-fitting|矩量法(MoM)]]
 - [[分层介质格林函数|分层介质格林函数]]
 - [[矢量拟合-vf|矢量拟合(VF)]]
 - [[递归卷积法|递归卷积法]]
@@ -70,15 +70,15 @@ sources: ["EMT_Doc/11/De Araújo 等 - 2021 - Computation of ground potential ri
 - [[垂直接地极|垂直接地极]]
 - [[交叉接地极|交叉接地极]]
 - [[频变分层土壤模型|频变分层土壤模型]]
-- [[topics/grounding-lightning-overvoltage|雷电流源]]
+- [[grounding-lightning-overvoltage|雷电流源]]
 - [[接地系统等效电路|接地系统等效电路]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态]]
+- [[emt-simulation|电磁暂态]]
 - [[接地阻抗计算|接地阻抗计算]]
-- [[topics/ground-potential-rise|地电位升]]
-- [[topics/frequency-dependent-modeling|频率相关建模]]
+- [[ground-potential-rise|地电位升]]
+- [[frequency-dependent-modeling|频率相关建模]]
 - [[分层土壤|分层土壤]]
 - [[雷击暂态分析|雷击暂态分析]]
 

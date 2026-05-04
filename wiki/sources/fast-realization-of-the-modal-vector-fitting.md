@@ -59,7 +59,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/tpwrd.2008.2005462.pdf.pdf"]
 ## 使用的方法
 
 - [[模态矢量拟合|模态矢量拟合]]
-- [[methods/vector-fitting|矢量拟合]]
+- [[vector-fitting|矢量拟合]]
 - [[有理拟合|有理拟合]]
 - [[极点-留数建模|极点-留数建模]]
 - [[最小二乘优化|最小二乘优化]]
@@ -67,16 +67,16 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/tpwrd.2008.2005462.pdf.pdf"]
 
 ## 涉及的模型
 
-- [[sources/电磁机电暂态混合仿真中的频率相关网络等值|频率相关网络等值]]
+- [[电磁机电暂态混合仿真中的频率相关网络等值|频率相关网络等值]]
 - [[多端口系统|多端口系统]]
 - [[极点-留数模型|极点-留数模型]]
-- [[methods/state-space-method|状态空间模型]]
+- [[state-space-method|状态空间模型]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[topics/frequency-dependent-modeling|频率相关建模]]
-- [[topics/network-equivalent|网络等值]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[frequency-dependent-modeling|频率相关建模]]
+- [[network-equivalent|网络等值]]
 - [[宽频带建模|宽频带建模]]
 - [[高阻抗终端误差抑制|高阻抗终端误差抑制]]
 

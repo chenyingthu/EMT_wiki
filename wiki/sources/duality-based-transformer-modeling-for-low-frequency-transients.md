@@ -66,7 +66,7 @@ sources: ["EMT_Doc/13&14/files/TPWRD.2016.2517327.pdf.pdf"]
 
 ## 涉及的模型
 
-- [[models/transformer-model|电力变压器]]
+- [[transformer-model|电力变压器]]
 - [[壳式-芯式变压器|壳式/芯式变压器]]
 - [[多绕组变压器|多绕组变压器]]
 - [[对偶π型模型|对偶π型模型]]
@@ -76,10 +76,10 @@ sources: ["EMT_Doc/13&14/files/TPWRD.2016.2517327.pdf.pdf"]
 
 - [[低频电磁暂态|低频电磁暂态]]
 - [[变压器建模|变压器建模]]
-- [[topics/ferroresonance|铁磁谐振]]
+- [[ferroresonance|铁磁谐振]]
 - [[励磁涌流|励磁涌流]]
 - [[地磁感应电流|地磁感应电流]]
-- [[methods/numerical-integration|数值稳定性分析]]
+- [[numerical-integration|数值稳定性分析]]
 
 ## 主要发现
 

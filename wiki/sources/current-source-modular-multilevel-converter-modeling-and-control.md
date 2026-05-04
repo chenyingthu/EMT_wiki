@@ -59,22 +59,22 @@ sources: ["EMT_Doc/29/TPWRD.2016.2590569.pdf-1.pdf"]
 ## 使用的方法
 
 - [[诺顿等效建模|诺顿等效建模]]
-- [[methods/numerical-integration|梯形积分法]]
-- [[methods/nodal-analysis|节点分析法]]
-- [[topics/co-simulation|混合建模]]
+- [[numerical-integration|梯形积分法]]
+- [[nodal-analysis|节点分析法]]
+- [[co-simulation|混合建模]]
 - [[自定义fortran模块|自定义FORTRAN模块]]
 
 ## 涉及的模型
 
 - [[mmc-model|MMC]]
-- [[models/mmc-model|半桥子模块]]
+- [[mmc-model|半桥子模块]]
 - [[背靠背变流器系统|背靠背变流器系统]]
 - [[传统详细模型|传统详细模型]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[methods/average-value-model|等效建模]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[average-value-model|等效建模]]
 - [[动态特性研究|动态特性研究]]
 - [[背靠背变流器|背靠背变流器]]
 - [[电流平衡控制|电流平衡控制]]

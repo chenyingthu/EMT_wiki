@@ -58,30 +58,30 @@ sources: ["EMT_Doc/17/Liu 等 - 2010 - Electromechanical transientelectromagneti
 
 ## 使用的方法
 
-- [[topics/co-simulation|混合仿真]]
+- [[co-simulation|混合仿真]]
 - [[诺顿等值|诺顿等值]]
-- [[methods/average-value-model|补偿法]]
-- [[methods/least-squares|最小二乘法]]
+- [[average-value-model|补偿法]]
+- [[least-squares|最小二乘法]]
 - [[序网-三相坐标变换|序网-三相坐标变换]]
 - [[迭代交互求解|迭代交互求解]]
 
 ## 涉及的模型
 
 - [[vsc-hvdc|VSC-HVDC]]
-- [[topics/power-electronics|换流器]]
-- [[models/transformer-model|换流变压器]]
-- [[models/synchronous-machine-model|同步发电机]]
+- [[power-electronics|换流器]]
+- [[transformer-model|换流变压器]]
+- [[synchronous-machine-model|同步发电机]]
 - [[动态负荷|动态负荷]]
-- [[topics/large-scale-grid-simulation|交流电网]]
+- [[large-scale-grid-simulation|交流电网]]
 
 ## 相关主题
 
-- [[topics/electromechanical-electromagnetic-hybrid-simulation|机电-电磁混合仿真]]
-- [[methods/fault-analysis-methods|不对称故障]]
-- [[topics/network-equivalent|网络等值]]
+- [[electromechanical-electromagnetic-hybrid-simulation|机电-电磁混合仿真]]
+- [[fault-analysis-methods|不对称故障]]
+- [[network-equivalent|网络等值]]
 - [[接口交互技术|接口交互技术]]
 - [[正负序参数处理|正负序参数处理]]
-- [[topics/large-scale-grid-simulation|大规模电网仿真]]
+- [[large-scale-grid-simulation|大规模电网仿真]]
 
 ## 主要发现
 

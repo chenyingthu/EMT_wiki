@@ -69,15 +69,15 @@ sources: ["EMT_Doc/27&28/Modeling of MMC-based STATCOM with embedded energy stor
 
 - [[mmc-model|MMC]]
 - [[statcom|STATCOM]]
-- [[models/full-bridge-smb|全桥子模块]]
+- [[full-bridge-smb|全桥子模块]]
 - [[超级电容|超级电容]]
 - [[蓄电池|蓄电池]]
-- [[models/dc-dc-converter|DC/DC变换器]]
+- [[dc-dc-converter|DC/DC变换器]]
 - [[耦合变压器|耦合变压器]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[储能集成建模|储能集成建模]]
 - [[mmc-model|MMC]]
 - [[statcom控制|STATCOM控制]]

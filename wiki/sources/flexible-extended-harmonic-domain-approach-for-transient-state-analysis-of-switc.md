@@ -62,12 +62,12 @@ FEHD仍以EHD的基本变换为核心：把含周期系数的时域LTP方程ẋ(
 - [[灵活扩展谐波域法|灵活扩展谐波域法]]
 - [[广义平均值模型|广义平均值模型]]
 - [[频域卷积|频域卷积]]
-- [[methods/model-order-reduction|降阶建模]]
+- [[model-order-reduction|降阶建模]]
 
 ## 涉及的模型
 
-- [[topics/power-electronics|电力电子变换器]]
-- [[topics/pv-power-plant|光伏系统]]
+- [[power-electronics|电力电子变换器]]
+- [[pv-power-plant|光伏系统]]
 - [[三相闭环光伏系统|三相闭环光伏系统]]
 - [[开关系统|开关系统]]
 

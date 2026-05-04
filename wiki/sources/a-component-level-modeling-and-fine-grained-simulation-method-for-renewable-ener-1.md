@@ -59,22 +59,22 @@ sources: ["EMT_Doc/01/Wang 等 - 2026 - A component-level modeling and fine-grai
 - [[广义延迟插入法|广义延迟插入法]]
 - [[蛙跳差分法|蛙跳差分法]]
 - [[gpu多线程并行|GPU多线程并行]]
-- [[methods/nodal-analysis|节点分析法]]
+- [[nodal-analysis|节点分析法]]
 - [[细粒度并行求解|细粒度并行求解]]
 
 ## 涉及的模型
 
-- [[topics/wind-farm-modeling|风电场]]
+- [[wind-farm-modeling|风电场]]
 - [[风力发电机组|风力发电机组]]
-- [[topics/power-electronics|电力电子变换器]]
+- [[power-electronics|电力电子变换器]]
 - [[三相节点支路模型|三相节点支路模型]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[topics/parallel-computing|并行计算]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[parallel-computing|并行计算]]
 - [[细粒度仿真|细粒度仿真]]
-- [[methods/gpu-accelerated-simulation|GPU加速]]
+- [[gpu-accelerated-simulation|GPU加速]]
 - [[新能源并网建模|新能源并网建模]]
 
 ## 主要发现

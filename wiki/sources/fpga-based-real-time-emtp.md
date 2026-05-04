@@ -58,10 +58,10 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/TPWRD.2008.923392.pdf.pdf"]
 
 ## 使用的方法
 
-- [[topics/parallel-computing|并行算法]]
+- [[parallel-computing|并行算法]]
 - [[深度流水线技术|深度流水线技术]]
 - [[浮点运算|浮点运算]]
-- [[methods/nodal-analysis|节点分析法]]
+- [[nodal-analysis|节点分析法]]
 
 ## 涉及的模型
 
@@ -72,11 +72,11 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/TPWRD.2008.923392.pdf.pdf"]
 
 ## 相关主题
 
-- [[topics/real-time-simulation|实时仿真]]
-- [[topics/parallel-computing|并行计算]]
-- [[methods/fpga-real-time-simulation|FPGA硬件实现]]
-- [[topics/frequency-dependent-modeling|频率相关建模]]
-- [[topics/emt-simulation|电磁暂态分析]]
+- [[real-time-simulation|实时仿真]]
+- [[parallel-computing|并行计算]]
+- [[fpga-real-time-simulation|FPGA硬件实现]]
+- [[frequency-dependent-modeling|频率相关建模]]
+- [[emt-simulation|电磁暂态分析]]
 
 ## 主要发现
 

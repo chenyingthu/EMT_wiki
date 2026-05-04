@@ -65,16 +65,16 @@ sources: ["EMT_Doc/03/Wang 等 - 2019 - A Piecewise Generalized State Space Mode
 
 - [[并网变流器|并网变流器]]
 - [[三相pwm逆变器|三相PWM逆变器]]
-- [[topics/pv-power-plant|光伏系统]]
+- [[pv-power-plant|光伏系统]]
 - [[变流器开关详细模型|变流器开关详细模型]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[topics/renewable-energy-integration|新能源并网]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[renewable-energy-integration|新能源并网]]
 - [[变流器建模|变流器建模]]
 - [[高效仿真|高效仿真]]
-- [[methods/harmonic-analysis-methods|谐波分析]]
+- [[harmonic-analysis-methods|谐波分析]]
 
 ## 主要发现
 

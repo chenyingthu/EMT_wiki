@@ -58,24 +58,24 @@ sources: ["EMT_Doc/17/Zhao 等 - 2023 - Equivalent model of nearest level modula
 
 ## 使用的方法
 
-- [[methods/average-value-model|平均值模型]]
+- [[average-value-model|平均值模型]]
 - [[电压闭环控制|电压闭环控制]]
-- [[methods/average-value-model|等效电路建模]]
+- [[average-value-model|等效电路建模]]
 - [[离散元件建模|离散元件建模]]
 
 ## 涉及的模型
 
 - [[mmc-model|MMC]]
-- [[models/mmc-model|子模块]]
-- [[methods/switch-modeling|开关模型]]
+- [[mmc-model|子模块]]
+- [[switch-modeling|开关模型]]
 - [[基频等效电路模型|基频等效电路模型]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[methods/nearest-level-modulation|最近电平调制]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[nearest-level-modulation|最近电平调制]]
 - [[电容电压均衡|电容电压均衡]]
-- [[sources/适用于交直流混联电网的ch-mmc电磁暂态快速仿真模型-15|快速仿真]]
+- [[适用于交直流混联电网的ch-mmc电磁暂态快速仿真模型-15|快速仿真]]
 
 ## 主要发现
 

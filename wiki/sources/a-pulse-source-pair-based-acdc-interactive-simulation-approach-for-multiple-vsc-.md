@@ -59,7 +59,7 @@ sources: ["EMT_Doc/03/TPWRD.2020.2984275.pdf.pdf"]
 
 - [[脉冲电压电流源对建模|脉冲电压电流源对建模]]
 - [[单向松耦合求解算法|单向松耦合求解算法]]
-- [[methods/nodal-analysis|节点导纳矩阵法]]
+- [[nodal-analysis|节点导纳矩阵法]]
 - [[控制系统暂态分析-tacs|控制系统暂态分析(TACS)]]
 
 ## 涉及的模型
@@ -67,11 +67,11 @@ sources: ["EMT_Doc/03/TPWRD.2020.2984275.pdf.pdf"]
 - [[vsc-model|VSC]]
 - [[igbt-反并联二极管开关|IGBT/反并联二极管开关]]
 - [[直流侧电容|直流侧电容]]
-- [[topics/hybrid-acdc-network|交直流混合电网]]
+- [[hybrid-acdc-network|交直流混合电网]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[vsc-model|VSC]]
 - [[开关事件高效处理|开关事件高效处理]]
 - [[交直流交互仿真|交直流交互仿真]]

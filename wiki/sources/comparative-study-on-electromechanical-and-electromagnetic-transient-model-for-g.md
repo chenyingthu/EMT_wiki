@@ -59,28 +59,28 @@ sources: ["EMT_Doc/10/Sun 等 - 2014 - Comparative study on electromechanical an
 ## 使用的方法
 
 - [[传递函数建模|传递函数建模]]
-- [[methods/average-value-model|平均值模型]]
+- [[average-value-model|平均值模型]]
 - [[pq解耦控制|PQ解耦控制]]
-- [[models/coordinate-transformation-model|dq坐标变换]]
+- [[coordinate-transformation-model|dq坐标变换]]
 - [[对比仿真验证|对比仿真验证]]
 
 ## 涉及的模型
 
 - [[光伏电池|光伏电池]]
 - [[mppt控制器|MPPT控制器]]
-- [[models/dc-dc-converter|DC/DC变换器]]
+- [[dc-dc-converter|DC/DC变换器]]
 - [[直流母线电容|直流母线电容]]
-- [[models/gfl-inverter-model|并网逆变器]]
+- [[gfl-inverter-model|并网逆变器]]
 - [[机电暂态模型|机电暂态模型]]
-- [[topics/emt-simulation|电磁暂态模型]]
+- [[emt-simulation|电磁暂态模型]]
 
 ## 相关主题
 
-- [[topics/electromechanical-transient|机电暂态建模]]
+- [[electromechanical-transient|机电暂态建模]]
 - [[大规模光伏电站仿真|大规模光伏电站仿真]]
-- [[topics/renewable-energy-integration|新能源并网]]
-- [[methods/model-order-reduction|模型降阶]]
-- [[topics/parallel-computing|仿真加速]]
+- [[renewable-energy-integration|新能源并网]]
+- [[model-order-reduction|模型降阶]]
+- [[parallel-computing|仿真加速]]
 
 ## 主要发现
 

@@ -58,7 +58,7 @@ sources: ["EMT_Doc/07&08/An improved approach for modeling lightning transients 
 
 ## 使用的方法
 
-- [[methods/average-value-model|等效电路建模]]
+- [[average-value-model|等效电路建模]]
 - [[多导体系统离散化|多导体系统离散化]]
 - [[诺伊曼积分法|诺伊曼积分法]]
 - [[电磁类比法|电磁类比法]]
@@ -66,10 +66,10 @@ sources: ["EMT_Doc/07&08/An improved approach for modeling lightning transients 
 
 ## 涉及的模型
 
-- [[models/dfig-model|风力发电机]]
+- [[dfig-model|风力发电机]]
 - [[风机叶片|风机叶片]]
 - [[风机塔筒|风机塔筒]]
-- [[models/grounding-system-model|接地系统]]
+- [[grounding-system-model|接地系统]]
 - [[动态接触部件|动态接触部件]]
 
 ## 相关主题

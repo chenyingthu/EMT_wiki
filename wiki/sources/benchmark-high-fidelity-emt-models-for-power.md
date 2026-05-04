@@ -58,29 +58,29 @@ sources: ["EMT_Doc/10/Marthi 等 - 2024 - Benchmark High-Fidelity EMT Models for
 
 ## 使用的方法
 
-- [[methods/dae-solvers|微分代数方程]]
+- [[dae-solvers|微分代数方程]]
 - [[二阶梯形积分|二阶梯形积分]]
 - [[kron降阶法|Kron降阶法]]
 - [[dae聚类与聚合|DAE聚类与聚合]]
 - [[多阶离散化|多阶离散化]]
 - [[混合离散化|混合离散化]]
-- [[methods/multirate-method|多速率仿真]]
+- [[multirate-method|多速率仿真]]
 - [[lu分解|LU分解]]
 
 ## 涉及的模型
 
-- [[topics/pv-power-plant|光伏电站]]
+- [[pv-power-plant|光伏电站]]
 - [[光伏逆变器|光伏逆变器]]
 - [[电站级控制器|电站级控制器]]
-- [[models/transformer-model|变压器]]
-- [[models/transmission-line-model|架空输电线路]]
-- [[models/cable-model|地下电缆]]
+- [[transformer-model|变压器]]
+- [[transmission-line-model|架空输电线路]]
+- [[cable-model|地下电缆]]
 - [[并联电容器|并联电容器]]
-- [[test-systems/ieee-39-bus-system|IEEE-39节点系统]]
+- [[ieee-39-bus-system|IEEE-39节点系统]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[高比例光伏并网|高比例光伏并网]]
 - [[逆变器并网资源建模|逆变器并网资源建模]]
 - [[故障扰动分析|故障扰动分析]]

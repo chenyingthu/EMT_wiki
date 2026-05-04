@@ -68,6 +68,10 @@ created: "2026-04-14"
 
 | 论文 | 年份 |
 |------|------|
+| [[digital-time-domain-investigation-of-transient-behavior-of-coupling-capacitor-vo|Digital Time-Domain Investigation of Transient Behavior of C]] | 2004 |
+| [[dual-reversible-transformer-model-for-the-13&14|Dual Reversible Transformer Model for the]] | 2013 |
+| [[duality-based-transformer-modeling-for-low-frequency-transients|Duality-Based Transformer Modeling for Low-Frequency Transie]] | 2016 |
+| [[accurate-simulation-model-for-a-three-phase-ferroresonant-circuit-in-emtpatp|Accurate simulation model for a three-phase ferroresonant ci]] | 2018 |
 | [[saturable-reactor-hysteresis-model-based-on-jilesatherton-formulation-for-ferror|Saturable reactor hysteresis model based on Jiles–Atherton f]] | 2018 |
 ## 技术演进脉络
 

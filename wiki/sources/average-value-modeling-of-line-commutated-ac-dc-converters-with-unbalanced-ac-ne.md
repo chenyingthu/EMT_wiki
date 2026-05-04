@@ -66,15 +66,15 @@ sources: ["EMT_Doc/09/Ebrahimi 等 - 2021 - Average-Value Modeling of Line-Commu
 ## 涉及的模型
 
 - [[lcc-model|LCC]]
-- [[topics/large-scale-grid-simulation|交流电网]]
+- [[large-scale-grid-simulation|交流电网]]
 - [[直流侧rlc滤波器|直流侧RLC滤波器]]
 - [[戴维南等效电源|戴维南等效电源]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[不平衡工况分析|不平衡工况分析]]
-- [[methods/harmonic-analysis-methods|谐波分析]]
+- [[harmonic-analysis-methods|谐波分析]]
 - [[系统级快速仿真|系统级快速仿真]]
 - [[频域阻抗预测|频域阻抗预测]]
 

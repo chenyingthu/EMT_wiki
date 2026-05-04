@@ -59,24 +59,24 @@ sources: ["EMT_Doc/23/de Lima和Portela - 2007 - Inclusion of Frequency-Dependen
 ## 使用的方法
 
 - [[高斯-克朗罗德数值积分|高斯-克朗罗德数值积分]]
-- [[methods/numerical-integration|数值拉普拉斯变换]]
-- [[methods/nodal-analysis|相域建模]]
-- [[methods/modal-analysis|模态分析]]
+- [[numerical-integration|数值拉普拉斯变换]]
+- [[nodal-analysis|相域建模]]
+- [[modal-analysis|模态分析]]
 - [[双空间傅里叶积分变换|双空间傅里叶积分变换]]
 
 ## 涉及的模型
 
-- [[models/transmission-line-model|架空输电线路]]
-- [[models/cable-model|地下电缆]]
+- [[transmission-line-model|架空输电线路]]
+- [[cable-model|地下电缆]]
 - [[大地返回阻抗模型|大地返回阻抗模型]]
-- [[models/grounding-system-model|频变土壤模型]]
+- [[grounding-system-model|频变土壤模型]]
 
 ## 相关主题
 
-- [[topics/frequency-dependent-modeling|频率相关建模]]
-- [[models/transmission-line-model|输电线路建模]]
+- [[frequency-dependent-modeling|频率相关建模]]
+- [[transmission-line-model|输电线路建模]]
 - [[大地返回阻抗|大地返回阻抗]]
-- [[topics/emt-simulation|电磁暂态分析]]
+- [[emt-simulation|电磁暂态分析]]
 - [[频域与时域分析|频域与时域分析]]
 
 ## 主要发现

@@ -58,7 +58,7 @@ sources: ["EMT_Doc/26/Khodabakhchian - 1997 - Modeling a mixed residential-comme
 
 ## 使用的方法
 
-- [[entities/atp-emtp|EMTP电磁暂态仿真]]
+- [[atp-emtp|EMTP电磁暂态仿真]]
 - [[基于组件的负荷建模|基于组件的负荷建模]]
 - [[现场录波数据辨识|现场录波数据辨识]]
 - [[静态与动态负荷建模|静态与动态负荷建模]]
@@ -76,11 +76,11 @@ sources: ["EMT_Doc/26/Khodabakhchian - 1997 - Modeling a mixed residential-comme
 
 ## 相关主题
 
-- [[topics/load-modeling|负荷建模]]
+- [[load-modeling|负荷建模]]
 - [[大扰动仿真|大扰动仿真]]
-- [[topics/electromechanical-transient|暂态稳定分析]]
+- [[electromechanical-transient|暂态稳定分析]]
 - [[电压稳定分析|电压稳定分析]]
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[现场数据验证|现场数据验证]]
 
 ## 主要发现

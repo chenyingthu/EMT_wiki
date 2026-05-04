@@ -66,18 +66,18 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/tpwrd.2021.3049595.pdf-1.pdf"]
 
 ## 涉及的模型
 
-- [[models/transmission-line-model|架空输电线路]]
+- [[transmission-line-model|架空输电线路]]
 - [[多层大地模型|多层大地模型]]
 - [[大地返回阻抗-导纳模型|大地返回阻抗/导纳模型]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[架空线路参数计算|架空线路参数计算]]
 - [[多层大地建模|多层大地建模]]
 - [[波传播特性分析|波传播特性分析]]
 - [[过电压-浪涌分析|过电压/浪涌分析]]
-- [[topics/frequency-dependent-modeling|频率相关建模]]
+- [[frequency-dependent-modeling|频率相关建模]]
 
 ## 主要发现
 

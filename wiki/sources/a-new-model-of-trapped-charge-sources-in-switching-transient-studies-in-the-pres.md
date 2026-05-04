@@ -68,16 +68,16 @@ sources: ["EMT_Doc/02/Akafi-Mobarakeh 等 - 2025 - A New Model of Trapped Charge
 
 - [[陷落电荷源|陷落电荷源]]
 - [[并联电抗器|并联电抗器]]
-- [[models/transmission-line-model|输电线路]]
+- [[transmission-line-model|输电线路]]
 - [[统计开关|统计开关]]
 - [[系统等值阻抗|系统等值阻抗]]
 
 ## 相关主题
 
-- [[methods/switch-modeling|开关暂态]]
-- [[methods/insulation-coordination|绝缘配合]]
+- [[switch-modeling|开关暂态]]
+- [[insulation-coordination|绝缘配合]]
 - [[重合闸过电压|重合闸过电压]]
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[并联补偿|并联补偿]]
 
 ## 主要发现

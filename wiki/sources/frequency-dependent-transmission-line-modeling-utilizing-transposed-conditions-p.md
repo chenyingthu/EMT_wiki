@@ -59,24 +59,24 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/tpwrd.2002.1022812.pdf.pdf"]
 ## 使用的方法
 
 - [[恒定变换矩阵法|恒定变换矩阵法]]
-- [[methods/modal-analysis|模态分解]]
-- [[methods/nodal-analysis|相域建模]]
-- [[methods/numerical-integration|梯形积分法]]
-- [[topics/co-simulation|混合建模]]
+- [[modal-analysis|模态分解]]
+- [[nodal-analysis|相域建模]]
+- [[numerical-integration|梯形积分法]]
+- [[co-simulation|混合建模]]
 
 ## 涉及的模型
 
 - [[多回架空线路|多回架空线路]]
-- [[models/cable-model|地下电缆]]
+- [[cable-model|地下电缆]]
 - [[频率相关输电线路模型|频率相关输电线路模型]]
 - [[连续换位线路模型|连续换位线路模型]]
 - [[单相模态线路模型|单相模态线路模型]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[topics/frequency-dependent-modeling|频率相关建模]]
-- [[models/transmission-line-model|输电线路建模]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[frequency-dependent-modeling|频率相关建模]]
+- [[transmission-line-model|输电线路建模]]
 - [[线路换位处理|线路换位处理]]
 - [[计算加速|计算加速]]
 

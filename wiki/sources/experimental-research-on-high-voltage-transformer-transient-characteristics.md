@@ -58,24 +58,24 @@ sources: ["EMT_Doc/18/Tang 等 - 2010 - Experimental research on high-voltage tr
 
 ## 使用的方法
 
-- [[topics/electromechanical-electromagnetic-hybrid-simulation|机电-电磁暂态混合仿真]]
+- [[electromechanical-electromagnetic-hybrid-simulation|机电-电磁暂态混合仿真]]
 - [[并行仿真技术|并行仿真技术]]
-- [[topics/real-time-simulation|实时数字仿真]]
+- [[real-time-simulation|实时数字仿真]]
 - [[在线数据接口技术|在线数据接口技术]]
 
 ## 涉及的模型
 
-- [[models/synchronous-machine-model|同步电机]]
-- [[models/transformer-model|变压器]]
-- [[models/transmission-line-model|输电线路]]
+- [[synchronous-machine-model|同步电机]]
+- [[transformer-model|变压器]]
+- [[transmission-line-model|输电线路]]
 - [[电流互感器|电流互感器]]
 - [[电压互感器|电压互感器]]
 - [[线路保护装置|线路保护装置]]
 
 ## 相关主题
 
-- [[topics/co-simulation|混合仿真]]
-- [[topics/real-time-simulation|实时仿真]]
+- [[co-simulation|混合仿真]]
+- [[real-time-simulation|实时仿真]]
 - [[继电保护测试|继电保护测试]]
 - [[故障重现|故障重现]]
 - [[ct饱和特性|CT饱和特性]]

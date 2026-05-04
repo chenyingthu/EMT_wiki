@@ -58,7 +58,7 @@ Electromagnetic transient modeling of grounding electrodes buried in frequency d
 
 ## 使用的方法
 
-- [[methods/finite-element-method|有限元法(FEM)]]
+- [[finite-element-method|有限元法(FEM)]]
 - [[快速松弛矢量拟合-frvf|快速松弛矢量拟合(FRVF)]]
 - [[全波电磁建模|全波电磁建模]]
 - [[频域网络分析|频域网络分析]]
@@ -68,7 +68,7 @@ Electromagnetic transient modeling of grounding electrodes buried in frequency d
 
 - [[垂直接地极|垂直接地极]]
 - [[水平接地极|水平接地极]]
-- [[models/grounding-system-model|频变土壤模型]]
+- [[grounding-system-model|频变土壤模型]]
 - [[雷击回击电流波形|雷击回击电流波形]]
 - [[emt等效电路|EMT等效电路]]
 
@@ -79,7 +79,7 @@ Electromagnetic transient modeling of grounding electrodes buried in frequency d
 - [[土壤含水量变化|土壤含水量变化]]
 - [[雷电暂态保护|雷电暂态保护]]
 - [[地电位升分析|地电位升分析]]
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 
 ## 主要发现
 

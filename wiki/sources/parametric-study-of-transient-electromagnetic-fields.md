@@ -63,12 +63,12 @@ sources: ["EMT_Doc/31/TPWRD.2011.2158592.pdf.pdf"]
 - [[复镜像理论|复镜像理论]]
 - [[king近似公式|King近似公式]]
 - [[傅里叶变换|傅里叶变换]]
-- [[methods/vector-fitting|矩量法(MoM)]]
+- [[vector-fitting|矩量法(MoM)]]
 
 ## 涉及的模型
 
 - [[多导体架空输电线路|多导体架空输电线路]]
-- [[models/cable-model|地下电缆]]
+- [[cable-model|地下电缆]]
 - [[损耗大地模型|损耗大地模型]]
 - [[频变线路参数模型|频变线路参数模型]]
 
@@ -76,7 +76,7 @@ sources: ["EMT_Doc/31/TPWRD.2011.2158592.pdf.pdf"]
 
 - [[暂态电磁场计算|暂态电磁场计算]]
 - [[电磁干扰分析|电磁干扰分析]]
-- [[topics/frequency-dependent-modeling|频变参数建模]]
+- [[frequency-dependent-modeling|频变参数建模]]
 - [[损耗大地效应|损耗大地效应]]
 - [[导体弧垂影响|导体弧垂影响]]
 - [[参数化研究|参数化研究]]

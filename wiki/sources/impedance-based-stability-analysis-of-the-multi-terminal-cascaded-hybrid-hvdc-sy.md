@@ -58,20 +58,20 @@ sources: ["EMT_Doc/22/Xu 等 - 2025 - Impedance Based Stability Analysis of the 
 
 ## 使用的方法
 
-- [[methods/impedance-modeling|阻抗建模]]
+- [[impedance-modeling|阻抗建模]]
 - [[谐波状态空间法|谐波状态空间法]]
 - [[阻抗重塑|阻抗重塑]]
-- [[methods/sensitivity-analysis|灵敏度分析]]
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[sensitivity-analysis|灵敏度分析]]
+- [[emt-simulation|电磁暂态仿真]]
 
 ## 涉及的模型
 
 - [[lcc-model|LCC]]
 - [[mmc-model|MMC]]
 - [[vsc-hvdc|VSC-HVDC]]
-- [[topics/hybrid-acdc-network|交直流电网]]
+- [[hybrid-acdc-network|交直流电网]]
 - [[直流滤波器|直流滤波器]]
-- [[models/dc-rlc-filter|平波电抗器]]
+- [[dc-rlc-filter|平波电抗器]]
 
 ## 相关主题
 
@@ -79,7 +79,7 @@ sources: ["EMT_Doc/22/Xu 等 - 2025 - Impedance Based Stability Analysis of the 
 - [[多端混合直流输电|多端混合直流输电]]
 - [[振荡传播机理|振荡传播机理]]
 - [[阻抗重塑|阻抗重塑]]
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 
 ## 主要发现
 

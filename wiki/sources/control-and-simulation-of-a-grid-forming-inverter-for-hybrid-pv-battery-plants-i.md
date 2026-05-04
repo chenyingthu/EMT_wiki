@@ -57,8 +57,8 @@ sources: ["EMT_Doc/11/Nguyen 等 - 2021 - Control and Simulation of a Grid-Formi
 
 ## 使用的方法
 
-- [[methods/grid-forming-control|构网型控制]]
-- [[methods/droop-control|下垂控制]]
+- [[grid-forming-control|构网型控制]]
+- [[droop-control|下垂控制]]
 - [[dq坐标系嵌套双环控制|dq坐标系嵌套双环控制]]
 - [[脉宽调制-pwm|脉宽调制(PWM)]]
 - [[时域电磁暂态仿真|时域电磁暂态仿真]]
@@ -68,10 +68,10 @@ sources: ["EMT_Doc/11/Nguyen 等 - 2021 - Control and Simulation of a Grid-Formi
 
 - [[构网型逆变器|构网型逆变器]]
 - [[光伏阵列|光伏阵列]]
-- [[models/bess-model|电池储能系统]]
+- [[bess-model|电池储能系统]]
 - [[lc滤波器|LC滤波器]]
 - [[升压变压器|升压变压器]]
-- [[models/dc-dc-converter|DC/DC变换器]]
+- [[dc-dc-converter|DC/DC变换器]]
 - [[ieee-9节点测试系统|IEEE 9节点测试系统]]
 
 ## 相关主题
@@ -81,7 +81,7 @@ sources: ["EMT_Doc/11/Nguyen 等 - 2021 - Control and Simulation of a Grid-Formi
 - [[光储混合系统|光储混合系统]]
 - [[电力系统恢复|电力系统恢复]]
 - [[电压与频率稳定|电压与频率稳定]]
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 
 ## 主要发现
 

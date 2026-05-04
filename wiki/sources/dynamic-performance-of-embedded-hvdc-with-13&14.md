@@ -67,7 +67,7 @@ sources: ["EMT_Doc/13&14/files/PESGM.2015.7286425.pdf.pdf"]
 ## 涉及的模型
 
 - [[vsc-model|VSC]]
-- [[models/synchronous-machine-model|同步发电机]]
+- [[synchronous-machine-model|同步发电机]]
 - [[交流输电线路|交流输电线路]]
 - [[ieee-4机6节点系统|IEEE 4机6节点系统]]
 

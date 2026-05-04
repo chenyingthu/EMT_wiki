@@ -74,8 +74,8 @@ sources: ["EMT_Doc/18/Mashayekhi和Kordi - 2013 - Fast and efficient calculation
 ## 相关主题
 
 - [[雷击感应过电压|雷击感应过电压]]
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[topics/frequency-dependent-modeling|频率相关建模]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[frequency-dependent-modeling|频率相关建模]]
 - [[场线耦合分析|场线耦合分析]]
 - [[非均匀电磁场|非均匀电磁场]]
 

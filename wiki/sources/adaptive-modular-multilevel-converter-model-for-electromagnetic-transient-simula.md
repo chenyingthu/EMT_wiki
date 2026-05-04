@@ -59,25 +59,25 @@ sources: ["EMT_Doc/05/TPWRD.2020.2993502.pdf.pdf"]
 ## 使用的方法
 
 - [[模型切换技术|模型切换技术]]
-- [[methods/average-value-model|平均值模型]]
+- [[average-value-model|平均值模型]]
 - [[桥臂等效模型|桥臂等效模型]]
-- [[methods/average-value-model|详细等效模型]]
+- [[average-value-model|详细等效模型]]
 - [[时域初始化|时域初始化]]
-- [[methods/norton-equivalent|诺顿等效]]
+- [[norton-equivalent|诺顿等效]]
 
 ## 涉及的模型
 
 - [[mmc-model|MMC]]
-- [[models/mmc-model|半桥子模块]]
-- [[models/full-bridge-smb|全桥子模块]]
+- [[mmc-model|半桥子模块]]
+- [[full-bridge-smb|全桥子模块]]
 - [[mmc-model|MMC]]
 - [[耦合变压器|耦合变压器]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[topics/real-time-simulation|实时仿真]]
-- [[topics/parallel-computing|仿真加速]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[real-time-simulation|实时仿真]]
+- [[parallel-computing|仿真加速]]
 - [[mmc-model|MMC]]
 - [[控制系统建模|控制系统建模]]
 

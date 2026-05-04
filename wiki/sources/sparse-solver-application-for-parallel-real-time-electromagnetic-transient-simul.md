@@ -64,14 +64,14 @@ sources: ["EMT_Doc/35/Bruned 等 - 2023 - Sparse solver application for parallel
 - [[填充元减少技术|填充元减少技术]]
 - [[部分重分解技术|部分重分解技术]]
 - [[选主元技术|选主元技术]]
-- [[methods/nodal-analysis|节点分析法]]
-- [[methods/hil-simulation|硬件在环仿真]]
-- [[methods/average-value-model|补偿法]]
+- [[nodal-analysis|节点分析法]]
+- [[hil-simulation|硬件在环仿真]]
+- [[average-value-model|补偿法]]
 
 ## 涉及的模型
 
 - [[实际电力系统网络模型|实际电力系统网络模型]]
-- [[sources/大规模电力电子设备接入的电力系统混合仿真接口技术综述|电力电子设备]]
+- [[大规模电力电子设备接入的电力系统混合仿真接口技术综述|电力电子设备]]
 - [[可再生能源系统|可再生能源系统]]
 
 ## 相关主题

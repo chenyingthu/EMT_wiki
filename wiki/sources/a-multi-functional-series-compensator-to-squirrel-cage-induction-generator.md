@@ -59,7 +59,7 @@ sources: ["EMT_Doc/02/Jiang 等 - 2015 - A multi-functional series compensator t
 - [[全补偿控制策略|全补偿控制策略]]
 - [[强制换流法|强制换流法]]
 - [[晶闸管触发角控制|晶闸管触发角控制]]
-- [[entities/pscad-emtdc|PSCAD/EMTDC仿真]]
+- [[pscad-emtdc|PSCAD/EMTDC仿真]]
 
 ## 涉及的模型
 
@@ -72,11 +72,11 @@ sources: ["EMT_Doc/02/Jiang 等 - 2015 - A multi-functional series compensator t
 
 ## 相关主题
 
-- [[methods/lvrt|低电压穿越]]
+- [[lvrt|低电压穿越]]
 - [[故障限流|故障限流]]
 - [[电压快速恢复|电压快速恢复]]
 - [[多模式切换控制|多模式切换控制]]
-- [[topics/wind-farm-modeling|风电并网]]
+- [[wind-farm-modeling|风电并网]]
 - [[串联补偿|串联补偿]]
 
 ## 主要发现

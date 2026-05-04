@@ -58,8 +58,8 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/Zhang 等 - 2017 - Half-wavelength S
 
 ## 使用的方法
 
-- [[topics/dynamic-phasor|动态相量法]]
-- [[methods/multirate-method|变步长仿真]]
+- [[dynamic-phasor|动态相量法]]
+- [[multirate-method|变步长仿真]]
 - [[线性插值近似法|线性插值近似法]]
 - [[节点导纳矩阵交替求解|节点导纳矩阵交替求解]]
 - [[贝瑞隆模型|贝瑞隆模型]]
@@ -68,16 +68,16 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/Zhang 等 - 2017 - Half-wavelength S
 
 - [[交流输电线路|交流输电线路]]
 - [[半波长交流线路|半波长交流线路]]
-- [[sources/2728一种用于lcc-hvdc系统小干扰稳定性分析的改进动态相量模型|动态相量模型]]
+- [[2728一种用于lcc-hvdc系统小干扰稳定性分析的改进动态相量模型|动态相量模型]]
 - [[贝瑞隆分布参数模型|贝瑞隆分布参数模型]]
 - [[同步发电机及励磁系统|同步发电机及励磁系统]]
 
 ## 相关主题
 
-- [[topics/electromechanical-transient|机电暂态仿真]]
+- [[electromechanical-transient|机电暂态仿真]]
 - [[半波长输电|半波长输电]]
 - [[波传输特性|波传输特性]]
-- [[topics/transient-stability-analysis|暂态稳定]]
+- [[transient-stability-analysis|暂态稳定]]
 - [[故障仿真|故障仿真]]
 - [[仿真步长优化|仿真步长优化]]
 

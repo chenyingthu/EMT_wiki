@@ -58,25 +58,25 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/59.535695.pdf.pdf"]
 
 ## 使用的方法
 
-- [[methods/nodal-analysis|牛顿-拉夫逊法]]
+- [[nodal-analysis|牛顿-拉夫逊法]]
 - [[特征值对角化算法|特征值对角化算法]]
 - [[模态跟踪技术|模态跟踪技术]]
-- [[methods/vector-fitting|有理函数拟合]]
-- [[methods/numerical-integration|梯形积分法]]
+- [[vector-fitting|有理函数拟合]]
+- [[numerical-integration|梯形积分法]]
 - [[卡森公式|卡森公式]]
 
 ## 涉及的模型
 
 - [[非换位输电线路|非换位输电线路]]
 - [[多回架空线路|多回架空线路]]
-- [[models/transmission-line-model|频变线路模型]]
-- [[models/cable-model|地下电缆]]
+- [[transmission-line-model|频变线路模型]]
+- [[cable-model|地下电缆]]
 
 ## 相关主题
 
-- [[topics/frequency-dependent-modeling|频率相关建模]]
-- [[topics/emt-simulation|时域仿真]]
-- [[methods/modal-analysis|模态变换]]
+- [[frequency-dependent-modeling|频率相关建模]]
+- [[emt-simulation|时域仿真]]
+- [[modal-analysis|模态变换]]
 - [[线路参数拟合|线路参数拟合]]
 - [[电磁暂态程序|电磁暂态程序]]
 - [[特征值求解|特征值求解]]

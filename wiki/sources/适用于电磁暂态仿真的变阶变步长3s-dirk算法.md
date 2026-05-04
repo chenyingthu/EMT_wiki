@@ -60,7 +60,7 @@ sources: ["EMT_Doc/40/叶小晖 等 - 2020 - 适用于电磁暂态仿真的变�
 
 - [[numerical-integration]]
 - [[nodal-analysis]]
-- [[methods/state-space-method]]
+- [[state-space-method]]
 - [[fixed-admittance]]
 
 ## 涉及的模型
@@ -69,10 +69,10 @@ sources: ["EMT_Doc/40/叶小晖 等 - 2020 - 适用于电磁暂态仿真的变�
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[methods/numerical-integration|数值振荡抑制]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[numerical-integration|数值振荡抑制]]
 - [[数值积分算法|数值积分算法]]
-- [[methods/multirate-method|变步长仿真]]
+- [[multirate-method|变步长仿真]]
 
 ## 主要发现
 

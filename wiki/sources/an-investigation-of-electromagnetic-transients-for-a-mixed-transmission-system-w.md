@@ -67,12 +67,12 @@ sources: ["EMT_Doc/07&08/Xue et al. - 2022 - An Investigation of Electromagnetic
 
 ## 涉及的模型
 
-- [[models/transmission-line-model|架空输电线路]]
+- [[transmission-line-model|架空输电线路]]
 - [[海底电缆|海底电缆]]
-- [[models/cable-model|地下电缆]]
+- [[cable-model|地下电缆]]
 - [[线状与等效管状铠装|线状与等效管状铠装]]
 - [[并联电抗器|并联电抗器]]
-- [[models/surge-arrester-model|避雷器]]
+- [[surge-arrester-model|避雷器]]
 - [[混合输电系统|混合输电系统]]
 
 ## 相关主题
@@ -82,7 +82,7 @@ sources: ["EMT_Doc/07&08/Xue et al. - 2022 - An Investigation of Electromagnetic
 - [[混合输电系统暂态分析|混合输电系统暂态分析]]
 - [[线路参数精确计算|线路参数精确计算]]
 - [[宽频带建模|宽频带建模]]
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 
 ## 主要发现
 

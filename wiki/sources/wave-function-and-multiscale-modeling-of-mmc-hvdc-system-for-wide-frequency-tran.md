@@ -67,13 +67,13 @@ sources: ["EMT_Doc/40/Ye 等 - 2021 - Wave Function and Multiscale Modeling of M
 
 - [[mmc-model]]
 - [[vsc-hvdc]]
-- [[models/mmc-model]]
+- [[mmc-model]]
 
 ## 相关主题
 
-- [[methods/harmonic-analysis-methods]]
-- [[topics/wind-farm-modeling]]
-- [[topics/parallel-computing]]
+- [[harmonic-analysis-methods]]
+- [[wind-farm-modeling]]
+- [[parallel-computing]]
 - [[宽频暂态建模]]
 
 ## 主要发现

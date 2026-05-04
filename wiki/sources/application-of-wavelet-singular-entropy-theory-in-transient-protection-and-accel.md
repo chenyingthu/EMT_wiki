@@ -61,7 +61,7 @@ sources: ["EMT_Doc/09/Liu 等 - 2009 - Application of wavelet singular entropy t
 - [[小波变换|小波变换]]
 - [[小波奇异熵理论|小波奇异熵理论]]
 - [[多分辨分析|多分辨分析]]
-- [[entities/pscad-emtdc|PSCAD/EMTDC电磁暂态仿真]]
+- [[pscad-emtdc|PSCAD/EMTDC电磁暂态仿真]]
 
 ## 涉及的模型
 
@@ -76,7 +76,7 @@ sources: ["EMT_Doc/09/Liu 等 - 2009 - Application of wavelet singular entropy t
 - [[全线相继速动保护|全线相继速动保护]]
 - [[单端量保护|单端量保护]]
 - [[高频暂态信号分析|高频暂态信号分析]]
-- [[topics/protection-system|继电保护]]
+- [[protection-system|继电保护]]
 
 ## 主要发现
 

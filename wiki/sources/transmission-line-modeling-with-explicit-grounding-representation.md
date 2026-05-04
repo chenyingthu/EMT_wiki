@@ -58,16 +58,16 @@ Electric Power Systems Research, 14 (1988) 109 - 119 Transmission Line Modeling 
 
 ## 使用的方法
 
-- [[topics/frequency-dependent-modeling]]
+- [[frequency-dependent-modeling]]
 - [[numerical-integration]]
 
 ## 涉及的模型
 
-- [[models/transmission-line-model]]
+- [[transmission-line-model]]
 
 ## 相关主题
 
-- [[topics/frequency-dependent-modeling]]
+- [[frequency-dependent-modeling]]
 - [[network-equivalent]]
 
 ## 主要发现

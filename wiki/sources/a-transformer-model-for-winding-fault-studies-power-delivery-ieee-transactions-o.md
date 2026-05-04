@@ -65,7 +65,7 @@ sources: ["EMT_Doc/04/61.296246.pdf.pdf"]
 
 ## 涉及的模型
 
-- [[models/transformer-model|电力变压器]]
+- [[transformer-model|电力变压器]]
 - [[绕组故障模型|绕组故障模型]]
 - [[匝间短路模型|匝间短路模型]]
 - [[对地短路模型|对地短路模型]]
@@ -74,7 +74,7 @@ sources: ["EMT_Doc/04/61.296246.pdf.pdf"]
 
 - [[变压器内部故障|变压器内部故障]]
 - [[继电保护验证|继电保护验证]]
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[漏磁参数辨识|漏磁参数辨识]]
 
 ## 主要发现

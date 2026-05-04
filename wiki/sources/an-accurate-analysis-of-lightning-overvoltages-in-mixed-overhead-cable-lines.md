@@ -60,26 +60,26 @@ sources: ["EMT_Doc/06/j.epsr.2021.107052.pdf.pdf"]
 
 - [[扩展传输线方法|扩展传输线方法]]
 - [[经典传输线方法|经典传输线方法]]
-- [[models/grounding-system-model|频变土壤模型]]
+- [[grounding-system-model|频变土壤模型]]
 - [[混合电磁模型|混合电磁模型]]
-- [[methods/numerical-integration|数值拉普拉斯变换]]
-- [[methods/modal-analysis|模态分析]]
+- [[numerical-integration|数值拉普拉斯变换]]
+- [[modal-analysis|模态分析]]
 
 ## 涉及的模型
 
 - [[架空-电缆混合线路|架空-电缆混合线路]]
 - [[地下电力电缆|地下电力电缆]]
-- [[models/transmission-line-model|架空线路]]
+- [[transmission-line-model|架空线路]]
 - [[杆塔接地系统|杆塔接地系统]]
 - [[变电站接地网|变电站接地网]]
 
 ## 相关主题
 
 - [[雷电过电压分析|雷电过电压分析]]
-- [[topics/frequency-dependent-modeling|频率相关建模]]
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[frequency-dependent-modeling|频率相关建模]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[接地系统频变特性|接地系统频变特性]]
-- [[models/transmission-line-model|波传播特性]]
+- [[transmission-line-model|波传播特性]]
 
 ## 主要发现
 

@@ -59,24 +59,24 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/TPWRD.2018.2796089.pdf.pdf"]
 ## 使用的方法
 
 - [[完整场解法|完整场解法]]
-- [[models/transmission-line-model|电报方程]]
+- [[transmission-line-model|电报方程]]
 - [[准tem近似|准TEM近似]]
 - [[矩量法-mom-so|矩量法(MoM-So)]]
-- [[methods/eigenvalue-analysis|特征值分析]]
+- [[eigenvalue-analysis|特征值分析]]
 
 ## 涉及的模型
 
-- [[models/cable-model|地下电缆]]
-- [[models/cross-bonded-cable|交叉互联电缆]]
+- [[cable-model|地下电缆]]
+- [[cross-bonded-cable|交叉互联电缆]]
 - [[多相电缆系统|多相电缆系统]]
 - [[大地返回阻抗-导纳模型|大地返回阻抗/导纳模型]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[models/transmission-line-model|波传播特性]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[transmission-line-model|波传播特性]]
 - [[浪涌分析|浪涌分析]]
-- [[topics/frequency-dependent-modeling|频率相关建模]]
+- [[frequency-dependent-modeling|频率相关建模]]
 - [[现场试验验证|现场试验验证]]
 
 ## 主要发现

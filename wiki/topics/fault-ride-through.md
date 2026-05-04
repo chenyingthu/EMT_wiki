@@ -117,6 +117,8 @@ $$\frac{1}{2}C_{dc}\frac{dV_{dc}^2}{dt} = P_{in} - P_{out}$$
 - [[pmsm-model]] - 直驱风机FRT特性
 - [[fault-analysis-methods]] - 故障分析方法
 - [[renewable-energy-integration]] - 可再生能源并网
+- [[electromagnetic-transient]] - 电磁暂态
+- [[power-system-network]] - 电力系统网络
 
 ## 开放问题
 

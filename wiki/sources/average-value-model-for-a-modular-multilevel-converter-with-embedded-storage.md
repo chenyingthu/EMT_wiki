@@ -57,8 +57,8 @@ sources: ["EMT_Doc/09/Herath和Filizadeh - 2021 - Average-Value Model for a Modu
 
 ## 使用的方法
 
-- [[methods/average-value-model|平均值建模]]
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[average-value-model|平均值建模]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[解析分析|解析分析]]
 - [[环流抑制控制|环流抑制控制]]
 - [[解耦控制|解耦控制]]
@@ -74,7 +74,7 @@ sources: ["EMT_Doc/09/Herath和Filizadeh - 2021 - Average-Value Model for a Modu
 
 ## 相关主题
 
-- [[topics/large-scale-system-simulation|系统级仿真]]
+- [[large-scale-system-simulation|系统级仿真]]
 - [[环流分析|环流分析]]
 - [[电容电压纹波|电容电压纹波]]
 - [[参数选型|参数选型]]

@@ -55,7 +55,7 @@ sources: ["EMT_Doc/03/tpwrd.2003.820426.pdf.pdf"]
 
 ## 使用的方法
 
-- [[entities/atp-emtp|EMTP仿真]]
+- [[atp-emtp|EMTP仿真]]
 - [[概率统计方法|概率统计方法]]
 - [[迭代参数辨识|迭代参数辨识]]
 - [[确定性模型扩展|确定性模型扩展]]
@@ -63,7 +63,7 @@ sources: ["EMT_Doc/03/tpwrd.2003.820426.pdf.pdf"]
 ## 涉及的模型
 
 - [[二次电弧模型|二次电弧模型]]
-- [[models/transmission-line-model|架空输电线路]]
+- [[transmission-line-model|架空输电线路]]
 - [[短路等效电源|短路等效电源]]
 - [[重燃电压特性曲线|重燃电压特性曲线]]
 

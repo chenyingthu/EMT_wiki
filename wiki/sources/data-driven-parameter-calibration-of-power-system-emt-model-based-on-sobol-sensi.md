@@ -74,8 +74,8 @@ sources: ["EMT_Doc/12/Data-Driven_Parameter_Calibration_of_Power_System_EMT_Mode
 
 - [[参数校准|参数校准]]
 - [[数据驱动建模|数据驱动建模]]
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[methods/sensitivity-analysis|灵敏度分析]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[sensitivity-analysis|灵敏度分析]]
 - [[后验分布估计|后验分布估计]]
 - [[高维优化|高维优化]]
 

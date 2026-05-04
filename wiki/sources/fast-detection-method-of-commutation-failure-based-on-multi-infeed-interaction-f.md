@@ -59,23 +59,23 @@ sources: ["EMT_Doc/18/Zhang 等 - 2018 - Fast Detection Method of Commutation Fa
 ## 使用的方法
 
 - [[准稳态模型|准稳态模型]]
-- [[topics/electromechanical-electromagnetic-hybrid-simulation|机电-电磁混合仿真]]
-- [[methods/symmetrical-components|对称分量法]]
+- [[electromechanical-electromagnetic-hybrid-simulation|机电-电磁混合仿真]]
+- [[symmetrical-components|对称分量法]]
 - [[换相方程解析法|换相方程解析法]]
 
 ## 涉及的模型
 
 - [[lcc-model|LCC]]
 - [[12脉动换流器|12脉动换流器]]
-- [[models/transformer-model|换流变压器]]
-- [[topics/hybrid-acdc-network|多馈入直流系统]]
+- [[transformer-model|换流变压器]]
+- [[hybrid-acdc-network|多馈入直流系统]]
 
 ## 相关主题
 
 - [[换相失败|换相失败]]
-- [[methods/fault-analysis-methods|不对称故障]]
-- [[topics/electromechanical-electromagnetic-hybrid-simulation|机电-电磁混合仿真]]
-- [[topics/hybrid-acdc-network|多馈入直流系统]]
+- [[fault-analysis-methods|不对称故障]]
+- [[electromechanical-electromagnetic-hybrid-simulation|机电-电磁混合仿真]]
+- [[hybrid-acdc-network|多馈入直流系统]]
 - [[负序电压影响|负序电压影响]]
 
 ## 主要发现

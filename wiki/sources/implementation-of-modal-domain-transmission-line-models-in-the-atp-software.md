@@ -61,8 +61,8 @@ EMT软件大量依赖输电线路模型，但ATP-EMTP等程序通常把线路模
 - [[clarke模态变换|Clarke模态变换]]
 - [[理想变压器等效电路|理想变压器等效电路]]
 - [[transmission-line-model|Bergeron线路模型]]
-- [[models/frequency-dependent-line-model|JMarti模型]]
-- [[methods/nodal-analysis|节点导纳矩阵法]]
+- [[frequency-dependent-line-model|JMarti模型]]
+- [[nodal-analysis|节点导纳矩阵法]]
 - [[频域扫描|频域扫描]]
 
 ## 涉及的模型
@@ -70,13 +70,13 @@ EMT软件大量依赖输电线路模型，但ATP-EMTP等程序通常把线路模
 - [[换位三相输电线路|换位三相输电线路]]
 - [[单相输电线路模型|单相输电线路模型]]
 - [[transmission-line-model|Bergeron线路模型]]
-- [[models/frequency-dependent-line-model|JMarti模型]]
+- [[frequency-dependent-line-model|JMarti模型]]
 - [[折叠线等效模型|折叠线等效模型]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[topics/frequency-dependent-modeling|频变参数建模]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[frequency-dependent-modeling|频变参数建模]]
 - [[模态域解耦|模态域解耦]]
 - [[atp-emtp模型实现|ATP-EMTP模型实现]]
 - [[土壤频变特性|土壤频变特性]]

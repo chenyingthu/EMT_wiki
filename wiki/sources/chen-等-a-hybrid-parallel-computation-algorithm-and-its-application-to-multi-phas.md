@@ -58,7 +58,7 @@ sources: ["EMT_Doc/01/Chen 等 - 2010 - A hybrid parallel computation algorithm 
 
 ## 使用的方法
 
-- [[methods/numerical-integration|隐式梯形积分法]]
+- [[numerical-integration|隐式梯形积分法]]
 - [[诺顿等效模型|诺顿等效模型]]
 - [[多端口戴维南等效-mate|多端口戴维南等效(MATE)]]
 - [[元件级并行|元件级并行]]
@@ -76,10 +76,10 @@ sources: ["EMT_Doc/01/Chen 等 - 2010 - A hybrid parallel computation algorithm 
 
 ## 相关主题
 
-- [[topics/parallel-computing|并行计算]]
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[parallel-computing|并行计算]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[系统切分与负载均衡|系统切分与负载均衡]]
-- [[topics/real-time-simulation|超实时仿真]]
+- [[real-time-simulation|超实时仿真]]
 - [[综合电力系统|综合电力系统]]
 
 ## 主要发现

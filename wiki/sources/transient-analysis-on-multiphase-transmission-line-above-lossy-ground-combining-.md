@@ -66,7 +66,7 @@ sources: ["EMT_Doc/38/Colqui 等 - 2022 - Transient Analysis on Multiphase Trans
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态分析]]
+- [[emt-simulation|电磁暂态分析]]
 - [[雷电感应电压|雷电感应电压]]
 - [[频率相关土壤参数|频率相关土壤参数]]
 - [[大地回路阻抗建模|大地回路阻抗建模]]

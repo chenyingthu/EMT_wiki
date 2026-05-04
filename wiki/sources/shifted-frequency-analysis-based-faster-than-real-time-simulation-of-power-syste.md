@@ -60,15 +60,15 @@ sources: ["EMT_Doc/34/Zhang 等 - 2024 - Shifted frequency analysis based, faste
 
 - [[移频分析法-sfa|移频分析法(SFA)]]
 - [[基于延迟的线性多步复合法|基于延迟的线性多步复合法]]
-- [[methods/gpu-accelerated-simulation|GPU并行加速]]
+- [[gpu-accelerated-simulation|GPU并行加速]]
 - [[数据并行与任务并行|数据并行与任务并行]]
-- [[topics/dynamic-phasor|动态相量法]]
+- [[dynamic-phasor|动态相量法]]
 - [[基于图的线程安全设计|基于图的线程安全设计]]
 
 ## 涉及的模型
 
-- [[topics/large-scale-power-system|电力系统]]
-- [[sources/大规模电力电子设备接入的电力系统混合仿真接口技术综述|电力电子设备]]
+- [[large-scale-power-system|电力系统]]
+- [[大规模电力电子设备接入的电力系统混合仿真接口技术综述|电力电子设备]]
 
 ## 相关主题
 

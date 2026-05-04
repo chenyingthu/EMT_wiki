@@ -69,9 +69,9 @@ sources: ["EMT_Doc/15/适用于交直流混联电网的CH-MMC电磁暂态快速�
 
 ## 相关主题
 
-- [[models/mmc-model]]
+- [[mmc-model]]
 - [[vsc-hvdc]]
-- [[topics/vsc-hvdc]]
+- [[vsc-hvdc]]
 
 ## 主要发现
 

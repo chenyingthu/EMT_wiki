@@ -59,24 +59,24 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/TPWRS.2009.2016587.pdf.pdf"]
 ## 使用的方法
 
 - [[频率自适应仿真-fast|频率自适应仿真(FAST)]]
-- [[topics/dynamic-phasor|动态相量法]]
-- [[methods/numerical-integration|梯形积分法]]
+- [[dynamic-phasor|动态相量法]]
+- [[numerical-integration|梯形积分法]]
 - [[伴随模型法|伴随模型法]]
-- [[methods/nodal-analysis|节点分析法]]
+- [[nodal-analysis|节点分析法]]
 - [[解析信号处理|解析信号处理]]
 
 ## 涉及的模型
 
-- [[models/transformer-model|变压器]]
-- [[models/synchronous-machine-model|同步电机]]
-- [[models/transmission-line-model|输电线路]]
+- [[transformer-model|变压器]]
+- [[synchronous-machine-model|同步电机]]
+- [[transmission-line-model|输电线路]]
 
 ## 相关主题
 
-- [[topics/co-simulation|多尺度仿真]]
-- [[topics/emt-simulation|电磁暂态]]
-- [[topics/electromechanical-transient|机电暂态]]
-- [[sources/vsc-hvdc-系统的动态相量法建模仿真分析|动态相量]]
+- [[co-simulation|多尺度仿真]]
+- [[emt-simulation|电磁暂态]]
+- [[electromechanical-transient|机电暂态]]
+- [[vsc-hvdc-系统的动态相量法建模仿真分析|动态相量]]
 - [[频率自适应建模|频率自适应建模]]
 
 ## 主要发现

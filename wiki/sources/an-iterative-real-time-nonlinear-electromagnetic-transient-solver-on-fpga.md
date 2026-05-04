@@ -58,7 +58,7 @@ sources: ["EMT_Doc/07&08/Chen and Dinavahi - 2011 - An iterative real-time nonli
 
 ## 使用的方法
 
-- [[methods/average-value-model|补偿法]]
+- [[average-value-model|补偿法]]
 - [[牛顿-拉夫逊算法|牛顿-拉夫逊算法]]
 - [[连续牛顿法|连续牛顿法]]
 - [[分段牛顿法|分段牛顿法]]
@@ -68,19 +68,19 @@ sources: ["EMT_Doc/07&08/Chen and Dinavahi - 2011 - An iterative real-time nonli
 
 ## 涉及的模型
 
-- [[models/surge-arrester-model|避雷器]]
+- [[surge-arrester-model|避雷器]]
 - [[串联补偿线路|串联补偿线路]]
-- [[models/transformer-model|变压器]]
+- [[transformer-model|变压器]]
 - [[铁磁谐振模型|铁磁谐振模型]]
 - [[线性多端口网络|线性多端口网络]]
 
 ## 相关主题
 
-- [[topics/real-time-simulation|实时仿真]]
-- [[methods/fpga-real-time-simulation|FPGA硬件加速]]
-- [[topics/parallel-computing|并行计算]]
+- [[real-time-simulation|实时仿真]]
+- [[fpga-real-time-simulation|FPGA硬件加速]]
+- [[parallel-computing|并行计算]]
 - [[非线性网络求解|非线性网络求解]]
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 
 ## 主要发现
 

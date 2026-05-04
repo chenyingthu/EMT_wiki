@@ -61,24 +61,24 @@ sources: ["EMT_Doc/13&14/files/j.epsr.2019.106030.pdf.pdf"]
 - [[奇异摄动理论|奇异摄动理论]]
 - [[特征值灵敏度分析|特征值灵敏度分析]]
 - [[多时间尺度划分|多时间尺度划分]]
-- [[methods/model-order-reduction|模型降阶]]
+- [[model-order-reduction|模型降阶]]
 - [[时域仿真验证|时域仿真验证]]
 
 ## 涉及的模型
 
 - [[电池储能系统-bess|电池储能系统(BESS)]]
-- [[models/gfl-inverter-model|并网逆变器]]
-- [[topics/dynamic-phasor|锁相环(PLL)]]
+- [[gfl-inverter-model|并网逆变器]]
+- [[dynamic-phasor|锁相环(PLL)]]
 - [[功率电流双环控制器|功率电流双环控制器]]
 - [[滤波电路|滤波电路]]
 
 ## 相关主题
 
-- [[methods/model-order-reduction|模型降阶]]
+- [[model-order-reduction|模型降阶]]
 - [[电力电子接口发电机|电力电子接口发电机]]
 - [[多时间尺度动态|多时间尺度动态]]
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[topics/renewable-energy-integration|新能源并网]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[renewable-energy-integration|新能源并网]]
 
 ## 主要发现
 

@@ -58,26 +58,26 @@ sources: ["EMT_Doc/17/Xu 等 - 2016 - Enhanced high-speed electromagnetic transi
 
 ## 使用的方法
 
-- [[methods/numerical-integration|后向欧拉法]]
-- [[methods/nodal-analysis|戴维南等效]]
+- [[numerical-integration|后向欧拉法]]
+- [[nodal-analysis|戴维南等效]]
 - [[伴随电路模型|伴随电路模型]]
-- [[models/ideal-switch-model|理想开关模型]]
+- [[ideal-switch-model|理想开关模型]]
 - [[最近电平控制|最近电平控制]]
 - [[高效排序算法|高效排序算法]]
 
 ## 涉及的模型
 
 - [[mmc-model|MMC]]
-- [[topics/hybrid-acdc-network|多端直流电网]]
-- [[models/mmc-model|半桥子模块]]
+- [[hybrid-acdc-network|多端直流电网]]
+- [[mmc-model|半桥子模块]]
 - [[直流输电系统|直流输电系统]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[高速仿真|高速仿真]]
 - [[mmc-model|MMC]]
-- [[topics/hybrid-acdc-network|多端直流电网]]
+- [[hybrid-acdc-network|多端直流电网]]
 - [[电容电压平衡|电容电压平衡]]
 
 ## 主要发现

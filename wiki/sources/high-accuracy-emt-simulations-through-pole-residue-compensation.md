@@ -58,26 +58,26 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/Kida 等 - 2026 - High-accuracy EMT 
 
 ## 使用的方法
 
-- [[methods/vector-fitting|有理函数逼近]]
+- [[vector-fitting|有理函数逼近]]
 - [[极点-留数形式|极点-留数形式]]
-- [[methods/numerical-integration|梯形积分法]]
+- [[numerical-integration|梯形积分法]]
 - [[预畸变技术|预畸变技术]]
 - [[频率畸变补偿算法|频率畸变补偿算法]]
-- [[methods/vector-fitting|矢量拟合]]
+- [[vector-fitting|矢量拟合]]
 
 ## 涉及的模型
 
 - [[频变等效模型|频变等效模型]]
-- [[models/transmission-line-model|输电线路]]
+- [[transmission-line-model|输电线路]]
 - [[配电系统|配电系统]]
-- [[methods/nodal-analysis|节点导纳矩阵]]
+- [[nodal-analysis|节点导纳矩阵]]
 - [[rlcg等效电路|RLCG等效电路]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[topics/frequency-dependent-modeling|频率相关建模]]
-- [[methods/numerical-integration|数值积分误差]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[frequency-dependent-modeling|频率相关建模]]
+- [[numerical-integration|数值积分误差]]
 - [[频响失真补偿|频响失真补偿]]
 - [[时域仿真精度|时域仿真精度]]
 

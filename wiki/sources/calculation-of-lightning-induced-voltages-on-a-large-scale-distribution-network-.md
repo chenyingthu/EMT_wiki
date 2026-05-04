@@ -61,21 +61,21 @@ sources: ["EMT_Doc/10/De Conti和Leal - 2026 - Calculation of lightning-induced 
 - [[时域方法|时域方法]]
 - [[扩展模域-emd-模型|扩展模域(EMD)模型]]
 - [[独立电流源等效|独立电流源等效]]
-- [[methods/vector-fitting|有理函数拟合]]
+- [[vector-fitting|有理函数拟合]]
 - [[卷积积分计算|卷积积分计算]]
 
 ## 涉及的模型
 
 - [[jmartí输电线路模型|JMartí输电线路模型]]
 - [[配电变压器|配电变压器]]
-- [[models/surge-arrester-model|避雷器]]
-- [[models/grounding-system-model|接地系统]]
+- [[surge-arrester-model|避雷器]]
+- [[grounding-system-model|接地系统]]
 - [[配电网负荷|配电网负荷]]
 
 ## 相关主题
 
 - [[雷击感应过电压|雷击感应过电压]]
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[频率相关损耗建模|频率相关损耗建模]]
 - [[大规模配电网|大规模配电网]]
 - [[atp仿真|ATP仿真]]

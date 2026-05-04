@@ -58,10 +58,10 @@ sources: ["EMT_Doc/17/Yu 等 - 2022 - Electromechanical transient modelling and 
 
 ## 使用的方法
 
-- [[topics/electromechanical-transient|机电暂态建模]]
-- [[methods/vector-control|矢量控制]]
+- [[electromechanical-transient|机电暂态建模]]
+- [[vector-control|矢量控制]]
 - [[一阶惯性等效|一阶惯性等效]]
-- [[methods/nodal-analysis|等效电路法]]
+- [[nodal-analysis|等效电路法]]
 - [[电磁暂态对比验证|电磁暂态对比验证]]
 
 ## 涉及的模型
@@ -73,9 +73,9 @@ sources: ["EMT_Doc/17/Yu 等 - 2022 - Electromechanical transient modelling and 
 
 ## 相关主题
 
-- [[topics/electromechanical-transient|机电暂态仿真]]
+- [[electromechanical-transient|机电暂态仿真]]
 - [[mmc-model|MMC]]
-- [[topics/transient-stability-analysis|暂态稳定性分析]]
+- [[transient-stability-analysis|暂态稳定性分析]]
 - [[故障穿越|故障穿越]]
 - [[交直流系统解耦|交直流系统解耦]]
 

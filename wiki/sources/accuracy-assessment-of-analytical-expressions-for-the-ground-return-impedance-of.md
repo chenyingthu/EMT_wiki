@@ -61,19 +61,19 @@ sources: ["EMT_Doc/05/De Conti和Lima - 2026 - Accuracy assessment of analytical
 - [[闭式近似公式|闭式近似公式]]
 - [[积分方程法|积分方程法]]
 - [[误差分析|误差分析]]
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[准tem模型|准TEM模型]]
 
 ## 涉及的模型
 
-- [[models/cable-model|地下电缆]]
+- [[cable-model|地下电缆]]
 - [[双回路电缆系统|双回路电缆系统]]
 - [[地回路阻抗模型|地回路阻抗模型]]
 - [[土壤参数模型|土壤参数模型]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[地回路阻抗计算|地回路阻抗计算]]
 - [[宽频带电缆建模|宽频带电缆建模]]
 - [[土壤参数敏感性分析|土壤参数敏感性分析]]

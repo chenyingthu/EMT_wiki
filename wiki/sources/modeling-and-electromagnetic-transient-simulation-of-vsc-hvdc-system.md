@@ -62,7 +62,7 @@ sources: ["EMT_Doc/26/Zeng 等 - 2010 - Modeling and electromagnetic transient s
 - [[参数折算|参数折算]]
 - [[三端星型等值电路|三端星型等值电路]]
 - [[分段线性插值法|分段线性插值法]]
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 
 ## 涉及的模型
 
@@ -75,13 +75,13 @@ sources: ["EMT_Doc/26/Zeng 等 - 2010 - Modeling and electromagnetic transient s
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[models/differential-protection|变压器差动保护]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[differential-protection|变压器差动保护]]
 - [[励磁涌流分析|励磁涌流分析]]
 - [[内部故障建模|内部故障建模]]
 - [[二次谐波制动|二次谐波制动]]
 - [[特高压电网|特高压电网]]
-- [[methods/harmonic-analysis-methods|谐波分析]]
+- [[harmonic-analysis-methods|谐波分析]]
 
 ## 主要发现
 

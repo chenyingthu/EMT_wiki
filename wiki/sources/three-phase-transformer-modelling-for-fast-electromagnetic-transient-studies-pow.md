@@ -63,12 +63,12 @@ sources: ["EMT_Doc/37/61.296302.pdf.pdf"]
 
 ## 涉及的模型
 
-- [[models/transformer-model]]
+- [[transformer-model]]
 
 ## 相关主题
 
-- [[topics/frequency-dependent-modeling]]
-- [[methods/harmonic-analysis-methods]]
+- [[frequency-dependent-modeling]]
+- [[harmonic-analysis-methods]]
 
 ## 主要发现
 

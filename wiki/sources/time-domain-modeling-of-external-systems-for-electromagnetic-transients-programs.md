@@ -62,7 +62,7 @@ sources: ["EMT_Doc/37/59.260813.pdf.pdf"]
 
 ## 涉及的模型
 
-- [[models/transmission-line-model]]
+- [[transmission-line-model]]
 - [[network-equivalent]]
 
 ## 相关主题

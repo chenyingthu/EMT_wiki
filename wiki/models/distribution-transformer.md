@@ -105,7 +105,7 @@ $$T_h = \frac{V_{2h}}{V_{1h}} = \frac{1}{|1 + hZ_k/Z_{load}|}$$
 - [[power-quality]] - 电能质量
 - [[harmonic-analysis-methods]] - 谐波分析方法
 - [[load-model]] - 负荷模型
-- [[test-systems/ieee-14-bus-system]] - IEEE 14节点测试系统
+- [[ieee-14-bus-system]] - IEEE 14节点测试系统
 - [[emt-simulation]] - EMT仿真基础
 
 ---

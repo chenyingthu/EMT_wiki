@@ -59,17 +59,17 @@ sources: ["EMT_Doc/39/Li 等 - 2025 - Universal Decoupled Equivalent Circuit Mod
 ## 使用的方法
 
 - [[average-value-model]]
-- [[methods/interpolation-method]]
+- [[interpolation-method]]
 - [[fixed-admittance]]
 
 ## 涉及的模型
 
-- [[models/transformer-model]]
+- [[transformer-model]]
 - [[vsc-model]]
 
 ## 相关主题
 
-- [[topics/real-time-simulation]]
+- [[real-time-simulation]]
 - [[numerical-integration]]
 - [[nodal-analysis]]
 

@@ -73,11 +73,11 @@ sources: ["EMT_Doc/25/Xu 等 - 2025 - Low-Dimensional Equivalent Models and Mult
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[topics/parallel-computing|并行计算]]
-- [[methods/average-value-model|等效建模]]
-- [[topics/renewable-energy-integration|新能源并网]]
-- [[topics/parallel-computing|仿真加速]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[parallel-computing|并行计算]]
+- [[average-value-model|等效建模]]
+- [[renewable-energy-integration|新能源并网]]
+- [[parallel-computing|仿真加速]]
 
 ## 主要发现
 

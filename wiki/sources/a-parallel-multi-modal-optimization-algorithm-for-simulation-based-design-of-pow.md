@@ -58,7 +58,7 @@ sources: ["EMT_Doc/03/TPWRD.2015.2410172.pdf.pdf"]
 - [[并行多模态优化算法|并行多模态优化算法]]
 - [[代理模型-三次样条插值|代理模型(三次样条插值)]]
 - [[黑盒优化|黑盒优化]]
-- [[topics/parallel-computing|并行计算]]
+- [[parallel-computing|并行计算]]
 - [[基于仿真的优化设计|基于仿真的优化设计]]
 
 ## 涉及的模型
@@ -70,8 +70,8 @@ sources: ["EMT_Doc/03/TPWRD.2015.2410172.pdf.pdf"]
 
 - [[基于仿真的优化设计|基于仿真的优化设计]]
 - [[多模态优化|多模态优化]]
-- [[topics/parallel-computing|并行计算]]
-- [[methods/sensitivity-analysis|灵敏度分析]]
+- [[parallel-computing|并行计算]]
+- [[sensitivity-analysis|灵敏度分析]]
 - [[vsc-model|VSC]]
 
 ## 主要发现

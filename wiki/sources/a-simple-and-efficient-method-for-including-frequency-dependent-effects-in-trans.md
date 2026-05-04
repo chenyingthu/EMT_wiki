@@ -62,15 +62,15 @@ sources: ["EMT_Doc/03/s0142-0615%2896%2900033-6.pdf.pdf"]
 
 ## 涉及的模型
 
-- [[models/transmission-line-model|输电线路]]
-- [[models/cable-model|地下电缆]]
+- [[transmission-line-model|输电线路]]
+- [[cable-model|地下电缆]]
 - [[频变分布参数线路|频变分布参数线路]]
 - [[集中l-r阻抗电路|集中L-R阻抗电路]]
 
 ## 相关主题
 
-- [[topics/frequency-dependent-modeling|频率相关建模]]
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[frequency-dependent-modeling|频率相关建模]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[线路等值建模|线路等值建模]]
 - [[时域暂态计算|时域暂态计算]]
 

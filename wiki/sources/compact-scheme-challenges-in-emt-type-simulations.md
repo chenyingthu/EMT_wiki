@@ -59,11 +59,11 @@ sources: ["EMT_Doc/10/Matehkolaei 等 - 2026 - Compact scheme challenges in EMT-
 ## 使用的方法
 
 - [[紧凑格式积分法|紧凑格式积分法]]
-- [[methods/numerical-integration|梯形积分法]]
-- [[methods/numerical-integration|后向欧拉法]]
+- [[numerical-integration|梯形积分法]]
+- [[numerical-integration|后向欧拉法]]
 - [[改进型增广节点分析法|改进型增广节点分析法]]
 - [[稀疏表法|稀疏表法]]
-- [[methods/nodal-analysis|牛顿迭代法]]
+- [[nodal-analysis|牛顿迭代法]]
 - [[不连续点处理|不连续点处理]]
 
 ## 涉及的模型
@@ -74,7 +74,7 @@ sources: ["EMT_Doc/10/Matehkolaei 等 - 2026 - Compact scheme challenges in EMT-
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[数值积分方法|数值积分方法]]
 - [[不连续点处理|不连续点处理]]
 - [[非线性特性分析|非线性特性分析]]

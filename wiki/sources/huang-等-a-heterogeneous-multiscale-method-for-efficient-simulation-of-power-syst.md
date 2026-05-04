@@ -68,15 +68,15 @@ sources: ["EMT_Doc/01/Huang 等 - 2025 - A Heterogeneous Multiscale Method for E
 ## 涉及的模型
 
 - [[逆变器型资源-ibr|逆变器型资源(IBR)]]
-- [[models/synchronous-machine-model|同步发电机]]
+- [[synchronous-machine-model|同步发电机]]
 - [[全阶emt网络模型|全阶EMT网络模型]]
-- [[test-systems/ieee-39-bus-system|IEEE 39节点系统]]
+- [[ieee-39-bus-system|IEEE 39节点系统]]
 - [[两区域系统|两区域系统]]
 
 ## 相关主题
 
 - [[多时间尺度仿真|多时间尺度仿真]]
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[高渗透率ibr电网|高渗透率IBR电网]]
 - [[刚性微分方程求解|刚性微分方程求解]]
 - [[高效时域仿真|高效时域仿真]]

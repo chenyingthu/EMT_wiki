@@ -632,7 +632,7 @@ m = sqrt(m_d² + m_q²)  % 调制比幅值
 ## 相关测试系统
 
 - [[ieee-39-bus-system]] - IEEE 39节点系统
-- [[test-systems/ieee-14-bus-system]] - IEEE 14节点系统
+- [[ieee-14-bus-system]] - IEEE 14节点系统
 - [[cigre-b4-dc-grid]] - CIGRE B4直流电网测试系统
 - [[zhangbei-dc-grid]] - 张北柔直工程测试系统
 - [[wudongde-hvdc]] - 乌东德特高压混合直流工程

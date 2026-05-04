@@ -59,27 +59,27 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/j.ijepes.2020.106186.pdf.pdf"]
 ## 使用的方法
 
 - [[矩阵指数积分法|矩阵指数积分法]]
-- [[methods/gpu-accelerated-simulation|GPU并行计算]]
-- [[methods/state-space-method|状态空间法]]
+- [[gpu-accelerated-simulation|GPU并行计算]]
+- [[state-space-method|状态空间法]]
 - [[显式积分|显式积分]]
 - [[缓存机制|缓存机制]]
 
 ## 涉及的模型
 
-- [[topics/power-electronics|电力电子变流器]]
-- [[topics/wind-farm-modeling|风电场]]
-- [[models/dfig-model|风力发电机]]
-- [[models/transmission-line-model|输电线路]]
-- [[models/transformer-model|变压器]]
+- [[power-electronics|电力电子变流器]]
+- [[wind-farm-modeling|风电场]]
+- [[dfig-model|风力发电机]]
+- [[transmission-line-model|输电线路]]
+- [[transformer-model|变压器]]
 - [[rlc负荷|RLC负荷]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[topics/parallel-computing|并行计算]]
-- [[methods/gpu-accelerated-simulation|GPU加速]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[parallel-computing|并行计算]]
+- [[gpu-accelerated-simulation|GPU加速]]
 - [[变流器建模|变流器建模]]
-- [[topics/wind-farm-modeling|风电场建模]]
+- [[wind-farm-modeling|风电场建模]]
 - [[内存管理|内存管理]]
 
 ## 主要发现

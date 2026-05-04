@@ -58,21 +58,21 @@ sources: ["EMT_Doc/06/Parvari 等 - 2023 - An accelerated detailed equivalent mo
 
 ## 使用的方法
 
-- [[methods/nodal-analysis|戴维南等效电路]]
-- [[methods/numerical-integration|梯形积分法]]
+- [[nodal-analysis|戴维南等效电路]]
+- [[numerical-integration|梯形积分法]]
 - [[节点导纳矩阵优化|节点导纳矩阵优化]]
 - [[电磁暂态离散化|电磁暂态离散化]]
 
 ## 涉及的模型
 
 - [[mmc-model|MMC]]
-- [[models/half-bridge-smb|半桥子模块(HBSM)]]
+- [[half-bridge-smb|半桥子模块(HBSM)]]
 - [[全桥子模块-fbsm|全桥子模块(FBSM)]]
 - [[详细等效模型-dem|详细等效模型(DEM)]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[mmc-model|MMC]]
 - [[计算加速|计算加速]]
 - [[直流故障闭锁|直流故障闭锁]]

@@ -58,7 +58,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/j.epsr.2018.04.002.pdf.pdf"]
 
 ## 使用的方法
 
-- [[methods/nodal-analysis|节点导纳矩阵法]]
+- [[nodal-analysis|节点导纳矩阵法]]
 - [[阻抗矩阵法|阻抗矩阵法]]
 - [[修正傅里叶逆变换|修正傅里叶逆变换]]
 - [[atp-emtp仿真|ATP-EMTP仿真]]
@@ -77,7 +77,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/j.epsr.2018.04.002.pdf.pdf"]
 - [[过电压评估|过电压评估]]
 - [[绕组电压分布|绕组电压分布]]
 - [[放大因子|放大因子]]
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 
 ## 主要发现
 

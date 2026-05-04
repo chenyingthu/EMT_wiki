@@ -60,18 +60,18 @@ International Journal of Electrical Power and Energy Systems Shooting method bas
 
 - [[numerical-integration]]
 - [[network-equivalent]]
-- [[methods/state-space-method]]
+- [[state-space-method]]
 
 ## 涉及的模型
 
-- [[models/mmc-model]]
+- [[mmc-model]]
 - [[mmc-model]]
 - [[average-value-model]]
 
 ## 相关主题
 
-- [[models/mmc-model]]
-- [[topics/vsc-hvdc]]
+- [[mmc-model]]
+- [[vsc-hvdc]]
 - [[vsc-hvdc]]
 
 ## 主要发现

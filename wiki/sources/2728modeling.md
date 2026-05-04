@@ -58,8 +58,8 @@ sources: ["EMT_Doc/27&28/Modeling_of_LCC_HVDC_Systems_Using_Dynam.pdf"]
 
 ## 使用的方法
 
-- [[topics/dynamic-phasor|动态相量法]]
-- [[methods/average-value-model|动态平均值建模]]
+- [[dynamic-phasor|动态相量法]]
+- [[average-value-model|动态平均值建模]]
 - [[时变傅里叶系数展开|时变傅里叶系数展开]]
 
 ## 涉及的模型
@@ -70,11 +70,11 @@ sources: ["EMT_Doc/27&28/Modeling_of_LCC_HVDC_Systems_Using_Dynam.pdf"]
 
 ## 相关主题
 
-- [[topics/vsc-hvdc|高压直流输电]]
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[vsc-hvdc|高压直流输电]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[大扰动暂态分析|大扰动暂态分析]]
-- [[topics/real-time-simulation|实时仿真]]
-- [[topics/large-scale-system-simulation|计算效率优化]]
+- [[real-time-simulation|实时仿真]]
+- [[large-scale-system-simulation|计算效率优化]]
 
 ## 主要发现
 

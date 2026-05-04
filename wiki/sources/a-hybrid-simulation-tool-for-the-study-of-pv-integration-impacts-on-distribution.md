@@ -55,8 +55,8 @@ sources: ["EMT_Doc/02/Hariri和Faruque - 2017 - A Hybrid Simulation Tool for the
 
 ## 使用的方法
 
-- [[topics/co-simulation|混合仿真]]
-- [[methods/multirate-method|多速率仿真]]
+- [[co-simulation|混合仿真]]
+- [[multirate-method|多速率仿真]]
 - [[准稳态时间序列-qsts|准稳态时间序列(QSTS)]]
 - [[相量域分析|相量域分析]]
 - [[串行接口协议|串行接口协议]]
@@ -72,7 +72,7 @@ sources: ["EMT_Doc/02/Hariri和Faruque - 2017 - A Hybrid Simulation Tool for the
 
 ## 相关主题
 
-- [[topics/co-simulation|混合仿真]]
+- [[co-simulation|混合仿真]]
 - [[光伏并网影响|光伏并网影响]]
 - [[配电网仿真|配电网仿真]]
 - [[多速率协同|多速率协同]]

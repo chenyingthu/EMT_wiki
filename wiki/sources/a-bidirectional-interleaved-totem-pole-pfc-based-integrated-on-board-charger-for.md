@@ -60,7 +60,7 @@ sources: ["EMT_Doc/01/Faheem Ali 等 - 2024 - A Bidirectional Interleaved Totem 
 
 - [[交错图腾柱pfc控制|交错图腾柱PFC控制]]
 - [[零瞬时转矩控制|零瞬时转矩控制]]
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[双向功率流控制|双向功率流控制]]
 
 ## 涉及的模型
@@ -77,7 +77,7 @@ sources: ["EMT_Doc/01/Faheem Ali 等 - 2024 - A Bidirectional Interleaved Totem 
 - [[共模电压抑制|共模电压抑制]]
 - [[双向充放电|双向充放电]]
 - [[零瞬时转矩控制|零瞬时转矩控制]]
-- [[methods/harmonic-analysis-methods|谐波分析]]
+- [[harmonic-analysis-methods|谐波分析]]
 
 ## 主要发现
 

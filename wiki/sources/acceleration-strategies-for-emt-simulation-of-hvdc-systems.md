@@ -69,17 +69,17 @@ sources: ["EMT_Doc/05/Allabadi 等 - 2026 - Acceleration strategies for EMT Simu
 
 - [[mmc-model|MMC]]
 - [[dfig-model|DFIG]]
-- [[topics/wind-farm-modeling|风电场]]
+- [[wind-farm-modeling|风电场]]
 - [[直流电缆|直流电缆]]
 - [[宽带线路模型|宽带线路模型]]
 - [[电网等值电源|电网等值电源]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[多端直流输电-mtdc|多端直流输电(MTDC)]]
-- [[topics/parallel-computing|并行计算]]
-- [[topics/emt-simulation|离线仿真]]
+- [[parallel-computing|并行计算]]
+- [[emt-simulation|离线仿真]]
 - [[控制系统加速|控制系统加速]]
 - [[混合加速策略|混合加速策略]]
 

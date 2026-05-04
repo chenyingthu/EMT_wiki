@@ -62,7 +62,7 @@ sources: ["EMT_Doc/01/Zhang 等 - 2021 - A Hierarchical Low-Rank Approximation B
 - [[奇异值分解-svd|奇异值分解(SVD)]]
 - [[快速矩阵向量乘法|快速矩阵向量乘法]]
 - [[图划分网络分区|图划分网络分区]]
-- [[methods/nodal-analysis|节点分析法]]
+- [[nodal-analysis|节点分析法]]
 
 ## 涉及的模型
 
@@ -74,9 +74,9 @@ sources: ["EMT_Doc/01/Zhang 等 - 2021 - A Hierarchical Low-Rank Approximation B
 
 ## 相关主题
 
-- [[topics/parallel-computing|电磁暂态仿真加速]]
-- [[methods/nodal-analysis|网络方程求解]]
-- [[topics/parallel-computing|并行计算]]
+- [[parallel-computing|电磁暂态仿真加速]]
+- [[nodal-analysis|网络方程求解]]
+- [[parallel-computing|并行计算]]
 - [[大规模电力系统仿真|大规模电力系统仿真]]
 - [[矩阵运算优化|矩阵运算优化]]
 

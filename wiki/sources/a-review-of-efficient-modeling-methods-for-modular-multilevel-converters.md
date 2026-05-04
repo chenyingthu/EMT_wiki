@@ -58,27 +58,27 @@ sources: ["EMT_Doc/03/Xu 等 - 2015 - A review of efficient modeling methods for
 - [[受控源等效法|受控源等效法]]
 - [[戴维南等效法|戴维南等效法]]
 - [[后退欧拉法|后退欧拉法]]
-- [[methods/numerical-integration|梯形积分法]]
-- [[methods/average-value-model|平均值模型]]
+- [[numerical-integration|梯形积分法]]
+- [[average-value-model|平均值模型]]
 - [[矩阵降阶技术|矩阵降阶技术]]
 - [[分组排序算法|分组排序算法]]
 
 ## 涉及的模型
 
 - [[mmc-model|MMC]]
-- [[models/mmc-model|半桥子模块]]
-- [[models/full-bridge-smb|全桥子模块]]
-- [[models/transformer-model|换流变压器]]
+- [[mmc-model|半桥子模块]]
+- [[full-bridge-smb|全桥子模块]]
+- [[transformer-model|换流变压器]]
 - [[直流电缆|直流电缆]]
 - [[戴维南等效模型|戴维南等效模型]]
 - [[受控源模型|受控源模型]]
-- [[methods/average-value-model|平均值模型]]
+- [[average-value-model|平均值模型]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[topics/real-time-simulation|实时仿真]]
-- [[topics/electromechanical-transient|机电暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[real-time-simulation|实时仿真]]
+- [[electromechanical-transient|机电暂态仿真]]
 - [[vsc-model|VSC]]
 - [[高效建模|高效建模]]
 - [[电容均压算法|电容均压算法]]

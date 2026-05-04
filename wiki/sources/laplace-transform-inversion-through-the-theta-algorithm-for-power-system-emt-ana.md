@@ -58,13 +58,13 @@ sources: ["EMT_Doc/25/Castañón 等 - 2021 - Laplace transform inversion throug
 
 ## 使用的方法
 
-- [[methods/numerical-integration|数值拉普拉斯变换]]
+- [[numerical-integration|数值拉普拉斯变换]]
 - [[theta算法|Theta算法]]
 - [[无穷级数加速法|无穷级数加速法]]
 - [[padé逼近|Padé逼近]]
 - [[shanks变换|Shanks变换]]
 - [[epsilon算法|Epsilon算法]]
-- [[methods/fft|快速傅里叶变换]]
+- [[fft|快速傅里叶变换]]
 
 ## 涉及的模型
 
@@ -72,11 +72,11 @@ sources: ["EMT_Doc/25/Castañón 等 - 2021 - Laplace transform inversion throug
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态分析]]
-- [[topics/frequency-domain-analysis|频域分析]]
+- [[emt-simulation|电磁暂态分析]]
+- [[frequency-domain-analysis|频域分析]]
 - [[拉普拉斯逆变换|拉普拉斯逆变换]]
 - [[数值计算方法|数值计算方法]]
-- [[topics/emt-simulation|电力系统仿真]]
+- [[emt-simulation|电力系统仿真]]
 
 ## 主要发现
 

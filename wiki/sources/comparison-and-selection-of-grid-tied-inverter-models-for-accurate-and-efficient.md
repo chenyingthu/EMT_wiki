@@ -58,31 +58,31 @@ sources: ["EMT_Doc/10/Sano 等 - 2022 - Comparison and Selection of Grid-Tied In
 
 ## 使用的方法
 
-- [[methods/nodal-analysis|节点分析法]]
-- [[methods/numerical-integration|固定步长仿真]]
-- [[methods/average-value-model|平均值建模]]
+- [[nodal-analysis|节点分析法]]
+- [[numerical-integration|固定步长仿真]]
+- [[average-value-model|平均值建模]]
 - [[电压插值法|电压插值法]]
 - [[电流注入法|电流注入法]]
 - [[状态空间平均法|状态空间平均法]]
 
 ## 涉及的模型
 
-- [[models/gfl-inverter-model|并网逆变器]]
+- [[gfl-inverter-model|并网逆变器]]
 - [[三相桥式逆变器|三相桥式逆变器]]
-- [[methods/switch-modeling|开关模型]]
-- [[methods/average-value-model|平均值模型]]
+- [[switch-modeling|开关模型]]
+- [[average-value-model|平均值模型]]
 - [[电压插值模型|电压插值模型]]
 - [[受控电流注入模型|受控电流注入模型]]
 - [[简化电流注入模型|简化电流注入模型]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[模型对比与选型|模型对比与选型]]
-- [[methods/harmonic-analysis-methods|谐波分析]]
-- [[topics/transient-stability-analysis|暂态稳定性分析]]
-- [[topics/large-scale-system-simulation|计算效率优化]]
-- [[topics/renewable-energy-integration|新能源并网]]
+- [[harmonic-analysis-methods|谐波分析]]
+- [[transient-stability-analysis|暂态稳定性分析]]
+- [[large-scale-system-simulation|计算效率优化]]
+- [[renewable-energy-integration|新能源并网]]
 
 ## 主要发现
 

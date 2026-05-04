@@ -57,8 +57,8 @@ sources: ["EMT_Doc/03/Xiong 等 - 2024 - A Semi-Analytical Approach for State-Sp
 
 - [[半解析解法|半解析解法]]
 - [[微分变换法|微分变换法]]
-- [[methods/state-space-method|状态空间法]]
-- [[methods/multirate-method|变步长仿真]]
+- [[state-space-method|状态空间法]]
+- [[multirate-method|变步长仿真]]
 - [[密集输出机制|密集输出机制]]
 - [[二分搜索增强二次插值|二分搜索增强二次插值]]
 
@@ -68,15 +68,15 @@ sources: ["EMT_Doc/03/Xiong 等 - 2024 - A Semi-Analytical Approach for State-Sp
 - [[vbr同步发电机模型|VBR同步发电机模型]]
 - [[发电机控制器|发电机控制器]]
 - [[逆变器型资源-ibr-模型|逆变器型资源(IBR)模型]]
-- [[test-systems/ieee-39-bus-system|IEEE 39节点系统]]
+- [[ieee-39-bus-system|IEEE 39节点系统]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[methods/state-space-method|状态空间建模]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[state-space-method|状态空间建模]]
 - [[变步长算法|变步长算法]]
 - [[开关事件处理|开关事件处理]]
-- [[topics/large-scale-grid-simulation|大规模电网仿真]]
+- [[large-scale-grid-simulation|大规模电网仿真]]
 
 ## 主要发现
 

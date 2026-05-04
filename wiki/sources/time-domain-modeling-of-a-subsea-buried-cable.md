@@ -63,13 +63,13 @@ sources: ["EMT_Doc/38/Camara 等 - 2024 - Time-domain modeling of a subsea burie
 
 ## 涉及的模型
 
-- [[models/cable-model]]
-- [[models/transmission-line-model]]
+- [[cable-model]]
+- [[transmission-line-model]]
 
 ## 相关主题
 
-- [[topics/vsc-hvdc]]
-- [[topics/frequency-dependent-modeling]]
+- [[vsc-hvdc]]
+- [[frequency-dependent-modeling]]
 
 ## 主要发现
 

@@ -58,7 +58,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/Yao 等 - 2023 - Harmonics Interacti
 
 ## 使用的方法
 
-- [[methods/average-value-model|等效电路建模]]
+- [[average-value-model|等效电路建模]]
 - [[谐波传递系数推导|谐波传递系数推导]]
 - [[关断角定量计算|关断角定量计算]]
 - [[电磁暂态仿真验证|电磁暂态仿真验证]]
@@ -66,7 +66,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/Yao 等 - 2023 - Harmonics Interacti
 ## 涉及的模型
 
 - [[lcc-model|LCC]]
-- [[topics/hybrid-acdc-network|多馈入直流系统]]
+- [[hybrid-acdc-network|多馈入直流系统]]
 - [[换流站-逆变器|换流站/逆变器]]
 - [[交流耦合网络等效模型|交流耦合网络等效模型]]
 
@@ -75,7 +75,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/Yao 等 - 2023 - Harmonics Interacti
 - [[谐波交互机制|谐波交互机制]]
 - [[并发换相失败|并发换相失败]]
 - [[关断角计算|关断角计算]]
-- [[topics/hybrid-acdc-network|多馈入直流系统]]
+- [[hybrid-acdc-network|多馈入直流系统]]
 - [[分层接入|分层接入]]
 - [[交流故障暂态分析|交流故障暂态分析]]
 

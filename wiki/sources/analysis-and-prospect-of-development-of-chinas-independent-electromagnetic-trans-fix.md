@@ -62,8 +62,8 @@ sources: ["EMT_Doc/07&08/Analysis and Prospect of Development of China's Indepen
 - [[半隐式延迟解耦|半隐式延迟解耦]]
 - [[参数矩阵级联法|参数矩阵级联法]]
 - [[二值电阻模型|二值电阻模型]]
-- [[methods/average-value-model|平均值模型]]
-- [[topics/parallel-computing|并行计算]]
+- [[average-value-model|平均值模型]]
+- [[parallel-computing|并行计算]]
 - [[离散状态事件驱动|离散状态事件驱动]]
 - [[节点导纳矩阵求逆|节点导纳矩阵求逆]]
 
@@ -76,16 +76,16 @@ sources: ["EMT_Doc/07&08/Analysis and Prospect of Development of China's Indepen
 - [[dc-pfc|DC-PFC]]
 - [[chb-dab|CHB-DAB]]
 - [[h桥子模块|H桥子模块]]
-- [[models/transformer-model|高频隔离变压器]]
-- [[models/igbt-model|IGBT]]
+- [[transformer-model|高频隔离变压器]]
+- [[igbt-model|IGBT]]
 
 ## 相关主题
 
 - [[电磁暂态仿真平台|电磁暂态仿真平台]]
 - [[仿真效率加速|仿真效率加速]]
 - [[模块化电力电子建模|模块化电力电子建模]]
-- [[topics/real-time-simulation|实时仿真]]
-- [[methods/hil-simulation|硬件在环]]
+- [[real-time-simulation|实时仿真]]
+- [[hil-simulation|硬件在环]]
 - [[并行计算优化|并行计算优化]]
 - [[网络解耦等值|网络解耦等值]]
 - [[国产化软件生态|国产化软件生态]]

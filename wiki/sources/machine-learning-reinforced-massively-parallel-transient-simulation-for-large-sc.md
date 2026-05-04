@@ -71,15 +71,15 @@ sources: ["EMT_Doc/25/Cheng 等 - 2025 - Machine-Learning-Reinforced Massively P
 - [[光伏阵列-pv|光伏阵列(PV)]]
 - [[dfig-model|DFIG]]
 - [[储能电池系统|储能电池系统]]
-- [[topics/wind-farm-modeling|风电场]]
-- [[topics/microgrid|微电网]]
-- [[test-systems/ieee-118-bus-system|IEEE 118节点系统]]
+- [[wind-farm-modeling|风电场]]
+- [[microgrid|微电网]]
+- [[ieee-118-bus-system|IEEE 118节点系统]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[大规模新能源并网|大规模新能源并网]]
-- [[topics/parallel-computing|并行计算]]
+- [[parallel-computing|并行计算]]
 - [[机器学习建模|机器学习建模]]
 - [[gpu加速仿真|GPU加速仿真]]
 - [[数据驱动建模|数据驱动建模]]

@@ -59,10 +59,10 @@ sources: ["EMT_Doc/26/Ramirez 等 - 2003 - Modeling nonuniform transmission line
 ## 使用的方法
 
 - [[行波法|行波法]]
-- [[methods/numerical-integration|数值拉普拉斯变换]]
-- [[methods/characteristic-method|特征线法]]
-- [[methods/vector-fitting|有理函数逼近]]
-- [[methods/state-space-method|状态空间实现]]
+- [[numerical-integration|数值拉普拉斯变换]]
+- [[characteristic-method|特征线法]]
+- [[vector-fitting|有理函数逼近]]
+- [[state-space-method|状态空间实现]]
 - [[复深度法|复深度法]]
 
 ## 涉及的模型
@@ -74,10 +74,10 @@ sources: ["EMT_Doc/26/Ramirez 等 - 2003 - Modeling nonuniform transmission line
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[topics/frequency-dependent-modeling|频率相关建模]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[frequency-dependent-modeling|频率相关建模]]
 - [[非均匀线路建模|非均匀线路建模]]
-- [[topics/emt-simulation|时域仿真]]
+- [[emt-simulation|时域仿真]]
 - [[输电线路参数计算|输电线路参数计算]]
 
 ## 主要发现

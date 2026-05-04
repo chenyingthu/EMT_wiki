@@ -58,7 +58,7 @@ sources: ["EMT_Doc/02/Li 等 - 2019 - A new topology for current limiting HVDC c
 
 ## 使用的方法
 
-- [[entities/pscad-emtdc|PSCAD/EMTDC电磁暂态仿真]]
+- [[pscad-emtdc|PSCAD/EMTDC电磁暂态仿真]]
 - [[等效电路分析|等效电路分析]]
 - [[硬件实验验证|硬件实验验证]]
 

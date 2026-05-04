@@ -58,24 +58,24 @@ sources: ["EMT_Doc/27&28/Multirate Method for Dynamic Phasor Simulation of Large
 
 ## 使用的方法
 
-- [[topics/dynamic-phasor|动态相量法]]
-- [[methods/multirate-method|多速率仿真]]
+- [[dynamic-phasor|动态相量法]]
+- [[multirate-method|多速率仿真]]
 - [[插值与平均耦合|插值与平均耦合]]
 - [[误差校验步长控制|误差校验步长控制]]
 
 ## 涉及的模型
 
-- [[models/synchronous-machine-model|同步电机]]
+- [[synchronous-machine-model|同步电机]]
 - [[发电机控制器|发电机控制器]]
 - [[交流输电网络|交流输电网络]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[topics/dynamic-phasor|动态相量建模]]
-- [[methods/multirate-method|多速率仿真]]
-- [[topics/large-scale-grid-simulation|大规模电网仿真]]
-- [[topics/electromechanical-transient|暂态稳定分析]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[dynamic-phasor|动态相量建模]]
+- [[multirate-method|多速率仿真]]
+- [[large-scale-grid-simulation|大规模电网仿真]]
+- [[electromechanical-transient|暂态稳定分析]]
 
 ## 主要发现
 

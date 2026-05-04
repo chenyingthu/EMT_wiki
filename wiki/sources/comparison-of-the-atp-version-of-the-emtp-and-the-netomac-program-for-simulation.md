@@ -68,7 +68,7 @@ sources: ["EMT_Doc/10/Lehn和Rittiger - 1995 - Comparison of the atp version of 
 
 - [[lcc-model|LCC]]
 - [[交流滤波器|交流滤波器]]
-- [[models/transmission-line-model|输电线路]]
+- [[transmission-line-model|输电线路]]
 - [[海底电缆|海底电缆]]
 - [[饱和变压器|饱和变压器]]
 - [[晶闸管|晶闸管]]

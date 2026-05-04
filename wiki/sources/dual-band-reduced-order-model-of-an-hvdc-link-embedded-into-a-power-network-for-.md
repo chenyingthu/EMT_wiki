@@ -73,12 +73,12 @@ sources: ["EMT_Doc/13&14/files/TEC.2019.2935892.pdf.pdf"]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[methods/model-order-reduction|模型降阶]]
-- [[topics/frequency-domain-analysis|频域分析]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[model-order-reduction|模型降阶]]
+- [[frequency-domain-analysis|频域分析]]
 - [[电力系统动态等值|电力系统动态等值]]
 - [[开关频率动态|开关频率动态]]
-- [[topics/large-scale-system-simulation|计算效率优化]]
+- [[large-scale-system-simulation|计算效率优化]]
 
 ## 主要发现
 

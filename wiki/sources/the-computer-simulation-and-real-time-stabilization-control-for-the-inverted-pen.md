@@ -58,9 +58,9 @@ sources: ["EMT_Doc/13&14/files/icnc.2009.724.pdf.pdf"]
 
 ## 使用的方法
 
-- [[methods/state-space-method]]
-- [[topics/real-time-simulation]]
-- [[topics/parallel-computing]]
+- [[state-space-method]]
+- [[real-time-simulation]]
+- [[parallel-computing]]
 
 ## 涉及的模型
 
@@ -70,8 +70,8 @@ sources: ["EMT_Doc/13&14/files/icnc.2009.724.pdf.pdf"]
 
 ## 相关主题
 
-- [[topics/real-time-simulation]]
-- [[methods/state-space-method]]
+- [[real-time-simulation]]
+- [[state-space-method]]
 
 ## 主要发现
 

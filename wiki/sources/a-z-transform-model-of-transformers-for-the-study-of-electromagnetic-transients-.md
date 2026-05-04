@@ -67,7 +67,7 @@ sources: ["EMT_Doc/05/A Z-transform model of transformers for the study of elect
 
 ## 涉及的模型
 
-- [[models/transformer-model|变压器]]
+- [[transformer-model|变压器]]
 - [[自耦变压器|自耦变压器]]
 - [[绕组对|绕组对]]
 - [[短路阻抗模型|短路阻抗模型]]
@@ -75,10 +75,10 @@ sources: ["EMT_Doc/05/A Z-transform model of transformers for the study of elect
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态]]
-- [[topics/frequency-dependent-modeling|频率相关建模]]
+- [[emt-simulation|电磁暂态]]
+- [[frequency-dependent-modeling|频率相关建模]]
 - [[变压器建模|变压器建模]]
-- [[topics/lightning-overvoltage|雷电过电压]]
+- [[lightning-overvoltage|雷电过电压]]
 - [[母线切换暂态|母线切换暂态]]
 - [[断路器恢复电压|断路器恢复电压]]
 

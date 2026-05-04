@@ -68,13 +68,13 @@ sources: ["EMT_Doc/09/Huang和Vittal - 2016 - Application of Electromagnetic Tra
 
 - [[单相感应电机|单相感应电机]]
 - [[空调压缩机负荷|空调压缩机负荷]]
-- [[topics/transmission-network|输电网络]]
-- [[test-systems/wscc-9-bus-system|IEEE 9节点系统]]
+- [[transmission-network|输电网络]]
+- [[wscc-9-bus-system|IEEE 9节点系统]]
 - [[wecc大电网模型|WECC大电网模型]]
 
 ## 相关主题
 
-- [[topics/co-simulation|混合仿真]]
+- [[co-simulation|混合仿真]]
 - [[故障诱发延迟电压恢复|故障诱发延迟电压恢复]]
 - [[不对称故障仿真|不对称故障仿真]]
 - [[电机堵转传播|电机堵转传播]]

@@ -58,29 +58,29 @@ sources: ["EMT_Doc/09/Cao和Chen - 2007 - Application of EMTP-RV graphic softwar
 
 ## 使用的方法
 
-- [[methods/sparse-matrix-solver|稀疏矩阵求解]]
+- [[sparse-matrix-solver|稀疏矩阵求解]]
 - [[非线性迭代求解|非线性迭代求解]]
-- [[topics/emt-simulation|时域仿真]]
-- [[methods/harmonic-analysis-methods|谐波分析]]
+- [[emt-simulation|时域仿真]]
+- [[harmonic-analysis-methods|谐波分析]]
 - [[离散傅里叶变换|离散傅里叶变换]]
 
 ## 涉及的模型
 
-- [[models/svc-model|SVC]]
-- [[models/svc-tcr-model|TCR]]
+- [[svc-model|SVC]]
+- [[svc-tcr-model|TCR]]
 - [[晶闸管阀组|晶闸管阀组]]
 - [[zno避雷器|ZnO避雷器]]
 - [[rlc支路|RLC支路]]
-- [[models/circuit-breaker-model|断路器]]
+- [[circuit-breaker-model|断路器]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[methods/switch-modeling|开关暂态]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[switch-modeling|开关暂态]]
 - [[过电压保护|过电压保护]]
-- [[methods/insulation-coordination|绝缘配合]]
+- [[insulation-coordination|绝缘配合]]
 - [[facts装置建模|FACTS装置建模]]
-- [[methods/harmonic-analysis-methods|谐波分析]]
+- [[harmonic-analysis-methods|谐波分析]]
 
 ## 主要发现
 

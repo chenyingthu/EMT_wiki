@@ -58,27 +58,27 @@ sources: ["EMT_Doc/13&14/files/TPWRD.2014.2340870.pdf.pdf"]
 
 ## 使用的方法
 
-- [[methods/average-value-model|动态平均值建模]]
+- [[average-value-model|动态平均值建模]]
 - [[参数化方法|参数化方法]]
-- [[methods/nodal-analysis|节点分析法]]
-- [[methods/state-space-method|状态变量法]]
+- [[nodal-analysis|节点分析法]]
+- [[state-space-method|状态变量法]]
 
 ## 涉及的模型
 
 - [[lcc-model|LCC]]
 - [[十二脉冲换流器|十二脉冲换流器]]
-- [[models/transformer-model|换流变压器]]
+- [[transformer-model|换流变压器]]
 - [[交流滤波器|交流滤波器]]
-- [[models/transmission-line-model|直流输电线路]]
-- [[models/dc-rlc-filter|平波电抗器]]
+- [[transmission-line-model|直流输电线路]]
+- [[dc-rlc-filter|平波电抗器]]
 - [[弱交流电网|弱交流电网]]
 
 ## 相关主题
 
 - [[vsc-hvdc|VSC-HVDC]]
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[大信号暂态分析|大信号暂态分析]]
-- [[topics/large-scale-system-simulation|系统级仿真]]
+- [[large-scale-system-simulation|系统级仿真]]
 - [[动态等值|动态等值]]
 - [[换流器控制|换流器控制]]
 

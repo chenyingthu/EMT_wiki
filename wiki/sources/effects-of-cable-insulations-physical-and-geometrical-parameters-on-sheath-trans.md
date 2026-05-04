@@ -58,8 +58,8 @@ sources: ["EMT_Doc/13&14/files/j.ijepes.2019.02.047.pdf.pdf"]
 
 ## 使用的方法
 
-- [[entities/atp-emtp|EMTP仿真]]
-- [[methods/finite-element-method|有限元法(FEM)]]
+- [[atp-emtp|EMTP仿真]]
+- [[finite-element-method|有限元法(FEM)]]
 - [[理论解析计算|理论解析计算]]
 - [[数值电流计算|数值电流计算]]
 
@@ -76,7 +76,7 @@ sources: ["EMT_Doc/13&14/files/j.ijepes.2019.02.047.pdf.pdf"]
 - [[护套暂态过电压|护套暂态过电压]]
 - [[介质损耗分析|介质损耗分析]]
 - [[绝缘参数优化|绝缘参数优化]]
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 
 ## 主要发现
 

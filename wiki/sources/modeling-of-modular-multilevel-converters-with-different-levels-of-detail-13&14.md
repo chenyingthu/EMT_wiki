@@ -61,7 +61,7 @@ sources: ["EMT_Doc/13&14/files/TPWRD.2017.2774806.pdf.pdf"]
 - [[传输线短截线建模-tlm-stub|传输线短截线建模(TLM-stub)]]
 - [[动态曲线拟合|动态曲线拟合]]
 - [[电路分区与合并|电路分区与合并]]
-- [[methods/nodal-analysis|戴维南等效]]
+- [[nodal-analysis|戴维南等效]]
 - [[分段线性化|分段线性化]]
 - [[fpga硬件在环仿真|FPGA硬件在环仿真]]
 
@@ -76,11 +76,11 @@ sources: ["EMT_Doc/13&14/files/TPWRD.2017.2774806.pdf.pdf"]
 
 ## 相关主题
 
-- [[topics/real-time-simulation|实时仿真]]
+- [[real-time-simulation|实时仿真]]
 - [[硬件在环-hil|硬件在环(HIL)]]
 - [[电热耦合仿真|电热耦合仿真]]
-- [[methods/fpga-real-time-simulation|FPGA并行计算]]
-- [[topics/hybrid-acdc-network|多端直流系统]]
+- [[fpga-real-time-simulation|FPGA并行计算]]
+- [[hybrid-acdc-network|多端直流系统]]
 - [[固态变压器-sst|固态变压器(SST)]]
 - [[器件级建模|器件级建模]]
 

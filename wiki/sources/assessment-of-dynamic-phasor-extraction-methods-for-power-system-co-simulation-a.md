@@ -70,10 +70,10 @@ sources: ["EMT_Doc/09/Rupasinghe 等 - 2021 - Assessment of dynamic phasor extra
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[topics/co-simulation|联合仿真]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[co-simulation|联合仿真]]
 - [[动态相量提取|动态相量提取]]
-- [[methods/harmonic-analysis-methods|谐波分析]]
+- [[harmonic-analysis-methods|谐波分析]]
 - [[频域建模|频域建模]]
 
 ## 主要发现

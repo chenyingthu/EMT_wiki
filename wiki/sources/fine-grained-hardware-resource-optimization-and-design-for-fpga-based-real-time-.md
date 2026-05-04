@@ -72,10 +72,10 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/Li 等 - 2025 - Fine-grained hardwar
 
 ## 相关主题
 
-- [[topics/real-time-simulation|实时仿真]]
-- [[methods/fpga-real-time-simulation|FPGA硬件加速]]
+- [[real-time-simulation|实时仿真]]
+- [[fpga-real-time-simulation|FPGA硬件加速]]
 - [[硬件资源优化|硬件资源优化]]
-- [[methods/automatic-code-generation|自动代码生成]]
+- [[automatic-code-generation|自动代码生成]]
 - [[大规模新能源并网|大规模新能源并网]]
 
 ## 主要发现

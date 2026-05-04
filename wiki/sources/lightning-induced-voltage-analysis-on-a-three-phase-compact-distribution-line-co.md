@@ -58,9 +58,9 @@ Lightning-induced voltage analysis on a three-phase compact distribution Alberto
 
 ## 使用的方法
 
-- [[methods/fdtd|有限差分时域法(FDTD)]]
+- [[fdtd|有限差分时域法(FDTD)]]
 - [[marti传输线模型|Marti传输线模型]]
-- [[methods/vector-fitting|矢量拟合]]
+- [[vector-fitting|矢量拟合]]
 - [[伯德渐近法|伯德渐近法]]
 - [[模域参数拟合|模域参数拟合]]
 - [[电报方程求解|电报方程求解]]
@@ -77,7 +77,7 @@ Lightning-induced voltage analysis on a three-phase compact distribution Alberto
 ## 相关主题
 
 - [[雷击感应电压|雷击感应电压]]
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[紧凑型配电线路|紧凑型配电线路]]
 - [[输电线路频变建模|输电线路频变建模]]
 - [[外部电磁场耦合|外部电磁场耦合]]

@@ -61,9 +61,9 @@ sources: ["EMT_Doc/18/Leal和Conti - 2021 - Evaluation of the extended modal-dom
 - [[扩展模域模型|扩展模域模型]]
 - [[扩展相域模型|扩展相域模型]]
 - [[marti模型|Marti模型]]
-- [[models/transmission-line-model|通用线路模型]]
-- [[methods/modal-analysis|模态分解]]
-- [[methods/vector-fitting|矢量拟合]]
+- [[transmission-line-model|通用线路模型]]
+- [[modal-analysis|模态分解]]
+- [[vector-fitting|矢量拟合]]
 - [[carson公式|Carson公式]]
 
 ## 涉及的模型
@@ -78,9 +78,9 @@ sources: ["EMT_Doc/18/Leal和Conti - 2021 - Evaluation of the extended modal-dom
 ## 相关主题
 
 - [[雷击感应电压|雷击感应电压]]
-- [[models/transmission-line-model|输电线路建模]]
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[topics/frequency-dependent-modeling|频率相关建模]]
+- [[transmission-line-model|输电线路建模]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[frequency-dependent-modeling|频率相关建模]]
 - [[atp仿真|ATP仿真]]
 
 ## 主要发现

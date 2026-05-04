@@ -58,17 +58,17 @@ sources: ["EMT_Doc/05/Luo 等 - 2022 - Active Damping Control and Parameter Calc
 
 ## 使用的方法
 
-- [[methods/impedance-modeling|阻抗建模]]
-- [[methods/state-space-method|状态空间法]]
+- [[impedance-modeling|阻抗建模]]
+- [[state-space-method|状态空间法]]
 - [[有源阻尼控制|有源阻尼控制]]
 - [[参数解析计算|参数解析计算]]
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 
 ## 涉及的模型
 
 - [[vsc-model|VSC]]
 - [[双向dc-dc变换器|双向DC-DC变换器]]
-- [[models/bess-model|电池储能系统]]
+- [[bess-model|电池储能系统]]
 - [[直流配电网|直流配电网]]
 - [[直流限流电抗器|直流限流电抗器]]
 

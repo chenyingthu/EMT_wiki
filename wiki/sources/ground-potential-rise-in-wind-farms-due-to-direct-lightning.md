@@ -65,16 +65,16 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/j.epsr.2021.107110.pdf.pdf"]
 
 ## 涉及的模型
 
-- [[models/dfig-model|风力发电机]]
-- [[models/grounding-system-model|接地系统]]
+- [[dfig-model|风力发电机]]
+- [[grounding-system-model|接地系统]]
 - [[风机叶片|风机叶片]]
 - [[风机塔筒|风机塔筒]]
 - [[互联接地网络|互联接地网络]]
-- [[models/grounding-system-model|频变土壤模型]]
+- [[grounding-system-model|频变土壤模型]]
 
 ## 相关主题
 
-- [[topics/ground-potential-rise|地电位升]]
+- [[ground-potential-rise|地电位升]]
 - [[直击雷暂态|直击雷暂态]]
 - [[风电场防雷|风电场防雷]]
 - [[接地系统冲击响应|接地系统冲击响应]]

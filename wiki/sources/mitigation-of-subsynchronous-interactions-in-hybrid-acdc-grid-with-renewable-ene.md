@@ -70,17 +70,17 @@ sources: ["EMT_Doc/26/Cao 等 - 2021 - Mitigation of Subsynchronous Interactions
 - [[五质量块扭振轴系模型|五质量块扭振轴系模型]]
 - [[vsc-hvdc|VSC-HVDC]]
 - [[串联补偿输电线路|串联补偿输电线路]]
-- [[topics/wind-farm-modeling|风电场]]
+- [[wind-farm-modeling|风电场]]
 - [[励磁控制系统-avr-pss|励磁控制系统(AVR/PSS)]]
 
 ## 相关主题
 
 - [[次同步相互作用-ssi-抑制|次同步相互作用(SSI)抑制]]
-- [[topics/hybrid-acdc-network|交直流混合电网]]
-- [[topics/real-time-simulation|超实时仿真]]
+- [[hybrid-acdc-network|交直流混合电网]]
+- [[real-time-simulation|超实时仿真]]
 - [[fpga并行加速|FPGA并行加速]]
 - [[机电暂态协同仿真|机电暂态协同仿真]]
-- [[topics/electromechanical-transient|暂态稳定分析]]
+- [[electromechanical-transient|暂态稳定分析]]
 
 ## 主要发现
 

@@ -60,7 +60,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/Gao 等 - 2022 - Fast Simulation Mod
 
 - [[开关状态预测|开关状态预测]]
 - [[有限状态机|有限状态机]]
-- [[methods/nodal-analysis|节点分析法]]
+- [[nodal-analysis|节点分析法]]
 - [[两步预测法|两步预测法]]
 
 ## 涉及的模型
@@ -70,13 +70,13 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/Gao 等 - 2022 - Fast Simulation Mod
 - [[两电平变换器|两电平变换器]]
 - [[三电平npc变换器|三电平NPC变换器]]
 - [[三电平t型变换器|三电平T型变换器]]
-- [[topics/microgrid-distribution-network|直流微电网]]
+- [[microgrid-distribution-network|直流微电网]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[电力电子建模|电力电子建模]]
-- [[topics/parallel-computing|仿真加速]]
+- [[parallel-computing|仿真加速]]
 - [[开关状态预测|开关状态预测]]
 - [[新能源并网系统|新能源并网系统]]
 

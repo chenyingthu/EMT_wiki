@@ -59,12 +59,12 @@ sources: ["EMT_Doc/39/s0142-0615%2898%2900042-8.pdf.pdf"]
 ## 使用的方法
 
 - [[numerical-integration]]
-- [[methods/interpolation-method]]
+- [[interpolation-method]]
 
 ## 涉及的模型
 
-- [[models/transmission-line-model]]
-- [[topics/frequency-dependent-modeling]]
+- [[transmission-line-model]]
+- [[frequency-dependent-modeling]]
 
 ## 相关主题
 

@@ -824,12 +824,12 @@ IEEE 118节点系统的PSS/E格式数据文件可在以下途径获取:
 
 ## 相关测试系统
 
-- [[test-systems/ieee-14-bus-system]] - IEEE 14节点系统（教学用小型系统）
-- [[test-systems/ieee-30-bus-system]] - IEEE 30节点系统（优化算法测试）
-- [[test-systems/ieee-39-bus-system]] - IEEE 39节点系统（暂态稳定性研究）
-- [[test-systems/ieee-57-bus-system]] - IEEE 57节点系统（配电网络分析）
+- [[ieee-14-bus-system]] - IEEE 14节点系统（教学用小型系统）
+- [[ieee-30-bus-system]] - IEEE 30节点系统（优化算法测试）
+- [[ieee-39-bus-system]] - IEEE 39节点系统（暂态稳定性研究）
+- [[ieee-57-bus-system]] - IEEE 57节点系统（配电网络分析）
 - [[ieee-300-bus]] - IEEE 300节点系统（超大规模测试）
-- [[test-systems/wscc-9-bus-system]] - WSCC 9节点系统（经典三机系统）
+- [[wscc-9-bus-system]] - WSCC 9节点系统（经典三机系统）
 - [[pegase-1354-bus]] - PEGASE 1354节点系统（欧洲电网模型）
 
 ## 参考文献

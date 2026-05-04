@@ -55,7 +55,7 @@ EMT仿真中的频变线路/电缆模型，首先依赖单位长度串联阻抗Z
 
 ## 使用的方法
 
-- [[methods/vector-fitting|矩量法(MoM)]]
+- [[vector-fitting|矩量法(MoM)]]
 - [[表面导纳算子-so|表面导纳算子(SO)]]
 - [[傅里叶级数展开|傅里叶级数展开]]
 - [[等效定理|等效定理]]
@@ -63,17 +63,17 @@ EMT仿真中的频变线路/电缆模型，首先依赖单位长度串联阻抗Z
 
 ## 涉及的模型
 
-- [[models/transmission-line-model|输电线路]]
-- [[models/transmission-line-model|架空线路]]
-- [[models/cable-model|地下电缆]]
+- [[transmission-line-model|输电线路]]
+- [[transmission-line-model|架空线路]]
+- [[cable-model|地下电缆]]
 - [[多绞线电缆|多绞线电缆]]
 - [[多层土壤模型|多层土壤模型]]
 - [[架空-地下混合线路|架空-地下混合线路]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[topics/frequency-dependent-modeling|频率相关建模]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[frequency-dependent-modeling|频率相关建模]]
 - [[单位长度参数计算|单位长度参数计算]]
 - [[集肤与邻近效应|集肤与邻近效应]]
 - [[线路-电缆参数计算|线路/电缆参数计算]]

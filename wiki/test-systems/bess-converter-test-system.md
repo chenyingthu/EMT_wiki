@@ -670,11 +670,11 @@ Vbatt = OCV - I×R0 - V1 - V2
 - IEEE 2030: 智能电网标准
 
 ## 相关测试系统
-- [[test-systems/ieee-39-bus-system]] - IEEE 39节点系统
-- [[test-systems/ieee-14-bus-system]] - IEEE 14节点系统
-- [[test-systems/cigre-hvdc-benchmark]] - CIGRE HVDC标准测试系统
-- [[test-systems/mmc-21-level-hvdc]] - MMC-HVDC测试系统
-- [[test-systems/dfig-wind-farm]] - 双馈风电场测试系统
+- [[ieee-39-bus-system]] - IEEE 39节点系统
+- [[ieee-14-bus-system]] - IEEE 14节点系统
+- [[cigre-hvdc-benchmark]] - CIGRE HVDC标准测试系统
+- [[mmc-21-level-hvdc]] - MMC-HVDC测试系统
+- [[dfig-wind-farm]] - 双馈风电场测试系统
 
 ## 参考文献
 

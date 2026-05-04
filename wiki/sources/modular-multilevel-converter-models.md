@@ -58,11 +58,11 @@ sources: ["EMT_Doc/27&28/Modular Multilevel Converter Models for Electromagnetic
 
 ## 使用的方法
 
-- [[methods/average-value-model|平均值模型]]
-- [[methods/switching-function-method|开关函数法]]
-- [[methods/nodal-analysis|等效电路法]]
-- [[methods/numerical-integration|梯形积分法]]
-- [[methods/numerical-integration|后向欧拉法]]
+- [[average-value-model|平均值模型]]
+- [[switching-function-method|开关函数法]]
+- [[nodal-analysis|等效电路法]]
+- [[numerical-integration|梯形积分法]]
+- [[numerical-integration|后向欧拉法]]
 - [[迭代求解算法|迭代求解算法]]
 
 ## 涉及的模型
@@ -70,15 +70,15 @@ sources: ["EMT_Doc/27&28/Modular Multilevel Converter Models for Electromagnetic
 - [[mmc-model|MMC]]
 - [[vsc-model|VSC]]
 - [[vsc-hvdc|VSC-HVDC]]
-- [[models/mmc-model|半桥子模块]]
+- [[mmc-model|半桥子模块]]
 - [[igbt开关模型|IGBT开关模型]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[mmc-model|MMC]]
 - [[模型简化与等效|模型简化与等效]]
-- [[methods/numerical-integration|数值振荡抑制]]
+- [[numerical-integration|数值振荡抑制]]
 - [[暂态事件分析|暂态事件分析]]
 
 ## 主要发现

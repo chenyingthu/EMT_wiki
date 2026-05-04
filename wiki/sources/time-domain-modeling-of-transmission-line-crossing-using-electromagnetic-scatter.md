@@ -62,11 +62,11 @@ sources: ["EMT_Doc/38/Gunawardana和Kordi - 2020 - Time-Domain Modeling of Trans
 
 ## 涉及的模型
 
-- [[models/transmission-line-model]]
+- [[transmission-line-model]]
 
 ## 相关主题
 
-- [[models/transmission-line-model]]
+- [[transmission-line-model]]
 
 ## 主要发现
 

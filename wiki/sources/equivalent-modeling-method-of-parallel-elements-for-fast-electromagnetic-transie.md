@@ -58,9 +58,9 @@ sources: ["EMT_Doc/18/Sun和Xu - 2023 - Equivalent Modeling Method of Parallel E
 
 ## 使用的方法
 
-- [[methods/numerical-integration|梯形积分法]]
+- [[numerical-integration|梯形积分法]]
 - [[二值电阻等值|二值电阻等值]]
-- [[methods/norton-equivalent|诺顿等效]]
+- [[norton-equivalent|诺顿等效]]
 - [[叠加定理|叠加定理]]
 - [[端口解耦|端口解耦]]
 - [[多线程并行计算|多线程并行计算]]
@@ -71,16 +71,16 @@ sources: ["EMT_Doc/18/Sun和Xu - 2023 - Equivalent Modeling Method of Parallel E
 - [[级联h桥型pet-chb-pet|级联H桥型PET(CHB-PET)]]
 - [[功率模块-pm|功率模块(PM)]]
 - [[h桥单元|H桥单元]]
-- [[models/transformer-model|高频隔离变压器]]
+- [[transformer-model|高频隔离变压器]]
 - [[igbt-二极管开关组|IGBT-二极管开关组]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[topics/parallel-computing|并行计算]]
-- [[methods/average-value-model|等效建模]]
-- [[topics/parallel-computing|仿真加速]]
-- [[topics/large-scale-system-simulation|系统级仿真]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[parallel-computing|并行计算]]
+- [[average-value-model|等效建模]]
+- [[parallel-computing|仿真加速]]
+- [[large-scale-system-simulation|系统级仿真]]
 
 ## 主要发现
 

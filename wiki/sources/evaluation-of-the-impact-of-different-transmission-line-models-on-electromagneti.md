@@ -58,28 +58,28 @@ sources: ["EMT_Doc/18/Schroeder 等 - 2018 - Evaluation of the impact of differe
 
 ## 使用的方法
 
-- [[methods/vector-fitting|矢量拟合]]
+- [[vector-fitting|矢量拟合]]
 - [[emtp-atp仿真|EMTP/ATP仿真]]
 - [[宽带电磁建模|宽带电磁建模]]
-- [[methods/nodal-analysis|等效电路法]]
+- [[nodal-analysis|等效电路法]]
 - [[频变土壤参数模型|频变土壤参数模型]]
 
 ## 涉及的模型
 
 - [[杆塔接地系统|杆塔接地系统]]
-- [[models/transmission-line-model|输电线路]]
+- [[transmission-line-model|输电线路]]
 - [[绝缘子串|绝缘子串]]
-- [[models/grounding-system-model|频变土壤模型]]
+- [[grounding-system-model|频变土壤模型]]
 - [[宽带接地等效电路|宽带接地等效电路]]
 
 ## 相关主题
 
-- [[topics/lightning-overvoltage|雷电过电压]]
+- [[lightning-overvoltage|雷电过电压]]
 - [[接地系统宽带建模|接地系统宽带建模]]
 - [[土壤参数频变特性|土壤参数频变特性]]
-- [[topics/ground-potential-rise|地电位升]]
+- [[ground-potential-rise|地电位升]]
 - [[反击跳闸率|反击跳闸率]]
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 
 ## 主要发现
 

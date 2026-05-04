@@ -75,7 +75,7 @@ sources: ["EMT_Doc/17/Song和Liu - 2018 - EMU-traction network modeling of high 
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[弓网燃弧分析|弓网燃弧分析]]
 - [[牵引网建模|牵引网建模]]
 - [[谐波与过电压分析|谐波与过电压分析]]

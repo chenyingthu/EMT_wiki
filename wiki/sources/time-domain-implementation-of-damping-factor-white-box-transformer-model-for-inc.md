@@ -58,19 +58,19 @@ sources: ["EMT_Doc/38/Gustavsen 等 - 2020 - Time-Domain Implementation of Dampi
 
 ## 使用的方法
 
-- [[methods/state-space-method]]
-- [[topics/frequency-dependent-modeling]]
+- [[state-space-method]]
+- [[frequency-dependent-modeling]]
 - [[numerical-integration]]
 
 ## 涉及的模型
 
-- [[models/transformer-model]]
+- [[transformer-model]]
 - [[network-equivalent]]
 
 ## 相关主题
 
-- [[methods/harmonic-analysis-methods]]
-- [[topics/frequency-dependent-modeling]]
+- [[harmonic-analysis-methods]]
+- [[frequency-dependent-modeling]]
 
 ## 主要发现
 

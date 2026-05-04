@@ -74,11 +74,11 @@ sources: ["EMT_Doc/25/Le-Huy 等 - 2023 - Lessons learned in porting offline lar
 
 ## 相关主题
 
-- [[topics/real-time-simulation|实时仿真]]
+- [[real-time-simulation|实时仿真]]
 - [[离线仿真移植|离线仿真移植]]
 - [[广域监测保护与控制|广域监测保护与控制]]
-- [[methods/hil-simulation|硬件在环仿真]]
-- [[topics/emt-simulation|电磁暂态建模]]
+- [[hil-simulation|硬件在环仿真]]
+- [[emt-simulation|电磁暂态建模]]
 - [[模型兼容性|模型兼容性]]
 
 ## 主要发现

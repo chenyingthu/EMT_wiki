@@ -58,18 +58,18 @@ sources: ["EMT_Doc/35/Fu 等 - 2025 - Splitting State-Space Method for Converter
 
 ## 使用的方法
 
-- [[methods/state-space-method]]
+- [[state-space-method]]
 - [[numerical-integration]]
 
 ## 涉及的模型
 
 - [[mmc-model]]
-- [[topics/wind-farm-modeling]]
+- [[wind-farm-modeling]]
 
 ## 相关主题
 
-- [[topics/real-time-simulation]]
-- [[models/vsc-model]]
+- [[real-time-simulation]]
+- [[vsc-model]]
 
 ## 主要发现
 

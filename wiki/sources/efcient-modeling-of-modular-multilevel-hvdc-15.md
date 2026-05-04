@@ -61,7 +61,7 @@ sources: ["EMT_Doc/15/Efficient modeling of modular multilevel HVDC converters (
 - [[导纳矩阵分割|导纳矩阵分割]]
 - [[时变戴维南等效|时变戴维南等效]]
 - [[嵌套快速同步求解|嵌套快速同步求解]]
-- [[methods/nodal-analysis|节点分析法]]
+- [[nodal-analysis|节点分析法]]
 - [[电容电压平衡控制|电容电压平衡控制]]
 
 ## 涉及的模型
@@ -74,11 +74,11 @@ sources: ["EMT_Doc/15/Efficient modeling of modular multilevel HVDC converters (
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[vsc-model|VSC]]
-- [[topics/network-equivalent|网络等值]]
-- [[topics/large-scale-system-simulation|计算效率优化]]
-- [[topics/power-electronics|换流器建模]]
+- [[network-equivalent|网络等值]]
+- [[large-scale-system-simulation|计算效率优化]]
+- [[power-electronics|换流器建模]]
 
 ## 主要发现
 

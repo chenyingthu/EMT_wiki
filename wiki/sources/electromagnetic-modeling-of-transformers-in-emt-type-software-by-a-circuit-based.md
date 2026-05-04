@@ -66,7 +66,7 @@ sources: ["EMT_Doc/15/Electromagnetic modeling of transformers in EMT-type softw
 
 ## 涉及的模型
 
-- [[models/transformer-model|变压器]]
+- [[transformer-model|变压器]]
 - [[壳式变压器|壳式变压器]]
 - [[三相双绕组变压器|三相双绕组变压器]]
 - [[铁芯|铁芯]]
@@ -75,7 +75,7 @@ sources: ["EMT_Doc/15/Electromagnetic modeling of transformers in EMT-type softw
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[变压器详细建模|变压器详细建模]]
 - [[铁芯饱和|铁芯饱和]]
 - [[内部故障仿真|内部故障仿真]]

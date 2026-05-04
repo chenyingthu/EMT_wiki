@@ -55,11 +55,11 @@ sources: ["EMT_Doc/04/tpwrs.2012.2227845.pdf.pdf"]
 
 ## 使用的方法
 
-- [[methods/vector-fitting|矢量拟合]]
+- [[vector-fitting|矢量拟合]]
 - [[频率扫描|频率扫描]]
-- [[methods/companion-circuit|伴随电路法]]
+- [[companion-circuit|伴随电路法]]
 - [[傅里叶分析|傅里叶分析]]
-- [[methods/vector-fitting|有理函数逼近]]
+- [[vector-fitting|有理函数逼近]]
 
 ## 涉及的模型
 
@@ -68,15 +68,15 @@ sources: ["EMT_Doc/04/tpwrs.2012.2227845.pdf.pdf"]
 - [[fdne-model|FDNE]]
 - [[dlfe低频动态等值模型|DLFE低频动态等值模型]]
 - [[集电系统|集电系统]]
-- [[models/grid-side-converter|网侧变流器]]
+- [[grid-side-converter|网侧变流器]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态分析]]
+- [[emt-simulation|电磁暂态分析]]
 - [[动态等值|动态等值]]
-- [[topics/frequency-dependent-modeling|频率相关建模]]
-- [[topics/wind-farm-modeling|风电场建模]]
-- [[methods/model-order-reduction|降阶建模]]
+- [[frequency-dependent-modeling|频率相关建模]]
+- [[wind-farm-modeling|风电场建模]]
+- [[model-order-reduction|降阶建模]]
 - [[宽频带响应|宽频带响应]]
 
 ## 主要发现

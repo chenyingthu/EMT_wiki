@@ -64,18 +64,18 @@ sources: ["EMT_Doc/04/Wu 等 - 2017 - A Transformer Model With Hysteresis Charac
 ## 涉及的模型
 
 - [[三相变压器|三相变压器]]
-- [[models/transformer-model|换流变压器]]
-- [[models/transformer-model|非线性电感]]
+- [[transformer-model|换流变压器]]
+- [[transformer-model|非线性电感]]
 - [[bctran模型|BCTRAN模型]]
 - [[umec模型|UMEC模型]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[励磁涌流|励磁涌流]]
 - [[磁滞特性建模|磁滞特性建模]]
-- [[topics/vsc-hvdc|高压直流输电]]
-- [[methods/harmonic-analysis-methods|谐波分析]]
+- [[vsc-hvdc|高压直流输电]]
+- [[harmonic-analysis-methods|谐波分析]]
 
 ## 主要发现
 

@@ -61,7 +61,7 @@ sources: ["EMT_Doc/09/Alameri和Gomez - 2023 - Analytical and measurement-based 
 - [[拉普拉斯域分析|拉普拉斯域分析]]
 - [[模式平均法|模式平均法]]
 - [[双端口导纳建模|双端口导纳建模]]
-- [[methods/numerical-inverse-laplace-transform|数值拉普拉斯逆变换]]
+- [[numerical-inverse-laplace-transform|数值拉普拉斯逆变换]]
 - [[基于测量的模型重构|基于测量的模型重构]]
 
 ## 涉及的模型
@@ -73,9 +73,9 @@ sources: ["EMT_Doc/09/Alameri和Gomez - 2023 - Analytical and measurement-based 
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[methods/wideband-modeling|宽频建模]]
-- [[topics/frequency-domain-analysis|频域分析]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[wideband-modeling|宽频建模]]
+- [[frequency-domain-analysis|频域分析]]
 - [[电力电子变换器建模|电力电子变换器建模]]
 - [[导纳建模|导纳建模]]
 - [[分布式能源并网|分布式能源并网]]

@@ -373,11 +373,11 @@ fbus tbus r x b rateA rateB rateC ratio angle status
 | WECC 179 | 179 | 29 | 实际系统 |
 
 ## 相关测试系统
-- [[test-systems/ieee-14-bus-system]] - IEEE 14节点系统
-- [[test-systems/ieee-30-bus-system]] - IEEE 30节点系统
-- [[test-systems/ieee-57-bus-system]] - IEEE 57节点系统
-- [[test-systems/ieee-118-bus-system]] - IEEE 118节点系统
-- [[test-systems/wscc-9-bus-system]] - WSCC 9节点系统
+- [[ieee-14-bus-system]] - IEEE 14节点系统
+- [[ieee-30-bus-system]] - IEEE 30节点系统
+- [[ieee-57-bus-system]] - IEEE 57节点系统
+- [[ieee-118-bus-system]] - IEEE 118节点系统
+- [[wscc-9-bus-system]] - WSCC 9节点系统
 
 ## 参考文献
 

@@ -62,9 +62,9 @@ sources: ["EMT_Doc/25/Shu 等 - 2009 - Locating arc faults on coupling two paral
 ## 使用的方法
 
 
-- [[methods/modal-analysis|相模变换]]
+- [[modal-analysis|相模变换]]
 - [[时域算法|时域算法]]
-- [[methods/least-squares|最小二乘法]]
+- [[least-squares|最小二乘法]]
 - [[阻抗矩阵解耦|阻抗矩阵解耦]]
 
 
@@ -80,7 +80,7 @@ sources: ["EMT_Doc/25/Shu 等 - 2009 - Locating arc faults on coupling two paral
 
 
 - [[故障测距|故障测距]]
-- [[topics/emt-simulation|电磁暂态分析]]
+- [[emt-simulation|电磁暂态分析]]
 - [[线路解耦|线路解耦]]
 - [[电弧故障定位|电弧故障定位]]
 

@@ -60,7 +60,7 @@ sources: ["EMT_Doc/22/TPWRD.2018.2817878.pdf.pdf"]
 
 - [[状态空间平均法-ssa|状态空间平均法(SSA)]]
 - [[广义状态空间平均法-gssa|广义状态空间平均法(GSSA)]]
-- [[topics/dynamic-phasor|动态相量法]]
+- [[dynamic-phasor|动态相量法]]
 - [[混合平均建模|混合平均建模]]
 - [[时域开关级仿真|时域开关级仿真]]
 

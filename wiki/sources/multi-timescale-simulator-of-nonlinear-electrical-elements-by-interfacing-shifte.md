@@ -61,24 +61,24 @@ sources: ["EMT_Doc/27&28/Multi-timescale simulator of nonlinear electrical eleme
 - [[移位等效相量法-sep|移位等效相量法(SEP)]]
 - [[动态相量法-dp|动态相量法(DP)]]
 - [[牛顿-拉夫逊迭代|牛顿-拉夫逊迭代]]
-- [[methods/numerical-integration|梯形积分法]]
+- [[numerical-integration|梯形积分法]]
 - [[伴随模型法|伴随模型法]]
-- [[topics/co-simulation|混合仿真接口]]
+- [[co-simulation|混合仿真接口]]
 
 ## 涉及的模型
 
 - [[饱和变压器|饱和变压器]]
 - [[vsc-model|VSC]]
-- [[models/transformer-model|非线性电感]]
+- [[transformer-model|非线性电感]]
 - [[磁链控制非线性支路|磁链控制非线性支路]]
 
 ## 相关主题
 
 - [[多时间尺度仿真|多时间尺度仿真]]
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[非线性元件建模|非线性元件建模]]
 - [[包络跟踪|包络跟踪]]
-- [[methods/harmonic-analysis-methods|谐波分析]]
+- [[harmonic-analysis-methods|谐波分析]]
 - [[大步长仿真|大步长仿真]]
 
 ## 主要发现

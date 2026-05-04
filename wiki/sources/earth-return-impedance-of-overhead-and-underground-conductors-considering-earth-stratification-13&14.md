@@ -61,20 +61,20 @@ sources: ["EMT_Doc/13&14/files/TPWRS.2008.923816.pdf.pdf"]
 - [[赫兹矢量法|赫兹矢量法]]
 - [[电磁场解析法|电磁场解析法]]
 - [[互易定理|互易定理]]
-- [[methods/numerical-integration|数值积分法]]
+- [[numerical-integration|数值积分法]]
 - [[准tem模假设|准TEM模假设]]
 
 ## 涉及的模型
 
-- [[models/transmission-line-model|架空输电线路]]
-- [[models/cable-model|地下电缆]]
+- [[transmission-line-model|架空输电线路]]
+- [[cable-model|地下电缆]]
 - [[多层大地模型|多层大地模型]]
 - [[单芯电缆|单芯电缆]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态分析]]
-- [[models/transmission-line-model|输电线路建模]]
+- [[emt-simulation|电磁暂态分析]]
+- [[transmission-line-model|输电线路建模]]
 - [[大地返回阻抗|大地返回阻抗]]
 - [[非均匀土壤建模|非均匀土壤建模]]
 - [[频率相关参数|频率相关参数]]

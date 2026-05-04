@@ -59,24 +59,24 @@ sources: ["EMT_Doc/18/De Conti和Emídio - 2016 - Extension of a modal-domain tr
 ## 使用的方法
 
 - [[模态域建模|模态域建模]]
-- [[methods/vector-fitting|有理函数拟合]]
+- [[vector-fitting|有理函数拟合]]
 - [[接地导纳修正|接地导纳修正]]
 - [[地回路阻抗计算|地回路阻抗计算]]
-- [[topics/emt-simulation|时域仿真]]
+- [[emt-simulation|时域仿真]]
 
 ## 涉及的模型
 
 - [[架空配电线路|架空配电线路]]
-- [[models/grounding-system-model|频变土壤模型]]
+- [[grounding-system-model|频变土壤模型]]
 - [[marti线路模型|Marti线路模型]]
 - [[地回路阻抗模型|地回路阻抗模型]]
 
 ## 相关主题
 
 - [[频变土壤参数|频变土壤参数]]
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[topics/emt-simulation|高频暂态分析]]
-- [[models/transmission-line-model|输电线路建模]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|高频暂态分析]]
+- [[transmission-line-model|输电线路建模]]
 - [[不良导体接地效应|不良导体接地效应]]
 
 ## 主要发现

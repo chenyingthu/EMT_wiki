@@ -68,9 +68,9 @@ sources: ["EMT_Doc/39/tpwrd.2018.2875073.pdf.pdf"]
 
 ## 相关主题
 
-- [[models/mmc-model]]
-- [[topics/vsc-hvdc]]
-- [[topics/real-time-simulation]]
+- [[mmc-model]]
+- [[vsc-hvdc]]
+- [[real-time-simulation]]
 
 ## 主要发现
 

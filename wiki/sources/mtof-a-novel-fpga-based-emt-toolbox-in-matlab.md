@@ -58,26 +58,26 @@ MTOF的核心实现思路是把EMT数学模型先转成适合硬件流水/并行
 
 ## 使用的方法
 
-- [[methods/numerical-integration|梯形积分法]]
-- [[methods/nodal-analysis|节点分析法]]
+- [[numerical-integration|梯形积分法]]
+- [[nodal-analysis|节点分析法]]
 - [[行波法|行波法]]
 - [[浮点运算硬件映射|浮点运算硬件映射]]
-- [[methods/automatic-code-generation|自动代码生成]]
+- [[automatic-code-generation|自动代码生成]]
 
 ## 涉及的模型
 
 - [[rlc支路|RLC支路]]
 - [[三相变压器|三相变压器]]
 - [[分布参数输电线路|分布参数输电线路]]
-- [[models/synchronous-machine-model|同步电机]]
-- [[methods/nodal-analysis|节点导纳矩阵]]
+- [[synchronous-machine-model|同步电机]]
+- [[nodal-analysis|节点导纳矩阵]]
 
 ## 相关主题
 
-- [[topics/real-time-simulation|实时仿真]]
-- [[methods/fpga-real-time-simulation|FPGA硬件加速]]
-- [[methods/automatic-code-generation|自动代码生成]]
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[real-time-simulation|实时仿真]]
+- [[fpga-real-time-simulation|FPGA硬件加速]]
+- [[automatic-code-generation|自动代码生成]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[电力系统建模|电力系统建模]]
 
 ## 主要发现

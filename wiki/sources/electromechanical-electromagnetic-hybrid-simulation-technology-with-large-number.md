@@ -58,7 +58,7 @@ sources: ["EMT_Doc/17/Chen 等 - 2020 - Electromechanical-electromagnetic Hybrid
 
 ## 使用的方法
 
-- [[topics/electromechanical-electromagnetic-hybrid-simulation|机电-电磁混合仿真]]
+- [[electromechanical-electromagnetic-hybrid-simulation|机电-电磁混合仿真]]
 - [[数据映射拼接|数据映射拼接]]
 - [[内部潮流计算|内部潮流计算]]
 - [[工况自动调整与微调|工况自动调整与微调]]
@@ -67,16 +67,16 @@ sources: ["EMT_Doc/17/Chen 等 - 2020 - Electromechanical-electromagnetic Hybrid
 ## 涉及的模型
 
 - [[vsc-hvdc|VSC-HVDC]]
-- [[models/transformer-model|换流变压器]]
+- [[transformer-model|换流变压器]]
 - [[交流滤波器|交流滤波器]]
 - [[六脉冲换流器|六脉冲换流器]]
-- [[models/transmission-line-model|直流输电线路]]
+- [[transmission-line-model|直流输电线路]]
 - [[频率相关线路模型|频率相关线路模型]]
 - [[简化控制保护模型|简化控制保护模型]]
 
 ## 相关主题
 
-- [[topics/electromechanical-electromagnetic-hybrid-simulation|机电-电磁混合仿真]]
+- [[electromechanical-electromagnetic-hybrid-simulation|机电-电磁混合仿真]]
 - [[大规模交直流电网|大规模交直流电网]]
 - [[特高压直流输电|特高压直流输电]]
 - [[批量仿真计算|批量仿真计算]]

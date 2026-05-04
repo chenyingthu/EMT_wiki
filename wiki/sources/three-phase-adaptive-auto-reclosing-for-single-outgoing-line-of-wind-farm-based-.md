@@ -58,19 +58,19 @@ sources: ["EMT_Doc/37/TPWRD.2019.2956943.pdf.pdf"]
 
 ## 使用的方法
 
-- [[models/vsc-model]]
-- [[topics/parallel-computing]]
+- [[vsc-model]]
+- [[parallel-computing]]
 
 ## 涉及的模型
 
-- [[topics/wind-farm-modeling]]
-- [[models/transmission-line-model]]
+- [[wind-farm-modeling]]
+- [[transmission-line-model]]
 - [[vsc-model]]
 
 ## 相关主题
 
-- [[topics/wind-farm-modeling]]
-- [[models/transmission-line-model]]
+- [[wind-farm-modeling]]
+- [[transmission-line-model]]
 
 ## 主要发现
 

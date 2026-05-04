@@ -60,22 +60,22 @@ sources: ["EMT_Doc/24/Li 等 - 2016 - Influence of frequency characteristics of 
 
 - [[复返回平面法|复返回平面法]]
 - [[准模态法|准模态法]]
-- [[topics/frequency-dependent-modeling|频变参数建模]]
+- [[frequency-dependent-modeling|频变参数建模]]
 - [[宽带介电谱测量|宽带介电谱测量]]
 
 ## 涉及的模型
 
-- [[models/transmission-line-model|架空输电线路]]
+- [[transmission-line-model|架空输电线路]]
 - [[地回路模型|地回路模型]]
-- [[models/grounding-system-model|频变土壤模型]]
+- [[grounding-system-model|频变土壤模型]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态分析]]
-- [[topics/frequency-dependent-modeling|频率相关建模]]
+- [[emt-simulation|电磁暂态分析]]
+- [[frequency-dependent-modeling|频率相关建模]]
 - [[地回路参数|地回路参数]]
 - [[土壤频变特性|土壤频变特性]]
-- [[models/transmission-line-model|输电线路建模]]
+- [[transmission-line-model|输电线路建模]]
 
 ## 主要发现
 

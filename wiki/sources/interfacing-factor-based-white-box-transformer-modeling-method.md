@@ -59,7 +59,7 @@ sources: ["EMT_Doc/24/Gustavsen和Portillo - 2014 - Interfacing ${rm k}$-Factor 
 ## 使用的方法
 
 - [[状态方程法|状态方程法]]
-- [[methods/norton-equivalent|诺顿等效]]
+- [[norton-equivalent|诺顿等效]]
 - [[矩阵对角化|矩阵对角化]]
 - [[时域离散化|时域离散化]]
 - [[集中参数建模|集中参数建模]]

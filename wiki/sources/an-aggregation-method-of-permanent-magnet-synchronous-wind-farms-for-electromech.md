@@ -66,7 +66,7 @@ sources: ["EMT_Doc/06/Yang 等 - 2011 - An aggregation method of permanent magne
 
 ## 涉及的模型
 
-- [[models/pmsm-model|PMSG]]
+- [[pmsm-model|PMSG]]
 - [[全功率变流器|全功率变流器]]
 - [[升压变压器|升压变压器]]
 - [[集电线路|集电线路]]
@@ -75,8 +75,8 @@ sources: ["EMT_Doc/06/Yang 等 - 2011 - An aggregation method of permanent magne
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[topics/wind-farm-modeling|风电场建模]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[wind-farm-modeling|风电场建模]]
 - [[模型聚合|模型聚合]]
 - [[电网故障响应|电网故障响应]]
 - [[电压跌落分析|电压跌落分析]]

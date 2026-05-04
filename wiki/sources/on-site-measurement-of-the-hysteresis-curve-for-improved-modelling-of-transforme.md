@@ -65,7 +65,7 @@ sources: ["EMT_Doc/29/Velásquez 等 - 2023 - On-site measurement of the hystere
 
 ## 涉及的模型
 
-- [[models/transformer-model|电力变压器]]
+- [[transformer-model|电力变压器]]
 - [[t型等效电路模型|T型等效电路模型]]
 - [[磁滞饱和模型|磁滞饱和模型]]
 - [[单相低压变压器|单相低压变压器]]
@@ -73,11 +73,11 @@ sources: ["EMT_Doc/29/Velásquez 等 - 2023 - On-site measurement of the hystere
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[励磁涌流分析|励磁涌流分析]]
 - [[磁滞特性建模|磁滞特性建模]]
 - [[饱和曲线测量|饱和曲线测量]]
-- [[methods/harmonic-analysis-methods|谐波分析]]
+- [[harmonic-analysis-methods|谐波分析]]
 - [[现场测试|现场测试]]
 
 ## 主要发现

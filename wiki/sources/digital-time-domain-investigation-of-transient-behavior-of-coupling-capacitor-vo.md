@@ -74,7 +74,7 @@ sources: ["EMT_Doc/13&14/files/61.660947.pdf.pdf"]
 
 ## 相关主题
 
-- [[topics/ferroresonance|铁磁谐振]]
+- [[ferroresonance|铁磁谐振]]
 - [[暂态响应分析|暂态响应分析]]
 - [[频域灵敏度分析|频域灵敏度分析]]
 - [[继电保护影响评估|继电保护影响评估]]

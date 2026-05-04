@@ -62,15 +62,15 @@ sources: ["EMT_Doc/25/Verrax 等 - 2022 - Low-complexity graph-based traveling w
 - [[行波理论|行波理论]]
 - [[参数化建模|参数化建模]]
 - [[物理-行为联合建模|物理-行为联合建模]]
-- [[topics/frequency-domain-analysis|频域分析]]
+- [[frequency-domain-analysis|频域分析]]
 - [[emtp-rv仿真|EMTP-RV仿真]]
 
 ## 涉及的模型
 
 - [[混合输电线路|混合输电线路]]
-- [[models/transmission-line-model|架空线路]]
-- [[models/cable-model|地下电缆]]
-- [[topics/hybrid-acdc-network|多端直流电网]]
+- [[transmission-line-model|架空线路]]
+- [[cable-model|地下电缆]]
+- [[hybrid-acdc-network|多端直流电网]]
 - [[故障等效模型|故障等效模型]]
 
 ## 相关主题

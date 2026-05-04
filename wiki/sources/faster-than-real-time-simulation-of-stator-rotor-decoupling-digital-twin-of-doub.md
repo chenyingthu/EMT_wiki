@@ -63,7 +63,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/Chen 等 - 2023 - Faster-than-real-t
 
 
 - [[虚拟电容等效法|虚拟电容等效法]]
-- [[topics/parallel-computing|并行计算]]
+- [[parallel-computing|并行计算]]
 - [[流水线优化|流水线优化]]
 - [[中点积分法|中点积分法]]
 - [[verilog硬件描述|Verilog硬件描述]]
@@ -81,12 +81,12 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/Chen 等 - 2023 - Faster-than-real-t
 ## 相关主题
 
 
-- [[topics/real-time-simulation|超实时仿真]]
-- [[topics/parallel-computing|并行计算]]
+- [[real-time-simulation|超实时仿真]]
+- [[parallel-computing|并行计算]]
 - [[fpga加速|FPGA加速]]
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[数字孪生|数字孪生]]
-- [[topics/wind-farm-modeling|风电场建模]]
+- [[wind-farm-modeling|风电场建模]]
 
 
 ## 主要发现

@@ -59,10 +59,10 @@ sources: ["EMT_Doc/10/Bruned 等 - 2026 - Co-simulation and compensation method 
 ## 使用的方法
 
 - [[补偿法-cm|补偿法(CM)]]
-- [[methods/nodal-analysis|改进增广节点分析法(MANA)]]
+- [[nodal-analysis|改进增广节点分析法(MANA)]]
 - [[功能模型接口-fmi|功能模型接口(FMI)]]
-- [[methods/numerical-integration|梯形积分法]]
-- [[methods/nodal-analysis|牛顿迭代法]]
+- [[numerical-integration|梯形积分法]]
+- [[nodal-analysis|牛顿迭代法]]
 - [[单边框块对角分解-sbbd|单边框块对角分解(SBBD)]]
 - [[自适应步长与阶数控制|自适应步长与阶数控制]]
 
@@ -71,16 +71,16 @@ sources: ["EMT_Doc/10/Bruned 等 - 2026 - Co-simulation and compensation method 
 - [[逆变器接口资源-ibr|逆变器接口资源(IBR)]]
 - [[输电线路模型|输电线路模型]]
 - [[非线性设备模型|非线性设备模型]]
-- [[methods/nodal-analysis|戴维南等效电路]]
+- [[nodal-analysis|戴维南等效电路]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[topics/co-simulation|协同仿真]]
-- [[topics/parallel-computing|并行计算]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[co-simulation|协同仿真]]
+- [[parallel-computing|并行计算]]
 - [[无延迟网络解耦|无延迟网络解耦]]
 - [[逆变器并网系统|逆变器并网系统]]
-- [[topics/large-scale-grid-simulation|大规模电网仿真]]
+- [[large-scale-grid-simulation|大规模电网仿真]]
 
 ## 主要发现
 

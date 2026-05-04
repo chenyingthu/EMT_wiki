@@ -73,9 +73,9 @@ sources: ["EMT_Doc/27&28/Multilayer Earth Structure Approximation by a Homogeneo
 ## 相关主题
 
 - [[地回路阻抗计算|地回路阻抗计算]]
-- [[topics/frequency-dependent-modeling|频率相关建模]]
+- [[frequency-dependent-modeling|频率相关建模]]
 - [[土壤电导率建模|土壤电导率建模]]
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[输电线路参数计算|输电线路参数计算]]
 
 ## 主要发现

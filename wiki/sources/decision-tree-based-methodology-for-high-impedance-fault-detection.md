@@ -61,24 +61,24 @@ sources: ["EMT_Doc/12/Decision_tree-based_methodology_for_high_impedance_fault_d
 - [[决策树算法-cart|决策树算法(CART)]]
 - [[快速傅里叶变换-fft|快速傅里叶变换(FFT)]]
 - [[滑动窗口特征提取|滑动窗口特征提取]]
-- [[entities/atp-emtp|EMTP电磁暂态仿真]]
+- [[atp-emtp|EMTP电磁暂态仿真]]
 - [[bctran参数计算|BCTRAN参数计算]]
 
 ## 涉及的模型
 
 - [[高阻故障-hif-电弧模型|高阻故障(HIF)电弧模型]]
 - [[配电系统|配电系统]]
-- [[models/transformer-model|变压器]]
-- [[models/transmission-line-model|输电线路]]
+- [[transformer-model|变压器]]
+- [[transmission-line-model|输电线路]]
 - [[并联电容器|并联电容器]]
 - [[工业负荷|工业负荷]]
 
 ## 相关主题
 
 - [[高阻故障检测|高阻故障检测]]
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[methods/harmonic-analysis-methods|谐波分析]]
-- [[topics/protection-system|继电保护]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[harmonic-analysis-methods|谐波分析]]
+- [[protection-system|继电保护]]
 - [[模式识别|模式识别]]
 - [[配电系统暂态分析|配电系统暂态分析]]
 

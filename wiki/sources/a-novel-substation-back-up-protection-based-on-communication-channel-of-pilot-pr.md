@@ -55,7 +55,7 @@ sources: ["EMT_Doc/03/PESMG.2013.6672207.pdf.pdf"]
 
 ## 使用的方法
 
-- [[entities/pscad-emtdc|PSCAD/EMTDC电磁暂态仿真]]
+- [[pscad-emtdc|PSCAD/EMTDC电磁暂态仿真]]
 - [[逻辑决策算法|逻辑决策算法]]
 - [[两阶段故障检测|两阶段故障检测]]
 - [[距离保护整定配合|距离保护整定配合]]

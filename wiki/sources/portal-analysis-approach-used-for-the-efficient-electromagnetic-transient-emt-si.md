@@ -61,24 +61,24 @@ sources: ["EMT_Doc/31/Gao 等 - 2023 - Portal Analysis Approach Used for the Eff
 - [[端口分析法|端口分析法]]
 - [[端口撕裂法|端口撕裂法]]
 - [[块对角加边矩阵分解|块对角加边矩阵分解]]
-- [[topics/parallel-computing|并行计算]]
-- [[methods/nodal-analysis|节点分析法]]
+- [[parallel-computing|并行计算]]
+- [[nodal-analysis|节点分析法]]
 
 ## 涉及的模型
 
 - [[dab变换器|DAB变换器]]
 - [[chb-dab|CHB-DAB]]
-- [[topics/pv-power-plant|光伏系统]]
+- [[pv-power-plant|光伏系统]]
 - [[储能系统|储能系统]]
 - [[vsc-model|VSC]]
 - [[mmc-model|MMC]]
-- [[topics/power-electronics|电力电子变压器]]
+- [[power-electronics|电力电子变压器]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[电力电子系统建模|电力电子系统建模]]
-- [[topics/parallel-computing|并行计算]]
+- [[parallel-computing|并行计算]]
 - [[电路网络划分|电路网络划分]]
 - [[微电网仿真|微电网仿真]]
 

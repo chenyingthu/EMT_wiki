@@ -66,7 +66,7 @@ sources: ["EMT_Doc/12/1-s2.0-S0378779621001346-main.pdf"]
 
 ## 涉及的模型
 
-- [[models/transformer-model|电力变压器]]
+- [[transformer-model|电力变压器]]
 - [[ynd11变压器|Ynd11变压器]]
 - [[t型等效模型|T型等效模型]]
 - [[非线性励磁电感|非线性励磁电感]]

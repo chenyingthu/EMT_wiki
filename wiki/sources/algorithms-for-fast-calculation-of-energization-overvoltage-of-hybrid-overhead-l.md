@@ -58,7 +58,7 @@ sources: ["EMT_Doc/06/Huang和Vittal - 2018 - Advanced EMT and Phasor-Domain Hyb
 
 ## 使用的方法
 
-- [[methods/modal-analysis|相模变换]]
+- [[modal-analysis|相模变换]]
 - [[数值拉普拉斯逆变换-nilt|数值拉普拉斯逆变换(NILT)]]
 - [[全频域参数计算|全频域参数计算]]
 - [[复频域边界条件推导|复频域边界条件推导]]
@@ -75,8 +75,8 @@ sources: ["EMT_Doc/06/Huang和Vittal - 2018 - Advanced EMT and Phasor-Domain Hyb
 ## 相关主题
 
 - [[合闸过电压计算|合闸过电压计算]]
-- [[topics/frequency-dependent-modeling|频率相关建模]]
-- [[topics/parallel-computing|电磁暂态仿真加速]]
+- [[frequency-dependent-modeling|频率相关建模]]
+- [[parallel-computing|电磁暂态仿真加速]]
 - [[输电线路模态分析|输电线路模态分析]]
 - [[复频域时域转换|复频域时域转换]]
 

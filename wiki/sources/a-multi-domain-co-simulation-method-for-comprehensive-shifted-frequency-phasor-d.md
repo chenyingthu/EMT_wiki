@@ -58,7 +58,7 @@ sources: ["EMT_Doc/02/Shu 等 - 2019 - A Multi-Domain Co-Simulation Method for C
 - [[移频相量法|移频相量法]]
 - [[多域协同仿真|多域协同仿真]]
 - [[混合多域传输线模型接口|混合多域传输线模型接口]]
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[系统分区解耦|系统分区解耦]]
 
 ## 涉及的模型
@@ -66,8 +66,8 @@ sources: ["EMT_Doc/02/Shu 等 - 2019 - A Multi-Domain Co-Simulation Method for C
 - [[sfp模型|SFP模型]]
 - [[emt模型|EMT模型]]
 - [[mmc-model|MMC]]
-- [[topics/hybrid-acdc-network|多端直流电网]]
-- [[topics/large-scale-grid-simulation|交流电网]]
+- [[hybrid-acdc-network|多端直流电网]]
+- [[large-scale-grid-simulation|交流电网]]
 - [[cigre交直流测试系统|CIGRE交直流测试系统]]
 
 ## 相关主题

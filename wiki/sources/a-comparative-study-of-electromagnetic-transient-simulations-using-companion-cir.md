@@ -58,25 +58,25 @@ sources: ["EMT_Doc/01/Sinkar 等 - 2021 - A Comparative Study of Electromagnetic
 
 ## 使用的方法
 
-- [[methods/companion-circuit|伴随电路法]]
+- [[companion-circuit|伴随电路法]]
 - [[描述符状态空间方程|描述符状态空间方程]]
 - [[修正节点分析|修正节点分析]]
-- [[methods/numerical-integration|梯形积分法]]
+- [[numerical-integration|梯形积分法]]
 - [[并行接口技术|并行接口技术]]
 
 ## 涉及的模型
 
 - [[集中参数rlc元件|集中参数RLC元件]]
 - [[独立电压-电流源|独立电压/电流源]]
-- [[test-systems/ieee-39-bus-system|IEEE 39节点系统]]
+- [[ieee-39-bus-system|IEEE 39节点系统]]
 - [[vsc-hvdc|VSC-HVDC]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[网络方程建模|网络方程建模]]
-- [[topics/co-simulation|混合仿真接口]]
-- [[topics/parallel-computing|并行计算]]
+- [[co-simulation|混合仿真接口]]
+- [[parallel-computing|并行计算]]
 - [[系统特征值分析|系统特征值分析]]
 
 ## 主要发现

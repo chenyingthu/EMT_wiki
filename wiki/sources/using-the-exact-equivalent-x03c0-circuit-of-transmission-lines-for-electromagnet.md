@@ -63,13 +63,13 @@ sources: ["EMT_Doc/39/Juan Robles Balestero 等 - 2022 - Using the Exact Equival
 
 ## 涉及的模型
 
-- [[models/transmission-line-model]]
+- [[transmission-line-model]]
 - [[network-equivalent]]
 
 ## 相关主题
 
-- [[topics/frequency-dependent-modeling]]
-- [[methods/harmonic-analysis-methods]]
+- [[frequency-dependent-modeling]]
+- [[harmonic-analysis-methods]]
 
 ## 主要发现
 

@@ -67,17 +67,17 @@ sources: ["EMT_Doc/15/Electro-mechanical transient modeling of MMC based multi-t
 ## 涉及的模型
 
 - [[mmc-model|MMC]]
-- [[topics/hybrid-acdc-network|MTDC]]
+- [[hybrid-acdc-network|MTDC]]
 - [[ieee-39节点交流系统|IEEE 39节点交流系统]]
 - [[直流线路|直流线路]]
 - [[接地短路故障模型|接地短路故障模型]]
 
 ## 相关主题
 
-- [[topics/electromechanical-transient|机电暂态建模]]
+- [[electromechanical-transient|机电暂态建模]]
 - [[直流故障仿真|直流故障仿真]]
-- [[topics/electromechanical-transient|暂态稳定分析]]
-- [[topics/hybrid-acdc-system|交直流混合系统]]
+- [[electromechanical-transient|暂态稳定分析]]
+- [[hybrid-acdc-system|交直流混合系统]]
 - [[多端高压直流输电|多端高压直流输电]]
 
 ## 主要发现

@@ -67,13 +67,13 @@ sources: ["EMT_Doc/25/Sun 等 - 2024 - Inverter-Based Resources Model Verificati
 ## 涉及的模型
 
 - [[ibr-逆变器型资源|IBR（逆变器型资源）]]
-- [[topics/emt-simulation|电磁暂态模型]]
+- [[emt-simulation|电磁暂态模型]]
 - [[输电线路与变压器|输电线路与变压器]]
 
 ## 相关主题
 
 - [[模型验证|模型验证]]
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[回放仿真|回放仿真]]
 - [[新能源并网建模|新能源并网建模]]
 - [[实测数据驱动|实测数据驱动]]

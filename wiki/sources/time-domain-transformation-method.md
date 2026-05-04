@@ -62,18 +62,18 @@ sources: ["EMT_Doc/37/tpwrs.2012.2188913.pdf.pdf"]
 - [[numerical-integration]]
 - [[nodal-analysis]]
 - [[co-simulation]]
-- [[topics/parallel-computing]]
+- [[parallel-computing]]
 
 ## 涉及的模型
 
-- [[models/fdne-model]]
+- [[fdne-model]]
 - [[network-equivalent]]
 
 ## 相关主题
 
-- [[topics/real-time-simulation]]
-- [[methods/harmonic-analysis-methods]]
-- [[topics/frequency-dependent-modeling]]
+- [[real-time-simulation]]
+- [[harmonic-analysis-methods]]
+- [[frequency-dependent-modeling]]
 
 ## 主要发现
 

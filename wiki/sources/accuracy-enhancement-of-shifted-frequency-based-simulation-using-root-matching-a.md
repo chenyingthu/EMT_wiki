@@ -61,25 +61,25 @@ sources: ["EMT_Doc/05/Gao 等 - 2023 - Accuracy Enhancement of Shifted Frequency
 - [[移频电磁暂态仿真|移频电磁暂态仿真]]
 - [[根匹配法|根匹配法]]
 - [[嵌入式小步长|嵌入式小步长]]
-- [[methods/hilbert-transform|希尔伯特变换]]
-- [[methods/numerical-integration|梯形积分法]]
+- [[hilbert-transform|希尔伯特变换]]
+- [[numerical-integration|梯形积分法]]
 
 ## 涉及的模型
 
-- [[models/synchronous-machine-model|同步电机]]
-- [[models/induction-machine-model|感应电机]]
-- [[models/transformer-model|变压器]]
-- [[models/transmission-line-model|输电线路]]
-- [[models/cable-model|电缆]]
+- [[synchronous-machine-model|同步电机]]
+- [[induction-machine-model|感应电机]]
+- [[transformer-model|变压器]]
+- [[transmission-line-model|输电线路]]
+- [[cable-model|电缆]]
 - [[风电机组|风电机组]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[大时间步仿真|大时间步仿真]]
 - [[移频技术|移频技术]]
 - [[突变场景精度分析|突变场景精度分析]]
-- [[methods/numerical-integration|数值积分误差]]
+- [[numerical-integration|数值积分误差]]
 
 ## 主要发现
 

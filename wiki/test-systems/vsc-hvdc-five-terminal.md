@@ -804,7 +804,7 @@ mpc.branchdc = [
 
 ### 相关测试系统
 - [[ieee-39-bus-system]] - IEEE 39节点交流系统(可接口研究)
-- [[test-systems/ieee-14-bus-system]] - IEEE 14节点小型测试系统
+- [[ieee-14-bus-system]] - IEEE 14节点小型测试系统
 - [[cigre-mtdc-three-terminal]] - CIGRE三端MTDC系统
 - [[zhangbei-four-terminal]] - 张北四端柔性直流工程
 

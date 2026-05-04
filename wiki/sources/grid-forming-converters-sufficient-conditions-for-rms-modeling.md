@@ -74,11 +74,11 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/j.epsr.2021.107324.pdf.pdf"]
 ## 相关主题
 
 - [[rms建模|RMS建模]]
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[methods/grid-forming-control|构网型控制]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[grid-forming-control|构网型控制]]
 - [[低惯量系统|低惯量系统]]
 - [[时间尺度分离|时间尺度分离]]
-- [[methods/small-signal-analysis|稳定性分析]]
+- [[small-signal-analysis|稳定性分析]]
 
 ## 主要发现
 

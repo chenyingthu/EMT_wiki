@@ -58,25 +58,25 @@ sources: ["EMT_Doc/26/Herath 等 - 2019 - Modeling of a Modular Multilevel Conve
 
 ## 使用的方法
 
-- [[methods/nodal-analysis|戴维南等效]]
-- [[methods/nodal-analysis|节点分析法]]
-- [[methods/average-value-model|详细等效模型]]
+- [[nodal-analysis|戴维南等效]]
+- [[nodal-analysis|节点分析法]]
+- [[average-value-model|详细等效模型]]
 - [[最近电平控制|最近电平控制]]
 - [[状态均衡控制|状态均衡控制]]
 
 ## 涉及的模型
 
 - [[mmc-model|MMC]]
-- [[models/bess-model|电池储能系统]]
-- [[models/mmc-model|子模块]]
+- [[bess-model|电池储能系统]]
+- [[mmc-model|子模块]]
 - [[双向dc-dc变换器|双向DC-DC变换器]]
-- [[models/detailed-switch-model|详细开关模型]]
+- [[detailed-switch-model|详细开关模型]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[储能集成建模|储能集成建模]]
-- [[topics/large-scale-system-simulation|计算效率优化]]
+- [[large-scale-system-simulation|计算效率优化]]
 - [[电力电子变换器建模|电力电子变换器建模]]
 - [[详细等效建模|详细等效建模]]
 

@@ -66,18 +66,18 @@ sources: ["EMT_Doc/13&14/files/j.ijepes.2020.106163.pdf.pdf"]
 
 ## 涉及的模型
 
-- [[models/cable-model|地下电缆]]
-- [[models/cross-bonded-cable|交叉互联电缆]]
-- [[models/grounding-system-model|频变土壤模型]]
+- [[cable-model|地下电缆]]
+- [[cross-bonded-cable|交叉互联电缆]]
+- [[grounding-system-model|频变土壤模型]]
 - [[恒定土壤模型|恒定土壤模型]]
 - [[大地返回阻抗模型|大地返回阻抗模型]]
 
 ## 相关主题
 
-- [[topics/frequency-dependent-modeling|频率相关建模]]
-- [[models/transmission-line-model|波传播特性]]
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[models/cable-model|地下电缆建模]]
+- [[frequency-dependent-modeling|频率相关建模]]
+- [[transmission-line-model|波传播特性]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[cable-model|地下电缆建模]]
 - [[大地返回参数计算|大地返回参数计算]]
 - [[浪涌分析|浪涌分析]]
 

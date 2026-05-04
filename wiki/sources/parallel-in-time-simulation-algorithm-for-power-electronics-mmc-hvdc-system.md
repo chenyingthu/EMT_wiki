@@ -61,8 +61,8 @@ sources: ["EMT_Doc/30/JESTPE.2019.2947411.pdf.pdf"]
 - [[时间并行算法|时间并行算法]]
 - [[多重网格时间缩减法-mgrit|多重网格时间缩减法(MGRIT)]]
 - [[parareal算法|Parareal算法]]
-- [[methods/average-value-model|平均值模型]]
-- [[models/detailed-switch-model|详细开关模型]]
+- [[average-value-model|平均值模型]]
+- [[detailed-switch-model|详细开关模型]]
 - [[多时间步长迭代|多时间步长迭代]]
 
 ## 涉及的模型
@@ -74,8 +74,8 @@ sources: ["EMT_Doc/30/JESTPE.2019.2947411.pdf.pdf"]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[topics/parallel-computing|并行计算]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[parallel-computing|并行计算]]
 - [[时间并行仿真|时间并行仿真]]
 - [[电力电子系统加速|电力电子系统加速]]
 - [[多电平换流器建模|多电平换流器建模]]

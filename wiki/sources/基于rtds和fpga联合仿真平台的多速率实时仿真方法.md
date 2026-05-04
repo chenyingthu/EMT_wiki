@@ -72,11 +72,11 @@ sources: ["EMT_Doc/27&28/Multi-rate real-time simulation method based on RTDS an
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[topics/real-time-simulation|实时仿真]]
-- [[methods/multirate-method|多速率仿真]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[real-time-simulation|实时仿真]]
+- [[multirate-method|多速率仿真]]
 - [[分布式电源并网|分布式电源并网]]
-- [[topics/co-simulation|联合仿真]]
+- [[co-simulation|联合仿真]]
 - [[通信延迟补偿|通信延迟补偿]]
 
 ## 主要发现

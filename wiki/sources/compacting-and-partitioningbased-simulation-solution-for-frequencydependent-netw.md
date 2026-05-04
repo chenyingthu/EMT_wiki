@@ -58,25 +58,25 @@ sources: ["EMT_Doc/10/Hu 等 - 2015 - Compacting and partitioning-based simulati
 
 ## 使用的方法
 
-- [[methods/vector-fitting|矢量拟合]]
+- [[vector-fitting|矢量拟合]]
 - [[奇异值分解|奇异值分解]]
-- [[methods/state-space-method|状态空间实现]]
-- [[methods/numerical-integration|梯形积分法]]
-- [[topics/parallel-computing|并行计算]]
+- [[state-space-method|状态空间实现]]
+- [[numerical-integration|梯形积分法]]
+- [[parallel-computing|并行计算]]
 - [[模型压缩|模型压缩]]
 
 ## 涉及的模型
 
 - [[fdne-model|FDNE]]
 - [[有理函数模型|有理函数模型]]
-- [[methods/state-space-method|状态空间模型]]
+- [[state-space-method|状态空间模型]]
 
 ## 相关主题
 
-- [[topics/real-time-simulation|实时仿真]]
-- [[topics/parallel-computing|并行计算]]
-- [[topics/frequency-dependent-modeling|频率相关建模]]
-- [[topics/network-equivalent|网络等值]]
+- [[real-time-simulation|实时仿真]]
+- [[parallel-computing|并行计算]]
+- [[frequency-dependent-modeling|频率相关建模]]
+- [[network-equivalent|网络等值]]
 - [[计算加速|计算加速]]
 
 ## 主要发现

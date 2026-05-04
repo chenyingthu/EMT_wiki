@@ -75,10 +75,10 @@ sources: ["EMT_Doc/05/j.ijepes.2018.11.016.pdf.pdf"]
 
 ## 相关主题
 
-- [[topics/ferroresonance|铁磁谐振]]
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[ferroresonance|铁磁谐振]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[变压器非线性建模|变压器非线性建模]]
-- [[methods/switch-modeling|开关暂态]]
+- [[switch-modeling|开关暂态]]
 - [[emtp-atp|EMTP-ATP]]
 
 ## 主要发现

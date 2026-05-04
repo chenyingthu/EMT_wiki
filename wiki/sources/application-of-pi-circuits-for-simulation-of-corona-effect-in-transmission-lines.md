@@ -58,26 +58,26 @@ sources: ["EMT_Doc/09/Lessa 等 - 2012 - Application of π circuits for simulati
 
 ## 使用的方法
 
-- [[methods/state-space-method|状态变量法]]
-- [[methods/numerical-integration|梯形积分法]]
+- [[state-space-method|状态变量法]]
+- [[numerical-integration|梯形积分法]]
 - [[π型电路级联|π型电路级联]]
 - [[并联rl支路频率拟合|并联RL支路频率拟合]]
 - [[矩阵数值求解|矩阵数值求解]]
 
 ## 涉及的模型
 
-- [[models/transmission-line-model|输电线路]]
+- [[transmission-line-model|输电线路]]
 - [[π型等效电路|π型等效电路]]
 - [[电晕效应模型|电晕效应模型]]
 - [[频变参数模型|频变参数模型]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[行波分析|行波分析]]
-- [[topics/frequency-dependent-modeling|频率相关建模]]
-- [[methods/numerical-integration|数值振荡抑制]]
-- [[models/transmission-line-model|输电线路建模]]
+- [[frequency-dependent-modeling|频率相关建模]]
+- [[numerical-integration|数值振荡抑制]]
+- [[transmission-line-model|输电线路建模]]
 
 ## 主要发现
 

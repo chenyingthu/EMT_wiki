@@ -58,18 +58,18 @@ sources: ["EMT_Doc/35/Xu 等 - 2025 - Simplified EMT Model of Multiple-Active-Br
 
 ## 使用的方法
 
-- [[methods/state-space-method]]
+- [[state-space-method]]
 - [[average-value-model]]
 - [[nodal-analysis]]
 
 ## 涉及的模型
 
-- [[models/transformer-model]]
+- [[transformer-model]]
 - [[mmc-model]]
 
 ## 相关主题
 
-- [[methods/harmonic-analysis-methods]]
+- [[harmonic-analysis-methods]]
 - [[network-equivalent]]
 - [[dynamic-phasor]]
 

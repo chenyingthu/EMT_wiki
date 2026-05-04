@@ -58,19 +58,19 @@ sources: ["EMT_Doc/34/tpwrd.2009.2035916.pdf.pdf"]
 
 ## 使用的方法
 
-- [[methods/passivity-enforcement]]
+- [[passivity-enforcement]]
 - [[vector-fitting]]
-- [[topics/frequency-dependent-modeling]]
+- [[frequency-dependent-modeling]]
 
 ## 涉及的模型
 
-- [[models/transmission-line-model]]
-- [[models/cable-model]]
+- [[transmission-line-model]]
+- [[cable-model]]
 
 ## 相关主题
 
-- [[topics/vsc-hvdc]]
-- [[methods/passivity-enforcement]]
+- [[vsc-hvdc]]
+- [[passivity-enforcement]]
 
 ## 主要发现
 

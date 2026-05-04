@@ -58,7 +58,7 @@ sources: ["EMT_Doc/27&28/Multi-rate real time hybrid simulation of controllable 
 
 ## 使用的方法
 
-- [[methods/multirate-method|多速率仿真]]
+- [[multirate-method|多速率仿真]]
 - [[cpu-fpga协同仿真|CPU-FPGA协同仿真]]
 - [[离散电感解耦法|离散电感解耦法]]
 - [[关联离散电路模型|关联离散电路模型]]
@@ -70,17 +70,17 @@ sources: ["EMT_Doc/27&28/Multi-rate real time hybrid simulation of controllable 
 - [[lcc-model|LCC]]
 - [[igbt阀组|IGBT阀组]]
 - [[晶闸管阀组|晶闸管阀组]]
-- [[models/transmission-line-model|直流输电线路]]
+- [[transmission-line-model|直流输电线路]]
 - [[金属氧化物避雷器|金属氧化物避雷器]]
 
 ## 相关主题
 
-- [[topics/real-time-simulation|实时仿真]]
-- [[topics/co-simulation|混合仿真]]
-- [[methods/multirate-method|多速率仿真]]
+- [[real-time-simulation|实时仿真]]
+- [[co-simulation|混合仿真]]
+- [[multirate-method|多速率仿真]]
 - [[异构并行计算|异构并行计算]]
 - [[高压直流输电建模|高压直流输电建模]]
-- [[topics/emt-simulation|开关暂态分析]]
+- [[emt-simulation|开关暂态分析]]
 
 ## 主要发现
 

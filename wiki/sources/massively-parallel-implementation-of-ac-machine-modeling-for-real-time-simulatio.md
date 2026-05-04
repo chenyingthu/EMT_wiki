@@ -60,24 +60,24 @@ sources: ["EMT_Doc/25/Matar和Iravani - 2011 - Massively parallel implementation
 
 - [[dq0变换模型|dq0变换模型]]
 - [[单步延迟接口法|单步延迟接口法]]
-- [[topics/parallel-computing|并行计算]]
-- [[methods/fpga-real-time-simulation|FPGA硬件实现]]
+- [[parallel-computing|并行计算]]
+- [[fpga-real-time-simulation|FPGA硬件实现]]
 - [[常数电感矩阵离散化|常数电感矩阵离散化]]
 
 ## 涉及的模型
 
 - [[pmsm-model|PMSM]]
-- [[models/induction-machine-model|感应电机]]
-- [[models/synchronous-machine-model|同步电机]]
+- [[induction-machine-model|感应电机]]
+- [[synchronous-machine-model|同步电机]]
 - [[双馈异步电机|双馈异步电机]]
 - [[机电耦合模型|机电耦合模型]]
 
 ## 相关主题
 
-- [[topics/real-time-simulation|实时仿真]]
-- [[topics/parallel-computing|并行计算]]
+- [[real-time-simulation|实时仿真]]
+- [[parallel-computing|并行计算]]
 - [[fpga仿真|FPGA仿真]]
-- [[topics/emt-simulation|电磁暂态]]
+- [[emt-simulation|电磁暂态]]
 - [[模型解耦|模型解耦]]
 
 ## 主要发现

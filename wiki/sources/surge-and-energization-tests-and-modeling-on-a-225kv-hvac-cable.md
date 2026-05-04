@@ -60,7 +60,7 @@ sources: ["EMT_Doc/37/j.epsr.2018.03.003.pdf.pdf"]
 
 - [[现场浪涌测试-surge-tests|现场浪涌测试（Surge tests）]]
 - [[现场投切测试-energization-tests|现场投切测试（Energization tests）]]
-- [[entities/atp-emtp|EMTP电磁暂态仿真]]
+- [[atp-emtp|EMTP电磁暂态仿真]]
 - [[详细分段建模与均匀等效简化建模对比分析|详细分段建模与均匀等效简化建模对比分析]]
 
 ## 涉及的模型

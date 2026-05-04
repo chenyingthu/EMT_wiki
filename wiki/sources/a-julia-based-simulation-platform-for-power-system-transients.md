@@ -58,31 +58,31 @@ sources: ["EMT_Doc/02/Naidjate 等 - 2025 - A Julia-Based Simulation Platform fo
 
 ## 使用的方法
 
-- [[methods/nodal-analysis|改进增广节点分析法(MANA)]]
-- [[methods/numerical-integration|梯形积分法]]
-- [[methods/nodal-analysis|牛顿迭代法]]
+- [[nodal-analysis|改进增广节点分析法(MANA)]]
+- [[numerical-integration|梯形积分法]]
+- [[nodal-analysis|牛顿迭代法]]
 - [[分段线性化|分段线性化]]
-- [[methods/sparse-matrix-solver|稀疏矩阵求解]]
-- [[topics/parallel-computing|并行计算]]
+- [[sparse-matrix-solver|稀疏矩阵求解]]
+- [[parallel-computing|并行计算]]
 - [[符号分解优化|符号分解优化]]
 
 ## 涉及的模型
 
 - [[rlc支路|RLC支路]]
 - [[理想变压器|理想变压器]]
-- [[models/transformer-model|非线性电感]]
+- [[transformer-model|非线性电感]]
 - [[非线性电阻|非线性电阻]]
-- [[models/transmission-line-model|输电线路]]
-- [[models/synchronous-machine-model|同步电机]]
+- [[transmission-line-model|输电线路]]
+- [[synchronous-machine-model|同步电机]]
 - [[同步电机控制系统|同步电机控制系统]]
 - [[开关|开关]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[topics/parallel-computing|高性能计算]]
-- [[topics/parallel-computing|并行计算]]
-- [[methods/nodal-analysis|网络方程求解]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[parallel-computing|高性能计算]]
+- [[parallel-computing|并行计算]]
+- [[nodal-analysis|网络方程求解]]
 - [[电力系统暂态分析|电力系统暂态分析]]
 
 ## 主要发现

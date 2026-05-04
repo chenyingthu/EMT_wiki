@@ -68,10 +68,10 @@ sources: ["EMT_Doc/06/Ranasinghe 等 - 2024 - Advanced DSOGI PLL with Adaptive B
 
 ## 涉及的模型
 
-- [[models/gfl-inverter-model|并网逆变器]]
-- [[topics/pv-power-plant|光伏系统]]
+- [[gfl-inverter-model|并网逆变器]]
+- [[pv-power-plant|光伏系统]]
 - [[弱电网|弱电网]]
-- [[topics/transmission-network|输电网络]]
+- [[transmission-network|输电网络]]
 - [[dsogi-pll模型|DSOGI-PLL模型]]
 - [[srf-pll模型|SRF-PLL模型]]
 
@@ -82,7 +82,7 @@ sources: ["EMT_Doc/06/Ranasinghe 等 - 2024 - Advanced DSOGI PLL with Adaptive B
 - [[暂态稳定性|暂态稳定性]]
 - [[故障穿越|故障穿越]]
 - [[逆变器控制|逆变器控制]]
-- [[topics/renewable-energy-integration|新能源并网]]
+- [[renewable-energy-integration|新能源并网]]
 
 ## 主要发现
 

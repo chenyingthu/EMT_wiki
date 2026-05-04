@@ -58,31 +58,31 @@ sources: ["EMT_Doc/12/Damping_of_Subsynchronous_Control_Interactions_in_Large-Sc
 
 ## 使用的方法
 
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[topics/electromechanical-transient|机电暂态仿真]]
-- [[topics/co-simulation|混合仿真]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[electromechanical-transient|机电暂态仿真]]
+- [[co-simulation|混合仿真]]
 - [[fpga硬件仿真|FPGA硬件仿真]]
-- [[topics/parallel-computing|并行计算]]
-- [[methods/eigenvalue-analysis|特征值分析]]
+- [[parallel-computing|并行计算]]
+- [[eigenvalue-analysis|特征值分析]]
 - [[功率-电压接口|功率-电压接口]]
 
 ## 涉及的模型
 
-- [[topics/pv-power-plant|光伏电站]]
-- [[models/vsc-model|电压源换流器]]
-- [[topics/large-scale-grid-simulation|交流电网]]
+- [[pv-power-plant|光伏电站]]
+- [[vsc-model|电压源换流器]]
+- [[large-scale-grid-simulation|交流电网]]
 - [[串联补偿输电线路|串联补偿输电线路]]
 - [[pv-statcom|PV-STATCOM]]
 
 ## 相关主题
 
 - [[次同步控制交互|次同步控制交互]]
-- [[topics/real-time-simulation|超实时仿真]]
+- [[real-time-simulation|超实时仿真]]
 - [[硬件仿真|硬件仿真]]
-- [[topics/co-simulation|混合仿真]]
+- [[co-simulation|混合仿真]]
 - [[弱电网稳定性|弱电网稳定性]]
-- [[topics/pv-power-plant|光伏并网]]
-- [[topics/parallel-computing|并行计算]]
+- [[pv-power-plant|光伏并网]]
+- [[parallel-computing|并行计算]]
 
 ## 主要发现
 

@@ -58,26 +58,26 @@ sources: ["EMT_Doc/24/TPWRD.2020.3017084.pdf.pdf"]
 
 ## 使用的方法
 
-- [[topics/dynamic-phasor|动态相量法]]
-- [[topics/co-simulation|混合仿真]]
+- [[dynamic-phasor|动态相量法]]
+- [[co-simulation|混合仿真]]
 - [[接口位移技术|接口位移技术]]
 - [[lambert-w函数分析|Lambert W函数分析]]
-- [[topics/network-equivalent|网络等值]]
+- [[network-equivalent|网络等值]]
 
 ## 涉及的模型
 
-- [[topics/power-electronics|换流器]]
+- [[power-electronics|换流器]]
 - [[交流系统等值模型|交流系统等值模型]]
 - [[可控电流源|可控电流源]]
-- [[topics/hybrid-acdc-network|交直流电网]]
+- [[hybrid-acdc-network|交直流电网]]
 
 ## 相关主题
 
-- [[topics/co-simulation|混合仿真]]
+- [[co-simulation|混合仿真]]
 - [[接口延迟|接口延迟]]
-- [[topics/hybrid-acdc-network|交直流电网]]
+- [[hybrid-acdc-network|交直流电网]]
 - [[动态相量映射|动态相量映射]]
-- [[topics/parallel-computing|网络分区]]
+- [[parallel-computing|网络分区]]
 
 ## 主要发现
 

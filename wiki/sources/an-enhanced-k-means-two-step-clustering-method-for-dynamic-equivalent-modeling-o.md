@@ -64,22 +64,22 @@ sources: ["EMT_Doc/07&08/Xu et al. - 2026 - An enhanced K-means two-step cluster
 - [[kd树加速搜索|KD树加速搜索]]
 - [[davies-bouldin指数|Davies-Bouldin指数]]
 - [[动态等值建模|动态等值建模]]
-- [[methods/vector-control|矢量控制]]
+- [[vector-control|矢量控制]]
 
 ## 涉及的模型
 
 - [[dfig-model|DFIG]]
-- [[topics/wind-farm-modeling|风电场]]
+- [[wind-farm-modeling|风电场]]
 - [[转子侧变流器|转子侧变流器]]
-- [[models/grid-side-converter|网侧变流器]]
+- [[grid-side-converter|网侧变流器]]
 - [[电磁暂态详细模型|电磁暂态详细模型]]
 
 ## 相关主题
 
 - [[动态等值建模|动态等值建模]]
-- [[methods/lvrt|低电压穿越]]
+- [[lvrt|低电压穿越]]
 - [[风电场聚合|风电场聚合]]
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[电力系统稳定性分析|电力系统稳定性分析]]
 
 ## 主要发现

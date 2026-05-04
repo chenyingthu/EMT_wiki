@@ -65,16 +65,16 @@ sources: ["EMT_Doc/13&14/files/tpwrd.2012.2227836.pdf.pdf"]
 
 ## 涉及的模型
 
-- [[models/transformer-model|变压器]]
-- [[models/circuit-breaker-model|断路器]]
+- [[transformer-model|变压器]]
+- [[circuit-breaker-model|断路器]]
 - [[继电保护装置|继电保护装置]]
-- [[models/synchronous-machine-model|同步电机]]
-- [[models/induction-machine-model|感应电机]]
-- [[topics/distributed-generation|分布式电源]]
+- [[synchronous-machine-model|同步电机]]
+- [[induction-machine-model|感应电机]]
+- [[distributed-generation|分布式电源]]
 - [[pi型线路|PI型线路]]
 - [[rlc支路|RLC支路]]
-- [[models/ideal-switch-model|理想开关]]
-- [[topics/load-modeling|负荷]]
+- [[ideal-switch-model|理想开关]]
+- [[load-modeling|负荷]]
 
 ## 相关主题
 

@@ -59,17 +59,17 @@ sources: ["EMT_Doc/16/徐家俊 等 - 2014 - 基于ADPSS的电力系统和牵引
 ## 使用的方法
 
 - [[co-simulation]]
-- [[topics/real-time-simulation]]
+- [[real-time-simulation]]
 
 ## 涉及的模型
 
-- [[models/transformer-model]]
-- [[models/transmission-line-model]]
-- [[models/synchronous-machine-model]]
+- [[transformer-model]]
+- [[transmission-line-model]]
+- [[synchronous-machine-model]]
 
 ## 相关主题
 
-- [[methods/harmonic-analysis-methods]]
+- [[harmonic-analysis-methods]]
 
 ## 主要发现
 

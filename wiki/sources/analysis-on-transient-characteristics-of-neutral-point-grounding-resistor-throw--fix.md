@@ -86,7 +86,7 @@ sources: ["EMT_Doc/07&08/Analysis on Transient Characteristics of Neutral Point 
 ## 相关主题
 
 
-- [[methods/fault-analysis-methods|单相接地故障]]
+- [[fault-analysis-methods|单相接地故障]]
 - [[暂态特征分析|暂态特征分析]]
 - [[谐振机理|谐振机理]]
 - [[配电网接地保护|配电网接地保护]]

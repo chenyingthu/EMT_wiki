@@ -59,7 +59,7 @@ sources: ["EMT_Doc/37/Li 等 - 2024 - The Impact of Frame Transformations on Pow
 ## 使用的方法
 
 - [[numerical-integration]]
-- [[topics/real-time-simulation]]
+- [[real-time-simulation]]
 
 ## 涉及的模型
 
@@ -67,7 +67,7 @@ sources: ["EMT_Doc/37/Li 等 - 2024 - The Impact of Frame Transformations on Pow
 
 ## 相关主题
 
-- [[methods/state-space-method]]
+- [[state-space-method]]
 - [[numerical-integration]]
 
 ## 主要发现

@@ -58,7 +58,7 @@ sources: ["EMT_Doc/27&28/Multirate EMT Simulation of Power Electronic Transforme
 
 ## 使用的方法
 
-- [[methods/multirate-method|多速率仿真]]
+- [[multirate-method|多速率仿真]]
 - [[改进节点分析法|改进节点分析法]]
 - [[多端口诺顿等效|多端口诺顿等效]]
 - [[电流源等效|电流源等效]]
@@ -67,18 +67,18 @@ sources: ["EMT_Doc/27&28/Multirate EMT Simulation of Power Electronic Transforme
 
 ## 涉及的模型
 
-- [[topics/power-electronics|电力电子变压器]]
+- [[power-electronics|电力电子变压器]]
 - [[级联h桥|级联H桥]]
 - [[双有源桥|双有源桥]]
-- [[models/transformer-model|高频隔离变压器]]
+- [[transformer-model|高频隔离变压器]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[methods/multirate-method|多速率仿真]]
-- [[topics/power-electronics|电力电子变压器]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[multirate-method|多速率仿真]]
+- [[power-electronics|电力电子变压器]]
 - [[高频开关建模|高频开关建模]]
-- [[topics/parallel-computing|仿真加速]]
+- [[parallel-computing|仿真加速]]
 - [[器件级划分|器件级划分]]
 
 ## 主要发现

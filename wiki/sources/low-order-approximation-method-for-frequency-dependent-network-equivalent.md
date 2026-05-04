@@ -58,11 +58,11 @@ Rational function approximations of characteristic impedance and propagation coe
 
 ## 使用的方法
 
-- [[methods/vector-fitting|有理函数拟合]]
+- [[vector-fitting|有理函数拟合]]
 - [[bode渐近线法|Bode渐近线法]]
 - [[非线性最小二乘法|非线性最小二乘法]]
 - [[递归卷积|递归卷积]]
-- [[methods/modal-analysis|相模变换]]
+- [[modal-analysis|相模变换]]
 
 ## 涉及的模型
 
@@ -72,10 +72,10 @@ Rational function approximations of characteristic impedance and propagation coe
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[topics/frequency-dependent-modeling|频率相关建模]]
-- [[models/transmission-line-model|输电线路建模]]
-- [[topics/network-equivalent|网络等值]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[frequency-dependent-modeling|频率相关建模]]
+- [[transmission-line-model|输电线路建模]]
+- [[network-equivalent|网络等值]]
 
 ## 主要发现
 

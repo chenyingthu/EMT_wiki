@@ -61,20 +61,20 @@ sources: ["EMT_Doc/13&14/files/j.epsr.2021.107351.pdf.pdf"]
 - [[准tem近似法|准TEM近似法]]
 - [[闭式近似法|闭式近似法]]
 - [[改进节点分析法|改进节点分析法]]
-- [[methods/numerical-integration|数值拉普拉斯变换]]
+- [[numerical-integration|数值拉普拉斯变换]]
 - [[广义导纳矩阵求解|广义导纳矩阵求解]]
 
 ## 涉及的模型
 
-- [[models/cable-model|地下电缆]]
-- [[models/cross-bonded-cable|交叉互联电缆]]
+- [[cable-model|地下电缆]]
+- [[cross-bonded-cable|交叉互联电缆]]
 - [[大地返回导纳模型|大地返回导纳模型]]
 - [[分布参数线路模型|分布参数线路模型]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[topics/frequency-dependent-modeling|频率相关建模]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[frequency-dependent-modeling|频率相关建模]]
 - [[大地返回参数|大地返回参数]]
 - [[暂态过电压分析|暂态过电压分析]]
 - [[电缆交叉互联|电缆交叉互联]]

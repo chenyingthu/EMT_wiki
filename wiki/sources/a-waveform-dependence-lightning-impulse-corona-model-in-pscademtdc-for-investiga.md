@@ -59,15 +59,15 @@ sources: ["EMT_Doc/05/Jiang 等 - 2024 - A waveform-dependence lightning impulse
 ## 使用的方法
 
 - [[临界体积法|临界体积法]]
-- [[methods/numerical-integration|梯形积分法]]
-- [[methods/nodal-analysis|牛顿-拉夫逊法]]
+- [[numerical-integration|梯形积分法]]
+- [[nodal-analysis|牛顿-拉夫逊法]]
 - [[无迭代求解算法|无迭代求解算法]]
 - [[电磁暂态程序仿真|电磁暂态程序仿真]]
 
 ## 涉及的模型
 
 - [[雷电冲击电晕模型|雷电冲击电晕模型]]
-- [[models/transmission-line-model|输电线路]]
+- [[transmission-line-model|输电线路]]
 - [[非线性电晕电容|非线性电晕电容]]
 - [[导线-大地结构|导线-大地结构]]
 - [[同轴圆柱结构|同轴圆柱结构]]
@@ -78,7 +78,7 @@ sources: ["EMT_Doc/05/Jiang 等 - 2024 - A waveform-dependence lightning impulse
 - [[行波传播|行波传播]]
 - [[电晕效应|电晕效应]]
 - [[波形依赖性|波形依赖性]]
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 
 ## 主要发现
 

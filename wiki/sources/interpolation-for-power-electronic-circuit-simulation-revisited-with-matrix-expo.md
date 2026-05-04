@@ -62,18 +62,18 @@ sources: ["EMT_Doc/25/Li 等 - 2020 - Interpolation for power electronic circuit
 - [[padé逼近|Padé逼近]]
 - [[密集输出公式|密集输出公式]]
 - [[高阶插值|高阶插值]]
-- [[methods/state-space-method|状态空间法]]
+- [[state-space-method|状态空间法]]
 - [[缩放平方算法|缩放平方算法]]
 
 ## 涉及的模型
 
-- [[models/svc-tcr-model|TCR]]
+- [[svc-tcr-model|TCR]]
 - [[vsc-model|VSC]]
 - [[电力电子电路|电力电子电路]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[电力电子电路仿真|电力电子电路仿真]]
 - [[开关事件插值|开关事件插值]]
 - [[数值积分算法|数值积分算法]]

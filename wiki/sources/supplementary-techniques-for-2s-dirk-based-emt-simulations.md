@@ -65,17 +65,17 @@ Supplementary techniques for 2S-DIRK-based EMT simulations T. Noda a,∗ , T. Ki
 
 ## 涉及的模型
 
-- [[sources/一种用于电磁暂态仿真的两电平电压源型换流器解耦模型|电压源]]
+- [[一种用于电磁暂态仿真的两电平电压源型换流器解耦模型|电压源]]
 - [[电流源|电流源]]
-- [[models/igbt-model|开关器件]]
+- [[igbt-model|开关器件]]
 - [[电感与电容元件|电感与电容元件]]
-- [[topics/power-electronics|电力电子变流器]]
+- [[power-electronics|电力电子变流器]]
 
 ## 相关主题
 
 - [[电磁暂态-emt-仿真|电磁暂态(EMT)仿真]]
 - [[数值积分算法|数值积分算法]]
-- [[methods/numerical-integration|数值振荡抑制]]
+- [[numerical-integration|数值振荡抑制]]
 - [[开关暂态建模|开关暂态建模]]
 - [[电力系统数字仿真|电力系统数字仿真]]
 

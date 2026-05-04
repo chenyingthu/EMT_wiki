@@ -58,8 +58,8 @@ sources: ["EMT_Doc/15/Electro-mechanical transient modeling of MMC based multi-t
 
 ## 使用的方法
 
-- [[topics/electromechanical-transient|机电暂态建模]]
-- [[methods/dae-solvers|微分代数方程]]
+- [[electromechanical-transient|机电暂态建模]]
+- [[dae-solvers|微分代数方程]]
 - [[预设故障信息法|预设故障信息法]]
 - [[dq-ri坐标系变换|dq/RI坐标系变换]]
 - [[级联控制建模|级联控制建模]]
@@ -67,18 +67,18 @@ sources: ["EMT_Doc/15/Electro-mechanical transient modeling of MMC based multi-t
 ## 涉及的模型
 
 - [[mmc-model|MMC]]
-- [[topics/hybrid-acdc-network|多端直流系统]]
+- [[hybrid-acdc-network|多端直流系统]]
 - [[二阶直流侧等效电路|二阶直流侧等效电路]]
-- [[topics/large-scale-grid-simulation|交流电网]]
+- [[large-scale-grid-simulation|交流电网]]
 - [[级联控制模型|级联控制模型]]
 
 ## 相关主题
 
 - [[直流故障仿真|直流故障仿真]]
-- [[topics/electromechanical-transient|暂态稳定分析]]
-- [[topics/electromechanical-transient|机电暂态建模]]
-- [[topics/hybrid-acdc-system|交直流混合系统]]
-- [[topics/hybrid-acdc-network|多端直流电网]]
+- [[electromechanical-transient|暂态稳定分析]]
+- [[electromechanical-transient|机电暂态建模]]
+- [[hybrid-acdc-system|交直流混合系统]]
+- [[hybrid-acdc-network|多端直流电网]]
 
 ## 主要发现
 

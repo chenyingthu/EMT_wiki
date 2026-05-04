@@ -66,7 +66,7 @@ sources: ["EMT_Doc/39/Rashidirad 等 - 2023 - Unified MANA-based load-flow for m
 
 ## 相关主题
 
-- [[methods/harmonic-analysis-methods]]
+- [[harmonic-analysis-methods]]
 
 ## 主要发现
 

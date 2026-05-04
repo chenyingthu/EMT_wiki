@@ -61,7 +61,7 @@ sources: ["EMT_Doc/31/j.epsr.2011.10.013.pdf.pdf"]
 - [[基本线性系统技术-blst|基本线性系统技术(BLST)]]
 - [[扩展线性系统技术-elst|扩展线性系统技术(ELST)]]
 - [[收敛性分析|收敛性分析]]
-- [[methods/nodal-analysis|节点分析法]]
+- [[nodal-analysis|节点分析法]]
 - [[pscad-emtdc]]
 
 ## 涉及的模型
@@ -69,12 +69,12 @@ sources: ["EMT_Doc/31/j.epsr.2011.10.013.pdf.pdf"]
 - [[光伏发电机|光伏发电机]]
 - [[单二极管等效电路|单二极管等效电路]]
 - [[ieee标准测试系统|IEEE标准测试系统]]
-- [[models/gfl-inverter-model|并网逆变器]]
+- [[gfl-inverter-model|并网逆变器]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[methods/numerical-integration|数值稳定性]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[numerical-integration|数值稳定性]]
 - [[光伏系统建模|光伏系统建模]]
 - [[局部阴影效应|局部阴影效应]]
 - [[分布式发电|分布式发电]]

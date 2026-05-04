@@ -59,29 +59,29 @@ sources: ["EMT_Doc/25/Lin 等 - 2023 - Massively Parallel Modeling of Battery En
 
 - [[emt-ts联合仿真|EMT-TS联合仿真]]
 - [[cpu-gpu异构并行计算|CPU-GPU异构并行计算]]
-- [[methods/multirate-method|多速率仿真]]
+- [[multirate-method|多速率仿真]]
 - [[多流异步处理|多流异步处理]]
 - [[向量化建模|向量化建模]]
 - [[传输线链接-tll-模型|传输线链接(TLL)模型]]
-- [[methods/state-space-method|状态空间法]]
+- [[state-space-method|状态空间法]]
 - [[后向欧拉离散|后向欧拉离散]]
 
 ## 涉及的模型
 
 - [[电池储能系统-bess|电池储能系统(BESS)]]
-- [[topics/power-electronics|电力电子变流器]]
+- [[power-electronics|电力电子变流器]]
 - [[戴维南等效电池模型|戴维南等效电池模型]]
-- [[topics/hybrid-acdc-network|交直流电网]]
-- [[test-systems/ieee-118-bus-system|IEEE 118节点系统]]
+- [[hybrid-acdc-network|交直流电网]]
+- [[ieee-118-bus-system|IEEE 118节点系统]]
 
 ## 相关主题
 
-- [[topics/parallel-computing|高性能计算]]
-- [[topics/parallel-computing|并行计算]]
-- [[topics/co-simulation|混合仿真]]
-- [[topics/emt-simulation|电磁暂态]]
-- [[topics/transient-stability-analysis|暂态稳定]]
-- [[topics/large-scale-grid-simulation|大规模电网仿真]]
+- [[parallel-computing|高性能计算]]
+- [[parallel-computing|并行计算]]
+- [[co-simulation|混合仿真]]
+- [[emt-simulation|电磁暂态]]
+- [[transient-stability-analysis|暂态稳定]]
+- [[large-scale-grid-simulation|大规模电网仿真]]
 
 ## 主要发现
 

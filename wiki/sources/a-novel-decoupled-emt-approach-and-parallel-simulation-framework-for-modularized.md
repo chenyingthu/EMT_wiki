@@ -73,11 +73,11 @@ sources: ["EMT_Doc/02/Feng 等 - 2023 - A Novel Decoupled EMT Approach and Paral
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态建模]]
-- [[topics/parallel-computing|并行仿真]]
+- [[emt-simulation|电磁暂态建模]]
+- [[parallel-computing|并行仿真]]
 - [[解耦建模|解耦建模]]
-- [[topics/power-electronics|电力电子变压器]]
-- [[topics/parallel-computing|仿真加速]]
+- [[power-electronics|电力电子变压器]]
+- [[parallel-computing|仿真加速]]
 
 ## 主要发现
 

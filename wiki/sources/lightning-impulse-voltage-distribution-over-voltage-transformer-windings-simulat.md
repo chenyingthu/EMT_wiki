@@ -75,7 +75,7 @@ sources: ["EMT_Doc/25/Trkulja 等 - 2017 - Lightning impulse voltage distributio
 
 - [[雷电冲击电压分布|雷电冲击电压分布]]
 - [[内部过电压|内部过电压]]
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[绕组绝缘应力分析|绕组绝缘应力分析]]
 - [[冲击试验验证|冲击试验验证]]
 

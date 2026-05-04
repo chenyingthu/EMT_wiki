@@ -62,7 +62,7 @@ sources: ["EMT_Doc/25/Zhu 等 - 2012 - Loop closing analytical calculation syste
 ## 使用的方法
 
 
-- [[topics/electromechanical-electromagnetic-hybrid-simulation|机电-电磁暂态混合仿真]]
+- [[electromechanical-electromagnetic-hybrid-simulation|机电-电磁暂态混合仿真]]
 - [[最大级数搜索算法|最大级数搜索算法]]
 - [[戴维南-诺顿等值接口|戴维南/诺顿等值接口]]
 - [[序相量与瞬时值变换|序相量与瞬时值变换]]
@@ -72,22 +72,22 @@ sources: ["EMT_Doc/25/Zhu 等 - 2012 - Loop closing analytical calculation syste
 ## 涉及的模型
 
 
-- [[models/transmission-line-model|输电线路]]
-- [[models/transformer-model|变压器]]
-- [[models/synchronous-machine-model|同步发电机]]
-- [[topics/load-modeling|负荷]]
-- [[models/capacitor-model|电容器]]
-- [[models/arm-reactor|电抗器]]
+- [[transmission-line-model|输电线路]]
+- [[transformer-model|变压器]]
+- [[synchronous-machine-model|同步发电机]]
+- [[load-modeling|负荷]]
+- [[capacitor-model|电容器]]
+- [[arm-reactor|电抗器]]
 
 
 ## 相关主题
 
 
-- [[topics/co-simulation|混合仿真]]
+- [[co-simulation|混合仿真]]
 - [[电网合环分析|电网合环分析]]
 - [[网络自动划分|网络自动划分]]
 - [[模型自动转换|模型自动转换]]
-- [[topics/parallel-computing|并行计算]]
+- [[parallel-computing|并行计算]]
 - [[冲击电流分析|冲击电流分析]]
 
 

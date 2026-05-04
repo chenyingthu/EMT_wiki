@@ -58,9 +58,9 @@ sources: ["EMT_Doc/15/Efficient modeling of parallel counterpoise wires using an
 
 ## 使用的方法
 
-- [[methods/fdtd|有限差分时域法(FDTD)]]
-- [[topics/transmission-line-theory|传输线理论]]
-- [[methods/vector-fitting|有理函数逼近]]
+- [[fdtd|有限差分时域法(FDTD)]]
+- [[transmission-line-theory|传输线理论]]
+- [[vector-fitting|有理函数逼近]]
 - [[全波电磁场模型验证|全波电磁场模型验证]]
 
 ## 涉及的模型
@@ -74,7 +74,7 @@ sources: ["EMT_Doc/15/Efficient modeling of parallel counterpoise wires using an
 
 - [[接地系统建模|接地系统建模]]
 - [[雷电暂态分析|雷电暂态分析]]
-- [[topics/frequency-dependent-modeling|频率相关建模]]
+- [[frequency-dependent-modeling|频率相关建模]]
 - [[地电位升分析|地电位升分析]]
 - [[冲击阻抗评估|冲击阻抗评估]]
 

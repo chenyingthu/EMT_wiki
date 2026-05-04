@@ -60,8 +60,8 @@ sources: ["EMT_Doc/37/TPWRD.2015.2465812.pdf.pdf"]
 
 - [[正交变换|正交变换]]
 - [[变压器类比法|变压器类比法]]
-- [[methods/average-value-model|平均值模型]]
-- [[methods/switch-modeling|开关模型]]
+- [[average-value-model|平均值模型]]
+- [[switch-modeling|开关模型]]
 - [[戴维南等效推导|戴维南等效推导]]
 - [[观测器设计|观测器设计]]
 - [[atp-emtp时域仿真|ATP-EMTP时域仿真]]
@@ -70,17 +70,17 @@ sources: ["EMT_Doc/37/TPWRD.2015.2465812.pdf.pdf"]
 
 - [[vsc-model|VSC]]
 - [[反并联二极管整流器-apdr|反并联二极管整流器(APDR)]]
-- [[models/vsc-model|两电平换流器]]
+- [[vsc-model|两电平换流器]]
 - [[多端直流系统-mtdc|多端直流系统(MTDC)]]
-- [[models/transmission-line-model|直流输电线路]]
+- [[transmission-line-model|直流输电线路]]
 
 ## 相关主题
 
 - [[直流故障研究|直流故障研究]]
 - [[vsc-model|VSC]]
-- [[topics/network-equivalent|网络等值]]
+- [[network-equivalent|网络等值]]
 - [[直流保护|直流保护]]
-- [[topics/parallel-computing|仿真加速]]
+- [[parallel-computing|仿真加速]]
 - [[暂态分析|暂态分析]]
 
 ## 主要发现

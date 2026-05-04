@@ -55,8 +55,8 @@ sources: ["EMT_Doc/04/pesgm.2012.6345135.pdf.pdf"]
 
 ## 使用的方法
 
-- [[methods/average-value-model|动态平均值建模]]
-- [[methods/vector-control|矢量控制]]
+- [[average-value-model|动态平均值建模]]
+- [[vector-control|矢量控制]]
 - [[正弦脉宽调制|正弦脉宽调制]]
 - [[受控源等效建模|受控源等效建模]]
 - [[开关时刻插值算法|开关时刻插值算法]]
@@ -67,15 +67,15 @@ sources: ["EMT_Doc/04/pesgm.2012.6345135.pdf.pdf"]
 - [[vsc-model|VSC]]
 - [[三电平npc换流器|三电平NPC换流器]]
 - [[直流链路电容|直流链路电容]]
-- [[models/transformer-model|换流变压器]]
+- [[transformer-model|换流变压器]]
 
 ## 相关主题
 
-- [[topics/parallel-computing|仿真加速]]
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[parallel-computing|仿真加速]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[系统级建模|系统级建模]]
 - [[暂态特性分析|暂态特性分析]]
-- [[topics/vsc-hvdc|柔性直流输电]]
+- [[vsc-hvdc|柔性直流输电]]
 
 ## 主要发现
 

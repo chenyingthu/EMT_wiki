@@ -67,16 +67,16 @@ sources: ["EMT_Doc/04/TPWRS.2019.2918229.pdf.pdf"]
 ## 涉及的模型
 
 - [[mmc-model|MMC]]
-- [[topics/large-scale-grid-simulation|交流电网]]
+- [[large-scale-grid-simulation|交流电网]]
 - [[fdne-model|FDNE]]
 
 ## 相关主题
 
-- [[topics/co-simulation|混合仿真]]
-- [[topics/network-equivalent|网络等值]]
-- [[methods/passivity-enforcement|无源性保证]]
+- [[co-simulation|混合仿真]]
+- [[network-equivalent|网络等值]]
+- [[passivity-enforcement|无源性保证]]
 - [[宽频动态建模|宽频动态建模]]
-- [[topics/hybrid-acdc-network|交直流电网]]
+- [[hybrid-acdc-network|交直流电网]]
 
 ## 主要发现
 

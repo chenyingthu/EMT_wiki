@@ -58,26 +58,26 @@ sources: ["EMT_Doc/30/Zhou和Dinavahi - 2014 - Parallel Massive-Thread Electroma
 
 ## 使用的方法
 
-- [[methods/nodal-analysis|节点分析法]]
+- [[nodal-analysis|节点分析法]]
 - [[cuda并行编程|CUDA并行编程]]
-- [[methods/sparse-matrix-solver|稀疏矩阵求解]]
+- [[sparse-matrix-solver|稀疏矩阵求解]]
 - [[分块节点调整|分块节点调整]]
 - [[通用线路模型算法|通用线路模型算法]]
 
 ## 涉及的模型
 
 - [[线性无源元件|线性无源元件]]
-- [[models/transmission-line-model|通用线路模型]]
+- [[transmission-line-model|通用线路模型]]
 - [[通用同步电机模型|通用同步电机模型]]
-- [[models/transmission-line-model|输电线路]]
-- [[models/synchronous-machine-model|同步电机]]
+- [[transmission-line-model|输电线路]]
+- [[synchronous-machine-model|同步电机]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
-- [[methods/gpu-accelerated-simulation|GPU并行计算]]
+- [[emt-simulation|电磁暂态仿真]]
+- [[gpu-accelerated-simulation|GPU并行计算]]
 - [[大规模电网建模|大规模电网建模]]
-- [[topics/emt-simulation|离线仿真]]
+- [[emt-simulation|离线仿真]]
 - [[稀疏网络求解|稀疏网络求解]]
 
 ## 主要发现

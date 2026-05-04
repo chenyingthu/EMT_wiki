@@ -62,7 +62,7 @@ sources: ["EMT_Doc/09/Cao - 2006 - Application of EMTP in the research of UHV AC
 ## 使用的方法
 
 
-- [[methods/frequency-scanning|频率扫描法]]
+- [[frequency-scanning|频率扫描法]]
 - [[相坐标建模|相坐标建模]]
 - [[统计开关法|统计开关法]]
 - [[tacs迭代控制|TACS迭代控制]]
@@ -72,7 +72,7 @@ sources: ["EMT_Doc/09/Cao - 2006 - Application of EMTP in the research of UHV AC
 ## 涉及的模型
 
 
-- [[models/synchronous-machine-model|同步电机]]
+- [[synchronous-machine-model|同步电机]]
 - [[j-marti输电线路模型|J.Marti输电线路模型]]
 - [[饱和变压器|饱和变压器]]
 - [[并联电抗器|并联电抗器]]
@@ -90,7 +90,7 @@ sources: ["EMT_Doc/09/Cao - 2006 - Application of EMTP in the research of UHV AC
 - [[谐振过电压|谐振过电压]]
 - [[潜供电流熄弧|潜供电流熄弧]]
 - [[暂态恢复电压|暂态恢复电压]]
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 
 
 ## 主要发现

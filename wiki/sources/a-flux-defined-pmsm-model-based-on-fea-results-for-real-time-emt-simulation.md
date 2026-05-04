@@ -74,8 +74,8 @@ sources: ["EMT_Doc/01/Li 等 - 2025 - A Flux-Defined Pmsm Model Based on Fea Res
 
 ## 相关主题
 
-- [[topics/real-time-simulation|实时仿真]]
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[real-time-simulation|实时仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[基于有限元的降阶建模|基于有限元的降阶建模]]
 - [[空间谐波与磁饱和建模|空间谐波与磁饱和建模]]
 - [[硬件在环测试|硬件在环测试]]

@@ -60,28 +60,28 @@ sources: ["EMT_Doc/02/Li 等 - 2020 - A Multi-Rate Co-Simulation of Combined Pha
 
 - [[多速率联合仿真|多速率联合仿真]]
 - [[移频相量法|移频相量法]]
-- [[topics/parallel-computing|网络分区]]
+- [[parallel-computing|网络分区]]
 - [[多域传输线模型|多域传输线模型]]
-- [[topics/frequency-dependent-modeling|频变建模]]
-- [[methods/numerical-integration|梯形积分法]]
+- [[frequency-dependent-modeling|频变建模]]
+- [[numerical-integration|梯形积分法]]
 
 ## 涉及的模型
 
 - [[大规模交流电网|大规模交流电网]]
-- [[topics/wind-farm-modeling|风电场]]
+- [[wind-farm-modeling|风电场]]
 - [[双馈感应发电机|双馈感应发电机]]
-- [[models/transmission-line-model|输电线路]]
+- [[transmission-line-model|输电线路]]
 - [[移频相量模型|移频相量模型]]
-- [[topics/emt-simulation|电磁暂态模型]]
+- [[emt-simulation|电磁暂态模型]]
 
 ## 相关主题
 
 - [[次超同步相互作用|次超同步相互作用]]
 - [[宽频带交互分析|宽频带交互分析]]
-- [[topics/co-simulation|混合仿真]]
-- [[topics/wind-farm-modeling|风电场建模]]
-- [[topics/frequency-dependent-modeling|频率相关建模]]
-- [[topics/parallel-computing|网络分区]]
+- [[co-simulation|混合仿真]]
+- [[wind-farm-modeling|风电场建模]]
+- [[frequency-dependent-modeling|频率相关建模]]
+- [[parallel-computing|网络分区]]
 
 ## 主要发现
 

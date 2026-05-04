@@ -677,11 +677,11 @@ print(net.res_line.loading_percent)  # 线路负载率
 
 ## 相关测试系统
 
-- [[test-systems/ieee-14-bus-system]] - IEEE 14节点系统
-- [[test-systems/ieee-39-bus-system]] - IEEE 39节点系统
-- [[test-systems/ieee-57-bus-system]] - IEEE 57节点系统
-- [[test-systems/ieee-118-bus-system]] - IEEE 118节点系统
-- [[test-systems/wscc-9-bus-system]] - WSCC 9节点系统
+- [[ieee-14-bus-system]] - IEEE 14节点系统
+- [[ieee-39-bus-system]] - IEEE 39节点系统
+- [[ieee-57-bus-system]] - IEEE 57节点系统
+- [[ieee-118-bus-system]] - IEEE 118节点系统
+- [[wscc-9-bus-system]] - WSCC 9节点系统
 
 ## 参考文献
 

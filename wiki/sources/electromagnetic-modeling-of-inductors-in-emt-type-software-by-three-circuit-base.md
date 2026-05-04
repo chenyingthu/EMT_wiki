@@ -67,17 +67,17 @@ sources: ["EMT_Doc/15/Electromagnetic modeling of inductors in EMT-type software
 
 ## 涉及的模型
 
-- [[models/inductor-model|电感器]]
+- [[inductor-model|电感器]]
 - [[壳式电感器|壳式电感器]]
 - [[磁路模型|磁路模型]]
 - [[分布式等效电路|分布式等效电路]]
 
 ## 相关主题
 
-- [[topics/emt-simulation|电磁暂态仿真]]
+- [[emt-simulation|电磁暂态仿真]]
 - [[电感器建模|电感器建模]]
 - [[磁路等效|磁路等效]]
-- [[models/transformer-model|磁饱和建模]]
+- [[transformer-model|磁饱和建模]]
 - [[漏磁与边缘磁通分析|漏磁与边缘磁通分析]]
 - [[电路场耦合建模|电路场耦合建模]]
 
