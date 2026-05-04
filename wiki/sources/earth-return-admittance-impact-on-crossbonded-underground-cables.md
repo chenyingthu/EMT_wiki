@@ -67,7 +67,7 @@ sources: ["EMT_Doc/13&14/files/j.epsr.2021.107351.pdf.pdf"]
 ## 涉及的模型
 
 - [[models/cable-model|地下电缆]]
-- [[交叉互联电缆|交叉互联电缆]]
+- [[models/cross-bonded-cable|交叉互联电缆]]
 - [[大地返回导纳模型|大地返回导纳模型]]
 - [[分布参数线路模型|分布参数线路模型]]
 

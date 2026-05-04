@@ -67,7 +67,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/TPWRD.2018.2796089.pdf.pdf"]
 ## 涉及的模型
 
 - [[models/cable-model|地下电缆]]
-- [[交叉互联电缆|交叉互联电缆]]
+- [[models/cross-bonded-cable|交叉互联电缆]]
 - [[多相电缆系统|多相电缆系统]]
 - [[大地返回阻抗-导纳模型|大地返回阻抗/导纳模型]]
 

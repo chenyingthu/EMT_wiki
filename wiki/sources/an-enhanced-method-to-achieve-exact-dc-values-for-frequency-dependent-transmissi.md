@@ -61,7 +61,7 @@ sources: ["EMT_Doc/07&08/De Silva and Liu - 2023 - An Enhanced Method to Achieve
 - [[methods/vector-fitting|矢量拟合]]
 - [[methods/vector-fitting|有理函数逼近]]
 - [[递归卷积|递归卷积]]
-- [[最小二乘法|最小二乘法]]
+- [[methods/least-squares|最小二乘法]]
 - [[直流校正|直流校正]]
 - [[加权拟合|加权拟合]]
 - [[阶数缩减|阶数缩减]]

@@ -59,7 +59,7 @@ sources: ["EMT_Doc/24/Jalili-Marandi 等 - 2009 - Interfacing Techniques for Tra
 ## 使用的方法
 
 - [[混合仿真接口技术|混合仿真接口技术]]
-- [[网络分割|网络分割]]
+- [[methods/network-partitioning|网络分割]]
 - [[topics/parallel-computing|并行计算]]
 - [[多速率积分|多速率积分]]
 - [[频移法|频移法]]
@@ -83,7 +83,7 @@ sources: ["EMT_Doc/24/Jalili-Marandi 等 - 2009 - Interfacing Techniques for Tra
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[topics/co-simulation|接口技术]]
 - [[topics/parallel-computing|并行计算]]
-- [[网络分割|网络分割]]
+- [[methods/network-partitioning|网络分割]]
 - [[频率自适应建模|频率自适应建模]]
 - [[topics/large-scale-grid-simulation|大规模电网仿真]]
 

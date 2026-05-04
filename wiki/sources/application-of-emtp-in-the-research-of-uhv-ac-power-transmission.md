@@ -62,7 +62,7 @@ sources: ["EMT_Doc/09/Cao - 2006 - Application of EMTP in the research of UHV AC
 ## 使用的方法
 
 
-- [[频率扫描法|频率扫描法]]
+- [[methods/frequency-scanning|频率扫描法]]
 - [[相坐标建模|相坐标建模]]
 - [[统计开关法|统计开关法]]
 - [[tacs迭代控制|TACS迭代控制]]

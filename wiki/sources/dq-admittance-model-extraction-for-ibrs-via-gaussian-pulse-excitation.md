@@ -61,7 +61,7 @@ sources: ["EMT_Doc/13&14/files/DQ_Admittance_Model_Extraction_for_IBRs_via_Gauss
 - [[高斯脉冲激励|高斯脉冲激励]]
 - [[系统辨识|系统辨识]]
 - [[工具变量法|工具变量法]]
-- [[频率扫描法|频率扫描法]]
+- [[methods/frequency-scanning|频率扫描法]]
 - [[线性调频信号注入|线性调频信号注入]]
 
 ## 涉及的模型

@@ -69,7 +69,7 @@ sources: ["EMT_Doc/27&28/Multi-Conductor Cable Modeling With Inclusion of Measur
 - [[多导体电缆|多导体电缆]]
 - [[同轴波传播模型|同轴波传播模型]]
 - [[频变行波模型|频变行波模型]]
-- [[交叉互联电缆|交叉互联电缆]]
+- [[models/cross-bonded-cable|交叉互联电缆]]
 - [[变压器-电机绕组|变压器/电机绕组]]
 
 ## 相关主题

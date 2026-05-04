@@ -77,7 +77,7 @@ sources: ["EMT_Doc/27&28/Multiphase power flow solutions using EMTP and Newtons 
 
 - [[多相潮流计算|多相潮流计算]]
 - [[不平衡系统分析|不平衡系统分析]]
-- [[稳态初始化|稳态初始化]]
+- [[topics/steady-state-initialization|稳态初始化]]
 - [[emtp集成|EMTP集成]]
 - [[大型输电网络|大型输电网络]]
 

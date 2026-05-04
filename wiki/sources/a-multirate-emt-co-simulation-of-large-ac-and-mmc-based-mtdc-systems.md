@@ -76,7 +76,7 @@ sources: ["EMT_Doc/02/Shu 等 - 2018 - A Multirate EMT Co-Simulation of Large AC
 - [[methods/multirate-method|多速率仿真]]
 - [[topics/co-simulation|协同仿真]]
 - [[接口建模|接口建模]]
-- [[网络分割|网络分割]]
+- [[methods/network-partitioning|网络分割]]
 - [[methods/numerical-integration|数值稳定性]]
 - [[mmc-model|MMC]]
 - [[topics/emt-simulation|电磁暂态仿真]]

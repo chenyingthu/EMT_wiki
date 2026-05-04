@@ -62,7 +62,7 @@ sources: ["EMT_Doc/11/Hernández-Ramírez 等 - 2024 - Comprehensive D Q impedan
 - [[时频混合解析法|时频混合解析法]]
 - [[dq阻抗建模|DQ阻抗建模]]
 - [[频域电报方程|频域电报方程]]
-- [[频率扫描法|频率扫描法]]
+- [[methods/frequency-scanning|频率扫描法]]
 - [[奈奎斯特稳定判据|奈奎斯特稳定判据]]
 
 ## 涉及的模型

@@ -67,7 +67,7 @@ sources: ["EMT_Doc/06/Li 等 - 2022 - Algorithm for fast calculating the energiz
 ## 涉及的模型
 
 - [[电力电缆|电力电缆]]
-- [[交叉互联电缆|交叉互联电缆]]
+- [[models/cross-bonded-cable|交叉互联电缆]]
 - [[频变相位模型|频变相位模型]]
 - [[分布参数模型|分布参数模型]]
 

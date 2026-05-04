@@ -64,7 +64,7 @@ sources: ["EMT_Doc/25/Shu 等 - 2009 - Locating arc faults on coupling two paral
 
 - [[methods/modal-analysis|相模变换]]
 - [[时域算法|时域算法]]
-- [[最小二乘法|最小二乘法]]
+- [[methods/least-squares|最小二乘法]]
 - [[阻抗矩阵解耦|阻抗矩阵解耦]]
 
 

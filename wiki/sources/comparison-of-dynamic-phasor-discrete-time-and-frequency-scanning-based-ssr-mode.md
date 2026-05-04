@@ -60,7 +60,7 @@ sources: ["EMT_Doc/10/Dey 等 - 2021 - Comparison of dynamic phasor, discrete-ti
 
 - [[topics/dynamic-phasor|动态相量法]]
 - [[离散时间建模|离散时间建模]]
-- [[频率扫描法|频率扫描法]]
+- [[methods/frequency-scanning|频率扫描法]]
 - [[methods/vector-fitting|矢量拟合]]
 - [[methods/eigenvalue-analysis|特征值分析]]
 

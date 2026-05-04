@@ -59,7 +59,7 @@ sources: ["EMT_Doc/24/TPWRD.2008.2002889.pdf.pdf"]
 ## 使用的方法
 
 - [[topics/co-simulation|混合仿真]]
-- [[网络分割|网络分割]]
+- [[methods/network-partitioning|网络分割]]
 - [[topics/parallel-computing|并行计算]]
 - [[多速率积分|多速率积分]]
 - [[频率平移|频率平移]]
@@ -82,7 +82,7 @@ sources: ["EMT_Doc/24/TPWRD.2008.2002889.pdf.pdf"]
 - [[topics/emt-simulation|电磁暂态]]
 - [[topics/co-simulation|接口技术]]
 - [[topics/parallel-computing|并行计算]]
-- [[网络分割|网络分割]]
+- [[methods/network-partitioning|网络分割]]
 - [[频率自适应建模|频率自适应建模]]
 - [[methods/multirate-method|多速率仿真]]
 

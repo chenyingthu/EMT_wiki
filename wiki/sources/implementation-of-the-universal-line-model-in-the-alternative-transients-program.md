@@ -60,7 +60,7 @@ sources: ["EMT_Doc/23/Zanon 等 - 2021 - Implementation of the universal line mo
 
 - [[methods/vector-fitting|矢量拟合]]
 - [[methods/nodal-analysis|相域建模]]
-- [[递归卷积|递归卷积]]
+- [[methods/recursive-convolution|递归卷积]]
 - [[methods/norton-equivalent|诺顿等效]]
 - [[外部模型接口|外部模型接口]]
 

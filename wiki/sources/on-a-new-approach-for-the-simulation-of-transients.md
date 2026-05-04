@@ -79,7 +79,7 @@ sources: ["EMT_Doc/29/j.epsr.2006.08.027.pdf.pdf"]
 - [[数值计算方法|数值计算方法]]
 - [[仿真软件架构|仿真软件架构]]
 - [[methods/nodal-analysis|网络方程求解]]
-- [[稳态初始化|稳态初始化]]
+- [[topics/steady-state-initialization|稳态初始化]]
 
 ## 主要发现
 
