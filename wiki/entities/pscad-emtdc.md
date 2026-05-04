@@ -265,4 +265,12 @@ $$
 
 | 论文 | 年份 |
 |------|------|
+| [[application-of-wavelet-singular-entropy-theory-in-transient-protection-and-accel|Application of wavelet singular entropy theory in transient ]] | 2009 |
 | [[photovoltaic-generator-modelling-to-improve-numerical-robustness-of-emt-simulati|Photovoltaic generator modelling to improve numerical robust]] | 2012 |
+| [[a-novel-substation-back-up-protection-based-on-communication-channel-of-pilot-pr|A Novel Substation Back-up Protection Based on Communication]] | 2013 |
+| [[neutral-conductor-current-in-three-phase-networks-with-compact-fluorescent-lamps|Neutral conductor current in three-phase networks with compa]] | 2013 |
+| [[a-multi-functional-series-compensator-to-squirrel-cage-induction-generator|A multi-functional series compensator to squirrel cage induc]] | 2015 |
+| [[a-new-topology-for-current-limiting-hvdc-circuit-breaker|A new topology for current limiting HVDC circuit breaker]] | 2018 |
+| [[characteristics-and-optimal-configuration-of-capacitive-current-limiter-consider|Characteristics and Optimal Configuration of Capacitive Curr]] | 2020 |
+| [[analysis-and-general-calculation-of-dc-fault-currents-in-mmc-mtdc-grids|Analysis and general calculation of DC fault currents in MMC]] | 2023 |
+| [[dynamic-synchrophasor-estimator-based-on-multi-frequency-phasor-model|Dynamic Synchrophasor Estimator Based on Multi-frequency Pha]] | 2023 |

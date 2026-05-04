@@ -278,3 +278,20 @@ $$
 - [[real-time-simulation|实时仿真]] - ATP用于算法验证和教学，与实时仿真平台对比
 - [[harmonic-analysis|谐波分析]] - ATP支持的电力系统谐波和电能质量研究
 - [[frequency-dependent-modeling|频变建模]] - 频变线路和变压器模型在ATP中的实现
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[a-systematical-method-for-suppressing-ferroresonance-at-neutral-grounded-substat|A systematical method for suppressing ferroresonance at neut]] | 2001 |
+| [[a-probabilistic-approach-for-secondary-arc-risk-assessment|A Probabilistic Approach for Secondary Arc Risk Assessment]] | 2004 |
+| [[decision-tree-based-methodology-for-high-impedance-fault-detection|Decision tree-based methodology for high impedance fault det]] | 2004 |
+| [[modeling-a-mixed-residential-commercial-load-for-simulations-involving-large-dis|Modeling A Mixed Residential-commercial Load  For Simulation]] | 2004 |
+| [[power-converter-simulation-module-connected-to-the-emtp-power-systems-ieee-trans|Power converter simulation module connected to the EMTP - Po]] | 2004 |
+| [[dual-reversible-transformer-model-for-the-13&14|Dual Reversible Transformer Model for the]] | 2013 |
+| [[an-extended-habedanks-equation-based-emtp-model-of-pantograph-arcing-considering-fix|An Extended Habedank]] | 2015 |
+| [[analysing-a-power-transformers-internal-response-to-system-transients-using-a-hy|Analysing a power transformer⠒s internal response to system ]] | 2015 |
+| [[surge-and-energization-tests-and-modeling-on-a-225kv-hvac-cable|Surge and energization tests and modeling on a 225kV HVAC ca]] | 2018 |
+| [[effects-of-cable-insulations-physical-and-geometrical-parameters-on-sheath-trans|Effects of cable insulations’ physical and geometrical param]] | 2019 |
+| [[generalized-formulation-of-overhead-line-parameters-for-multi-layer-earth-19、20、21|Generalized Formulation of Overhead Line Parameters for Mult]] | 2021 |
+| [[modelling-of-electromagnetic-transients-in-multi-unit-high-voltage-circuit-break|Modelling of electromagnetic transients in multi-unit high-v]] | 2024 |
