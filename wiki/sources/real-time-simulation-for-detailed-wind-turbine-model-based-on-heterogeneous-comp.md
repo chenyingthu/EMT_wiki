@@ -75,7 +75,7 @@ sources: ["EMT_Doc/32/Li 等 - 2024 - Real-time simulation for detailed wind tur
 ## 相关主题
 
 - [[topics/real-time-simulation|实时仿真]]
-- [[硬件在环仿真|硬件在环仿真]]
+- [[methods/hil-simulation|硬件在环仿真]]
 - [[多时间尺度耦合|多时间尺度耦合]]
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[机电耦合动态|机电耦合动态]]

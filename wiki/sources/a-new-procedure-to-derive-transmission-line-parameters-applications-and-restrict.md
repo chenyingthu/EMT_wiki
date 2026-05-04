@@ -66,7 +66,7 @@ sources: ["EMT_Doc/02/Kurokawa 等 - 2006 - A new procedure to derive transmissi
 
 - [[models/transmission-line-model|架空输电线路]]
 - [[多相输电线路|多相输电线路]]
-- [[频变线路模型|频变线路模型]]
+- [[models/transmission-line-model|频变线路模型]]
 - [[大地回路模型|大地回路模型]]
 
 ## 相关主题

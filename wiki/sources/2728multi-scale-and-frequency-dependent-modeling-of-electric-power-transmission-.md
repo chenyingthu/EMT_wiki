@@ -69,7 +69,7 @@ sources: ["EMT_Doc/27&28/Multi-Scale and Frequency-Dependent Modeling of Electri
 ## 涉及的模型
 
 - [[models/transmission-line-model|输电线路]]
-- [[频变线路模型|频变线路模型]]
+- [[models/transmission-line-model|频变线路模型]]
 - [[π型等值电路|π型等值电路]]
 - [[多相线路|多相线路]]
 

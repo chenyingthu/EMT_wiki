@@ -61,7 +61,7 @@ sources: ["EMT_Doc/13&14/files/A novel distance protection algorithm in frequenc
 - [[parameter-identification|参数辨识]]
 - [[矩阵束算法|矩阵束算法]]
 - [[topics/frequency-domain-analysis|频域分析]]
-- [[相模变换|相模变换]]
+- [[methods/modal-analysis|相模变换]]
 - [[线性方程求解|线性方程求解]]
 - [[r-l模型|R-L模型]]
 
@@ -76,7 +76,7 @@ sources: ["EMT_Doc/13&14/files/A novel distance protection algorithm in frequenc
 ## 相关主题
 
 - [[距离保护|距离保护]]
-- [[单相接地故障|单相接地故障]]
+- [[methods/fault-analysis-methods|单相接地故障]]
 - [[超越动作抑制|超越动作抑制]]
 - [[故障测距|故障测距]]
 - [[暂态信号处理|暂态信号处理]]

@@ -69,7 +69,7 @@ sources: ["EMT_Doc/30/j.epsr.2021.107168.pdf.pdf"]
 
 - [[mmc-model|MMC]]
 - [[详细等效模型|详细等效模型]]
-- [[子模块|子模块]]
+- [[models/mmc-model|子模块]]
 - [[mmc-model|MMC]]
 - [[igbt|IGBT]]
 

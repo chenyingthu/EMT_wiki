@@ -68,7 +68,7 @@ sources: ["EMT_Doc/09/Wang和Jatskevich - 2010 - Approximate voltage-behind-reac
 
 - [[models/induction-machine-model|感应电机]]
 - [[鼠笼式感应电机|鼠笼式感应电机]]
-- [[相域模型|相域模型]]
+- [[methods/nodal-analysis|相域模型]]
 - [[电压后电抗模型|电压后电抗模型]]
 - [[近似电压后电抗模型|近似电压后电抗模型]]
 

@@ -60,7 +60,7 @@ sources: ["EMT_Doc/10/Matehkolaei 等 - 2026 - Compact scheme challenges in EMT-
 
 - [[紧凑格式积分法|紧凑格式积分法]]
 - [[methods/numerical-integration|梯形积分法]]
-- [[后向欧拉法|后向欧拉法]]
+- [[methods/numerical-integration|后向欧拉法]]
 - [[改进型增广节点分析法|改进型增广节点分析法]]
 - [[稀疏表法|稀疏表法]]
 - [[牛顿迭代法|牛顿迭代法]]

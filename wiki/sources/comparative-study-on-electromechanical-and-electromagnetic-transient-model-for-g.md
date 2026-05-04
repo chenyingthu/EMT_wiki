@@ -76,7 +76,7 @@ sources: ["EMT_Doc/10/Sun 等 - 2014 - Comparative study on electromechanical an
 
 ## 相关主题
 
-- [[机电暂态建模|机电暂态建模]]
+- [[topics/electromechanical-transient|机电暂态建模]]
 - [[大规模光伏电站仿真|大规模光伏电站仿真]]
 - [[topics/renewable-energy-integration|新能源并网]]
 - [[methods/model-order-reduction|模型降阶]]

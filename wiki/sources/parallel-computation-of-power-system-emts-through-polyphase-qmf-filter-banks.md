@@ -77,7 +77,7 @@ sources: ["EMT_Doc/30/j.epsr.2021.107317.pdf.pdf"]
 
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[topics/parallel-computing|并行计算]]
-- [[超实时仿真|超实时仿真]]
+- [[topics/real-time-simulation|超实时仿真]]
 - [[网络等值降阶|网络等值降阶]]
 - [[fpga硬件加速|FPGA硬件加速]]
 - [[统计性暂态分析|统计性暂态分析]]

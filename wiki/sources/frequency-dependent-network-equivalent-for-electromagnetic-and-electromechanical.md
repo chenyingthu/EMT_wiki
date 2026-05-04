@@ -66,13 +66,13 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/Zhang 等 - 2012 - Frequency depende
 - [[频变网络等值|频变网络等值]]
 - [[methods/passivity-enforcement|无源性强制]]
 - [[高斯消元法|高斯消元法]]
-- [[有理函数拟合|有理函数拟合]]
+- [[methods/vector-fitting|有理函数拟合]]
 
 
 ## 涉及的模型
 
 
-- [[ieee-39节点系统|IEEE 39节点系统]]
+- [[test-systems/ieee-39-bus-system|IEEE 39节点系统]]
 - [[节点导纳矩阵|节点导纳矩阵]]
 - [[频变网络等值模型|频变网络等值模型]]
 

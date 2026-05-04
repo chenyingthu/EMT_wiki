@@ -62,7 +62,7 @@ EMT软件大量依赖输电线路模型，但ATP-EMTP等程序通常把线路模
 - [[理想变压器等效电路|理想变压器等效电路]]
 - [[transmission-line-model|Bergeron线路模型]]
 - [[jmarti模型|JMarti模型]]
-- [[节点导纳矩阵法|节点导纳矩阵法]]
+- [[methods/nodal-analysis|节点导纳矩阵法]]
 - [[频域扫描|频域扫描]]
 
 ## 涉及的模型

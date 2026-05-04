@@ -61,7 +61,7 @@ sources: ["EMT_Doc/07&08/An Inverter Model Simulating Accurate Harmonics With Lo
 - [[时间平均法-tam|时间平均法(TAM)]]
 - [[电压插值法|电压插值法]]
 - [[methods/numerical-integration|梯形积分法]]
-- [[后向欧拉法|后向欧拉法]]
+- [[methods/numerical-integration|后向欧拉法]]
 - [[电路平均模型|电路平均模型]]
 - [[开关模型|开关模型]]
 

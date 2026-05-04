@@ -66,7 +66,7 @@ sources: ["EMT_Doc/17/Zhao 等 - 2023 - Equivalent model of nearest level modula
 ## 涉及的模型
 
 - [[mmc-model|MMC]]
-- [[子模块|子模块]]
+- [[models/mmc-model|子模块]]
 - [[开关模型|开关模型]]
 - [[基频等效电路模型|基频等效电路模型]]
 

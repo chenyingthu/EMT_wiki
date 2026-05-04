@@ -69,7 +69,7 @@ sources: ["EMT_Doc/26/Wang 等 - 2010 - Methods of interfacing rotating machine 
 
 - [[models/synchronous-machine-model|同步电机]]
 - [[models/induction-machine-model|感应电机]]
-- [[相域模型|相域模型]]
+- [[methods/nodal-analysis|相域模型]]
 - [[dq0参考系模型|dq0参考系模型]]
 - [[刚体机械模型|刚体机械模型]]
 

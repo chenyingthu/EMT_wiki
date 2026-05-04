@@ -67,7 +67,7 @@ sources: ["EMT_Doc/29/TPWRD.2016.2590569.pdf-1.pdf"]
 ## 涉及的模型
 
 - [[mmc-model|MMC]]
-- [[models/half-bridge-submodule|半桥子模块]]
+- [[models/mmc-model|半桥子模块]]
 - [[背靠背变流器系统|背靠背变流器系统]]
 - [[传统详细模型|传统详细模型]]
 

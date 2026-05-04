@@ -71,9 +71,9 @@ sources: ["EMT_Doc/16/Filizadeh 等 - 2025 - Electromagnetic Transient Modeling 
 ## 涉及的模型
 
 - [[models/transmission-line-model|输电线路]]
-- [[电缆|电缆]]
+- [[models/cable-model|电缆]]
 - [[models/synchronous-machine-model|同步发电机]]
-- [[电力电子变流器|电力电子变流器]]
+- [[topics/power-electronics|电力电子变流器]]
 - [[lcc-model|LCC]]
 - [[mmc-model|MMC]]
 - [[vsc-hvdc|VSC-HVDC]]

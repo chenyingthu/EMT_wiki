@@ -63,7 +63,7 @@ sources: ["EMT_Doc/39/Bruned 等 - 2020 - Use of efficient task allocation algor
 - [[启发式算法|启发式算法]]
 - [[精确求解方法|精确求解方法]]
 - [[网络分割技术|网络分割技术]]
-- [[硬件在环仿真|硬件在环仿真]]
+- [[methods/hil-simulation|硬件在环仿真]]
 
 ## 涉及的模型
 

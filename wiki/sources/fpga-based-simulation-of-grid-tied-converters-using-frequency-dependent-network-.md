@@ -63,7 +63,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/Hajizadeh 等 - 2026 - FPGA-based si
 - [[向后欧拉法|向后欧拉法]]
 - [[高层次综合|高层次综合]]
 - [[定制浮点运算|定制浮点运算]]
-- [[有理函数拟合|有理函数拟合]]
+- [[methods/vector-fitting|有理函数拟合]]
 
 ## 涉及的模型
 
@@ -77,7 +77,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/Hajizadeh 等 - 2026 - FPGA-based si
 ## 相关主题
 
 - [[topics/real-time-simulation|实时仿真]]
-- [[超实时仿真|超实时仿真]]
+- [[topics/real-time-simulation|超实时仿真]]
 - [[fpga硬件加速|FPGA硬件加速]]
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[methods/hil-simulation|硬件在环]]

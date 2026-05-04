@@ -78,7 +78,7 @@ CPU based parallel computation of electromagnetic transients for large A. Abusal
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[topics/parallel-computing|并行计算]]
 - [[大规模电网|大规模电网]]
-- [[稀疏矩阵求解|稀疏矩阵求解]]
+- [[methods/sparse-matrix-solver|稀疏矩阵求解]]
 - [[离线仿真|离线仿真]]
 - [[电力电子换流器建模|电力电子换流器建模]]
 

@@ -60,7 +60,7 @@ sources: ["EMT_Doc/15/Efficient modeling of parallel counterpoise wires using an
 
 - [[有限差分时域法-fdtd|有限差分时域法(FDTD)]]
 - [[传输线理论|传输线理论]]
-- [[methods/rational-function-approximation|有理函数逼近]]
+- [[methods/vector-fitting|有理函数逼近]]
 - [[全波电磁场模型验证|全波电磁场模型验证]]
 
 ## 涉及的模型

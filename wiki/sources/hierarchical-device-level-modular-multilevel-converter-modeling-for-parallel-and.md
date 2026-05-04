@@ -71,7 +71,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/OJPEL.2020.3016296.pdf.pdf"]
 - [[igbt|IGBT]]
 - [[续流二极管|续流二极管]]
 - [[vsc-hvdc|VSC-HVDC]]
-- [[子模块|子模块]]
+- [[models/mmc-model|子模块]]
 
 ## 相关主题
 

@@ -70,7 +70,7 @@ sources: ["EMT_Doc/05/Gao 等 - 2023 - Accuracy Enhancement of Shifted Frequency
 - [[models/induction-machine-model|感应电机]]
 - [[models/transformer-model|变压器]]
 - [[models/transmission-line-model|输电线路]]
-- [[电缆|电缆]]
+- [[models/cable-model|电缆]]
 - [[风电机组|风电机组]]
 
 ## 相关主题

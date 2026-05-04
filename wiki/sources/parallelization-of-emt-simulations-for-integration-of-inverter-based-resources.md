@@ -73,7 +73,7 @@ sources: ["EMT_Doc/30/Ouafi 等 - 2023 - Parallelization of EMT simulations for 
 - [[topics/wind-farm-modeling|风电场]]
 - [[光伏场|光伏场]]
 - [[models/transmission-line-model|输电线路]]
-- [[电缆|电缆]]
+- [[models/cable-model|电缆]]
 - [[igbt变流器|IGBT变流器]]
 - [[详细电路模型|详细电路模型]]
 

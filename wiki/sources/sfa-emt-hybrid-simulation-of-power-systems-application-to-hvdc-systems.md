@@ -59,7 +59,7 @@ sources: ["EMT_Doc/34/Tarazona 等 - 2026 - SFA-EMT hybrid simulation of power s
 ## 使用的方法
 
 - [[co-simulation]]
-- [[multirate]]
+- [[methods/multirate-method]]
 - [[dynamic-phasor]]
 - [[network-equivalent]]
 
@@ -71,7 +71,7 @@ sources: ["EMT_Doc/34/Tarazona 等 - 2026 - SFA-EMT hybrid simulation of power s
 
 - [[topics/vsc-hvdc]]
 - [[co-simulation]]
-- [[multirate]]
+- [[methods/multirate-method]]
 
 ## 主要发现
 

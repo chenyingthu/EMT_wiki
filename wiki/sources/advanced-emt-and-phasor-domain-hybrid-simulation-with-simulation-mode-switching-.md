@@ -68,7 +68,7 @@ sources: ["EMT_Doc/06/Huang和Vittal - 2018 - Advanced EMT and Phasor-Domain Hyb
 
 - [[输配电网络|输配电网络]]
 - [[topics/distributed-generation|分布式电源]]
-- [[电力电子变换器|电力电子变换器]]
+- [[topics/power-electronics|电力电子变换器]]
 - [[单相感应电机|单相感应电机]]
 - [[emt详细模型|EMT详细模型]]
 
@@ -77,7 +77,7 @@ sources: ["EMT_Doc/06/Huang和Vittal - 2018 - Advanced EMT and Phasor-Domain Hyb
 - [[topics/co-simulation|混合仿真]]
 - [[输配电一体化|输配电一体化]]
 - [[仿真模式切换|仿真模式切换]]
-- [[topics/computational-efficiency|计算效率优化]]
+- [[topics/large-scale-system-simulation|计算效率优化]]
 - [[topics/network-equivalent|网络等值]]
 
 ## 主要发现

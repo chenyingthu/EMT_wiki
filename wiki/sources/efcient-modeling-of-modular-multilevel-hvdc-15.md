@@ -77,7 +77,7 @@ sources: ["EMT_Doc/15/Efficient modeling of modular multilevel HVDC converters (
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[vsc-model|VSC]]
 - [[topics/network-equivalent|网络等值]]
-- [[topics/computational-efficiency|计算效率优化]]
+- [[topics/large-scale-system-simulation|计算效率优化]]
 - [[换流器建模|换流器建模]]
 
 ## 主要发现

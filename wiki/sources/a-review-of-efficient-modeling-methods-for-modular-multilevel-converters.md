@@ -66,7 +66,7 @@ sources: ["EMT_Doc/03/Xu 等 - 2015 - A review of efficient modeling methods for
 ## 涉及的模型
 
 - [[mmc-model|MMC]]
-- [[models/half-bridge-submodule|半桥子模块]]
+- [[models/mmc-model|半桥子模块]]
 - [[全桥子模块|全桥子模块]]
 - [[models/transformer-model|换流变压器]]
 - [[直流电缆|直流电缆]]
@@ -78,7 +78,7 @@ sources: ["EMT_Doc/03/Xu 等 - 2015 - A review of efficient modeling methods for
 
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[topics/real-time-simulation|实时仿真]]
-- [[机电暂态仿真|机电暂态仿真]]
+- [[topics/electromechanical-transient|机电暂态仿真]]
 - [[vsc-model|VSC]]
 - [[高效建模|高效建模]]
 - [[电容均压算法|电容均压算法]]

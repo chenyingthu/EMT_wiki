@@ -81,7 +81,7 @@ sources: ["EMT_Doc/10/Sano 等 - 2022 - Comparison and Selection of Grid-Tied In
 - [[模型对比与选型|模型对比与选型]]
 - [[methods/harmonic-analysis-methods|谐波分析]]
 - [[暂态稳定性分析|暂态稳定性分析]]
-- [[topics/computational-efficiency|计算效率优化]]
+- [[topics/large-scale-system-simulation|计算效率优化]]
 - [[topics/renewable-energy-integration|新能源并网]]
 
 ## 主要发现

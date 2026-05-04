@@ -679,7 +679,7 @@ ROCOF是评估VSG惯量支撑能力的关键指标。
 
 ### 相关测试系统
 - [[ieee-39-bus-system]] - IEEE 39节点标准测试系统
-- [[ieee-14-bus]] - IEEE 14节点测试系统
+- [[test-systems/ieee-14-bus-system]] - IEEE 14节点测试系统
 - [[microgrid-test-system]] - 微电网测试系统
 
 ### 相关模型

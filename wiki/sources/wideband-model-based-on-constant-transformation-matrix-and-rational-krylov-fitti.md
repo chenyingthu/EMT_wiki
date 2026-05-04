@@ -67,7 +67,7 @@ EMT仿真需要把多导体架空线/电缆的频率相关传播函数H和特性
 
 ## 相关主题
 
-- [[passivity]]
+- [[methods/passivity-enforcement]]
 - [[topics/frequency-dependent-modeling]]
 
 ## 主要发现

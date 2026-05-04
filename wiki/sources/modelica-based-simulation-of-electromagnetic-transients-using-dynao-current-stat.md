@@ -70,8 +70,8 @@ sources: ["EMT_Doc/26/Masoom 等 - 2021 - Modelica-based simulation of electroma
 
 - [[输电线路-cp-wb模型|输电线路(CP/WB模型)]]
 - [[models/synchronous-machine-model|同步电机]]
-- [[电力变压器|电力变压器]]
-- [[避雷器|避雷器]]
+- [[models/transformer-model|电力变压器]]
+- [[models/surge-arrester-model|避雷器]]
 - [[电力控制器|电力控制器]]
 
 ## 相关主题

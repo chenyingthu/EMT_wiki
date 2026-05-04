@@ -73,7 +73,7 @@ sources: ["EMT_Doc/15/Electromagnetic disturbances in gas-insulated substations 
 - [[电流互感器-ct|电流互感器(CT)]]
 - [[电压互感器-vt-cvt|电压互感器(VT/CVT)]]
 - [[控制电缆|控制电缆]]
-- [[接地网|接地网]]
+- [[models/grounding-system-model|接地网]]
 - [[xlpe电缆|XLPE电缆]]
 
 ## 相关主题

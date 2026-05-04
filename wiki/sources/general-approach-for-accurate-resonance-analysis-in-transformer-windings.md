@@ -58,7 +58,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/j.epsr.2018.04.002.pdf.pdf"]
 
 ## 使用的方法
 
-- [[节点导纳矩阵法|节点导纳矩阵法]]
+- [[methods/nodal-analysis|节点导纳矩阵法]]
 - [[阻抗矩阵法|阻抗矩阵法]]
 - [[修正傅里叶逆变换|修正傅里叶逆变换]]
 - [[atp-emtp仿真|ATP-EMTP仿真]]

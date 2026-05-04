@@ -72,7 +72,7 @@ sources: ["EMT_Doc/24/Jalili-Marandi 等 - 2009 - Interfacing Techniques for Tra
 - [[models/transmission-line-model|输电线路]]
 - [[vsc-hvdc|VSC-HVDC]]
 - [[facts装置|FACTS装置]]
-- [[电力电子变换器|电力电子变换器]]
+- [[topics/power-electronics|电力电子变换器]]
 - [[集中参数元件|集中参数元件]]
 - [[分布参数线路|分布参数线路]]
 

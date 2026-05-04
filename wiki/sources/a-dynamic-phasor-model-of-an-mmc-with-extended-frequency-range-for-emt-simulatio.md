@@ -67,7 +67,7 @@ sources: ["EMT_Doc/01/Rupasinghe 等 - 2019 - A Dynamic Phasor Model of an MMC W
 ## 涉及的模型
 
 - [[mmc-model|MMC]]
-- [[models/half-bridge-submodule|半桥子模块]]
+- [[models/mmc-model|半桥子模块]]
 - [[vsc-model|VSC]]
 - [[背靠背直流系统|背靠背直流系统]]
 - [[12节点交流系统|12节点交流系统]]
@@ -77,7 +77,7 @@ sources: ["EMT_Doc/01/Rupasinghe 等 - 2019 - A Dynamic Phasor Model of an MMC W
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[扩展频率范围建模|扩展频率范围建模]]
 - [[methods/harmonic-analysis-methods|谐波分析]]
-- [[topics/computational-efficiency|计算效率优化]]
+- [[topics/large-scale-system-simulation|计算效率优化]]
 - [[vsc-hvdc|VSC-HVDC]]
 
 ## 主要发现

@@ -76,7 +76,7 @@ sources: ["EMT_Doc/24/Zhu 等 - 2021 - Interface Displacement and Dynamic Phasor
 - [[topics/co-simulation|混合仿真]]
 - [[接口延迟|接口延迟]]
 - [[动态相量|动态相量]]
-- [[交直流电网|交直流电网]]
+- [[topics/hybrid-acdc-network|交直流电网]]
 - [[网络分区|网络分区]]
 
 ## 主要发现

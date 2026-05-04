@@ -59,7 +59,7 @@ sources: ["EMT_Doc/09/Rezende 等 - 2024 - Assessment of the accuracy of the mod
 ## 使用的方法
 
 - [[模域模型|模域模型]]
-- [[相域模型|相域模型]]
+- [[methods/nodal-analysis|相域模型]]
 - [[models/transmission-line-model|通用线路模型]]
 - [[topics/frequency-domain-analysis|频域分析]]
 - [[topics/emt-simulation|时域仿真]]

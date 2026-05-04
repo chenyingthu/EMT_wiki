@@ -58,10 +58,10 @@ sources: ["EMT_Doc/35/Sinkar 等 - 2025 - Stability Assessment of Multi-Rate Ele
 
 ## 使用的方法
 
-- [[multirate]]
+- [[methods/multirate-method]]
 - [[numerical-integration]]
 - [[methods/state-space-method]]
-- [[interpolation]]
+- [[methods/interpolation-method]]
 
 ## 涉及的模型
 
@@ -69,7 +69,7 @@ sources: ["EMT_Doc/35/Sinkar 等 - 2025 - Stability Assessment of Multi-Rate Ele
 
 ## 相关主题
 
-- [[multirate]]
+- [[methods/multirate-method]]
 - [[numerical-integration]]
 
 ## 主要发现

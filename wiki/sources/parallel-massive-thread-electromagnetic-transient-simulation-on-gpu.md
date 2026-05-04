@@ -60,7 +60,7 @@ sources: ["EMT_Doc/30/Zhou和Dinavahi - 2014 - Parallel Massive-Thread Electroma
 
 - [[methods/nodal-analysis|节点分析法]]
 - [[cuda并行编程|CUDA并行编程]]
-- [[稀疏矩阵求解|稀疏矩阵求解]]
+- [[methods/sparse-matrix-solver|稀疏矩阵求解]]
 - [[分块节点调整|分块节点调整]]
 - [[通用线路模型算法|通用线路模型算法]]
 

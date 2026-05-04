@@ -68,7 +68,7 @@ sources: ["EMT_Doc/03/Mu 等 - 2014 - A parallel multi-rate electromagnetic tran
 
 - [[models/transmission-line-model|传输线模型]]
 - [[戴维南等值电路|戴维南等值电路]]
-- [[状态空间模型|状态空间模型]]
+- [[methods/state-space-method|状态空间模型]]
 
 ## 相关主题
 

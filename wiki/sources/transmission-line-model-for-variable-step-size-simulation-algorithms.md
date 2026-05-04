@@ -59,7 +59,7 @@ sources: ["EMT_Doc/39/s0142-0615%2898%2900042-8.pdf.pdf"]
 ## 使用的方法
 
 - [[numerical-integration]]
-- [[interpolation]]
+- [[methods/interpolation-method]]
 
 ## 涉及的模型
 

@@ -59,7 +59,7 @@ sources: ["EMT_Doc/07&08/De Silva and Liu - 2023 - An Enhanced Method to Achieve
 ## 使用的方法
 
 - [[methods/vector-fitting|矢量拟合]]
-- [[methods/rational-function-approximation|有理函数逼近]]
+- [[methods/vector-fitting|有理函数逼近]]
 - [[递归卷积|递归卷积]]
 - [[最小二乘法|最小二乘法]]
 - [[直流校正|直流校正]]

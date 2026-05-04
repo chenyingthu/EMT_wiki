@@ -68,7 +68,7 @@ sources: ["EMT_Doc/02/Li 等 - 2020 - A multi-area Thevenin equivalent based mul
 
 - [[lcc-model|LCC]]
 - [[vsc-hvdc|VSC-HVDC]]
-- [[交直流电网|交直流电网]]
+- [[topics/hybrid-acdc-network|交直流电网]]
 - [[models/transmission-line-model|输电线路]]
 - [[戴维南等效模型|戴维南等效模型]]
 

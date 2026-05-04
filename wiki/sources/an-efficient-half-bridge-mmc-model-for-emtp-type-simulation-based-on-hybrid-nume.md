@@ -69,7 +69,7 @@ sources: ["EMT_Doc/07&08/An Efficient Half-Bridge MMC Model for EMTP-Type Simula
 ## 涉及的模型
 
 - [[mmc-model|MMC]]
-- [[models/half-bridge-submodule|半桥子模块]]
+- [[models/mmc-model|半桥子模块]]
 - [[桥臂电感|桥臂电感]]
 - [[子模块电容|子模块电容]]
 

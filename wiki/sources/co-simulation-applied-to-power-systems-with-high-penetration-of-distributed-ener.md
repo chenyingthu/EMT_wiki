@@ -82,7 +82,7 @@ sources: ["EMT_Doc/10/Chagas和Tomim - 2022 - Co-simulation applied to power sys
 - [[高渗透率分布式能源|高渗透率分布式能源]]
 - [[跨平台仿真|跨平台仿真]]
 - [[动态仿真|动态仿真]]
-- [[topics/computational-efficiency|计算效率优化]]
+- [[topics/large-scale-system-simulation|计算效率优化]]
 - [[fmi标准|FMI标准]]
 
 ## 主要发现

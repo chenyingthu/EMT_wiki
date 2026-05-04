@@ -66,7 +66,7 @@ sources: ["EMT_Doc/01/Wang 等 - 2026 - A component-level modeling and fine-grai
 
 - [[topics/wind-farm-modeling|风电场]]
 - [[风力发电机组|风力发电机组]]
-- [[电力电子变换器|电力电子变换器]]
+- [[topics/power-electronics|电力电子变换器]]
 - [[三相节点支路模型|三相节点支路模型]]
 
 ## 相关主题

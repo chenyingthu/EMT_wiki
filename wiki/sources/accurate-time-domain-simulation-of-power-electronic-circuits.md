@@ -59,7 +59,7 @@ sources: ["EMT_Doc/05/Nzale 等 - 2021 - Accurate time-domain simulation of powe
 ## 使用的方法
 
 - [[methods/numerical-integration|梯形积分法]]
-- [[后向欧拉法|后向欧拉法]]
+- [[methods/numerical-integration|后向欧拉法]]
 - [[改进增广节点分析法|改进增广节点分析法]]
 - [[线性-二次插值法|线性/二次插值法]]
 - [[临界阻尼调整|临界阻尼调整]]

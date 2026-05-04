@@ -766,7 +766,7 @@ fbus tbus r x b rateA rateB rateC ratio angle status
 - [[ieee-118-bus]] - IEEE 118节点系统
 - [[wscc-9-bus]] - WSCC 9节点系统
 - [[nordic-44]] - Nordic 44扩展系统
-- [[ieee-14-bus]] - IEEE 14节点系统
+- [[test-systems/ieee-14-bus-system]] - IEEE 14节点系统
 
 ## 参考文献
 

@@ -58,7 +58,7 @@ sources: ["EMT_Doc/07&08/Na et al. - 2023 - An improved high-accuracy interpolat
 
 ## 使用的方法
 
-- [[后向欧拉法|后向欧拉法]]
+- [[methods/numerical-integration|后向欧拉法]]
 - [[methods/numerical-integration|梯形积分法]]
 - [[线性插值|线性插值]]
 - [[瞬时解插值|瞬时解插值]]

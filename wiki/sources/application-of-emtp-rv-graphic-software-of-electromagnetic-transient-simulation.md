@@ -58,7 +58,7 @@ sources: ["EMT_Doc/09/Cao和Chen - 2007 - Application of EMTP-RV graphic softwar
 
 ## 使用的方法
 
-- [[稀疏矩阵求解|稀疏矩阵求解]]
+- [[methods/sparse-matrix-solver|稀疏矩阵求解]]
 - [[非线性迭代求解|非线性迭代求解]]
 - [[topics/emt-simulation|时域仿真]]
 - [[methods/harmonic-analysis-methods|谐波分析]]

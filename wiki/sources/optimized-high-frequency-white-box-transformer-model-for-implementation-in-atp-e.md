@@ -62,11 +62,11 @@ sources: ["EMT_Doc/30/Mombello 等 - 2022 - Optimized high-frequency white-box t
 - [[磁路解耦|磁路解耦]]
 - [[rl阻抗极点拟合|RL阻抗极点拟合]]
 - [[topics/frequency-dependent-modeling|频率相关建模]]
-- [[等效电路法|等效电路法]]
+- [[methods/nodal-analysis|等效电路法]]
 
 ## 涉及的模型
 
-- [[电力变压器|电力变压器]]
+- [[models/transformer-model|电力变压器]]
 - [[高频白盒模型|高频白盒模型]]
 - [[绕组离散模型|绕组离散模型]]
 - [[频率相关rl网络|频率相关RL网络]]

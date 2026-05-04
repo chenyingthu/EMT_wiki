@@ -62,7 +62,7 @@ sources: ["EMT_Doc/02/Naidjate 等 - 2025 - A Julia-Based Simulation Platform fo
 - [[methods/numerical-integration|梯形积分法]]
 - [[牛顿迭代法|牛顿迭代法]]
 - [[分段线性化|分段线性化]]
-- [[稀疏矩阵求解|稀疏矩阵求解]]
+- [[methods/sparse-matrix-solver|稀疏矩阵求解]]
 - [[topics/parallel-computing|并行计算]]
 - [[符号分解优化|符号分解优化]]
 

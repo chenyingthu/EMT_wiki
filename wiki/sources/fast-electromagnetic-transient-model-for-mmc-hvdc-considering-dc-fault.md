@@ -59,7 +59,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/TPWRD.2018.2796089.pdf.pdf"]
 ## 使用的方法
 
 - [[完整场解法|完整场解法]]
-- [[电报方程|电报方程]]
+- [[models/transmission-line-model|电报方程]]
 - [[准tem近似|准TEM近似]]
 - [[矩量法-mom-so|矩量法(MoM-So)]]
 - [[methods/eigenvalue-analysis|特征值分析]]

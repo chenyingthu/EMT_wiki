@@ -68,7 +68,7 @@ sources: ["EMT_Doc/01/Ahmed 等 - 2014 - A Computationally Efficient Continuous 
 - [[mmc-model|MMC]]
 - [[vsc-model|VSC]]
 - [[vsc-hvdc|VSC-HVDC]]
-- [[models/half-bridge-submodule|半桥子模块]]
+- [[models/mmc-model|半桥子模块]]
 - [[桥臂等效电路|桥臂等效电路]]
 
 ## 相关主题
@@ -77,7 +77,7 @@ sources: ["EMT_Doc/01/Ahmed 等 - 2014 - A Computationally Efficient Continuous 
 - [[vsc-model|VSC]]
 - [[故障仿真|故障仿真]]
 - [[闭锁状态建模|闭锁状态建模]]
-- [[topics/computational-efficiency|计算效率优化]]
+- [[topics/large-scale-system-simulation|计算效率优化]]
 
 ## 主要发现
 

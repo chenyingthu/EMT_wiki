@@ -68,7 +68,7 @@ sources: ["EMT_Doc/01/Sinkar 等 - 2021 - A Comparative Study of Electromagnetic
 
 - [[集中参数rlc元件|集中参数RLC元件]]
 - [[独立电压-电流源|独立电压/电流源]]
-- [[ieee-39节点系统|IEEE 39节点系统]]
+- [[test-systems/ieee-39-bus-system|IEEE 39节点系统]]
 - [[vsc-hvdc|VSC-HVDC]]
 
 ## 相关主题

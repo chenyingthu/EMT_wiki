@@ -69,7 +69,7 @@ sources: ["EMT_Doc/07&08/Analysing a power transformer's internal response to sy
 
 ## 涉及的模型
 
-- [[电力变压器|电力变压器]]
+- [[models/transformer-model|电力变压器]]
 - [[黑箱导纳矩阵模型|黑箱导纳矩阵模型]]
 - [[灰箱物理结构模型|灰箱物理结构模型]]
 - [[气体绝缘变电站-gis|气体绝缘变电站(GIS)]]

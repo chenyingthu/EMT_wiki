@@ -58,7 +58,7 @@ sources: ["EMT_Doc/17/Xu 等 - 2016 - Enhanced high-speed electromagnetic transi
 
 ## 使用的方法
 
-- [[后向欧拉法|后向欧拉法]]
+- [[methods/numerical-integration|后向欧拉法]]
 - [[methods/nodal-analysis|戴维南等效]]
 - [[伴随电路模型|伴随电路模型]]
 - [[理想开关模型|理想开关模型]]
@@ -69,7 +69,7 @@ sources: ["EMT_Doc/17/Xu 等 - 2016 - Enhanced high-speed electromagnetic transi
 
 - [[mmc-model|MMC]]
 - [[topics/hybrid-acdc-network|多端直流电网]]
-- [[models/half-bridge-submodule|半桥子模块]]
+- [[models/mmc-model|半桥子模块]]
 - [[直流输电系统|直流输电系统]]
 
 ## 相关主题

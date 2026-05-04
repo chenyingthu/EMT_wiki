@@ -60,9 +60,9 @@ sources: ["EMT_Doc/27&28/Modular Multilevel Converter Models for Electromagnetic
 
 - [[methods/average-value-model|平均值模型]]
 - [[开关函数法|开关函数法]]
-- [[等效电路法|等效电路法]]
+- [[methods/nodal-analysis|等效电路法]]
 - [[methods/numerical-integration|梯形积分法]]
-- [[后向欧拉法|后向欧拉法]]
+- [[methods/numerical-integration|后向欧拉法]]
 - [[迭代求解算法|迭代求解算法]]
 
 ## 涉及的模型
@@ -70,7 +70,7 @@ sources: ["EMT_Doc/27&28/Modular Multilevel Converter Models for Electromagnetic
 - [[mmc-model|MMC]]
 - [[vsc-model|VSC]]
 - [[vsc-hvdc|VSC-HVDC]]
-- [[models/half-bridge-submodule|半桥子模块]]
+- [[models/mmc-model|半桥子模块]]
 - [[igbt开关模型|IGBT开关模型]]
 
 ## 相关主题

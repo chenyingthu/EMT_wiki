@@ -70,7 +70,7 @@ sources: ["EMT_Doc/18/Kouki 等 - 2022 - Exhaustive modal analysis of large-scal
 - [[大规模互联电力系统|大规模互联电力系统]]
 - [[欧洲电网模型|欧洲电网模型]]
 - [[models/synchronous-machine-model|同步发电机]]
-- [[电力电子变流器|电力电子变流器]]
+- [[topics/power-electronics|电力电子变流器]]
 - [[动态设备集群|动态设备集群]]
 
 ## 相关主题

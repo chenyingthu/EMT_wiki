@@ -69,7 +69,7 @@ sources: ["EMT_Doc/22/Xu 等 - 2025 - Impedance Based Stability Analysis of the 
 - [[lcc-model|LCC]]
 - [[mmc-model|MMC]]
 - [[vsc-hvdc|VSC-HVDC]]
-- [[交直流电网|交直流电网]]
+- [[topics/hybrid-acdc-network|交直流电网]]
 - [[直流滤波器|直流滤波器]]
 - [[平波电抗器|平波电抗器]]
 

@@ -58,11 +58,11 @@ Rational function approximations of characteristic impedance and propagation coe
 
 ## 使用的方法
 
-- [[有理函数拟合|有理函数拟合]]
+- [[methods/vector-fitting|有理函数拟合]]
 - [[bode渐近线法|Bode渐近线法]]
 - [[非线性最小二乘法|非线性最小二乘法]]
 - [[递归卷积|递归卷积]]
-- [[相模变换|相模变换]]
+- [[methods/modal-analysis|相模变换]]
 
 ## 涉及的模型
 

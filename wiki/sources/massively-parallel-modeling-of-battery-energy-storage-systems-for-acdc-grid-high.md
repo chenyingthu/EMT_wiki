@@ -69,9 +69,9 @@ sources: ["EMT_Doc/25/Lin 等 - 2023 - Massively Parallel Modeling of Battery En
 ## 涉及的模型
 
 - [[电池储能系统-bess|电池储能系统(BESS)]]
-- [[电力电子变流器|电力电子变流器]]
+- [[topics/power-electronics|电力电子变流器]]
 - [[戴维南等效电池模型|戴维南等效电池模型]]
-- [[交直流电网|交直流电网]]
+- [[topics/hybrid-acdc-network|交直流电网]]
 - [[ieee-118节点系统|IEEE 118节点系统]]
 
 ## 相关主题

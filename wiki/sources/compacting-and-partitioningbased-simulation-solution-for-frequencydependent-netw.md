@@ -69,7 +69,7 @@ sources: ["EMT_Doc/10/Hu 等 - 2015 - Compacting and partitioning-based simulati
 
 - [[fdne-model|FDNE]]
 - [[有理函数模型|有理函数模型]]
-- [[状态空间模型|状态空间模型]]
+- [[methods/state-space-method|状态空间模型]]
 
 ## 相关主题
 

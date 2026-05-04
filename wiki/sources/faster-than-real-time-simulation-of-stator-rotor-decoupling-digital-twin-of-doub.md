@@ -81,7 +81,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/Chen 等 - 2023 - Faster-than-real-t
 ## 相关主题
 
 
-- [[超实时仿真|超实时仿真]]
+- [[topics/real-time-simulation|超实时仿真]]
 - [[topics/parallel-computing|并行计算]]
 - [[fpga加速|FPGA加速]]
 - [[topics/emt-simulation|电磁暂态仿真]]

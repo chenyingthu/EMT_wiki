@@ -76,7 +76,7 @@ sources: ["EMT_Doc/10/Marthi 等 - 2024 - Benchmark High-Fidelity EMT Models for
 - [[models/transmission-line-model|架空输电线路]]
 - [[models/cable-model|地下电缆]]
 - [[并联电容器|并联电容器]]
-- [[ieee-39节点系统|IEEE-39节点系统]]
+- [[test-systems/ieee-39-bus-system|IEEE-39节点系统]]
 
 ## 相关主题
 

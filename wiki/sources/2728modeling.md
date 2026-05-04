@@ -74,7 +74,7 @@ sources: ["EMT_Doc/27&28/Modeling_of_LCC_HVDC_Systems_Using_Dynam.pdf"]
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[大扰动暂态分析|大扰动暂态分析]]
 - [[topics/real-time-simulation|实时仿真]]
-- [[topics/computational-efficiency|计算效率优化]]
+- [[topics/large-scale-system-simulation|计算效率优化]]
 
 ## 主要发现
 

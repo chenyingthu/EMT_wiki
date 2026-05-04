@@ -824,7 +824,7 @@ IEEE 118节点系统的PSS/E格式数据文件可在以下途径获取:
 
 ## 相关测试系统
 
-- [[ieee-14-bus]] - IEEE 14节点系统（教学用小型系统）
+- [[test-systems/ieee-14-bus-system]] - IEEE 14节点系统（教学用小型系统）
 - [[ieee-30-bus]] - IEEE 30节点系统（优化算法测试）
 - [[ieee-39-bus]] - IEEE 39节点系统（暂态稳定性研究）
 - [[ieee-57-bus]] - IEEE 57节点系统（配电网络分析）

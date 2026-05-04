@@ -75,7 +75,7 @@ sources: ["EMT_Doc/01/Shu 等 - 2021 - A Harmonic Phasor Domain Cosimulation Met
 ## 相关主题
 
 - [[methods/harmonic-analysis-methods|谐波分析]]
-- [[交直流电网|交直流电网]]
+- [[topics/hybrid-acdc-network|交直流电网]]
 - [[vsc-model|VSC]]
 - [[宽频带振荡|宽频带振荡]]
 - [[大规模电网建模|大规模电网建模]]

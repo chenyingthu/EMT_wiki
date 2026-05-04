@@ -58,7 +58,7 @@ sources: ["EMT_Doc/34/tpwrd.2009.2035916.pdf.pdf"]
 
 ## 使用的方法
 
-- [[passivity]]
+- [[methods/passivity-enforcement]]
 - [[vector-fitting]]
 - [[topics/frequency-dependent-modeling]]
 
@@ -70,7 +70,7 @@ sources: ["EMT_Doc/34/tpwrd.2009.2035916.pdf.pdf"]
 ## 相关主题
 
 - [[topics/vsc-hvdc]]
-- [[passivity]]
+- [[methods/passivity-enforcement]]
 
 ## 主要发现
 

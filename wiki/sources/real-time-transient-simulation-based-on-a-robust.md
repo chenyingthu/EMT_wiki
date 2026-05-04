@@ -71,7 +71,7 @@ sources: ["EMT_Doc/33/tpwrs.2007.907963.pdf.pdf"]
 ## 相关主题
 
 - [[topics/frequency-dependent-modeling]]
-- [[passivity]]
+- [[methods/passivity-enforcement]]
 - [[topics/real-time-simulation]]
 
 ## 主要发现

@@ -59,7 +59,7 @@ sources: ["EMT_Doc/12/Damping_of_Subsynchronous_Control_Interactions_in_Large-Sc
 ## 使用的方法
 
 - [[topics/emt-simulation|电磁暂态仿真]]
-- [[机电暂态仿真|机电暂态仿真]]
+- [[topics/electromechanical-transient|机电暂态仿真]]
 - [[topics/co-simulation|混合仿真]]
 - [[fpga硬件仿真|FPGA硬件仿真]]
 - [[topics/parallel-computing|并行计算]]
@@ -77,7 +77,7 @@ sources: ["EMT_Doc/12/Damping_of_Subsynchronous_Control_Interactions_in_Large-Sc
 ## 相关主题
 
 - [[次同步控制交互|次同步控制交互]]
-- [[超实时仿真|超实时仿真]]
+- [[topics/real-time-simulation|超实时仿真]]
 - [[硬件仿真|硬件仿真]]
 - [[topics/co-simulation|混合仿真]]
 - [[弱电网稳定性|弱电网稳定性]]

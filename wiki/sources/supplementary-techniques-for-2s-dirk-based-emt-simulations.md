@@ -69,7 +69,7 @@ Supplementary techniques for 2S-DIRK-based EMT simulations T. Noda a,∗ , T. Ki
 - [[电流源|电流源]]
 - [[开关器件|开关器件]]
 - [[电感与电容元件|电感与电容元件]]
-- [[电力电子变流器|电力电子变流器]]
+- [[topics/power-electronics|电力电子变流器]]
 
 ## 相关主题
 

@@ -60,7 +60,7 @@ HVDC线路/电缆的EMT仿真需要同一个线路模型同时覆盖接近直流
 
 - [[分频段拟合|分频段拟合]]
 - [[直流校正|直流校正]]
-- [[methods/rational-function-approximation|有理函数逼近]]
+- [[methods/vector-fitting|有理函数逼近]]
 - [[模态分解|模态分解]]
 - [[状态空间实现|状态空间实现]]
 - [[时域卷积|时域卷积]]
@@ -68,7 +68,7 @@ HVDC线路/电缆的EMT仿真需要同一个线路模型同时覆盖接近直流
 ## 涉及的模型
 
 - [[models/transmission-line-model|输电线路]]
-- [[电缆|电缆]]
+- [[models/cable-model|电缆]]
 - [[models/transmission-line-model|通用线路模型]]
 - [[频率相关电缆模型|频率相关电缆模型]]
 - [[高压直流输电线路|高压直流输电线路]]

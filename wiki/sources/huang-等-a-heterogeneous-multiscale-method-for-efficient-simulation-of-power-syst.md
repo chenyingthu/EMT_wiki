@@ -70,7 +70,7 @@ sources: ["EMT_Doc/01/Huang 等 - 2025 - A Heterogeneous Multiscale Method for E
 - [[逆变器型资源-ibr|逆变器型资源(IBR)]]
 - [[models/synchronous-machine-model|同步发电机]]
 - [[全阶emt网络模型|全阶EMT网络模型]]
-- [[ieee-39节点系统|IEEE 39节点系统]]
+- [[test-systems/ieee-39-bus-system|IEEE 39节点系统]]
 - [[两区域系统|两区域系统]]
 
 ## 相关主题

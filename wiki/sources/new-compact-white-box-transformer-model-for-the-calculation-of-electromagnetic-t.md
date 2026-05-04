@@ -67,7 +67,7 @@ sources: ["EMT_Doc/27&28/New Compact White-Box Transformer Model for the Calcula
 
 ## 涉及的模型
 
-- [[电力变压器|电力变压器]]
+- [[models/transformer-model|电力变压器]]
 - [[白盒模型|白盒模型]]
 - [[频变电感模型|频变电感模型]]
 - [[涡流阻尼等效回路|涡流阻尼等效回路]]

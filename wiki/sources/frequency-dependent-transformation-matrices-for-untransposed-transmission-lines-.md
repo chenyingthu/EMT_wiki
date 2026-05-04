@@ -61,7 +61,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/59.535695.pdf.pdf"]
 - [[牛顿-拉夫逊法|牛顿-拉夫逊法]]
 - [[特征值对角化算法|特征值对角化算法]]
 - [[模态跟踪技术|模态跟踪技术]]
-- [[有理函数拟合|有理函数拟合]]
+- [[methods/vector-fitting|有理函数拟合]]
 - [[methods/numerical-integration|梯形积分法]]
 - [[卡森公式|卡森公式]]
 
@@ -69,7 +69,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/59.535695.pdf.pdf"]
 
 - [[非换位输电线路|非换位输电线路]]
 - [[多回架空线路|多回架空线路]]
-- [[频变线路模型|频变线路模型]]
+- [[models/transmission-line-model|频变线路模型]]
 - [[models/cable-model|地下电缆]]
 
 ## 相关主题

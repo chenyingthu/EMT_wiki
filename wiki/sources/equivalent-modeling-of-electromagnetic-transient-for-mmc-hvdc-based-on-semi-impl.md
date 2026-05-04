@@ -67,7 +67,7 @@ sources: ["EMT_Doc/18/Zhao 等 - 2021 - Equivalent modeling of electromagnetic t
 ## 涉及的模型
 
 - [[混合式制动电阻变换器|混合式制动电阻变换器]]
-- [[子模块|子模块]]
+- [[models/mmc-model|子模块]]
 - [[vsc-model|VSC]]
 - [[集中制动电阻|集中制动电阻]]
 

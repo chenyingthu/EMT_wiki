@@ -69,7 +69,7 @@ sources: ["EMT_Doc/07&08/Analyses of the modifications in the 蟺 circuits for i
 - [[models/transmission-line-model|输电线路]]
 - [[频变π型电路|频变π型电路]]
 - [[并联rl等效模块|并联RL等效模块]]
-- [[状态空间模型|状态空间模型]]
+- [[methods/state-space-method|状态空间模型]]
 
 ## 相关主题
 

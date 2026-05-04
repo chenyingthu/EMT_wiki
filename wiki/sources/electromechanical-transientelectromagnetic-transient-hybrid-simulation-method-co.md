@@ -77,7 +77,7 @@ sources: ["EMT_Doc/17/Liu 等 - 2010 - Electromechanical transientelectromagneti
 ## 相关主题
 
 - [[机电-电磁混合仿真|机电-电磁混合仿真]]
-- [[不对称故障|不对称故障]]
+- [[methods/fault-analysis-methods|不对称故障]]
 - [[topics/network-equivalent|网络等值]]
 - [[接口交互技术|接口交互技术]]
 - [[正负序参数处理|正负序参数处理]]

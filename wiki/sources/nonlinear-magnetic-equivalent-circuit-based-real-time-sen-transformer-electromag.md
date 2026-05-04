@@ -61,7 +61,7 @@ sources: ["EMT_Doc/27&28/Nonlinear Magnetic Equivalent Circuit-Based Real-Time S
 - [[磁等效电路法|磁等效电路法]]
 - [[preisach磁滞模型|Preisach磁滞模型]]
 - [[频变等效网络|频变等效网络]]
-- [[节点导纳矩阵法|节点导纳矩阵法]]
+- [[methods/nodal-analysis|节点导纳矩阵法]]
 - [[并行流水线架构|并行流水线架构]]
 - [[硬件描述语言|硬件描述语言]]
 
@@ -76,7 +76,7 @@ sources: ["EMT_Doc/27&28/Nonlinear Magnetic Equivalent Circuit-Based Real-Time S
 ## 相关主题
 
 - [[topics/real-time-simulation|实时仿真]]
-- [[硬件在环仿真|硬件在环仿真]]
+- [[methods/hil-simulation|硬件在环仿真]]
 - [[fpga实现|FPGA实现]]
 - [[非线性磁路建模|非线性磁路建模]]
 - [[潮流控制|潮流控制]]

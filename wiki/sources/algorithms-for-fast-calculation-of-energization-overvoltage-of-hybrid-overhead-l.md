@@ -58,7 +58,7 @@ sources: ["EMT_Doc/06/Huang和Vittal - 2018 - Advanced EMT and Phasor-Domain Hyb
 
 ## 使用的方法
 
-- [[相模变换|相模变换]]
+- [[methods/modal-analysis|相模变换]]
 - [[数值拉普拉斯逆变换-nilt|数值拉普拉斯逆变换(NILT)]]
 - [[全频域参数计算|全频域参数计算]]
 - [[复频域边界条件推导|复频域边界条件推导]]

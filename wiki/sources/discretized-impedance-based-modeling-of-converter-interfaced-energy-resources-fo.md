@@ -78,7 +78,7 @@ sources: ["EMT_Doc/13&14/files/Vahabzadeh 等 - 2025 - Discretized Impedance-Bas
 - [[实时电磁暂态仿真|实时电磁暂态仿真]]
 - [[状态变量仿真|状态变量仿真]]
 - [[换流器接口建模|换流器接口建模]]
-- [[topics/computational-efficiency|计算效率优化]]
+- [[topics/large-scale-system-simulation|计算效率优化]]
 - [[methods/numerical-integration|数值稳定性]]
 - [[电力系统暂态分析|电力系统暂态分析]]
 

@@ -61,7 +61,7 @@ sources: ["EMT_Doc/04/Leal和Conti - 2023 - A Thévenin-Type Version of the Exte
 - [[戴维南等效变换|戴维南等效变换]]
 - [[递归卷积算法|递归卷积算法]]
 - [[模态域变换|模态域变换]]
-- [[methods/rational-function-approximation|有理函数逼近]]
+- [[methods/vector-fitting|有理函数逼近]]
 
 ## 涉及的模型
 
@@ -69,7 +69,7 @@ sources: ["EMT_Doc/04/Leal和Conti - 2023 - A Thévenin-Type Version of the Exte
 - [[扩展模态域模型|扩展模态域模型]]
 - [[多导体架空线路|多导体架空线路]]
 - [[配电变压器|配电变压器]]
-- [[避雷器|避雷器]]
+- [[models/surge-arrester-model|避雷器]]
 
 ## 相关主题
 

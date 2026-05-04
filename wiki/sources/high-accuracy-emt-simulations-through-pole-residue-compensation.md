@@ -58,7 +58,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/Kida 等 - 2026 - High-accuracy EMT 
 
 ## 使用的方法
 
-- [[methods/rational-function-approximation|有理函数逼近]]
+- [[methods/vector-fitting|有理函数逼近]]
 - [[极点-留数形式|极点-留数形式]]
 - [[methods/numerical-integration|梯形积分法]]
 - [[预畸变技术|预畸变技术]]

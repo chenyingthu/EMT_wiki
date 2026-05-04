@@ -59,7 +59,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/Cao 等 - 2023 - Faster-Than-Real-Ti
 ## 使用的方法
 
 - [[topics/emt-simulation|电磁暂态仿真]]
-- [[机电暂态仿真|机电暂态仿真]]
+- [[topics/electromechanical-transient|机电暂态仿真]]
 - [[多fpga并行计算|多FPGA并行计算]]
 - [[动态电压注入接口|动态电压注入接口]]
 - [[显式四阶龙格库塔法|显式四阶龙格库塔法]]
@@ -77,7 +77,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/Cao 等 - 2023 - Faster-Than-Real-Ti
 ## 相关主题
 
 - [[动态安全分析|动态安全分析]]
-- [[超实时仿真|超实时仿真]]
+- [[topics/real-time-simulation|超实时仿真]]
 - [[硬件仿真|硬件仿真]]
 - [[topics/parallel-computing|并行计算]]
 - [[交直流混合电网|交直流混合电网]]

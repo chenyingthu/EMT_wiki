@@ -69,7 +69,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/j.epsr.2020.106716.pdf.pdf"]
 
 - [[models/transmission-line-model|通用线路模型(ULM)]]
 - [[models/transmission-line-model|输电线路]]
-- [[电缆|电缆]]
+- [[models/cable-model|电缆]]
 - [[诺顿等效电路|诺顿等效电路]]
 
 ## 相关主题

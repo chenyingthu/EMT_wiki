@@ -69,7 +69,7 @@ sources: ["EMT_Doc/40/0142-0615%2883%2990035-2.pdf.pdf"]
 ## 相关主题
 
 - [[topics/frequency-dependent-modeling]]
-- [[passivity]]
+- [[methods/passivity-enforcement]]
 
 ## 主要发现
 

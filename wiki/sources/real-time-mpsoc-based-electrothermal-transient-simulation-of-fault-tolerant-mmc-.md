@@ -58,7 +58,7 @@ sources: ["EMT_Doc/32/pesgm41954.2020.9281694.pdf.pdf"]
 
 ## 使用的方法
 
-- [[等效电路法|等效电路法]]
+- [[methods/nodal-analysis|等效电路法]]
 - [[器件级建模|器件级建模]]
 - [[电热耦合仿真|电热耦合仿真]]
 - [[topics/real-time-simulation|实时仿真]]

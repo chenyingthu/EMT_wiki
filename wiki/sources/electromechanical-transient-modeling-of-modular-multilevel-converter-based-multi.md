@@ -58,9 +58,9 @@ sources: ["EMT_Doc/17/Liu 等 - 2014 - Electromechanical transient modeling of m
 
 ## 使用的方法
 
-- [[机电暂态建模|机电暂态建模]]
+- [[topics/electromechanical-transient|机电暂态建模]]
 - [[topics/power-flow-calculation|潮流计算]]
-- [[等效电路法|等效电路法]]
+- [[methods/nodal-analysis|等效电路法]]
 - [[动态过程定量分析|动态过程定量分析]]
 - [[节点分析|节点分析]]
 
@@ -71,11 +71,11 @@ sources: ["EMT_Doc/17/Liu 等 - 2014 - Electromechanical transient modeling of m
 - [[vsc-model|VSC]]
 - [[models/transformer-model|换流变压器]]
 - [[models/synchronous-machine-model|同步发电机]]
-- [[交直流电网|交直流电网]]
+- [[topics/hybrid-acdc-network|交直流电网]]
 
 ## 相关主题
 
-- [[机电暂态仿真|机电暂态仿真]]
+- [[topics/electromechanical-transient|机电暂态仿真]]
 - [[多端直流输电|多端直流输电]]
 - [[电力系统稳定性|电力系统稳定性]]
 - [[交直流潮流|交直流潮流]]

@@ -68,7 +68,7 @@ sources: ["EMT_Doc/27&28/Multi-FPGA digital hardware design for detailed large-s
 ## 涉及的模型
 
 - [[models/transmission-line-model|输电线路]]
-- [[电缆|电缆]]
+- [[models/cable-model|电缆]]
 - [[models/transmission-line-model|通用线路模型(ULM)]]
 - [[models/synchronous-machine-model|同步电机]]
 - [[models/transformer-model|变压器]]

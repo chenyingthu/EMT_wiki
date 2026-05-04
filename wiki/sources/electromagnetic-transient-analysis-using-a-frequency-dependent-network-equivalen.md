@@ -79,7 +79,7 @@ sources: ["EMT_Doc/15/Electromagnetic transient analysis using a frequency depen
 - [[风电并网仿真|风电并网仿真]]
 - [[故障暂态分析|故障暂态分析]]
 - [[parameter-identification|参数辨识]]
-- [[topics/computational-efficiency|计算效率优化]]
+- [[topics/large-scale-system-simulation|计算效率优化]]
 
 ## 主要发现
 

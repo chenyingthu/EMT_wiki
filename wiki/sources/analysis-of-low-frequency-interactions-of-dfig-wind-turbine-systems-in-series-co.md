@@ -70,7 +70,7 @@ Analysis of low frequency interactions of DFIG wind turbine systems in Aramis S.
 - [[dfig-model|DFIG]]
 - [[串补输电线路|串补输电线路]]
 - [[压敏电阻|压敏电阻]]
-- [[避雷器|避雷器]]
+- [[models/surge-arrester-model|避雷器]]
 - [[models/transformer-model|变压器]]
 - [[集电系统|集电系统]]
 - [[等值电网|等值电网]]

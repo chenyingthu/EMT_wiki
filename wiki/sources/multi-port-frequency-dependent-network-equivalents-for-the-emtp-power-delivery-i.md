@@ -58,7 +58,7 @@ sources: ["EMT_Doc/27&28/Multi-Port Frequency Dependent Network Equivalents for 
 
 ## 使用的方法
 
-- [[节点导纳矩阵法|节点导纳矩阵法]]
+- [[methods/nodal-analysis|节点导纳矩阵法]]
 - [[频域导纳匹配|频域导纳匹配]]
 - [[karrenbauer模态变换|Karrenbauer模态变换]]
 - [[分层矩阵消去法|分层矩阵消去法]]

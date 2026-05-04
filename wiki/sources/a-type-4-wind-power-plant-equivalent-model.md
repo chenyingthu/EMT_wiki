@@ -59,7 +59,7 @@ sources: ["EMT_Doc/04/tpwrs.2012.2227845.pdf.pdf"]
 - [[频率扫描|频率扫描]]
 - [[伴随电路法|伴随电路法]]
 - [[傅里叶分析|傅里叶分析]]
-- [[methods/rational-function-approximation|有理函数逼近]]
+- [[methods/vector-fitting|有理函数逼近]]
 
 ## 涉及的模型
 

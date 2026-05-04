@@ -74,7 +74,7 @@ sources: ["EMT_Doc/15/Electro-mechanical transient modeling of MMC based multi-t
 
 ## 相关主题
 
-- [[机电暂态建模|机电暂态建模]]
+- [[topics/electromechanical-transient|机电暂态建模]]
 - [[直流故障仿真|直流故障仿真]]
 - [[topics/electromechanical-transient|暂态稳定分析]]
 - [[交直流混合系统|交直流混合系统]]

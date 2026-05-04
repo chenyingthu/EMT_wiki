@@ -61,7 +61,7 @@ sources: ["EMT_Doc/27&28/Modeling of overhead transmission lines for trapped cha
 - [[methods/vector-fitting|矢量拟合]]
 - [[methods/numerical-integration|数值拉普拉斯变换]]
 - [[灵敏度分析|灵敏度分析]]
-- [[有理函数拟合|有理函数拟合]]
+- [[methods/vector-fitting|有理函数拟合]]
 - [[相域直接拟合|相域直接拟合]]
 
 ## 涉及的模型

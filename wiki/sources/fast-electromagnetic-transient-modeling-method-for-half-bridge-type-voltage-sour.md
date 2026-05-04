@@ -72,7 +72,7 @@ sources: ["EMT_Doc/18/Zhang 等 - 2021 - Fast Electromagnetic Transient Modeling
 
 
 - [[vsc-model|VSC]]
-- [[models/half-bridge-submodule|半桥子模块]]
+- [[models/mmc-model|半桥子模块]]
 - [[固态变压器|固态变压器]]
 - [[igbt-二极管|IGBT/二极管]]
 

@@ -60,14 +60,14 @@ VFDLM的实现思路是保留EMT线路模型的端口行波接口，同时把线
 
 - [[methods/vector-fitting|矢量拟合]]
 - [[递归卷积|递归卷积]]
-- [[methods/rational-function-approximation|有理函数逼近]]
+- [[methods/vector-fitting|有理函数逼近]]
 - [[methods/norton-equivalent|诺顿等效]]
 - [[行波方程求解|行波方程求解]]
 
 ## 涉及的模型
 
 - [[models/transmission-line-model|输电线路]]
-- [[频变线路模型|频变线路模型]]
+- [[models/transmission-line-model|频变线路模型]]
 - [[宽带线路模型|宽带线路模型]]
 - [[电晕模型|电晕模型]]
 

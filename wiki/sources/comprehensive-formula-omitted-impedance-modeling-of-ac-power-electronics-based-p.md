@@ -67,7 +67,7 @@ sources: ["EMT_Doc/11/Hernández-Ramírez 等 - 2024 - Comprehensive D Q impedan
 
 ## 涉及的模型
 
-- [[电力电子变流器|电力电子变流器]]
+- [[topics/power-electronics|电力电子变流器]]
 - [[频变输电线路|频变输电线路]]
 - [[分布参数模型|分布参数模型]]
 - [[pwm延时模型|PWM延时模型]]

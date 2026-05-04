@@ -59,7 +59,7 @@ sources: ["EMT_Doc/39/Li 等 - 2025 - Universal Decoupled Equivalent Circuit Mod
 ## 使用的方法
 
 - [[average-value-model]]
-- [[interpolation]]
+- [[methods/interpolation-method]]
 - [[fixed-admittance]]
 
 ## 涉及的模型

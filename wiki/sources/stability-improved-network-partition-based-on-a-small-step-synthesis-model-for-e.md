@@ -69,7 +69,7 @@ International Journal of Electrical Power and Energy Systems Stability-improved 
 ## 相关主题
 
 - [[topics/parallel-computing]]
-- [[multirate]]
+- [[methods/multirate-method]]
 - [[topics/real-time-simulation]]
 
 ## 主要发现

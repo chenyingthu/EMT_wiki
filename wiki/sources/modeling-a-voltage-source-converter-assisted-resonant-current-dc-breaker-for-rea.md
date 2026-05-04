@@ -69,7 +69,7 @@ sources: ["EMT_Doc/26/Mirhosseini 等 - 2020 - Modeling a voltage source convert
 - [[varc直流断路器|VARC直流断路器]]
 - [[vsc-model|VSC]]
 - [[谐振lc电路|谐振LC电路]]
-- [[避雷器|避雷器]]
+- [[models/surge-arrester-model|避雷器]]
 - [[限流电抗器|限流电抗器]]
 - [[mtdc电网|MTDC电网]]
 - [[频率相关电缆模型|频率相关电缆模型]]

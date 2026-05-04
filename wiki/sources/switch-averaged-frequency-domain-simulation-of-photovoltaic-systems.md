@@ -59,7 +59,7 @@ sources: ["EMT_Doc/37/Agudelo 等 - 2023 - Switch-Averaged Frequency Domain Simu
 ## 使用的方法
 
 - [[numerical-integration]]
-- [[interpolation]]
+- [[methods/interpolation-method]]
 - [[average-value-model]]
 
 ## 涉及的模型

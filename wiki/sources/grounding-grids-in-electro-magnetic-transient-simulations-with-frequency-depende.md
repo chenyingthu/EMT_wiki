@@ -66,9 +66,9 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/j.ijepes.2019.105546.pdf.pdf"]
 
 ## 涉及的模型
 
-- [[接地网|接地网]]
+- [[models/grounding-system-model|接地网]]
 - [[models/transformer-model|变压器]]
-- [[避雷器|避雷器]]
+- [[models/surge-arrester-model|避雷器]]
 - [[π型等效电路|π型等效电路]]
 - [[频变导纳支路|频变导纳支路]]
 

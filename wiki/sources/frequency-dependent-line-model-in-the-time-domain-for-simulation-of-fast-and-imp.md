@@ -69,7 +69,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/j.ijepes.2016.01.051.pdf.pdf"]
 - [[models/transmission-line-model|输电线路]]
 - [[transmission-line-model|Bergeron线路模型]]
 - [[集中参数模型|集中参数模型]]
-- [[频变线路模型|频变线路模型]]
+- [[models/transmission-line-model|频变线路模型]]
 
 ## 相关主题
 

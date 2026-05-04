@@ -59,7 +59,7 @@ sources: ["EMT_Doc/33/Lima 等 - 2026 - Realization of rational models for tower
 ## 使用的方法
 
 - [[nodal-analysis]]
-- [[passivity]]
+- [[methods/passivity-enforcement]]
 
 ## 涉及的模型
 

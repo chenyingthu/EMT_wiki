@@ -79,7 +79,7 @@ sources: ["EMT_Doc/07&08/An Equivalent Dynamic Phasor Model for a Single-Phase B
 - [[控制器参数整定|控制器参数整定]]
 - [[methods/harmonic-analysis-methods|谐波分析]]
 - [[topics/parallel-computing|仿真加速]]
-- [[电力电子变换器|电力电子变换器]]
+- [[topics/power-electronics|电力电子变换器]]
 
 ## 主要发现
 

@@ -66,7 +66,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/Paull 等 - 2026 - GPU Parallel-Rate
 
 ## 涉及的模型
 
-- [[电力电子变换器|电力电子变换器]]
+- [[topics/power-electronics|电力电子变换器]]
 - [[二极管-无源开关|二极管/无源开关]]
 - [[开关级状态空间模型|开关级状态空间模型]]
 

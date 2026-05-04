@@ -59,7 +59,7 @@ sources: ["EMT_Doc/40/徐政 - 1996 - 耦合长线电磁暂态分析的扩展Ber
 ## 使用的方法
 
 - [[numerical-integration]]
-- [[interpolation]]
+- [[methods/interpolation-method]]
 - [[nodal-analysis]]
 
 ## 涉及的模型

@@ -56,7 +56,7 @@ sources: ["EMT_Doc/02/Rosołowski 等 - 1997 - A new distance relaying algorithm
 ## 使用的方法
 
 - [[傅里叶滤波|傅里叶滤波]]
-- [[对称分量法|对称分量法]]
+- [[methods/symmetrical-components|对称分量法]]
 - [[复数微分方程求解|复数微分方程求解]]
 - [[时域阻抗估计|时域阻抗估计]]
 - [[数字距离保护|数字距离保护]]

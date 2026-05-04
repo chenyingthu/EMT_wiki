@@ -62,7 +62,7 @@ sources: ["EMT_Doc/10/Leal和De Conti - 2021 - Compact Matrix Formulation for Ca
 - [[卷积积分|卷积积分]]
 - [[指数项拟合|指数项拟合]]
 - [[数值积分法|数值积分法]]
-- [[相模变换|相模变换]]
+- [[methods/modal-analysis|相模变换]]
 - [[集中源等效|集中源等效]]
 
 ## 涉及的模型

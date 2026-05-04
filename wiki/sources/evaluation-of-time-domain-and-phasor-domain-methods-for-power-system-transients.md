@@ -63,10 +63,10 @@ sources: ["EMT_Doc/18/Hassani 等 - 2022 - Evaluation of time-domain and phasor-
 - [[三相相量法|三相相量法]]
 - [[正序相量法|正序相量法]]
 - [[methods/numerical-integration|梯形积分法]]
-- [[后向欧拉法|后向欧拉法]]
+- [[methods/numerical-integration|后向欧拉法]]
 - [[methods/iterative-solvers|迭代求解器]]
 - [[伴随电路法|伴随电路法]]
-- [[稀疏矩阵求解|稀疏矩阵求解]]
+- [[methods/sparse-matrix-solver|稀疏矩阵求解]]
 
 ## 涉及的模型
 

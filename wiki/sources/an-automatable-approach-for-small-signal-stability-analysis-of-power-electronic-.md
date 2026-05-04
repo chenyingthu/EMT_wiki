@@ -80,7 +80,7 @@ sources: ["EMT_Doc/06/Chindu和Kulkarni - 2023 - An Automatable Approach for Sma
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[电力电子化电力系统|电力电子化电力系统]]
 - [[采样数据建模|采样数据建模]]
-- [[状态空间模型|状态空间模型]]
+- [[methods/state-space-method|状态空间模型]]
 - [[自动化建模|自动化建模]]
 
 ## 主要发现

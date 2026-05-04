@@ -68,7 +68,7 @@ sources: ["EMT_Doc/03/Xiong 等 - 2024 - A Semi-Analytical Approach for State-Sp
 - [[vbr同步发电机模型|VBR同步发电机模型]]
 - [[发电机控制器|发电机控制器]]
 - [[逆变器型资源-ibr-模型|逆变器型资源(IBR)模型]]
-- [[ieee-39节点系统|IEEE 39节点系统]]
+- [[test-systems/ieee-39-bus-system|IEEE 39节点系统]]
 
 ## 相关主题
 

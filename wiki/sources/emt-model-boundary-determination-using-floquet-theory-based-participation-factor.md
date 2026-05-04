@@ -73,7 +73,7 @@ sources: ["EMT_Doc/17/Sajjadi 等 - 2026 - EMT Model Boundary Determination Usin
 - [[输电线路与母线|输电线路与母线]]
 - [[多端口诺顿等值模型|多端口诺顿等值模型]]
 - [[改进kundur两区域系统|改进Kundur两区域系统]]
-- [[ieee-39节点系统|IEEE 39节点系统]]
+- [[test-systems/ieee-39-bus-system|IEEE 39节点系统]]
 
 ## 相关主题
 

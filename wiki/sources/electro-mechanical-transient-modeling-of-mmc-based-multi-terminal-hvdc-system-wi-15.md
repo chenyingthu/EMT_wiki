@@ -58,7 +58,7 @@ sources: ["EMT_Doc/15/Electro-mechanical transient modeling of MMC based multi-t
 
 ## 使用的方法
 
-- [[机电暂态建模|机电暂态建模]]
+- [[topics/electromechanical-transient|机电暂态建模]]
 - [[微分代数方程|微分代数方程]]
 - [[预设故障信息法|预设故障信息法]]
 - [[dq-ri坐标系变换|dq/RI坐标系变换]]
@@ -76,7 +76,7 @@ sources: ["EMT_Doc/15/Electro-mechanical transient modeling of MMC based multi-t
 
 - [[直流故障仿真|直流故障仿真]]
 - [[topics/electromechanical-transient|暂态稳定分析]]
-- [[机电暂态建模|机电暂态建模]]
+- [[topics/electromechanical-transient|机电暂态建模]]
 - [[交直流混合系统|交直流混合系统]]
 - [[topics/hybrid-acdc-network|多端直流电网]]
 

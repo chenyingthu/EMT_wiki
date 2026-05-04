@@ -621,7 +621,7 @@ mpc.branch = [
 
 ## 相关测试系统
 
-- [[ieee-14-bus]] - IEEE 14节点系统
+- [[test-systems/ieee-14-bus-system]] - IEEE 14节点系统
 - [[ieee-30-bus]] - IEEE 30节点系统
 - [[ieee-39-bus]] - IEEE 39节点系统(新英格兰系统)
 - [[ieee-57-bus]] - IEEE 57节点系统

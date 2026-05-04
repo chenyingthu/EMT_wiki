@@ -67,7 +67,7 @@ sources: ["EMT_Doc/02/Rupasinghe 等 - 2023 - A multi-solver framework for co-si
 ## 涉及的模型
 
 - [[mmc-model|MMC]]
-- [[电力电子变换器|电力电子变换器]]
+- [[topics/power-electronics|电力电子变换器]]
 - [[methods/average-value-model|平均值模型]]
 - [[118节点测试系统|118节点测试系统]]
 

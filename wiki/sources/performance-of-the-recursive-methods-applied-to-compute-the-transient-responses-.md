@@ -77,7 +77,7 @@ sources: ["EMT_Doc/31/j.epsr.2021.107281.pdf.pdf"]
 ## 相关主题
 
 - [[topics/emt-simulation|电磁暂态]]
-- [[地电位升|地电位升]]
+- [[topics/ground-potential-rise|地电位升]]
 - [[models/grounding-system-model|接地系统]]
 - [[topics/frequency-dependent-modeling|频率相关建模]]
 - [[雷击暂态分析|雷击暂态分析]]

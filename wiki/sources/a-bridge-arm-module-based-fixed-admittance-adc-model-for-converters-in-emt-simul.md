@@ -60,7 +60,7 @@ sources: ["EMT_Doc/01/Cao 等 - 2025 - A Bridge-Arm-Module-Based Fixed-Admittanc
 
 - [[关联离散电路法-adc|关联离散电路法(ADC)]]
 - [[固定导纳建模|固定导纳建模]]
-- [[后向欧拉法|后向欧拉法]]
+- [[methods/numerical-integration|后向欧拉法]]
 - [[交叉重初始化-cri|交叉重初始化(CRI)]]
 - [[methods/norton-equivalent|诺顿等效]]
 

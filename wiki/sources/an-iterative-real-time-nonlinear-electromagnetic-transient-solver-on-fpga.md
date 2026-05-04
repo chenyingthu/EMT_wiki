@@ -68,7 +68,7 @@ sources: ["EMT_Doc/07&08/Chen and Dinavahi - 2011 - An iterative real-time nonli
 
 ## 涉及的模型
 
-- [[避雷器|避雷器]]
+- [[models/surge-arrester-model|避雷器]]
 - [[串联补偿线路|串联补偿线路]]
 - [[models/transformer-model|变压器]]
 - [[铁磁谐振模型|铁磁谐振模型]]

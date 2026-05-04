@@ -67,9 +67,9 @@ sources: ["EMT_Doc/27&28/Multi-scale formulation of admittance-based modeling of
 
 ## 涉及的模型
 
-- [[电缆|电缆]]
+- [[models/cable-model|电缆]]
 - [[models/transmission-line-model|输电线路]]
-- [[频变线路模型|频变线路模型]]
+- [[models/transmission-line-model|频变线路模型]]
 - [[节点导纳模型|节点导纳模型]]
 
 ## 相关主题

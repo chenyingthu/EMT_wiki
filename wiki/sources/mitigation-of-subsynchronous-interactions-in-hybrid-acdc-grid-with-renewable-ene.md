@@ -77,7 +77,7 @@ sources: ["EMT_Doc/26/Cao 等 - 2021 - Mitigation of Subsynchronous Interactions
 
 - [[次同步相互作用-ssi-抑制|次同步相互作用(SSI)抑制]]
 - [[交直流混合电网|交直流混合电网]]
-- [[超实时仿真|超实时仿真]]
+- [[topics/real-time-simulation|超实时仿真]]
 - [[fpga并行加速|FPGA并行加速]]
 - [[机电暂态协同仿真|机电暂态协同仿真]]
 - [[topics/electromechanical-transient|暂态稳定分析]]

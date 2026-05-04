@@ -59,7 +59,7 @@ sources: ["EMT_Doc/18/De Conti和Emídio - 2016 - Extension of a modal-domain tr
 ## 使用的方法
 
 - [[模态域建模|模态域建模]]
-- [[有理函数拟合|有理函数拟合]]
+- [[methods/vector-fitting|有理函数拟合]]
 - [[接地导纳修正|接地导纳修正]]
 - [[地回路阻抗计算|地回路阻抗计算]]
 - [[topics/emt-simulation|时域仿真]]

@@ -59,7 +59,7 @@ sources: ["EMT_Doc/17/Yu 等 - 2024 - Electromechanical Transient Modeling of th
 ## 使用的方法
 
 - [[迭代潮流计算|迭代潮流计算]]
-- [[机电暂态建模|机电暂态建模]]
+- [[topics/electromechanical-transient|机电暂态建模]]
 - [[正序基波相量法|正序基波相量法]]
 - [[用户自定义模型|用户自定义模型]]
 - [[虚拟同步机控制|虚拟同步机控制]]
@@ -74,7 +74,7 @@ sources: ["EMT_Doc/17/Yu 等 - 2024 - Electromechanical Transient Modeling of th
 
 ## 相关主题
 
-- [[机电暂态建模|机电暂态建模]]
+- [[topics/electromechanical-transient|机电暂态建模]]
 - [[低频交流输电|低频交流输电]]
 - [[混合系统潮流计算|混合系统潮流计算]]
 - [[电力系统稳定性|电力系统稳定性]]

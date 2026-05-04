@@ -62,7 +62,7 @@ sources: ["EMT_Doc/23/De Silva和Zhang - 2026 - Improving numerical efficiency o
 - [[模态截断|模态截断]]
 - [[平衡截断|平衡截断]]
 - [[methods/model-order-reduction|模型降阶]]
-- [[methods/rational-function-approximation|有理函数逼近]]
+- [[methods/vector-fitting|有理函数逼近]]
 - [[递归卷积|递归卷积]]
 
 ## 涉及的模型

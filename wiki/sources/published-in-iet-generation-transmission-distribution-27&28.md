@@ -60,7 +60,7 @@ sources: ["EMT_Doc/27&28/New model for overhead lossy multiconductor transmissio
 
 - [[特征线法|特征线法]]
 - [[瞬态电阻矩阵|瞬态电阻矩阵]]
-- [[有理函数拟合|有理函数拟合]]
+- [[methods/vector-fitting|有理函数拟合]]
 - [[模态变换|模态变换]]
 - [[卷积积分|卷积积分]]
 

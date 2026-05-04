@@ -59,7 +59,7 @@ sources: ["EMT_Doc/32/VF_paper.pdf"]
 ## 使用的方法
 
 - [[methods/vector-fitting|矢量拟合]]
-- [[methods/rational-function-approximation|有理函数逼近]]
+- [[methods/vector-fitting|有理函数逼近]]
 - [[极点迁移法|极点迁移法]]
 - [[最小二乘法|最小二乘法]]
 - [[部分分式展开|部分分式展开]]

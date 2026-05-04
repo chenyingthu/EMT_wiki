@@ -62,14 +62,14 @@ sources: ["EMT_Doc/10/Mudunkotuwa和Filizadeh - 2018 - Co-simulation of electric
 - [[methods/multirate-method|多速率仿真]]
 - [[傅里叶级数展开|傅里叶级数展开]]
 - [[methods/numerical-integration|梯形积分法]]
-- [[节点导纳矩阵法|节点导纳矩阵法]]
+- [[methods/nodal-analysis|节点导纳矩阵法]]
 - [[接口数据映射算法|接口数据映射算法]]
 
 ## 涉及的模型
 
 - [[ieee-118节点系统|IEEE 118节点系统]]
 - [[topics/wind-farm-modeling|风电场]]
-- [[电力电子变流器|电力电子变流器]]
+- [[topics/power-electronics|电力电子变流器]]
 - [[输电网络|输电网络]]
 - [[旋转电机|旋转电机]]
 

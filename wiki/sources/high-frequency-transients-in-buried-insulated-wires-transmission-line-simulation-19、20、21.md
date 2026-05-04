@@ -59,7 +59,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/Alipio 等 - 2024 - High-frequency t
 ## 使用的方法
 
 - [[传输线理论|传输线理论]]
-- [[节点导纳矩阵法|节点导纳矩阵法]]
+- [[methods/nodal-analysis|节点导纳矩阵法]]
 - [[数值拉普拉斯逆变换|数值拉普拉斯逆变换]]
 - [[topics/frequency-domain-analysis|频域分析]]
 - [[准tem近似|准TEM近似]]

@@ -67,7 +67,7 @@ sources: ["EMT_Doc/05/Aluthge 等 - 2026 - Accelerating electromagnetic transien
 
 ## 涉及的模型
 
-- [[ieee-39节点系统|IEEE 39节点系统]]
+- [[test-systems/ieee-39-bus-system|IEEE 39节点系统]]
 - [[models/transformer-model|变压器]]
 - [[models/synchronous-machine-model|同步发电机]]
 - [[π型输电线路|π型输电线路]]
@@ -80,7 +80,7 @@ sources: ["EMT_Doc/05/Aluthge 等 - 2026 - Accelerating electromagnetic transien
 - [[gpu并行加速|GPU并行加速]]
 - [[topics/large-scale-grid-simulation|大规模电网仿真]]
 - [[高频开关动态|高频开关动态]]
-- [[稀疏矩阵求解|稀疏矩阵求解]]
+- [[methods/sparse-matrix-solver|稀疏矩阵求解]]
 - [[topics/renewable-energy-integration|新能源并网]]
 
 ## 主要发现

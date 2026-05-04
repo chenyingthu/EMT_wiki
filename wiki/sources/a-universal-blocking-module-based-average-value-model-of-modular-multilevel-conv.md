@@ -67,7 +67,7 @@ sources: ["EMT_Doc/04/tec.2019.2944332.pdf.pdf"]
 ## 涉及的模型
 
 - [[mmc-model|MMC]]
-- [[models/half-bridge-submodule|半桥子模块]]
+- [[models/mmc-model|半桥子模块]]
 - [[全桥子模块|全桥子模块]]
 - [[混合桥子模块|混合桥子模块]]
 - [[mmc-model|MMC]]

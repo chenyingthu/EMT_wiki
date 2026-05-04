@@ -72,7 +72,7 @@ sources: ["EMT_Doc/07&08/Xue et al. - 2022 - An Investigation of Electromagnetic
 - [[models/cable-model|地下电缆]]
 - [[线状与等效管状铠装|线状与等效管状铠装]]
 - [[并联电抗器|并联电抗器]]
-- [[避雷器|避雷器]]
+- [[models/surge-arrester-model|避雷器]]
 - [[混合输电系统|混合输电系统]]
 
 ## 相关主题

@@ -70,7 +70,7 @@ sources: ["EMT_Doc/17/Meredith - 1997 - EMTP modeling of electromagnetic transie
 - [[架空线路|架空线路]]
 - [[管型电缆|管型电缆]]
 - [[变压器铁芯|变压器铁芯]]
-- [[避雷器|避雷器]]
+- [[models/surge-arrester-model|避雷器]]
 
 ## 相关主题
 

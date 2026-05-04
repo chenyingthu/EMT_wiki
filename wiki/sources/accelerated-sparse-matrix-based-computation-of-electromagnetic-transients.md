@@ -79,7 +79,7 @@ sources: ["EMT_Doc/05/Abusalah 等 - 2020 - Accelerated Sparse Matrix-Based Comp
 
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[topics/parallel-computing|并行计算]]
-- [[稀疏矩阵求解|稀疏矩阵求解]]
+- [[methods/sparse-matrix-solver|稀疏矩阵求解]]
 - [[自动网络分解|自动网络分解]]
 - [[离线仿真加速|离线仿真加速]]
 - [[非线性迭代求解|非线性迭代求解]]

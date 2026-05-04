@@ -68,7 +68,7 @@ sources: ["EMT_Doc/26/Herath 等 - 2019 - Modeling of a Modular Multilevel Conve
 
 - [[mmc-model|MMC]]
 - [[电池储能系统|电池储能系统]]
-- [[子模块|子模块]]
+- [[models/mmc-model|子模块]]
 - [[双向dc-dc变换器|双向DC-DC变换器]]
 - [[详细开关模型|详细开关模型]]
 
@@ -76,7 +76,7 @@ sources: ["EMT_Doc/26/Herath 等 - 2019 - Modeling of a Modular Multilevel Conve
 
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[储能集成建模|储能集成建模]]
-- [[topics/computational-efficiency|计算效率优化]]
+- [[topics/large-scale-system-simulation|计算效率优化]]
 - [[电力电子变换器建模|电力电子变换器建模]]
 - [[详细等效建模|详细等效建模]]
 

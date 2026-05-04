@@ -74,7 +74,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/Zhang 等 - 2017 - Half-wavelength S
 
 ## 相关主题
 
-- [[机电暂态仿真|机电暂态仿真]]
+- [[topics/electromechanical-transient|机电暂态仿真]]
 - [[半波长输电|半波长输电]]
 - [[波传输特性|波传输特性]]
 - [[topics/transient-stability-analysis|暂态稳定]]
