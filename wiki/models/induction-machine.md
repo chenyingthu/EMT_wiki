@@ -91,6 +91,8 @@ $$T_{start} = (1.5-2.5)T_N$$
 - [[power-quality]] - 电能质量（电压暂降）
 - [[load-model]] - 负荷模型
 - [[coordinate-transformation]] - 坐标变换方法
+- [[test-systems/ieee-14-bus-system]] - IEEE 14节点测试系统
+- [[emt-simulation]] - EMT仿真基础
 
 ## 代表性来源
 

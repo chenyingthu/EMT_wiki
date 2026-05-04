@@ -128,6 +128,8 @@ $$I_{start} = (5-7) I_N$$
 - [[load-model]] - 负荷模型
 - [[dfig-model]] - DFIG模型
 - [[power-quality]] - 电能质量分析
+- [[test-systems/ieee-14-bus-system]] - IEEE 14节点测试系统
+- [[emt-simulation]] - EMT仿真基础
 
 ## 开放问题
 
