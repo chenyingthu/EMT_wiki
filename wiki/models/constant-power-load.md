@@ -134,7 +134,8 @@ $$\frac{dV}{dI} = \frac{I - P_0/V}{C(V_s - RI - V)/L}$$
 - [[power-electronics]] - 电力电子技术
 - [[dc-dc-converter]] - DC-DC变换器
 - [[inverter-model]] - 逆变器模型
-- [[motor-modeling]] - 电机建模
+- [[induction-machine]] - 感应电机模型
+- [[synchronous-machine-model]] - 同步电机模型
 
 ## 开放问题
 

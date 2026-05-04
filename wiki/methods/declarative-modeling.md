@@ -98,16 +98,14 @@ $$\text{Index }2 \rightarrow \text{Index }1$$
 
 ## 与相关页面的关系
 
-- [[modeling-language]] - 建模语言
 - [[state-space-method]] - 状态空间法
 - [[nodal-analysis]] - 节点分析法
 - [[companion-circuit-model]] - 伴随电路模型
 - [[dae-solvers]] - DAE求解器
-- [[acausal-modeling]] - 无因果建模
-- [[equation-based-modeling]] - 基于方程的建模
-- [[modelica-language]] - Modelica语言
 - [[numerical-integration]] - 数值积分方法
-- [[state-space-method]] - 状态空间法
+- [[emt-simulation]] - EMT仿真基础
+- [[circuit-breaker-model]] - 断路器模型
+- [[power-electronics]] - 电力电子
 
 ## 代表性来源
 

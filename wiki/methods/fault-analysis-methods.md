@@ -72,9 +72,6 @@ $$i_f(t)=G_f(t)v_f(t), \quad G_f(t)=1/R_f(t)$$
 | [[an-ultra-fast-mmc-hvdc-fault-location-algorithm-based-on-transient-voltage-featu]] | 直流故障定位中暂态电压特征和数据窗的案例 | 阈值、采样率和噪声结论需绑定原文系统 |
 | [[a-novel-ultra-high-speed-traveling-wave-protection-principle-for-vsc-based-dc-gr]] | VSC 直流电网行波保护和故障极选择的代表性来源 | 不应外推到电缆、混合线路或不同测量链路 |
 | [[protection-system-representation-in-the-electromagnetic-transients-program-power]] | EMT 中保护系统表示的来源入口 | 保护模型细节需按具体程序和装置核验 |
-| [[short-circuit-current-calculation-in-high-voltage-ac-systems-ieee-std-c37]] | 高压交流系统短路电流计算标准 | 适用于传统短路计算，EMT需补充暂态细节 |
-| [[fault-analysis-and-protection-coordination-for-mmc-based-hvdc-systems]] | MMC-HVDC系统故障分析与保护配合 | 结论限于MMC拓扑和控制系统设计 |
-| [[ultra-high-speed-protection-for-dc-grids-based-on-transient-voltage]] | 基于暂态电压的直流电网超高速保护 | 阈值和采样率需按具体系统验证 |
 
 ## 形式化表达
 

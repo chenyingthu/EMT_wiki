@@ -92,10 +92,10 @@ $$\mathbf{\theta}_{k+1} = \mathbf{\theta}_k + (\mathbf{J}^T\mathbf{J})^{-1}\math
 - [[transformer-model]] - 变压器模型（饱和特性拟合）
 - [[least-squares]] - 最小二乘法
 - [[numerical-integration]] - 数值积分
-- [[optimization-methods]] - 优化方法
 - [[wideband-modeling]] - 宽频建模
-- [[numerical-integration]] - 数值积分方法
 - [[state-space-method]] - 状态空间法
+- [[prony-analysis]] - Prony分析
+- [[dynamic-phasor]] - 动态相量法
 
 ## 代表性来源
 
