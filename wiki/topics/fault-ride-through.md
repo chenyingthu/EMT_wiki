@@ -105,9 +105,9 @@ $$\frac{1}{2}C_{dc}\frac{dV_{dc}^2}{dt} = P_{in} - P_{out}$$
 
 ### 研究文献
 
-- [[gfl-inverter-model]] - 跟网型逆变器FRT控制
-- [[gfm-inverter-model]] - 构网型逆变器故障响应
-- [[dfig-model]] - 双馈风机FRT与撬棒保护
+- 跟网型逆变器FRT控制
+- 构网型逆变器故障响应
+- 双馈风机FRT与撬棒保护
 
 ## 与相关页面的关系
 
@@ -116,7 +116,7 @@ $$\frac{1}{2}C_{dc}\frac{dV_{dc}^2}{dt} = P_{in} - P_{out}$$
 - [[dfig-model]] - 双馈风机FRT与保护
 - [[pmsm-model]] - 直驱风机FRT特性
 - [[fault-analysis-methods]] - 故障分析方法
-- [[grid-code-compliance]] - 并网准则验证
+- [[renewable-energy-integration]] - 可再生能源并网
 
 ## 开放问题
 

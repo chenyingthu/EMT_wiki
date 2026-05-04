@@ -127,8 +127,8 @@ $$\text{Re}(s) < 0 \Leftrightarrow |z| < 1$$
 - [[numerical-integration]] - 数值积分（梯形法）
 - [[discretization-methods]] - 离散化方法综合
 - [[companion-circuit]] - 伴随电路（梯形法实现）
-- [[z-transform]] - Z变换理论
 - [[state-space-method]] - 状态空间方法
+- [[trapezoidal-rule]] - 梯形积分法则
 
 ## 开放问题
 

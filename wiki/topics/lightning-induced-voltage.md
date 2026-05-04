@@ -121,17 +121,17 @@ $$\mathbf{V}_{ind} = \mathbf{Z}_{mutual} \cdot \mathbf{I}_{lightning}$$
 
 ### 应用方法
 
-- [[lightning-transient-analysis]] - 雷击暂态分析
-- [[transmission-line-model]] - 线路场线耦合模型
-- [[electromagnetic-coupling]] - 电磁耦合理论
+- 雷击暂态分析方法
+- 线路场线耦合建模
+- 电磁耦合理论
 
 ## 与相关页面的关系
 
 - [[lightning-transient-analysis]] - 雷击暂态整体分析
 - [[transmission-line-model]] - 输电线路建模
-- [[distributed-parameter-model]] - 分布参数与行波
-- [[grounding-system-model]] - 接地与雷电流
-- [[insulator-string-model]] - 绝缘子闪络
+- [[distributed-parameter-line]] - 分布参数线路
+- [[grounding-system-model]] - 接地系统模型
+- [[insulator-string-model]] - 绝缘子串模型
 
 ## 开放问题
 

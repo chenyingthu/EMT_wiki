@@ -115,17 +115,17 @@ GFM需设计加速面积小于减速面积。
 
 ### GFM应用
 
-- [[gfm-inverter-model]] - 构网型逆变器模型
-- [[droop-control-model]] - 下垂控制模型
-- [[microgrid-distribution-network]] - 微电网应用
+- 构网型逆变器模型
+- 下垂控制实现
+- 微电网应用技术
 
 ## 与相关页面的关系
 
 - [[gfm-inverter-model]] - 构网型逆变器详细模型
 - [[gfl-inverter-model]] - 跟网型逆变器对比
-- [[droop-control-model]] - 下垂控制
-- [[virtual-synchronous-machine]] - 虚拟同步机
+- [[droop-control-model]] - 下垂控制模型
 - [[microgrid-distribution-network]] - 微电网应用
+- [[pll-model]] - 锁相环模型
 
 ## 开放问题
 
