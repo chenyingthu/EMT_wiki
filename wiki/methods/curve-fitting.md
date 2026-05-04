@@ -84,6 +84,14 @@ $$\mathbf{\theta}_{k+1} = \mathbf{\theta}_k + (\mathbf{J}^T\mathbf{J})^{-1}\math
 - **病态问题**：参数高度相关
 - **局部极小**：非凸优化问题
 
+## 与相关页面的关系
+
+- [[vector-fitting]] - 矢量拟合（有理函数拟合）
+- [[parameter-identification]] - 参数辨识方法
+- [[transmission-line-model]] - 输电线路模型（频变参数拟合）
+- [[transformer-model]] - 变压器模型（饱和特性拟合）
+- [[least-squares]] - 最小二乘法
+
 ## 代表性来源
 
 - Press, W.H., et al., "Numerical Recipes," *Cambridge*, 2007.

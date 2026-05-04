@@ -144,7 +144,7 @@ $$
 
 - [[transient-stability-analysis]] - 暂态稳定性分析
 - [[small-signal-stability]] - 小信号稳定性
-- [[subsynchronous-oscillation]] - 次同步振荡分析
+- 次同步振荡分析
 
 ## 与相关页面的关系
 

@@ -96,6 +96,14 @@ $$\text{Index }2 \rightarrow \text{Index }1$$
 - **高索引**：数值困难
 - **不连续**：事件处理复杂
 
+## 与相关页面的关系
+
+- [[modeling-language]] - 建模语言
+- [[state-space-method]] - 状态空间法
+- [[nodal-analysis]] - 节点分析法
+- [[companion-circuit-model]] - 伴随电路模型
+- [[dae-solvers]] - DAE求解器
+
 ## 代表性来源
 
 - Fritzson, P., "Principles of Object-Oriented Modeling and Simulation with Modelica 3.3," *Wiley*, 2014.

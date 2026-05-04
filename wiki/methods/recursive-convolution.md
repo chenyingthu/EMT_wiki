@@ -120,7 +120,7 @@ $$
 ### 应用案例
 
 - [[frequency-dependent-line-model]] - 频变线路模型的递归卷积实现
-- [[jmarti-model]] - J.Marti模型的递归卷积基础
+- J.Marti 模型的递归卷积基础
 - [[transmission-line-model]] - 输电线路建模中的递归卷积应用
 
 ### 数值方法

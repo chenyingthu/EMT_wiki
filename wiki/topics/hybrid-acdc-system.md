@@ -27,4 +27,4 @@ created: "2026-05-04"
 
 - [[vsc-hvdc]] - VSC-HVDC
 - [[lcc-model]] - LCC换流器
-- [[multi-infeed-hvdc]] - 多馈入直流
+- 多馈入直流

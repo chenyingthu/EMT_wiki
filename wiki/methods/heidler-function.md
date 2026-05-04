@@ -81,6 +81,14 @@ $$t_{peak} \approx \tau_1(10\tau_2/\tau_1)^{1/10}$$
 - **多回击**：复杂波形难以单函数描述
 - **通道效应**：未考虑通道阻抗变化
 
+## 与相关页面的关系
+
+- [[lightning-transient-analysis]] - 雷击暂态分析
+- [[transmission-line-model]] - 输电线路模型
+- [[grounding-system-model]] - 接地系统模型
+- [[surge-arrester-model]] - 避雷器模型
+- [[bergeron-model]] - 贝杰龙模型
+
 ## 代表性来源
 
 - Heidler, F., "Traveling Current Source Model for LEMP Calculation," *ICLP*, 1985.

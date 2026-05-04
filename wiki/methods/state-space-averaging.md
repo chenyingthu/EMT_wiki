@@ -72,6 +72,14 @@ $$\mathbf{X} = -[d\mathbf{A}_1 + (1-d)\mathbf{A}_2]^{-1}[d\mathbf{B}_1 + (1-d)\m
 - **变频控制**：无法定义固定周期
 - **大信号暂态**：超出小信号范围
 
+## 与相关页面的关系
+
+- [[average-value-model]] - 平均值模型（基于SSA）
+- [[switch-modeling]] - 开关建模方法
+- [[small-signal-analysis]] - 小信号分析
+- [[numerical-integration]] - 数值积分方法
+- [[bilinear-transform]] - 双线性变换
+
 ## 代表性来源
 
 - Middlebrook, R.D. and Ćuk, S., "A General Unified Approach to Modelling Switching-Converter Power Stages," *PESC*, 1976.

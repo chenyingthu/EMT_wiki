@@ -85,6 +85,14 @@ $$t_{block} < 5\text{ms}$$
 - **过电压**：能量无处耗散
 - **通信故障**：协调失败
 
+## 与相关页面的关系
+
+- [[mmc-model]] - MMC换流器模型
+- [[fault-analysis-methods]] - 故障分析方法
+- [[fault-ride-through]] - 故障穿越
+- [[vsc-hvdc]] - VSC-HVDC系统
+- [[protection-relay-modeling]] - 继电保护建模
+
 ## 代表性来源
 
 - Marquardt, R., "Modular Multilevel Converter with DC Short Circuit Current Limitation," *EPE*, 2011.

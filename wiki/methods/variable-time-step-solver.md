@@ -76,6 +76,14 @@ $$t_{switch}: g(t_{switch}) = 0$$
 - **刚性系统**：稳定性限制步长
 - **事件检测**：错过开关时刻
 
+## 与相关页面的关系
+
+- [[numerical-integration]] - 数值积分方法
+- [[stiff-system-handling]] - 刚性系统处理
+- [[switch-modeling]] - 开关建模（事件处理）
+- [[trapezoidal-rule]] - 梯形积分法
+- [[interpolation-method]] - 插值方法
+
 ## 代表性来源
 
 - Hairer, E., et al., "Solving ODE I & II," *Springer*, 1993.

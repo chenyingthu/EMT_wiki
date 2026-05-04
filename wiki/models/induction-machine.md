@@ -84,6 +84,14 @@ $$T_{start} = (1.5-2.5)T_N$$
 - **过热**：长期过载
 - **电压暂降**：大电机启动引起
 
+## 与相关页面的关系
+
+- [[dfig-model]] - DFIG模型（双馈感应发电机）
+- [[synchronous-machine-model]] - 同步电机模型
+- [[power-quality]] - 电能质量（电压暂降）
+- [[load-model]] - 负荷模型
+- [[coordinate-transformation]] - 坐标变换方法
+
 ## 代表性来源
 
 - Krause, P.C., et al., "Analysis of Electric Machinery," *IEEE Press*, 2013.

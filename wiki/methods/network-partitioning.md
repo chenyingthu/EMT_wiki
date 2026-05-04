@@ -127,7 +127,7 @@ $$\min C = \alpha \cdot \frac{N_{boundary}}{N_{total}} + \beta \cdot \frac{\max(
 
 - [[interface-technique]] - 接口技术
 - [[multirate-method]] - 多速率方法
-- [[domain-decomposition]] - 区域分解
+- 区域分解
 
 ## 与相关页面的关系
 

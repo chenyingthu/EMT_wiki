@@ -139,7 +139,7 @@ $E_{unbalance}$ 为三相不对称引起的不平衡电压。
 - [[transmission-line-model]] - 输电线路模型
 - [[grounding-system-model]] - 接地系统设计
 - [[frequency-dependent-modeling]] - 频变参数建模
-- [[sheath-circulating-current]] - 护套环流分析
+- 护套环流分析
 - [[emt-simulation]] - 电磁暂态仿真
 
 ## 开放问题

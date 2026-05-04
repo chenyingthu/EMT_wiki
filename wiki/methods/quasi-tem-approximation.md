@@ -81,6 +81,14 @@ $$Z_c = \sqrt{\frac{R + j\omega L}{G + j\omega C}}$$
 - **大损耗**：TEM假设失效
 - **不均匀介质**：混合模式
 
+## 与相关页面的关系
+
+- [[transmission-line-model]] - 输电线路模型
+- [[cable-model]] - 电缆模型
+- [[wideband-modeling]] - 宽频建模
+- [[frequency-dependent-modeling]] - 频率相关建模
+- [[earth-return-impedance]] - 地回路阻抗
+
 ## 代表性来源
 
 - Carson, J.R., "Wave Propagation in Overhead Wires," *BSTJ*, 1926.

@@ -97,9 +97,11 @@ $$V_{sag} = \frac{Z_{fault}}{Z_{source} + Z_{fault}}$$
 
 ## 与相关页面的关系
 
-- [[harmonic-analysis-methods]] - 谐波分析
-- [[voltage-sag-analysis]] - 电压暂降
-- [[flicker-analysis]] - 闪变分析
+- [[harmonic-analysis-methods]] - 谐波分析方法
+- [[fault-analysis-methods]] - 故障分析（含电压暂降）
+- [[lightning-transient-analysis]] - 雷击暂态分析
+- [[emt-simulation]] - EMT仿真基础
+- [[power-system-network]] - 电力系统网络
 
 ---
 

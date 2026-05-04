@@ -113,20 +113,20 @@ $$\epsilon_T \approx \frac{e^{ct}}{e^{2MT}-1}$$
 
 ### 应用方法
 
-- [[laplace-transform]] - 拉普拉斯变换
+- 拉普拉斯变换
 - [[frequency-domain-analysis]] - 频域分析
-- [[convolution-method]] - 卷积方法
+- 卷积方法
 - [[transmission-line-model]] - 传输线模型
 
 ### 数值方法
 
 - [[numerical-integration]] - 数值积分
 - [[fft]] - 快速傅里叶变换
-- [[complex-integration]] - 复积分
+- 复积分
 
 ## 与相关页面的关系
 
-- [[laplace-transform]] - 拉普拉斯变换基础
+- 拉普拉斯变换基础
 - [[frequency-domain-analysis]] - 频域分析
 - [[transmission-line-model]] - 频变线路模型
 - [[recursive-convolution]] - 时域递归卷积实现

@@ -133,11 +133,11 @@ $$PM = 180° + \angle T_m(f_c) \quad \text{[°]}$$
 - [[impedance-modeling]] - 阻抗建模理论
 - [[harmonic-analysis-methods]] - 谐波分析方法
 - [[small-signal-analysis]] - 小信号分析基础
-- [[fft-analysis]] - FFT频谱分析
+- FFT 频谱分析
 
 ### 应用案例
 
-- [[grid-connected-inverter]] - 并网逆变器阻抗测量
+- 并网逆变器阻抗测量
 - [[wind-farm-modeling]] - 风电场阻抗特性
 - [[pv-power-plant]] - 光伏电站频率扫描分析
 

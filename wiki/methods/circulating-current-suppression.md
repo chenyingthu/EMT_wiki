@@ -76,6 +76,14 @@ $$I_{2f,suppressed} < 0.1 I_{2f,nominal}$$
 - **控制饱和**：注入电压超限
 - **不对称故障**：负序电流与环流耦合
 
+## 与相关页面的关系
+
+- [[mmc-model]] - MMC换流器模型
+- [[harmonic-analysis-methods]] - 谐波分析方法
+- [[state-space-method]] - 状态空间法
+- [[coordinate-transformation]] - 坐标变换方法
+- [[average-value-model]] - 平均值模型
+
 ## 代表性来源
 
 - Tu, Q., et al., "Suppressing DC Voltage Ripples of MMC-HVDC," *IEEE TPEL*, 2012.
