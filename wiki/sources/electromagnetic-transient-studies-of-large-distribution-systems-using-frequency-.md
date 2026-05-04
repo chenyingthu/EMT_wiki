@@ -69,7 +69,7 @@ Electromagnetic transient studies of large distribution systems using frequency 
 - [[分布参数线路|分布参数线路]]
 - [[集中参数线路|集中参数线路]]
 - [[models/transformer-model|变压器]]
-- [[断路器|断路器]]
+- [[models/circuit-breaker-model|断路器]]
 - [[架空线|架空线]]
 - [[models/cable-model|地下电缆]]
 

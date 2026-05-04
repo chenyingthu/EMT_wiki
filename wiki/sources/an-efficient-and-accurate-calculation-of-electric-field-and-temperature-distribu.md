@@ -73,7 +73,7 @@ sources: ["EMT_Doc/06/tpwrd.2016.2545922.pdf.pdf"]
 
 ## 相关主题
 
-- [[高频暂态分析|高频暂态分析]]
+- [[topics/emt-simulation|高频暂态分析]]
 - [[topics/frequency-dependent-modeling|频率相关建模]]
 - [[磁芯饱和效应|磁芯饱和效应]]
 - [[暂态抑制|暂态抑制]]

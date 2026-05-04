@@ -75,9 +75,9 @@ sources: ["EMT_Doc/13&14/files/j.ijepes.2020.106163.pdf.pdf"]
 ## 相关主题
 
 - [[topics/frequency-dependent-modeling|频率相关建模]]
-- [[波传播特性|波传播特性]]
+- [[models/transmission-line-model|波传播特性]]
 - [[topics/emt-simulation|电磁暂态仿真]]
-- [[地下电缆建模|地下电缆建模]]
+- [[models/cable-model|地下电缆建模]]
 - [[大地返回参数计算|大地返回参数计算]]
 - [[浪涌分析|浪涌分析]]
 

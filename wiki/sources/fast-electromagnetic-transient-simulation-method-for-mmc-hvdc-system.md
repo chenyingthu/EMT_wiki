@@ -75,10 +75,10 @@ sources: ["EMT_Doc/18/Gao 等 - 2014 - Fast electromagnetic transient simulation
 
 ## 相关主题
 
-- [[gpu并行计算|GPU并行计算]]
+- [[methods/gpu-accelerated-simulation|GPU并行计算]]
 - [[快速电磁暂态仿真|快速电磁暂态仿真]]
 - [[细粒度并行|细粒度并行]]
-- [[大规模系统仿真|大规模系统仿真]]
+- [[topics/large-scale-system-simulation|大规模系统仿真]]
 - [[开关过程处理|开关过程处理]]
 
 ## 主要发现

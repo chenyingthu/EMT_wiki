@@ -61,7 +61,7 @@ sources: ["EMT_Doc/09/Liu 等 - 2009 - Application of wavelet singular entropy t
 - [[小波变换|小波变换]]
 - [[小波奇异熵理论|小波奇异熵理论]]
 - [[多分辨分析|多分辨分析]]
-- [[pscad-emtdc电磁暂态仿真|PSCAD/EMTDC电磁暂态仿真]]
+- [[entities/pscad-emtdc|PSCAD/EMTDC电磁暂态仿真]]
 
 ## 涉及的模型
 

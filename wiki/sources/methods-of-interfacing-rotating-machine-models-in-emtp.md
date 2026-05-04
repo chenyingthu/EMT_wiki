@@ -59,7 +59,7 @@ sources: ["EMT_Doc/26/Wang 等 - 2010 - Methods of interfacing rotating machine 
 ## 使用的方法
 
 - [[methods/nodal-analysis|节点分析法]]
-- [[状态变量法|状态变量法]]
+- [[methods/state-space-method|状态变量法]]
 - [[间接接口技术|间接接口技术]]
 - [[直接接口技术|直接接口技术]]
 - [[park变换|Park变换]]

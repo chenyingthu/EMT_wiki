@@ -61,7 +61,7 @@ sources: ["EMT_Doc/13&14/files/Vahabzadeh 等 - 2025 - Discretized Impedance-Bas
 - [[离散阻抗建模|离散阻抗建模]]
 - [[导纳建模|导纳建模]]
 - [[methods/nodal-analysis|戴维南等效电路]]
-- [[状态变量法|状态变量法]]
+- [[methods/state-space-method|状态变量法]]
 - [[数值离散化|数值离散化]]
 - [[methods/average-value-model|平均值模型]]
 

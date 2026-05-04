@@ -62,7 +62,7 @@ sources: ["EMT_Doc/32/VF_paper.pdf"]
 - [[methods/vector-fitting|有理函数逼近]]
 - [[极点迁移法|极点迁移法]]
 - [[最小二乘法|最小二乘法]]
-- [[部分分式展开|部分分式展开]]
+- [[methods/partial-fraction-expansion|部分分式展开]]
 
 ## 涉及的模型
 

@@ -68,11 +68,11 @@ sources: ["EMT_Doc/10/Sun 等 - 2014 - Comparative study on electromechanical an
 
 - [[光伏电池|光伏电池]]
 - [[mppt控制器|MPPT控制器]]
-- [[dc-dc变换器|DC/DC变换器]]
+- [[models/dc-dc-converter|DC/DC变换器]]
 - [[直流母线电容|直流母线电容]]
 - [[models/gfl-inverter-model|并网逆变器]]
 - [[机电暂态模型|机电暂态模型]]
-- [[电磁暂态模型|电磁暂态模型]]
+- [[topics/emt-simulation|电磁暂态模型]]
 
 ## 相关主题
 

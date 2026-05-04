@@ -59,7 +59,7 @@ sources: ["EMT_Doc/27&28/New Compact White-Box Transformer Model for the Calcula
 ## 使用的方法
 
 - [[methods/vector-fitting|矢量拟合]]
-- [[部分分式展开|部分分式展开]]
+- [[methods/partial-fraction-expansion|部分分式展开]]
 - [[奇异值分解|奇异值分解]]
 - [[低秩矩阵分解|低秩矩阵分解]]
 - [[有限元法|有限元法]]

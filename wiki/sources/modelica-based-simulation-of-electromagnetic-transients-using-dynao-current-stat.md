@@ -79,7 +79,7 @@ sources: ["EMT_Doc/26/Masoom 等 - 2021 - Modelica-based simulation of electroma
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[modelica建模|Modelica建模]]
 - [[混合仿真架构|混合仿真架构]]
-- [[大规模系统仿真|大规模系统仿真]]
+- [[topics/large-scale-system-simulation|大规模系统仿真]]
 - [[数值求解器集成|数值求解器集成]]
 - [[仿真性能优化|仿真性能优化]]
 - [[非因果建模|非因果建模]]

@@ -60,7 +60,7 @@ sources: ["EMT_Doc/10/Hu 等 - 2015 - Compacting and partitioning-based simulati
 
 - [[methods/vector-fitting|矢量拟合]]
 - [[奇异值分解|奇异值分解]]
-- [[状态空间实现|状态空间实现]]
+- [[methods/state-space-method|状态空间实现]]
 - [[methods/numerical-integration|梯形积分法]]
 - [[topics/parallel-computing|并行计算]]
 - [[模型压缩|模型压缩]]

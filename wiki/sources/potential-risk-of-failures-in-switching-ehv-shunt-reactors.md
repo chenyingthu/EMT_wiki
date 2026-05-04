@@ -76,7 +76,7 @@ sources: ["EMT_Doc/31/j.epsr.2005.12.018.pdf.pdf"]
 
 - [[电弧不稳定|电弧不稳定]]
 - [[断路器热失效|断路器热失效]]
-- [[开关暂态|开关暂态]]
+- [[methods/switch-modeling|开关暂态]]
 - [[topics/frequency-dependent-modeling|频率相关建模]]
 - [[电弧-电路交互|电弧-电路交互]]
 - [[并联电抗器投切|并联电抗器投切]]

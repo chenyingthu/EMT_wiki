@@ -70,14 +70,14 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/Kida 等 - 2026 - High-accuracy EMT 
 - [[频变等效模型|频变等效模型]]
 - [[models/transmission-line-model|输电线路]]
 - [[配电系统|配电系统]]
-- [[节点导纳矩阵|节点导纳矩阵]]
+- [[methods/nodal-analysis|节点导纳矩阵]]
 - [[rlcg等效电路|RLCG等效电路]]
 
 ## 相关主题
 
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[topics/frequency-dependent-modeling|频率相关建模]]
-- [[数值积分误差|数值积分误差]]
+- [[methods/numerical-integration|数值积分误差]]
 - [[频响失真补偿|频响失真补偿]]
 - [[时域仿真精度|时域仿真精度]]
 

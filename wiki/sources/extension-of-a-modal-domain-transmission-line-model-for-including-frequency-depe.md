@@ -75,7 +75,7 @@ sources: ["EMT_Doc/18/De Conti和Emídio - 2016 - Extension of a modal-domain tr
 
 - [[频变土壤参数|频变土壤参数]]
 - [[topics/emt-simulation|电磁暂态仿真]]
-- [[高频暂态分析|高频暂态分析]]
+- [[topics/emt-simulation|高频暂态分析]]
 - [[models/transmission-line-model|输电线路建模]]
 - [[不良导体接地效应|不良导体接地效应]]
 

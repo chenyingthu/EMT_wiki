@@ -70,7 +70,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/JESTPE.2014.2315833.pdf.pdf"]
 - [[半桥-全桥子模块|半桥/全桥子模块]]
 - [[vsc-model|VSC]]
 - [[topics/hybrid-acdc-network|多端直流电网]]
-- [[桥臂电抗器|桥臂电抗器]]
+- [[models/arm-reactor|桥臂电抗器]]
 
 ## 相关主题
 

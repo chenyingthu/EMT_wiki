@@ -62,7 +62,7 @@ sources: ["EMT_Doc/17/Xiong 等 - 2020 - Electromechanical-electromagnetic trans
 ## 使用的方法
 
 
-- [[机电-电磁暂态混合仿真|机电-电磁暂态混合仿真]]
+- [[topics/electromechanical-electromagnetic-hybrid-simulation|机电-电磁暂态混合仿真]]
 - [[网络分割与戴维南等值|网络分割与戴维南等值]]
 - [[用户自定义建模-udm|用户自定义建模(UDM)]]
 - [[阶跃响应与故障对比测试|阶跃响应与故障对比测试]]

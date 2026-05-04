@@ -73,9 +73,9 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/Alipio 等 - 2024 - High-frequency t
 
 ## 相关主题
 
-- [[高频暂态分析|高频暂态分析]]
+- [[topics/emt-simulation|高频暂态分析]]
 - [[地回路参数计算|地回路参数计算]]
-- [[地下电缆建模|地下电缆建模]]
+- [[models/cable-model|地下电缆建模]]
 - [[实验验证|实验验证]]
 - [[频率相关特性|频率相关特性]]
 

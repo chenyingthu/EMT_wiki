@@ -72,7 +72,7 @@ sources: ["EMT_Doc/26/Dehkordi 等 - 2026 - Modeling of cross-magnetization effe
 
 ## 相关主题
 
-- [[磁饱和建模|磁饱和建模]]
+- [[models/transformer-model|磁饱和建模]]
 - [[交叉磁化效应|交叉磁化效应]]
 - [[topics/real-time-simulation|实时仿真]]
 - [[电磁暂态程序|电磁暂态程序]]

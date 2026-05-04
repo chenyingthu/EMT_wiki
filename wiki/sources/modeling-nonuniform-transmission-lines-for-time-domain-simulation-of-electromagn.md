@@ -62,7 +62,7 @@ sources: ["EMT_Doc/26/Ramirez 等 - 2003 - Modeling nonuniform transmission line
 - [[methods/numerical-integration|数值拉普拉斯变换]]
 - [[methods/characteristic-method|特征线法]]
 - [[methods/vector-fitting|有理函数逼近]]
-- [[状态空间实现|状态空间实现]]
+- [[methods/state-space-method|状态空间实现]]
 - [[复深度法|复深度法]]
 
 ## 涉及的模型

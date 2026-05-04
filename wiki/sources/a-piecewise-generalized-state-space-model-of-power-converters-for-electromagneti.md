@@ -65,7 +65,7 @@ sources: ["EMT_Doc/03/Wang 等 - 2019 - A Piecewise Generalized State Space Mode
 
 - [[并网变流器|并网变流器]]
 - [[三相pwm逆变器|三相PWM逆变器]]
-- [[光伏系统|光伏系统]]
+- [[topics/pv-power-plant|光伏系统]]
 - [[变流器开关详细模型|变流器开关详细模型]]
 
 ## 相关主题

@@ -69,7 +69,7 @@ sources: ["EMT_Doc/32/61.296247.pdf.pdf"]
 - [[电容式电压互感器-cvt|电容式电压互感器(CVT)]]
 - [[距离保护继电器|距离保护继电器]]
 - [[变压器差动继电器|变压器差动继电器]]
-- [[断路器|断路器]]
+- [[models/circuit-breaker-model|断路器]]
 - [[models/transmission-line-model|输电线路]]
 
 ## 相关主题

@@ -59,7 +59,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/Paull 等 - 2026 - GPU Parallel-Rate
 ## 使用的方法
 
 - [[指数积分法|指数积分法]]
-- [[gpu并行计算|GPU并行计算]]
+- [[methods/gpu-accelerated-simulation|GPU并行计算]]
 - [[多粒度并行仿真|多粒度并行仿真]]
 - [[矩阵指数预计算|矩阵指数预计算]]
 - [[离散开关事件驱动|离散开关事件驱动]]

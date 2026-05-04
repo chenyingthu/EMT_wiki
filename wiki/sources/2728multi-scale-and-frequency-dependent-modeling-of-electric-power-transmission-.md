@@ -62,7 +62,7 @@ sources: ["EMT_Doc/27&28/Multi-Scale and Frequency-Dependent Modeling of Electri
 - [[解析信号|解析信号]]
 - [[频移技术|频移技术]]
 - [[methods/modal-analysis|模态分解]]
-- [[部分分式展开|部分分式展开]]
+- [[methods/partial-fraction-expansion|部分分式展开]]
 - [[数值递归卷积|数值递归卷积]]
 - [[topics/co-simulation|多尺度仿真]]
 

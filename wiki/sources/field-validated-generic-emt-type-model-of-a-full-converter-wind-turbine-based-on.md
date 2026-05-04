@@ -60,7 +60,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/TPWRD.2018.2850848.pdf.pdf"]
 
 - [[methods/average-value-model|平均值模型]]
 - [[开关等效电路|开关等效电路]]
-- [[混合建模|混合建模]]
+- [[topics/co-simulation|混合建模]]
 - [[标幺值控制|标幺值控制]]
 - [[故障穿越控制|故障穿越控制]]
 

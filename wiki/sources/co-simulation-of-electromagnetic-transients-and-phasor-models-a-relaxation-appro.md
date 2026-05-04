@@ -68,7 +68,7 @@ sources: ["EMT_Doc/10/Plumier 等 - 2016 - Co-Simulation of electromagnetic tran
 ## 涉及的模型
 
 - [[相量模式模型|相量模式模型]]
-- [[电磁暂态模型|电磁暂态模型]]
+- [[topics/emt-simulation|电磁暂态模型]]
 - [[频率相关网络等效|频率相关网络等效]]
 - [[戴维南等效网络|戴维南等效网络]]
 - [[models/synchronous-machine-model|同步电机]]

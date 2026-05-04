@@ -68,7 +68,7 @@ sources: ["EMT_Doc/05/Luo 等 - 2022 - Active Damping Control and Parameter Calc
 
 - [[vsc-model|VSC]]
 - [[双向dc-dc变换器|双向DC-DC变换器]]
-- [[电池储能系统|电池储能系统]]
+- [[models/bess-model|电池储能系统]]
 - [[直流配电网|直流配电网]]
 - [[直流限流电抗器|直流限流电抗器]]
 

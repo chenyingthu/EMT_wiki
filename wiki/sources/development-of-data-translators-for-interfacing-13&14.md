@@ -66,7 +66,7 @@ sources: ["EMT_Doc/13&14/files/tpwrd.2012.2227836.pdf.pdf"]
 ## 涉及的模型
 
 - [[models/transformer-model|变压器]]
-- [[断路器|断路器]]
+- [[models/circuit-breaker-model|断路器]]
 - [[继电保护装置|继电保护装置]]
 - [[models/synchronous-machine-model|同步电机]]
 - [[models/induction-machine-model|感应电机]]

@@ -58,7 +58,7 @@ sources: ["EMT_Doc/09/Lessa 等 - 2012 - Application of π circuits for simulati
 
 ## 使用的方法
 
-- [[状态变量法|状态变量法]]
+- [[methods/state-space-method|状态变量法]]
 - [[methods/numerical-integration|梯形积分法]]
 - [[π型电路级联|π型电路级联]]
 - [[并联rl支路频率拟合|并联RL支路频率拟合]]

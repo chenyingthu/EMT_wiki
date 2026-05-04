@@ -68,7 +68,7 @@ sources: ["EMT_Doc/04/Mou 等 - 2024 - A Transient Conducted em Disturbances Sou
 - [[超级电容|超级电容]]
 - [[双三相直线电机|双三相直线电机]]
 - [[双三相dc-ac逆变器|双三相DC-AC逆变器]]
-- [[dc-dc变换器|DC-DC变换器]]
+- [[models/dc-dc-converter|DC-DC变换器]]
 
 ## 相关主题
 

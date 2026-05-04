@@ -69,13 +69,13 @@ sources: ["EMT_Doc/13&14/files/DQ_Admittance_Model_Extraction_for_IBRs_via_Gauss
 - [[type-4风电机组|Type-4风电机组]]
 - [[dq导纳模型|dq导纳模型]]
 - [[永磁同步发电机|永磁同步发电机]]
-- [[网侧变流器|网侧变流器]]
+- [[models/grid-side-converter|网侧变流器]]
 - [[逆变器并网资源|逆变器并网资源]]
 
 ## 相关主题
 
 - [[导纳模型提取|导纳模型提取]]
-- [[稳定性分析|稳定性分析]]
+- [[methods/small-signal-analysis|稳定性分析]]
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[系统辨识|系统辨识]]
 - [[风电机组建模|风电机组建模]]

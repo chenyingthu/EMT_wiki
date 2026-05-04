@@ -75,8 +75,8 @@ sources: ["EMT_Doc/31/59.76692.pdf.pdf"]
 
 ## 相关主题
 
-- [[emtp仿真|EMTP仿真]]
-- [[换流器建模|换流器建模]]
+- [[entities/atp-emtp|EMTP仿真]]
+- [[topics/power-electronics|换流器建模]]
 - [[topics/co-simulation|混合仿真接口]]
 - [[methods/numerical-integration|数值振荡抑制]]
 - [[变拓扑网络求解|变拓扑网络求解]]

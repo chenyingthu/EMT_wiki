@@ -62,7 +62,7 @@ sources: ["EMT_Doc/29/Chen 等 - 2026 - Nuclear-Powered Hybrid Energy System for
 - [[methods/nodal-analysis|节点分析法]]
 - [[多时间步长协同仿真|多时间步长协同仿真]]
 - [[隐式迭代求解|隐式迭代求解]]
-- [[牛顿迭代法|牛顿迭代法]]
+- [[methods/nodal-analysis|牛顿迭代法]]
 - [[fpga硬件协同仿真|FPGA硬件协同仿真]]
 
 ## 涉及的模型
@@ -70,7 +70,7 @@ sources: ["EMT_Doc/29/Chen 等 - 2026 - Nuclear-Powered Hybrid Energy System for
 - [[小型模块化反应堆-smr|小型模块化反应堆(SMR)]]
 - [[质子交换膜-pem-电解槽|质子交换膜(PEM)电解槽]]
 - [[topics/wind-farm-modeling|风电场]]
-- [[光伏系统|光伏系统]]
+- [[topics/pv-power-plant|光伏系统]]
 - [[储氢罐|储氢罐]]
 - [[dfig-model|DFIG]]
 - [[热工水力系统|热工水力系统]]

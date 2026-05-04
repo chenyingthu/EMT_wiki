@@ -63,11 +63,11 @@ sources: ["EMT_Doc/05/Nzale 等 - 2021 - Accurate time-domain simulation of powe
 - [[改进增广节点分析法|改进增广节点分析法]]
 - [[线性-二次插值法|线性/二次插值法]]
 - [[临界阻尼调整|临界阻尼调整]]
-- [[固定步长仿真|固定步长仿真]]
+- [[methods/numerical-integration|固定步长仿真]]
 
 ## 涉及的模型
 
-- [[理想开关模型|理想开关模型]]
+- [[models/ideal-switch-model|理想开关模型]]
 - [[电力电子电路|电力电子电路]]
 - [[rl支路|RL支路]]
 - [[电感电容伴随模型|电感电容伴随模型]]

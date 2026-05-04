@@ -58,7 +58,7 @@ sources: ["EMT_Doc/18/Tang 等 - 2010 - Experimental research on high-voltage tr
 
 ## 使用的方法
 
-- [[机电-电磁暂态混合仿真|机电-电磁暂态混合仿真]]
+- [[topics/electromechanical-electromagnetic-hybrid-simulation|机电-电磁暂态混合仿真]]
 - [[并行仿真技术|并行仿真技术]]
 - [[topics/real-time-simulation|实时数字仿真]]
 - [[在线数据接口技术|在线数据接口技术]]

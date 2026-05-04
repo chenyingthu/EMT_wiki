@@ -61,7 +61,7 @@ sources: ["EMT_Doc/17/Xu 等 - 2016 - Enhanced high-speed electromagnetic transi
 - [[methods/numerical-integration|后向欧拉法]]
 - [[methods/nodal-analysis|戴维南等效]]
 - [[伴随电路模型|伴随电路模型]]
-- [[理想开关模型|理想开关模型]]
+- [[models/ideal-switch-model|理想开关模型]]
 - [[最近电平控制|最近电平控制]]
 - [[高效排序算法|高效排序算法]]
 

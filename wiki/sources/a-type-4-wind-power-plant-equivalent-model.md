@@ -68,7 +68,7 @@ sources: ["EMT_Doc/04/tpwrs.2012.2227845.pdf.pdf"]
 - [[fdne-model|FDNE]]
 - [[dlfe低频动态等值模型|DLFE低频动态等值模型]]
 - [[集电系统|集电系统]]
-- [[网侧变流器|网侧变流器]]
+- [[models/grid-side-converter|网侧变流器]]
 
 ## 相关主题
 

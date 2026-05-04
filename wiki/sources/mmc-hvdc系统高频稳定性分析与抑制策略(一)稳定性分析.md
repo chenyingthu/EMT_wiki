@@ -77,7 +77,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/Li 等 - 2021 - High Frequency Stabi
 ## 相关主题
 
 - [[高频振荡|高频振荡]]
-- [[稳定性分析|稳定性分析]]
+- [[methods/small-signal-analysis|稳定性分析]]
 - [[vsc-model|VSC]]
 - [[小干扰稳定性|小干扰稳定性]]
 - [[大链路延时|大链路延时]]

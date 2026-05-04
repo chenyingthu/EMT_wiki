@@ -73,7 +73,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/Zhang 等 - 2012 - Frequency depende
 
 
 - [[test-systems/ieee-39-bus-system|IEEE 39节点系统]]
-- [[节点导纳矩阵|节点导纳矩阵]]
+- [[methods/nodal-analysis|节点导纳矩阵]]
 - [[频变网络等值模型|频变网络等值模型]]
 
 

@@ -67,7 +67,7 @@ Electromagnetic transient (EMT) and quasi static time series (QSTS) Co-simulatio
 
 ## 涉及的模型
 
-- [[光伏系统|光伏系统]]
+- [[topics/pv-power-plant|光伏系统]]
 - [[电力电子发电机|电力电子发电机]]
 - [[ieee-13节点测试馈线|IEEE 13节点测试馈线]]
 - [[电能质量改善装置|电能质量改善装置]]

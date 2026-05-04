@@ -65,7 +65,7 @@ sources: ["EMT_Doc/04/Wu 等 - 2017 - A Transformer Model With Hysteresis Charac
 
 - [[三相变压器|三相变压器]]
 - [[models/transformer-model|换流变压器]]
-- [[非线性电感|非线性电感]]
+- [[models/transformer-model|非线性电感]]
 - [[bctran模型|BCTRAN模型]]
 - [[umec模型|UMEC模型]]
 

@@ -75,7 +75,7 @@ sources: ["EMT_Doc/26/Papadopoulos 等 - 2021 - Modal propagation characteristic
 
 - [[大地导电效应|大地导电效应]]
 - [[土壤频变特性|土壤频变特性]]
-- [[波传播特性|波传播特性]]
+- [[models/transmission-line-model|波传播特性]]
 - [[topics/emt-simulation|电磁暂态分析]]
 - [[地下电缆系统建模|地下电缆系统建模]]
 

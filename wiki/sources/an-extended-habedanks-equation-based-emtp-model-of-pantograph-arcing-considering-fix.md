@@ -61,7 +61,7 @@ sources: ["EMT_Doc/07&08/An Extended Habedank's Equation-Based EMTP Model of Pan
 - [[有限元法|有限元法]]
 - [[habedank方程模型|Habedank方程模型]]
 - [[mayr-cassie组合模型|Mayr-Cassie组合模型]]
-- [[emtp电磁暂态仿真|EMTP电磁暂态仿真]]
+- [[entities/atp-emtp|EMTP电磁暂态仿真]]
 - [[等效参数推导|等效参数推导]]
 
 ## 涉及的模型

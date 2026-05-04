@@ -71,12 +71,12 @@ sources: ["EMT_Doc/09/Cao和Chen - 2007 - Application of EMTP-RV graphic softwar
 - [[晶闸管阀组|晶闸管阀组]]
 - [[zno避雷器|ZnO避雷器]]
 - [[rlc支路|RLC支路]]
-- [[断路器|断路器]]
+- [[models/circuit-breaker-model|断路器]]
 
 ## 相关主题
 
 - [[topics/emt-simulation|电磁暂态仿真]]
-- [[开关暂态|开关暂态]]
+- [[methods/switch-modeling|开关暂态]]
 - [[过电压保护|过电压保护]]
 - [[methods/insulation-coordination|绝缘配合]]
 - [[facts装置建模|FACTS装置建模]]

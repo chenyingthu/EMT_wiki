@@ -75,7 +75,7 @@ sources: ["EMT_Doc/01/Cao 等 - 2025 - A Bridge-Arm-Module-Based Fixed-Admittanc
 
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[topics/real-time-simulation|实时仿真]]
-- [[换流器建模|换流器建模]]
+- [[topics/power-electronics|换流器建模]]
 - [[虚拟功率损耗|虚拟功率损耗]]
 - [[状态切换误差修正|状态切换误差修正]]
 

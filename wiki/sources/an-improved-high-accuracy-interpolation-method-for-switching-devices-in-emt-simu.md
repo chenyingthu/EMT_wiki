@@ -63,7 +63,7 @@ sources: ["EMT_Doc/07&08/Na et al. - 2023 - An improved high-accuracy interpolat
 - [[线性插值|线性插值]]
 - [[瞬时解插值|瞬时解插值]]
 - [[methods/nodal-analysis|节点分析]]
-- [[固定步长仿真|固定步长仿真]]
+- [[methods/numerical-integration|固定步长仿真]]
 
 ## 涉及的模型
 
@@ -79,7 +79,7 @@ sources: ["EMT_Doc/07&08/Na et al. - 2023 - An improved high-accuracy interpolat
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[开关不连续性处理|开关不连续性处理]]
 - [[methods/numerical-integration|数值振荡抑制]]
-- [[固定步长仿真|固定步长仿真]]
+- [[methods/numerical-integration|固定步长仿真]]
 - [[电力电子开关建模|电力电子开关建模]]
 
 ## 主要发现

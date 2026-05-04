@@ -59,9 +59,9 @@ sources: ["EMT_Doc/15/Efficient GPU-based electromagnetic transient simulation f
 ## 使用的方法
 
 - [[methods/nodal-analysis|节点分析法]]
-- [[gpu并行计算|GPU并行计算]]
+- [[methods/gpu-accelerated-simulation|GPU并行计算]]
 - [[面向线程的模型变换|面向线程的模型变换]]
-- [[自动代码生成|自动代码生成]]
+- [[methods/automatic-code-generation|自动代码生成]]
 - [[融合乘加运算|融合乘加运算]]
 - [[分层有向无环图建模|分层有向无环图建模]]
 - [[simt并行架构|SIMT并行架构]]
@@ -79,7 +79,7 @@ sources: ["EMT_Doc/15/Efficient GPU-based electromagnetic transient simulation f
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[gpu并行加速|GPU并行加速]]
 - [[topics/real-time-simulation|实时仿真]]
-- [[自动代码生成|自动代码生成]]
+- [[methods/automatic-code-generation|自动代码生成]]
 - [[大规模配电网仿真|大规模配电网仿真]]
 - [[异构计算|异构计算]]
 

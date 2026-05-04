@@ -69,7 +69,7 @@ sources: ["EMT_Doc/26/Sun和Kong - 2008 - Modeling and simulation analysis of VS
 
 - [[vsc-hvdc系统|VSC-HVDC系统]]
 - [[电压源换流器-vsc|电压源换流器(VSC)]]
-- [[开关函数模型|开关函数模型]]
+- [[methods/switching-function-method|开关函数模型]]
 - [[动态相量模型|动态相量模型]]
 - [[详细时域模型|详细时域模型]]
 - [[变压器与直流电容-线路|变压器与直流电容/线路]]

@@ -62,7 +62,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/tpwrd.2021.3049595.pdf.pdf"]
 - [[等效均匀大地法-ehem|等效均匀大地法(EHEM)]]
 - [[矩量法-表面导纳算子-mom-so|矩量法-表面导纳算子(MoM-SO)]]
 - [[修正格林函数法|修正格林函数法]]
-- [[emtp电磁暂态仿真|EMTP电磁暂态仿真]]
+- [[entities/atp-emtp|EMTP电磁暂态仿真]]
 
 ## 涉及的模型
 
@@ -75,7 +75,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/tpwrd.2021.3049595.pdf.pdf"]
 - [[topics/frequency-dependent-modeling|频率相关建模]]
 - [[浪涌分析|浪涌分析]]
 - [[topics/emt-simulation|电磁暂态仿真]]
-- [[波传播特性|波传播特性]]
+- [[models/transmission-line-model|波传播特性]]
 - [[大地返回参数计算|大地返回参数计算]]
 
 ## 主要发现

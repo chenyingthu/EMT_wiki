@@ -62,7 +62,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/tpwrd.2002.1022812.pdf.pdf"]
 - [[methods/modal-analysis|模态分解]]
 - [[methods/nodal-analysis|相域建模]]
 - [[methods/numerical-integration|梯形积分法]]
-- [[混合建模|混合建模]]
+- [[topics/co-simulation|混合建模]]
 
 ## 涉及的模型
 

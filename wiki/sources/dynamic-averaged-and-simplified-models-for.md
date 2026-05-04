@@ -58,7 +58,7 @@ sources: ["EMT_Doc/13&14/files/TPWRD.2013.2251912.pdf.pdf"]
 
 ## 使用的方法
 
-- [[动态平均值建模|动态平均值建模]]
+- [[methods/average-value-model|动态平均值建模]]
 - [[详细非线性开关模型|详细非线性开关模型]]
 - [[最近电平逼近调制|最近电平逼近调制]]
 - [[环流抑制控制|环流抑制控制]]
@@ -71,13 +71,13 @@ sources: ["EMT_Doc/13&14/files/TPWRD.2013.2251912.pdf.pdf"]
 - [[vsc-model|VSC]]
 - [[models/mmc-model|半桥子模块]]
 - [[igbt阀|IGBT阀]]
-- [[桥臂电抗器|桥臂电抗器]]
+- [[models/arm-reactor|桥臂电抗器]]
 - [[methods/average-value-model|平均值模型]]
 
 ## 相关主题
 
 - [[topics/emt-simulation|电磁暂态仿真]]
-- [[动态平均值建模|动态平均值建模]]
+- [[methods/average-value-model|动态平均值建模]]
 - [[mmc-model|MMC]]
 - [[topics/large-scale-system-simulation|计算效率优化]]
 - [[降阶模型|降阶模型]]

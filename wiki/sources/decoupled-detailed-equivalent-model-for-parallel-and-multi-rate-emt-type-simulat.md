@@ -69,7 +69,7 @@ sources: ["EMT_Doc/12/Decoupled_Detailed_Equivalent_Model_for_Parallel_and_Multi
 - [[mmc-model|MMC]]
 - [[topics/energy-storage|BESS]]
 - [[models/mmc-model|子模块]]
-- [[dc-dc变换器|DC-DC变换器]]
+- [[models/dc-dc-converter|DC-DC变换器]]
 - [[methods/average-value-model|详细等效模型]]
 
 ## 相关主题

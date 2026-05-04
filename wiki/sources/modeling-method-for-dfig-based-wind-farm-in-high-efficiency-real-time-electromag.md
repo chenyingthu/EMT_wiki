@@ -61,7 +61,7 @@ sources: ["EMT_Doc/26/Liu 等 - 2025 - Modeling Method for DFIG-Based Wind Farm 
 - [[延迟解耦法|延迟解耦法]]
 - [[多级嵌套快速同步求解-m-nfss|多级嵌套快速同步求解(M-NFSS)]]
 - [[methods/nodal-analysis|节点分析法]]
-- [[开关函数模型|开关函数模型]]
+- [[methods/switching-function-method|开关函数模型]]
 - [[离散化建模|离散化建模]]
 
 ## 涉及的模型

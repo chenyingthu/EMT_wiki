@@ -76,7 +76,7 @@ sources: ["EMT_Doc/09/Duarte 等 - 2023 - Assessment of the transmission line th
 
 - [[topics/emt-simulation|电磁暂态分析]]
 - [[接地返回参数|接地返回参数]]
-- [[地下电缆建模|地下电缆建模]]
+- [[models/cable-model|地下电缆建模]]
 - [[快速暂态仿真|快速暂态仿真]]
 - [[高电阻率土壤影响|高电阻率土壤影响]]
 

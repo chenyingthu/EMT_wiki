@@ -58,7 +58,7 @@ sources: ["EMT_Doc/23/Kocar 等 - 2010 - Improvement of Numerical Stability for 
 
 ## 使用的方法
 
-- [[部分分式展开|部分分式展开]]
+- [[methods/partial-fraction-expansion|部分分式展开]]
 - [[methods/vector-fitting|有理函数逼近]]
 - [[约束线性最小二乘法|约束线性最小二乘法]]
 - [[methods/characteristic-method|特征线法]]

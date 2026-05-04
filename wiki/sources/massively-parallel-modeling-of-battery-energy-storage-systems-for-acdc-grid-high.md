@@ -76,7 +76,7 @@ sources: ["EMT_Doc/25/Lin 等 - 2023 - Massively Parallel Modeling of Battery En
 
 ## 相关主题
 
-- [[高性能计算|高性能计算]]
+- [[topics/parallel-computing|高性能计算]]
 - [[topics/parallel-computing|并行计算]]
 - [[topics/co-simulation|混合仿真]]
 - [[topics/emt-simulation|电磁暂态]]

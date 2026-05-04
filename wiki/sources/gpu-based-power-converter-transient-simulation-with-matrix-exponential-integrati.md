@@ -59,7 +59,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/j.ijepes.2020.106186.pdf.pdf"]
 ## 使用的方法
 
 - [[矩阵指数积分法|矩阵指数积分法]]
-- [[gpu并行计算|GPU并行计算]]
+- [[methods/gpu-accelerated-simulation|GPU并行计算]]
 - [[methods/state-space-method|状态空间法]]
 - [[显式积分|显式积分]]
 - [[缓存机制|缓存机制]]

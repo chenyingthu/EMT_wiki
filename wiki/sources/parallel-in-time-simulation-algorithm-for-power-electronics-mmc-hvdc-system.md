@@ -62,7 +62,7 @@ sources: ["EMT_Doc/30/JESTPE.2019.2947411.pdf.pdf"]
 - [[多重网格时间缩减法-mgrit|多重网格时间缩减法(MGRIT)]]
 - [[parareal算法|Parareal算法]]
 - [[methods/average-value-model|平均值模型]]
-- [[详细开关模型|详细开关模型]]
+- [[models/detailed-switch-model|详细开关模型]]
 - [[多时间步长迭代|多时间步长迭代]]
 
 ## 涉及的模型

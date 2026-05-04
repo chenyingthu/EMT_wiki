@@ -59,7 +59,7 @@ sources: ["EMT_Doc/06/Pascoalato 等 - 2024 - Alternative method to include the 
 ## 使用的方法
 
 - [[methods/state-space-method|状态空间法]]
-- [[集中参数模型|集中参数模型]]
+- [[models/transmission-line-model|集中参数模型]]
 - [[π型电路级联|π型电路级联]]
 - [[频变参数拟合|频变参数拟合]]
 - [[直接时域仿真|直接时域仿真]]

@@ -61,7 +61,7 @@ sources: ["EMT_Doc/29/TPWRD.2016.2590569.pdf-1.pdf"]
 - [[诺顿等效建模|诺顿等效建模]]
 - [[methods/numerical-integration|梯形积分法]]
 - [[methods/nodal-analysis|节点分析法]]
-- [[混合建模|混合建模]]
+- [[topics/co-simulation|混合建模]]
 - [[自定义fortran模块|自定义FORTRAN模块]]
 
 ## 涉及的模型

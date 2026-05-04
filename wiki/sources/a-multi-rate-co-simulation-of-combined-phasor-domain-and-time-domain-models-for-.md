@@ -72,7 +72,7 @@ sources: ["EMT_Doc/02/Li 等 - 2020 - A Multi-Rate Co-Simulation of Combined Pha
 - [[双馈感应发电机|双馈感应发电机]]
 - [[models/transmission-line-model|输电线路]]
 - [[移频相量模型|移频相量模型]]
-- [[电磁暂态模型|电磁暂态模型]]
+- [[topics/emt-simulation|电磁暂态模型]]
 
 ## 相关主题
 

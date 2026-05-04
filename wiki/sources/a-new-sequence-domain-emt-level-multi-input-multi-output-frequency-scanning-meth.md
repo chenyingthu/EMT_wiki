@@ -67,7 +67,7 @@ sources: ["EMT_Doc/02/Meng 等 - 2023 - A new sequence domain EMT-level multi-in
 ## 涉及的模型
 
 - [[全功率变流器风电场|全功率变流器风电场]]
-- [[网侧变流器|网侧变流器]]
+- [[models/grid-side-converter|网侧变流器]]
 - [[锁相环控制模型|锁相环控制模型]]
 - [[弱电网戴维南等效模型|弱电网戴维南等效模型]]
 

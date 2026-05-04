@@ -66,7 +66,7 @@ sources: ["EMT_Doc/27&28/Modelling of circuit breakers in the electromagnetic tr
 
 ## 涉及的模型
 
-- [[断路器|断路器]]
+- [[models/circuit-breaker-model|断路器]]
 - [[动态电弧模型|动态电弧模型]]
 - [[vsc-hvdc|VSC-HVDC]]
 - [[models/transformer-model|变压器]]

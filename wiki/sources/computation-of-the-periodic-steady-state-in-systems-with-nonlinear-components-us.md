@@ -69,7 +69,7 @@ sources: ["EMT_Doc/11/Computation_of_the_periodic_steady_state_in_systems_with_n
 
 - [[models/transmission-line-model|输电线路]]
 - [[非线性负载|非线性负载]]
-- [[非线性电感|非线性电感]]
+- [[models/transformer-model|非线性电感]]
 - [[线性网络|线性网络]]
 
 ## 相关主题

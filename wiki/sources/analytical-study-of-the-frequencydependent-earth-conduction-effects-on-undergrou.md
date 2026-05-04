@@ -75,7 +75,7 @@ sources: ["EMT_Doc/09/Papadopoulos 等 - Analytical study of the frequency‐dep
 - [[频率相关大地建模|频率相关大地建模]]
 - [[地下电缆电磁暂态|地下电缆电磁暂态]]
 - [[大地分层效应|大地分层效应]]
-- [[高频暂态分析|高频暂态分析]]
+- [[topics/emt-simulation|高频暂态分析]]
 - [[线路参数计算|线路参数计算]]
 
 ## 主要发现

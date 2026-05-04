@@ -79,7 +79,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/OJPEL.2020.3016296.pdf.pdf"]
 - [[topics/parallel-computing|并行计算]]
 - [[异构计算|异构计算]]
 - [[器件级建模|器件级建模]]
-- [[高性能计算|高性能计算]]
+- [[topics/parallel-computing|高性能计算]]
 - [[vsc-hvdc|VSC-HVDC]]
 
 ## 主要发现

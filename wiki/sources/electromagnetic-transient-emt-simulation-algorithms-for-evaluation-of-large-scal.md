@@ -84,7 +84,7 @@ sources: ["EMT_Doc/15/Electromagnetic transient (EMT) simulation algorithms for 
 - [[输配电网协同仿真|输配电网协同仿真]]
 - [[仿真加速算法|仿真加速算法]]
 - [[高渗透率电力电子电网|高渗透率电力电子电网]]
-- [[大规模系统仿真|大规模系统仿真]]
+- [[topics/large-scale-system-simulation|大规模系统仿真]]
 
 ## 主要发现
 

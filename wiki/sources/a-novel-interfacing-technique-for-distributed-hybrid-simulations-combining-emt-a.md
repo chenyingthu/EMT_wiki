@@ -68,7 +68,7 @@ sources: ["EMT_Doc/03/TPWRD.2017.2690145.pdf.pdf"]
 - [[models/synchronous-machine-model|同步电机]]
 - [[models/transmission-line-model|输电线路]]
 - [[机电暂态模型|机电暂态模型]]
-- [[电磁暂态模型|电磁暂态模型]]
+- [[topics/emt-simulation|电磁暂态模型]]
 
 ## 相关主题
 

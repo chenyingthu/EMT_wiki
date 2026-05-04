@@ -79,7 +79,7 @@ sources: ["EMT_Doc/05/Gao 等 - 2023 - Accuracy Enhancement of Shifted Frequency
 - [[大时间步仿真|大时间步仿真]]
 - [[移频技术|移频技术]]
 - [[突变场景精度分析|突变场景精度分析]]
-- [[数值积分误差|数值积分误差]]
+- [[methods/numerical-integration|数值积分误差]]
 
 ## 主要发现
 

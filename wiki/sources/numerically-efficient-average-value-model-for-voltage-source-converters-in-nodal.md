@@ -67,7 +67,7 @@ sources: ["EMT_Doc/29/EBRAHIMI 等 - 2024 - Numerically Efficient Average-Value 
 ## 涉及的模型
 
 - [[vsc-model|VSC]]
-- [[详细开关模型|详细开关模型]]
+- [[models/detailed-switch-model|详细开关模型]]
 - [[传统受控源平均值模型|传统受控源平均值模型]]
 - [[直流侧电容|直流侧电容]]
 - [[戴维南等效电网|戴维南等效电网]]

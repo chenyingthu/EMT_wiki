@@ -74,7 +74,7 @@ sources: ["EMT_Doc/02/Dennetière 等 - 2009 - A link between EMTP-RV and FLUX3D
 ## 相关主题
 
 - [[变压器空载合闸|变压器空载合闸]]
-- [[开关暂态|开关暂态]]
+- [[methods/switch-modeling|开关暂态]]
 - [[铁磁饱和|铁磁饱和]]
 - [[topics/co-simulation|混合仿真]]
 - [[铁芯详细建模|铁芯详细建模]]

@@ -72,7 +72,7 @@ sources: ["EMT_Doc/24/TPWRD.2008.2002889.pdf.pdf"]
 - [[models/transmission-line-model|输电线路]]
 - [[vsc-hvdc|VSC-HVDC]]
 - [[facts装置|FACTS装置]]
-- [[集中参数模型|集中参数模型]]
+- [[models/transmission-line-model|集中参数模型]]
 - [[分布参数模型|分布参数模型]]
 
 ## 相关主题

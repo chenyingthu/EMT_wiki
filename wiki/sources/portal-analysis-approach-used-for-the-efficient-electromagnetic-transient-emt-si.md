@@ -68,7 +68,7 @@ sources: ["EMT_Doc/31/Gao 等 - 2023 - Portal Analysis Approach Used for the Eff
 
 - [[dab变换器|DAB变换器]]
 - [[chb-dab|CHB-DAB]]
-- [[光伏系统|光伏系统]]
+- [[topics/pv-power-plant|光伏系统]]
 - [[储能系统|储能系统]]
 - [[vsc-model|VSC]]
 - [[mmc-model|MMC]]

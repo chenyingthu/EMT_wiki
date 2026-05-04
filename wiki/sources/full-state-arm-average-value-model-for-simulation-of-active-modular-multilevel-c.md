@@ -75,7 +75,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/Tang 等 - 2022 - Full-state Arm Ave
 - [[mmc-model|MMC]]
 - [[储能单元|储能单元]]
 - [[models/mmc-model|子模块]]
-- [[桥臂电抗器|桥臂电抗器]]
+- [[models/arm-reactor|桥臂电抗器]]
 - [[双向buck-boost变换器|双向Buck-Boost变换器]]
 
 

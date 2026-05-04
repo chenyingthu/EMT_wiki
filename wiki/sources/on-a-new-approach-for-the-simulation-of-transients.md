@@ -59,7 +59,7 @@ sources: ["EMT_Doc/29/j.epsr.2006.08.027.pdf.pdf"]
 ## 使用的方法
 
 - [[增广节点分析法|增广节点分析法]]
-- [[牛顿迭代法|牛顿迭代法]]
+- [[methods/nodal-analysis|牛顿迭代法]]
 - [[methods/numerical-integration|梯形积分法]]
 - [[谐波稳态求解|谐波稳态求解]]
 - [[methods/power-flow-calculation|潮流计算]]
@@ -78,7 +78,7 @@ sources: ["EMT_Doc/29/j.epsr.2006.08.027.pdf.pdf"]
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[数值计算方法|数值计算方法]]
 - [[仿真软件架构|仿真软件架构]]
-- [[网络方程求解|网络方程求解]]
+- [[methods/nodal-analysis|网络方程求解]]
 - [[稳态初始化|稳态初始化]]
 
 ## 主要发现

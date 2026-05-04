@@ -69,7 +69,7 @@ sources: ["EMT_Doc/27&28/Multi-timescale simulator of nonlinear electrical eleme
 
 - [[饱和变压器|饱和变压器]]
 - [[vsc-model|VSC]]
-- [[非线性电感|非线性电感]]
+- [[models/transformer-model|非线性电感]]
 - [[磁链控制非线性支路|磁链控制非线性支路]]
 
 ## 相关主题

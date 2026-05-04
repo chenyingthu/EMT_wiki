@@ -74,7 +74,7 @@ sources: ["EMT_Doc/02/Akafi-Mobarakeh 等 - 2025 - A New Model of Trapped Charge
 
 ## 相关主题
 
-- [[开关暂态|开关暂态]]
+- [[methods/switch-modeling|开关暂态]]
 - [[methods/insulation-coordination|绝缘配合]]
 - [[重合闸过电压|重合闸过电压]]
 - [[topics/emt-simulation|电磁暂态仿真]]

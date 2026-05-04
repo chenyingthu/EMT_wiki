@@ -67,7 +67,7 @@ sources: ["EMT_Doc/25/Sun 等 - 2024 - Inverter-Based Resources Model Verificati
 ## 涉及的模型
 
 - [[ibr-逆变器型资源|IBR（逆变器型资源）]]
-- [[电磁暂态模型|电磁暂态模型]]
+- [[topics/emt-simulation|电磁暂态模型]]
 - [[输电线路与变压器|输电线路与变压器]]
 
 ## 相关主题

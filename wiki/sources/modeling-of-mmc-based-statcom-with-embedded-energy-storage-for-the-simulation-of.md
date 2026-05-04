@@ -72,7 +72,7 @@ sources: ["EMT_Doc/27&28/Modeling of MMC-based STATCOM with embedded energy stor
 - [[全桥子模块|全桥子模块]]
 - [[超级电容|超级电容]]
 - [[蓄电池|蓄电池]]
-- [[dc-dc变换器|DC/DC变换器]]
+- [[models/dc-dc-converter|DC/DC变换器]]
 - [[耦合变压器|耦合变压器]]
 
 ## 相关主题

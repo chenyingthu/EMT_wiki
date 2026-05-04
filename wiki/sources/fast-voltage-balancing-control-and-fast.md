@@ -68,7 +68,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/tpwrd.2014.2351397.pdf-1.pdf"]
 
 - [[mmc-model|MMC]]
 - [[models/mmc-model|半桥子模块]]
-- [[详细开关模型|详细开关模型]]
+- [[models/detailed-switch-model|详细开关模型]]
 - [[快速数值仿真模型|快速数值仿真模型]]
 - [[混合仿真模型|混合仿真模型]]
 

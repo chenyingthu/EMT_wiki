@@ -69,7 +69,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/Cao 等 - 2023 - Faster-Than-Real-Ti
 - [[topics/microgrid|微电网]]
 - [[光伏阵列|光伏阵列]]
 - [[双馈感应发电机|双馈感应发电机]]
-- [[电池储能系统|电池储能系统]]
+- [[models/bess-model|电池储能系统]]
 - [[交流主网|交流主网]]
 - [[topics/power-electronics|电力电子变流器]]
 

@@ -58,7 +58,7 @@ sources: ["EMT_Doc/27&28/Modelling of electromagnetic transients in multi-unit h
 
 ## 使用的方法
 
-- [[emtp仿真|EMTP仿真]]
+- [[entities/atp-emtp|EMTP仿真]]
 - [[集中参数建模|集中参数建模]]
 - [[开关逻辑控制|开关逻辑控制]]
 - [[击穿电压包络线法|击穿电压包络线法]]
@@ -76,11 +76,11 @@ sources: ["EMT_Doc/27&28/Modelling of electromagnetic transients in multi-unit h
 ## 相关主题
 
 - [[topics/emt-simulation|电磁暂态]]
-- [[开关暂态|开关暂态]]
+- [[methods/switch-modeling|开关暂态]]
 - [[断路器建模|断路器建模]]
 - [[预击穿与重燃|预击穿与重燃]]
 - [[介质恢复特性|介质恢复特性]]
-- [[高频暂态分析|高频暂态分析]]
+- [[topics/emt-simulation|高频暂态分析]]
 
 ## 主要发现
 

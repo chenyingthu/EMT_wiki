@@ -77,7 +77,7 @@ sources: ["EMT_Doc/18/Gao 等 - 2021 - Equivalent Modelling Method of Single Act
 - [[topics/parallel-computing|电磁暂态仿真加速]]
 - [[电力电子变换器等效建模|电力电子变换器等效建模]]
 - [[直流电源并网|直流电源并网]]
-- [[固定步长仿真|固定步长仿真]]
+- [[methods/numerical-integration|固定步长仿真]]
 - [[methods/numerical-integration|数值稳定性分析]]
 
 ## 主要发现

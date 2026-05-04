@@ -58,10 +58,10 @@ sources: ["EMT_Doc/13&14/files/TPWRD.2014.2340870.pdf.pdf"]
 
 ## 使用的方法
 
-- [[动态平均值建模|动态平均值建模]]
+- [[methods/average-value-model|动态平均值建模]]
 - [[参数化方法|参数化方法]]
 - [[methods/nodal-analysis|节点分析法]]
-- [[状态变量法|状态变量法]]
+- [[methods/state-space-method|状态变量法]]
 
 ## 涉及的模型
 

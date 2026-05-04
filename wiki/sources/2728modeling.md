@@ -59,7 +59,7 @@ sources: ["EMT_Doc/27&28/Modeling_of_LCC_HVDC_Systems_Using_Dynam.pdf"]
 ## 使用的方法
 
 - [[topics/dynamic-phasor|动态相量法]]
-- [[动态平均值建模|动态平均值建模]]
+- [[methods/average-value-model|动态平均值建模]]
 - [[时变傅里叶系数展开|时变傅里叶系数展开]]
 
 ## 涉及的模型

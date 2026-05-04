@@ -76,7 +76,7 @@ sources: ["EMT_Doc/06/Chindu和Kulkarni - 2023 - An Automatable Approach for Sma
 
 ## 相关主题
 
-- [[小信号稳定性分析|小信号稳定性分析]]
+- [[methods/small-signal-analysis|小信号稳定性分析]]
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[电力电子化电力系统|电力电子化电力系统]]
 - [[采样数据建模|采样数据建模]]

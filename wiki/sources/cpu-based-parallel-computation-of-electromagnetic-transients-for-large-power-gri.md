@@ -61,7 +61,7 @@ CPU based parallel computation of electromagnetic transients for large A. Abusal
 - [[改进增广节点分析法|改进增广节点分析法]]
 - [[klu稀疏矩阵求解器|KLU稀疏矩阵求解器]]
 - [[块三角分解|块三角分解]]
-- [[牛顿迭代法|牛顿迭代法]]
+- [[methods/nodal-analysis|牛顿迭代法]]
 - [[共享内存并行计算|共享内存并行计算]]
 - [[自动网络撕裂|自动网络撕裂]]
 

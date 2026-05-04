@@ -58,7 +58,7 @@ sources: ["EMT_Doc/07&08/Analyses of the modifications in the 蟺 circuits for i
 
 ## 使用的方法
 
-- [[状态变量法|状态变量法]]
+- [[methods/state-space-method|状态变量法]]
 - [[methods/numerical-integration|梯形积分法]]
 - [[methods/characteristic-method|特征线法]]
 - [[π型电路级联|π型电路级联]]

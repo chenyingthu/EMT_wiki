@@ -76,7 +76,7 @@ sources: ["EMT_Doc/03/Mu 等 - 2014 - A parallel multi-rate electromagnetic tran
 - [[methods/multirate-method|多速率仿真]]
 - [[topics/parallel-computing|并行计算]]
 - [[网络分解|网络分解]]
-- [[稳定性分析|稳定性分析]]
+- [[methods/small-signal-analysis|稳定性分析]]
 
 ## 主要发现
 

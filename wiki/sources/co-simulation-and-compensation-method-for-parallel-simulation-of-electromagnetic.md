@@ -59,10 +59,10 @@ sources: ["EMT_Doc/10/Bruned 等 - 2026 - Co-simulation and compensation method 
 ## 使用的方法
 
 - [[补偿法-cm|补偿法(CM)]]
-- [[改进增广节点分析法-mana|改进增广节点分析法(MANA)]]
+- [[methods/nodal-analysis|改进增广节点分析法(MANA)]]
 - [[功能模型接口-fmi|功能模型接口(FMI)]]
 - [[methods/numerical-integration|梯形积分法]]
-- [[牛顿迭代法|牛顿迭代法]]
+- [[methods/nodal-analysis|牛顿迭代法]]
 - [[单边框块对角分解-sbbd|单边框块对角分解(SBBD)]]
 - [[自适应步长与阶数控制|自适应步长与阶数控制]]
 

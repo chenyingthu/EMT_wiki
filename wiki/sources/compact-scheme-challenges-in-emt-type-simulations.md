@@ -63,7 +63,7 @@ sources: ["EMT_Doc/10/Matehkolaei 等 - 2026 - Compact scheme challenges in EMT-
 - [[methods/numerical-integration|后向欧拉法]]
 - [[改进型增广节点分析法|改进型增广节点分析法]]
 - [[稀疏表法|稀疏表法]]
-- [[牛顿迭代法|牛顿迭代法]]
+- [[methods/nodal-analysis|牛顿迭代法]]
 - [[不连续点处理|不连续点处理]]
 
 ## 涉及的模型

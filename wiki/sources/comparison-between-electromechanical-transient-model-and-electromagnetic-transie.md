@@ -65,7 +65,7 @@ sources: ["EMT_Doc/10/Wang 等 - 2013 - Comparison between electromechanical tra
 - [[tls-esprit算法|TLS-ESPRIT算法]]
 - [[methods/numerical-integration|隐式梯形积分法]]
 - [[methods/nodal-analysis|节点分析法]]
-- [[机电-电磁暂态混合仿真|机电-电磁暂态混合仿真]]
+- [[topics/electromechanical-electromagnetic-hybrid-simulation|机电-电磁暂态混合仿真]]
 - [[准稳态等值建模|准稳态等值建模]]
 
 

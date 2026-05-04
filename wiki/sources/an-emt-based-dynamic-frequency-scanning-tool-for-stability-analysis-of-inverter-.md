@@ -62,7 +62,7 @@ sources: ["EMT_Doc/07&08/An EMT based dynamic frequency scanning tool for stabil
 - [[离散傅里叶变换|离散傅里叶变换]]
 - [[根轨迹分析|根轨迹分析]]
 - [[伯德图分析|伯德图分析]]
-- [[小信号稳定性分析|小信号稳定性分析]]
+- [[methods/small-signal-analysis|小信号稳定性分析]]
 - [[dq坐标系解耦扫描|dq坐标系解耦扫描]]
 
 ## 涉及的模型
@@ -75,7 +75,7 @@ sources: ["EMT_Doc/07&08/An EMT based dynamic frequency scanning tool for stabil
 
 ## 相关主题
 
-- [[稳定性分析|稳定性分析]]
+- [[methods/small-signal-analysis|稳定性分析]]
 - [[methods/grid-forming-control|构网型控制]]
 - [[频率扫描|频率扫描]]
 - [[methods/impedance-modeling|阻抗建模]]

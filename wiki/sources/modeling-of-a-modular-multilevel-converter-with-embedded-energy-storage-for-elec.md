@@ -67,10 +67,10 @@ sources: ["EMT_Doc/26/Herath 等 - 2019 - Modeling of a Modular Multilevel Conve
 ## 涉及的模型
 
 - [[mmc-model|MMC]]
-- [[电池储能系统|电池储能系统]]
+- [[models/bess-model|电池储能系统]]
 - [[models/mmc-model|子模块]]
 - [[双向dc-dc变换器|双向DC-DC变换器]]
-- [[详细开关模型|详细开关模型]]
+- [[models/detailed-switch-model|详细开关模型]]
 
 ## 相关主题
 

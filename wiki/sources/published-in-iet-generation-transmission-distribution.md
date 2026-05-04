@@ -75,7 +75,7 @@ sources: ["EMT_Doc/27&28/Multi-FPGA digital hardware design for detailed large-s
 - [[线性集总rlcg元件|线性集总RLCG元件]]
 - [[非线性元件|非线性元件]]
 - [[负荷|负荷]]
-- [[断路器|断路器]]
+- [[models/circuit-breaker-model|断路器]]
 
 ## 相关主题
 

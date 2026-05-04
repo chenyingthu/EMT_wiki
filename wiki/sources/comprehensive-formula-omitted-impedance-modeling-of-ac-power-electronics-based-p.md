@@ -77,7 +77,7 @@ sources: ["EMT_Doc/11/Hernández-Ramírez 等 - 2024 - Comprehensive D Q impedan
 - [[谐波稳定性|谐波稳定性]]
 - [[methods/impedance-modeling|阻抗建模]]
 - [[topics/frequency-dependent-modeling|频率相关建模]]
-- [[小信号稳定性分析|小信号稳定性分析]]
+- [[methods/small-signal-analysis|小信号稳定性分析]]
 - [[实时仿真验证|实时仿真验证]]
 - [[topics/emt-simulation|电磁暂态分析]]
 

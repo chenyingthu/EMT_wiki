@@ -61,16 +61,16 @@ MMC-MTDC直流电网发生直流侧短路后，闭锁前故障电流上升快、
 - [[解析计算法|解析计算法]]
 - [[methods/nodal-analysis|等效电路法]]
 - [[rlc参数化建模|RLC参数化建模]]
-- [[pscad-emtdc电磁暂态仿真|PSCAD/EMTDC电磁暂态仿真]]
-- [[数模混合仿真|数模混合仿真]]
+- [[entities/pscad-emtdc|PSCAD/EMTDC电磁暂态仿真]]
+- [[topics/co-simulation|数模混合仿真]]
 
 ## 涉及的模型
 
 - [[mmc-model|MMC]]
-- [[半桥子模块-hbsm|半桥子模块(HBSM)]]
+- [[models/half-bridge-smb|半桥子模块(HBSM)]]
 - [[多端直流电网-mtdc|多端直流电网(MTDC)]]
 - [[直流断路器|直流断路器]]
-- [[桥臂电抗器|桥臂电抗器]]
+- [[models/arm-reactor|桥臂电抗器]]
 - [[models/transmission-line-model|直流输电线路]]
 
 ## 相关主题
@@ -80,7 +80,7 @@ MMC-MTDC直流电网发生直流侧短路后，闭锁前故障电流上升快、
 - [[mmc-model|MMC]]
 - [[topics/hybrid-acdc-network|多端直流电网]]
 - [[topics/emt-simulation|电磁暂态仿真]]
-- [[数模混合仿真|数模混合仿真]]
+- [[topics/co-simulation|数模混合仿真]]
 - [[保护设计|保护设计]]
 
 ## 主要发现

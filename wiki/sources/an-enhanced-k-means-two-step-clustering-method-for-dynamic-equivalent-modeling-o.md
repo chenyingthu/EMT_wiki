@@ -71,7 +71,7 @@ sources: ["EMT_Doc/07&08/Xu et al. - 2026 - An enhanced K-means two-step cluster
 - [[dfig-model|DFIG]]
 - [[topics/wind-farm-modeling|风电场]]
 - [[转子侧变流器|转子侧变流器]]
-- [[网侧变流器|网侧变流器]]
+- [[models/grid-side-converter|网侧变流器]]
 - [[电磁暂态详细模型|电磁暂态详细模型]]
 
 ## 相关主题

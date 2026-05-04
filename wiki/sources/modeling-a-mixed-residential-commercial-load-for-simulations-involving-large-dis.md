@@ -58,7 +58,7 @@ sources: ["EMT_Doc/26/Khodabakhchian - 1997 - Modeling a mixed residential-comme
 
 ## 使用的方法
 
-- [[emtp电磁暂态仿真|EMTP电磁暂态仿真]]
+- [[entities/atp-emtp|EMTP电磁暂态仿真]]
 - [[基于组件的负荷建模|基于组件的负荷建模]]
 - [[现场录波数据辨识|现场录波数据辨识]]
 - [[静态与动态负荷建模|静态与动态负荷建模]]

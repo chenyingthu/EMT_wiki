@@ -68,10 +68,10 @@ sources: ["EMT_Doc/11/Nguyen 等 - 2021 - Control and Simulation of a Grid-Formi
 
 - [[构网型逆变器|构网型逆变器]]
 - [[光伏阵列|光伏阵列]]
-- [[电池储能系统|电池储能系统]]
+- [[models/bess-model|电池储能系统]]
 - [[lc滤波器|LC滤波器]]
 - [[升压变压器|升压变压器]]
-- [[dc-dc变换器|DC/DC变换器]]
+- [[models/dc-dc-converter|DC/DC变换器]]
 - [[ieee-9节点测试系统|IEEE 9节点测试系统]]
 
 ## 相关主题

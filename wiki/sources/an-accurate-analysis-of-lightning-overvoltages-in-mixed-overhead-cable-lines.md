@@ -79,7 +79,7 @@ sources: ["EMT_Doc/06/j.epsr.2021.107052.pdf.pdf"]
 - [[topics/frequency-dependent-modeling|频率相关建模]]
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[接地系统频变特性|接地系统频变特性]]
-- [[波传播特性|波传播特性]]
+- [[models/transmission-line-model|波传播特性]]
 
 ## 主要发现
 

@@ -69,7 +69,7 @@ sources: ["EMT_Doc/27&28/Modeling of overhead transmission lines for trapped cha
 - [[models/transmission-line-model|架空输电线路]]
 - [[topics/frequency-dependent-modeling|频变模型]]
 - [[宽频模型|宽频模型]]
-- [[集中参数模型|集中参数模型]]
+- [[models/transmission-line-model|集中参数模型]]
 
 ## 相关主题
 

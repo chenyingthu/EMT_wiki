@@ -62,7 +62,7 @@ sources: ["EMT_Doc/31/Bruned 等 - 2025 - Partial Refactorization Techniques for
 - [[左视lu分解|左视LU分解]]
 - [[基于路径的局部重分解|基于路径的局部重分解]]
 - [[分块三角分解-btf|分块三角分解(BTF)]]
-- [[改进增广节点分析法-mana|改进增广节点分析法(MANA)]]
+- [[methods/nodal-analysis|改进增广节点分析法(MANA)]]
 - [[近似最小度排序-amd|近似最小度排序(AMD)]]
 - [[主元有效性检验|主元有效性检验]]
 
@@ -76,7 +76,7 @@ sources: ["EMT_Doc/31/Bruned 等 - 2025 - Partial Refactorization Techniques for
 
 - [[topics/parallel-computing|电磁暂态仿真加速]]
 - [[methods/sparse-matrix-solver|稀疏矩阵求解]]
-- [[网络方程求解|网络方程求解]]
+- [[methods/nodal-analysis|网络方程求解]]
 - [[电力电子开关暂态|电力电子开关暂态]]
 - [[topics/large-scale-grid-simulation|大规模电网仿真]]
 

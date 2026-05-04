@@ -60,7 +60,7 @@ sources: ["EMT_Doc/18/Zhao 等 - 2021 - Equivalent modeling of electromagnetic t
 
 - [[methods/nodal-analysis|戴维南等效]]
 - [[嵌套迭代|嵌套迭代]]
-- [[理想开关模型|理想开关模型]]
+- [[models/ideal-switch-model|理想开关模型]]
 - [[methods/numerical-integration|梯形积分法]]
 - [[滞回比较触发|滞回比较触发]]
 

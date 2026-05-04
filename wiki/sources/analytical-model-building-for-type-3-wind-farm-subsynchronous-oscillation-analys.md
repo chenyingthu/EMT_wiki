@@ -81,7 +81,7 @@ sources: ["EMT_Doc/09/Fan和Miao - 2021 - Analytical model building for Type-3 w
 - [[动态建模|动态建模]]
 - [[弱电网稳定性|弱电网稳定性]]
 - [[变流器控制|变流器控制]]
-- [[小信号稳定性分析|小信号稳定性分析]]
+- [[methods/small-signal-analysis|小信号稳定性分析]]
 
 ## 主要发现
 

@@ -70,7 +70,7 @@ sources: ["EMT_Doc/12/Design_and_Implementation_of_Scalable_Communication_Interf
 
 - [[ibr|IBR]]
 - [[topics/pv-power-plant|光伏电站]]
-- [[电池储能系统|电池储能系统]]
+- [[models/bess-model|电池储能系统]]
 - [[柴油发电机|柴油发电机]]
 - [[ieee-123节点配电网|IEEE 123节点配电网]]
 - [[微电网控制系统|微电网控制系统]]

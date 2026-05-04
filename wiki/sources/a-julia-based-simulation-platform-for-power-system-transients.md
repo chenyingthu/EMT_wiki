@@ -58,9 +58,9 @@ sources: ["EMT_Doc/02/Naidjate 等 - 2025 - A Julia-Based Simulation Platform fo
 
 ## 使用的方法
 
-- [[改进增广节点分析法-mana|改进增广节点分析法(MANA)]]
+- [[methods/nodal-analysis|改进增广节点分析法(MANA)]]
 - [[methods/numerical-integration|梯形积分法]]
-- [[牛顿迭代法|牛顿迭代法]]
+- [[methods/nodal-analysis|牛顿迭代法]]
 - [[分段线性化|分段线性化]]
 - [[methods/sparse-matrix-solver|稀疏矩阵求解]]
 - [[topics/parallel-computing|并行计算]]
@@ -70,7 +70,7 @@ sources: ["EMT_Doc/02/Naidjate 等 - 2025 - A Julia-Based Simulation Platform fo
 
 - [[rlc支路|RLC支路]]
 - [[理想变压器|理想变压器]]
-- [[非线性电感|非线性电感]]
+- [[models/transformer-model|非线性电感]]
 - [[非线性电阻|非线性电阻]]
 - [[models/transmission-line-model|输电线路]]
 - [[models/synchronous-machine-model|同步电机]]
@@ -80,9 +80,9 @@ sources: ["EMT_Doc/02/Naidjate 等 - 2025 - A Julia-Based Simulation Platform fo
 ## 相关主题
 
 - [[topics/emt-simulation|电磁暂态仿真]]
-- [[高性能计算|高性能计算]]
+- [[topics/parallel-computing|高性能计算]]
 - [[topics/parallel-computing|并行计算]]
-- [[网络方程求解|网络方程求解]]
+- [[methods/nodal-analysis|网络方程求解]]
 - [[电力系统暂态分析|电力系统暂态分析]]
 
 ## 主要发现

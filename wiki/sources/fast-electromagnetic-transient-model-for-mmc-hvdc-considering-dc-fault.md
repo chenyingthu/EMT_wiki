@@ -74,7 +74,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/TPWRD.2018.2796089.pdf.pdf"]
 ## 相关主题
 
 - [[topics/emt-simulation|电磁暂态仿真]]
-- [[波传播特性|波传播特性]]
+- [[models/transmission-line-model|波传播特性]]
 - [[浪涌分析|浪涌分析]]
 - [[topics/frequency-dependent-modeling|频率相关建模]]
 - [[现场试验验证|现场试验验证]]

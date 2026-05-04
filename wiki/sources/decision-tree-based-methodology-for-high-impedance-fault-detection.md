@@ -61,7 +61,7 @@ sources: ["EMT_Doc/12/Decision_tree-based_methodology_for_high_impedance_fault_d
 - [[决策树算法-cart|决策树算法(CART)]]
 - [[快速傅里叶变换-fft|快速傅里叶变换(FFT)]]
 - [[滑动窗口特征提取|滑动窗口特征提取]]
-- [[emtp电磁暂态仿真|EMTP电磁暂态仿真]]
+- [[entities/atp-emtp|EMTP电磁暂态仿真]]
 - [[bctran参数计算|BCTRAN参数计算]]
 
 ## 涉及的模型

@@ -66,7 +66,7 @@ sources: ["EMT_Doc/10/Li 等 - 2020 - Characteristics and Optimal Configuration 
 - [[等值电路法|等值电路法]]
 - [[解析计算|解析计算]]
 - [[多目标优化|多目标优化]]
-- [[pscad-emtdc电磁暂态仿真|PSCAD/EMTDC电磁暂态仿真]]
+- [[entities/pscad-emtdc|PSCAD/EMTDC电磁暂态仿真]]
 
 
 ## 涉及的模型

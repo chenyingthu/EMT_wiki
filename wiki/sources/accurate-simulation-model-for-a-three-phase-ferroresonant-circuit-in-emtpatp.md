@@ -78,7 +78,7 @@ sources: ["EMT_Doc/05/j.ijepes.2018.11.016.pdf.pdf"]
 - [[topics/ferroresonance|铁磁谐振]]
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[变压器非线性建模|变压器非线性建模]]
-- [[开关暂态|开关暂态]]
+- [[methods/switch-modeling|开关暂态]]
 - [[emtp-atp|EMTP-ATP]]
 
 ## 主要发现

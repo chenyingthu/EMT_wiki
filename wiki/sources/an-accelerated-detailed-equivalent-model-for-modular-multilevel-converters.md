@@ -66,7 +66,7 @@ sources: ["EMT_Doc/06/Parvari 等 - 2023 - An accelerated detailed equivalent mo
 ## 涉及的模型
 
 - [[mmc-model|MMC]]
-- [[半桥子模块-hbsm|半桥子模块(HBSM)]]
+- [[models/half-bridge-smb|半桥子模块(HBSM)]]
 - [[全桥子模块-fbsm|全桥子模块(FBSM)]]
 - [[详细等效模型-dem|详细等效模型(DEM)]]
 

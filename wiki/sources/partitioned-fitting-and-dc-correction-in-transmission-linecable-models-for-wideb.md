@@ -62,7 +62,7 @@ HVDC线路/电缆的EMT仿真需要同一个线路模型同时覆盖接近直流
 - [[直流校正|直流校正]]
 - [[methods/vector-fitting|有理函数逼近]]
 - [[methods/modal-analysis|模态分解]]
-- [[状态空间实现|状态空间实现]]
+- [[methods/state-space-method|状态空间实现]]
 - [[时域卷积|时域卷积]]
 
 ## 涉及的模型
