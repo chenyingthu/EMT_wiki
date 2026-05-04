@@ -7,9 +7,21 @@ created: "2026-05-02"
 
 # 静止同步补偿器 (STATCOM)
 
-## 概述
+## 定义与边界
 
-静止同步补偿器(Static Synchronous Compensator, STATCOM)是基于电压源换流器(VSC)的并联型柔性交流输电系统(FACTS)装置。通过向电网注入可控的无功电流，STATCOM能够快速、连续地调节节点电压，提供动态无功支撑，是维持电压稳定和提高电能质量的关键设备。
+静止同步补偿器（Static Synchronous Compensator, STATCOM）是基于电压源换流器（VSC）的并联型柔性交流输电系统（FACTS）装置。通过向电网注入可控的无功电流，STATCOM能够快速、连续地调节节点电压，提供动态无功支撑。与传统SVC相比，STATCOM在电压跌落时仍能输出额定电流，具有更好的低电压特性。
+
+**边界限定**：本页面聚焦于STATCOM的EMT建模与控制，不包括SVC或其他并联补偿装置。
+
+## EMT中的作用
+
+STATCOM是电压稳定控制的关键设备：
+
+- **动态无功补偿**：快速响应电压变化，维持节点电压
+- **电能质量改善**：抑制电压闪变、谐波和三相不平衡
+- **故障电压支撑**：电网故障期间提供无功电流支撑
+- **新能源并网**：风电场、光伏电站的电压调节
+- **工业负荷补偿**：电弧炉、大型电机启动的电压波动抑制
 
 ## 基本结构
 
@@ -348,13 +360,19 @@ $$\tilde{V}_{out} = \frac{m}{2}V_{dc}e^{j\theta}$$
 - 谐波分析
 - 损耗计算
 
-## 相关模型
-- [[vsc-model]] - VSC模型
-- [[svc-model]] - SVC模型
-- [[facts]] - FACTS
-- [[mmc-model]] - MMC模型
-- `pwm-modulation` - PWM调制
-- `voltage-regulation` - 电压调节
+## 与相关页面的关系
+
+- [[vsc-model]] - VSC换流器模型
+- [[svc-model]] - SVC静止无功补偿器
+- [[facts]] - FACTS柔性交流输电系统
+- [[mmc-model]] - MMC模块化多电平换流器
+- [[pll-model]] - 锁相环模型
+- [[power-quality]] - 电能质量
+
+## 代表性来源
+
+- Schauder, C. and Mehta, H., "Vector Analysis and Control of Advanced Static VAR Compensators," *IEE Proceedings C*, 1993.
+- Gyugyi, L., "Dynamic Compensation of AC Transmission Lines by Solid-State Synchronous Voltage Sources," *IEEE TPWRD*, 1994.
 
 ## 来源论文
 
