@@ -68,7 +68,7 @@ sources: ["EMT_Doc/17/Liu 等 - 2010 - Electromechanical transientelectromagneti
 ## 涉及的模型
 
 - [[vsc-hvdc|VSC-HVDC]]
-- [[换流器|换流器]]
+- [[topics/power-electronics|换流器]]
 - [[models/transformer-model|换流变压器]]
 - [[models/synchronous-machine-model|同步发电机]]
 - [[动态负荷|动态负荷]]

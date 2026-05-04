@@ -65,7 +65,7 @@ Supplementary techniques for 2S-DIRK-based EMT simulations T. Noda a,∗ , T. Ki
 
 ## 涉及的模型
 
-- [[电压源|电压源]]
+- [[sources/一种用于电磁暂态仿真的两电平电压源型换流器解耦模型|电压源]]
 - [[电流源|电流源]]
 - [[models/igbt-model|开关器件]]
 - [[电感与电容元件|电感与电容元件]]

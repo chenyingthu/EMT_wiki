@@ -77,7 +77,7 @@ sources: ["EMT_Doc/13&14/files/Bai 等 - 2018 - Dynamic Synchrophasor Estimator 
 - [[动态工况|动态工况]]
 - [[离散傅里叶变换|离散傅里叶变换]]
 - [[广域测量系统|广域测量系统]]
-- [[pscad-emtdc仿真|PSCAD/EMTDC仿真]]
+- [[entities/pscad-emtdc|PSCAD/EMTDC仿真]]
 
 ## 主要发现
 

@@ -69,7 +69,7 @@ sources: ["EMT_Doc/13&14/files/TPWRS.2017.2766269.pdf.pdf"]
 - [[lcc-model|LCC]]
 - [[topics/large-scale-grid-simulation|交流电网]]
 - [[models/transmission-line-model|输电线路]]
-- [[换流器|换流器]]
+- [[topics/power-electronics|换流器]]
 
 ## 相关主题
 

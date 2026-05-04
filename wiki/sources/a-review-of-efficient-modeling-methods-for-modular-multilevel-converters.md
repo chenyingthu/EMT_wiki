@@ -67,7 +67,7 @@ sources: ["EMT_Doc/03/Xu 等 - 2015 - A review of efficient modeling methods for
 
 - [[mmc-model|MMC]]
 - [[models/mmc-model|半桥子模块]]
-- [[全桥子模块|全桥子模块]]
+- [[models/full-bridge-smb|全桥子模块]]
 - [[models/transformer-model|换流变压器]]
 - [[直流电缆|直流电缆]]
 - [[戴维南等效模型|戴维南等效模型]]

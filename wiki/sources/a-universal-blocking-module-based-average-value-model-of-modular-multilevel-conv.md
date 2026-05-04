@@ -68,7 +68,7 @@ sources: ["EMT_Doc/04/tec.2019.2944332.pdf.pdf"]
 
 - [[mmc-model|MMC]]
 - [[models/mmc-model|半桥子模块]]
-- [[全桥子模块|全桥子模块]]
+- [[models/full-bridge-smb|全桥子模块]]
 - [[混合桥子模块|混合桥子模块]]
 - [[mmc-model|MMC]]
 - [[methods/average-value-model|详细等效模型]]

@@ -85,7 +85,7 @@ sources: ["EMT_Doc/17/Xiong 等 - 2020 - Electromechanical-electromagnetic trans
 
 - [[topics/co-simulation|混合仿真]]
 - [[特高压直流分层接入|特高压直流分层接入]]
-- [[交直流混联电网|交直流混联电网]]
+- [[sources/适用于交直流混联电网的ch-mmc电磁暂态快速仿真模型-15|交直流混联电网]]
 - [[机电-电磁暂态接口|机电-电磁暂态接口]]
 - [[换相失败预防控制|换相失败预防控制]]
 - [[仿真效率与精度评估|仿真效率与精度评估]]

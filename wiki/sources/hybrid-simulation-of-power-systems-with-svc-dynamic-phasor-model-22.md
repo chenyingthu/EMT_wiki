@@ -67,7 +67,7 @@ sources: ["EMT_Doc/22/j.ijepes.2009.01.002.pdf.pdf"]
 ## 涉及的模型
 
 - [[models/svc-model|SVC]]
-- [[tcr|TCR]]
+- [[models/svc-tcr-model|TCR]]
 - [[交流机电暂态模型|交流机电暂态模型]]
 - [[rlc滤波器|RLC滤波器]]
 - [[9节点测试系统|9节点测试系统]]

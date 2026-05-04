@@ -72,7 +72,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/Cao 等 - 2023 - Faster-Than-Real-Ti
 - [[models/transmission-line-model|输电线路]]
 - [[models/transformer-model|变压器]]
 - [[topics/hybrid-acdc-network|多端直流电网]]
-- [[换流器|换流器]]
+- [[topics/power-electronics|换流器]]
 
 ## 相关主题
 

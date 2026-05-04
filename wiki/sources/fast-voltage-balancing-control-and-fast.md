@@ -77,7 +77,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/tpwrd.2014.2351397.pdf-1.pdf"]
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[vsc-model|VSC]]
 - [[电压均衡控制|电压均衡控制]]
-- [[快速仿真|快速仿真]]
+- [[sources/适用于交直流混联电网的ch-mmc电磁暂态快速仿真模型-15|快速仿真]]
 - [[topics/co-simulation|混合仿真]]
 
 ## 主要发现

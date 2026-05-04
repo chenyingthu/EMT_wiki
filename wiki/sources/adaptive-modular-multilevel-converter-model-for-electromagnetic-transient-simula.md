@@ -69,7 +69,7 @@ sources: ["EMT_Doc/05/TPWRD.2020.2993502.pdf.pdf"]
 
 - [[mmc-model|MMC]]
 - [[models/mmc-model|半桥子模块]]
-- [[全桥子模块|全桥子模块]]
+- [[models/full-bridge-smb|全桥子模块]]
 - [[mmc-model|MMC]]
 - [[耦合变压器|耦合变压器]]
 

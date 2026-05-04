@@ -68,7 +68,7 @@ sources: ["EMT_Doc/27&28/Multiphase power flow solutions using EMTP and Newtons 
 
 - [[models/synchronous-machine-model|同步电机]]
 - [[pq负荷|PQ负荷]]
-- [[电压源|电压源]]
+- [[sources/一种用于电磁暂态仿真的两电平电压源型换流器解耦模型|电压源]]
 - [[电流源|电流源]]
 - [[models/transmission-line-model|输电线路]]
 - [[models/transformer-model|变压器]]

@@ -58,7 +58,7 @@ sources: ["EMT_Doc/32/Li 等 - 2024 - Real-time simulation for detailed wind tur
 
 ## 使用的方法
 
-- [[异构计算|异构计算]]
+- [[topics/parallel-computing|异构计算]]
 - [[methods/multirate-method|多速率仿真]]
 - [[methods/nodal-analysis|节点分析法]]
 - [[实时操作系统|实时操作系统]]

@@ -67,7 +67,7 @@ sources: ["EMT_Doc/22/Zhijun 等 - 2009 - Hybrid simulation of power systems wit
 ## 涉及的模型
 
 - [[models/svc-model|SVC]]
-- [[tcr|TCR]]
+- [[models/svc-tcr-model|TCR]]
 - [[交流子系统|交流子系统]]
 - [[rlc滤波器|RLC滤波器]]
 - [[机电暂态模型|机电暂态模型]]

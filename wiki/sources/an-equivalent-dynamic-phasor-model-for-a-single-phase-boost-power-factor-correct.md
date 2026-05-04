@@ -69,7 +69,7 @@ sources: ["EMT_Doc/07&08/An Equivalent Dynamic Phasor Model for a Single-Phase B
 - [[单相boost-pfc变换器|单相Boost PFC变换器]]
 - [[二极管整流桥|二极管整流桥]]
 - [[等效有源整流器|等效有源整流器]]
-- [[动态相量模型|动态相量模型]]
+- [[sources/2728一种用于lcc-hvdc系统小干扰稳定性分析的改进动态相量模型|动态相量模型]]
 - [[小信号模型|小信号模型]]
 
 ## 相关主题

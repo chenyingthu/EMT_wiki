@@ -81,7 +81,7 @@ sources: ["EMT_Doc/15/Efficient GPU-based electromagnetic transient simulation f
 - [[topics/real-time-simulation|实时仿真]]
 - [[methods/automatic-code-generation|自动代码生成]]
 - [[大规模配电网仿真|大规模配电网仿真]]
-- [[异构计算|异构计算]]
+- [[topics/parallel-computing|异构计算]]
 
 ## 主要发现
 

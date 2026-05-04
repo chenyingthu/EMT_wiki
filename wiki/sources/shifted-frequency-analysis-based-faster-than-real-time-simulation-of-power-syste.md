@@ -68,7 +68,7 @@ sources: ["EMT_Doc/34/Zhang 等 - 2024 - Shifted frequency analysis based, faste
 ## 涉及的模型
 
 - [[topics/large-scale-power-system|电力系统]]
-- [[电力电子设备|电力电子设备]]
+- [[sources/大规模电力电子设备接入的电力系统混合仿真接口技术综述|电力电子设备]]
 
 ## 相关主题
 

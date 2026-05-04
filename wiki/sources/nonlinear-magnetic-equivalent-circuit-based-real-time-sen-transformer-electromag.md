@@ -79,7 +79,7 @@ sources: ["EMT_Doc/27&28/Nonlinear Magnetic Equivalent Circuit-Based Real-Time S
 - [[methods/hil-simulation|硬件在环仿真]]
 - [[fpga实现|FPGA实现]]
 - [[非线性磁路建模|非线性磁路建模]]
-- [[潮流控制|潮流控制]]
+- [[sources/协调分布式潮流控制器串并联变流器能量交换的等效模型|潮流控制]]
 - [[topics/parallel-computing|并行计算]]
 
 ## 主要发现

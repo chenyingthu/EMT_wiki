@@ -59,7 +59,7 @@ sources: ["EMT_Doc/02/Jiang 等 - 2015 - A multi-functional series compensator t
 - [[全补偿控制策略|全补偿控制策略]]
 - [[强制换流法|强制换流法]]
 - [[晶闸管触发角控制|晶闸管触发角控制]]
-- [[pscad-emtdc仿真|PSCAD/EMTDC仿真]]
+- [[entities/pscad-emtdc|PSCAD/EMTDC仿真]]
 
 ## 涉及的模型
 

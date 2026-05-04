@@ -67,7 +67,7 @@ sources: ["EMT_Doc/09/Cao和Chen - 2007 - Application of EMTP-RV graphic softwar
 ## 涉及的模型
 
 - [[models/svc-model|SVC]]
-- [[tcr|TCR]]
+- [[models/svc-tcr-model|TCR]]
 - [[晶闸管阀组|晶闸管阀组]]
 - [[zno避雷器|ZnO避雷器]]
 - [[rlc支路|RLC支路]]

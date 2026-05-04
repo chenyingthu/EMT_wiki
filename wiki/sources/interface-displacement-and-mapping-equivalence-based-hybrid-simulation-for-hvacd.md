@@ -66,7 +66,7 @@ sources: ["EMT_Doc/24/TPWRD.2020.3017084.pdf.pdf"]
 
 ## 涉及的模型
 
-- [[换流器|换流器]]
+- [[topics/power-electronics|换流器]]
 - [[交流系统等值模型|交流系统等值模型]]
 - [[可控电流源|可控电流源]]
 - [[topics/hybrid-acdc-network|交直流电网]]

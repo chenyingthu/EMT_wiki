@@ -75,7 +75,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/Liu 等 - 2026 - Fine-Grained Optima
 ## 相关主题
 
 - [[topics/parallel-computing|并行计算]]
-- [[异构计算|异构计算]]
+- [[topics/parallel-computing|异构计算]]
 - [[topics/wind-farm-modeling|风电场建模]]
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[最优分配|最优分配]]

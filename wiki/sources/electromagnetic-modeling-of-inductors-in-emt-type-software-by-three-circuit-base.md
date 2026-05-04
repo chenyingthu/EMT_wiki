@@ -67,7 +67,7 @@ sources: ["EMT_Doc/15/Electromagnetic modeling of inductors in EMT-type software
 
 ## 涉及的模型
 
-- [[电感器|电感器]]
+- [[models/inductor-model|电感器]]
 - [[壳式电感器|壳式电感器]]
 - [[磁路模型|磁路模型]]
 - [[分布式等效电路|分布式等效电路]]

@@ -79,7 +79,7 @@ sources: ["EMT_Doc/18/Hassani 等 - 2022 - Evaluation of time-domain and phasor-
 
 - [[topics/emt-simulation|电磁暂态]]
 - [[topics/transient-stability-analysis|暂态稳定]]
-- [[动态相量|动态相量]]
+- [[sources/vsc-hvdc-系统的动态相量法建模仿真分析|动态相量]]
 - [[topics/emt-simulation|时域仿真]]
 - [[相量域仿真|相量域仿真]]
 - [[计算性能评估|计算性能评估]]

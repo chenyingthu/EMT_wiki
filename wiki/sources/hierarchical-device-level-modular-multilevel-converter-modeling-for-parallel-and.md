@@ -77,7 +77,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/OJPEL.2020.3016296.pdf.pdf"]
 
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[topics/parallel-computing|并行计算]]
-- [[异构计算|异构计算]]
+- [[topics/parallel-computing|异构计算]]
 - [[器件级建模|器件级建模]]
 - [[topics/parallel-computing|高性能计算]]
 - [[vsc-hvdc|VSC-HVDC]]

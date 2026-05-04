@@ -67,7 +67,7 @@ sources: ["EMT_Doc/25/Li 等 - 2020 - Interpolation for power electronic circuit
 
 ## 涉及的模型
 
-- [[tcr|TCR]]
+- [[models/svc-tcr-model|TCR]]
 - [[vsc-model|VSC]]
 - [[电力电子电路|电力电子电路]]
 
