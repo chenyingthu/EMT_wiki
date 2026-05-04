@@ -1,3 +1,10 @@
+---
+title: "参数辨识方法 (Parameter Identification)"
+type: method
+tags: [parameter-identification, system-identification, least-squares, optimization, emt-modeling]
+created: "2026-05-04"
+---
+
 # 参数辨识方法 (Parameter Identification)
 
 ## 定义与边界
@@ -34,7 +41,26 @@
 - 激励充分性：未被激励的模态和频段不能从数据中可靠恢复。
 - 数据质量：积分漂移、传感器相位误差、采样同步和滤波延迟会直接进入参数估计。
 - 模型结构：用线性模型拟合饱和、电弧或限幅控制，只能代表局部工作点。
-- 数值外推：原页面中若干“误差 <0.5%”“提升 3 倍”等数字只有在绑定具体论文、测试频段和指标时才可使用；本页不把它们写成通用精度。
+- 数值外推：原页面中若干”误差 <0.5%””提升 3 倍”等数字只有在绑定具体论文、测试频段和指标时才可使用；本页不把它们写成通用精度。
+
+### 可辨识性条件
+
+| 条件 | 描述 | 检验方法 |
+|------|------|----------|
+| 结构可辨识性 | 模型结构允许参数唯一确定 | 灵敏度矩阵满秩 |
+| 激励充分性 | 输入信号覆盖待辨识频段 | 持续激励条件 |
+| 数值可辨识性 | 参数估计条件良好 | 条件数检查 |
+| 物理合理性 | 参数在物理可行范围内 | 约束优化 |
+
+### 常见问题与对策
+
+| 问题 | 原因 | 对策 |
+|------|------|------|
+| 参数相关性 | 多个参数影响相同输出 | 重新参数化、固定部分参数 |
+| 局部极小值 | 非线性优化多峰 | 多初值、全局优化算法 |
+| 过拟合 | 模型复杂度高、数据不足 | 正则化、交叉验证 |
+| 噪声敏感 | 信噪比低 | 滤波、加权、贝叶斯方法 |
+| 数值不稳定 | 矩阵病态 | 正则化、QR分解、SVD |
 
 ## 代表性来源
 
@@ -53,3 +79,49 @@
 - [[state-space-method]]：辨识结果常转成状态空间或递推滤波器参与 EMT 步进。
 - [[frequency-dependent-modeling]]：线路、电缆和外部网络的频率相关参数通常需要辨识或拟合。
 - [[transformer-model]]：磁化曲线、漏抗和饱和参数辨识必须区分测试工况和工程运行工况。
+
+## 形式化表达
+
+### 最小二乘辨识
+
+线性回归形式的参数估计：
+
+$$\hat{\boldsymbol{\theta}} = (\mathbf{\Phi}^T\mathbf{\Phi})^{-1}\mathbf{\Phi}^T\mathbf{y}$$
+
+其中 $\mathbf{\Phi}$ 为回归矩阵，$\mathbf{y}$ 为观测向量。
+
+加权最小二乘：
+$$\hat{\boldsymbol{\theta}} = (\mathbf{\Phi}^T\mathbf{W}\mathbf{\Phi})^{-1}\mathbf{\Phi}^T\mathbf{W}\mathbf{y}$$
+
+其中 $\mathbf{W}$ 为权重矩阵，反映各数据点的可信度。
+
+### 递推最小二乘
+
+在线更新公式：
+
+$$\hat{\boldsymbol{\theta}}_k = \hat{\boldsymbol{\theta}}_{k-1} + \mathbf{K}_k(y_k - \mathbf{\phi}_k^T\hat{\boldsymbol{\theta}}_{k-1})$$
+
+$$\mathbf{K}_k = \frac{\mathbf{P}_{k-1}\mathbf{\phi}_k}{\lambda + \mathbf{\phi}_k^T\mathbf{P}_{k-1}\mathbf{\phi}_k}$$
+
+$$\mathbf{P}_k = \frac{1}{\lambda}(\mathbf{P}_{k-1} - \mathbf{K}_k\mathbf{\phi}_k^T\mathbf{P}_{k-1})$$
+
+其中 $\lambda$ 为遗忘因子（$0 < \lambda \leq 1$），控制历史数据权重。
+
+### 非线性优化
+
+非线性最小二乘目标函数：
+
+$$J(\boldsymbol{\theta}) = \sum_{n=1}^{N} \|y_{\text{meas}}(t_n) - y_{\text{model}}(t_n, \boldsymbol{\theta})\|^2$$
+
+Gauss-Newton迭代：
+$$\boldsymbol{\theta}^{(k+1)} = \boldsymbol{\theta}^{(k)} - (\mathbf{J}^T\mathbf{J})^{-1}\mathbf{J}^T\mathbf{r}$$
+
+其中 $\mathbf{J}$ 为Jacobi矩阵，$\mathbf{r}$ 为残差向量。
+
+### 置信区间估计
+
+参数估计的协方差矩阵：
+$$\text{Cov}(\hat{\boldsymbol{\theta}}) = \sigma^2(\mathbf{\Phi}^T\mathbf{\Phi})^{-1}$$
+
+第 $i$ 个参数的 $95\%$ 置信区间：
+$$\hat{\theta}_i \pm 1.96\sqrt{\text{Cov}_{ii}}$$

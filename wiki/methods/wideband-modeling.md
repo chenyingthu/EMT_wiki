@@ -1,3 +1,10 @@
+---
+title: "宽频建模方法 (Wideband Modeling)"
+type: method
+tags: [wideband-modeling, frequency-dependent, vector-fitting, rational-approximation, emt]
+created: "2026-05-04"
+---
+
 # 宽频建模方法 (Wideband Modeling)
 
 ## 定义与边界
@@ -49,6 +56,37 @@ $$Y(s)\approx \sum_{k=1}^{n}\frac{R_k}{s-p_k}+D+sE$$
 - 用线性宽频模型描述铁芯饱和、电弧、避雷器动作或控制限幅时，应明确它只覆盖线性化或局部工作点。
 - 宽频模型阶数越高，实时仿真计算量越大；降阶后必须重新验证频响和时域响应。
 
+### 频率范围选择
+
+| 应用 | 关注频段 | 典型上限频率 |
+|------|----------|--------------|
+| 工频稳态 | 50/60 Hz | 1 kHz |
+| 谐波分析 | 2~50次谐波 | 3 kHz |
+| 开关暂态 | 暂态恢复电压 | 10 kHz |
+| 雷电过电压 | 快速波头 | 1 MHz |
+| GIS/VFTO | 极快速暂态 | 100 MHz |
+| 电磁兼容 | 传导/辐射干扰 | 1 GHz |
+
+### 模型阶数与精度
+
+| 模型类型 | 典型阶数 | 适用场景 |
+|----------|----------|----------|
+| 单导线 | 10~20 | 架空线简化模型 |
+| 多导体线路 | 30~50 | 三相线路、电缆 |
+| 变压器 | 20~40 | 宽频变压器模型 |
+| 接地系统 | 15~30 | 变电站接地网 |
+| 外部网络等值 | 50~200 | FDNE |
+
+### 验证指标
+
+| 指标 | 定义 | 典型要求 |
+|------|------|----------|
+| 幅值误差 | $\|H_{fit} - H_{data}\|/\|H_{data}\|$ | <1% |
+| 相位误差 | $|\angle H_{fit} - \angle H_{data}|$ | <1° |
+| 无源性偏差 | $\min\lambda(\text{Re}(Y))$ | $\geq 0$ |
+| DC精度 | $H(0)$ 与理论值偏差 | <0.1% |
+| 高频渐近 | 与解析渐近行为一致 | 满足 |
+
 ## 代表性来源
 
 | 来源 | 可支撑的内容 | 使用边界 |
@@ -68,3 +106,53 @@ $$Y(s)\approx \sum_{k=1}^{n}\frac{R_k}{s-p_k}+D+sE$$
 - [[frequency-dependent-line-model]]、[[universal-line-model]]、[[cable-model]] 和 [[transmission-line-model]] 是线路/电缆下游模型页。
 - [[earth-return-impedance]]、[[frequency-dependent-soil]] 和 [[frequency-dependent-soil-model]] 说明大地回流和土壤参数如何进入宽频模型。
 - [[fdne-model]] 和 [[network-equivalent]] 把宽频建模用于外部网络压缩和混合仿真边界。
+
+## 形式化表达
+
+### 频变参数模型
+
+线路单位长度阻抗和导纳的频率依赖性：
+
+**电阻（集肤效应）**：
+$$R(f) = R_{dc}\sqrt{1 + \left(\frac{f}{f_{skin}}\right)^2}$$
+
+其中 $f_{skin}$ 为集肤效应特征频率。
+
+**电感（内电感变化）**：
+$$L(f) = L_{ext} + \frac{L_{int}}{\sqrt{1 + (f/f_{skin})^2}}$$
+
+**电容（介质损耗）**：
+$$C(f) = \frac{C_0}{1 + j\tan\delta(f)}$$
+
+### 有理函数近似
+
+频响函数的有理逼近：
+$$H(s) = \sum_{k=1}^{n}\frac{R_k}{s-p_k} + D + sE$$
+
+其中：
+- $p_k = \sigma_k + j\omega_k$：极点（复数或实数）
+- $R_k$：留数（矩阵或标量）
+- $D$：直接耦合项
+- $E$：高频渐近项
+
+### 时域递归实现
+
+状态空间形式：
+$$\dot{x}_k(t) = p_k x_k(t) + u(t)$$
+$$y_k(t) = R_k x_k(t)$$
+
+总输出：
+$$y(t) = \sum_{k=1}^{n}y_k(t) + Du(t) + E\frac{du}{dt}$$
+
+离散化（梯形法则）：
+$$x_k(t+h) = \frac{1 + p_k h/2}{1 - p_k h/2}x_k(t) + \frac{h}{1 - p_k h/2}u(t+h/2)$$
+
+### 无源性条件
+
+端口导纳矩阵 $Y(s)$ 的无源性要求：
+1. $Y(s^*) = Y^*(s)$（实有理函数）
+2. $Y(s)$ 在右半平面解析
+3. $Y^H(j\omega) + Y(j\omega) \geq 0, \quad \forall \omega \geq 0$
+
+等价于阻抗实部矩阵半正定：
+$$\text{Re}(Y(j\omega)) = \frac{Y(j\omega) + Y^H(j\omega)}{2} \geq 0$$

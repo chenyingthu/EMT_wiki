@@ -1,3 +1,10 @@
+---
+title: "故障分析方法 (Fault Analysis Methods)"
+type: method
+tags: [fault-analysis, short-circuit, grounding, protection, emt-simulation]
+created: "2026-05-04"
+---
+
 # 故障分析方法 (Fault Analysis Methods)
 
 ## 定义与边界
@@ -42,10 +49,19 @@ $$i_f(t)=G_f(t)v_f(t), \quad G_f(t)=1/R_f(t)$$
 ## 适用边界与失败模式
 
 - 故障电阻、接地路径和电弧模型不确定时，电流幅值和保护裕度应以参数扫描表达，而不是给单一强结论。
-- 梯形积分在开关突变后可能产生数值振荡；应检查 [[discretization-methods]]、[[numerical-integration-methods]] 和开关插值设置。
+- 梯形积分在开关突变后可能产生数值振荡；应检查 [[discretization-methods]]、[[numerical-integration]] 和开关插值设置。
 - 故障前初始化错误会把人工暂态混入故障响应；应先核查 [[steady-state-initialization]] 和故障投入前的潮流/控制状态。
 - 相量或 RMS 后处理会抹去首波头、高频振荡和直流偏移，不适合直接评价行波保护和器件级应力。
+- 故障电阻、接地路径和电弧模型不确定时，电流幅值和保护裕度应以参数扫描表达，而不是给单一强结论。
 - 单个 PSCAD、RTDS 或自编 EMT 算例只能支撑该算例的故障行为；不能写成所有电压等级、线路类型或控制策略下的通用结论。
+
+### 关键假设
+
+1. **线性假设**：序分量分析假设系统在故障前后保持线性
+2. **对称假设**：三相线路参数对称，互感相等
+3. **基波主导**：序分量提取假设基波占主导，谐波影响可忽略
+4. **稳态初始**：故障前系统处于稳态运行点
+5. **集中故障**：故障建模为集中参数，不考虑故障发展过程
 
 ## 代表性来源
 
@@ -56,10 +72,48 @@ $$i_f(t)=G_f(t)v_f(t), \quad G_f(t)=1/R_f(t)$$
 | [[an-ultra-fast-mmc-hvdc-fault-location-algorithm-based-on-transient-voltage-featu]] | 直流故障定位中暂态电压特征和数据窗的案例 | 阈值、采样率和噪声结论需绑定原文系统 |
 | [[a-novel-ultra-high-speed-traveling-wave-protection-principle-for-vsc-based-dc-gr]] | VSC 直流电网行波保护和故障极选择的代表性来源 | 不应外推到电缆、混合线路或不同测量链路 |
 | [[protection-system-representation-in-the-electromagnetic-transients-program-power]] | EMT 中保护系统表示的来源入口 | 保护模型细节需按具体程序和装置核验 |
+| [[short-circuit-current-calculation-in-high-voltage-ac-systems-ieee-std-c37]] | 高压交流系统短路电流计算标准 | 适用于传统短路计算，EMT需补充暂态细节 |
+| [[fault-analysis-and-protection-coordination-for-mmc-based-hvdc-systems]] | MMC-HVDC系统故障分析与保护配合 | 结论限于MMC拓扑和控制系统设计 |
+| [[ultra-high-speed-protection-for-dc-grids-based-on-transient-voltage]] | 基于暂态电压的直流电网超高速保护 | 阈值和采样率需按具体系统验证 |
+
+## 形式化表达
+
+### 故障支路导纳模型
+
+金属性短路故障可用时变导纳表示：
+
+$$G_f(t) = \begin{cases} 0 & t < t_f \\ G_{sc} & t_f \leq t < t_c \\ 0 & t \geq t_c \end{cases}$$
+
+其中 $t_f$ 为故障投入时刻，$t_c$ 为故障切除时刻，$G_{sc} = 1/R_{sc}$ 为短路导纳（典型值 $R_{sc} = 0.001\sim0.01\,\Omega$）。
+
+### 不对称故障序分量变换
+
+三相量到序分量的变换矩阵：
+
+$$\begin{bmatrix} V_0 \\ V_1 \\ V_2 \end{bmatrix} = \frac{1}{3}\begin{bmatrix} 1 & 1 & 1 \\ 1 & a & a^2 \\ 1 & a^2 & a \end{bmatrix}\begin{bmatrix} V_a \\ V_b \\ V_c \end{bmatrix}$$
+
+其中 $a = e^{j2\pi/3}$，$V_0$、$V_1$、$V_2$ 分别为零序、正序、负序电压。
+
+### 故障电流直流偏移
+
+短路电流中的直流偏移分量：
+
+$$i_{dc}(t) = \left(\frac{V_m}{|Z|}\sin\theta - \frac{V_m}{|Z|}\sin(\omega t + \theta)\right)e^{-t/\tau}$$
+
+其中 $\theta$ 为故障投入角，$\tau = L/R$ 为时间常数，决定直流衰减速度。
+
+### 距离保护测量阻抗
+
+故障定位常用的距离保护测量阻抗：
+
+$$Z_m = \frac{V_m}{I_m + k_0 I_0}$$
+
+其中 $k_0 = (Z_0 - Z_1)/3Z_1$ 为零序补偿系数，$I_0$ 为零序电流。
 
 ## 与相关页面的关系
 
 - [[fault-impedance-model]] 处理故障支路、过渡电阻和电弧模型；本页说明这些模型如何进入故障场景。
+- [[sequence-network-model]] 支撑不对称故障的序分量解释；EMT求解仍应保留相域瞬时量。
 - [[circuit-breaker-model]] 关注切除设备和开断过程；本页只把断路器作为故障时序的一部分。
 - [[sequence-network-model]] 支撑不对称故障的序分量解释；EMT 求解仍应保留相域瞬时量。
 - [[transmission-line-model]] 和 [[frequency-dependent-line-model]] 决定故障行波传播与反射特性。

@@ -45,7 +45,26 @@ created: "2026-04-30"
 - 频率边界：参考频率偏移、PLL 失锁或多频率电网会使包络不再慢变。
 - 非线性边界：铁磁饱和、电弧、限幅控制和开关死区会产生宽频分量，动态相量模型只能在明确工作点或分段假设下使用。
 - 接口边界：与 [[co-simulation]]、[[multirate-method]] 或 RMS 侧耦合时，应说明接口变量是瞬时值、复包络还是功率量。
-- 证据边界：原页面中“5-10 倍步长”“误差 <1%”“206 倍提速”等数字没有在本页绑定到测试系统、平台和论文表图，因此不作为通用结论保留。
+- 证据边界：原页面中”5-10 倍步长””误差 <1%””206 倍提速”等数字没有在本页绑定到测试系统、平台和论文表图，因此不作为通用结论保留。
+
+### 阶数选择准则
+
+| 保留阶数 | 适用场景 | 计算复杂度 | 精度 |
+|----------|----------|------------|------|
+| $K=0$（平均值） | 系统级慢动态 | 最低 | 仅基波 |
+| $K=1$（基波+一阶谐波） | VSC/HVDC基本动态 | 低 | 含主要谐波 |
+| $K=2\sim3$ | MMC环流、谐波耦合 | 中等 | 较好 |
+| $K\geq5$ | 宽频振荡、详细分析 | 较高 | 接近全EMT |
+
+### 与其他方法的对比
+
+| 特性 | 全EMT | 动态相量 | 平均值模型 |
+|------|-------|----------|------------|
+| 开关细节 | 完整 | 包络 | 平均 |
+| 计算效率 | 低 | 中等 | 高 |
+| 适用频段 | 全频带 | 选定频带 | 基波附近 |
+| 谐波耦合 | 精确 | 截断阶数内 | 无 |
+| 非线性处理 | 直接 | 近似 | 工作点线性化 |
 
 ## 代表性来源
 
@@ -54,6 +73,47 @@ created: "2026-04-30"
 | [[real-time-simulation-of-hybrid-modular-multilevel-converters-using-shifted-phaso]] | 移位相量用于混合 MMC 子模块和桥臂等效，并在 FPGA 实时仿真平台验证 | 证据限于原文两端 LVDC/MMC 系统和给定硬件实现 |
 | [[comparison-of-dynamic-phasor-discrete-time-and-frequency-scanning-based-ssr-mode]] | 动态相量、离散时间和频率扫描方法可用于 SSR 模态建模对比 | 不能外推为所有宽频振荡场景的优选 |
 | [[dynamic-synchrophasor-estimator-based-on-multi-frequency-phasor-model]] | 多频相量模型可支撑动态同步相量估计 | 属于测量/估计场景，不等同于全 EMT 设备模型 |
+
+## 形式化表达
+
+### 动态相量系数求解
+
+对于周期为 $T$ 的信号 $x(t)$，第 $k$ 阶动态相量系数：
+
+$$\langle x \rangle_k(t) = \frac{1}{T}\int_{t-T}^{t} x(\tau) e^{-jk\omega_s\tau} d\tau$$
+
+逆变换：
+$$x(t) = \sum_{k=-K}^{K} \langle x \rangle_k(t) e^{jk\omega_s t}$$
+
+### 微分和乘积运算规则
+
+**微分规则**：
+$$\langle \frac{dx}{dt} \rangle_k = \frac{d\langle x \rangle_k}{dt} + jk\omega_s \langle x \rangle_k$$
+
+**乘积规则**（卷积和）：
+$$\langle xy \rangle_k = \sum_{i=-K}^{K} \langle x \rangle_{k-i} \langle y \rangle_i$$
+
+**电感方程**：
+$$\langle v_L \rangle_k = L\frac{d\langle i_L \rangle_k}{dt} + jk\omega_s L \langle i_L \rangle_k$$
+
+**电容方程**：
+$$\langle i_C \rangle_k = C\frac{d\langle v_C \rangle_k}{dt} + jk\omega_s C \langle v_C \rangle_k$$
+
+### 复数状态空间形式
+
+将各阶动态相量组成状态向量 $\mathbf{X} = [\langle x \rangle_{-K}, ..., \langle x \rangle_0, ..., \langle x \rangle_K]^T$，可写成状态空间形式：
+
+$$\dot{\mathbf{X}} = \mathbf{A}_{dp}\mathbf{X} + \mathbf{B}_{dp}\mathbf{U}$$
+
+其中 $\mathbf{A}_{dp}$ 包含原系统矩阵和频率耦合项 $jk\omega_s$。
+
+### 移位相量实现
+
+构造解析信号：
+$$x_a(t) = x(t) + j\mathcal{H}\{x(t)\}$$
+
+其中 $\mathcal{H}$ 为Hilbert变换。移位到基带：
+$$x_{dp}(t) = x_a(t)e^{-j\omega_c t}$$
 
 ## 与相关页面的关系
 

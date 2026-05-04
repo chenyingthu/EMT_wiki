@@ -53,7 +53,7 @@ $$
 - [[emtp-modeling-of-electromagnetic-transients-power-delivery-ieee-transactions-on]] 是 EMT 建模传统的来源入口，适合追踪 EMTP 型时域建模思想。
 - [[a-combined-state-space-nodal-method-for-the-simulation-of-power-system-transient]] 支撑状态空间与节点方法组合的机制讨论。
 - [[a-comparative-study-of-electromagnetic-transient-simulations-using-companion-cir]] 可用于比较伴随电路 EMT 实现的数值差异。
-- [[accuracy-evaluation-of-electromagnetic-transients-simulation-algorithms]] 提醒算法精度需要绑定测试系统和指标，而不是用“高精度”概括。
+- [[accuracy-evaluation-of-electromagnetic-transients-simulation-algorithms]] 提醒算法精度需要绑定测试系统和指标，而不是用”高精度”概括。
 
 ## 与相关页面的关系
 
@@ -62,8 +62,31 @@ $$
 - [[real-time-simulation]] 讨论实时 deadline；它是 EMT 的一种执行约束，不是所有 EMT 的默认形态。
 - [[frequency-domain-analysis]] 提供频域识别和阻抗视角；EMT 提供时域非线性和事件验证。
 
+## 形式化表达补充
+
+### 数值积分稳定性
+
+梯形法则的局部截断误差：
+$$\tau_n = -\frac{h^3}{12}y^{(4)}(\xi), \quad \xi \in [t_n, t_{n+1}]$$
+
+后向欧拉法的绝对稳定区域覆盖整个左半平面，适合刚性系统。
+
+### 开关事件处理
+
+开关时刻 $t_{sw}$ 的插值：
+$$v(t_{sw}) = v(t_n) + \frac{t_{sw} - t_n}{h}(v(t_{n+1}) - v(t_n))$$
+
+临界点检测：$i(t_n) \cdot i(t_{n+1}) < 0$ 表示二极管在区间内导通。
+
+### 误差控制
+
+相对误差和绝对误差控制：
+$$\text{err} = \sqrt{\frac{1}{N}\sum_{i=1}^{N}\left(\frac{|y_i - \hat{y}_i|}{\text{atol} + \text{rtol} \cdot |y_i|}\right)^2}$$
+
 ## 开放问题
 
 - 如何为黑盒电力电子设备建立既可共享又可验证的 EMT 模型。
 - 如何在大规模系统中系统报告模型层级、参数来源、步长、误差和计算性能。
 - 如何把频域稳定性、机电暂态和 EMT 波形验证组织成一致的证据链。
+- 如何在保证精度的前提下将 EMT 仿真扩展到大规模系统（>10000节点）。
+- 如何处理高比例电力电子设备接入带来的新暂态特性。
