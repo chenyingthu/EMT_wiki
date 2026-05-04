@@ -57,7 +57,7 @@ sources: ["EMT_Doc/04/tpwrs.2012.2227845.pdf.pdf"]
 
 - [[methods/vector-fitting|矢量拟合]]
 - [[频率扫描|频率扫描]]
-- [[伴随电路法|伴随电路法]]
+- [[methods/companion-circuit|伴随电路法]]
 - [[傅里叶分析|傅里叶分析]]
 - [[methods/vector-fitting|有理函数逼近]]
 

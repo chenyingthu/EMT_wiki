@@ -70,7 +70,7 @@ sources: ["EMT_Doc/10/Leal和De Conti - 2021 - Compact Matrix Formulation for Ca
 - [[models/transmission-line-model|输电线路]]
 - [[models/transmission-line-model|通用线路模型(ULM)]]
 - [[marti频变模型|Marti频变模型]]
-- [[架空线路|架空线路]]
+- [[models/transmission-line-model|架空线路]]
 
 ## 相关主题
 

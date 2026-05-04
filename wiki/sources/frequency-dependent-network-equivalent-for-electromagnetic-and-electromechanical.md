@@ -80,7 +80,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/Zhang 等 - 2012 - Frequency depende
 ## 相关主题
 
 
-- [[机电-电磁混合仿真|机电-电磁混合仿真]]
+- [[topics/electromechanical-electromagnetic-hybrid-simulation|机电-电磁混合仿真]]
 - [[topics/frequency-dependent-modeling|频率相关建模]]
 - [[topics/network-equivalent|网络等值]]
 - [[无源性保证|无源性保证]]

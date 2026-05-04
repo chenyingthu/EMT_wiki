@@ -72,7 +72,7 @@ sources: ["EMT_Doc/10/Plumier 等 - 2016 - Co-Simulation of electromagnetic tran
 - [[频率相关网络等效|频率相关网络等效]]
 - [[戴维南等效网络|戴维南等效网络]]
 - [[models/synchronous-machine-model|同步电机]]
-- [[输电网络|输电网络]]
+- [[topics/transmission-network|输电网络]]
 
 ## 相关主题
 

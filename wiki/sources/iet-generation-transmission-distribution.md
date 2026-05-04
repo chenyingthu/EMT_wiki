@@ -73,7 +73,7 @@ sources: ["EMT_Doc/25/Ye 等 - 2020 - Large step size electromagnetic transient 
 
 ## 相关主题
 
-- [[大时间步长仿真|大时间步长仿真]]
+- [[methods/multirate-method|大时间步长仿真]]
 - [[宽频带动态分析|宽频带动态分析]]
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[移频分析|移频分析]]

@@ -62,7 +62,7 @@ sources: ["EMT_Doc/29/j.epsr.2006.08.027.pdf.pdf"]
 - [[牛顿迭代法|牛顿迭代法]]
 - [[methods/numerical-integration|梯形积分法]]
 - [[谐波稳态求解|谐波稳态求解]]
-- [[topics/power-flow-calculation|潮流计算]]
+- [[methods/power-flow-calculation|潮流计算]]
 
 ## 涉及的模型
 

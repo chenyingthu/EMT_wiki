@@ -60,7 +60,7 @@ sources: ["EMT_Doc/31/59.76692.pdf.pdf"]
 
 - [[节点分析|节点分析]]
 - [[methods/numerical-integration|梯形积分法]]
-- [[补偿法|补偿法]]
+- [[methods/average-value-model|补偿法]]
 - [[戴维南等值|戴维南等值]]
 - [[methods/state-space-method|状态空间法]]
 - [[非线性支路建模|非线性支路建模]]

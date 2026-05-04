@@ -77,7 +77,7 @@ sources: ["EMT_Doc/13&14/files/Direct_Interfacing_of_Parametric_Average-Value_Mo
 - [[topics/real-time-simulation|实时仿真]]
 - [[大步长仿真|大步长仿真]]
 - [[节点分析|节点分析]]
-- [[平均值建模|平均值建模]]
+- [[methods/average-value-model|平均值建模]]
 - [[methods/numerical-integration|数值稳定性]]
 
 ## 主要发现

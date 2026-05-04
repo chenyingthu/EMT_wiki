@@ -69,7 +69,7 @@ sources: ["EMT_Doc/24/Scheibe 等 - 2022 - Interfacing real-time and offline pow
 
 ## 涉及的模型
 
-- [[架空线路|架空线路]]
+- [[models/transmission-line-model|架空线路]]
 - [[电压源模型|电压源模型]]
 - [[电流源模型|电流源模型]]
 - [[正序网络等值|正序网络等值]]

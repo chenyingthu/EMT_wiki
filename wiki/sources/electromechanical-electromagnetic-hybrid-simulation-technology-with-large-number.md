@@ -58,7 +58,7 @@ sources: ["EMT_Doc/17/Chen 等 - 2020 - Electromechanical-electromagnetic Hybrid
 
 ## 使用的方法
 
-- [[机电-电磁混合仿真|机电-电磁混合仿真]]
+- [[topics/electromechanical-electromagnetic-hybrid-simulation|机电-电磁混合仿真]]
 - [[数据映射拼接|数据映射拼接]]
 - [[内部潮流计算|内部潮流计算]]
 - [[工况自动调整与微调|工况自动调整与微调]]
@@ -76,7 +76,7 @@ sources: ["EMT_Doc/17/Chen 等 - 2020 - Electromechanical-electromagnetic Hybrid
 
 ## 相关主题
 
-- [[机电-电磁混合仿真|机电-电磁混合仿真]]
+- [[topics/electromechanical-electromagnetic-hybrid-simulation|机电-电磁混合仿真]]
 - [[大规模交直流电网|大规模交直流电网]]
 - [[特高压直流输电|特高压直流输电]]
 - [[批量仿真计算|批量仿真计算]]

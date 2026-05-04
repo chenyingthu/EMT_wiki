@@ -57,7 +57,7 @@ sources: ["EMT_Doc/09/Herath和Filizadeh - 2021 - Average-Value Model for a Modu
 
 ## 使用的方法
 
-- [[平均值建模|平均值建模]]
+- [[methods/average-value-model|平均值建模]]
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[解析分析|解析分析]]
 - [[环流抑制控制|环流抑制控制]]

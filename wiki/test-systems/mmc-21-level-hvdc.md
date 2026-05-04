@@ -813,10 +813,10 @@ I_circ: 环流分量(100Hz)
 ## 相关页面
 
 ### 相关测试系统
-- [[cigre-hvdc-benchmark]] - CIGRE HVDC基准模型
+- [[test-systems/cigre-hvdc-benchmark]] - CIGRE HVDC基准模型
 - [[ieee-39-bus-system]] - IEEE 39节点系统
 - [[ieee-118-bus-system]] - IEEE 118节点系统
-- [[nordic-32-system]] - Nordic 32系统
+- [[test-systems/nordic-32-system]] - Nordic 32系统
 
 ### 相关模型页
 - [[mmc-model]] - MMC模型

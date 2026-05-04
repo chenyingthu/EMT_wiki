@@ -281,7 +281,7 @@ $$P_{loss} = 6(P_{cond} + P_{sw})$$
 - 三相不平衡治理
 
 ### 新能源并网
-- [[pmsg-offshore-wind-farm]] - 风电场
+- [[test-systems/pmsg-offshore-wind-farm]] - 风电场
 - [[pv-power-plant]] - 光伏电站
 - 无功功率调节
 - 电压波动平抑

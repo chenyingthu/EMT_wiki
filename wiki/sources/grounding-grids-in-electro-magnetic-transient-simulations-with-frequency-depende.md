@@ -76,7 +76,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/j.ijepes.2019.105546.pdf.pdf"]
 
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[topics/frequency-dependent-modeling|频率相关建模]]
-- [[topics/insulation-coordination|绝缘配合]]
+- [[methods/insulation-coordination|绝缘配合]]
 - [[快速暂态分析|快速暂态分析]]
 - [[接地网等值|接地网等值]]
 

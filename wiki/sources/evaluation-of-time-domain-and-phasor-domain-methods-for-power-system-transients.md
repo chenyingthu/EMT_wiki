@@ -65,7 +65,7 @@ sources: ["EMT_Doc/18/Hassani 等 - 2022 - Evaluation of time-domain and phasor-
 - [[methods/numerical-integration|梯形积分法]]
 - [[methods/numerical-integration|后向欧拉法]]
 - [[methods/iterative-solvers|迭代求解器]]
-- [[伴随电路法|伴随电路法]]
+- [[methods/companion-circuit|伴随电路法]]
 - [[methods/sparse-matrix-solver|稀疏矩阵求解]]
 
 ## 涉及的模型

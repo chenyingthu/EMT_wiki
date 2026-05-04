@@ -74,7 +74,7 @@ sources: ["EMT_Doc/18/Schroeder 等 - 2018 - Evaluation of the impact of differe
 
 ## 相关主题
 
-- [[雷电过电压|雷电过电压]]
+- [[topics/lightning-overvoltage|雷电过电压]]
 - [[接地系统宽带建模|接地系统宽带建模]]
 - [[土壤参数频变特性|土壤参数频变特性]]
 - [[topics/ground-potential-rise|地电位升]]

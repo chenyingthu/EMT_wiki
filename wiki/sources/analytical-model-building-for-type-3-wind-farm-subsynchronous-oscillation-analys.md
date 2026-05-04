@@ -68,7 +68,7 @@ sources: ["EMT_Doc/09/Fan和Miao - 2021 - Analytical model building for Type-3 w
 ## 涉及的模型
 
 - [[dfig-model|DFIG]]
-- [[锁相环-pll|锁相环(PLL)]]
+- [[topics/dynamic-phasor|锁相环(PLL)]]
 - [[转子侧变流器-rsc|转子侧变流器(RSC)]]
 - [[网侧变流器-gsc|网侧变流器(GSC)]]
 - [[串联补偿输电线路|串联补偿输电线路]]

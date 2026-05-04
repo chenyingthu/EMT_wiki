@@ -11,7 +11,7 @@ created: "2026-05-02"
 
 IEEE 118 bus system 是用于输电网潮流、稳定性、优化和大规模算法研究的标准测试系统。它通常作为正序、稳态或机电暂态 benchmark 使用；若用于 EMT，需要额外补充线路频变参数、变压器详细模型、保护定值、控制器、负荷动态和扰动脚本。
 
-本页作为 topic 页说明 IEEE 118 在 EMT 知识网络中的使用边界。具体测试系统条目可阅读 [[ieee-118-bus-system]] 下的 test-system 页面；更小规模测试可参考 [[ieee-14-bus-system]]、[[ieee-39-bus-system]] 和 [[ieee-57-bus-system]]。
+本页作为 topic 页说明 IEEE 118 在 EMT 知识网络中的使用边界。具体测试系统条目可阅读 [[ieee-118-bus-system]] 下的 test-system 页面；更小规模测试可参考 [[test-systems/ieee-14-bus-system]]、[[ieee-39-bus-system]] 和 [[test-systems/ieee-57-bus-system]]。
 
 ## EMT 中的作用
 
@@ -64,7 +64,7 @@ $$
 - [[model-verification-benchmark]] 讨论 benchmark 流程和误差证据。
 - [[large-scale-system-simulation]]、[[large-scale-grid-simulation]] 和 [[large-scale-power-system]] 讨论规模化系统仿真问题。
 - [[power-flow-calculation]] 和 [[optimal-power-flow]] 处理该系统的常见稳态用途。
-- [[ieee-39-bus-system]]、[[ieee-14-bus-system]] 和 [[ieee-57-bus-system]] 是规模较小的相关测试系统。
+- [[ieee-39-bus-system]]、[[test-systems/ieee-14-bus-system]] 和 [[test-systems/ieee-57-bus-system]] 是规模较小的相关测试系统。
 
 ## 开放问题
 

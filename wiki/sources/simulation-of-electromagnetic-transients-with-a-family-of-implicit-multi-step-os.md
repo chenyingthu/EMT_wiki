@@ -63,7 +63,7 @@ sources: ["EMT_Doc/35/Melgoza-Vázquez - 2026 - Simulation of electromagnetic tr
 
 ## 涉及的模型
 
-- [[电力系统|电力系统]]
+- [[topics/large-scale-power-system|电力系统]]
 - [[感性支路|感性支路]]
 
 ## 相关主题

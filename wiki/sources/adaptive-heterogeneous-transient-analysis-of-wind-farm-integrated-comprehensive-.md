@@ -62,12 +62,12 @@ sources: ["EMT_Doc/05/Lin 等 - 2021 - Adaptive Heterogeneous Transient Analysis
 - [[cpu-gpu异构并行计算|CPU-GPU异构并行计算]]
 - [[拓扑重构与内部解耦|拓扑重构与内部解耦]]
 - [[梯形积分法离散化|梯形积分法离散化]]
-- [[状态空间建模|状态空间建模]]
+- [[methods/state-space-method|状态空间建模]]
 
 ## 涉及的模型
 
 - [[dfig-model|DFIG]]
-- [[风力发电机|风力发电机]]
+- [[models/dfig-model|风力发电机]]
 - [[topics/hybrid-acdc-network|交直流电网]]
 - [[topics/hybrid-acdc-network|多端直流电网]]
 - [[models/transformer-model|变压器]]

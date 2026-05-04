@@ -61,7 +61,7 @@ sources: ["EMT_Doc/07&08/An Equivalent Dynamic Phasor Model for a Single-Phase B
 - [[topics/dynamic-phasor|动态相量法]]
 - [[符号函数变换|符号函数变换]]
 - [[methods/small-signal-analysis|小信号分析]]
-- [[等效建模|等效建模]]
+- [[methods/average-value-model|等效建模]]
 - [[线性化分析|线性化分析]]
 
 ## 涉及的模型

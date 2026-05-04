@@ -62,7 +62,7 @@ sources: ["EMT_Doc/26/Mao 等 - 2025 - Modeling and application of DQ-sequence d
 - [[dq序动态相量法|dq序动态相量法]]
 - [[瞬时对称分量分解|瞬时对称分量分解]]
 - [[park变换|Park变换]]
-- [[状态空间建模|状态空间建模]]
+- [[methods/state-space-method|状态空间建模]]
 
 ## 涉及的模型
 

@@ -64,7 +64,7 @@ EMT仿真中的频变线路/电缆模型，首先依赖单位长度串联阻抗Z
 ## 涉及的模型
 
 - [[models/transmission-line-model|输电线路]]
-- [[架空线路|架空线路]]
+- [[models/transmission-line-model|架空线路]]
 - [[models/cable-model|地下电缆]]
 - [[多绞线电缆|多绞线电缆]]
 - [[多层土壤模型|多层土壤模型]]

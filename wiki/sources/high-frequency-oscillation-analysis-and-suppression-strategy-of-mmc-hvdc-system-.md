@@ -59,7 +59,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/Zhang 等 - 2022 - High-frequency os
 ## 使用的方法
 
 - [[广义特征根法|广义特征根法]]
-- [[状态空间建模|状态空间建模]]
+- [[methods/state-space-method|状态空间建模]]
 - [[小扰动线性化|小扰动线性化]]
 - [[h-鲁棒控制|H∞鲁棒控制]]
 - [[混合灵敏度优化|混合灵敏度优化]]
@@ -70,7 +70,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/Zhang 等 - 2022 - High-frequency os
 - [[mmc-model|MMC]]
 - [[mmc-model|MMC]]
 - [[topics/large-scale-grid-simulation|交流电网]]
-- [[锁相环-pll|锁相环(PLL)]]
+- [[topics/dynamic-phasor|锁相环(PLL)]]
 - [[双闭环pi控制器|双闭环PI控制器]]
 - [[环流抑制控制器|环流抑制控制器]]
 

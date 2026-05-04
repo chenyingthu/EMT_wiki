@@ -60,7 +60,7 @@ sources: ["EMT_Doc/10/Sano 等 - 2022 - Comparison and Selection of Grid-Tied In
 
 - [[methods/nodal-analysis|节点分析法]]
 - [[固定步长仿真|固定步长仿真]]
-- [[平均值建模|平均值建模]]
+- [[methods/average-value-model|平均值建模]]
 - [[电压插值法|电压插值法]]
 - [[电流注入法|电流注入法]]
 - [[状态空间平均法|状态空间平均法]]

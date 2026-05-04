@@ -59,7 +59,7 @@ sources: ["EMT_Doc/13&14/files/j.ijepes.2019.02.047.pdf.pdf"]
 ## 使用的方法
 
 - [[emtp仿真|EMTP仿真]]
-- [[有限元法-fem|有限元法(FEM)]]
+- [[methods/finite-element-method|有限元法(FEM)]]
 - [[理论解析计算|理论解析计算]]
 - [[数值电流计算|数值电流计算]]
 

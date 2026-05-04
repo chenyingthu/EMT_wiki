@@ -78,7 +78,7 @@ sources: ["EMT_Doc/09/Cao和Chen - 2007 - Application of EMTP-RV graphic softwar
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[开关暂态|开关暂态]]
 - [[过电压保护|过电压保护]]
-- [[topics/insulation-coordination|绝缘配合]]
+- [[methods/insulation-coordination|绝缘配合]]
 - [[facts装置建模|FACTS装置建模]]
 - [[methods/harmonic-analysis-methods|谐波分析]]
 

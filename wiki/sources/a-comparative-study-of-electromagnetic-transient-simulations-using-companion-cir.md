@@ -58,7 +58,7 @@ sources: ["EMT_Doc/01/Sinkar 等 - 2021 - A Comparative Study of Electromagnetic
 
 ## 使用的方法
 
-- [[伴随电路法|伴随电路法]]
+- [[methods/companion-circuit|伴随电路法]]
 - [[描述符状态空间方程|描述符状态空间方程]]
 - [[修正节点分析|修正节点分析]]
 - [[methods/numerical-integration|梯形积分法]]

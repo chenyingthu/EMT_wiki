@@ -77,7 +77,7 @@ VFDLM的实现思路是保留EMT线路模型的端口行波接口，同时把线
 - [[topics/frequency-dependent-modeling|频率相关建模]]
 - [[models/transmission-line-model|输电线路建模]]
 - [[topics/emt-simulation|电磁暂态仿真]]
-- [[雷电过电压|雷电过电压]]
+- [[topics/lightning-overvoltage|雷电过电压]]
 
 ## 主要发现
 

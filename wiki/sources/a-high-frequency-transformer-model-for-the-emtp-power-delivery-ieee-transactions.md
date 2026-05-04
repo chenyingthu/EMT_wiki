@@ -62,7 +62,7 @@ sources: ["EMT_Doc/01/Morched 等 - 1993 - A High Frequency Transformer Model fo
 - [[methods/nodal-analysis|节点导纳矩阵法]]
 - [[多端口π型等效电路|多端口π型等效电路]]
 - [[rlc网络综合|RLC网络综合]]
-- [[模态分解|模态分解]]
+- [[methods/modal-analysis|模态分解]]
 
 ## 涉及的模型
 

@@ -62,7 +62,7 @@ Electromagnetic transient studies of large distribution systems using frequency 
 - [[多相节点分析|多相节点分析]]
 - [[kron降阶法|Kron降阶法]]
 - [[methods/numerical-integration|数值拉普拉斯变换]]
-- [[模态分解|模态分解]]
+- [[methods/modal-analysis|模态分解]]
 
 ## 涉及的模型
 

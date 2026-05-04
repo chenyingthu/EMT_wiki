@@ -55,7 +55,7 @@ sources: ["EMT_Doc/02/Dennetière 等 - 2009 - A link between EMTP-RV and FLUX3D
 
 ## 使用的方法
 
-- [[有限元法-fem|有限元法(FEM)]]
+- [[methods/finite-element-method|有限元法(FEM)]]
 - [[电路-磁场耦合|电路-磁场耦合]]
 - [[动态链接库-dll-接口|动态链接库(DLL)接口]]
 - [[牛顿-拉夫逊迭代法|牛顿-拉夫逊迭代法]]

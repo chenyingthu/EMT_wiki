@@ -68,7 +68,7 @@ sources: ["EMT_Doc/25/Verrax 等 - 2022 - Low-complexity graph-based traveling w
 ## 涉及的模型
 
 - [[混合输电线路|混合输电线路]]
-- [[架空线路|架空线路]]
+- [[models/transmission-line-model|架空线路]]
 - [[models/cable-model|地下电缆]]
 - [[topics/hybrid-acdc-network|多端直流电网]]
 - [[故障等效模型|故障等效模型]]

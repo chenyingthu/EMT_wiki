@@ -675,8 +675,8 @@ mpc.branch = [
 
 ## 相关测试系统
 
-- [[ieee-14-bus-system]] - IEEE 14节点系统
-- [[ieee-30-bus-system]] - IEEE 30节点系统
+- [[test-systems/ieee-14-bus-system]] - IEEE 14节点系统
+- [[test-systems/ieee-30-bus-system]] - IEEE 30节点系统
 - [[ieee-39-bus-system]] - IEEE 39节点系统
 - [[ieee-118-bus-system]] - IEEE 118节点系统
 - [[ieee-300-bus-system]] - IEEE 300节点系统

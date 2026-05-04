@@ -76,7 +76,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/59.535695.pdf.pdf"]
 
 - [[topics/frequency-dependent-modeling|频率相关建模]]
 - [[topics/emt-simulation|时域仿真]]
-- [[模态变换|模态变换]]
+- [[methods/modal-analysis|模态变换]]
 - [[线路参数拟合|线路参数拟合]]
 - [[电磁暂态程序|电磁暂态程序]]
 - [[特征值求解|特征值求解]]

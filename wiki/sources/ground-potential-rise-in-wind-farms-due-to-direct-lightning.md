@@ -65,7 +65,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/j.epsr.2021.107110.pdf.pdf"]
 
 ## 涉及的模型
 
-- [[风力发电机|风力发电机]]
+- [[models/dfig-model|风力发电机]]
 - [[models/grounding-system-model|接地系统]]
 - [[风机叶片|风机叶片]]
 - [[风机塔筒|风机塔筒]]

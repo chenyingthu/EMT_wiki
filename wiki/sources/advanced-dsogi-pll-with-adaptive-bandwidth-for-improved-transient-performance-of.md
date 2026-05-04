@@ -71,7 +71,7 @@ sources: ["EMT_Doc/06/Ranasinghe 等 - 2024 - Advanced DSOGI PLL with Adaptive B
 - [[并网逆变器|并网逆变器]]
 - [[光伏系统|光伏系统]]
 - [[弱电网|弱电网]]
-- [[输电网络|输电网络]]
+- [[topics/transmission-network|输电网络]]
 - [[dsogi-pll模型|DSOGI-PLL模型]]
 - [[srf-pll模型|SRF-PLL模型]]
 

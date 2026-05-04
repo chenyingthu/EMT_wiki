@@ -60,7 +60,7 @@ sources: ["EMT_Doc/23/Lefebvre和Mahseredjian - 1994 - Improved control systems 
 
 - [[methods/nodal-analysis|节点分析法]]
 - [[methods/numerical-integration|梯形积分法]]
-- [[补偿法|补偿法]]
+- [[methods/average-value-model|补偿法]]
 - [[预测校正法|预测校正法]]
 - [[矩阵三角分解|矩阵三角分解]]
 

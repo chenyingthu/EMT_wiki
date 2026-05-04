@@ -58,7 +58,7 @@ sources: ["EMT_Doc/06/Chindu和Kulkarni - 2023 - An Automatable Approach for Sma
 
 ## 使用的方法
 
-- [[伴随电路法|伴随电路法]]
+- [[methods/companion-circuit|伴随电路法]]
 - [[methods/nodal-analysis|节点分析法]]
 - [[methods/numerical-integration|梯形积分法]]
 - [[lu分解|LU分解]]

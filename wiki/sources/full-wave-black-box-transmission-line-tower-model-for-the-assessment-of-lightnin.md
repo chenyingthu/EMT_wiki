@@ -58,7 +58,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/j.epsr.2021.107399.pdf.pdf"]
 
 ## 使用的方法
 
-- [[有限元法-fem|有限元法(FEM)]]
+- [[methods/finite-element-method|有限元法(FEM)]]
 - [[全波频域麦克斯韦方程求解|全波频域麦克斯韦方程求解]]
 - [[vector-fitting|矢量拟合]]
 - [[多端口网络建模|多端口网络建模]]

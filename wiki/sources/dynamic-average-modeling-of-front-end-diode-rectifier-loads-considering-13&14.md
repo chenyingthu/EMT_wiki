@@ -59,7 +59,7 @@ Dynamic Average Modeling of Front-End Diode Rectifier Loads Considering Disconti
 ## 使用的方法
 
 - [[动态平均值建模|动态平均值建模]]
-- [[平均值建模|平均值建模]]
+- [[methods/average-value-model|平均值建模]]
 - [[系统级暂态仿真|系统级暂态仿真]]
 
 ## 涉及的模型

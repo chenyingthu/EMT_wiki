@@ -71,7 +71,7 @@ Electrical Power and Energy Systems 148 (2023) 108928 0142-0615/© 2022 Elsevier
 - [[lc滤波器|LC滤波器]]
 - [[models/transformer-model|变压器]]
 - [[models/transmission-line-model|输电线路]]
-- [[风力发电机|风力发电机]]
+- [[models/dfig-model|风力发电机]]
 
 ## 相关主题
 

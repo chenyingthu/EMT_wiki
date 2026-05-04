@@ -61,7 +61,7 @@ sources: ["EMT_Doc/27&28/Multi-Scale and Frequency-Dependent Modeling of Electri
 - [[topics/dynamic-phasor|动态相量法]]
 - [[解析信号|解析信号]]
 - [[频移技术|频移技术]]
-- [[模态分解|模态分解]]
+- [[methods/modal-analysis|模态分解]]
 - [[部分分式展开|部分分式展开]]
 - [[数值递归卷积|数值递归卷积]]
 - [[多尺度仿真|多尺度仿真]]

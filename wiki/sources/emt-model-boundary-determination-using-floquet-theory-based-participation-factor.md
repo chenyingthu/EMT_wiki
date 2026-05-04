@@ -77,7 +77,7 @@ sources: ["EMT_Doc/17/Sajjadi 等 - 2026 - EMT Model Boundary Determination Usin
 
 ## 相关主题
 
-- [[电磁暂态仿真加速|电磁暂态仿真加速]]
+- [[topics/parallel-computing|电磁暂态仿真加速]]
 - [[emt边界划分|EMT边界划分]]
 - [[次同步振荡分析|次同步振荡分析]]
 - [[topics/network-equivalent|网络等值]]

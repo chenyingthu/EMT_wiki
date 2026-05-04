@@ -58,7 +58,7 @@ Analysis of low frequency interactions of DFIG wind turbine systems in Aramis S.
 
 ## 使用的方法
 
-- [[状态空间建模|状态空间建模]]
+- [[methods/state-space-method|状态空间建模]]
 - [[methods/modal-analysis|模态分析]]
 - [[参与因子分析|参与因子分析]]
 - [[灵敏度分析|灵敏度分析]]

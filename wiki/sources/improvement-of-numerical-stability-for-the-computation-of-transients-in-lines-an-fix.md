@@ -61,7 +61,7 @@ sources: ["EMT_Doc/23/Kocar 等 - 2010 - Improvement of Numerical Stability for 
 - [[部分分式展开|部分分式展开]]
 - [[methods/vector-fitting|有理函数逼近]]
 - [[约束线性最小二乘法|约束线性最小二乘法]]
-- [[特征线法|特征线法]]
+- [[methods/characteristic-method|特征线法]]
 - [[methods/state-space-method|状态空间法]]
 
 ## 涉及的模型
@@ -74,7 +74,7 @@ sources: ["EMT_Doc/23/Kocar 等 - 2010 - Improvement of Numerical Stability for 
 ## 相关主题
 
 - [[topics/emt-simulation|电磁暂态仿真]]
-- [[数值稳定性分析|数值稳定性分析]]
+- [[methods/numerical-integration|数值稳定性分析]]
 - [[topics/frequency-dependent-modeling|频率相关建模]]
 - [[宽频线路建模|宽频线路建模]]
 - [[时域卷积计算|时域卷积计算]]

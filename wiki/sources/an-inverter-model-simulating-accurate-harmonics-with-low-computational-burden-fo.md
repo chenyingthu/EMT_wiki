@@ -78,7 +78,7 @@ sources: ["EMT_Doc/07&08/An Inverter Model Simulating Accurate Harmonics With Lo
 - [[methods/harmonic-analysis-methods|谐波分析]]
 - [[离线仿真加速|离线仿真加速]]
 - [[电力电子变换器建模|电力电子变换器建模]]
-- [[大时间步长仿真|大时间步长仿真]]
+- [[methods/multirate-method|大时间步长仿真]]
 
 ## 主要发现
 

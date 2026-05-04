@@ -62,7 +62,7 @@ sources: ["EMT_Doc/18/Leal和Conti - 2021 - Evaluation of the extended modal-dom
 - [[扩展相域模型|扩展相域模型]]
 - [[marti模型|Marti模型]]
 - [[models/transmission-line-model|通用线路模型]]
-- [[模态分解|模态分解]]
+- [[methods/modal-analysis|模态分解]]
 - [[methods/vector-fitting|矢量拟合]]
 - [[carson公式|Carson公式]]
 

@@ -61,7 +61,7 @@ sources: ["EMT_Doc/05/Aluthge 等 - 2026 - Accelerating electromagnetic transien
 - [[klu分解|KLU分解]]
 - [[cholesky分解|Cholesky分解]]
 - [[woodbury公式|Woodbury公式]]
-- [[补偿法|补偿法]]
+- [[methods/average-value-model|补偿法]]
 - [[gpu稀疏求解|GPU稀疏求解]]
 - [[methods/nodal-analysis|节点分析法]]
 

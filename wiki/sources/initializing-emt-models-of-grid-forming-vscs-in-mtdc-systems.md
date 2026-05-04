@@ -58,7 +58,7 @@ CISS的实现前提是可获得GVSC平均值模型及外环控制参数。它以
 
 ## 使用的方法
 
-- [[topics/power-flow-calculation|潮流计算]]
+- [[methods/power-flow-calculation|潮流计算]]
 - [[稳态分析|稳态分析]]
 - [[时域初始化|时域初始化]]
 - [[methods/average-value-model|平均值模型]]

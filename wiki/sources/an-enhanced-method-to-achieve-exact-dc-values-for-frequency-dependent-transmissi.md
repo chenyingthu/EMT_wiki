@@ -71,7 +71,7 @@ sources: ["EMT_Doc/07&08/De Silva and Liu - 2023 - An Enhanced Method to Achieve
 - [[models/transmission-line-model|通用线路模型(ULM)]]
 - [[频率相关输电线路模型|频率相关输电线路模型]]
 - [[models/cable-model|地下电缆]]
-- [[架空线路|架空线路]]
+- [[models/transmission-line-model|架空线路]]
 - [[高压直流输电线路|高压直流输电线路]]
 
 ## 相关主题

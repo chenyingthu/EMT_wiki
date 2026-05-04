@@ -68,7 +68,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/j.ijepes.2020.106186.pdf.pdf"]
 
 - [[topics/power-electronics|电力电子变流器]]
 - [[topics/wind-farm-modeling|风电场]]
-- [[风力发电机|风力发电机]]
+- [[models/dfig-model|风力发电机]]
 - [[models/transmission-line-model|输电线路]]
 - [[models/transformer-model|变压器]]
 - [[rlc负荷|RLC负荷]]

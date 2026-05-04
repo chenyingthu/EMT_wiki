@@ -66,7 +66,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/Tang 等 - 2022 - Full-state Arm Ave
 - [[离散化伴随模型|离散化伴随模型]]
 - [[methods/numerical-integration|梯形积分法]]
 - [[methods/nodal-analysis|戴维南等效电路]]
-- [[平均值建模|平均值建模]]
+- [[methods/average-value-model|平均值建模]]
 
 
 ## 涉及的模型

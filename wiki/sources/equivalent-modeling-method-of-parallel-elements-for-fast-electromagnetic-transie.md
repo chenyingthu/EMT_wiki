@@ -78,7 +78,7 @@ sources: ["EMT_Doc/18/Sun和Xu - 2023 - Equivalent Modeling Method of Parallel E
 
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[topics/parallel-computing|并行计算]]
-- [[等效建模|等效建模]]
+- [[methods/average-value-model|等效建模]]
 - [[topics/parallel-computing|仿真加速]]
 - [[系统级仿真|系统级仿真]]
 

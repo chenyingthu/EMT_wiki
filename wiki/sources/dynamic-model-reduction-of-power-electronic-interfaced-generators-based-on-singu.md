@@ -68,7 +68,7 @@ sources: ["EMT_Doc/13&14/files/j.epsr.2019.106030.pdf.pdf"]
 
 - [[电池储能系统-bess|电池储能系统(BESS)]]
 - [[并网逆变器|并网逆变器]]
-- [[锁相环-pll|锁相环(PLL)]]
+- [[topics/dynamic-phasor|锁相环(PLL)]]
 - [[功率电流双环控制器|功率电流双环控制器]]
 - [[滤波电路|滤波电路]]
 

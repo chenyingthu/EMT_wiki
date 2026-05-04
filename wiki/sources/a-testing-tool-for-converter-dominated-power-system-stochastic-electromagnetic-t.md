@@ -75,7 +75,7 @@ sources: ["EMT_Doc/04/Chen 等 - 2022 - A Testing Tool for Converter-Dominated P
 
 - [[随机电磁暂态仿真|随机电磁暂态仿真]]
 - [[参数不确定性建模|参数不确定性建模]]
-- [[数值稳定性分析|数值稳定性分析]]
+- [[methods/numerical-integration|数值稳定性分析]]
 - [[变流器主导电力系统|变流器主导电力系统]]
 - [[emtp框架集成|EMTP框架集成]]
 

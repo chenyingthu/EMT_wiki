@@ -75,7 +75,7 @@ sources: ["EMT_Doc/04/Zhao 等 - 2026 - A state-space approach for accelerated s
 
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[topics/parallel-computing|仿真加速]]
-- [[状态空间建模|状态空间建模]]
+- [[methods/state-space-method|状态空间建模]]
 - [[大规模电力电子系统|大规模电力电子系统]]
 - [[电容电压均衡|电容电压均衡]]
 

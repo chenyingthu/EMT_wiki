@@ -67,7 +67,7 @@ sources: ["EMT_Doc/26/Liu 等 - 2025 - Modeling Method for DFIG-Based Wind Farm 
 ## 涉及的模型
 
 - [[dfig-model|DFIG]]
-- [[风力发电机|风力发电机]]
+- [[models/dfig-model|风力发电机]]
 - [[背靠背变流器|背靠背变流器]]
 - [[models/transformer-model|变压器]]
 - [[滤波器|滤波器]]

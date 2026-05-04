@@ -77,7 +77,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/j.epsr.2015.05.019.pdf.pdf"]
 - [[models/transmission-line-model|输电线路建模]]
 - [[topics/frequency-dependent-modeling|频率相关建模]]
 - [[时域分析|时域分析]]
-- [[模态变换|模态变换]]
+- [[methods/modal-analysis|模态变换]]
 
 ## 主要发现
 

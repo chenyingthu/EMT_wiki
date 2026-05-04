@@ -59,7 +59,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/tpwrd.2002.1022812.pdf.pdf"]
 ## 使用的方法
 
 - [[恒定变换矩阵法|恒定变换矩阵法]]
-- [[模态分解|模态分解]]
+- [[methods/modal-analysis|模态分解]]
 - [[methods/nodal-analysis|相域建模]]
 - [[methods/numerical-integration|梯形积分法]]
 - [[混合建模|混合建模]]

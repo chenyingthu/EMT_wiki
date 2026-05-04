@@ -74,7 +74,7 @@ sources: ["EMT_Doc/29/TPWRD.2016.2590569.pdf-1.pdf"]
 ## 相关主题
 
 - [[topics/emt-simulation|电磁暂态仿真]]
-- [[等效建模|等效建模]]
+- [[methods/average-value-model|等效建模]]
 - [[动态特性研究|动态特性研究]]
 - [[背靠背变流器|背靠背变流器]]
 - [[电流平衡控制|电流平衡控制]]

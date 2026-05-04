@@ -73,7 +73,7 @@ sources: ["EMT_Doc/03/Xiong 等 - 2024 - A Semi-Analytical Approach for State-Sp
 ## 相关主题
 
 - [[topics/emt-simulation|电磁暂态仿真]]
-- [[状态空间建模|状态空间建模]]
+- [[methods/state-space-method|状态空间建模]]
 - [[变步长算法|变步长算法]]
 - [[开关事件处理|开关事件处理]]
 - [[topics/large-scale-grid-simulation|大规模电网仿真]]

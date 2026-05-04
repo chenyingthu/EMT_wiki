@@ -60,7 +60,7 @@ sources: ["EMT_Doc/17/Liu 等 - 2010 - Electromechanical transientelectromagneti
 
 - [[topics/co-simulation|混合仿真]]
 - [[诺顿等值|诺顿等值]]
-- [[补偿法|补偿法]]
+- [[methods/average-value-model|补偿法]]
 - [[最小二乘法|最小二乘法]]
 - [[序网-三相坐标变换|序网-三相坐标变换]]
 - [[迭代交互求解|迭代交互求解]]
@@ -76,7 +76,7 @@ sources: ["EMT_Doc/17/Liu 等 - 2010 - Electromechanical transientelectromagneti
 
 ## 相关主题
 
-- [[机电-电磁混合仿真|机电-电磁混合仿真]]
+- [[topics/electromechanical-electromagnetic-hybrid-simulation|机电-电磁混合仿真]]
 - [[methods/fault-analysis-methods|不对称故障]]
 - [[topics/network-equivalent|网络等值]]
 - [[接口交互技术|接口交互技术]]

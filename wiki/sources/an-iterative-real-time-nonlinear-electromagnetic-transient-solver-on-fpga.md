@@ -58,7 +58,7 @@ sources: ["EMT_Doc/07&08/Chen and Dinavahi - 2011 - An iterative real-time nonli
 
 ## 使用的方法
 
-- [[补偿法|补偿法]]
+- [[methods/average-value-model|补偿法]]
 - [[牛顿-拉夫逊算法|牛顿-拉夫逊算法]]
 - [[连续牛顿法|连续牛顿法]]
 - [[分段牛顿法|分段牛顿法]]

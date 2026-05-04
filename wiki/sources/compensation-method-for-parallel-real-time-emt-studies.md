@@ -58,7 +58,7 @@ sources: ["EMT_Doc/11/Bruned 等 - 2021 - Compensation method for parallel real-
 
 ## 使用的方法
 
-- [[补偿法|补偿法]]
+- [[methods/average-value-model|补偿法]]
 - [[节点分析|节点分析]]
 - [[methods/nodal-analysis|戴维南等效]]
 - [[稀疏lu分解|稀疏LU分解]]

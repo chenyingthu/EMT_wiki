@@ -68,7 +68,7 @@ sources: ["EMT_Doc/13&14/files/pesgm41954.2020.9281733.pdf.pdf"]
 - [[直驱永磁同步发电机-ddpmsg|直驱永磁同步发电机(DDPMSG)]]
 - [[topics/wind-farm-modeling|风电场]]
 - [[网侧变流器及控制系统|网侧变流器及控制系统]]
-- [[锁相环-pll|锁相环(PLL)]]
+- [[topics/dynamic-phasor|锁相环(PLL)]]
 
 ## 相关主题
 

@@ -68,7 +68,7 @@ sources: ["EMT_Doc/22/Zhu 等 - 2006 - Hybrid-model transient stability simulati
 - [[lcc-model|LCC]]
 - [[topics/large-scale-grid-simulation|交流电网]]
 - [[换流桥|换流桥]]
-- [[多馈入直流系统|多馈入直流系统]]
+- [[topics/hybrid-acdc-network|多馈入直流系统]]
 
 ## 相关主题
 

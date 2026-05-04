@@ -67,7 +67,7 @@ sources: ["EMT_Doc/17/Meredith - 1997 - EMTP modeling of electromagnetic transie
 ## 涉及的模型
 
 - [[同轴电缆|同轴电缆]]
-- [[架空线路|架空线路]]
+- [[models/transmission-line-model|架空线路]]
 - [[管型电缆|管型电缆]]
 - [[变压器铁芯|变压器铁芯]]
 - [[models/surge-arrester-model|避雷器]]

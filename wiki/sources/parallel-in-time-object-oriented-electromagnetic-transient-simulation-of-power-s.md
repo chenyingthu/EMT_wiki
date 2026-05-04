@@ -67,7 +67,7 @@ sources: ["EMT_Doc/30/oajpe.2020.3012636.pdf.pdf"]
 ## 涉及的模型
 
 - [[行波传输线模型|行波传输线模型]]
-- [[models/bergeron-model|贝杰龙模型]]
+- [[methods/bergeron-model|贝杰龙模型]]
 - [[微分代数方程系统|微分代数方程系统]]
 - [[延迟微分方程模型|延迟微分方程模型]]
 

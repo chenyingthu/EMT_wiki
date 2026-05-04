@@ -59,7 +59,7 @@ sources: ["EMT_Doc/27&28/Multi-Conductor Cable Modeling With Inclusion of Measur
 ## 使用的方法
 
 - [[methods/vector-fitting|矢量拟合]]
-- [[模态分解|模态分解]]
+- [[methods/modal-analysis|模态分解]]
 - [[频变行波建模|频变行波建模]]
 - [[models/transmission-line-model|通用线路模型(ULM)]]
 - [[参数融合技术|参数融合技术]]

@@ -60,7 +60,7 @@ sources: ["EMT_Doc/27&28/Modelling of circuit breakers in the electromagnetic tr
 
 - [[methods/numerical-integration|梯形积分法]]
 - [[methods/nodal-analysis|节点分析法]]
-- [[补偿法|补偿法]]
+- [[methods/average-value-model|补偿法]]
 - [[预测校正迭代法|预测校正迭代法]]
 - [[参数估计|参数估计]]
 

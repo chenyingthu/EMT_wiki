@@ -73,7 +73,7 @@ sources: ["EMT_Doc/40/Ye 等 - 2021 - Wave Function and Multiscale Modeling of M
 
 - [[methods/harmonic-analysis-methods]]
 - [[topics/wind-farm-modeling]]
-- [[电磁暂态仿真加速]]
+- [[topics/parallel-computing]]
 - [[宽频暂态建模]]
 
 ## 主要发现

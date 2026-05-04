@@ -81,7 +81,7 @@ sources: ["EMT_Doc/15/Electromagnetic disturbances in gas-insulated substations 
 - [[超快暂态-vft|超快暂态(VFT)]]
 - [[电磁干扰-emd|电磁干扰(EMD)]]
 - [[高频暂态过电压|高频暂态过电压]]
-- [[topics/insulation-coordination|绝缘配合]]
+- [[methods/insulation-coordination|绝缘配合]]
 - [[控制回路电磁兼容|控制回路电磁兼容]]
 - [[topics/emt-simulation|电磁暂态仿真]]
 

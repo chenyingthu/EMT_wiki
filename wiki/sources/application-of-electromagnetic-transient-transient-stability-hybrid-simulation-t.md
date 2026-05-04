@@ -68,7 +68,7 @@ sources: ["EMT_Doc/09/Huang和Vittal - 2016 - Application of Electromagnetic Tra
 
 - [[单相感应电机|单相感应电机]]
 - [[空调压缩机负荷|空调压缩机负荷]]
-- [[输电网络|输电网络]]
+- [[topics/transmission-network|输电网络]]
 - [[ieee-9节点系统|IEEE 9节点系统]]
 - [[wecc大电网模型|WECC大电网模型]]
 

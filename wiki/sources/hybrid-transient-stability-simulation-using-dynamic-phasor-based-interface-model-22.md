@@ -68,7 +68,7 @@ sources: ["EMT_Doc/22/j.epsr.2005.09.017.pdf-1.pdf"]
 
 - [[lcc-model|LCC]]
 - [[topics/large-scale-grid-simulation|交流电网]]
-- [[多馈入直流系统|多馈入直流系统]]
+- [[topics/hybrid-acdc-network|多馈入直流系统]]
 - [[换流器开关模型|换流器开关模型]]
 
 ## 相关主题

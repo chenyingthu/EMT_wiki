@@ -70,7 +70,7 @@ sources: ["EMT_Doc/10/Mudunkotuwa和Filizadeh - 2018 - Co-simulation of electric
 - [[ieee-118节点系统|IEEE 118节点系统]]
 - [[topics/wind-farm-modeling|风电场]]
 - [[topics/power-electronics|电力电子变流器]]
-- [[输电网络|输电网络]]
+- [[topics/transmission-network|输电网络]]
 - [[旋转电机|旋转电机]]
 
 ## 相关主题

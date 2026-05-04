@@ -80,7 +80,7 @@ sources: ["EMT_Doc/27&28/Modeling synchronous voltage source converters in trans
 - [[无功补偿|无功补偿]]
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[topics/electromechanical-transient|暂态稳定分析]]
-- [[topics/power-flow-calculation|潮流计算]]
+- [[methods/power-flow-calculation|潮流计算]]
 - [[vsc-model|VSC]]
 - [[谐波抑制|谐波抑制]]
 

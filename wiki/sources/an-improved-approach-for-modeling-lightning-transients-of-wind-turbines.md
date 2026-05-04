@@ -66,7 +66,7 @@ sources: ["EMT_Doc/07&08/An improved approach for modeling lightning transients 
 
 ## 涉及的模型
 
-- [[风力发电机|风力发电机]]
+- [[models/dfig-model|风力发电机]]
 - [[风机叶片|风机叶片]]
 - [[风机塔筒|风机塔筒]]
 - [[models/grounding-system-model|接地系统]]

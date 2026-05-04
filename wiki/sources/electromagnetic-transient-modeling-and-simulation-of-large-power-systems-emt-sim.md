@@ -61,7 +61,7 @@ sources: ["EMT_Doc/16/Filizadeh 等 - 2025 - Electromagnetic Transient Modeling 
 - [[topics/parallel-computing|并行计算]]
 - [[传播延迟模型|传播延迟模型]]
 - [[块对角矩阵求解|块对角矩阵求解]]
-- [[补偿法|补偿法]]
+- [[methods/average-value-model|补偿法]]
 - [[节点与状态空间联合分析|节点与状态空间联合分析]]
 - [[topics/dynamic-phasor|动态相量法]]
 - [[methods/multirate-method|多速率仿真]]

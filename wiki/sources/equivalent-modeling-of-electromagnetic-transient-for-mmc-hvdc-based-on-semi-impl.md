@@ -74,7 +74,7 @@ sources: ["EMT_Doc/18/Zhao 等 - 2021 - Equivalent modeling of electromagnetic t
 ## 相关主题
 
 - [[topics/emt-simulation|电磁暂态仿真]]
-- [[等效建模|等效建模]]
+- [[methods/average-value-model|等效建模]]
 - [[柔性直流送出系统|柔性直流送出系统]]
 - [[功率盈余控制|功率盈余控制]]
 - [[topics/parallel-computing|仿真加速]]

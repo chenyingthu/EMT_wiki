@@ -76,7 +76,7 @@ sources: ["EMT_Doc/03/Xu 等 - 2025 - A State Variables Elimination-Based EMTP-T
 ## 相关主题
 
 - [[topics/emt-simulation|电磁暂态仿真]]
-- [[等效建模|等效建模]]
+- [[methods/average-value-model|等效建模]]
 - [[methods/model-order-reduction|模型降阶]]
 - [[恒定导纳矩阵|恒定导纳矩阵]]
 - [[仿真效率优化|仿真效率优化]]

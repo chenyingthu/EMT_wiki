@@ -70,7 +70,7 @@ sources: ["EMT_Doc/09/Li 等 - 2023 - Analytical Calculation Method of Outer Loo
 - [[mmc-model|MMC]]
 - [[柔性直流换流站|柔性直流换流站]]
 - [[弱交流电网|弱交流电网]]
-- [[锁相环-pll|锁相环(PLL)]]
+- [[topics/dynamic-phasor|锁相环(PLL)]]
 - [[双闭环控制系统|双闭环控制系统]]
 - [[pcc等效电容|PCC等效电容]]
 - [[models/transformer-model|换流变压器]]

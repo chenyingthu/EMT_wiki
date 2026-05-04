@@ -55,7 +55,7 @@ sources: ["EMT_Doc/04/tpwrd.2005.855448.pdf.pdf"]
 
 ## 使用的方法
 
-- [[有限元法-fem|有限元法(FEM)]]
+- [[methods/finite-element-method|有限元法(FEM)]]
 - [[数值积分-高斯-勒让德-拉盖尔-洛巴托|数值积分(高斯-勒让德/拉盖尔/洛巴托)]]
 - [[carson公式|Carson公式]]
 - [[频域阻抗计算|频域阻抗计算]]

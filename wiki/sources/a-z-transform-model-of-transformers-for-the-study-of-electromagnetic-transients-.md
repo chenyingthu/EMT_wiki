@@ -78,7 +78,7 @@ sources: ["EMT_Doc/05/A Z-transform model of transformers for the study of elect
 - [[topics/emt-simulation|电磁暂态]]
 - [[topics/frequency-dependent-modeling|频率相关建模]]
 - [[变压器建模|变压器建模]]
-- [[雷电过电压|雷电过电压]]
+- [[topics/lightning-overvoltage|雷电过电压]]
 - [[母线切换暂态|母线切换暂态]]
 - [[断路器恢复电压|断路器恢复电压]]
 

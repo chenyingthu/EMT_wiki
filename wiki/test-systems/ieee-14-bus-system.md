@@ -564,11 +564,11 @@ ss = andes.run('ieee14/ieee14_full.xlsx')  # 运行仿真
 
 ## 相关测试系统
 
-- [[ieee-30-bus-system]] - IEEE 30节点系统
+- [[test-systems/ieee-30-bus-system]] - IEEE 30节点系统
 - [[ieee-39-bus-system]] - IEEE 39节点系统
-- [[ieee-57-bus-system]] - IEEE 57节点系统
+- [[test-systems/ieee-57-bus-system]] - IEEE 57节点系统
 - [[ieee-118-bus-system]] - IEEE 118节点系统
-- [[wscc-9-bus-system]] - WSCC 9节点系统
+- [[test-systems/wscc-9-bus-system]] - WSCC 9节点系统
 - [[new-england-test-system]] - 新英格兰测试系统
 
 ## 参考文献
