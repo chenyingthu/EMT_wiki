@@ -358,4 +358,4 @@ $$\tilde{V}_{out} = \frac{m}{2}V_{dc}e^{j\theta}$$
 
 ## 来源论文
 
-参见 [[index.md]] 获取更多STATCOM相关文献。
+参见 [[index]] 获取更多STATCOM相关文献。

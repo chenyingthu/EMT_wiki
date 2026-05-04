@@ -620,4 +620,4 @@ $$\mathbf{Y}_{eq}(s) \approx \sum_{m=1}^{N} \frac{\mathbf{R}_m}{s - p_m} + \math
 
 ## 来源论文
 
-参见 [[index.md]] 获取更多节点导纳矩阵相关文献。
+参见 [[index]] 获取更多节点导纳矩阵相关文献。

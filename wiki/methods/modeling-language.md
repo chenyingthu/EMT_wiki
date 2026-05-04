@@ -117,4 +117,4 @@ EMTP 卡片、ATP MODELS/TACS、PSCAD 自定义代码、SPICE 网表和 MATLAB/S
 
 ## 来源论文
 
-参见 [[index.md]] 获取更多建模语言相关文献。
+参见 [[index]] 获取更多建模语言相关文献。

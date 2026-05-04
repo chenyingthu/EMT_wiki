@@ -379,4 +379,4 @@ $$J\frac{d\omega}{dt} = T_m - T_e - D(\omega - \omega_0)$$
 
 ## 来源论文
 
-参见 [[index.md]] 获取更多可再生能源并网相关文献。
+参见 [[index]] 获取更多可再生能源并网相关文献。

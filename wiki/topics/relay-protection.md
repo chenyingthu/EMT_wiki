@@ -354,4 +354,4 @@ $$t = t_{breaker,max} + t_{margin} + t_{relay}$$
 
 ## 来源论文
 
-参见 [[index.md]] 获取更多继电保护相关文献。
+参见 [[index]] 获取更多继电保护相关文献。

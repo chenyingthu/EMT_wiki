@@ -428,4 +428,4 @@ $$\Delta t = \min(\Delta t_{stab}, \Delta t_{acc})$$
 
 ## 来源论文
 
-参见 [[index.md]] 获取更多数值稳定性相关文献。
+参见 [[index]] 获取更多数值稳定性相关文献。

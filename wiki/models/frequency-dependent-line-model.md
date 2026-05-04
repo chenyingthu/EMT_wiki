@@ -657,4 +657,4 @@ $$
 - B. Gustavsen and A. Semlyen, "Rational Approximation of Frequency Domain Responses by Vector Fitting" (1999)
 - A. Morched, "A High Frequency Transformer Model for the EMTP" (1992)
 
-参见 [[index.md]] 获取更多频变线路模型相关文献。
+参见 [[index]] 获取更多频变线路模型相关文献。

@@ -670,4 +670,4 @@ $$\frac{d[v]}{dt} = [C]^{-1}\left(-[G][v] - \frac{\partial [i]}{\partial x}\righ
 
 ## 来源论文
 
-参见 [[index.md]] 获取更多传输线理论相关文献。
+参见 [[index]] 获取更多传输线理论相关文献。

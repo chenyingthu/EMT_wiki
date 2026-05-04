@@ -411,4 +411,4 @@ $$Efficiency = \frac{Speedup}{N_{processors}}$$
 
 ## 来源论文
 
-参见 [[index.md]] 获取更多大规模电网仿真相关文献。
+参见 [[index]] 获取更多大规模电网仿真相关文献。

@@ -348,4 +348,4 @@ $$G_{eq} = \frac{2C}{\Delta t}, \quad I_{eq} = -i_C(t-\Delta t) - G_{eq}v_C(t-\D
 
 ## 来源论文
 
-参见 [[index.md]] 获取更多电磁暂态相关文献。
+参见 [[index]] 获取更多电磁暂态相关文献。

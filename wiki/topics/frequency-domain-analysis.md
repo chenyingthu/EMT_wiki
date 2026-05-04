@@ -293,4 +293,4 @@ $$v(t) = \mathcal{L}^{-1}\{Z(s)I(s)\} = \int_0^t z(\tau)i(t-\tau)d\tau$$
 
 ## 来源论文
 
-参见 [[index.md]] 获取更多频域分析相关文献。
+参见 [[index]] 获取更多频域分析相关文献。

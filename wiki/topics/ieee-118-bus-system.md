@@ -199,4 +199,4 @@ $$Q_i = \sum_{j=1}^{118} V_i V_j (G_{ij}\sin\theta_{ij} - B_{ij}\cos\theta_{ij})
 - P. M. Anderson, "Power System Control and Stability"
 - IEEE Committee Report, "IEEE 118 Bus Test System"
 
-参见 [[index.md]] 获取更多IEEE 118节点系统相关文献。
+参见 [[index]] 获取更多IEEE 118节点系统相关文献。

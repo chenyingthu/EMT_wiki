@@ -303,4 +303,4 @@ $$i_{fault}(t) = \frac{V_{dc}}{R} + \left(I_0 - \frac{V_{dc}}{R}\right)e^{-t/\ta
 
 ## 来源论文
 
-参见 [[index.md]] 获取更多混合交直流电网相关文献。
+参见 [[index]] 获取更多混合交直流电网相关文献。

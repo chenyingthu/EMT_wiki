@@ -390,4 +390,4 @@ $$Accuracy = \frac{N_{correct}}{N_{total}} \times 100\%$$
 
 ## 来源论文
 
-参见 [[index.md]] 获取更多能量函数法相关文献。
+参见 [[index]] 获取更多能量函数法相关文献。

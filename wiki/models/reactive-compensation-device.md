@@ -401,4 +401,4 @@ $$Q_{comp}^{min} \leq Q_{comp} \leq Q_{comp}^{max}$$
 
 ## 来源论文
 
-参见 [[index.md]] 获取更多无功补偿装置相关文献。
+参见 [[index]] 获取更多无功补偿装置相关文献。

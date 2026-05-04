@@ -702,7 +702,7 @@ $$\hat{\epsilon} = f_{NN}(x_{system}, x_{partition}, t_{simulation})$$
 
 ## 来源论文
 
-见[[index.md]]中混合仿真相关文献。
+见[[index]]中混合仿真相关文献。
 
 ---
 

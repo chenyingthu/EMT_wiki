@@ -585,7 +585,7 @@ $$R = \frac{\sum(y_{model} - \bar{y}_{model})(y_{meas} - \bar{y}_{meas})}{\sqrt{
 
 ## 来源论文
 
-参见 [[index.md]] 获取更多负荷建模相关文献。
+参见 [[index]] 获取更多负荷建模相关文献。
 
 ---
 

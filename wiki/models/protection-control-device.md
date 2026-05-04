@@ -367,4 +367,4 @@ $$Z = \frac{\sum v(k) \cdot e^{-j2\pi k/N}}{\sum i(k) \cdot e^{-j2\pi k/N}}$$
 
 ## 来源论文
 
-参见 [[index.md]] 获取更多保护控制设备相关文献。
+参见 [[index]] 获取更多保护控制设备相关文献。

@@ -835,7 +835,7 @@ $$\det(\mathbf{Z}\mathbf{Y} - \lambda\mathbf{I}) = 0$$
 
 ## 来源论文
 
-参见 [[index.md]] 获取更多模态变换相关文献，以及以下分类页面：
+参见 [[index]] 获取更多模态变换相关文献，以及以下分类页面：
 - [[interface-technique]] - 所有EMT方法
 - [[transmission-line-model]] - 输电线路建模方法
 - [[cable-model]] - 电缆建模方法

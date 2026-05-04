@@ -269,4 +269,4 @@ $$P_{TS} = \text{Re}(V_{TS} \cdot I_{TS}^*) = P_{EMT} = \text{Re}(V_{EMT} \cdot 
 
 ## 来源论文
 
-参见 [[index.md]] 获取更多机电-电磁暂态混合仿真相关文献。
+参见 [[index]] 获取更多机电-电磁暂态混合仿真相关文献。

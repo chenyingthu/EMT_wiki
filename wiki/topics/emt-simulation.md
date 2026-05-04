@@ -189,4 +189,4 @@ $$\mathbf{y} = \mathbf{C}\mathbf{x} + \mathbf{D}\mathbf{u}$$
 
 ## 来源论文
 
-参见 [[index.md]] 获取更多EMT仿真相关文献。
+参见 [[index]] 获取更多EMT仿真相关文献。

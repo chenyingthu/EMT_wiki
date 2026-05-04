@@ -825,7 +825,7 @@ IEC 61936-1《Power installations exceeding 1 kV a.c.》规定了电力装置的
 
 ## 来源论文
 
-参见 [[index.md]] 获取更多地电位升相关文献。
+参见 [[index]] 获取更多地电位升相关文献。
 
 ---
 

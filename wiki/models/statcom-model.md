@@ -293,4 +293,4 @@ $$v_{arm} = \sum_{i=1}^{N}v_{smi} \cdot S_i$$
 
 ## 来源论文
 
-参见 [[index.md]] 获取更多STATCOM模型相关文献。
+参见 [[index]] 获取更多STATCOM模型相关文献。
