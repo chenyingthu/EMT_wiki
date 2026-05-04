@@ -63,6 +63,8 @@ updated: 2026-05-03
 | [[microgrid-distribution-network\|微电网与配电网]] | 微电网控制、下垂控制、孤岛检测、配电网保护 |
 | [[wideband-oscillation-stability\|宽频振荡与稳定性]] | SSO/SSCI、阻抗判据、次同步振荡、新能源振荡 |
 | [[simulation-practice-guide\|仿真实践与工程指南]] | 方法选择、步长选择、收敛性、数值振荡抑制 |
+| [[lightning-transient-analysis\|雷击暂态分析]] | 直击雷、感应雷、反击、绕击、过电压计算 |
+| [[lightning-induced-voltage\|雷击感应电压]] | 电磁感应、容性耦合、感性耦合、配电网防雷 |
 
 ## 方法 (Methods)
 
@@ -96,6 +98,10 @@ updated: 2026-05-03
 | [[harmonic-analysis-methods\|谐波分析方法]] | 傅里叶分析、THD、谐波阻抗、滤波器设计，223篇来源 |
 | [[small-signal-analysis\|小信号分析]] | 线性化、特征值、参与因子、小干扰稳定性、SSO分析 |
 | [[parameter-identification\|参数辨识]] | 变压器饱和辨识、线路参数反演、FDNE拟合、故障测距 |
+| [[norton-equivalent\|诺顿等效]] | 电流源等效、网络简化、伴随电路、多端口等效 |
+| [[multithread-parallel-computing\|多线程并行]] | OpenMP/pthreads、MATE分网、任务并行、负载均衡 |
+| [[discrete-fourier-transform\|离散傅里叶变换]] | DFT/FFT、窗函数、频谱分析、谐波诊断 |
+| [[grid-forming-control\|构网型控制]] | GFM、下垂控制、虚拟同步机、孤岛运行 |
 
 ## 模型 (Models)
 
@@ -137,6 +143,9 @@ updated: 2026-05-03
 | [[gfm-inverter-model\|构网型变流器]] | GFM、VSM、虚拟惯量、100%新能源、孤岛运行 |
 | [[submodule-model\|子模块模型]] | MMC半桥/全桥子模块、电容均压、开关建模、故障分析 |
 | [[electromechanical-model\|机电暂态模型]] | 摇摆方程、发电机简化模型、机电-电磁接口、混合仿真 |
+| [[insulator-string-model\|绝缘子串]] | 绝缘子闪络、污闪模型、电压分布、过电压分析 |
+| [[ac-transmission-line\|交流输电线路]] | 架空线路、线路参数、多导体耦合、行波传播 |
+| [[single-phase-induction-machine\|单相感应电机]] | 电容启动、双轴模型、启动转矩、配电负荷 |
 | [[energy-storage-converter-model\|储能变流器]] | PCS、双向变换、SOC管理、调频、并离网切换 |
 | [[hybrid-converter-model\|混合AC/DC变流器]] | 多端口、DAB、CHB、能量路由器、PET |
 | [[voltage-current-sensor-model\|电压电流传感器]] | PT/CT、霍尔传感器、罗氏线圈、饱和特性、测量精度 |
