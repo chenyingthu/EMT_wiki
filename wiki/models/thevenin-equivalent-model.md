@@ -109,10 +109,11 @@ $$I_{close} = \frac{V_{th}}{Z_{th} + Z_{switch}}$$
 
 ## 与相关页面的关系
 
-- [[thevenin-norton-equivalent]] - 等效综合
-- [[network-equivalent]] - 网络等值
-- [[norton-equivalent]] - 诺顿等效
-- [[multirate-method]] - 多速率接口
+- [[thevenin-norton-equivalent]] - 戴维南-诺顿等效
+- [[network-equivalent]] - 网络等值方法
+- [[fdne-model]] - 频变网络等值模型
+- [[multirate-method]] - 多速率方法
+- [[nodal-analysis]] - 节点分析法
 
 ## 开放问题
 

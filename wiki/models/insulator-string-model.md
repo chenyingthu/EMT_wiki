@@ -123,10 +123,10 @@ $$U_{50} = 600 \cdot d \quad (\text{kV/m}, \text{负极性})$$
 ## 与相关页面的关系
 
 - [[transmission-line-model]] - 输电线路整体建模
-- [[lightning-overvoltage]] - 雷击过电压与闪络
+- [[lightning-transient-analysis]] - 雷击暂态分析
 - [[switching-transient]] - 操作过电压分析
-- [[surge-arrester-model]] - 避雷器与绝缘配合
-- [[grounding-system-model]] - 接地系统与雷电流泄放
+- [[surge-arrester-model]] - 避雷器模型
+- [[grounding-system-model]] - 接地系统模型
 
 ## 开放问题
 

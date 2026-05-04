@@ -101,8 +101,10 @@ $$T_h = \frac{V_{2h}}{V_{1h}} = \frac{1}{|1 + hZ_k/Z_{load}|}$$
 ## 与相关页面的关系
 
 - [[transformer-model]] - 变压器通用模型
-- [[distribution-network]] - 配电网
+- [[microgrid-distribution-network]] - 微电网与配电网
 - [[power-quality]] - 电能质量
+- [[harmonic-analysis-methods]] - 谐波分析方法
+- [[load-model]] - 负荷模型
 
 ---
 

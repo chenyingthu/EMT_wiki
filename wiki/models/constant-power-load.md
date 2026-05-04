@@ -119,19 +119,19 @@ $$\frac{dV}{dI} = \frac{I - P_0/V}{C(V_s - RI - V)/L}$$
 - Emadi, A. and Ehsani, A., "Dynamics and Control of Multiconverter DC Power Electronic Systems," *IEEE TPEL*, 2001.
 - Riccobono, A. and Santi, E., "Comprehensive Review of Stability Criteria for DC Power Distribution Systems," *IEEE TPEL*, 2014.
 
-### 稳定性分析
+### 相关主题
 
-- [[small-signal-analysis]] - 小信号稳定性
-- [[dc-microgrid]] - 直流微电网
-- [[power-electronic-load]] - 电力电子负载
+- 小信号稳定性分析
+- 直流微电网稳定性
+- 电力电子负载建模
 
 ## 与相关页面的关系
 
-- [[load-model]] - 负荷模型综合
-- [[dc-microgrid]] - 直流微电网稳定性
-- [[small-signal-analysis]] - 小信号稳定性分析
-- [[stability-analysis]] - 稳定性分析方法
-- [[power-electronics-stability]] - 电力电子系统稳定性
+- [[load-model]] - 负荷模型
+- [[microgrid-distribution-network]] - 微电网与配电网
+- [[small-signal-analysis]] - 小信号分析
+- [[transient-stability-analysis]] - 暂态稳定性分析
+- [[power-electronics]] - 电力电子技术
 
 ## 开放问题
 

@@ -115,18 +115,19 @@ $$I_{start} = (5-7) I_N$$
 - Krause, P.C., "Analysis of Electric Machinery," *McGraw-Hill*, 1986.
 - Fitzgerald, A.E., et al., "Electric Machinery," *McGraw-Hill*, 2003.
 
-### 电机建模
+### 相关模型
 
-- [[induction-machine-model]] - 感应电机通用模型
-- [[three-phase-induction-machine]] - 三相感应电机
-- [[motor-starting-analysis]] - 电机启动分析
+- 感应电机通用模型
+- 三相感应电机建模
+- 电机启动分析方法
 
 ## 与相关页面的关系
 
-- [[induction-machine-model]] - 感应电机通用模型
-- [[load-model]] - 负荷模型中的电机成分
-- [[voltage-stability]] - 电压稳定性分析
-- [[distribution-network]] - 配电网分析
+- [[induction-machine]] - 感应电机模型
+- [[induction-machine-model]] - 感应电机详细模型
+- [[load-model]] - 负荷模型
+- [[dfig-model]] - DFIG模型
+- [[power-quality]] - 电能质量分析
 
 ## 开放问题
 

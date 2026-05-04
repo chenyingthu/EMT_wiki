@@ -131,10 +131,10 @@ $$\omega(t) = \frac{x(t)\dot{\hat{x}}(t) - \hat{x}(t)\dot{x}(t)}{x^2(t) + \hat{x
 ## 与相关页面的关系
 
 - [[fourier-series]] - 傅里叶级数展开
-- 经验模态分解
-- 小波变换
-- 瞬时频率分析
-- 包络分析
+- [[prony-analysis]] - Prony分析（振荡模态辨识）
+- [[small-signal-analysis]] - 小信号分析
+- [[power-quality]] - 电能质量分析
+- [[harmonic-analysis-methods]] - 谐波分析方法
 
 ## 开放问题
 

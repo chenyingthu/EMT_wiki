@@ -90,8 +90,8 @@ $m_1$、$m_2$为PWM调制比，$n$为高频变压器变比。
 
 ## 与相关页面的关系
 
-- [[power-electronic-transformer]] - 电力电子变压器
-- [[dual-active-bridge]] - 双有源桥变换器
+- [[pet-sst-model]] - 电力电子变压器模型
+- [[dc-dc-converter]] - DC-DC变换器
 - [[mmc-model]] - MMC换流器（输入级）
 - [[vsc-model]] - VSC换流器（输出级）
 - [[transformer-model]] - 传统变压器模型

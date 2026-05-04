@@ -97,8 +97,10 @@ $$|Z_{sim}| < |Z_{real}|$$
 ## 与相关页面的关系
 
 - [[real-time-simulation]] - 实时仿真
-- [[hil-simulation]] - HIL详细方法
-- [[power-hardware-in-loop]] - 功率级HIL
+- [[hil-simulation]] - HIL仿真方法
+- [[fpga-real-time-simulation]] - FPGA实时仿真
+- [[power-electronics]] - 电力电子技术
+- [[protection-relay-modeling]] - 继电保护建模
 
 ---
 

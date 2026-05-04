@@ -109,18 +109,19 @@ $$f_{sw} = \frac{f_0}{N} \cdot \frac{V_{dc}}{2V_{SM}}$$
 - Gnanarathna, U.N., et al., "Efficient Modeling of Modular Multilevel HVDC Converters," *IEEE TEC*, 2011.
 - Saeedifard, M. and Iravani, R., "Dynamic Performance of a Modular Multilevel Back-to-Back HVDC System," *IEEE TPWRD*, 2010.
 
-### MMC调制
+### 相关方法
 
-- [[mmc-model]] - MMC换流器
-- [[carrier-phase-shift-pwm]] - 载波移相PWM
-- [[sorting-algorithm]] - 排序算法
+- MMC换流器调制策略
+- 载波移相PWM方法
+- 电容电压排序算法
 
 ## 与相关页面的关系
 
-- [[mmc-model]] - MMC换流器
-- [[modulation-methods]] - 调制方法
-- [[capacitor-voltage-balancing]] - 电容电压平衡
-- [[circulating-current-suppression]] - 环流抑制
+- [[mmc-model]] - MMC换流器模型
+- [[average-value-model]] - 平均值模型
+- [[circulating-current-suppression]] - 环流抑制控制
+- [[submodule-model]] - 子模块模型
+- [[vector-control]] - 矢量控制
 
 ## 开放问题
 
