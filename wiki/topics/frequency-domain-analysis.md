@@ -7,290 +7,61 @@ created: "2026-05-02"
 
 # 频域分析 (Frequency-Domain Analysis)
 
-## 概述
+## 定义与边界
 
-频域分析(Frequency-Domain Analysis)是研究电力系统频率响应特性的重要方法，通过分析系统在不同频率下的阻抗、导纳、传递函数和频谱特性，揭示系统的谐振特性、谐波传播行为和宽频稳定性。频域分析为滤波器设计、谐振抑制、设备建模和系统规划提供理论基础，是电磁暂态仿真和电力电子系统分析的核心技术之一。
+频域分析把电压、电流、阻抗、导纳、传递函数或时域波形表示为频率响应，用于识别谐振、谐波传播、阻抗耦合、小信号稳定性和频率相关模型。它不是 EMT 时域仿真的替代品；频域结论通常基于线性化、小扰动、稳态周期信号或给定频带内的响应。
 
-## 基本理论
+在 EMT Wiki 中，本页关注频域分析如何服务于 [[emt-simulation]]：构造频率相关元件、提取黑盒模型阻抗、识别振荡风险，并把频域模型转换为可在时域求解的等值。
 
-### 频域与时域关系
+## EMT 中的作用
 
-**拉普拉斯变换**：
-$$F(s) = \mathcal{L}\{f(t)\} = \int_0^{\infty} f(t)e^{-st}dt$$
+- 对线路、电缆、变压器和外部网络建立 [[frequency-dependent-modeling]] 或 [[fdne-model]]。
+- 从 EMT 波形中提取频谱、谐波和振荡模态，支撑 [[harmonic-analysis]] 与控制交互诊断。
+- 对逆变器、HVDC、FACTS 或弱网系统进行阻抗扫描和小信号稳定性筛查，再选择关键运行点做时域 EMT 验证。
+- 用 [[vector-fitting]] 将离散频率响应变成极点-留数模型，便于时域递推卷积或状态空间实现。
 
-**傅里叶变换**（$s = j\omega$）：
-$$F(j\omega) = \int_{-\infty}^{\infty} f(t)e^{-j\omega t}dt$$
+## 主要分支与机制
 
-**逆变换**：
-$$f(t) = \frac{1}{2\pi} \int_{-\infty}^{\infty} F(j\omega)e^{j\omega t}d\omega$$
+- 频率扫描：在指定频点注入小扰动并测量响应，得到阻抗、导纳或多端口传递函数。扰动幅值、坐标系、频点和运行点决定结论边界。
+- 谐波与频谱分析：[[fft]] 适合从采样波形提取频率成分，但需要处理采样率、窗函数、泄漏和非平稳信号。
+- 有理函数拟合：[[vector-fitting]] 通过极点迁移和最小二乘拟合频域响应；后续通常还需无源性、稳定极点和误差检查。
+- 模态提取：[[prony-analysis]] 从时域衰减振荡估计频率、阻尼和幅值，适合扰动后波形诊断，但对噪声和窗口选择敏感。
+- 阻抗稳定性：逆变器系统常使用源/荷阻抗或 dq 阻抗矩阵判断小信号稳定风险；多输入多输出系统不应简化为单一标量阻抗而不说明假设。
 
-### 频域特征量
+## 形式化表达
 
-| 特征量 | 符号 | 定义 | 应用 |
-|-------|------|------|------|
-| 阻抗 | $Z(j\omega)$ | $V/I$ | 谐振分析 |
-| 导纳 | $Y(j\omega)$ | $I/V$ | 滤波器设计 |
-| 传递函数 | $H(j\omega)$ | $Y/X$ | 控制分析 |
-| 增益 | $|H(j\omega)|$ | 幅值比 | 频率响应 |
-| 相位 | $\angle H(j\omega)$ | 相位差 | 稳定性分析 |
+频域分析通常处理输入扰动和输出响应之间的频率响应：
 
-## 频域建模方法
+$$
+H(j\omega)=\frac{Y(j\omega)}{U(j\omega)},\qquad
+Z(j\omega)=\frac{V(j\omega)}{I(j\omega)}
+$$
 
-### 元件频域模型
+对多端口或 dq 坐标系统，$H$、$Z$ 和 $Y$ 往往是矩阵而不是标量。频域结果进入 EMT 时域仿真时，常需要通过 [[vector-fitting]] 得到有理函数近似，并进一步检查稳定极点、无源性和时域误差。
 
-#### 电阻
-$$Z_R(j\omega) = R$$
+## 适用边界与失败模式
 
-#### 电感
-$$Z_L(j\omega) = j\omega L$$
+- 频域分析通常描述某一运行点附近的小扰动响应；限流、保护动作、故障穿越和控制饱和需要时域 EMT 检验。
+- 频率扫描得到的是模型或测量条件下的响应。黑盒控制器、坐标变换、扰动幅值和噪声都会影响结果。
+- 矢量拟合的低误差不等于时域仿真稳定；非无源多端口模型可能在 EMT 中产生非物理能量。
+- 谐波表或经验频段不能替代具体系统计算。谐振频率、阻尼和传播路径依赖网络拓扑、设备参数和运行方式。
 
-#### 电容
-$$Z_C(j\omega) = \frac{1}{j\omega C} = -j\frac{1}{\omega C}$$
+## 代表性来源
 
-#### RLC串联
-$$Z_{RLC}(j\omega) = R + j\omega L + \frac{1}{j\omega C} = R + j\left(\omega L - \frac{1}{\omega C}\right)$$
+- [[rational-approximation-of-frequency-domain-responses-by-vector-fitting-power-del]] 支撑矢量拟合在频率响应有理逼近中的机制与边界，特别是多谐振峰响应的拟合问题。
+- [[an-emt-based-dynamic-frequency-scanning-tool-for-stability-analysis-of-inverter-]] 说明可在 EMT 平台上进行动态频率扫描和逆变器稳定性分析，但其量化结果应限定在作者 MMC/VSG 算例。
+- [[analysis-of-frequency-dependent-network-equivalents-in-dynamic-harmonic-domain]] 是 FDNE 与动态谐波域分析的来源入口，适合讨论频域等值的验证边界。
+- [[review-and-comparison-of-frequency-domain-curve-fitting-techniques-vector-fittin]] 可用于比较频域曲线拟合路线，但具体优劣需要绑定响应类型和误差指标。
 
-### 输电线路频域模型
+## 与相关页面的关系
 
-**分布参数线路**：
-$$Z_c(j\omega) = \sqrt{\frac{R(j\omega) + j\omega L(j\omega)}{G(j\omega) + j\omega C(j\omega)}}$$
+- [[harmonic-analysis]] 更偏向谐波源、谐波潮流和电能质量；本页覆盖更宽的阻抗、传递函数和频率响应。
+- [[frequency-dependent-modeling]] 关注频率相关物理建模；本页包含分析和辨识方法。
+- [[fdne-model]] 是频域响应进入 EMT 时域仿真的模型产物。
+- [[emt-simulation]] 提供非线性、事件和大扰动验证；频域分析提供运行点附近的诊断和模型化入口。
 
-$$\gamma(j\omega) = \sqrt{(R(j\omega) + j\omega L(j\omega))(G(j\omega) + j\omega C(j\omega))}$$
+## 开放问题
 
-其中：
-- $Z_c$: 特性阻抗
-- $\gamma$: 传播常数
-- [[frequency-dependent-line-model]] - 频变线路模型
-
-### 频变参数处理
-
-**大地返回阻抗**（Carson公式）：
-$$Z_g(j\omega) = \frac{j\omega\mu_0}{2\pi}\ln\frac{D_{e}}{d}$$
-
-其中$D_e = 659\sqrt{\frac{\rho}{f}}$为等效大地深度。
-
-**皮肤效应**（简化模型）：
-$$R_{ac}(f) = R_{dc}\left(1 + k\sqrt{f}\right)$$
-
-## 频域分析技术
-
-### 频率扫描
-
-**单点扫描**：
-$$Z(j\omega_k) = \frac{V(j\omega_k)}{I(j\omega_k)}, \quad k = 1, 2, ..., N$$
-
-**对数扫描**：
-$$\omega_k = \omega_{min} \cdot 10^{k\cdot\Delta log}, \quad \Delta log = \frac{\log_{10}(\omega_{max}/\omega_{min})}{N}$$
-
-**应用场景**：
-- 宽频带阻抗特性测量
-- 谐振频率识别
-- 稳定性分析
-
-### 快速傅里叶变换(FFT)
-
-**DFT定义**：
-$$X[k] = \sum_{n=0}^{N-1} x[n]e^{-j2\pi kn/N}, \quad k = 0, 1, ..., N-1$$
-
-**FFT复杂度**：$O(N\log N)$ vs DFT的$O(N^2)$
-
-**采样定理**：
-$$f_s \geq 2f_{max}$$
-
-**频谱泄漏**：
-- 加窗处理：Hanning、Hamming、Blackman
-- 分辨率：$\Delta f = f_s/N$
-
-[[fft]] - FFT方法详情
-
-### 矢量拟合 (Vector Fitting)
-
-**有理函数近似**：
-$$f(s) \approx \sum_{i=1}^{N}\frac{c_i}{s-a_i} + d + se$$
-
-**应用**：
-- 频变参数建模
-- 网络等值
-- 时域转换
-
-[[vector-fitting]] - 矢量拟合详情
-
-### Prony分析
-
-**指数函数拟合**：
-$$y(t) = \sum_{i=1}^{N}A_ie^{\sigma_i t}\cos(\omega_i t + \phi_i)$$
-
-**频率提取**：
-- 阻尼系数：$\sigma_i$
-- 振荡频率：$\omega_i$
-- 幅值相位：$A_i, \phi_i$
-
-[[prony-analysis]] - Prony分析详情
-
-## 稳定性分析
-
-### 奈奎斯特判据
-
-**稳定性条件**：
-$$Z_{source}(j\omega) + Z_{load}(j\omega) \neq 0$$
-
-**阻抗比**：
-$$L(j\omega) = \frac{Z_{source}(j\omega)}{Z_{load}(j\omega)}$$
-
-**判据**：
-- 若$L(j\omega)$的奈奎斯特图包围(-1,0)点，系统不稳定
-- 距离(-1,0)点的距离表示稳定裕度
-
-### 波德图分析
-
-**幅频特性**：
-$$20\log_{10}|H(j\omega)| \text{ [dB]}$$
-
-**相频特性**：
-$$\angle H(j\omega) \text{ [deg]}$$
-
-**稳定裕度**：
-- 增益裕度$GM$：相位=-180°时的增益余量
-- 相位裕度$PM$：增益=0dB时的相位余量
-
-### 谐振分析
-
-**串联谐振**：
-$$\omega_0 = \frac{1}{\sqrt{LC}}, \quad Z_{min} = R$$
-
-**并联谐振**：
-$$\omega_0 = \frac{1}{\sqrt{LC}}, \quad Z_{max} = \frac{L}{RC}$$
-
-**品质因数**：
-$$Q = \frac{\omega_0 L}{R} = \frac{1}{\omega_0 CR}$$
-
-## 设备频域建模
-
-### 变压器
-
-**高频模型**：
-```
-    ┌───R1───┬───Lσ1───┬───C1───┐
-    │        │         │        │
-   V1        │         │        V2
-    │        │         │        │
-    └───C12──┴───Lm────┴───C12──┘
-```
-
-- $R_1, R_2$: 绕组电阻
-- $L_{\sigma}$: 漏感
-- $L_m$: 励磁电感
-- $C_1, C_2, C_{12}$: 分布电容
-
-[[transformer-model]] - 变压器模型
-
-### 电缆
-
-**高频等效电路**（π型）：
-$$Z_{series} = R(f) + j\omega L(f)$$
-$$Y_{shunt} = G + j\omega C$$
-
-[[cable-model]] - 电缆模型
-
-### 电机
-
-**等效电路**（单相）：
-```
-    ┌──Rs──┬──Lls──┬──────┬──Llr'──┬──Rr'/s──┐
-    │      │       │      │        │         │
-   Vs    Lms      Rfe    Llr'     Rr'      Ir
-    │      │       │      │        │         │
-    └──────┴───────┴──────┴────────┴─────────┘
-```
-
-[[synchronous-machine-model]] - 同步电机模型
-
-## 谐波分析
-
-### 谐波源
-
-| 谐波源 | 特征谐波 | 幅值特性 |
-|-------|---------|---------|
-| 6脉波整流器 | 5, 7, 11, 13... | $I_h \approx I_1/h$ |
-| 12脉波整流器 | 11, 13, 23... | 幅值更低 |
-| PWM逆变器 | 载波频率附近 | 与调制比相关 |
-| 电弧炉 | 2, 3, 5... | 随机性 |
-
-### 谐波潮流
-
-**节点方程**：
-$$Y(h)V(h) = I_{source}(h)$$
-
-其中$h$为谐波次数。
-
-**谐波阻抗**：
-$$Z(h) = \sqrt{R^2 + (hX_L - \frac{X_C}{h})^2}$$
-
-### 谐振条件
-
-**并联谐振**：
-$$h_{res} = \sqrt{\frac{X_C}{X_L}} = \sqrt{\frac{S_{sc}}{Q_{cap}}}$$
-
-其中：
-- $S_{sc}$: 短路容量
-- $Q_{cap}$: 电容无功
-
-## 应用案例
-
-### 滤波器设计
-
-**单调谐滤波器**：
-$$f_0 = \frac{1}{2\pi\sqrt{LC}}$$
-
-$$Q = \frac{X_L}{R} = \frac{X_C}{R}$$
-
-**高通滤波器**：
-$$f_c = \frac{1}{2\pi RC}$$
-
-### HVDC谐波分析
-
-**特征谐波**：
-$$h = np \pm 1$$
-
-其中$n$为正整数，$p$为脉波数。
-
-**非特征谐波**：由不对称、触发角偏差产生
-
-### 风电并网宽频振荡
-
-**次同步振荡**：10-50 Hz
-**超同步振荡**：高于基波频率
-**高频谐振**：与滤波器、电缆相关
-
-[[wind-farm-modeling]] - 风电场建模
-
-## 频域-时域转换
-
-### 数值拉普拉斯逆变换
-
-**Gaver-Stehfest算法**：
-$$f(t) \approx \frac{\ln 2}{t}\sum_{i=1}^{N}V_i F\left(\frac{\ln 2}{t}i\right)$$
-
-### 卷积方法
-
-**时域响应**：
-$$v(t) = \mathcal{L}^{-1}\{Z(s)I(s)\} = \int_0^t z(\tau)i(t-\tau)d\tau$$
-
-[[numerical-laplace-transform]] - 数值拉普拉斯变换
-
-## 相关主题
-- [[time-domain-simulation]] - 时域仿真
-- [[harmonic-analysis]] - 谐波分析
-- [[frequency-dependent-modeling]] - 频率相关建模
-- [[wideband-oscillation-stability]] - 宽频振荡稳定性
-
-## 相关方法
-- [[vector-fitting]] - 矢量拟合
-- [[fft]] - 快速傅里叶变换
-- [[prony-analysis]] - Prony分析
-- [[modal-analysis]] - 模态分析
-- [[fdne-model]] - 频变网络等值
-
-## 来源论文
-
-参见 [[index]] 获取更多频域分析相关文献。
+- 如何统一 EMT 黑盒频扫、解析小信号模型和现场扰动测量之间的误差评价。
+- 如何在多端口、多变流器系统中报告阻抗矩阵、坐标系、耦合项和稳定判据。
+- 如何把频域拟合误差、无源性修正和时域波形误差放入同一证据链。

@@ -11,7 +11,7 @@ created: "2026-05-02"
 
 谐波交互机制描述不同设备、网络阻抗、控制环节和频率分量之间通过电压、电流或控制变量形成的耦合关系。它关注的不只是“系统中存在谐波”，而是谐波分量如何传播、叠加、调制、反馈，并在特定条件下影响换相、保护、振荡或稳定裕度。
 
-本页是方法/机制页，适合解释交互路径和建模假设；具体频谱提取应参见 [[methods/fft.md]] 和 [[methods/fourier-filtering.md]]，网络传播量参见 [[methods/harmonic-transfer-coefficient.md]]，阻抗和稳定判据参见 [[topics/frequency-domain-analysis.md]] 与 [[methods/small-signal-analysis.md]]。
+本页是方法/机制页，适合解释交互路径和建模假设；具体频谱提取应参见 [[fft]] 和 [[fourier-filtering]]，网络传播量参见 [[harmonic-transfer-coefficient]]，阻抗和稳定判据参见 [[frequency-domain-analysis]] 与 [[small-signal-analysis]]。
 
 ## EMT 中的作用
 
@@ -44,8 +44,8 @@ $$\Delta V_h=\left(I-Z_hY_\text{dev}(h)\right)^{-1}Z_h\Delta I_\text{src}(h)$$
 
 | 交互类型 | 典型路径 | 适合分析工具 | 主要边界 |
 |----------|----------|--------------|----------|
-| 同频谐波叠加 | 多个源在同一频率注入 | [[methods/harmonic-transfer-coefficient.md]]、谐波潮流 | 相位和源定位很关键 |
-| 网络谐振放大 | 谐波源与 RLC/线路阻抗耦合 | [[methods/frequency-scan.md]]、阻抗测量 | 依赖运行方式和频变模型 |
+| 同频谐波叠加 | 多个源在同一频率注入 | [[harmonic-transfer-coefficient]]、谐波潮流 | 相位和源定位很关键 |
+| 网络谐振放大 | 谐波源与 RLC/线路阻抗耦合 | [[frequency-scan]]、阻抗测量 | 依赖运行方式和频变模型 |
 | 控制-网络耦合 | PLL、电流环、滤波器与弱网 | 小信号阻抗、EMT 扰动 | 需要控制器参数 |
 | 换相相关交互 | LCC 换流、交流故障、谐波电压 | EMT + 关断角模型 | 结论绑定 LCC 拓扑和故障条件 |
 | 多频率调制 | 开关频率、基波和边带耦合 | 动态相量、时频分析 | 频率耦合不能用单一谐波解释 |
@@ -59,18 +59,18 @@ $$\Delta V_h=\left(I-Z_hY_\text{dev}(h)\right)^{-1}Z_h\Delta I_\text{src}(h)$$
 
 ## 代表性来源
 
-- [[sources/harmonics-interaction-mechanism-and-impact-on-extinction-angles-in-multi-infeed-.md]]：可作为多馈入 LCC-HVDC 谐波交互与关断角影响的代表性证据；应保留“交流故障、多馈入、LCC”这些场景边界。
-- [[sources/analysis-on-non-characteristic-harmonic-circulating-current-in-parallel-inverter.md]]：适合说明并联逆变器之间可能出现非特征谐波环流，但不能泛化到所有并联系统。
-- [[sources/high-frequency-oscillation-analysis-and-suppression-strategy-of-mmc-hvdc-system-.md]]：可支撑 MMC 高频振荡与滤波/控制耦合讨论，具体频段和抑制效果需绑定原文。
-- [[sources/a-harmonic-phasor-domain-co-simulation-method-and-new-insight-for-harmonic-analy.md]]：说明谐波相量域可用于多频率交互仿真，但不应写成对所有 EMT 场景的替代。
+- [[harmonics-interaction-mechanism-and-impact-on-extinction-angles-in-multi-infeed-]]：可作为多馈入 LCC-HVDC 谐波交互与关断角影响的代表性证据；应保留“交流故障、多馈入、LCC”这些场景边界。
+- [[analysis-on-non-characteristic-harmonic-circulating-current-in-parallel-inverter]]：适合说明并联逆变器之间可能出现非特征谐波环流，但不能泛化到所有并联系统。
+- [[high-frequency-oscillation-analysis-and-suppression-strategy-of-mmc-hvdc-system-]]：可支撑 MMC 高频振荡与滤波/控制耦合讨论，具体频段和抑制效果需绑定原文。
+- [[a-harmonic-phasor-domain-co-simulation-method-and-new-insight-for-harmonic-analy]]：说明谐波相量域可用于多频率交互仿真，但不应写成对所有 EMT 场景的替代。
 
 ## 与相关页面的关系
 
-- [[methods/fourier-series.md]]、[[methods/fft.md]] 和 [[methods/fourier-filtering.md]] 提供频率分量提取语言。
-- [[methods/harmonic-transfer-coefficient.md]] 是描述传播路径的局部量。
-- [[methods/dynamic-phasor.md]] 和 [[topics/frequency-dependent-modeling.md]] 支撑跨频率和宽频网络表示。
-- [[models/vsc-model.md]]、[[models/mmc-model.md]]、[[models/lcc-model.md]]、[[models/pll-model.md]] 决定设备侧交互机制。
-- [[topics/wideband-oscillation-stability.md]] 关注交互导致的稳定性后果。
+- [[fourier-series]]、[[fft]] 和 [[fourier-filtering]] 提供频率分量提取语言。
+- [[harmonic-transfer-coefficient]] 是描述传播路径的局部量。
+- [[dynamic-phasor]] 和 [[frequency-dependent-modeling]] 支撑跨频率和宽频网络表示。
+- [[vsc-model]]、[[mmc-model]]、[[lcc-model]]、[[pll-model]] 决定设备侧交互机制。
+- [[wideband-oscillation-stability]] 关注交互导致的稳定性后果。
 
 ## 修订与证据使用注意事项
 

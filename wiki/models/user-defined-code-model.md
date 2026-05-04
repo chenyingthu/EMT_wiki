@@ -7,337 +7,95 @@ created: "2026-05-02"
 
 # 用户自定义代码模型 (User-Defined Code Model)
 
-## 概述
+## 定义与边界
 
-用户自定义代码模型(UDM)允许用户通过编程接口实现特定的设备模型、控制策略或非线性特性，扩展电磁暂态仿真软件的内建模型库。UDM提供了灵活性和可扩展性，使研究人员和工程师能够实现创新的建模需求，广泛应用于学术研究、新型设备开发和定制化仿真分析。
+用户自定义代码模型是通过仿真器提供的脚本、动态库、外部子程序、S-Function、MODELS/TACS、FMI 或类似接口，把用户编写的微分方程、代数方程、控制逻辑或状态机嵌入 EMT 时步循环的模型。它的物理对象可以是新型设备、控制器、保护算法、非线性元件或外部工具；EMT 等效对象是接口函数、状态向量、输入输出变量、参数表和与主网络求解器的耦合方式。
 
-## 编程接口类型
+本页讨论用户代码模型作为 EMT 模型的边界，不把任何特定工具的接口能力、跨平台兼容性或实时性能写成通用事实。具体语法和许可应以目标工具官方文档为准；本页只保留可迁移的建模结构。
 
-### MATLAB/Simulink S-Function
+## EMT 建模对象
 
-#### Level-1 S-Function
-简化接口：
-- 状态向量
-- 输入输出
-- 参数传递
+用户代码模型通常承担三类任务：
 
-模板结构：
-```matlab
-function [sys,x0,str,ts] = sfun(t,x,u,flag,params)
-switch flag
-    case 0 % 初始化
-    case 1 % 导数计算
-    case 2 % 更新
-    case 3 % 输出
-    case 9 % 终止
-end
-```
+- 电气元件：向网络方程贡献等效导纳、历史电流源、受控源或非线性残差。
+- 控制/保护逻辑：读取电压电流或状态量，输出门极、跳闸、闭锁、参考值或限幅信号。
+- 外部耦合：与优化器、机器学习模型、FMU、硬件接口或批处理脚本交换数据。
 
-#### Level-2 S-Function
-完整接口：
-- 多输入多输出
-- 直接馈通
-- 采样时间
-- 工作向量
+用户代码不是自由运行的外部程序，而是 EMT 求解器时序中的一个组件。其输入输出、采样时间、直接馈通、状态更新和错误处理必须与主程序求解顺序一致。
 
-C-MEX S-Function：
-```c
-static void mdlInitializeSizes(SimStruct *S)
-static void mdlInitializeSampleTimes(SimStruct *S)
-static void mdlOutputs(SimStruct *S, int_T tid)
-static void mdlDerivatives(SimStruct *S)
-```
+## 模型结构与接口变量
 
-### C/C++ 代码
+连续或离散用户模型可写成：
 
-#### 动态链接库(DLL)
-接口函数：
-```c
-void UDM_INIT(int *nstates, int *ninputs, int *noutputs, 
-              double *params, int nparams);
-void UDM_CALC(double t, double *x, double *u, double *xdot, 
-              double *y, double *params);
-```
+$$
+\dot{\mathbf{x}} = f(\mathbf{x}, \mathbf{u}, t, \mathbf{p}),
+\qquad
+\mathbf{y} = g(\mathbf{x}, \mathbf{u}, t, \mathbf{p}).
+$$
 
-编译：
-- Windows: DLL文件
-- Linux: SO文件
-- 动态加载
+离散时步实现可写成：
 
-#### 静态链接
-编译到主程序：
-- 源代码集成
-- 优化编译
-- 调试方便
+$$
+\mathbf{x}_{n+1} = F(\mathbf{x}_n, \mathbf{u}_n, t_n, \mathbf{p}, \Delta t),
+\qquad
+\mathbf{y}_n = G(\mathbf{x}_n, \mathbf{u}_n, t_n, \mathbf{p}).
+$$
 
-### Fortran代码
-传统接口：
-```fortran
-SUBROUTINE UDMINIT(NSTATES, NINPUTS, NOUTPUTS, PARAMS)
-SUBROUTINE UDMCALC(T, X, U, XDOT, Y, PARAMS)
-```
+若模型直接参与网络求解，还需要提供类似：
 
-优势：
-- 数值计算库
-- 科学计算传统
-- 遗留代码复用
+$$
+\mathbf{i}_{inj,n} = \mathbf{G}_{eq,n}\mathbf{v}_n + \mathbf{i}_{hist,n}.
+$$
 
-### Modelica
-面向对象建模：
-```modelica
-model CustomModel
-  parameter Real R = 1 "Resistance";
-  Real v "Voltage";
-  Real i "Current";
-equation
-  v = R*i;
-end CustomModel;
-```
+接口变量应显式定义：
 
-特点：
-- 声明式建模
-- 自动方程处理
-- 多领域建模
+- 状态变量：连续状态、离散状态、延迟队列、滤波器历史量、事件状态。
+- 代数变量：当前输入、输出、残差、雅可比或等效导纳。
+- 控制变量：参数、限幅、模式开关、采样时间、初始化条件。
+- 网络接口变量：节点电压、支路电流、注入源、拓扑状态或外部端口变量。
 
-## 模型结构
+## 建模层级
 
-### 状态空间表示
-标准形式：
-$$\dot{x} = f(x, u, t, p)$$
-$$y = g(x, u, t, p)$$
+| 层级 | 表示方式 | 适用用途 | 主要边界 |
+|------|----------|----------|----------|
+| 控制信号模型 | 输入输出函数或离散状态机 | 控制器、保护逻辑和调制器 | 不直接改变网络矩阵 |
+| 等效电路模型 | 返回导纳、历史源或受控源 | 自定义 RLC、非线性元件和电力电子等效 | 需要满足主求解器接口 |
+| 外部动态库模型 | C/C++/Fortran/S-Function 等编译接口 | 复用已有算法或加速计算 | ABI、内存和线程安全需验证 |
+| 协同仿真模型 | FMI、进程间通信或外部求解器 | 多工具耦合和多速率仿真 | 同步、插值和能量一致性是主要风险 |
+| 实时/HIL 模型 | 固定步长、预分配内存和确定性执行 | 实时仿真和硬件闭环 | 需报告最坏执行时间和接口延迟 |
 
-其中：
-- $x$: 状态向量
-- $u$: 输入向量
-- $y$: 输出向量
-- $p$: 参数向量
-- $t$: 时间
+## 适用边界与失败模式
 
-### 离散事件处理
-开关事件：
-```c
-if (condition) {
-    // 处理开关逻辑
-    x[0] = x_new;
-}
-```
+- 直接馈通输入输出可能形成代数环，需要延迟、迭代或雅可比信息配合主求解器处理。
+- 事件、限幅和模式切换会造成不连续，若未使用 [[interpolation-method]] 或事件定位，可能出现时间步依赖结果。
+- 动态库模型存在内存越界、全局状态污染、线程不安全和平台 ABI 不兼容风险。
+- 外部协同仿真会引入通信延迟和插值误差，不能默认保持 EMT 主网精度。
+- 用户代码若直接修改网络矩阵或拓扑，应说明与 [[nodal-admittance-matrix]]、[[numerical-integration]] 和初始化流程的关系。
 
-不连续点：
-- 事件检测
-- 状态重置
-- 导数跳变
+## 验证需求
 
-### 代数方程
-DAE系统：
-$$0 = h(x, y, u, t)$$
+用户自定义代码模型应从接口到系统分层验证：
 
-求解：
-- 消元法
-- Newton迭代
-- 初始化问题
+- 接口验证：输入输出维度、单位、采样时间、初值和参数范围检查。
+- 数值验证：解析解、离线参考模型、等效内置模型或小信号线性化对比。
+- 事件验证：边界条件、限幅、状态重置和模式切换是否可重复。
+- 集成验证：接入 EMT 网络后是否破坏收敛、能量平衡或时步稳定性。
+- 可维护验证：编译命令、依赖版本、错误处理和日志输出是否可复现。
 
-## 接口定义
+## 代表性来源
 
-### 电气接口
-节点连接：
-- 电压输入
-- 电流输出
-- 功率计算
+- [[protection-system-representation-in-the-electromagnetic-transients-program-power]] 支持通过 FORTRAN 用户子程序把继电器算法接入 EMTP 闭环；其证据边界不支持泛化到所有接口或实时性能。
+- [[using-tacs-functions-within-empt-to-teach-protective-relaying-fundamentals-power]] 代表用 TACS 函数实现保护教学模型，适合说明控制逻辑可进入 EMT 时步循环。
+- [[functional-mock-up-interface-based-approach-for-parallel-and-multistep-simulatio]] 代表 FMI 协同仿真和多步控制接口路线；计算收益和精度需绑定具体主从划分。
+- [[efficient-implementation-of-multi-port-frequency-dependent-network-equivalents-f]] 说明 MODELS、TACS Type-69 和外部子模型可作为 EMTP-ATP 中实现频变网络等值的不同接口选择。
 
-导纳贡献：
-```c
-G_matrix[node_i][node_j] += g_ij;
-I_vector[node_i] += i_inj;
-```
+## 与相关页面的关系
 
-### 控制接口
-信号输入：
-- 模拟量
-- 数字量
-- 触发信号
-
-控制输出：
-- 调制信号
-- 开关指令
-- 参考值
-
-### 参数传递
-参数列表：
-```c
-typedef struct {
-    double R;
-    double L;
-    double C;
-    int control_mode;
-} ModelParams;
-```
-
-GUI配置：
-- 对话框
-- 单位转换
-- 有效性检查
-
-## 开发流程
-
-### 1. 数学建模
-微分方程：
-$$L\frac{di}{dt} + Ri = v$$
-
-离散化：
-$$i_{n+1} = i_n + \frac{\Delta t}{L}(v_n - Ri_n)$$
-
-### 2. 代码实现
-核心函数：
-```c
-void model_calc(double t, double *x, double *u, 
-                double *xdot, double *y) {
-    double i = x[0];
-    double v = u[0];
-    xdot[0] = (v - R*i) / L;  // di/dt
-    y[0] = i;  // 输出电流
-}
-```
-
-### 3. 编译链接
-编译命令：
-```bash
-gcc -shared -fPIC model.c -o model.so
-```
-
-或Makefile：
-```makefile
-model.so: model.c
-    $(CC) $(CFLAGS) -shared -fPIC $< -o $@
-```
-
-### 4. 集成测试
-测试案例：
-- 稳态测试
-- 暂态测试
-- 极限条件
-- 与其他模型对比
-
-## 应用实例
-
-### 自定义电机模型
-同步电机：
-- 详细磁路模型
-- 饱和特性
-- 损耗计算
-
-永磁电机：
-- 反电势波形
-- 齿槽转矩
-- 弱磁控制
-
-### 新型电力电子
-多电平拓扑：
-- 特定调制策略
-- 故障容错
-- 热管理
-
-软开关电路：
-- 谐振参数优化
-- ZVS/ZCS实现
-- 损耗分析
-
-### 高级控制策略
-非线性控制：
-- 滑模控制
-- 自适应控制
-- 模糊控制
-
-智能算法：
-- 神经网络
-- 强化学习
-- 遗传算法
-
-### 复杂保护逻辑
-自定义保护：
-- 多判据融合
-- 自适应整定
-- 广域保护
-
-故障定位：
-- 行波算法
-- 阻抗法改进
-- 人工智能
-
-## 性能优化
-
-### 计算效率
-优化技巧：
-- 查表法
-- 简化计算
-- 预计算常量
-
-向量化：
-- SIMD指令
-- 并行计算
-- GPU加速
-
-### 数值稳定性
-刚性处理：
-- 隐式方法
-- 变步长
-- 误差控制
-
-不连续处理：
-- 插值方法
-- 事件定位
-- 状态重置
-
-## 调试技术
-
-### 日志输出
-调试信息：
-```c
-#ifdef DEBUG
-    printf("t=%f, x=%f, y=%f\n", t, x[0], y[0]);
-#endif
-```
-
-### 断点调试
-IDE调试：
-- Visual Studio
-- GDB
-- LLDB
-
-### 结果对比
-参考数据：
-- 解析解
-- 实测数据
-- 其他软件
-
-## 最佳实践
-
-### 代码规范
-命名规范：
-- 清晰变量名
-- 注释完整
-- 模块化设计
-
-错误处理：
-- 参数检查
-- 数值保护
-- 异常处理
-
-### 验证流程
-单元测试：
-- 功能测试
-- 边界测试
-- 性能测试
-
-系统集成：
-- 接口测试
-- 兼容性测试
-- 回归测试
-
-## 相关方法
-- [[state-space-method]] - 状态空间法
-- [[modeling-language]] - 建模语言
-- [[using-tacs-functions-within-empt-to-teach-protective-relaying-fundamentals-power]] - S函数
-- `dll-interface` - DLL接口
+- [[modeling-language]] 讨论 EMTP 卡片、MODELS/TACS、PSCAD 自定义代码、SPICE 网表和 MATLAB/Simulink 模块等表达方式。
+- [[state-space-method]] 提供用户代码中常见的状态方程组织方式。
+- [[netlist-import-export]] 关注网表和模型文件的交换边界。
+- [[simulation-tools-status]] 记录工具入口和状态，不能替代具体接口文档。
+- [[protection-control-device]] 是用户代码模型常见应用之一，尤其是保护算法和控制逻辑。
 
 ## 来源论文
 

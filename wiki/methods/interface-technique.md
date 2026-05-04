@@ -103,7 +103,7 @@ $$
 - 接口位置过近可能让 EMT 侧畸变直接污染相量域；过远则增加详细 EMT 区域规模。
 - 实时接口受通信延迟和固定步长约束，不能仅用离线仿真精度证明。
 
-## 证据边界
+## 代表性证据与证据边界
 
 接口论文常报告特定算例中的误差、加速比或稳定性改进。这些结论应保留在原算例、步长、端口数、平台和扰动条件内。可作为入口的来源包括 [[interfacing-techniques-for-transient-stability-and-electromagnetic-transient-hyb]]、[[dynamic-phasor-based-interface-model-for-emt-and-transient-stability-hybrid-simu]]、[[an-interface-method-for-co-simulation-of-emt-model-and-shifted-frequency-emt-mod]] 和 [[co-simulation-of-electromagnetic-transients-and-phasor-models-a-relaxation-appro]]。
 

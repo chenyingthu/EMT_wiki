@@ -7,340 +7,77 @@ created: "2026-05-02"
 
 # 快速系统仿真 (Fast System Simulation)
 
-## 概述
-
-快速系统仿真(Fast System Simulation)是通过算法优化、并行计算、模型降阶和硬件加速等技术，显著缩短大规模电力系统电磁暂态仿真计算时间的方法体系。随着电网规模扩大和仿真精细度提升，传统串行仿真面临计算时间过长的问题。快速仿真技术通过多核并行、GPU加速、FPGA实现和模型简化等手段，实现仿真速度数量级的提升，满足实时仿真、大规模场景分析和优化设计的时效需求。
-
-## 加速技术分类
-
-### 算法优化
-
-**快速求解器**:
-- 稀疏矩阵技术
-- 预处理迭代法
-- 快速多极子
-
-**多速率积分**:
-- 分区处理
-- 变步长策略
-- 事件驱动
-
-**模型简化**:
-- 动态等值
-- 端口等效
-- 谐波平衡
-
-### 并行计算
-
-**多核CPU**:
-- 多线程并行
-- OpenMP
-- 任务分解
-
-**GPU加速**:
-- CUDA/OpenCL
-- 大规模并行
-- 稠密矩阵运算
-
-**分布式计算**:
-- MPI
-- 集群计算
-- 云计算
-
-### 硬件加速
-
-**FPGA**:
-- 定制化电路
-- 流水线并行
-- 低延迟
-
-**ASIC**:
-- 专用芯片
-- 最高性能
-- 高成本
+## 定义与边界
 
-## 并行仿真技术
-
-### 空间分解
+快速系统仿真指在保持目标暂态现象可解释的前提下，缩短 EMT 仿真端到端时间的算法、模型和计算实现集合。它包括[[computational-acceleration]]、[[parallel-computing]]、[[model-order-reduction]]、[[network-partitioning]]、[[multirate-method]]、[[hardware-acceleration]] 和 [[fpga-real-time-simulation]] 等路线。
 
-**网络分区**:
-```
-┌─────────┐      ┌─────────┐
-│ Subnet 1│←────→│ Subnet 2│
-│  (CPU1) │ 接口 │  (CPU2) │
-└────┬────┘      └────┬────┘
-     │                │
-     └──────┬─────────┘
-            │
-       ┌────┴────┐
-       │ 协调器  │
-       └─────────┘
-```
-
-**分区策略**:
-- 最小割
-- 负载均衡
-- 通信最小化
+本页不把“快速”直接等同于“高精度”“实时”或“通用加速”。任何加速比、误差或实时裕度都必须绑定测试系统、模型层级、步长、硬件平台、通信方式和基准求解器。若只报告局部内核耗时，不能外推为完整 EMT 工作流加速。
 
-**接口处理**:
-- 边界条件
-- 数据交换
-- 同步机制
+## EMT 中的作用
 
-### 时间并行
+EMT 仿真常由最小步长、频繁开关事件、稀疏线性方程求解、控制器更新和输出记录共同决定耗时。快速系统仿真的作用是把计算资源集中在研究对象需要的频带、区域和事件上，使以下任务可计算或可重复：
 
-**波形松弛**:
-$$x^{(k+1)}(t) = f(x^{(k)}(t))$$
+- 大规模电网故障、换相失败、保护动作和控制限幅的批量扫描。
+- 含 MMC、VSC、风电场、光伏电站或 HVDC 的局部详细 EMT 与外部系统等值联合分析。
+- [[real-time-simulation]] 与 [[hil-simulation]] 中的 deadline 约束检查。
+- 参数辨识、模型校准、概率工况和运行策略筛选中的重复 EMT 运行。
 
-**流水线**:
-- 多时间窗并行
-- 预测-校正
-- 迭代收敛
+## 主要分支与机制
 
-### 多核实现
+### 算法与求解器加速
 
-**OpenMP并行**:
-```cpp
-#pragma omp parallel for
-for (int i = 0; i < n; i++) {
-    // 节点计算
-    V[i] = solve(Y[i], I[i]);
-}
-```
+节点方程通常可写成
 
-**加速效果**:
-- 理想: 线性加速
-- 实际: 70-90%效率
-- 受Amdahl定律限制
+$$
+Y_k v_k=i_k,\qquad x_{k+1}=\Phi(x_k,v_k,u_k),
+$$
 
-## GPU加速
+其中 $Y_k$ 是第 $k$ 步等效导纳矩阵，$v_k$ 是节点电压，$i_k$ 是历史源和注入电流，$x_k$ 是元件与控制状态。加速可来自[[sparse-matrix-solver]]、矩阵重排序、局部分解复用、[[fixed-admittance]]、事件局部更新和更适合刚性问题的[[numerical-integration]]。这些方法不改变研究对象本身，但会改变每步求解成本和事件处理代价。
 
-### CUDA编程模型
+### 分区、并行与任务映射
 
-**线程层次**:
-- Grid → Blocks → Threads
-- 成千上万线程并行
+若系统被划分为 $P$ 个任务，端到端时间近似受
 
-**内存层次**:
-- Global memory
-- Shared memory
-- Registers
+$$
+T_{\mathrm{step}}=\max_{p\le P} T_{\mathrm{solve},p}+T_{\mathrm{comm}}+T_{\mathrm{sync}}
+$$
 
-### 电力系统应用
+约束。$T_{\mathrm{solve},p}$ 为第 $p$ 个分区求解时间，$T_{\mathrm{comm}}$ 为接口通信时间，$T_{\mathrm{sync}}$ 为同步和调度开销。[[use-of-efficient-task-allocation-algorithm-for-parallel-real-time-emt-simulation]] 将实时 EMT 的任务分离和任务映射明确建模为图划分问题，可作为“并行性能依赖硬件拓扑和通信代价”的代表证据。
 
-**雅可比矩阵形成**:
-- 每线程一个元素
-- 并行计算
-- 适合GPU
+### 多速率与模型层级选择
 
-**矩阵求解**:
-- 稠密矩阵: GPU优势
-- 稀疏矩阵: CPU更优
+[[multirate-method]] 通过快区步长 $h_f$ 与慢区步长 $h_s=N h_f$ 的组合降低全系统小步长负担；[[a-multirate-emt-co-simulation-of-large-ac-and-mmc-based-mtdc-systems]] 支撑大型 AC 与 MMC-MTDC 系统按动态时间尺度分区的路线。模型层级方面，[[average-value-model]]、[[dynamic-phasor]]、[[network-equivalent]] 和 [[fdne-model]] 可减少状态数量或频带范围，但会舍弃部分开关、谐波、保护瞬时量或端口互耦。
 
-**典型加速**:
-| 计算任务 | 加速比 | GPU型号 |
-|---------|-------|--------|
-| 矩阵形成 | 10-50x | RTX 3080 |
-| 稠密求解 | 5-20x | Tesla V100 |
-| 蒙特卡洛 | 50-200x | A100 |
+### 硬件与异构加速
 
-### 实现案例
+[[gpu-parallel-acceleration]]、[[hardware-acceleration]] 和 [[fpga-real-time-simulation]] 关注把矩阵运算、批量元件更新或固定拓扑求解映射到 GPU、FPGA 或异构平台。硬件加速的证据应同时报告波形误差、资源占用、数据搬移、最坏步长耗时和失败工况；不能只用设备峰值算力说明 EMT 仿真能力。
 
-**EMTP-GPU**:
-- 节点导纳求解
-- 10-20x加速
-- 大规模网络
+## 适用边界与失败模式
 
-## 模型降阶
+- 加速效果受 Amdahl 型限制：串行事件处理、I/O、同步、控制器代数环和通信可能支配总耗时。
+- 分区接口若跨越强耦合、低阻抗或快速控制闭环，可能引入非物理延迟、功率不平衡或数值振荡。
+- 模型降阶和等值只在指定端口、频带、工况和控制状态内有效；故障、闭锁和保护动作可能需要切回详细模型。
+- GPU 或 FPGA 对规则、批量、固定结构计算更有利；稀疏不规则拓扑、频繁分支和小规模算例可能无法受益。
+- “超实时”与 HIL 实时不同。前者强调平均运行快于真实时间，后者要求每个步长满足最坏时延和抖动约束。
 
-### 平衡截断
+## 代表性来源
 
-**可控Gramian**:
-$$AP + PA^T + BB^T = 0$$
+- [[use-of-efficient-task-allocation-algorithm-for-parallel-real-time-emt-simulation]]：支撑实时并行 EMT 中任务分离、源图到目标图映射、负载均衡和通信代价约束；具体网络规模、步长和平台结论应限于原文案例。
+- [[performance-evaluation-of-communication-fabrics-for-offline-parallel-electromagn]]：支撑离线 MPI 并行 EMT 性能需要用每步时间、加速比、效率和 Karp-Flatt 指标解释，而不能只看核心数。
+- [[a-multirate-emt-co-simulation-of-large-ac-and-mmc-based-mtdc-systems]]：支撑多速率 AC-MTDC EMT 协同仿真机制；当前页面不引用未核验的具体加速百分比。
+- [[lessons-learned-in-porting-offline-large-scale-power-system-simulation-to-real-t]]：支撑离线大系统迁移到实时平台时，模型兼容、信号校核和实时性能约束共同决定是否可运行。
+- [[an-automated-fpga-real-time-simulator-for-power-electronics-and-power-systems-el]] 与 [[real-time-simulation-of-power-system-electromagnetic-transients-on-fpga-using-ad]] 可作为 FPGA 实时 EMT 的入口，结论必须绑定原文电路、芯片和步长。
 
-**可观Gramian**:
-$$A^TQ + QA + C^TC = 0$$
+## 与相关页面的关系
 
-**截断**:
-- 奇异值排序
-- 保留主要模态
-- 误差可控
+- [[large-scale-grid-simulation]] 关注大电网 EMT 问题本身；本页关注让这些问题更快求解的策略。
+- [[network-partitioning]] 是并行和多速率加速的结构基础，但分区本身不保证加速。
+- [[real-time-simulation]] 定义硬实时 deadline；快速系统仿真可以服务于实时化，也可只用于离线批量分析。
+- [[model-order-reduction]]、[[average-value-model]] 和 [[fdne-model]] 是降低模型复杂度的具体方法页。
+- [[parallel-computing]] 和 [[high-performance-computing]] 讨论计算架构；本页只综合它们在 EMT 任务中的证据使用规则。
 
-### Krylov子空间
+## 开放问题
 
-**Arnoldi算法**:
-- 构建正交基
-- 投影降阶
-- 矩匹配
-
-**优势**:
-- 保持输入输出
-- 数值稳定
-- 大规模适用
-
-### 端口等效
-
-**戴维南等效**:
-$$V_{eq} = V_{oc} - Z_{eq}I$$
-
-**应用**:
-- 外部网络等效
-- 关注点仿真
-- 计算量减少
-
-## 多速率仿真
-
-### 分区策略
-
-**快动态区**:
-- 电力电子
-- 小步长
-- 开关动作
-
-**慢动态区**:
-- 输电网
-- 大步长
-- 机电过程
-
-### 接口算法
-
-**插值方法**:
-- 线性插值
-- 二次插值
-- Hermite插值
-
-**稳定性**:
-- 显式耦合
-- 隐式耦合
-- 混合方法
-
-## 实时仿真
-
-### 实时约束
-
-**时间要求**:
-$$t_{compute} < t_{step}$$
-
-**典型步长**:
-- 电磁暂态: 10-100 μs
-- 机电暂态: 1-10 ms
-
-### 实现平台
-
-**RT-LAB**:
-- 多核实时
-- 自动分核
-- 硬件在环
-
-**Typhoon HIL**:
-- FPGA加速
-- 纳秒级延迟
-- 高精度
-
-## 应用案例
-
-### 大规模电网
-
-**场景**:
-- 10000+节点
-- 详细模型
-- 长时间仿真
-
-**加速效果**:
-- 串行: 数天
-- 并行: 数小时
-- 实时: 分钟级
-
-### 蒙特卡洛分析
-
-**应用**:
-- 不确定性量化
-- 概率风险评估
-- 优化设计
-
-**并行**:
-- 每样本独立
--  embarrassingly parallel
-- 100-1000x加速
-
-### 参数扫描
-
-**优化设计**:
-- 多参数组合
-- 网格搜索
-- 并行评估
-
-## 工具平台
-
-### 商业软件
-
-**PSS/E**:
-- 并行潮流
-- 分布式计算
-
-**PowerFactory**:
-- 多核支持
-- GPU选项
-
-### 开源工具
-
-**GridLAB-D**:
-- 并行框架
-- 可扩展
-
-**PandaPower**:
-- Python
-- 多核优化
-
-## 性能评估
-
-### 加速比
-
-**定义**:
-$$S(n) = \frac{T_{serial}}{T_{parallel}(n)}$$
-
-**效率**:
-$$E(n) = \frac{S(n)}{n}$$
-
-### Amdahl定律
-
-**公式**:
-$$S(n) = \frac{1}{(1-p) + p/n}$$
-
-其中$p$为并行比例
-
-**极限**:
-$$S_{max} = \frac{1}{1-p}$$
-
-## 发展趋势
-
-### 异构计算
-
-**CPU+GPU+FPGA**:
-- 任务分配
-- 协同计算
-- 最优配置
-
-### 云仿真
-
-**弹性计算**:
-- 按需资源
-- 分布式存储
-- 结果汇总
-
-### AI加速
-
-**代理模型**:
-- 神经网络
-- 快速预测
-- 在线修正
-
-## 相关主题
-- [[model-order-reduction]] - 模型降阶
-- [[parallel-computing]] - 并行计算
-- [[multirate-method]] - 多速率方法
-- [[hil-simulation]] - 硬件在环
-
-## 来源论文
-
-参见 [[index]] 获取更多快速系统仿真相关文献。
+- 如何建立同时报告端到端时间、波形误差、事件时间、接口功率误差和硬件资源的公共 benchmark。
+- 如何在保护动作、控制限幅和开关事件密集时动态选择详细模型、平均模型和等值模型。
+- 如何把图分区、任务映射、通信拓扑和模型误差统一到可审核的 EMT 加速证据链中。

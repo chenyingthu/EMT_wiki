@@ -59,7 +59,7 @@ $$
 
 ### 双回线行波和交叉差动判据
 
-[[sources/single-ended-travelling-wave-based-protection-scheme-for-double-circuit-transmis.md]] 把健康回线也视为行波传播回路的一部分，用首波幅值、极性、到达时差和累积交叉差动电流偏差识别双回线路内部故障。该来源的证据边界明确指出，当前摘录未给出可核验的动作时间、采样率、阈值或误动率统计；因此本页只把它作为“单端行波保护可利用双回线耦合信息”的代表性路线，而不是通用工程结论。
+[[single-ended-travelling-wave-based-protection-scheme-for-double-circuit-transmis]] 把健康回线也视为行波传播回路的一部分，用首波幅值、极性、到达时差和累积交叉差动电流偏差识别双回线路内部故障。该来源的证据边界明确指出，当前摘录未给出可核验的动作时间、采样率、阈值或误动率统计；因此本页只把它作为“单端行波保护可利用双回线耦合信息”的代表性路线，而不是通用工程结论。
 
 ## 方法步骤
 
@@ -80,17 +80,17 @@ $$
 
 ## 代表性证据
 
-- [[sources/a-new-distance-relaying-algorithm-based-on-complex-differential-equation-for-sym.md]] 在来源解读中说明其算法把对称分量、等效故障回路和并行线路互感纳入距离保护思路；当前证据不支持采用未核验的采样率、动作时间或成功率数字。
-- [[sources/single-ended-travelling-wave-based-protection-scheme-for-double-circuit-transmis.md]] 支持双回线路行波保护的思路，即利用故障回线和健康回线的高频暂态关系进行单端识别；结论限于作者仿真和录波范围。
-- [[sources/protection-system-representation-in-the-electromagnetic-transients-program-power.md]] 支持把保护、互感器和断路器反馈作为 EMT 闭环建模对象，而不是只离线判断保护动作。
+- [[a-new-distance-relaying-algorithm-based-on-complex-differential-equation-for-sym]] 在来源解读中说明其算法把对称分量、等效故障回路和并行线路互感纳入距离保护思路；当前证据不支持采用未核验的采样率、动作时间或成功率数字。
+- [[single-ended-travelling-wave-based-protection-scheme-for-double-circuit-transmis]] 支持双回线路行波保护的思路，即利用故障回线和健康回线的高频暂态关系进行单端识别；结论限于作者仿真和录波范围。
+- [[protection-system-representation-in-the-electromagnetic-transients-program-power]] 支持把保护、互感器和断路器反馈作为 EMT 闭环建模对象，而不是只离线判断保护动作。
 
 ## 与相关页面的关系
 
-- [[methods/distance-protection.md]] 解释距离保护的一般阻抗测量和区域判据。
-- [[methods/digital-distance-protection.md]] 解释数字算法、滤波和故障回路构造。
-- [[methods/parallel-transmission-line.md]] 和 [[models/transmission-line-model.md]] 关注平行线路本体模型。
-- [[methods/mutual-impedance.md]] 关注互阻抗参数本身。
-- [[topics/relay-protection.md]] 和 [[topics/protection-relay-modeling.md]] 关注保护系统目标和 EMT 建模框架。
+- [[distance-protection]] 解释距离保护的一般阻抗测量和区域判据。
+- [[digital-distance-protection]] 解释数字算法、滤波和故障回路构造。
+- [[parallel-transmission-line]] 和 [[transmission-line-model]] 关注平行线路本体模型。
+- [[mutual-impedance]] 关注互阻抗参数本身。
+- [[relay-protection]] 和 [[protection-relay-modeling]] 关注保护系统目标和 EMT 建模框架。
 
 ## 开放问题
 

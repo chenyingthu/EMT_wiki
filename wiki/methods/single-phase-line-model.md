@@ -11,15 +11,15 @@ created: "2026-05-02"
 
 单相线路模型是把一条线路简化为一个相导体及其返回路径的 EMT/电路表示。它可以是集中参数、π 型等值、常参数分布线路或 Bergeron 行波形式。其价值在于降低问题维度，适合教学、局部配电馈线、单相等效回路或经模态分解后的单一传播模态。
 
-该模型不应被当作所有配电线路或输电线路的默认表示。三相不平衡、地线/护套回流、平行线路耦合、非换位线路和宽频电缆暂态通常需要 [[methods/mutual-impedance.md]] 和 [[methods/distributed-parameter-line.md]] 表示。
+该模型不应被当作所有配电线路或输电线路的默认表示。三相不平衡、地线/护套回流、平行线路耦合、非换位线路和宽频电缆暂态通常需要 [[mutual-impedance]] 和 [[distributed-parameter-line]] 表示。
 
 ## EMT 中的作用
 
 单相线路模型常用于：
 
 - 构建简单的故障、开关和负荷接入算例。
-- 作为 [[methods/bergeron-line-model.md]] 或 [[methods/transmission-line-theory.md]] 的入门形式。
-- 表示多相系统经 [[methods/modal-transformation.md]] 后的某个独立模态。
+- 作为 [[bergeron-line-model]] 或 [[transmission-line-theory]] 的入门形式。
+- 表示多相系统经 [[modal-transformation]] 后的某个独立模态。
 - 在配电系统或低压网络中建立局部等效，但需明确返回导体和接地路径。
 
 在 EMT Wiki 中，本页应帮助读者判断“何时可以简化为单相”，而不是罗列未经来源绑定的典型参数表。
@@ -60,23 +60,23 @@ $$I_k(t)=\frac{V_k(t)}{Z_c}+I_{\text{hist},k}(t)$$
 
 - 必须定义返回路径。单相二线、相-地、芯线-护套和模态回路的参数含义不同。
 - 简化为单相会丢失相间互阻抗、零序耦合和不平衡传播；保护、故障定位和并行线路感应问题不能随意使用。
-- 对高频暂态，简单 R-L-C 参数可能无法表示 [[methods/earth-return-impedance.md]]、集肤效应和邻近效应。
+- 对高频暂态，简单 R-L-C 参数可能无法表示 [[earth-return-impedance]]、集肤效应和邻近效应。
 - 若单相模型来自模态变换，应说明它是“模态”等效，而不是物理单根导线。
 
 ## 代表性来源
 
-- [[sources/frequency-dependent-multiconductor-line-model-based-on-the-bergeron-method.md]]：说明多导体线路可分解为类似单相传播模态处理，但频变和互耦仍需在前处理阶段保留。
-- [[sources/assessment-of-the-transmission-line-theory-in-the-modeling-of-multiconductor-und.md]]：提醒短电缆快速暂态中，单相/简化 TLT 的返回路径假设需要验证。
-- [[sources/a-new-tool-for-calculation-of-line-and-cable-parameters.md]]：说明单相参数不是凭经验表格给出，而应从几何、材料和介质模型计算。
-- [[sources/transmission-line-model-for-variable-step-size-simulation-algorithms.md]]：可作为线路端口等值与时间步长关系的相关入口；具体算法边界需回原文确认。
+- [[frequency-dependent-multiconductor-line-model-based-on-the-bergeron-method]]：说明多导体线路可分解为类似单相传播模态处理，但频变和互耦仍需在前处理阶段保留。
+- [[assessment-of-the-transmission-line-theory-in-the-modeling-of-multiconductor-und]]：提醒短电缆快速暂态中，单相/简化 TLT 的返回路径假设需要验证。
+- [[a-new-tool-for-calculation-of-line-and-cable-parameters]]：说明单相参数不是凭经验表格给出，而应从几何、材料和介质模型计算。
+- [[transmission-line-model-for-variable-step-size-simulation-algorithms]]：可作为线路端口等值与时间步长关系的相关入口；具体算法边界需回原文确认。
 
 ## 与相关页面的关系
 
-- [[methods/lumped-parameter-model.md]] 是单相低阶实现之一。
-- [[methods/distributed-parameter-line.md]] 是保留传播效应的线路表示。
-- [[methods/mutual-impedance.md]] 说明单相简化会忽略哪些耦合。
-- [[models/cable-model.md]] 和 [[models/transmission-line-model.md]] 是具体设备模型页。
-- [[models/frequency-dependent-line-model.md]] 处理宽频参数和时域实现。
+- [[lumped-parameter-model]] 是单相低阶实现之一。
+- [[distributed-parameter-line]] 是保留传播效应的线路表示。
+- [[mutual-impedance]] 说明单相简化会忽略哪些耦合。
+- [[cable-model]] 和 [[transmission-line-model]] 是具体设备模型页。
+- [[frequency-dependent-line-model]] 处理宽频参数和时域实现。
 
 ## 修订与证据使用注意事项
 

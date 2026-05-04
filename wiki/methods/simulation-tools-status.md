@@ -56,6 +56,29 @@ created: "2026-05-02"
 
 这些维度应作为选择依据，而不是写成“某工具一定优于另一工具”。
 
+## 关键公式
+
+工具状态页的“数学形式”不是某个 EMT 求解器公式，而是证据记录的约束结构。可把一条工具证据写成如下元组：
+
+- $E_{tool}=(T,V,M,S,\Delta t,B,Q,L)$，其中 $T$ 是工具名称，$V$ 是版本或模块，$M$ 是模型入口，$S$ 是测试系统或工况，$\Delta t$ 是步长或实时周期，$B$ 是基准，$Q$ 是指标集合，$L$ 是证据边界。
+- 工具比较应在同一任务集合 $\mathcal{S}$ 和指标集合 $\mathcal{Q}$ 下进行，例如 $C(T_i,T_j\mid \mathcal{S},\mathcal{Q})$，而不是无条件排序。
+- 单篇论文的工具使用证据可记为 $E_{tool}\Rightarrow$ “该工具支持该算例中的验证流程”；不能直接推出 $T$ 对所有同类 EMT 问题都适用。
+
+这个形式化记录主要用于约束 Wiki 写作：缺少 $V$、$\Delta t$、$B$ 或 $Q$ 时，工具名称只能作为上下文，不能作为准确性、实时性或通用性的证明。
+
+## 字段完整性检查
+
+修订工具相关页面或 source 页时，可按下列 10 个字段检查证据是否足够：工具名称、版本、模块、模型入口、测试系统、仿真步长、硬件平台、对比基准、评价指标和失效边界。缺少其中任意字段时，不必删除工具信息，但应降低结论强度。
+
+典型记录方式包括：
+
+- 对离线 EMT 论文，至少记录工具名称、模型入口、测试系统、仿真步长和对比基准。
+- 对 [[real-time-simulation]] 或 [[hil-simulation]] 论文，还应记录硬件平台、I/O 延迟、固定步长和资源约束。
+- 对 [[co-simulation]]、[[modeling-language]] 或 [[netlist-import-export]] 相关论文，还应记录交换格式、时间同步方式和模型语义差异。
+- 对 [[tools-comparison-guide]] 或 [[model-verification-benchmark]]，应把指标 $Q$ 至少拆成 5 类可检查项：波形误差、事件时刻、稳态偏差、运行时间和资源占用；没有来源时只列“待核查字段”。
+
+这组字段不会证明某工具“更好”，但能防止把单个算例中的工具选择误写成领域级排序。
+
 ## 分类与变体
 
 | 工具类别 | 典型用途 | 证据使用方式 | 主要风险 |
@@ -84,17 +107,17 @@ created: "2026-05-02"
 
 ## 代表性证据
 
-- [[sources/real-time-hil-emulation-of-drm-with-machine-learning-accelerated-wbg-device-mode.md]]：该来源页把 PSCAD/EMTDC 和 SaberRD 作为离线对比工具，把 FPGA 作为实时实现平台；结论受 DRM 系统、器件模型和硬件平台约束。
-- [[sources/modeling-of-ac-machines-using-a-voltage-behind-reactance-formulation-for-simulat.md]]：展示论文中工具对比和性能指标应绑定模型基线、测试系统和步长，不能只写“与 PSCAD 一致”。
-- [[sources/accurate-simulation-model-for-a-three-phase-ferroresonant-circuit-in-emtpatp.md]]：代表 ATP 作为论文验证平台；贡献在变压器/断路器模型和实验对比，而不是 ATP 求解器本身。
+- [[real-time-hil-emulation-of-drm-with-machine-learning-accelerated-wbg-device-mode]]：该来源页把 PSCAD/EMTDC 和 SaberRD 作为离线对比工具，把 FPGA 作为实时实现平台；结论受 DRM 系统、器件模型和硬件平台约束。
+- [[modeling-of-ac-machines-using-a-voltage-behind-reactance-formulation-for-simulat]]：展示论文中工具对比和性能指标应绑定模型基线、测试系统和步长，不能只写“与 PSCAD 一致”。
+- [[accurate-simulation-model-for-a-three-phase-ferroresonant-circuit-in-emtpatp]]：代表 ATP 作为论文验证平台；贡献在变压器/断路器模型和实验对比，而不是 ATP 求解器本身。
 
 ## 与相关页面的关系
 
-- [[topics/tools-comparison-guide.md]]：主题页层面的工具选择综合；本页提供证据记录方法和边界纪律。
-- [[methods/modeling-language.md]]：说明工具如何表达模型。
-- [[methods/netlist-import-export.md]]：说明工具间交换模型文件的边界。
-- [[topics/real-time-simulation.md]]：关注硬实时求解、HIL 和硬件平台约束。
-- [[topics/model-verification-benchmark.md]]：提供跨工具对比和 benchmark 证据组织方式。
+- [[tools-comparison-guide]]：主题页层面的工具选择综合；本页提供证据记录方法和边界纪律。
+- [[modeling-language]]：说明工具如何表达模型。
+- [[netlist-import-export]]：说明工具间交换模型文件的边界。
+- [[real-time-simulation]]：关注硬实时求解、HIL 和硬件平台约束。
+- [[model-verification-benchmark]]：提供跨工具对比和 benchmark 证据组织方式。
 
 ## 修订与证据使用注意事项
 

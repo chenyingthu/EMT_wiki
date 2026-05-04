@@ -7,170 +7,62 @@ created: "2026-05-01"
 
 # 保护继电器建模 (Protection Relay Modeling)
 
-## 定义与概述
+## 定义与边界
 
-保护继电器建模是电力系统EMT仿真中的重要应用领域，用于验证继电保护装置在各种故障条件下的动作特性、选择性和速动性。随着电力电子设备的广泛应用和电网结构的复杂化，传统工频保护面临谐波干扰、高频暂态、直流分量等挑战，需要在EMT环境中进行详细的保护系统建模和验证。
+保护继电器建模是在 EMT 或实时仿真中表示测量链、判据算法、逻辑闭锁、通信延迟和跳闸接口的建模工作。它不是继电保护整定手册，也不能只用“速动性”“可靠性”这类目标词证明模型有效；保护结论必须绑定故障类型、采样率、滤波算法、互感器模型、断路器模型和一次系统模型。
 
-在EMT语境下，保护继电器模型通常包括：故障检测算法、测量元件、逻辑判断、出口跳闸等模块，需要与一次系统模型（线路、变压器、母线等）耦合验证。
+本页关注保护继电器如何进入 [[emt-simulation]]。具体设备模型可阅读 [[protection-control-device]]、[[differential-protection]]、[[distance-relay]]，故障注入和线路暂态可阅读 [[fault-analysis-methods]]、[[distributed-parameter-line]] 和 [[transmission-line-theory]]。
 
-## 作用机制
+## EMT 中的作用
 
-保护继电器EMT模型通常由以下部分组成：
+保护继电器模型在 EMT 中主要用于：
+
+- 检查故障波形、直流偏置、谐波、CT/PT 暂态和行波信号对保护判据的影响。
+- 验证距离保护、差动保护、纵联保护、直流保护和行波保护在特定故障场景下的动作边界。
+- 与 [[real-time-simulation]] 和 [[hil-simulation]] 结合，测试实际保护装置或控制器的闭环响应。
+- 将保护动作反馈到一次系统，例如跳闸、重合闸、闭锁或后备保护启动。
+
+## 主要分支与机制
+
+- 测量链模型：包括采样、滤波、互感器饱和、合并单元和通信延迟。若测量链简化，保护动作时间和误动/拒动结论应降级。
+- 工频量保护：距离、过流、差动和方向元件通常从电压电流基波量或序分量计算判据，适合与 [[phasor-measurement-unit]]、[[sequence-component-method]] 和 [[impedance-relay]] 衔接。
+- 暂态量保护：行波和高频保护依赖线路传播、反射、模态变换和高频采样。其有效性需要绑定线路模型和采样窗口。
+- 逻辑与执行：闭锁、允许、跳闸、重合闸和断路器失灵保护是离散事件逻辑，必须说明与连续 EMT 步进的同步方式。
+
+## 形式化表达
+
+保护继电器可抽象为从测量量到动作命令的离散逻辑系统：
 
 $$
-I_{fault} = \sqrt{i_d^2 + i_q^2}, \qquad Z_{measured} = \frac{V_{fault}}{I_{fault}}
+z_k = \mathcal{F}(v_{0:k}, i_{0:k}, p_m), \qquad
+\delta_k = \mathcal{R}(z_k, s_{k-1}, p_r)
 $$
 
-在时域仿真中，保护算法需要处理暂态过程中的谐波、衰减直流、频率偏移等问题。
+其中 $z_k$ 是滤波后的判据量，$p_m$ 是测量链参数，$\delta_k$ 是跳闸或闭锁命令，$s_{k-1}$ 是保护逻辑状态，$p_r$ 是整定和延时参数。EMT 验证需要同时检查 $\mathcal{F}$ 的波形保真和 $\mathcal{R}$ 的事件时序。
 
-- **故障检测元件**：过电流、欠电压、零序电流、负序分量检测
-- **距离保护**：阻抗计算、多边形特性、允许式/闭锁式逻辑
-- **行波保护**：小波变换、奇异熵理论、故障方向判别
-- **差动保护**：电流采样、比率制动、谐波制动、CT饱和识别
-- **频率保护**：频率跟踪、ROCOF（频率变化率）、矢量移位
-- **通信接口**：GOOSE、SV采样值、保护通道延时建模
+## 适用边界与失败模式
 
-## 适用边界
-
-- 详细保护模型适合保护整定验证、误动/拒动分析、配合协调研究
-- 行波保护需要高采样率(>100kHz)和行波传输线模型，不适合稳态潮流研究
-- 差动保护需要准确模拟CT/PT饱和特性，磁滞模型影响谐波制动性能
-- 通信延时对允许式纵联保护影响显著，典型通道延时2-10ms
-- 电力电子装置的高频谐波可能干扰传统工频保护，需专门验证
+- 未建模 CT 饱和、滤波延迟或通信延迟时，不应给出保护动作时间或选择性的强结论。
+- 只用正序或工频模型可能遗漏行波、高频暂态、直流分量和换流器限流造成的保护风险。
+- 行波保护和直流保护结论不能从单一线路长度、故障电阻或采样率外推到所有电网。
+- HIL 结果还受接口延迟、数模转换、放大器带宽和实际装置固件影响，应和仿真模型边界分开报告。
 
 ## 代表性来源
 
-| 论文 | 年份 | 关联要点 |
-|------|------|----------|
-| [[a-novel-ultra-high-speed-traveling-wave-protection-principle-for-vsc-based-dc-grids|A Novel Ultra-High-Speed Traveling-Wave Protection Principle) | 2019 | VSC直流电网超高速行波保护原理，无需通信实现故障区段识别 |
-| [[single-ended-travelling-wave-based-protection-scheme-for-double-circuit-transmission-lines|Single-Ended Travelling Wave-Based Protection Scheme) | 2017 | 双回线路单端行波保护方案，利用模态传输特性判别故障 |
-| [[distance-protection-scheme-for-dc-distribution-systems-based-on-the-high-frequency-characteristics-of-faults|Distance Protection Scheme for DC Distribution Systems) | 2019 | 基于故障高频特性的直流配电网距离保护 |
-| [[application-of-wavelet-singular-entropy-theory-in-transient-protection|Application of Wavelet Singular Entropy Theory) | 2009 | 小波奇异熵理论在暂态保护和加速跳闸中的应用 |
-| [[a-novel-substation-back-up-protection-based-on-communication-channel-of-pilot-protection|A Novel Substation Back-Up Protection) | 2013 | 利用纵联保护通信通道的变电站后备保护 |
-| [[protection-system-representation-in-the-electromagnetic-transients-program|Protection System Representation in EMTP) | 2004 | EMTP中的保护系统表示方法 |
+- [[protection-system-representation-in-the-electromagnetic-transients-program-power]] 支撑在 EMTP 中表示保护系统的基本思路，适合作为保护逻辑和一次系统耦合的来源入口。
+- [[using-tacs-functions-within-empt-to-teach-protective-relaying-fundamentals-power]] 可作为 TACS/EMTP 保护教学和算法表达的来源，但不应外推为工程继电器通用验证。
+- [[a-new-distance-relaying-algorithm-based-on-complex-differential-equation-for-sym]] 支撑距离保护算法与复杂微分方程处理的讨论。
+- [[single-ended-travelling-wave-based-protection-scheme-for-double-circuit-transmis]] 和 [[a-novel-ultra-high-speed-traveling-wave-protection-principle-for-vsc-based-dc-gr]] 可作为行波保护来源入口，结论应限定在作者线路和直流系统算例。
 
-## 技术演进脉络
+## 与相关页面的关系
 
-### 1990-2000年：数字保护基础
-- **微机保护兴起** (1990s)
-  - 传统电磁式继电器被数字保护取代，算法可编程化
-- **EMTP保护模型** (1995-1999)
-  - 在EMTP/ATP中建立数字保护元件库，支持TACS控制
+- [[relay-protection]] 是继电保护主题页；本页聚焦 EMT 建模方法和验证边界。
+- [[distance-relay]]、[[differential-protection]] 和 [[protection-control-device]] 是模型页，承载具体保护元件的结构。
+- [[wide-area-monitoring-protection]] 讨论广域测量和控制闭环，涉及通信和系统级动作。
+- [[fault-analysis]] 与 [[fault-analysis-methods]] 提供故障场景和故障注入方法。
 
-### 2001-2010年：行波与暂态保护
-- **小波变换保护** (2004-2009)
-  - 引入小波变换分析暂态信号，提出小波奇异熵保护判据
-- **行波保护原理** (2007-2010)
-  - 利用故障产生的行波实现超高速保护，动作时间<1ms
+## 开放问题
 
-### 2011-2018年：直流与交流新挑战
-- **直流配电网保护** (2012-2016)
-  - 针对直流配网缺乏自然过零点，提出高频特性距离保护
-- **VSC直流电网保护** (2017-2019)
-  - 提出无需通信的行波保护原理，实现直流故障快速隔离
-
-### 2019-2026年：智能化与适应性
-- **AI辅助保护** (2020-2023)
-  - 利用机器学习识别复杂故障模式，提高保护适应性
-- **宽频保护** (2024-2026)
-  - 覆盖工频至10kHz的宽频保护，应对电力电子装置谐波
-
-## 关键发现汇总
-
-### 保护精度与速动性
-- **[2009]** 小波奇异熵在故障后1/4周期内即可判别故障，速度比传统保护快2-3倍
-- **[2017]** 单端行波保护利用模态传输特性，测距误差<1%，无需对端通信
-- **[2019]** VSC直流电网行波保护动作时间<1ms，识别可靠性>99%
-
-### 关键技术突破
-- **[2012]** 直流距离保护利用故障高频特征(>1kHz)实现故障定位，误差<5%
-- **[2013]** 基于纵联保护通道的后备保护，通信延时可接受(5-10ms)
-- **[2020]** AI辅助保护在复杂故障识别准确率>95%，误动率降低50%
-
-### 应用效果验证
-- **[2004]** EMTP保护模型与实际继电器动作一致性>98%，可用于整定验证
-- **[2019]** 直流配网高频保护在实验室验证中速动性提升40%
-- **[2023]** 宽频保护在新能源并网中谐波干扰识别准确率>92%
-
-### 前沿研究方向
-- **无通信保护**：利用本地量测实现分布式保护，避免通信依赖
-- **数字孪生保护**：实时保护模型与物理设备同步，实现预测性保护
-- **自适应保护**：根据系统运行方式自动调整保护定值
-- **行波测距融合**：结合行波和阻抗测距，提高故障定位精度
-
-## 深度增强内容
-
-### 1. 保护类型与适用场景
-
-| 保护类型 | 适用范围 | 典型动作时间 | EMT建模要点 |
-|---------|---------|-------------|------------|
-| 过电流保护 | 配电线路、变压器 | 50-500ms | 电流采样、时间-电流特性 |
-| 距离保护 | 高压输电线路 | 20-100ms | 阻抗计算、多边形特性 |
-| 行波保护 | 超高压线路、直流 | <10ms | 高采样率、小波变换 |
-| 差动保护 | 变压器、母线、发电机 | 10-40ms | CT/PT饱和、谐波制动 |
-| 频率保护 | 孤岛检测、低频减载 | 100-500ms | 频率跟踪、ROCOF |
-
-### 2. 典型参数参考
-
-**采样与计算参数**:
-| 参数 | 典型值 | 说明 |
-|-----|-------|------|
-| 采样率 | 4-100kHz | 行波保护需要>100kHz |
-| 数据窗长 | 1/4-1周期 | 影响速度与精度平衡 |
-| 滤波截止频率 | 300-400Hz | 工频保护用低通滤波 |
-
-**通信参数**:
-| 参数 | 典型值 | 说明 |
-|-----|-------|------|
-| GOOSE延时 | 3-10ms | 过程层到间隔层 |
-| 光纤通道延时 | 2-5ms/100km | 纵联保护通道 |
-| SV采样同步 | <1μs | 合并单元同步精度 |
-
-### 3. 模型选择指南
-
-| 研究目标 | 推荐模型 | 关键考量 |
-|---------|---------|---------|
-| 保护整定验证 | 详细继电器模型 | 算法与实际一致 |
-| 故障分析 | 简化保护逻辑 | 关注一次系统暂态 |
-| 配合协调 | 多保护联合仿真 | 通信延时建模 |
-| 行波测距 | 分布式参数线路+高采样 | 波阻抗匹配 |
-| 直流保护 | 高频特性模型 | 考虑谐波影响 |
-
-### 4. 前沿研究方向
-
-**数字化保护**:
-- IEC 61850过程总线保护，采样值传输替代传统电缆
-- 软件定义保护，保护逻辑可动态重构
-
-**人工智能保护**:
-- 深度学习故障识别，适应复杂系统运行方式
-- 迁移学习实现保护模型快速适配
-
-**宽频保护**:
-- 覆盖10Hz-10kHz的宽频带保护
-- 电力电子装置谐波干扰下的保护适应性
-
-## 相关方法
-- [[state-space-method|状态空间法) - 保护系统状态空间建模
-- [[wavelet-analysis|小波分析) - 行波保护信号处理
-- [[numerical-integration|数值积分) - 保护算法离散化实现
-- [[real-time-simulation|实时仿真) - 保护装置HIL测试
-- [[multirate-method|多速率方法) - 保护采样与系统仿真协调
-
-## 相关模型
-- [[transmission-line-model|输电线路模型) - 故障定位与行波传播
-- [[transformer-model|变压器模型) - 励磁涌流与内部故障
-- [[vsc-model|VSC模型) - 直流保护验证
-- [[grounding-system-model|接地系统模型) - 接地故障分析
-- [[synchronous-machine-model|同步电机模型) - 发电机保护
-
-## 相关主题
-- [[real-time-simulation) - 保护实时仿真测试
-- [[vsc-hvdc) - 直流电网保护挑战
-- [[co-simulation) - 保护与控制系统联合仿真
-- [[wind-farm-modeling) - 新能源并网保护
-- [[network-equivalent) - 保护研究中的网络等值
-
----
-
-*本页面基于Karpathy LLM Wiki Pattern构建，内容来自EMT领域学术文献的深度分析*
+- 如何在保护厂家黑盒算法不可公开时报告可审核的模型等效和误差边界。
+- 如何统一 EMT 波形、实际录波和 HIL 测试之间的保护动作证据。
+- 如何在换流器型电源比例较高的系统中重新定义保护判据的适用边界。

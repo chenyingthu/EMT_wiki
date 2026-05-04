@@ -26,7 +26,7 @@ created: "2026-05-02"
 
 - 测量阻抗 $Z_m=R_m+jX_m$。
 - 动作域判定：动作、闭锁、延时、反向或负荷区限制。
-- 分区保护中的区段启动信号，供 [[methods/distance-protection.md]] 逻辑使用。
+- 分区保护中的区段启动信号，供 [[distance-protection]] 逻辑使用。
 
 ## 核心机制
 
@@ -84,22 +84,22 @@ $$
 - 负荷阻抗可能接近动作区，长线路、重负荷和低功率因数工况需要负荷限制。
 - 系统振荡会让视在阻抗缓慢穿越动作区，必须与短路故障突变量区分。
 - 近端三相故障或电压很低时，方向判别可能需要记忆电压或交叉极化。
-- CT/CVT 暂态会改变继电器输入量；用于 EMT 验证时应参考 [[topics/protection-relay-modeling.md]] 的测量链路。
+- CT/CVT 暂态会改变继电器输入量；用于 EMT 验证时应参考 [[protection-relay-modeling]] 的测量链路。
 - 阻抗继电器不适用于所有故障和所有系统。高阻故障、电力电子限流、串补线路、平行线路和混合线路均需专门验证。
 
 ## 代表性证据
 
-- [[sources/a-new-distance-relaying-algorithm-based-on-complex-differential-equation-for-sym.md]] 支持阻抗元件可以由对称分量和时域微分方程估计得到；该来源不支持未核验的通用动作时间或误差指标。
-- [[sources/a-novel-distance-protection-algorithm-in-frequency-domain-based-on-parameter-ide.md]] 说明阻抗/距离判据可转化为参数辨识问题，以处理单相接地远端高阻场景；其结论受模型和故障类型约束。
-- [[sources/protection-system-representation-in-the-electromagnetic-transients-program-power.md]] 支持在 EMT 中把继电器元件、互感器和断路器反馈合并验证，而不是只看静态阻抗圆。
+- [[a-new-distance-relaying-algorithm-based-on-complex-differential-equation-for-sym]] 支持阻抗元件可以由对称分量和时域微分方程估计得到；该来源不支持未核验的通用动作时间或误差指标。
+- [[a-novel-distance-protection-algorithm-in-frequency-domain-based-on-parameter-ide]] 说明阻抗/距离判据可转化为参数辨识问题，以处理单相接地远端高阻场景；其结论受模型和故障类型约束。
+- [[protection-system-representation-in-the-electromagnetic-transients-program-power]] 支持在 EMT 中把继电器元件、互感器和断路器反馈合并验证，而不是只看静态阻抗圆。
 
 ## 与相关页面的关系
 
-- [[methods/distance-protection.md]] 是包含阻抗继电器、分区逻辑和保护配合的上层方法页。
-- [[methods/digital-distance-protection.md]] 关注数字实现中的采样、滤波和参数估计。
-- [[models/distance-relay.md]] 是距离继电器模型页，偏设备/元件描述。
-- [[methods/impedance-measurement.md]] 关注阻抗测量的通用概念。
-- [[models/fault-impedance-model.md]] 解释故障阻抗如何影响测量阻抗。
+- [[distance-protection]] 是包含阻抗继电器、分区逻辑和保护配合的上层方法页。
+- [[digital-distance-protection]] 关注数字实现中的采样、滤波和参数估计。
+- [[distance-relay]] 是距离继电器模型页，偏设备/元件描述。
+- [[impedance-measurement]] 关注阻抗测量的通用概念。
+- [[fault-impedance-model]] 解释故障阻抗如何影响测量阻抗。
 
 ## 开放问题
 

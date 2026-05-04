@@ -7,196 +7,67 @@ created: "2026-05-02"
 
 # IEEE 118 Bus System
 
-## 概述
+## 定义与边界
 
-IEEE 118节点系统是美国电力系统研究中最常用的标准测试系统之一，由IEEE电力系统稳定子委员会于1980年代发布。该系统包含54台发电机、118条母线、186条支路（包括输电线路和变压器），总装机容量约10,000 MW，总负荷约4,200 MW。IEEE 118节点系统广泛用于大规模电力系统分析、优化算法测试、稳定性研究和先进控制策略验证。
+IEEE 118 bus system 是用于输电网潮流、稳定性、优化和大规模算法研究的标准测试系统。它通常作为正序、稳态或机电暂态 benchmark 使用；若用于 EMT，需要额外补充线路频变参数、变压器详细模型、保护定值、控制器、负荷动态和扰动脚本。
 
-## 系统结构
+本页作为 topic 页说明 IEEE 118 在 EMT 知识网络中的使用边界。具体测试系统条目可阅读 [[ieee-118-bus-system]] 下的 test-system 页面；更小规模测试可参考 [[ieee-14-bus-system]]、[[ieee-39-bus-system]] 和 [[ieee-57-bus-system]]。
 
-### 网络规模
-| 参数 | 数值 |
-|------|------|
-| 母线数 | 118 |
-| 发电机 | 54台 |
-| 负荷母线 | 99条 |
-| 支路数 | 186条（线路+变压器）|
-| 变压器 | 9台 |
-| 分区数 | 9个区域 |
+## EMT 中的作用
 
-### 电压等级
-- **345 kV**: 主输电网
-- **138 kV**: 次输电网
-- **69 kV**: 配电网接口
+IEEE 118 可作为大规模 EMT 或混合仿真的外部交流系统、算法测试系统或初始化来源：
 
-### 发电机配置
-| 类型 | 数量 | 容量范围 | 特点 |
-|------|------|----------|------|
-| 大型火电 | 12 | 100-800 MW | 基荷机组 |
-| 中型机组 | 22 | 50-200 MW | 腰荷机组 |
-| 小型机组 | 20 | 5-50 MW | 调峰机组 |
+- 检查 [[power-flow-calculation]]、[[optimal-power-flow]] 和 [[economic-dispatch]] 结果如何进入 EMT 初值。
+- 测试 [[large-scale-grid-simulation]]、[[parallel-computing]]、[[network-partitioning]] 和 [[model-order-reduction]] 的规模边界。
+- 作为新能源、FACTS、HVDC 或保护研究的背景网络，但需要明确改造位置和动态参数来源。
+- 支撑跨工具对比和 benchmark 报告，但不能替代具体 EMT 设备模型验证。
 
-## 系统参数
+## 主要分支与机制
 
-### 基准值
-- **基准容量**: 100 MVA
-- **系统频率**: 60 Hz
-- **总发电**: 9,968 MW
-- **总有功负荷**: 4,242 MW
-- **总无功负荷**: 1,438 Mvar
+- 稳态网络：以节点、支路、变压器和发电/负荷数据构成正序潮流系统，常用于 OPF 和潮流算法。
+- 动态扩展：加入发电机、励磁、调速、PSS、负荷和保护模型后，才可用于机电暂态或 EMT 研究。
+- EMT 改造：需要把线路、变压器、负荷、换流器或故障点转化为相域或三相模型，并说明外部系统等值。
+- 大规模求解：节点数和支路数使其适合检验矩阵组装、稀疏求解、分区和并行调度。
 
-### 负荷分布
-- **有功负荷**: 4,242 MW
-- **无功负荷**: 1,438 Mvar
-- **负荷功率因数**: 0.95（滞后）
-- **重载区域**: 5, 12, 23, 38号母线
+## 形式化表达
 
-### 输电线路
-- **345 kV线路**: 主干网架
-- **138 kV线路**: 次输电网
-- **线路类型**: 单回、双回、多回
-- `ac-transmission-line` - 交流输电线路
+IEEE 118 的基础潮流模型可写为：
 
-## 应用场景
+$$
+I=Y_{\mathrm{bus}}V,\qquad
+P_i+jQ_i=V_i I_i^\ast
+$$
 
-### 大规模系统分析
-- [[large-scale-system-simulation]] - 大规模系统仿真
-- **潮流计算**: 大规模收敛性测试
-- `power-flow-analysis` - 潮流分析
-- **稳定性**: 暂态/小信号稳定研究
-- [[transient-stability]] - 暂态稳定
+其中 $Y_{\mathrm{bus}}$ 是标准测试系统给出的正序网络矩阵。进入 EMT 时，必须进一步定义三相网络、动态状态 $x$、控制器 $c$ 和扰动集合 $\mathcal{D}$：
 
-### 优化算法测试
-- **最优潮流**: OPF算法验证
-- [[optimal-power-flow]] - 最优潮流
-- **经济调度**: ED问题求解
-- [[economic-dispatch]] - 经济调度
-- **机组组合**: UC问题
-- `unit-commitment` - 机组组合
+$$
+\mathcal{S}_{\mathrm{EMT}} = \{Y_{abc},x_0,c,\mathcal{D},h\}
+$$
 
-### 控制策略验证
-- **广域控制**: WAMS应用
-- `wide-area-control` - 广域控制
-- **阻尼控制**: PSS/STATCOM协调
-- `power-oscillation-damping` - 功率振荡阻尼
+没有这些扩展时，IEEE 118 只能作为稳态或机电背景，不能支撑详细 EMT 结论。
 
-### 新能源并网
-- [[renewable-energy-integration]] - 可再生能源并网
-- **风电接入**: 大规模风电并网
-- [[wind-farm-modeling]] - 风电场建模
-- **光伏接入**: 分布式光伏
-- [[pv-power-plant]] - 光伏电站
+## 适用边界与失败模式
 
-## 数学模型
+- 标准 IEEE 118 数据不包含完整 EMT 所需的设备高频参数、保护定值和控制器细节。
+- 若把 IEEE 118 用作外部系统等值，应说明保留哪些区域、哪些母线被等值、边界注入如何处理。
+- 新能源、HVDC 或 FACTS 改造后的结论只对改造版本成立，不能写成 IEEE 118 原始系统性质。
+- 不同数据版本可能有参数差异，报告时应说明数据来源和格式。
 
-### 节点导纳矩阵
-$$I = Y_{bus}V$$
+## 代表性来源
 
-其中：
-- $Y_{bus}$: 118×118 复数矩阵
-- 稀疏度: >99%
-- [[nodal-admittance-matrix]] - 节点导纳矩阵
+- [[large-scale-hybrid-real-time-simulation-modeling-and-benchmark-for-nelson-river-]] 可作为大规模 benchmark 和实时仿真证据边界的参考。
+- [[lessons-learned-in-porting-offline-large-scale-power-system-simulation-to-real-t]] 支撑离线大规模模型移植到实时平台时的工程边界。
+- [[benchmark-high-fidelity-emt-models-for-power]] 说明高保真 EMT benchmark 需要明确模型层级和验证指标。
 
-### 潮流方程
-$$P_i = \sum_{j=1}^{118} V_i V_j (G_{ij}\cos\theta_{ij} + B_{ij}\sin\theta_{ij})$$
-$$Q_i = \sum_{j=1}^{118} V_i V_j (G_{ij}\sin\theta_{ij} - B_{ij}\cos\theta_{ij})$$
+## 与相关页面的关系
 
-### 稳定模型
-- **经典模型**: 二阶摇摆方程
-- **详细模型**: 6阶发电机模型
-- [[synchronous-machine-model]] - 同步电机模型
+- [[model-verification-benchmark]] 讨论 benchmark 流程和误差证据。
+- [[large-scale-system-simulation]]、[[large-scale-grid-simulation]] 和 [[large-scale-power-system]] 讨论规模化系统仿真问题。
+- [[power-flow-calculation]] 和 [[optimal-power-flow]] 处理该系统的常见稳态用途。
+- [[ieee-39-bus-system]]、[[ieee-14-bus-system]] 和 [[ieee-57-bus-system]] 是规模较小的相关测试系统。
 
-## 测试系统特点
+## 开放问题
 
-### 区域互联
-- **9个区域**: 模拟互联系统
-- **联络线**: 区域间功率交换
-- `inter-area-oscillation` - 区间振荡研究
-- **弱联络**: 稳定极限研究
-
-### 电压分布
-- **电压范围**: 0.95-1.05 pu
-- **重载母线**: 电压支撑需求
-- **无功分布**: 优化配置研究
-
-### 稳定性特征
-- **暂态稳定**: 故障后首摆稳定
-- **小信号稳定**: 机电振荡模式
-- [[small-signal-stability]] - 小信号稳定
-- **电压稳定**: 负荷极限分析
-- `voltage-stability` - 电压稳定
-
-## 与IEEE 39节点对比
-
-| 特性 | IEEE 39 | IEEE 118 |
-|------|---------|----------|
-| 母线数 | 39 | 118 |
-| 发电机 | 10 | 54 |
-| 支路 | 46 | 186 |
-| 分区 | 1 | 9 |
-| 矩阵规模 | 39×39 | 118×118 |
-| 应用场景 | 教学/基础 | 研究/验证 |
-| 计算量 | 小 | 大 |
-
-## 数据格式
-
-### 潮流数据
-```
-母线数据: 编号、类型、电压、负荷P/Q
-支路数据: 首末端、电阻、电抗、电纳
-发电机数据: 母线、有功、电压设定、极限
-变压器数据: 分接头、变比、阻抗
-```
-
-### 动态数据
-- **发电机**: 惯性常数H、阻尼系数D
-- **励磁系统**: IEEE标准模型
-- [[excitation-system]] - 励磁系统
-- **调速系统**: 汽轮机/水轮机
-- `governor-model` - 调速系统
-
-## 软件实现
-
-### 商业软件
-- **PSS/E**: 内置IEEE 118数据
-- **PowerFactory**: 标准测试案例
-- **MATLAB**: 可导入数据文件
-
-### 开源工具
-- **PSAT**: 包含IEEE 118
-- **PST**: Power System Toolbox
-- `psat` - PSAT
-
-## 基准结果
-
-### 潮流基准
-- **总损耗**: 约 2-3%
-- **最大电压角**: < 45°
-- **临界母线**: 12, 38, 76号
-
-### 稳定基准
-- **临界切除时间**: 根据故障位置
-- **稳定裕度**: 典型值 15-20%
-
-## 扩展应用
-
-### 可靠性评估
-- **N-1安全**: 支路N-1校验
-- `n-1-security` - N-1安全
-- **概率潮流**: 不确定性分析
-
-### 优化配置
-- **无功优化**: 电容器/电抗器配置
-- `reactive-power-optimization` - 无功优化
-- **网架规划**: 扩建方案
-
-## 相关测试系统
-- [[ieee-39-bus-system]] - IEEE 39节点系统
-- [[ieee-14-bus-system]] - IEEE 14节点系统
-- [[ieee-57-bus-system]] - IEEE 57节点系统
-- `ieee-300-bus-system` - IEEE 300节点系统
-
-## 来源论文
-- P. M. Anderson, "Power System Control and Stability"
-- IEEE Committee Report, "IEEE 118 Bus Test System"
-
-参见 [[index]] 获取更多IEEE 118节点系统相关文献。
+- 如何公开一套可复现的 IEEE 118 三相 EMT 扩展版本。
+- 如何为 IEEE 118 中的负荷、保护和控制器补充可信动态参数。
+- 如何报告以 IEEE 118 为背景网络的新能源或 HVDC 改造，使结论不被误读为原始 benchmark 属性。

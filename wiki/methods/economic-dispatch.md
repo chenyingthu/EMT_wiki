@@ -27,7 +27,7 @@ created: "2026-05-02"
 - 各机组有功出力设定值；
 - 系统边际成本或拉格朗日乘子；
 - 约束是否紧绑定及相应的影子价格；
-- 可作为 [[methods/power-flow-calculation.md]] 或 [[methods/steady-state-initialization.md]] 输入的稳态运行点。
+- 可作为 [[power-flow-calculation]] 或 [[steady-state-initialization]] 输入的稳态运行点。
 
 ## 数学形式
 
@@ -49,7 +49,7 @@ $$
 P_{Gi}^{min} \leq P_{Gi} \leq P_{Gi}^{max}
 $$
 
-其中 $P_{Gi}$ 为第 $i$ 台机组有功出力，$P_D$ 为负荷有功需求，$P_{loss}$ 为由网络模型给出的有功损耗。若不显式考虑网络，则 $P_{loss}$ 可被忽略或作为外部估计量处理；若纳入线路约束和电压约束，问题会接近或并入 [[methods/optimal-power-flow.md]]。
+其中 $P_{Gi}$ 为第 $i$ 台机组有功出力，$P_D$ 为负荷有功需求，$P_{loss}$ 为由网络模型给出的有功损耗。若不显式考虑网络，则 $P_{loss}$ 可被忽略或作为外部估计量处理；若纳入线路约束和电压约束，问题会接近或并入 [[optimal-power-flow]]。
 
 在可微凸成本和无紧绑定不等式约束的简化条件下，最优性条件可表示为等微增率：
 
@@ -75,9 +75,9 @@ $$
 经济调度与 EMT 的连接主要发生在工况层：
 
 - 为 EMT 算例提供发电机有功出力、负荷水平和潮流目标；
-- 与 [[methods/power-flow-calculation.md]] 联合生成同步机、变压器、线路和换流器的稳态初值；
-- 在 [[methods/electromechanical-electromagnetic-hybrid-simulation.md]] 中，机电侧或调度侧可给出慢时间尺度的运行点，EMT 侧保留局部瞬时动态；
-- 对含新能源和电力电子设备的研究，可作为 [[topics/renewable-energy-integration.md]] 工况筛选的一部分。
+- 与 [[power-flow-calculation]] 联合生成同步机、变压器、线路和换流器的稳态初值；
+- 在 [[electromechanical-electromagnetic-hybrid-simulation]] 中，机电侧或调度侧可给出慢时间尺度的运行点，EMT 侧保留局部瞬时动态；
+- 对含新能源和电力电子设备的研究，可作为 [[renewable-energy-integration]] 工况筛选的一部分。
 
 经济调度本身通常不解析开关波形、谐波、暂态过电压、换流器保护动作或快速控制环细节。这些问题需要 EMT 模型、控制器模型和时域仿真支撑。
 
@@ -92,16 +92,16 @@ $$
 
 ## 代表性来源
 
-- [[sources/damping-of-subsynchronous-control-interactions-in-large-scale-pv-installations-t.md]]：可作为“运行优化/调度设定参与动态安全控制”的相关证据；具体控制效果和时间裕度必须绑定原文测试系统。
-- [[sources/electromechanical-transient-modeling-of-modular-multilevel-converter-based-multi.md]]：展示交直流系统运行点和潮流初始化对后续动态模型的重要性，但不把经济调度本身写成 EMT 求解器。
-- [[sources/a-hybrid-simulation-tool-for-the-study-of-pv-integration-impacts-on-distribution.md]]：说明慢时间尺度相量/QSTS 计算可与 EMT 局部模型协同；其结论应限制在原文接口和配电网场景内。
+- [[damping-of-subsynchronous-control-interactions-in-large-scale-pv-installations-t]]：可作为“运行优化/调度设定参与动态安全控制”的相关证据；具体控制效果和时间裕度必须绑定原文测试系统。
+- [[electromechanical-transient-modeling-of-modular-multilevel-converter-based-multi]]：展示交直流系统运行点和潮流初始化对后续动态模型的重要性，但不把经济调度本身写成 EMT 求解器。
+- [[a-hybrid-simulation-tool-for-the-study-of-pv-integration-impacts-on-distribution]]：说明慢时间尺度相量/QSTS 计算可与 EMT 局部模型协同；其结论应限制在原文接口和配电网场景内。
 
 ## 与相关页面的关系
 
-- [[methods/power-flow-calculation.md]] 给出稳态网络方程和节点电压，是把调度出力转化为网络运行点的常用环节。
-- [[methods/optimal-power-flow.md]] 将经济目标与潮流方程、线路约束、电压约束等统一进一个优化模型。
-- [[methods/steady-state-initialization.md]] 说明如何把稳态运行点转换为 EMT 初始状态。
-- [[topics/emt-simulation.md]] 关注瞬时值时域仿真，与经济调度处于不同建模层级。
+- [[power-flow-calculation]] 给出稳态网络方程和节点电压，是把调度出力转化为网络运行点的常用环节。
+- [[optimal-power-flow]] 将经济目标与潮流方程、线路约束、电压约束等统一进一个优化模型。
+- [[steady-state-initialization]] 说明如何把稳态运行点转换为 EMT 初始状态。
+- [[emt-simulation]] 关注瞬时值时域仿真，与经济调度处于不同建模层级。
 
 ## 证据边界
 

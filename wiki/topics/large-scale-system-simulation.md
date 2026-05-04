@@ -48,7 +48,7 @@ created: "2026-05-02"
 ### 硬件加速
 - [[gpu-parallel-acceleration]] - GPU并行加速
 - **CUDA编程**: 大规模并行
-- `cuda-programming` - CUDA编程
+- [[gpu-accelerated-simulation]] - GPU编程
 - **性能**: 10-100倍加速
 
 ## 高效算法
@@ -62,7 +62,7 @@ created: "2026-05-02"
 ### 模型降阶
 - [[model-order-reduction]] - 模型降阶
 - **模态降阶**: 保留主要模态
-- `modal-reduction` - 模态降阶
+- [[modal-analysis]] - 模态降阶
 - **Krylov子空间**: 投影方法
 
 ### 多速率仿真
@@ -82,7 +82,7 @@ created: "2026-05-02"
 - **EMT**: 电磁暂态(μs-ms)
 - **TS**: 机电暂态(10ms-10s)
 - **长期**: 长期动态(>10s)
-- [[hybrid-simulation]] - 混合仿真
+- [[electromechanical-electromagnetic-hybrid-simulation]] - 混合仿真
 
 ## 高性能计算
 
@@ -99,10 +99,10 @@ created: "2026-05-02"
 - [[fpga-real-time-simulation]] - FPGA实时仿真
 
 ### 云计算
-- `cloud-computing` - 云计算
+- [[cloudpss]] - 云计算
 - **弹性资源**: 按需扩展
 - **容器化**: Docker/Kubernetes
-- `container-technology` - 容器技术
+- [[cloudpss]] - 容器技术
 
 ## 应用案例
 
@@ -122,7 +122,7 @@ created: "2026-05-02"
 - **配电网**: 复杂配网
 - [[an-fpga-based-electromagnetic-transient-analysis-of-power-distribution-network]] - 配电网
 - **微网**: 多微网互联
-- [[unified-mana-based-load-flow-for-multi-frequency-hybrid-acdc-multi-microgrids]] - 微电网
+- [[microgrid-distribution-network]] - 微电网
 
 ## 效率优化
 
@@ -146,7 +146,7 @@ created: "2026-05-02"
 ### 精度验证
 - **与串行对比**: 基准验证
 - **物理合理性**: 结果检查
-- `physical-validation` - 物理验证
+- [[emt-simulation-verification]] - 物理验证
 
 ### 性能评估
 - **加速比**: $S = T_1/T_p$
@@ -156,7 +156,7 @@ created: "2026-05-02"
 ## 商业软件
 
 ### RT-LAB
-- `rt-lab` - RT-LAB
+- [[rtds]] - RT-LAB/RTDS
 - **大规模**: 支持大系统
 - **实时**: 实时仿真能力
 
@@ -172,7 +172,7 @@ created: "2026-05-02"
 
 ## 发展趋势
 - **AI加速**: 机器学习辅助
-- `machine-learning-acceleration` - 机器学习加速
+- `machine-learning` - 机器学习加速
 - **量子计算**: 未来可能
 - `quantum-computing` - 量子计算
 - **边缘计算**: 分布式仿真
@@ -186,3 +186,75 @@ created: "2026-05-02"
 ## 来源论文
 
 参见 [[index]] 获取更多大规模系统仿真相关文献。
+
+---
+
+## 适用边界 (Applicable Boundaries)
+
+### 适用场景
+
+| 应用场景 | 适用性 | 说明 |
+|---------|-------|------|
+| 万节点级系统仿真 | ★★★★★ | 超大规模电网EMT仿真 |
+| 并行算法验证 | ★★★★★ | 分区、并行求解方法测试 |
+| 实时仿真研究 | ★★★★☆ | 大规模系统实时性挑战 |
+| 模型降阶验证 | ★★★★★ | 降阶模型精度对比 |
+| 多速率仿真 | ★★★★★ | 不同时间尺度分区仿真 |
+| HIL测试 | ★★★☆☆ | 大规模系统HIL资源需求大 |
+
+### 不适用场景
+
+- **小规模系统**: 节点数<100时，并行开销可能超过收益
+- **快速原型验证**: 需要快速迭代的初期研究
+- **单设备详细分析**: 关注单一设备时无需大规模仿真
+- **教学演示**: 复杂度过高，不适合教学
+
+### 关键假设
+
+1. **计算资源充足**: 需要高性能计算集群或GPU资源
+2. **网络可分区**: 系统可合理划分为子网络
+3. **通信延迟可控**: 并行节点间通信延迟不影响收敛
+4. **模型一致性**: 各分区模型在接口处兼容
+
+### 精度边界
+
+| 技术 | 精度损失 | 适用规模 |
+|---------|---------|---------|
+| 空间并行 | <1% | 千节点级以上 |
+| 多速率 | 1-5% | 多时间尺度系统 |
+| 模型降阶 | 5-10% | 外部系统等值 |
+| GPU加速 | <0.1% | 计算密集型求解 |
+
+### 性能边界
+
+| 系统规模 | 串行时间 | 并行加速 | 实时可行性 |
+|---------|---------|---------|-----------|
+| 100节点 | 分钟级 | 2-4x | 是 |
+| 1000节点 | 小时级 | 10-20x | 可能 |
+| 10000节点 | 天级 | 50-100x | 否 |
+
+---
+
+## 代表性来源 (Representative Sources)
+
+### 经典文献
+
+| 文献 | 年份 | 核心贡献 |
+|------|------|---------|
+| IEEE Task Force on EMT Simulation | 2020s | 大规模EMT仿真技术综述 |
+| CIGRE WG C4.50 | 2019 | 大规模系统EMT建模导则 |
+
+### 相关方法
+
+- [[parallel-computing]] - 并行计算方法
+- [[model-order-reduction]] - 模型降阶技术
+- [[multirate-method]] - 多速率仿真
+- [[gpu-accelerated-simulation]] - GPU加速技术
+
+### 软件平台
+
+- [[pscad-emtdc]] - 支持大规模仿真
+- [[rtds]] - RT-LAB实时仿真
+- [[cloudpss]] - 云端大规模仿真
+
+参见 [[index]] 获取更多相关文献。

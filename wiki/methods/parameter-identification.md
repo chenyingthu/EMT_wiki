@@ -1,408 +1,55 @@
 # 参数辨识方法 (Parameter Identification)
 
-## 定义与概述
+## 定义与边界
 
-参数辨识方法（Parameter Identification）是电力系统电磁暂态（EMT）仿真中从测量数据或仿真结果中提取模型参数的技术集合。与基于物理结构和材料属性的理论计算方法不同，参数辨识通过反演算法从可观测的电气量（电压、电流、功率等）中估计设备或网络的等效参数。在EMT领域，参数辨识广泛应用于变压器饱和特性提取、输电线路参数反演、频率相关网络等值（FDNE）建模、保护装置定值优化等场景，是解决"黑箱"设备建模、现场模型校准和宽频特性提取的核心技术手段。
+参数辨识方法（Parameter Identification）是在给定模型结构、输入激励和观测数据的条件下估计模型参数的技术集合。EMT 中常见的待辨识对象包括线路频率相关参数、变压器磁化曲线、外部网络端口导纳、保护算法中的故障参数，以及由测量或仿真波形提取的模态参数。
 
-## 1. 理论基础
+参数辨识不是“从任意数据自动得到真实模型”。它至少需要明确模型结构、激励覆盖范围、观测量、噪声处理和误差指标。若模型结构错误、参数不可辨识或激励未覆盖关键频段，优化残差很小也可能得到物理上错误的参数。
 
-### 1.1 辨识问题数学表述
+## EMT 中的作用
 
-**一般参数辨识模型**：
-$$y(t) = f(u(t), \theta) + \epsilon(t)$$
+参数辨识在 EMT 中承担三类角色：现场模型校准、黑箱端口建模和暂态后处理。现场校准用于把设备试验或故障记录转成可仿真的参数；黑箱建模用于 [[fdne-model]]、[[transmission-line-model]]、[[cable-model]] 等频率相关模型；暂态后处理则通过 [[prony-analysis]]、矩阵束或最小二乘估计振荡频率、阻尼和故障距离。
 
-其中：
-- $y(t)$：系统输出（观测值）
-- $u(t)$：系统输入（激励信号）
-- $\theta$：待辨识参数向量
-- $\epsilon(t)$：测量噪声
+它和模型验证的关系是互补的：辨识给出候选参数，验证检查这些参数在未参与拟合的工况、频段或测试系统中是否仍然成立。
 
-**优化目标**：
-$$\min_\theta J(\theta) = \sum_{k=1}^{N} \|y_{meas}(t_k) - y_{sim}(t_k, \theta)\|^2$$
+## 核心机制
 
-**最小二乘解**：
-$$\hat{\theta} = (\Phi^T \Phi)^{-1} \Phi^T Y$$
+一般辨识问题可写为 $y(t)=f(u(t),\boldsymbol{\theta})+\epsilon(t)$，其中 $\boldsymbol{\theta}$ 是待估参数，$u(t)$ 是激励，$y(t)$ 是观测量，$\epsilon(t)$ 表示噪声、模型误差和数值误差。最小二乘形式为 $\min_{\boldsymbol{\theta}}\sum_n\|y_{\text{meas}}(t_n)-y_{\text{model}}(t_n,\boldsymbol{\theta})\|^2$。
 
-其中$\Phi$为回归矩阵，$Y$为观测向量。
+线性回归可形成 $\hat{\boldsymbol{\theta}}=(\mathbf{\Phi}^T\mathbf{\Phi})^{-1}\mathbf{\Phi}^T\mathbf{y}$，但只有在 $\mathbf{\Phi}$ 条件良好且列满秩时才可靠。非线性辨识通常需要迭代优化、参数约束和多初值检查。频域辨识把阻抗、导纳或传递函数采样拟合为参数模型；时域辨识则直接使用暂态波形、脉冲响应或投切记录。
 
-### 1.2 频域参数辨识
+## 分类与变体
 
-**传输线参数反演**：
-基于单端开路/短路阻抗测量：
-$$Z_{open} = Z_c \coth(\gamma l)$$
-$$Z_{short} = Z_c \tanh(\gamma l)$$
+| 类型 | 典型输入 | 输出 | EMT 用途 |
+|------|----------|------|----------|
+| 线性最小二乘 | 回归矩阵和观测向量 | 电阻、电感、线性模型参数 | 简化支路和保护方程参数 |
+| 加权/递推最小二乘 | 带权数据流 | 在线或分段参数 | 实时校准、测量噪声抑制 |
+| 频域拟合 | 阻抗/导纳频率扫描 | 极点、留数、宽频参数 | [[vector-fitting]]、FDNE、线路/电缆模型 |
+| 时域模态辨识 | 脉冲、阶跃或故障响应 | 极点、阻尼、频率 | [[prony-analysis]]、矩阵束、振荡识别 |
+| 物理曲线辨识 | 电压、电流、磁链或位移 | 饱和曲线、磁滞参数 | [[transformer-model]] 和非线性设备校准 |
 
-**传播常数求解**：
-$$\gamma = \frac{1}{l} \ln\left(\frac{1 + \sqrt{Z_{short}/Z_{open}}}{1 - \sqrt{Z_{short}/Z_{open}}}\right)$$
+## 适用边界与失败模式
 
-**单位长度参数重构**：
-$$z = \gamma Z_c, \quad y = \frac{\gamma}{Z_c}$$
+- 可辨识性：不同参数组合可能产生近似相同的端口响应，需检查矩阵秩、灵敏度或置信区间。
+- 激励充分性：未被激励的模态和频段不能从数据中可靠恢复。
+- 数据质量：积分漂移、传感器相位误差、采样同步和滤波延迟会直接进入参数估计。
+- 模型结构：用线性模型拟合饱和、电弧或限幅控制，只能代表局部工作点。
+- 数值外推：原页面中若干“误差 <0.5%”“提升 3 倍”等数字只有在绑定具体论文、测试频段和指标时才可使用；本页不把它们写成通用精度。
 
-### 1.3 时域参数辨识
+## 代表性来源
 
-**变压器饱和曲线辨识**：
-磁链-电流关系：
-$$\psi(t) = \psi_R + \int V_{mag}(t) dt$$
+| 来源或论文线索 | 支撑内容 | 证据边界 |
+|----------------|----------|----------|
+| Determination of saturation curve from transient measurements | 变压器投切暂态可用于饱和曲线辨识 | 结果依赖原文变压器、采样和校准方法 |
+| On-site measurement of hysteresis curve using DC excitation | 直流励磁可用于现场磁滞曲线测量 | 不能替代所有高压交流试验场景 |
+| New procedure to derive transmission-line parameters | 单端频域测量可反演线路参数 | 需满足原文关于频率、多值性和线路假设的限制 |
+| Distance protection based on parameter identification | 故障距离和过渡电阻可表述为辨识问题 | 只支撑原文算法和故障设置 |
+| RTDS-TSA hybrid simulation with FDNE | FDNE 可通过频域采样和有理拟合得到接口参数 | 实时可用性取决于模型阶数和无源性 |
 
-其中铁芯电压：
-$$V_{mag}(t) = V_{HV}(t) - L_{HV}\frac{dI}{dt} - R_{HV}I(t)$$
+## 与相关页面的关系
 
-**饱和段拟合**：
-对$\psi > \psi_{sat}$区域进行线性回归：
-$$L_{sat} = \frac{\Delta \psi}{\Delta I_{mag}}$$
-
-### 1.4 矢量拟合参数辨识
-
-**FDNE有理函数拟合**：
-$$Y(s) = \sum_{i=1}^{n} \frac{c_i}{s - a_i} + d + sh$$
-
-**状态空间实现**：
-$$Y(s) = C(sE - A)^{-1}B + D$$
-
-**参数辨识流程**：
-| 步骤 | 操作 | 输出 |
-|------|------|------|
-| 1 | 频率响应采样 | $Y(s_k), k=1,...,N$ |
-| 2 | 极点初始定位 | 初始极点$a_i$ |
-| 3 | 线性最小二乘 | 留数$c_i$、常数$d,h$ |
-| 4 | 极点重定位 | 更新$a_i$ |
-| 5 | 迭代收敛 | 最优参数集 |
-
-## 2. EMT仿真应用
-
-### 2.1 变压器饱和特性辨识
-
-**现场投切暂态法**（2021 Canal）：
-
-**原理**：利用变压器合闸暂态中至少一相未饱和的特性，从三相线电流中分离励磁电流。
-
-**算法步骤**：
-1. 采集投切暂态三相电压、电流（采样率≥5kHz）
-2. 从线电流中扣除三角形绕组环流：$I_{mag,i} = J_i - I_{\delta}$
-3. 计算励磁支路电压：$V_{mag} = V_{HV} - L_{HV}\frac{dJ}{dt} - R_{HV}J$
-4. 积分得磁链：$\psi(t) = -\int V_{mag}(t)dt + C$
-5. 用出厂空载试验校准积分常数$C$
-6. 对$\psi > \psi_{sat}$区域线性拟合得饱和电感
-
-**统计处理**：
-$$\bar{L}_{sat} \pm k\sigma\sqrt{1 + \frac{1}{n}}$$
-
-**典型结果**：
-| 参数 | 辨识值 | 厂家估算 | 误差修正 |
-|------|--------|----------|----------|
-| 饱和电感 | 0.833 H | 0.959 H | 高估15.1% |
-| 95%置信区间 | ±6.3% | ±20% | 精度提升3倍 |
-
-**工程意义**：饱和电感每高估10%，过电压约束低估约30%。
-
-### 2.2 直流励磁现场测量法
-
-**便携式直流测量**（2023 Velásquez）：
-
-**核心思想**：用直流/低频激励代替高压交流试验，降低现场测试难度。
-
-**技术优势对比**：
-| 方法 | 测试电压 | 设备要求 | 测量时间 |
-|------|----------|----------|----------|
-| 传统交流法 | 1.2-1.4 p.u. (~504kV) | 高压大功率电源 | 数小时 |
-| 直流励磁法 | 50-100 V | 便携式直流电阻测试仪 | ~5分钟 |
-
-**测量流程**：
-1. 施加正向直流电压，实时计算绕组电阻（1Hz）
-2. 监测电阻变化率判断饱和状态
-3. 自动极性反转捕获磁滞回线
-4. T型等效电路分离铁芯电压
-5. 积分计算磁链，建立$\psi-I$曲线
-
-### 2.3 输电线路参数反演
-
-**单端频域测量法**（2005 Kurokawa）：
-
-**适用场景**：非均匀线路（弧垂、非平行导体、频变土壤电导率）
-
-**突破点**：无需Carson/Pollaczek公式的均匀大地假设
-
-**验证结果**：
-- 频率范围：10 Hz ~ 10 kHz
-- 与传统方法误差：<0.5%
-- 波形畸变率降低：60%~80%
-
-**限制条件**：需满足$\text{Im}(\gamma)l < \pi/2$以避免反双曲函数多值性
-
-### 2.4 距离保护频域参数辨识
-
-**故障距离估计**（2012 Griffiths）：
-
-**问题转化**：将故障距离、过渡电阻、对侧等值参数作为未知量
-
-**线性方程构建**：
-$$sU_{mA}(s) = V(s)x_1 + I_{m0}(s)x_2 + sI_{m0}(s)x_3$$
-
-**参数映射**：
-$$p = x_1, \quad R_F = f(x_2, x_3), \quad L_{n0} = g(x_2, x_3)$$
-
-**矩阵束算法**：提取暂态中基频与直流分量，避免DFT频谱泄漏
-
-**性能对比**：
-| 场景 | 传统阻抗法 | 微分方程法 | 本文算法 |
-|------|------------|------------|----------|
-| 50km远端故障 | -15.58% | -27.32% | +0.02% |
-| 超越风险 | 高 | 极高 | 无 |
-
-### 2.5 FDNE宽频等值参数辨识
-
-**混合仿真接口建模**（2014 胡一中）：
-
-**频域采样**：在1-2.5kHz范围获取边界导纳频率特性
-
-**矢量拟合实现**：
-```
-步骤：
-1. 简化网络获取导纳采样值
-2. Vector Fitting求解极点、留数
-3. 无源性校正（摄动留数矩阵特征根）
-4. 状态空间离散化：I(t) = I_his + G_eq U(t)
-5. RTDS用户自定义模型实现
-```
-
-**拟合精度**：
-- 极点-留数模型阶数：n=10-20
-- 频率范围：1-2500 Hz
-- 幅值误差：<1%
-- 相位误差：<5°
-
-## 3. 实现技术
-
-### 3.1 数值优化方法
-
-**最小二乘算法**：
-```python
-def linear_least_squares(phi, y):
-    """线性最小二乘参数估计"""
-    theta = np.linalg.inv(phi.T @ phi) @ phi.T @ y
-    return theta
-```
-
-**加权最小二乘**：
-$$\hat{\theta} = (\Phi^T W \Phi)^{-1} \Phi^T W Y$$
-
-**递推最小二乘**（在线辨识）：
-$$K_k = P_{k-1}\phi_k(1 + \phi_k^T P_{k-1}\phi_k)^{-1}$$
-$$\hat{\theta}_k = \hat{\theta}_{k-1} + K_k(y_k - \phi_k^T\hat{\theta}_{k-1})$$
-$$P_k = (I - K_k\phi_k^T)P_{k-1}$$
-
-### 3.2 频域辨识算法
-
-**矩阵束算法**（Matrix Pencil）：
-构建Hankel矩阵：
-$$Y = \begin{bmatrix} y(0) & y(1) & \cdots & y(L) \\ y(1) & y(2) & \cdots & y(L+1) \\ \vdots & \vdots & \ddots & \vdots \\ y(N-L) & y(N-L+1) & \cdots & y(N) \end{bmatrix}$$
-
-SVD分解提取信号子空间，求解极点与留数。
-
-**Prony分析**：
-$$y(k) = \sum_{m=1}^{M} R_m z_m^k$$
-
-用于暂态信号模态参数提取。
-
-### 3.3 数据预处理
-
-**滤波处理**：
-- 低通滤波：消除高频噪声
--  notch滤波：消除工频干扰
-
-**积分漂移校正**：
-$$\psi(t) = \int_0^t V(\tau)d\tau - \frac{t}{T}\int_0^T V(\tau)d\tau$$
-
-**归一化处理**：
-$$x_{norm} = \frac{x - x_{min}}{x_{max} - x_{min}}$$
-
-## 4. 仿真软件实现
-
-### 4.1 MATLAB实现
-
-**变压器饱和曲线辨识**：
-```matlab
-% 磁链积分
-psi = cumtrapz(t, V_mag);
-
-% 去漂移
-psi = psi - mean(psi);
-
-% 饱和段拟合
-idx_sat = psi > psi_sat;
-p = polyfit(I_mag(idx_sat), psi(idx_sat), 1);
-L_sat = p(1);
-```
-
-**矢量拟合参数辨识**：
-```matlab
-% 使用Vector Fitting工具箱
-[poles, residues, d, h] = vectfit3(Y, s, init_poles);
-
-% 状态空间转换
-[A,B,C,D] = ss_from_pr(poles, residues, d, h);
-```
-
-### 4.2 Python实现
-
-**传输线参数反演**：
-```python
-import numpy as np
-
-def line_parameter_inversion(Z_open, Z_short, l):
-    """基于开短路阻抗反演线路参数"""
-    X = np.sqrt(Z_short / Z_open)
-    gamma = np.log((1 + X) / (1 - X)) / l
-    Zc = np.sqrt(Z_open * Z_short)
-    z = gamma * Zc
-    y = gamma / Zc
-    return z, y
-```
-
-**最小二乘拟合**：
-```python
-def ls_fit(phi, y, weights=None):
-    if weights is None:
-        theta = np.linalg.lstsq(phi, y, rcond=None)[0]
-    else:
-        W = np.diag(weights)
-        theta = np.linalg.inv(phi.T @ W @ phi) @ phi.T @ W @ y
-    return theta
-```
-
-### 4.3 EMTP/PSCAD实现
-
-**FDNE参数辨识流程**：
-```fortran
-! 频率响应计算
-DO f = f_min, f_max, df
-    CALL calc_admittance(Y(f), network, f)
-END DO
-
-! 矢量拟合
-CALL vector_fitting(Y, poles, residues, d, h, order)
-
-! 无源性检查
-CALL passivity_check(poles, residues, d, h, is_passive)
-IF (.NOT. is_passive) THEN
-    CALL passivity_enforcement(poles, residues, d, h)
-END IF
-```
-
-## 5. 典型参数参考
-
-### 5.1 辨识精度指标
-
-| 应用场景 | 参数类型 | 典型精度 | 置信水平 |
-|----------|----------|----------|----------|
-| 变压器饱和电感 | 电感值 | ±5-10% | 95% |
-| 输电线路参数 | R,L,C | <0.5% | 全频段 |
-| FDNE有理拟合 | Y(s) | <1% | 1-2.5kHz |
-| 故障距离估计 | 距离 | <1% | 线性方程 |
-| 磁滞回线 | $\psi-I$ | 1-3% | 波形对比 |
-
-### 5.2 采样要求
-
-| 辨识对象 | 采样率 | 数据窗长 | 窗函数 |
-|----------|--------|----------|--------|
-| 变压器饱和 | ≥5kHz | 1-2个周波 | 矩形 |
-| 线路参数 | 频域扫描 | 全频段 | - |
-| 暂态信号 | ≥10kHz | 10-20ms | Hanning |
-| 磁滞回线 | 1Hz | 完整循环 | - |
-
-### 5.3 算法选择指南
-
-| 问题类型 | 推荐算法 | 理由 |
-|----------|----------|------|
-| 线性参数 | 最小二乘 | 解析解，计算快 |
-| 非线性参数 | Levenberg-Marquardt | 收敛性好 |
-| 暂态模态 | 矩阵束/Prony | 频率分辨率高 |
-| 频域拟合 | 矢量拟合 | 稳定，精度高 |
-| 在线辨识 | 递推最小二乘 | 实时更新 |
-
-## 6. 相关主题与链接
-
-### 6.1 相关方法
-- [[vector-fitting|矢量拟合]] - FDNE参数辨识核心算法
-- [[prony-analysis|Prony分析]] - 暂态信号模态参数提取
-- [[frequency-dependent-modeling|频率相关建模]] - 频域参数辨识基础
-- [[state-space-method|状态空间法]] - FDNE状态空间实现
-
-### 6.2 相关模型
-- [[transformer-model|变压器模型]] - 饱和特性建模
-- [[transmission-line-model|输电线路模型]] - 线路参数建模
-- [[fdne-model|FDNE模型]] - 宽频网络等值
-- [[circuit-breaker-model|断路器模型]] - 电弧参数辨识
-
-### 6.3 相关主题
-- [[network-equivalent|网络等值]] - 参数辨识应用背景
-- [[real-time-simulation|实时仿真]] - 在线参数辨识
-- 现场测试 - 参数辨识数据来源
-- 模型验证 - 辨识结果校核
-
-## 7. 适用边界与限制
-
-### 7.1 适用条件
-
-**参数辨识有效场景**：
-- 有可观测的输入输出数据
-- 模型结构已知或可选择
-- 参数可辨识（观测矩阵满秩）
-- 信噪比足够高
-
-**数据质量要求**：
-- 采样率满足奈奎斯特准则
-- 激励信号充分激励所有模态
-- 数据长度覆盖主要动态过程
-
-### 7.2 失效边界
-
-**不适用场景**：
-- 模型结构未知且无法假设
-- 观测数据严重缺失
-- 参数不可辨识（共线性）
-- 强非线性系统（需分段线性化）
-
-**数值问题**：
-- 条件数过大导致病态
-- 局部极小值（非凸优化）
-- 积分漂移（时域积分）
-
-### 7.3 精度边界
-
-| 误差来源 | 典型误差 | 缓解方法 |
-|----------|----------|----------|
-| 测量噪声 | 1-5% | 滤波、加权最小二乘 |
-| 模型误差 | 5-15% | 模型结构选择、残差分析 |
-| 数值误差 | 0.1-1% | 双精度、正则化 |
-| 截断误差 | 1-3% | 增加拟合阶数 |
-
-## 8. 来源论文
-
-| 论文 | 年份 | 核心贡献 |
-|------|------|----------|
-| Determination of saturation curve from transient measurements | 2021 | 变压器饱和曲线现场辨识，投切暂态利用 |
-| On-site measurement of hysteresis curve using DC excitation | 2023 | 直流励磁法现场测量磁滞曲线 |
-| New procedure to derive transmission-line parameters | 2005 | 单端频域测量反演线路参数 |
-| Distance protection based on parameter identification | 2012 | 频域参数辨识用于故障测距 |
-| RTDS-TSA hybrid simulation with FDNE | 2014 | FDNE宽频等值参数辨识与实现 |
-| Wideband CVT model using scattering parameters | 2024 | 散射参数辨识用于CVT宽频建模 |
-
-## 相关模型
-
-- [[transformer-model|变压器模型]] - 饱和特性参数辨识的核心对象
-- [[transmission-line-model|输电线路模型]] - 线路参数频域辨识
-- [[fdne-model|FDNE模型]] - 宽频网络等值参数辨识
-- [[circuit-breaker-model|断路器模型]] - 电弧参数辨识应用
-- [[cable-model|电缆模型]] - 电缆参数现场辨识
-
-## 相关主题
-
-- [[network-equivalent|网络等值]] - 参数辨识在网络等值中的应用背景
-- [[real-time-simulation|实时仿真]] - 在线参数辨识技术
-- 现场测试 - 参数辨识数据来源与方法
-- 模型验证 - 辨识结果校核与验证
-
----
-
-*本页面基于Karpathy LLM Wiki Pattern构建，内容来自682篇EMT领域学术文献的深度分析*
+- [[vector-fitting]]：参数辨识在频域宽频模型中的典型算法，输出极点、留数和直接项。
+- [[prony-analysis]]：时域模态辨识方法，适合从暂态序列中提取阻尼和频率。
+- [[state-space-method]]：辨识结果常转成状态空间或递推滤波器参与 EMT 步进。
+- [[frequency-dependent-modeling]]：线路、电缆和外部网络的频率相关参数通常需要辨识或拟合。
+- [[transformer-model]]：磁化曲线、漏抗和饱和参数辨识必须区分测试工况和工程运行工况。

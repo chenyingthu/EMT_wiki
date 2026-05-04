@@ -11,7 +11,7 @@ created: "2026-05-02"
 
 分布参数模型是把电磁、热、机械或电路参数视为空间位置函数的建模方式。在 EMT Wiki 中，该术语主要用于线路、电缆、接地导体和多导体系统：状态变量不只随时间变化，也随空间坐标变化。
 
-对线路类问题，分布参数模型通常表现为偏微分方程或频域传播矩阵；对 EMT 工具实现，最终需要转化为可接入节点方程的端口模型。它不是“高精度”的同义词，也不等同于 [[methods/distributed-parameter-line.md]] 一页；本页负责说明通用思想，线路页负责具体线路模型。
+对线路类问题，分布参数模型通常表现为偏微分方程或频域传播矩阵；对 EMT 工具实现，最终需要转化为可接入节点方程的端口模型。它不是“高精度”的同义词，也不等同于 [[distributed-parameter-line]] 一页；本页负责说明通用思想，线路页负责具体线路模型。
 
 ## EMT 中的作用
 
@@ -32,11 +32,11 @@ $$-\frac{\partial v}{\partial x}=R'(x,\omega)i+L'(x,\omega)\frac{\partial i}{\pa
 
 $$-\frac{\partial i}{\partial x}=G'(x,\omega)v+C'(x,\omega)\frac{\partial v}{\partial t}$$
 
-在均匀频域模型中，端口关系可由传播常数 $\gamma$ 和特征导纳 $Y_c$ 构建。多导体系统中，$R',L',G',C'$ 是矩阵，需考虑 [[methods/mutual-impedance.md]] 和并联电容耦合。若参数随频率变化，常通过有理函数近似转入时域：
+在均匀频域模型中，端口关系可由传播常数 $\gamma$ 和特征导纳 $Y_c$ 构建。多导体系统中，$R',L',G',C'$ 是矩阵，需考虑 [[mutual-impedance]] 和并联电容耦合。若参数随频率变化，常通过有理函数近似转入时域：
 
 $$F(s)\approx \sum_{k=1}^{N}\frac{r_k}{s-p_k}+d+se$$
 
-该形式可用于 [[methods/vector-fitting.md]] 后的递归卷积、状态空间或等效电路实现。
+该形式可用于 [[vector-fitting]] 后的递归卷积、状态空间或等效电路实现。
 
 ## 分类与变体
 
@@ -56,18 +56,18 @@ $$F(s)\approx \sum_{k=1}^{N}\frac{r_k}{s-p_k}+d+se$$
 
 ## 代表性来源
 
-- [[sources/assessment-of-the-transmission-line-theory-in-the-modeling-of-multiconductor-und.md]]：说明分布参数/传输线理论在短电缆快速暂态中可与全波 FDTD 对比验证，但结论限于原文算例。
-- [[sources/a-new-tool-for-calculation-of-line-and-cable-parameters.md]]：说明单位长度参数矩阵计算本身就是模型质量的关键环节。
-- [[sources/earth-return-impedance-of-overhead-and-underground-conductors-considering-earth-stratification-13&14.md]]：说明多层土壤会进入大地返回自/互阻抗计算。
-- [[sources/development-of-phase-domain-frequency-dependent-transmission-line-model-on-fpga-.md]]：展示分布参数频变模型进入实时仿真的实现压力和边界。
+- [[assessment-of-the-transmission-line-theory-in-the-modeling-of-multiconductor-und]]：说明分布参数/传输线理论在短电缆快速暂态中可与全波 FDTD 对比验证，但结论限于原文算例。
+- [[a-new-tool-for-calculation-of-line-and-cable-parameters]]：说明单位长度参数矩阵计算本身就是模型质量的关键环节。
+- [[earth-return-impedance-of-overhead-and-underground-conductors-considering-earth-stratification-13&14]]：说明多层土壤会进入大地返回自/互阻抗计算。
+- [[development-of-phase-domain-frequency-dependent-transmission-line-model-on-fpga-]]：展示分布参数频变模型进入实时仿真的实现压力和边界。
 
 ## 与相关页面的关系
 
-- [[methods/distributed-parameter-line.md]] 是本页在线路对象上的具体化。
-- [[models/transmission-line-model.md]] 和 [[models/frequency-dependent-line-model.md]] 是模型页面。
-- [[methods/earth-return-impedance.md]] 和 [[methods/mutual-impedance.md]] 是形成单位长度阻抗矩阵的重要组成。
-- [[methods/modal-transformation.md]] 与 [[methods/phase-domain-modeling.md]] 是处理多导体耦合的两类路径。
-- [[methods/lumped-parameter-model.md]] 是简化对照。
+- [[distributed-parameter-line]] 是本页在线路对象上的具体化。
+- [[transmission-line-model]] 和 [[frequency-dependent-line-model]] 是模型页面。
+- [[earth-return-impedance]] 和 [[mutual-impedance]] 是形成单位长度阻抗矩阵的重要组成。
+- [[modal-transformation]] 与 [[phase-domain-modeling]] 是处理多导体耦合的两类路径。
+- [[lumped-parameter-model]] 是简化对照。
 
 ## 修订与证据使用注意事项
 

@@ -17,7 +17,7 @@ created: "2026-05-02"
 - **晶闸管(SCR)**: 可控导通，不可控关断
 - [[thyristor-control]] - 晶闸管
 - **门极可关断晶闸管(GTO)**: 可关断
-- `gto` - GTO
+- `gto-model` - GTO
 
 ### 全控型器件
 - **绝缘栅双极晶体管(IGBT)**: 主流器件
@@ -25,7 +25,7 @@ created: "2026-05-02"
 - **电力MOSFET**: 高频应用
 - `power-mosfet` - 电力MOSFET
 - **集成门极换流晶闸管(IGCT)**: 大功率
-- `igct` - IGCT
+- `igct-model` - IGCT
 
 ### 宽禁带器件
 - **碳化硅(SiC)**: 高温、高频
@@ -37,7 +37,7 @@ created: "2026-05-02"
 
 ### AC-DC变换
 - **整流器**: 交流变直流
-- [[dynamic-average-modeling-of-front-end-diode-rectifier-loads-considering-13&14]] - 整流器
+- `rectifier-model` - 整流器
 - **可控整流**: 晶闸管整流
 - `controlled-rectifier` - 可控整流
 - **PWM整流**: 四象限运行
@@ -47,9 +47,9 @@ created: "2026-05-02"
 - **逆变器**: 直流变交流
 - [[inverter-model]] - 逆变器
 - **电压源型**: VSI
-- `vsi` - 电压源逆变器
+- `vsi-model` - 电压源逆变器
 - **电流源型**: CSI
-- `csi` - 电流源逆变器
+- `csi-model` - 电流源逆变器
 
 ### DC-DC变换
 - **斩波器**: 直流变压
@@ -90,7 +90,7 @@ created: "2026-05-02"
 
 ### PWM技术
 - **SPWM**: 正弦脉宽调制
-- `spwm` - SPWM
+- [[pwm-modulator-model]] - SPWM
 - **SVPWM**: 空间矢量调制
 - `svpwm` - SVPWM
 - **特定谐波消除**: SHEPWM
@@ -98,7 +98,7 @@ created: "2026-05-02"
 
 ### 矢量控制
 - **FOC**: 磁场定向控制
-- `field-oriented-control` - 磁场定向控制
+- [[vector-control-model]] - 磁场定向控制
 - **DTC**: 直接转矩控制
 - `direct-torque-control` - 直接转矩控制
 
@@ -135,7 +135,7 @@ created: "2026-05-02"
 - **有源滤波**: APF
 - `active-power-filter` - 有源滤波
 - **无功补偿**: STATCOM/SVC
-- [[statcom]] - STATCOM
+- [[statcom-model]] - STATCOM
 - [[svc-model]] - SVC模型
 
 ## EMT仿真建模
@@ -186,9 +186,81 @@ created: "2026-05-02"
 ## 相关主题
 - [[power-electronics]] - 电力电子换流器建模
 - [[switching-function-method]] - 开关函数法
-- [[equivalent-model-of-nearest-level-modulation-for-fast-electromagnetic-transient-]] - 调制技术
+- `modulation-techniques` - 调制技术
 - `semiconductor-device` - 半导体器件
 
 ## 来源论文
 
 参见 [[index]] 获取更多电力电子相关文献。
+
+---
+
+## 适用边界 (Applicable Boundaries)
+
+### 适用场景
+
+| 应用场景 | 适用性 | 说明 |
+|---------|-------|------|
+| 换流器建模 | ★★★★★ | VSC/LCC/MMC等换流器核心基础 |
+| 新能源并网 | ★★★★★ | 光伏、风电变流器设计 |
+| 电机驱动 | ★★★★★ | 变频器、伺服控制 |
+| 直流输电 | ★★★★★ | HVDC换流站设计 |
+| 电能质量控制 | ★★★★☆ | STATCOM、APF等装置 |
+| 储能系统 | ★★★★☆ | 储能变流器设计 |
+
+### 不适用场景
+
+- **纯交流系统分析**: 不含电力电子设备的传统交流系统
+- **电磁场详细分析**: 需要场路耦合的精细电磁场问题
+- **器件级物理研究**: 半导体物理层面的载流子分析
+- **热力学系统**: 纯热管理问题
+
+### 关键假设
+
+1. **开关理想化**: 通常采用理想开关或简化开关模型
+2. **参数集中**: 器件参数视为集总参数
+3. **温度恒定**: 短期仿真忽略温度变化
+4. **线性化可行**: 小信号分析时可线性化
+
+### 精度边界
+
+| 模型类型 | 开关细节 | 适用频率 | 误差范围 |
+|---------|---------|---------|---------|
+| 详细开关模型 | 完整 | DC-100kHz | <1% |
+| 平均值模型 | 无 | <开关频率/10 | 5-10% |
+| 等效电路 | 简化 | 工频 | 10-20% |
+
+### 设计约束
+
+- **开关频率**: 受器件损耗和EMI限制
+- **散热能力**: 决定最大持续功率
+- **电压等级**: 受器件耐压限制
+- **成本控制**: 影响拓扑选择
+
+---
+
+## 代表性来源 (Representative Sources)
+
+### 经典文献
+
+| 文献 | 年份 | 核心贡献 |
+|------|------|---------|
+| Mohan, "Power Electronics" | 2003 | 电力电子经典教材 |
+| Rashid, "Power Electronics Handbook" | 2017 | 电力电子手册 |
+| Kolar, "Modeling of Power Electronic Systems" | 2010s | 电力电子系统建模 |
+
+### 相关模型
+
+- [[mmc-model]] - MMC换流器模型
+- [[vsc-model]] - VSC模型
+- [[igbt-model]] - IGBT器件模型
+- [[average-value-model]] - 平均值模型
+
+### 应用领域
+
+- [[vsc-hvdc]] - 柔性直流输电
+- [[wind-farm-modeling]] - 风电场建模
+- [[pv-system-model]] - 光伏系统建模
+- `motor-drive` - 电机驱动
+
+参见 [[index]] 获取更多相关文献。

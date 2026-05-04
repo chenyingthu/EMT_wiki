@@ -18,17 +18,17 @@ $$
 
 或等价的广义 Schur 问题，用于分析线性化系统、约束系统或带质量/电容/导纳矩阵的模态结构。它与标准特征值问题 $\mathbf{A}\mathbf{v}=\lambda\mathbf{v}$ 的区别在于右侧包含矩阵 $\mathbf{B}$；当 $\mathbf{B}$ 可逆时可转为 $\mathbf{B}^{-1}\mathbf{A}$ 的标准问题，但显式求逆通常不是数值上稳健的实现方式。
 
-在 EMT Wiki 中，本页覆盖广义特征值作为方法的定义、数值机制和证据边界。它不等同于所有[[methods/eigenvalue-analysis.md]]，也不自动给出稳定裕度、阻尼要求或控制器设计结论。稳定性解释必须说明线性化点、模型阶次、坐标系、矩阵构造和验证方式。
+在 EMT Wiki 中，本页覆盖广义特征值作为方法的定义、数值机制和证据边界。它不等同于所有[[eigenvalue-analysis]]，也不自动给出稳定裕度、阻尼要求或控制器设计结论。稳定性解释必须说明线性化点、模型阶次、坐标系、矩阵构造和验证方式。
 
 ## EMT 中的作用
 
 广义特征根法在 EMT 相关研究中常承担三类角色：
 
-- 分析线性化模型的固有模态、振荡频率和阻尼趋势，服务于[[methods/small-signal-analysis.md]]和[[methods/modal-analysis.md]]。
+- 分析线性化模型的固有模态、振荡频率和阻尼趋势，服务于[[small-signal-analysis]]和[[modal-analysis]]。
 - 分析频变线路、导纳矩阵或模型降阶中的矩阵谱结构，辅助识别病态拟合、模态耦合或尺度差异。
 - 分析动态相量、离散化或时滞模型中的特征值移动，判断步长、频移或延时近似是否改变关键模态。
 
-例如，[[sources/revisiting-dynamic-phasors-and-their-efficacy-in-simulating-electric-circuits.md]]用状态空间特征值说明频移只移动特征值虚部而不消除固有暂态模态。[[sources/an-emt-based-dynamic-frequency-scanning-tool-for-stability-analysis-of-inverter-.md]]则把阻抗/导纳矩阵闭环增益的特征值轨迹用于小扰动稳定判断。二者都使用特征值思想，但证据范围和模型对象不同。
+例如，[[revisiting-dynamic-phasors-and-their-efficacy-in-simulating-electric-circuits]]用状态空间特征值说明频移只移动特征值虚部而不消除固有暂态模态。[[an-emt-based-dynamic-frequency-scanning-tool-for-stability-analysis-of-inverter-]]则把阻抗/导纳矩阵闭环增益的特征值轨迹用于小扰动稳定判断。二者都使用特征值思想，但证据范围和模型对象不同。
 
 ## 核心机制
 
@@ -75,19 +75,19 @@ $$
 
 | 来源 | 特征值相关作用 | 可采信边界 |
 |---|---|---|
-| [[sources/revisiting-dynamic-phasors-and-their-efficacy-in-simulating-electric-circuits.md]] | 用状态空间特征值和平移关系解释动态相量大步长收益的条件性 | 可用于说明频移不消除固有暂态；不提供通用加速结论 |
-| [[sources/an-emt-based-dynamic-frequency-scanning-tool-for-stability-analysis-of-inverter-.md]] | 对阻抗/导纳闭环增益矩阵求特征值并作稳定裕度判断 | 适用于所述小扰动频扫框架；不应外推到故障穿越或多机强非线性 |
-| [[sources/a-full-frequency-dependent-line-model-based-on-folded-line-equivalencing-and-lat.md]] | 用导纳矩阵谱尺度解释有理拟合难度和折叠线等效的作用 | 可说明谱尺度影响建模；量化拟合收益需原文核验 |
-| [[sources/assessment-of-the-accuracy-of-the-modal-domain-line-models-with-real-and-frequen.md]] | 在参考频率下通过特征值/特征向量构造模态变换 | 可说明模态域线路模型依赖变换矩阵选择；不代表全频段恒定精度 |
-| [[sources/fast-realization-of-the-modal-vector-fitting.md]] | 利用导纳矩阵特征值和模态变换辅助多端口有理拟合 | 可作为频域网络等值中谱分析的来源 |
+| [[revisiting-dynamic-phasors-and-their-efficacy-in-simulating-electric-circuits]] | 用状态空间特征值和平移关系解释动态相量大步长收益的条件性 | 可用于说明频移不消除固有暂态；不提供通用加速结论 |
+| [[an-emt-based-dynamic-frequency-scanning-tool-for-stability-analysis-of-inverter-]] | 对阻抗/导纳闭环增益矩阵求特征值并作稳定裕度判断 | 适用于所述小扰动频扫框架；不应外推到故障穿越或多机强非线性 |
+| [[a-full-frequency-dependent-line-model-based-on-folded-line-equivalencing-and-lat]] | 用导纳矩阵谱尺度解释有理拟合难度和折叠线等效的作用 | 可说明谱尺度影响建模；量化拟合收益需原文核验 |
+| [[assessment-of-the-accuracy-of-the-modal-domain-line-models-with-real-and-frequen]] | 在参考频率下通过特征值/特征向量构造模态变换 | 可说明模态域线路模型依赖变换矩阵选择；不代表全频段恒定精度 |
+| [[fast-realization-of-the-modal-vector-fitting]] | 利用导纳矩阵特征值和模态变换辅助多端口有理拟合 | 可作为频域网络等值中谱分析的来源 |
 
 ## 与相关页面的关系
 
-- [[methods/eigenvalue-analysis.md]]：更广的页面，覆盖标准特征值、根轨迹、模态解释等。
-- [[methods/modal-analysis.md]]和[[methods/modal-decomposition.md]]：强调特征向量、模态形状和变量参与关系。
-- [[methods/small-signal-analysis.md]]、[[methods/small-signal-stability-analysis.md]]：把线性化模型的特征值用于稳定判断。
-- [[methods/state-space-method.md]]：广义特征值矩阵通常来自状态空间或 DAE 线性化。
-- [[methods/vector-fitting.md]]与[[methods/frequency-dependent-soil.md]]：特征值可用于解释频域矩阵拟合和模态变换问题。
+- [[eigenvalue-analysis]]：更广的页面，覆盖标准特征值、根轨迹、模态解释等。
+- [[modal-analysis]]和[[modal-decomposition]]：强调特征向量、模态形状和变量参与关系。
+- [[small-signal-analysis]]、[[small-signal-stability-analysis]]：把线性化模型的特征值用于稳定判断。
+- [[state-space-method]]：广义特征值矩阵通常来自状态空间或 DAE 线性化。
+- [[vector-fitting]]与[[frequency-dependent-soil]]：特征值可用于解释频域矩阵拟合和模态变换问题。
 
 ## 修订与证据使用注意事项
 

@@ -9,9 +9,9 @@ created: "2026-05-02"
 
 ## 概述
 
-关断角计算（Extinction Angle Calculation）用于估计 LCC 逆变器中晶闸管电流降为零后，到该阀重新承受正向电压前的电角度裕度。它是 [[models/lcc-model.md]]、[[methods/thyristor-control.md]] 和换相失败分析中的关键方法。
+关断角计算（Extinction Angle Calculation）用于估计 LCC 逆变器中晶闸管电流降为零后，到该阀重新承受正向电压前的电角度裕度。它是 [[lcc-model]]、[[thyristor-control]] 和换相失败分析中的关键方法。
 
-关断角 $\gamma$ 是线换相换流器的概念。它不适用于用 IGBT、IGCT 或 MMC 子模块自换相的 [[models/vsc-model.md]]。VSC 中的 PLL、dq 电流控制或 PWM 相位同步不能称为关断角控制；若页面同时讨论 LCC 和 VSC，应把两类控制边界分开。
+关断角 $\gamma$ 是线换相换流器的概念。它不适用于用 IGBT、IGCT 或 MMC 子模块自换相的 [[vsc-model]]。VSC 中的 PLL、dq 电流控制或 PWM 相位同步不能称为关断角控制；若页面同时讨论 LCC 和 VSC，应把两类控制边界分开。
 
 ## 定义与变量
 
@@ -47,9 +47,9 @@ $$\gamma=\pi-\alpha-\mu$$
 
 交流故障期间，关断角不再只由基波电压幅值决定。电压跌落会降低换相电压，直流电流上升会增加重叠角，谐波会移动换相电压过零点。此时应把计算结果写成“当前模型下的估计关断角”，而不是晶闸管真实恢复裕度的完整测量。
 
-[[sources/harmonics-interaction-mechanism-and-impact-on-extinction-angles-in-multi-infeed-.md]] 将多馈入 LCC-HVDC 的谐波交互写成频域等效电路，并用谐波电压传递、过零点偏移和修正重叠角解释远端逆变器关断角变化。该来源支持“谐波交互会影响关断角”的机制性结论；当前页面不沿用其中未核验的精确误差或概率数字。
+[[harmonics-interaction-mechanism-and-impact-on-extinction-angles-in-multi-infeed-]] 将多馈入 LCC-HVDC 的谐波交互写成频域等效电路，并用谐波电压传递、过零点偏移和修正重叠角解释远端逆变器关断角变化。该来源支持“谐波交互会影响关断角”的机制性结论；当前页面不沿用其中未核验的精确误差或概率数字。
 
-[[sources/average-value-modeling-of-line-commutated-inverter-systems-with-commutation-fail.md]] 在 LCC 逆变器 PAVM 中把关断角和临界电压跌落阈值用于自动换相失败检测。该结论应限定于线换相逆变器平均值模型和作者验证的换相失败场景。
+[[average-value-modeling-of-line-commutated-inverter-systems-with-commutation-fail]] 在 LCC 逆变器 PAVM 中把关断角和临界电压跌落阈值用于自动换相失败检测。该结论应限定于线换相逆变器平均值模型和作者验证的换相失败场景。
 
 ## 测量与估算
 
@@ -69,16 +69,16 @@ EMT 页面中应避免写成“只要 $\gamma$ 大于某个固定角度就不会
 
 | 来源 | 证据用途 | 边界 |
 |------|----------|------|
-| [[sources/average-value-modeling-of-line-commutated-inverter-systems-with-commutation-fail.md]] | 关断角与临界电压跌落阈值用于 LCC 逆变器换相失败检测 | 当前证据未支撑页面新增固定误差或加速数字 |
-| [[sources/harmonics-interaction-mechanism-and-impact-on-extinction-angles-in-multi-infeed-.md]] | 谐波传递、过零点偏移和重叠角修正会影响多馈入系统关断角 | 适用于 LCC 多馈入交流故障场景 |
-| [[sources/a-topology-based-simplified-dynamic-model-and-solving-algorithm-for-lcc-hvdc-con.md]] | 阀级拓扑状态和故障换相过程需要模型保留离散晶闸管行为 | 具体系统参数和耗时数字需回原文核对 |
+| [[average-value-modeling-of-line-commutated-inverter-systems-with-commutation-fail]] | 关断角与临界电压跌落阈值用于 LCC 逆变器换相失败检测 | 当前证据未支撑页面新增固定误差或加速数字 |
+| [[harmonics-interaction-mechanism-and-impact-on-extinction-angles-in-multi-infeed-]] | 谐波传递、过零点偏移和重叠角修正会影响多馈入系统关断角 | 适用于 LCC 多馈入交流故障场景 |
+| [[a-topology-based-simplified-dynamic-model-and-solving-algorithm-for-lcc-hvdc-con]] | 阀级拓扑状态和故障换相过程需要模型保留离散晶闸管行为 | 具体系统参数和耗时数字需回原文核对 |
 
 ## 与相关页面的关系
 
-- [[methods/thyristor-control.md]] 说明触发角如何生成。
-- [[methods/converter-station-inverter.md]] 说明 LCC 逆变站中关断角控制的系统位置。
-- [[methods/harmonic-transfer-coefficient.md]] 和 [[methods/harmonic-interaction.md]] 支撑多馈入场景下的修正计算。
-- [[models/lcc-model.md]] 是该方法的设备边界；[[models/vsc-model.md]] 是不应混用的相邻模型。
+- [[thyristor-control]] 说明触发角如何生成。
+- [[converter-station-inverter]] 说明 LCC 逆变站中关断角控制的系统位置。
+- [[harmonic-transfer-coefficient]] 和 [[harmonic-interaction]] 支撑多馈入场景下的修正计算。
+- [[lcc-model]] 是该方法的设备边界；[[vsc-model]] 是不应混用的相邻模型。
 
 ## 开放问题
 

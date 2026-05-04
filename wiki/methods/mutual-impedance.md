@@ -25,7 +25,7 @@ Z_{21} & Z_{22} & \cdots & Z_{2n}\\
 Z_{n1} & Z_{n2} & \cdots & Z_{nn}
 \end{bmatrix}$$
 
-非对角项 $Z_{ij}$ 即互阻抗。它不只是工频故障分析参数，也影响 [[methods/distributed-parameter-line.md]]、[[methods/earth-return-impedance.md]] 和宽频 EMT 模型。
+非对角项 $Z_{ij}$ 即互阻抗。它不只是工频故障分析参数，也影响 [[distributed-parameter-line]]、[[earth-return-impedance]] 和宽频 EMT 模型。
 
 ## EMT 中的作用
 
@@ -48,7 +48,7 @@ $$Z_{ij}'(\omega)=j\omega L_{ij}(\omega)+R_{ij}(\omega),\quad i\ne j$$
 
 $$Z_{ij}'(\omega)=Z_{\text{geom},ij}(\omega)+Z_{\text{earth},ij}(\omega)$$
 
-在三相对称、完全换位且参数理想均匀时，序分量变换可把矩阵近似对角化；在非换位、平行多回路或电缆系统中，非对角耦合可能不能忽略，需要 [[methods/phase-domain-modeling.md]] 或频率相关 [[methods/modal-transformation.md]]。
+在三相对称、完全换位且参数理想均匀时，序分量变换可把矩阵近似对角化；在非换位、平行多回路或电缆系统中，非对角耦合可能不能忽略，需要 [[phase-domain-modeling]] 或频率相关 [[modal-transformation]]。
 
 ## 分类与变体
 
@@ -68,18 +68,18 @@ $$Z_{ij}'(\omega)=Z_{\text{geom},ij}(\omega)+Z_{\text{earth},ij}(\omega)$$
 
 ## 代表性来源
 
-- [[sources/earth-return-impedance-of-overhead-and-underground-conductors-considering-earth-stratification-13&14.md]]：把自阻抗和互阻抗纳入多层大地统一公式，适合支撑“互阻抗依赖土壤结构”的表述。
-- [[sources/a-new-tool-for-calculation-of-line-and-cable-parameters.md]]：说明复杂架空线/电缆参数计算需要统一处理邻近效应和混合导体耦合。
-- [[sources/development-of-phase-domain-frequency-dependent-transmission-line-model-on-fpga-.md]]：展示相域频变矩阵模型在实时仿真中的实现意义。
-- [[sources/frequency-dependent-multiconductor-line-model-based-on-the-bergeron-method.md]]：适合说明多导体线路可通过模态处理互耦，但其结论仍受验证范围限制。
+- [[earth-return-impedance-of-overhead-and-underground-conductors-considering-earth-stratification-13&14]]：把自阻抗和互阻抗纳入多层大地统一公式，适合支撑“互阻抗依赖土壤结构”的表述。
+- [[a-new-tool-for-calculation-of-line-and-cable-parameters]]：说明复杂架空线/电缆参数计算需要统一处理邻近效应和混合导体耦合。
+- [[development-of-phase-domain-frequency-dependent-transmission-line-model-on-fpga-]]：展示相域频变矩阵模型在实时仿真中的实现意义。
+- [[frequency-dependent-multiconductor-line-model-based-on-the-bergeron-method]]：适合说明多导体线路可通过模态处理互耦，但其结论仍受验证范围限制。
 
 ## 与相关页面的关系
 
-- [[methods/earth-return-impedance.md]] 是互阻抗的重要组成。
-- [[methods/distributed-parameter-model.md]] 和 [[methods/distributed-parameter-line.md]] 使用互阻抗构造多导体方程。
-- [[methods/single-phase-line-model.md]] 通常忽略或外部化互阻抗，适合简化场景。
-- [[topics/frequency-dependent-modeling.md]] 讨论互阻抗随频率变化后的时域实现。
-- [[methods/impedance-measurement.md]] 可用于识别或校核等效耦合参数。
+- [[earth-return-impedance]] 是互阻抗的重要组成。
+- [[distributed-parameter-model]] 和 [[distributed-parameter-line]] 使用互阻抗构造多导体方程。
+- [[single-phase-line-model]] 通常忽略或外部化互阻抗，适合简化场景。
+- [[frequency-dependent-modeling]] 讨论互阻抗随频率变化后的时域实现。
+- [[impedance-measurement]] 可用于识别或校核等效耦合参数。
 
 ## 修订与证据使用注意事项
 

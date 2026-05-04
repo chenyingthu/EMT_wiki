@@ -11,7 +11,7 @@ created: "2026-05-02"
 
 交流耦合网络等效（AC Coupled Network Equivalent）是在机电暂态、电磁暂态或多工具协同仿真之间传递交流网络端口行为的接口方法。它把接口外侧网络压缩为戴维南、诺顿、功率注入或频率相关动态等值，使详细 EMT 区域不必展开整个外部系统。
 
-该方法解决的是“接口端口如何表示外部交流网络”的问题，不等同于完整的 [[topics/co-simulation.md]] 框架，也不等同于所有 [[topics/network-equivalent.md]] 方法。若外部系统的高频响应、控制动态或拓扑切换对局部 EMT 波形有重要影响，简单工频等值可能不足，需要使用 [[models/fdne-model.md]]、多端口等值或重新划分仿真边界。
+该方法解决的是“接口端口如何表示外部交流网络”的问题，不等同于完整的 [[co-simulation]] 框架，也不等同于所有 [[network-equivalent]] 方法。若外部系统的高频响应、控制动态或拓扑切换对局部 EMT 波形有重要影响，简单工频等值可能不足，需要使用 [[fdne-model]]、多端口等值或重新划分仿真边界。
 
 ## EMT 中的作用
 
@@ -57,7 +57,7 @@ $$
 Y(s) \approx D + sH + \sum_{k=1}^{n} \frac{C_k}{s-a_k}
 $$
 
-其中 $a_k$ 为极点，$C_k$ 为留数，$D$ 和 $H$ 为常数项或高频项。该表达式通常由频率扫描和 [[methods/vector-fitting.md]] 得到，再转成状态空间、递归卷积或伴随电路形式接入 EMT 求解器。用于混合仿真时，还应检查 [[methods/passivity-enforcement.md]]，否则拟合模型可能在时域接口处注入非物理能量。
+其中 $a_k$ 为极点，$C_k$ 为留数，$D$ 和 $H$ 为常数项或高频项。该表达式通常由频率扫描和 [[vector-fitting]] 得到，再转成状态空间、递归卷积或伴随电路形式接入 EMT 求解器。用于混合仿真时，还应检查 [[passivity-enforcement]]，否则拟合模型可能在时域接口处注入非物理能量。
 
 ### 多速率数据交换
 
@@ -97,19 +97,19 @@ $$
 
 ## 代表性证据
 
-- [[sources/frequency-dependent-network-equivalent-for-electromagnetic-and-electromechanical.md]]：该来源页说明 FDNE 可用于机电-电磁混合仿真的接口等值，核心证据是 IEEE 39 节点算例中的宽频端口导纳拟合、公共极点矢量拟合和无源性处理。页面中未保留足够信息来支持任意系统、任意频段或实时硬件平台的通用结论。
-- [[sources/a-multirate-emt-co-simulation-of-large-ac-and-mmc-based-mtdc-systems.md]]：代表多速率 EMT 协同仿真中的接口预测、校正和系统分区问题，适合支撑“接口误差与步长协调有关”的结论。
-- [[sources/a-novel-interfacing-technique-for-distributed-hybrid-simulations-combining-emt-a.md]]：可作为分布式混合仿真接口技术的代表来源，用于说明接口变量交换与延迟处理，而不是证明某一种等值形式具有普适最优性。
+- [[frequency-dependent-network-equivalent-for-electromagnetic-and-electromechanical]]：该来源页说明 FDNE 可用于机电-电磁混合仿真的接口等值，核心证据是 IEEE 39 节点算例中的宽频端口导纳拟合、公共极点矢量拟合和无源性处理。页面中未保留足够信息来支持任意系统、任意频段或实时硬件平台的通用结论。
+- [[a-multirate-emt-co-simulation-of-large-ac-and-mmc-based-mtdc-systems]]：代表多速率 EMT 协同仿真中的接口预测、校正和系统分区问题，适合支撑“接口误差与步长协调有关”的结论。
+- [[a-novel-interfacing-technique-for-distributed-hybrid-simulations-combining-emt-a]]：可作为分布式混合仿真接口技术的代表来源，用于说明接口变量交换与延迟处理，而不是证明某一种等值形式具有普适最优性。
 
 ## 与相关页面的关系
 
-- [[methods/thevenin-norton-equivalent.md]]：提供端口等效电路的基础形式；交流耦合网络等值把它用于混合仿真或多工具接口。
-- [[models/fdne-model.md]]：当工频等值不足以表示外部网络宽频响应时，可作为动态端口模型。
-- [[methods/vector-fitting.md]]：常用于把频域导纳/阻抗采样转换为有理函数。
-- [[methods/passivity-enforcement.md]]：用于检查和修正频率相关接口模型的非无源风险。
-- [[methods/multirate-method.md]]：处理 EMT 与机电或不同 EMT 子系统之间的步长差异。
-- [[topics/co-simulation.md]]：更高层框架，包含通信、同步、调度和误差控制。
-- [[methods/electromechanical-electromagnetic-hybrid-simulation.md]]：交流耦合网络等值的典型应用场景。
+- [[thevenin-norton-equivalent]]：提供端口等效电路的基础形式；交流耦合网络等值把它用于混合仿真或多工具接口。
+- [[fdne-model]]：当工频等值不足以表示外部网络宽频响应时，可作为动态端口模型。
+- [[vector-fitting]]：常用于把频域导纳/阻抗采样转换为有理函数。
+- [[passivity-enforcement]]：用于检查和修正频率相关接口模型的非无源风险。
+- [[multirate-method]]：处理 EMT 与机电或不同 EMT 子系统之间的步长差异。
+- [[co-simulation]]：更高层框架，包含通信、同步、调度和误差控制。
+- [[electromechanical-electromagnetic-hybrid-simulation]]：交流耦合网络等值的典型应用场景。
 
 ## 修订与证据使用注意事项
 

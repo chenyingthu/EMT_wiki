@@ -13,17 +13,17 @@ created: "2026-05-02"
 
 $$x(t)=a_0+\sum_{h=1}^{H}\left[a_h\cos(h\omega_0 t)+b_h\sin(h\omega_0 t)\right]$$
 
-其中 $H$ 是建模或分析时保留的最高谐波阶次。该方法适合描述周期或准周期稳态波形，不等同于任意暂态信号的完整表示；若信号包含故障初始直流偏置、非周期陡波、频率漂移或明显时变包络，应转向 [[methods/fft.md]]、[[methods/fourier-filtering.md]]、[[methods/dynamic-phasor.md]] 或直接时域 EMT 分析。
+其中 $H$ 是建模或分析时保留的最高谐波阶次。该方法适合描述周期或准周期稳态波形，不等同于任意暂态信号的完整表示；若信号包含故障初始直流偏置、非周期陡波、频率漂移或明显时变包络，应转向 [[fft]]、[[fourier-filtering]]、[[dynamic-phasor]] 或直接时域 EMT 分析。
 
 ## EMT 中的作用
 
 在 EMT 知识网络中，傅里叶级数主要承担三类角色：
 
-- 作为 [[topics/harmonic-analysis.md]] 的数学底座，把电压、电流、开关函数或控制量分解为各次谐波。
+- 作为 [[harmonic-analysis]] 的数学底座，把电压、电流、开关函数或控制量分解为各次谐波。
 - 作为建模工具，用少量低阶系数描述近周期电力电子波形，例如平均值模型、广义状态空间平均模型和谐波相量模型。
 - 作为结果解释语言，把 EMT 波形中的畸变、谐振和互调现象转化为可比较的频率分量。
 
-因此，傅里叶级数页不应被写成通用电能质量限值表，也不应替代 [[topics/frequency-domain-analysis.md]]、[[methods/frequency-scan.md]] 或 [[methods/impedance-measurement.md]] 页面。
+因此，傅里叶级数页不应被写成通用电能质量限值表，也不应替代 [[frequency-domain-analysis]]、[[frequency-scan]] 或 [[impedance-measurement]] 页面。
 
 ## 核心机制
 
@@ -59,18 +59,18 @@ X_h=\frac{1}{T}\int_0^T x(t)e^{-jh\omega_0t}\,dt$$
 
 ## 代表性来源
 
-- [[sources/a-piecewise-generalized-state-space-model-of-power-converters-for-electromagneti.md]]：把近周期 PWM 行为分段后用傅里叶系数描述，说明傅里叶展开可服务于高效 EMT 变流器建模；其适用性应限定在原文拓扑和分段准则内。
-- [[sources/average-value-modeling-of-line-commutated-ac-dc-converters-with-unbalanced-ac-ne.md]]：使用正负序和谐波分量描述 LCC 平均值模型，适合说明傅里叶系数与换流器波形重构的关系。
-- [[sources/multi-timescale-simulator-of-nonlinear-electrical-elements-by-interfacing-shifte.md]]：展示滑动窗口傅里叶系数在多时间尺度接口中的用法，但不能据此声称傅里叶展开对所有非线性元件都高效。
-- [[sources/revisiting-dynamic-phasors-and-their-efficacy-in-simulating-electric-circuits.md]]：提醒动态相量和傅里叶系数方法的计算收益依赖电路结构、目标频段和数值实现。
+- [[a-piecewise-generalized-state-space-model-of-power-converters-for-electromagneti]]：把近周期 PWM 行为分段后用傅里叶系数描述，说明傅里叶展开可服务于高效 EMT 变流器建模；其适用性应限定在原文拓扑和分段准则内。
+- [[average-value-modeling-of-line-commutated-ac-dc-converters-with-unbalanced-ac-ne]]：使用正负序和谐波分量描述 LCC 平均值模型，适合说明傅里叶系数与换流器波形重构的关系。
+- [[multi-timescale-simulator-of-nonlinear-electrical-elements-by-interfacing-shifte]]：展示滑动窗口傅里叶系数在多时间尺度接口中的用法，但不能据此声称傅里叶展开对所有非线性元件都高效。
+- [[revisiting-dynamic-phasors-and-their-efficacy-in-simulating-electric-circuits]]：提醒动态相量和傅里叶系数方法的计算收益依赖电路结构、目标频段和数值实现。
 
 ## 与相关页面的关系
 
-- [[methods/fft.md]] 是离散序列上计算频谱的算法；傅里叶级数是周期信号分解框架。
-- [[methods/fourier-filtering.md]] 关注从采样波形中提取或抑制目标频率分量。
-- [[methods/harmonic-transfer-coefficient.md]] 关注分量在网络中的传播关系。
-- [[methods/harmonic-interaction.md]] 关注不同设备、网络阻抗和控制环节之间的耦合反馈。
-- [[methods/dynamic-phasor.md]] 可理解为时变傅里叶系数在 EMT/相量混合仿真中的扩展。
+- [[fft]] 是离散序列上计算频谱的算法；傅里叶级数是周期信号分解框架。
+- [[fourier-filtering]] 关注从采样波形中提取或抑制目标频率分量。
+- [[harmonic-transfer-coefficient]] 关注分量在网络中的传播关系。
+- [[harmonic-interaction]] 关注不同设备、网络阻抗和控制环节之间的耦合反馈。
+- [[dynamic-phasor]] 可理解为时变傅里叶系数在 EMT/相量混合仿真中的扩展。
 
 ## 修订与证据使用注意事项
 

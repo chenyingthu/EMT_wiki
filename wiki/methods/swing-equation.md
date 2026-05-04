@@ -11,7 +11,7 @@ created: "2026-05-02"
 
 摇摆方程（Swing Equation）描述同步机转子机械运动与电磁功率不平衡之间的关系，是机电暂态和转子角稳定分析中的基础方程。它关注转子功角和转速在扰动后的变化，主要对应机电时间尺度。
 
-摇摆方程不是 EMT 网络求解方法。EMT 仿真可以包含同步机机械方程，但 EMT 的核心仍是三相瞬时电路、设备模型和数值积分。若研究对象是定子电磁暂态、绕组耦合、不平衡故障或开关暂态，摇摆方程必须与更详细的 [[models/synchronous-machine-model.md]] 和网络方程共同使用。
+摇摆方程不是 EMT 网络求解方法。EMT 仿真可以包含同步机机械方程，但 EMT 的核心仍是三相瞬时电路、设备模型和数值积分。若研究对象是定子电磁暂态、绕组耦合、不平衡故障或开关暂态，摇摆方程必须与更详细的 [[synchronous-machine-model]] 和网络方程共同使用。
 
 ## 基本形式
 
@@ -57,7 +57,7 @@ $$
 
 摇摆方程常用于：
 
-- [[methods/transient-stability-analysis.md]] 中的大扰动功角稳定评估；
+- [[transient-stability-analysis]] 中的大扰动功角稳定评估；
 - 小扰动线性化和阻尼分析；
 - 单机无穷大系统的等面积法解释；
 - 多机系统转子角相对运动和中心惯性坐标分析；
@@ -83,18 +83,18 @@ $$
 
 ## 代表性来源
 
-- [[sources/evaluation-of-time-domain-and-phasor-domain-methods-for-power-system-transients.md]]：适合支撑“机电/相量域与 EMT 时间尺度不同”的边界说明。
-- [[sources/saturation-in-transient-and-stability-phenomena-for-cylindrical-13&14.md]]：可用于说明同步机机械方程与电磁饱和、励磁和稳定现象耦合，不能只看经典正弦功角公式。
-- [[sources/application-of-electromagnetic-transient-transient-stability-hybrid-simulation-t.md]]：说明摇摆方程所在机电暂态模型可与 EMT 子系统耦合，但接口和分网边界需要单独验证。
+- [[evaluation-of-time-domain-and-phasor-domain-methods-for-power-system-transients]]：适合支撑“机电/相量域与 EMT 时间尺度不同”的边界说明。
+- [[saturation-in-transient-and-stability-phenomena-for-cylindrical-13&14]]：可用于说明同步机机械方程与电磁饱和、励磁和稳定现象耦合，不能只看经典正弦功角公式。
+- [[application-of-electromagnetic-transient-transient-stability-hybrid-simulation-t]]：说明摇摆方程所在机电暂态模型可与 EMT 子系统耦合，但接口和分网边界需要单独验证。
 
 ## 与相关页面的关系
 
-- [[models/synchronous-machine-model.md]] 给出同步机电磁和机械模型的完整上下文。
-- [[methods/excitation-system.md]] 通过改变电磁功率影响摇摆方程。
-- [[methods/power-system-stabilizer.md]] 通过励磁通道改善目标机电模态阻尼。
-- [[methods/transient-stability-analysis.md]] 以摇摆方程为核心工具之一。
-- [[topics/electromechanical-transient.md]] 说明摇摆方程所在的时间尺度。
-- [[topics/emt-simulation.md]] 说明瞬时值仿真的更宽建模范围。
+- [[synchronous-machine-model]] 给出同步机电磁和机械模型的完整上下文。
+- [[excitation-system]] 通过改变电磁功率影响摇摆方程。
+- [[power-system-stabilizer]] 通过励磁通道改善目标机电模态阻尼。
+- [[transient-stability-analysis]] 以摇摆方程为核心工具之一。
+- [[electromechanical-transient]] 说明摇摆方程所在的时间尺度。
+- [[emt-simulation]] 说明瞬时值仿真的更宽建模范围。
 
 ## 证据边界
 

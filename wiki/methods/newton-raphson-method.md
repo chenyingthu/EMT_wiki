@@ -27,12 +27,12 @@ $$
 在 EMT 和混合暂态研究中，牛顿迭代法常用于以下位置：
 
 - 非线性元件伴随模型，如饱和电感、避雷器、开关器件或电力电子控制约束。
-- [[methods/dae-solvers.md]]中的隐式残差方程。
+- [[dae-solvers]]中的隐式残差方程。
 - 机电-电磁或交直流接口的功率、电流、电压不平衡量求解。
 - 潮流、稳态初始化和运行点求解，为后续 EMT 仿真提供一致初值。
 - 优化、参数辨识和状态估计中的非线性最小二乘或 KKT 方程。
 
-[[sources/multi-timescale-simulator-of-nonlinear-electrical-elements-by-interfacing-shifte.md]]记录了用梯形积分和牛顿线性化把非线性电感转成诺顿伴随支路的做法。[[sources/hybrid-model-transient-stability-simulation-using-dynamic-phasors-based-hvdc-system-model.md]]记录了 Newton-Raphson 接口算法在交直流混合暂态稳定仿真中的作用。两类来源都支持“牛顿迭代是接口或非线性支路求解内核”，但不支持无条件定量收敛声明。
+[[multi-timescale-simulator-of-nonlinear-electrical-elements-by-interfacing-shifte]]记录了用梯形积分和牛顿线性化把非线性电感转成诺顿伴随支路的做法。[[hybrid-model-transient-stability-simulation-using-dynamic-phasors-based-hvdc-system-model]]记录了 Newton-Raphson 接口算法在交直流混合暂态稳定仿真中的作用。两类来源都支持“牛顿迭代是接口或非线性支路求解内核”，但不支持无条件定量收敛声明。
 
 ## 核心机制
 
@@ -89,19 +89,19 @@ $$
 
 | 来源 | 牛顿迭代的角色 | 可采信边界 |
 |---|---|---|
-| [[sources/multi-timescale-simulator-of-nonlinear-electrical-elements-by-interfacing-shifte.md]] | 对非线性电感曲线线性化，形成等效电导和历史电流源 | 可说明非线性伴随模型机制；具体步长、误差和收敛次数需原文核验 |
-| [[sources/hybrid-model-transient-stability-simulation-using-dynamic-phasors-based-hvdc-system-model.md]] | 在交直流接口处求解功率/电流不平衡 | 可说明混合接口求解思想；定量效率和迭代稳定性不能无来源外推 |
-| [[sources/nuclear-powered-hybrid-energy-system-for-clean-hydrogen-production-time-step-opt.md]] | 在多物理域协同仿真中用于刚性非线性方程或光伏模型求解 | 可作为多物理隐式迭代例子；具体容差和步长需查原文 |
-| [[sources/unified-mana-based-load-flow-for-multi-frequency-hybrid-acdc-multi-microgrids.md]] | 用统一雅可比求解多频混合微电网稳态方程 | 可作为潮流/稳态初始化类牛顿应用 |
+| [[multi-timescale-simulator-of-nonlinear-electrical-elements-by-interfacing-shifte]] | 对非线性电感曲线线性化，形成等效电导和历史电流源 | 可说明非线性伴随模型机制；具体步长、误差和收敛次数需原文核验 |
+| [[hybrid-model-transient-stability-simulation-using-dynamic-phasors-based-hvdc-system-model]] | 在交直流接口处求解功率/电流不平衡 | 可说明混合接口求解思想；定量效率和迭代稳定性不能无来源外推 |
+| [[nuclear-powered-hybrid-energy-system-for-clean-hydrogen-production-time-step-opt]] | 在多物理域协同仿真中用于刚性非线性方程或光伏模型求解 | 可作为多物理隐式迭代例子；具体容差和步长需查原文 |
+| [[unified-mana-based-load-flow-for-multi-frequency-hybrid-acdc-multi-microgrids]] | 用统一雅可比求解多频混合微电网稳态方程 | 可作为潮流/稳态初始化类牛顿应用 |
 
 ## 与相关页面的关系
 
-- [[methods/dae-solvers.md]]：牛顿迭代通常是隐式 DAE 每步内的非线性求解器。
-- [[methods/iterative-solvers.md]]：更广泛的线性和非线性迭代方法页面。
-- [[methods/sparse-matrix-solver.md]]：牛顿步内线性方程的主要计算内核。
-- [[methods/power-flow-calculation.md]]与[[methods/steady-state-initialization.md]]：牛顿迭代常用于给 EMT 提供一致初值。
-- [[methods/trapezoidal-rule.md]]：非线性动态元件经隐式梯形离散后常需要牛顿迭代求解。
-- [[methods/companion-circuit.md]]：牛顿线性化后的非线性支路常以伴随导纳和历史源形式进入网络方程。
+- [[dae-solvers]]：牛顿迭代通常是隐式 DAE 每步内的非线性求解器。
+- [[iterative-solvers]]：更广泛的线性和非线性迭代方法页面。
+- [[sparse-matrix-solver]]：牛顿步内线性方程的主要计算内核。
+- [[power-flow-calculation]]与[[steady-state-initialization]]：牛顿迭代常用于给 EMT 提供一致初值。
+- [[trapezoidal-rule]]：非线性动态元件经隐式梯形离散后常需要牛顿迭代求解。
+- [[companion-circuit]]：牛顿线性化后的非线性支路常以伴随导纳和历史源形式进入网络方程。
 
 ## 修订与证据使用注意事项
 

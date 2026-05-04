@@ -99,16 +99,16 @@ $$
 
 ## 代表性证据
 
-- [[sources/a-link-between-emtp-rv-and-flux3d-for-transformer-energization-studies.md]]：代表跨工具模型连接问题，重点在参数、接口变量和仿真结果对照，而不是简单文件导入。
-- [[sources/a-julia-based-simulation-platform-for-power-system-transients.md]]：可作为程序化建模和文本化模型组织的例子；结论应限于其实现和验证场景。
-- [[sources/comprehensive-full-scale-converter-wind-park-initialization-for-electromagnetic-.md]]：说明完整 EMT 算例除拓扑外还需要初始化流程、控制状态和仿真设置；这些信息通常不由基础网表自动保证。
+- [[a-link-between-emtp-rv-and-flux3d-for-transformer-energization-studies]]：代表跨工具模型连接问题，重点在参数、接口变量和仿真结果对照，而不是简单文件导入。
+- [[a-julia-based-simulation-platform-for-power-system-transients]]：可作为程序化建模和文本化模型组织的例子；结论应限于其实现和验证场景。
+- [[comprehensive-full-scale-converter-wind-park-initialization-for-electromagnetic-]]：说明完整 EMT 算例除拓扑外还需要初始化流程、控制状态和仿真设置；这些信息通常不由基础网表自动保证。
 
 ## 与相关页面的关系
 
-- [[methods/modeling-language.md]]：网表是建模语言的一种具体形式，偏重拓扑和元件参数。
-- [[methods/automatic-code-generation.md]]：可从模板或高层模型生成网表，必须做生成结果验证。
-- [[methods/model-compatibility-layer.md]]：处理不同工具元件库和语义不一致问题。
-- [[methods/simulation-tools-status.md]]：工具支持导入导出并不等于模型行为完全等价。
+- [[modeling-language]]：网表是建模语言的一种具体形式，偏重拓扑和元件参数。
+- [[automatic-code-generation]]：可从模板或高层模型生成网表，必须做生成结果验证。
+- [[model-compatibility-layer]]：处理不同工具元件库和语义不一致问题。
+- [[simulation-tools-status]]：工具支持导入导出并不等于模型行为完全等价。
 
 ## 修订与证据使用注意事项
 

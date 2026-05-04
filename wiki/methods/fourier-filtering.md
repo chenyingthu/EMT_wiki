@@ -11,7 +11,7 @@ created: "2026-05-02"
 
 傅里叶滤波是在频域中选择、提取或抑制特定频率分量的信号处理方法。它通常以 DFT/FFT、滑动 DFT、正弦/余弦正交滤波器或窗函数加权为实现形式，把采样波形 $x[n]$ 映射到频率分量 $X[k]$，再围绕基波、谐波、间谐波或振荡频率进行估计。
 
-该方法是 [[topics/harmonic-analysis.md]]、[[topics/relay-protection.md]]、[[methods/phasor-measurement-unit.md]] 和 EMT 结果后处理的常用工具，但它不是 EMT 数值求解器本身。若研究对象是网络频率响应，应连接到 [[topics/frequency-domain-analysis.md]]、[[methods/frequency-scan.md]] 和 [[methods/impedance-measurement.md]]；若研究对象是多频率模型，应连接到 [[methods/dynamic-phasor.md]]。
+该方法是 [[harmonic-analysis]]、[[relay-protection]]、[[phasor-measurement-unit]] 和 EMT 结果后处理的常用工具，但它不是 EMT 数值求解器本身。若研究对象是网络频率响应，应连接到 [[frequency-domain-analysis]]、[[frequency-scan]] 和 [[impedance-measurement]]；若研究对象是多频率模型，应连接到 [[dynamic-phasor]]。
 
 ## EMT 中的作用
 
@@ -54,22 +54,22 @@ $$X_w[k]=\sum_{n=0}^{N-1}w[n]x[n]e^{-j2\pi kn/N}$$
 - 傅里叶滤波默认窗口内信号接近平稳。故障初始阶段、换相失败和保护动作期间，频谱随时间变化，固定窗口结果只能解释为该窗口内的平均频率内容。
 - 频率分辨率由观测时间决定，$\Delta f=f_s/N=1/T_\text{window}$。提高分辨率通常意味着更长窗口和更慢响应。
 - 直流偏置、指数衰减暂态、采样不同步和频率漂移会影响基波相量估计；保护算法需要单独评估这些误差。
-- 滤波结果不是物理因果证明。频谱中出现某个频率只能说明波形含有该分量，谐振来源还需结合 [[methods/harmonic-transfer-coefficient.md]]、[[methods/impedance-measurement.md]] 或系统拓扑分析。
+- 滤波结果不是物理因果证明。频谱中出现某个频率只能说明波形含有该分量，谐振来源还需结合 [[harmonic-transfer-coefficient]]、[[impedance-measurement]] 或系统拓扑分析。
 
 ## 代表性来源
 
-- [[sources/a-study-on-interpolation-and-weighting-function-for-numerical-fourier-transform.md]]：适合支撑插值、加权和数值傅里叶变换误差控制的讨论；具体精度结论应回到原文算例。
-- [[sources/assessment-of-dynamic-phasor-extraction-methods-for-power-system-co-simulation-a.md]]：比较动态相量提取方法，可作为“窗口、提取算法和接口精度相关”的证据。
-- [[sources/a-novel-distance-protection-algorithm-in-frequency-domain-based-on-parameter-ide.md]]：说明傅里叶/频域处理可服务保护算法，但不应外推为所有故障工况下优于时域方法。
-- [[sources/damping-of-subsynchronous-control-interactions-in-large-scale-pv-installations-t.md]]：包含时域 FFT 与模态频率对照的用法，适合说明频谱分析常作为稳定性诊断证据之一。
+- [[a-study-on-interpolation-and-weighting-function-for-numerical-fourier-transform]]：适合支撑插值、加权和数值傅里叶变换误差控制的讨论；具体精度结论应回到原文算例。
+- [[assessment-of-dynamic-phasor-extraction-methods-for-power-system-co-simulation-a]]：比较动态相量提取方法，可作为“窗口、提取算法和接口精度相关”的证据。
+- [[a-novel-distance-protection-algorithm-in-frequency-domain-based-on-parameter-ide]]：说明傅里叶/频域处理可服务保护算法，但不应外推为所有故障工况下优于时域方法。
+- [[damping-of-subsynchronous-control-interactions-in-large-scale-pv-installations-t]]：包含时域 FFT 与模态频率对照的用法，适合说明频谱分析常作为稳定性诊断证据之一。
 
 ## 与相关页面的关系
 
-- [[methods/fourier-series.md]] 提供周期信号分解概念；本页关注采样数据上的提取和滤波。
-- [[methods/fft.md]] 是常用实现算法；本页还包括滑动 DFT、正交滤波和插值 DFT。
-- [[methods/distance-protection.md]] 和 [[topics/relay-protection.md]] 关注基波相量在保护判据中的使用。
-- [[methods/small-signal-analysis.md]] 和 [[topics/wideband-oscillation-stability.md]] 常把傅里叶滤波结果作为模态或振荡频率的辅助证据。
-- [[methods/passivity-enforcement.md]]、[[methods/vector-fitting.md]] 等频域建模页面使用频率响应数据，但不等同于简单波形滤波。
+- [[fourier-series]] 提供周期信号分解概念；本页关注采样数据上的提取和滤波。
+- [[fft]] 是常用实现算法；本页还包括滑动 DFT、正交滤波和插值 DFT。
+- [[distance-protection]] 和 [[relay-protection]] 关注基波相量在保护判据中的使用。
+- [[small-signal-analysis]] 和 [[wideband-oscillation-stability]] 常把傅里叶滤波结果作为模态或振荡频率的辅助证据。
+- [[passivity-enforcement]]、[[vector-fitting]] 等频域建模页面使用频率响应数据，但不等同于简单波形滤波。
 
 ## 修订与证据使用注意事项
 

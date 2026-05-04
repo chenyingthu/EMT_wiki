@@ -97,16 +97,16 @@ EMTP 卡片、ATP MODELS/TACS、PSCAD 自定义代码、SPICE 网表和 MATLAB/S
 
 ## 代表性证据
 
-- [[sources/accurate-simulation-model-for-a-three-phase-ferroresonant-circuit-in-emtpatp.md]]：代表工具内置 MODEL/TACS 语言用于实现断路器逻辑和非线性磁滞元件；结论应绑定到该铁磁谐振算例。
-- [[sources/a-julia-based-simulation-platform-for-power-system-transients.md]]：可作为用通用编程语言组织暂态仿真模型和求解流程的例子；不能据此说明所有 EMT 工具都具备同等 API。
-- [[sources/a-link-between-emtp-rv-and-flux3d-for-transformer-energization-studies.md]]：代表跨工具模型耦合问题，重点在接口变量、参数映射和验证，而不是单纯文件格式转换。
+- [[accurate-simulation-model-for-a-three-phase-ferroresonant-circuit-in-emtpatp]]：代表工具内置 MODEL/TACS 语言用于实现断路器逻辑和非线性磁滞元件；结论应绑定到该铁磁谐振算例。
+- [[a-julia-based-simulation-platform-for-power-system-transients]]：可作为用通用编程语言组织暂态仿真模型和求解流程的例子；不能据此说明所有 EMT 工具都具备同等 API。
+- [[a-link-between-emtp-rv-and-flux3d-for-transformer-energization-studies]]：代表跨工具模型耦合问题，重点在接口变量、参数映射和验证，而不是单纯文件格式转换。
 
 ## 与相关页面的关系
 
-- [[methods/netlist-import-export.md]]：关注拓扑和元件参数的文本化交换，是建模语言的一个具体分支。
-- [[methods/automatic-code-generation.md]]：可从建模语言或模板生成目标工具代码，但需要验证生成模型的语义等价性。
-- [[topics/co-simulation.md]]：建模语言可描述各子系统，协同仿真还需要时间同步和接口调度。
-- [[methods/simulation-tools-status.md]]：工具页应说明工具能力证据，不能把某语言支持直接等同于工具适用性。
+- [[netlist-import-export]]：关注拓扑和元件参数的文本化交换，是建模语言的一个具体分支。
+- [[automatic-code-generation]]：可从建模语言或模板生成目标工具代码，但需要验证生成模型的语义等价性。
+- [[co-simulation]]：建模语言可描述各子系统，协同仿真还需要时间同步和接口调度。
+- [[simulation-tools-status]]：工具页应说明工具能力证据，不能把某语言支持直接等同于工具适用性。
 
 ## 修订与证据使用注意事项
 

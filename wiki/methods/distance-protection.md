@@ -64,7 +64,7 @@ Z_\phi =
 k_0 = \frac{z_0-z_1}{3z_1}.
 $$
 
-若存在平行线路零序互感，则还可能引入互感补偿项，见 [[methods/parallel-line-protection.md]]。这些公式的前提是故障选相正确、线路参数可信、零序网络和接地方式已知。
+若存在平行线路零序互感，则还可能引入互感补偿项，见 [[parallel-line-protection]]。这些公式的前提是故障选相正确、线路参数可信、零序网络和接地方式已知。
 
 ### 动作特性
 
@@ -96,17 +96,17 @@ $$
 
 ## 代表性证据
 
-- [[sources/a-new-distance-relaying-algorithm-based-on-complex-differential-equation-for-sym.md]] 代表把短窗傅里叶滤波、对称分量和复数微分方程结合的数字距离保护路线；来源解读强调当前片段不支持未核验的动作时间、采样率和误差数字。
-- [[sources/a-novel-distance-protection-algorithm-in-frequency-domain-based-on-parameter-ide.md]] 代表用频域参数辨识处理单相接地远端高阻故障和超越风险的路线；其推导依赖 R-L 模型、单端量测和零序网络假设。
-- [[sources/using-tacs-functions-within-empt-to-teach-protective-relaying-fundamentals-power.md]] 支持在 EMT/TACS 中把采样、滤波和跳闸逻辑作为闭环保护模型演示；不能作为商用继电器性能证明。
+- [[a-new-distance-relaying-algorithm-based-on-complex-differential-equation-for-sym]] 代表把短窗傅里叶滤波、对称分量和复数微分方程结合的数字距离保护路线；来源解读强调当前片段不支持未核验的动作时间、采样率和误差数字。
+- [[a-novel-distance-protection-algorithm-in-frequency-domain-based-on-parameter-ide]] 代表用频域参数辨识处理单相接地远端高阻故障和超越风险的路线；其推导依赖 R-L 模型、单端量测和零序网络假设。
+- [[using-tacs-functions-within-empt-to-teach-protective-relaying-fundamentals-power]] 支持在 EMT/TACS 中把采样、滤波和跳闸逻辑作为闭环保护模型演示；不能作为商用继电器性能证明。
 
 ## 与相关页面的关系
 
-- [[methods/impedance-relay.md]] 关注阻抗元件和动作特性本身。
-- [[methods/digital-distance-protection.md]] 关注数字采样、滤波和参数估计算法。
-- [[models/distance-relay.md]] 是距离继电器设备/模型页面。
-- [[methods/fault-analysis.md]] 提供故障量和故障类型的上游分析。
-- [[topics/protection-relay-modeling.md]] 关注继电器在 EMT 中的建模链路。
+- [[impedance-relay]] 关注阻抗元件和动作特性本身。
+- [[digital-distance-protection]] 关注数字采样、滤波和参数估计算法。
+- [[distance-relay]] 是距离继电器设备/模型页面。
+- [[fault-analysis]] 提供故障量和故障类型的上游分析。
+- [[protection-relay-modeling]] 关注继电器在 EMT 中的建模链路。
 
 ## 开放问题
 

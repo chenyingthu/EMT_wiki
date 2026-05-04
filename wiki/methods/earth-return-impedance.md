@@ -11,7 +11,7 @@ created: "2026-05-02"
 
 地回路阻抗描述电流经大地或土壤介质返回时，对线路单位长度串联阻抗矩阵产生的频率相关贡献。它常用于架空线路零序参数、地下电缆回流路径、接地系统耦合、混合架空-电缆走廊和宽频 EMT 暂态建模。
 
-本页关注大地返回路径如何进入 [[methods/distributed-parameter-line.md]] 和 [[models/frequency-dependent-line-model.md]]。它不等同于接地网接地电阻，也不应替代 [[models/grounding-system-model.md]]。
+本页关注大地返回路径如何进入 [[distributed-parameter-line]] 和 [[frequency-dependent-line-model]]。它不等同于接地网接地电阻，也不应替代 [[grounding-system-model]]。
 
 ## EMT 中的作用
 
@@ -37,7 +37,7 @@ $$Z'(\omega)=Z_\text{int}(\omega)+Z_\text{ext}(\omega)+Z_\text{earth}(\omega)$$
 
 $$Z_{ij}'(\omega)=R_{ij}(\omega)+j\omega L_{ij}(\omega)+Z_{\text{earth},ij}(\omega)$$
 
-因此它与 [[methods/mutual-impedance.md]]、[[methods/phase-domain-modeling.md]] 和 [[methods/modal-transformation.md]] 都直接相关。
+因此它与 [[mutual-impedance]]、[[phase-domain-modeling]] 和 [[modal-transformation]] 都直接相关。
 
 ## 分类与变体
 
@@ -57,18 +57,18 @@ $$Z_{ij}'(\omega)=R_{ij}(\omega)+j\omega L_{ij}(\omega)+Z_{\text{earth},ij}(\ome
 
 ## 代表性来源
 
-- [[sources/earth-return-impedance-of-overhead-and-underground-conductors-considering-earth-stratification-13&14.md]]：给出多层大地中架空和地下导体自/互阻抗的统一理论框架；该 source 明确提醒 Part I 主要是理论推导，不能捏造 FEM 误差结论。
-- [[sources/assessment-of-the-transmission-line-theory-in-the-modeling-of-multiconductor-und.md]]：用全波 FDTD 评估地下电缆 TLT，适合支撑“接地返回导纳/阻抗会影响快速暂态”的边界性表述。
-- [[sources/a-new-tool-for-calculation-of-line-and-cable-parameters.md]]：说明现代线路/电缆参数工具把大地返回、邻近效应和并联导纳放在统一参数计算框架中。
-- [[sources/electromagnetic-transient-modeling-of-grounding-electrodes-buried-in-frequency-d.md]]：可作为接地电极频变土壤建模的相关入口，具体结论需回到原文。
+- [[earth-return-impedance-of-overhead-and-underground-conductors-considering-earth-stratification-13&14]]：给出多层大地中架空和地下导体自/互阻抗的统一理论框架；该 source 明确提醒 Part I 主要是理论推导，不能捏造 FEM 误差结论。
+- [[assessment-of-the-transmission-line-theory-in-the-modeling-of-multiconductor-und]]：用全波 FDTD 评估地下电缆 TLT，适合支撑“接地返回导纳/阻抗会影响快速暂态”的边界性表述。
+- [[a-new-tool-for-calculation-of-line-and-cable-parameters]]：说明现代线路/电缆参数工具把大地返回、邻近效应和并联导纳放在统一参数计算框架中。
+- [[electromagnetic-transient-modeling-of-grounding-electrodes-buried-in-frequency-d]]：可作为接地电极频变土壤建模的相关入口，具体结论需回到原文。
 
 ## 与相关页面的关系
 
-- [[methods/mutual-impedance.md]] 使用地回路项解释导体间耦合。
-- [[methods/frequency-dependent-soil.md]] 和 [[methods/frequency-dependent-soil-model.md]] 描述土壤参数随频率变化。
-- [[models/cable-model.md]]、[[models/grounding-system-model.md]] 和 [[models/transmission-line-model.md]] 是主要应用对象。
-- [[methods/vector-fitting.md]] 可把频域地回路阻抗转为时域可实现模型。
-- [[methods/frequency-scan.md]] 可用于检查等效参数对系统频响的影响。
+- [[mutual-impedance]] 使用地回路项解释导体间耦合。
+- [[frequency-dependent-soil]] 和 [[frequency-dependent-soil-model]] 描述土壤参数随频率变化。
+- [[cable-model]]、[[grounding-system-model]] 和 [[transmission-line-model]] 是主要应用对象。
+- [[vector-fitting]] 可把频域地回路阻抗转为时域可实现模型。
+- [[frequency-scan]] 可用于检查等效参数对系统频响的影响。
 
 ## 修订与证据使用注意事项
 

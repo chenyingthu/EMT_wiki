@@ -9,9 +9,9 @@ created: "2026-05-02"
 
 ## 定义与边界
 
-故障分析是对电力系统故障后电压、电流、功率和状态变量变化的计算方法集合。它既包括工频短路计算，也包括面向 [[topics/emt-simulation.md]] 的时域故障过程分析。方法页中的“故障分析”不等同于单一保护算法，也不应把某一算例中的短路电流、切除时间或稳定裕度外推为所有系统的工程定值。
+故障分析是对电力系统故障后电压、电流、功率和状态变量变化的计算方法集合。它既包括工频短路计算，也包括面向 [[emt-simulation]] 的时域故障过程分析。方法页中的“故障分析”不等同于单一保护算法，也不应把某一算例中的短路电流、切除时间或稳定裕度外推为所有系统的工程定值。
 
-在传统交流网络中，故障分析常以三相短路、单相接地、两相短路和两相接地为基本工况；在电力电子和直流系统中，还需要区分交流侧故障、直流侧短路、换流器闭锁、限流控制和保护动作的耦合过程。若页面讨论的是不平衡交流故障，应优先参照 [[topics/unbalanced-fault-analysis.md]]、[[methods/sequence-component-method.md]] 和 [[methods/sequence-network-model.md]] 的边界。
+在传统交流网络中，故障分析常以三相短路、单相接地、两相短路和两相接地为基本工况；在电力电子和直流系统中，还需要区分交流侧故障、直流侧短路、换流器闭锁、限流控制和保护动作的耦合过程。若页面讨论的是不平衡交流故障，应优先参照 [[unbalanced-fault-analysis]]、[[sequence-component-method]] 和 [[sequence-network-model]] 的边界。
 
 ## 输入与输出
 
@@ -53,11 +53,11 @@ $$
 
 ### 相域 EMT 故障注入
 
-在 EMT 仿真中，故障通常通过改变网络拓扑或接入 [[models/fault-impedance-model.md]] 表示。固定阻抗故障可写成节点导纳矩阵中的附加支路；动态电弧、断路器开断和重合闸则需要随时间更新支路状态。与工频短路计算相比，EMT 分析可以保留衰减直流、谐波、行波、控制限幅和开关动作，但结果也更依赖步长、模型频带和测量链路。
+在 EMT 仿真中，故障通常通过改变网络拓扑或接入 [[fault-impedance-model]] 表示。固定阻抗故障可写成节点导纳矩阵中的附加支路；动态电弧、断路器开断和重合闸则需要随时间更新支路状态。与工频短路计算相比，EMT 分析可以保留衰减直流、谐波、行波、控制限幅和开关动作，但结果也更依赖步长、模型频带和测量链路。
 
 ### 保护闭环
 
-当故障分析用于继电保护，应把保护算法和断路器动作视为会反过来改变网络状态的动态子系统。[[sources/protection-system-representation-in-the-electromagnetic-transients-program-power.md]] 明确把互感器模型、继电器算法接口和断路器反馈放入 EMTP 闭环，用于研究保护动作与电网暂态的相互影响；该来源没有提供可泛化的动作时间或精度指标，因此只能作为闭环建模框架证据。
+当故障分析用于继电保护，应把保护算法和断路器动作视为会反过来改变网络状态的动态子系统。[[protection-system-representation-in-the-electromagnetic-transients-program-power]] 明确把互感器模型、继电器算法接口和断路器反馈放入 EMTP 闭环，用于研究保护动作与电网暂态的相互影响；该来源没有提供可泛化的动作时间或精度指标，因此只能作为闭环建模框架证据。
 
 ## 方法步骤
 
@@ -79,17 +79,17 @@ $$
 
 ## 代表性证据
 
-- [[sources/protection-system-representation-in-the-electromagnetic-transients-program-power.md]] 支持“保护系统可进入 EMTP 闭环仿真”的方法定位；页面证据边界指出原文片段未给出可核验数值指标。
-- [[sources/using-tacs-functions-within-empt-to-teach-protective-relaying-fundamentals-power.md]] 支持用 EMTP/TACS 表示采样、滤波和跳闸控制的教学型闭环建模；其结论主要限于教学和概念演示。
-- [[sources/comparison-and-selection-of-grid-tied-inverter-models-for-accurate-and-efficient.md]] 显示并网逆变器故障分析结果依赖模型保真度；它不支持把某一模型选择规则外推到所有控制器或故障类型。
+- [[protection-system-representation-in-the-electromagnetic-transients-program-power]] 支持“保护系统可进入 EMTP 闭环仿真”的方法定位；页面证据边界指出原文片段未给出可核验数值指标。
+- [[using-tacs-functions-within-empt-to-teach-protective-relaying-fundamentals-power]] 支持用 EMTP/TACS 表示采样、滤波和跳闸控制的教学型闭环建模；其结论主要限于教学和概念演示。
+- [[comparison-and-selection-of-grid-tied-inverter-models-for-accurate-and-efficient]] 显示并网逆变器故障分析结果依赖模型保真度；它不支持把某一模型选择规则外推到所有控制器或故障类型。
 
 ## 与相关页面的关系
 
-- [[topics/unbalanced-fault-analysis.md]] 侧重不平衡故障类型、序分量和相量关系。
-- [[models/fault-impedance-model.md]] 侧重故障点阻抗、电弧和接地模型。
-- [[topics/relay-protection.md]] 侧重保护系统分类和工程目标。
-- [[methods/distance-protection.md]]、[[methods/digital-distance-protection.md]] 和 [[methods/impedance-relay.md]] 侧重用故障量构造距离保护判据。
-- [[methods/transient-stability-analysis.md]] 侧重故障清除后系统能否保持同步或恢复稳定运行。
+- [[unbalanced-fault-analysis]] 侧重不平衡故障类型、序分量和相量关系。
+- [[fault-impedance-model]] 侧重故障点阻抗、电弧和接地模型。
+- [[relay-protection]] 侧重保护系统分类和工程目标。
+- [[distance-protection]]、[[digital-distance-protection]] 和 [[impedance-relay]] 侧重用故障量构造距离保护判据。
+- [[transient-stability-analysis]] 侧重故障清除后系统能否保持同步或恢复稳定运行。
 
 ## 开放问题
 

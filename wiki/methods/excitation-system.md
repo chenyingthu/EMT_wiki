@@ -11,7 +11,7 @@ created: "2026-05-02"
 
 励磁系统是同步发电机的电压与励磁控制系统，用于调节转子励磁电压或励磁电流，影响机端电压、无功输出和电磁转矩。它通常包括测量环节、自动电压调节器、功率放大或整流环节、励磁机或静止励磁电源、限幅与保护环节。
 
-励磁系统不是 EMT 网络求解方法，而是 [[models/synchronous-machine-model.md]] 的控制和外部电源子系统。其在 EMT 中的建模细节取决于研究目标：若关注机电稳定，可采用传递函数或状态空间近似；若关注整流器、灭磁、励磁绕组电磁过程或不平衡暂态，则需要更详细的瞬时值模型。
+励磁系统不是 EMT 网络求解方法，而是 [[synchronous-machine-model]] 的控制和外部电源子系统。其在 EMT 中的建模细节取决于研究目标：若关注机电稳定，可采用传递函数或状态空间近似；若关注整流器、灭磁、励磁绕组电磁过程或不平衡暂态，则需要更详细的瞬时值模型。
 
 ## 输入与输出
 
@@ -20,13 +20,13 @@ created: "2026-05-02"
 - 机端电压、无功、电流或频率等测量量；
 - 电压参考值和附加控制信号；
 - 限幅器、过励/欠励限制和保护状态；
-- 来自 [[methods/power-system-stabilizer.md]] 的阻尼附加信号。
+- 来自 [[power-system-stabilizer]] 的阻尼附加信号。
 
 典型输出包括：
 
 - 励磁电压或励磁电流指令；
 - 同步机内部电势和无功能力的动态变化；
-- 对 [[methods/swing-equation.md]] 中电磁功率和阻尼特性的间接影响。
+- 对 [[swing-equation]] 中电磁功率和阻尼特性的间接影响。
 
 ## 基本控制结构
 
@@ -56,7 +56,7 @@ $$
 
 ## 常见模型层级
 
-- 稳态或潮流层：给定机端电压目标和无功限值，用于 [[methods/power-flow-calculation.md]] 和 [[methods/steady-state-initialization.md]]。
+- 稳态或潮流层：给定机端电压目标和无功限值，用于 [[power-flow-calculation]] 和 [[steady-state-initialization]]。
 - 机电暂态层：用 AVR、励磁机和限制器的传递函数描述秒级电压和功角动态。
 - EMT 控制层：把控制器离散化并与同步机、电力电子励磁电源或外部电路接口。
 - 详细电磁层：显式表示整流器、励磁绕组、电刷/旋转整流器或灭磁回路，适合研究励磁电路暂态。
@@ -70,7 +70,7 @@ $$
 - 机端三相瞬时电压需要转换为控制器使用的幅值、dq 量或滤波量；
 - 励磁输出可能作为同步机转子方程的输入，也可能通过显式励磁电路与网络联立；
 - 限幅和保护动作会改变控制方程结构，可能引起非线性和事件切换；
-- 与 [[methods/power-system-stabilizer.md]] 配合时，励磁系统相位滞后会影响阻尼效果。
+- 与 [[power-system-stabilizer]] 配合时，励磁系统相位滞后会影响阻尼效果。
 
 因此，励磁系统在 EMT 页中应作为控制/设备模型讨论，而不是作为 EMT 求解器、网络等值或开关算法。
 
@@ -83,17 +83,17 @@ $$
 
 ## 代表性来源
 
-- [[sources/synchronous-machine-exciter-circuit-model-in-a.md]]：适合支撑“励磁系统可作为同步机 EMT 模型的电气侧接口”这一边界；具体模型结构需回到原文公式。
-- [[sources/saturation-in-transient-and-stability-phenomena-for-cylindrical-13&14.md]]：包含同步机暂态、饱和、AVR/PSS 影响的讨论，可用于提醒励磁模型不能脱离机器和饱和假设。
-- [[sources/field-validated-generic-emt-type-model-of-a-full-converter-wind-turbine-based-on.md]]：展示外励磁同步发电机和变流器链条中的励磁接口，但不应泛化到所有同步机励磁系统。
+- [[synchronous-machine-exciter-circuit-model-in-a]]：适合支撑“励磁系统可作为同步机 EMT 模型的电气侧接口”这一边界；具体模型结构需回到原文公式。
+- [[saturation-in-transient-and-stability-phenomena-for-cylindrical-13&14]]：包含同步机暂态、饱和、AVR/PSS 影响的讨论，可用于提醒励磁模型不能脱离机器和饱和假设。
+- [[field-validated-generic-emt-type-model-of-a-full-converter-wind-turbine-based-on]]：展示外励磁同步发电机和变流器链条中的励磁接口，但不应泛化到所有同步机励磁系统。
 
 ## 与相关页面的关系
 
-- [[models/synchronous-machine-model.md]] 是励磁系统的主要受控对象。
-- [[methods/power-system-stabilizer.md]] 是励磁系统的附加阻尼控制环节。
-- [[methods/swing-equation.md]] 描述转子机电运动，励磁通过电磁功率间接影响该方程。
-- [[methods/transient-stability-analysis.md]] 关注励磁对大扰动同步稳定的影响。
-- [[methods/state-space-method.md]] 可用于表达励磁控制器和同步机联合小信号模型。
+- [[synchronous-machine-model]] 是励磁系统的主要受控对象。
+- [[power-system-stabilizer]] 是励磁系统的附加阻尼控制环节。
+- [[swing-equation]] 描述转子机电运动，励磁通过电磁功率间接影响该方程。
+- [[transient-stability-analysis]] 关注励磁对大扰动同步稳定的影响。
+- [[state-space-method]] 可用于表达励磁控制器和同步机联合小信号模型。
 
 ## 证据边界
 

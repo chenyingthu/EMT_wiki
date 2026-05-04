@@ -9,7 +9,7 @@ created: "2026-05-02"
 
 ## 定义与边界
 
-数字距离保护是在采样值或数字相量基础上实现 [[methods/distance-protection.md]] 的方法集合。它包括采样、抗混叠、相量或参数估计、故障回路构造、阻抗区判别、闭锁和出口逻辑。数字实现可以表达更复杂的动作区域和滤波策略，但不自动保证更快、更准或对所有故障更可靠；性能必须绑定数据窗、采样频率、信号质量、硬件延迟、故障类型和验证场景。
+数字距离保护是在采样值或数字相量基础上实现 [[distance-protection]] 的方法集合。它包括采样、抗混叠、相量或参数估计、故障回路构造、阻抗区判别、闭锁和出口逻辑。数字实现可以表达更复杂的动作区域和滤波策略，但不自动保证更快、更准或对所有故障更可靠；性能必须绑定数据窗、采样频率、信号质量、硬件延迟、故障类型和验证场景。
 
 本页不新增未绑定来源的采样率、动作时间或测距精度数值。若某一论文给出具体数字，应保留在对应 source 页并注明工况。
 
@@ -42,9 +42,9 @@ $$
 
 ### 时域和参数辨识算法
 
-除相量法外，数字距离保护还可用微分方程或参数辨识方法估计线路电阻、电感和故障距离。[[sources/a-new-distance-relaying-algorithm-based-on-complex-differential-equation-for-sym.md]] 代表一种把短窗傅里叶滤波后的对称分量与复数微分方程结合的路线；其价值在于说明频域滤波和时域求解可以组合，但当前页面证据不支持把具体采样率、动作时间或成功率写成通用结论。
+除相量法外，数字距离保护还可用微分方程或参数辨识方法估计线路电阻、电感和故障距离。[[a-new-distance-relaying-algorithm-based-on-complex-differential-equation-for-sym]] 代表一种把短窗傅里叶滤波后的对称分量与复数微分方程结合的路线；其价值在于说明频域滤波和时域求解可以组合，但当前页面证据不支持把具体采样率、动作时间或成功率写成通用结论。
 
-[[sources/a-novel-distance-protection-algorithm-in-frequency-domain-based-on-parameter-ide.md]] 代表用频域线性参数辨识处理单相接地远端高阻故障的路线。该方法的证据边界包括 R-L 集中参数模型、单端量测、零序网络假设和仿真范围；不应外推到所有相间故障、多端线路或电力电子主导电网。
+[[a-novel-distance-protection-algorithm-in-frequency-domain-based-on-parameter-ide]] 代表用频域线性参数辨识处理单相接地远端高阻故障的路线。该方法的证据边界包括 R-L 集中参数模型、单端量测、零序网络假设和仿真范围；不应外推到所有相间故障、多端线路或电力电子主导电网。
 
 ### 阻抗区判别
 
@@ -76,18 +76,18 @@ $$
 
 ## 代表性证据
 
-- [[sources/a-new-distance-relaying-algorithm-based-on-complex-differential-equation-for-sym.md]] 支持“对称分量故障回路 + 复数微分方程”的算法路线，且明确当前证据缺少可核验的泛化数值指标。
-- [[sources/a-novel-distance-protection-algorithm-in-frequency-domain-based-on-parameter-ide.md]] 支持“频域参数辨识 + 矩阵束提取暂态分量”的路线，但其结论主要绑定单相接地和 R-L 模型。
-- [[sources/using-tacs-functions-within-empt-to-teach-protective-relaying-fundamentals-power.md]] 支持采样、滤波和跳闸逻辑可在 EMTP/TACS 中构造成闭环教学模型；该来源不是工程产品认证证据。
-- [[sources/protection-system-representation-in-the-electromagnetic-transients-program-power.md]] 支持保护系统与 EMT 网络逐时步交互的框架性证据。
+- [[a-new-distance-relaying-algorithm-based-on-complex-differential-equation-for-sym]] 支持“对称分量故障回路 + 复数微分方程”的算法路线，且明确当前证据缺少可核验的泛化数值指标。
+- [[a-novel-distance-protection-algorithm-in-frequency-domain-based-on-parameter-ide]] 支持“频域参数辨识 + 矩阵束提取暂态分量”的路线，但其结论主要绑定单相接地和 R-L 模型。
+- [[using-tacs-functions-within-empt-to-teach-protective-relaying-fundamentals-power]] 支持采样、滤波和跳闸逻辑可在 EMTP/TACS 中构造成闭环教学模型；该来源不是工程产品认证证据。
+- [[protection-system-representation-in-the-electromagnetic-transients-program-power]] 支持保护系统与 EMT 网络逐时步交互的框架性证据。
 
 ## 与相关页面的关系
 
-- [[methods/distance-protection.md]] 给出距离保护的一般方法边界。
-- [[methods/impedance-relay.md]] 关注阻抗元件和动作区几何。
-- [[methods/impedance-measurement.md]] 关注阻抗测量概念。
-- [[methods/fourier-filtering.md]]、[[methods/time-domain-impedance-estimation.md]] 和 [[methods/parameter-identification.md]] 分别对应相量滤波、时域估计和参数辨识路线。
-- [[topics/protection-relay-modeling.md]] 关注数字保护在 EMT 中的整体建模。
+- [[distance-protection]] 给出距离保护的一般方法边界。
+- [[impedance-relay]] 关注阻抗元件和动作区几何。
+- [[impedance-measurement]] 关注阻抗测量概念。
+- [[fourier-filtering]]、[[time-domain-impedance-estimation]] 和 [[parameter-identification]] 分别对应相量滤波、时域估计和参数辨识路线。
+- [[protection-relay-modeling]] 关注数字保护在 EMT 中的整体建模。
 
 ## 开放问题
 

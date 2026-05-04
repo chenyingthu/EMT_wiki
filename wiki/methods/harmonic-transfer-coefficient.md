@@ -17,7 +17,7 @@ $$Z_{ji}(h)=\frac{V_j(h)}{I_i(h)}$$
 
 $$H_{ji}(h)=\frac{V_j(h)}{V_i(h)}$$
 
-这两个量的物理含义不同，不能混用。前者是传递阻抗或灵敏度，后者是节点间电压传递比。本页关注“如何定义和解释传递关系”，不替代 [[topics/harmonic-analysis.md]]、[[methods/frequency-scan.md]] 或 [[methods/impedance-measurement.md]]。
+这两个量的物理含义不同，不能混用。前者是传递阻抗或灵敏度，后者是节点间电压传递比。本页关注“如何定义和解释传递关系”，不替代 [[harmonic-analysis]]、[[frequency-scan]] 或 [[impedance-measurement]]。
 
 ## EMT 中的作用
 
@@ -59,21 +59,21 @@ $$H_{ji}(h)=\frac{Z_{ji}(h)}{Z_{ii}(h)}$$
 - 传递系数不是设备固定参数。网络拓扑、滤波器投切、变压器接线、控制状态和运行点都会改变结果。
 - 频率相关线路、电缆、大地返回和设备宽频模型会影响 $Y(h)$；低频等值不能无条件用于高频谐波。
 - 多谐波源同时存在时，观测波形是各源贡献和相位叠加的结果，单个传递系数不能直接给出责任归因。
-- 对 LCC-HVDC 换相失败、VSC 宽频振荡或 PLL 耦合问题，应把传递系数与 [[methods/harmonic-interaction.md]]、[[methods/small-signal-analysis.md]] 和 EMT 时域验证结合使用。
+- 对 LCC-HVDC 换相失败、VSC 宽频振荡或 PLL 耦合问题，应把传递系数与 [[harmonic-interaction]]、[[small-signal-analysis]] 和 EMT 时域验证结合使用。
 
 ## 代表性来源
 
-- [[sources/harmonics-interaction-mechanism-and-impact-on-extinction-angles-in-multi-infeed-.md]]：给出多馈入直流系统交流故障期间谐波传播、传递等效电路和关断角影响的场景化证据；其结论不应外推到所有 HVDC 拓扑。
-- [[sources/analysis-of-frequency-dependent-network-equivalents-in-dynamic-harmonic-domain.md]]：适合支撑频率相关网络等值对谐波传递关系的影响。
-- [[sources/a-time-domain-harmonic-power-flow-algorithm.md]]：说明谐波潮流可与时域框架结合，但具体传递系数仍需绑定算法假设。
-- [[sources/an-emt-based-dynamic-frequency-scanning-tool-for-stability-analysis-of-inverter-.md]]：展示通过 EMT 扰动和频域提取获得阻抗/传递信息的思路。
+- [[harmonics-interaction-mechanism-and-impact-on-extinction-angles-in-multi-infeed-]]：给出多馈入直流系统交流故障期间谐波传播、传递等效电路和关断角影响的场景化证据；其结论不应外推到所有 HVDC 拓扑。
+- [[analysis-of-frequency-dependent-network-equivalents-in-dynamic-harmonic-domain]]：适合支撑频率相关网络等值对谐波传递关系的影响。
+- [[a-time-domain-harmonic-power-flow-algorithm]]：说明谐波潮流可与时域框架结合，但具体传递系数仍需绑定算法假设。
+- [[an-emt-based-dynamic-frequency-scanning-tool-for-stability-analysis-of-inverter-]]：展示通过 EMT 扰动和频域提取获得阻抗/传递信息的思路。
 
 ## 与相关页面的关系
 
-- [[methods/fourier-series.md]] 和 [[methods/fft.md]] 解决频率分量提取问题；本页解决分量在网络中的传递解释。
-- [[topics/frequency-dependent-modeling.md]] 和 [[methods/passivity-enforcement.md]] 影响传递矩阵是否可信。
-- [[models/vsc-model.md]]、[[models/mmc-model.md]]、[[models/lcc-model.md]] 和 [[models/pll-model.md]] 决定谐波源和控制耦合如何进入网络方程。
-- [[methods/vector-fitting.md]] 可把频域传递关系转化为可用于时域仿真的有理模型。
+- [[fourier-series]] 和 [[fft]] 解决频率分量提取问题；本页解决分量在网络中的传递解释。
+- [[frequency-dependent-modeling]] 和 [[passivity-enforcement]] 影响传递矩阵是否可信。
+- [[vsc-model]]、[[mmc-model]]、[[lcc-model]] 和 [[pll-model]] 决定谐波源和控制耦合如何进入网络方程。
+- [[vector-fitting]] 可把频域传递关系转化为可用于时域仿真的有理模型。
 
 ## 修订与证据使用注意事项
 

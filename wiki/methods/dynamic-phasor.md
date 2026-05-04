@@ -7,284 +7,58 @@ created: "2026-04-30"
 
 # 动态相量法 (Dynamic Phasor Method)
 
-## 定义与概述
+## 定义与边界
 
-动态相量法是电磁暂态仿真中实现多时间尺度建模的核心方法，通过将时域信号分解为缓慢变化的幅值和相位分量（动态相量），在保证精度的前提下显著增大仿真步长。该方法基于频谱搬移原理，将高频交流信号转换为低频复包络，突破了传统EMT仿真受奈奎斯特采样定理限制的步长约束，特别适用于大规模交直流混联电网的高效仿真。
+动态相量法（Dynamic Phasor Method）把围绕一个或多个中心频率变化的电压、电流或状态量表示为缓慢变化的复包络。它不是传统稳态相量，也不是完整开关级 EMT 的替代品；它牺牲部分高频瞬时细节，换取对基波、低阶谐波或指定频带动态的低阶描述。
 
-## 1. 理论基础
+对时域信号 $x(t)$，第 $k$ 阶动态相量常写为 $\langle x\rangle_k(t)=\frac{1}{T}\int_{t-T}^{t}x(\tau)e^{-jk\omega_s\tau}d\tau$。其中 $T$ 是滑动窗口，$\omega_s$ 是参考角频率，$k$ 是保留的频率分量。该定义隐含了窗口、中心频率和保留阶数；离开这些设置谈“精度”或“加速比”没有可审核意义。
 
-### 1.1 动态相量定义
+## EMT 中的作用
 
-**k阶动态相量**:
-$$\langle x \rangle_k(t) = \frac{1}{T}\int_{t-T}^{t} x(\tau)e^{-jk\omega_s \tau} d\tau$$
+在 EMT 中，动态相量法主要用于多时间尺度建模：把工频附近的带通信号搬移到基带，使状态变量变化速度低于原始瞬时波形。典型对象包括 [[mmc-model]]、[[vsc-model]]、HVDC 外部等值、准稳态谐波传播和机电-电磁接口中的慢动态表达。
 
-其中：
-- $T$: 滑动窗周期（通常取基频周期20ms）
-- $\omega_s$: 基波角频率
-- $k$: 谐波阶数
-- $\langle x \rangle_k$: 第k阶动态相量（复数）
+它适合回答“某些频带的包络如何变化”，不适合单独回答“开关沿、雷击陡波、保护动作瞬间的全频谱波形如何变化”。若研究目标是子模块器件应力、开关损耗或高频绝缘暂态，应优先使用详细开关模型、[[discretization-methods]] 和常规 [[nodal-analysis]]。
 
-### 1.2 复数信号构造
+## 核心机制
 
-**解析信号构造**:
-$$x_S(t) = x(t) + j x_T(t)$$
+动态相量的核心是频谱搬移和截断。若信号可表示为 $x(t)\approx \sum_{k=-K}^{K}X_k(t)e^{jk\omega_s t}$，则 $X_k(t)$ 是慢变包络；微分和乘积在相量域中分别变为
 
-**希尔伯特变换法**（最优）：
-$$x_T(t) = \mathcal{H}\{x(t)\} = \frac{1}{\pi} \int_{-\infty}^{+\infty} \frac{x(\tau)}{t-\tau} d\tau$$
+- 微分：$\langle \dot{x}\rangle_k=\frac{d\langle x\rangle_k}{dt}+jk\omega_s\langle x\rangle_k$。
+- 乘积：$\langle xy\rangle_k=\sum_i \langle x\rangle_{k-i}\langle y\rangle_i$。
 
-**微分变换法**（简化）：
-$$x_T(t) = -\frac{1}{\omega_c}\frac{dx(t)}{dt}$$
+因此，电感、电容、控制器和调制函数会从瞬时微分方程变成多个相量阶数之间的耦合方程。保留阶数越多，越能表达谐波耦合；阶数越少，计算越轻，但未保留频率会被截断或折叠为误差。
 
-**积分变换法**（替代）：
-$$x_T(t) = \omega_c \int x(t)dt$$
+在移位相量实现中，也可先构造解析信号 $x_a(t)=x(t)+jx_q(t)$，再做 $x_e(t)=x_a(t)e^{-j\omega_c t}$。这里 $x_q(t)$ 可以由 Hilbert 变换、滤波器或近似正交生成方法得到；不同构造方式的误差应按论文或实现报告绑定，而不应写成通用优劣排序。
 
-### 1.3 移频变换
+## 分类与变体
 
-**复数移频变换**:
-$$x_E(t) = x_S(t) e^{-j\omega_c t} = (x(t) + jx_T(t))e^{-j\omega_c t}$$
+| 变体 | 输入与状态 | EMT 用途 | 边界 |
+|------|------------|----------|------|
+| 基波动态相量 | 基波复包络和低阶控制状态 | 机电-电磁接口、VSC/HVDC 慢动态 | 不保留开关纹波 |
+| 多频动态相量 | 多个 $k$ 阶分量 | 谐波耦合、MMC 环流、低阶宽频振荡 | 阶数选择影响结果 |
+| 移位相量模型 | 解析信号或正交分量 | FPGA/实时仿真中的带通信号降频 | 正交信号构造需验证 |
+| 动态相量-节点混合 | 相量域设备接入节点网络 | 局部设备降阶、系统级 EMT | 接口变量和步长需一致 |
 
-**实数矩阵形式**:
-$$\begin{bmatrix} x_u(t) \\ x_v(t) \end{bmatrix} = \begin{bmatrix} \cos(\omega_c t) & \sin(\omega_c t) \\ -\sin(\omega_c t) & \cos(\omega_c t) \end{bmatrix} \begin{bmatrix} x(t) \\ x_T(t) \end{bmatrix}$$
+## 适用边界与失败模式
 
-其中：
-- $x_u(t), x_v(t)$: 复包络的实部和虚部
-- $\omega_c$: 中心角频率（基波角频率）
+- 带宽边界：信号能量应主要集中在被保留的中心频率和谐波附近；故障陡波、雷电暂态和高频电缆振荡通常需要额外频段或全 EMT。
+- 频率边界：参考频率偏移、PLL 失锁或多频率电网会使包络不再慢变。
+- 非线性边界：铁磁饱和、电弧、限幅控制和开关死区会产生宽频分量，动态相量模型只能在明确工作点或分段假设下使用。
+- 接口边界：与 [[co-simulation]]、[[multirate-method]] 或 RMS 侧耦合时，应说明接口变量是瞬时值、复包络还是功率量。
+- 证据边界：原页面中“5-10 倍步长”“误差 <1%”“206 倍提速”等数字没有在本页绑定到测试系统、平台和论文表图，因此不作为通用结论保留。
 
-## 2. EMT仿真应用
+## 代表性来源
 
-### 2.1 移频电磁暂态模型
+| 来源 | 支撑内容 | 使用边界 |
+|------|----------|----------|
+| [[real-time-simulation-of-hybrid-modular-multilevel-converters-using-shifted-phaso]] | 移位相量用于混合 MMC 子模块和桥臂等效，并在 FPGA 实时仿真平台验证 | 证据限于原文两端 LVDC/MMC 系统和给定硬件实现 |
+| [[comparison-of-dynamic-phasor-discrete-time-and-frequency-scanning-based-ssr-mode]] | 动态相量、离散时间和频率扫描方法可用于 SSR 模态建模对比 | 不能外推为所有宽频振荡场景的优选 |
+| [[dynamic-synchrophasor-estimator-based-on-multi-frequency-phasor-model]] | 多频相量模型可支撑动态同步相量估计 | 属于测量/估计场景，不等同于全 EMT 设备模型 |
 
-**移频微分方程**:
-$$\frac{dx_E(t)}{dt} = f_E(t) - j\omega_c x_E(t)$$
+## 与相关页面的关系
 
-**梯形积分离散化**:
-$$\frac{x_E(t) - x_E(t-\Delta t)}{\Delta t} = \frac{f_E(t) + f_E(t-\Delta t)}{2} - j\omega_c \frac{x_E(t) + x_E(t-\Delta t)}{2}$$
-
-**I型模型（复数形式）**:
-- 直接求解n维复数节点电压方程
-- 计算量小，内存访问局部性好
-- 算术运算次数：$N_1 = 2nD + \frac{4n^3+12n^2+14n}{3}M + \frac{4n^3+12n^2+2n}{3}A$
-
-**II型模型（矩阵形式）**:
-- 求解2n维实数方程组
-- 避免复数运算但计算量较大
-- 算术运算次数：$N_2 = 2nD + \frac{8n^3+12n^2-2n}{3}M + \frac{8n^3+12n^2-2n}{3}A$
-
-### 2.2 MMC动态相量建模
-
-**基频动态相量（BFDP）**:
-$$X_B(t) = \langle x \rangle_0(t) e^{-j\frac{2\pi}{T}(t-T+s)} + 2\sum_{k=1}^{+\infty} \langle x \rangle_k(t) e^{j(k-1)\frac{2\pi}{T}(t-T+s)}$$
-
-**和/差分量解耦**:
-- 和分量（s）：表征直流/共模动态
-- 差分量（d）：表征交流/环流动态
-
-**电容电压动态方程**:
-$$\frac{d}{dt}V_{Cx}^{s,d} = \frac{1}{2NC_{SM}}(S_x^s i_x^{s,d} + S_x^d i_x^{s,d})$$
-
-**桥臂电流动态方程**:
-$$\frac{d}{dt}i_x^{s,d} = -\frac{1}{L}\left(\frac{1}{2}S_x^s V_{Cx}^{s,d} + \frac{1}{2}S_x^d V_{Cx}^{s,d} + R i_x^{s,d} \mp V_{dc}\right)$$
-
-### 2.3 多频率分量处理
-
-**傅里叶微分性质**:
-$$\left\langle \frac{dx}{dt} \right\rangle_q = \frac{d\langle x \rangle_q}{dt} - jq\omega_s \langle x \rangle_q$$
-
-**傅里叶乘积卷积性质**:
-$$\langle xy \rangle_q = \sum_{i=-\infty}^{\infty} \langle x \rangle_{q-i} \langle y \rangle_i$$
-
-## 3. 实现技术
-
-### 3.1 复数信号构造算法
-
-**算法步骤**:
-1. 对原始电压/电流实信号$x(t)$应用数学变换$T(x)$生成正交信号$x_T(t)$
-2. 构造复数信号$x_S(t) = x(t) + jx_T(t)$
-3. 执行移频变换$x_E(t) = x_S(t)e^{-j\omega_c t}$
-4. 建立移频微分方程并离散化求解
-
-**构造方法对比**:
-| 方法 | 负频率抑制 | 实现复杂度 | 精度 | 适用场景 |
-|------|-----------|-----------|------|----------|
-| 希尔伯特变换 | 完全消除 | 高（卷积运算） | 最高 | 高精度要求 |
-| 微分变换 | 残留~5% | 低 | 中等 | 实时仿真 |
-| 积分变换 | 残留~5% | 低 | 中等 | 快速估计 |
-
-### 3.2 模型离散化策略
-
-**I型模型（复数形式）优势**:
-- 复数形式比矩阵形式快约2.4-2.6倍
-- IEEE 9241节点系统：复数形式8.15s vs 矩阵形式21.59s
-- 内存访问局部性更好，缓存命中率更高
-
-**步长选择**:
-- 传统EMT：$\Delta t < 1/(10f_{max})$
-- 移频EMT：$\Delta t$ 可增大5-10倍
-- 典型步长：50μs（传统10μs）
-
-### 3.3 谐波阶数选择
-
-**保留阶数与精度关系**:
-| 保留谐波 | 幅值误差 | 相位误差 | 计算耗时增加 |
-|----------|----------|----------|--------------|
-| 基波(k=0) | <5% | <2° | 基准 |
-| 基波+2次 | <2% | <1° | +15% |
-| 基波+5次 | <0.5% | <0.3° | +50% |
-| 基波+7次 | <0.3% | <0.2° | +80% |
-
-## 4. 仿真软件实现
-
-### 4.1 PSCAD/EMTDC实现
-
-```fortran
-! 移频变换模块
-SUBROUTINE FREQUENCY_SHIFT(X_REAL, X_IMAG, OMEGA_C, T, X_SHIFTED)
-    COMPLEX X_SHIFTED
-    REAL X_REAL, X_IMAG, OMEGA_C, T
-    
-    ! 构造复数信号
-    X_COMPLEX = CMPLX(X_REAL, X_IMAG)
-    
-    ! 移频变换
-    X_SHIFTED = X_COMPLEX * CEXP(-CMPLX(0.0, OMEGA_C * T))
-    
-END SUBROUTINE
-
-! 动态相量提取
-SUBROUTINE DYNAMIC_PHASOR(X_TIME, OMEGA_S, K, T_WINDOW, PHASOR_K)
-    COMPLEX PHASOR_K
-    REAL X_TIME(*), OMEGA_S, T_WINDOW
-    INTEGER K, N_STEPS
-    
-    PHASOR_K = CMPLX(0.0, 0.0)
-    DT = T_WINDOW / N_STEPS
-    
-    DO I = 1, N_STEPS
-        TAU = I * DT
-        PHASOR_K = PHASOR_K + X_TIME(I) * CEXP(-CMPLX(0.0, K * OMEGA_S * TAU)) * DT
-    END DO
-    
-    PHASOR_K = PHASOR_K / T_WINDOW
-    
-END SUBROUTINE
-```
-
-### 4.2 MATLAB实现
-
-```matlab
-classdef DynamicPhasorModel < handle
-    properties
-        omega_c         % 中心角频率
-        T_window        % 滑动窗周期
-        k_max           % 最大谐波阶数
-        phasor_history  % 历史相量
-    end
-    
-    methods
-        function obj = DynamicPhasorModel(omega_c, T_window, k_max)
-            obj.omega_c = omega_c;
-            obj.T_window = T_window;
-            obj.k_max = k_max;
-            obj.phasor_history = cell(k_max+1, 1);
-        end
-        
-        function x_analytic = hilbert_transform(obj, x_real)
-            % 希尔伯特变换构造解析信号
-            x_hilbert = hilbert(x_real);
-            x_analytic = x_real + 1j * imag(x_hilbert);
-        end
-        
-        function x_envelope = frequency_shift(obj, x_analytic, t)
-            % 移频变换
-            x_envelope = x_analytic * exp(-1j * obj.omega_c * t);
-        end
-        
-        function phasor = extract_phasor(obj, x_time, k)
-            % 提取k阶动态相量
-            N = length(x_time);
-            dt = obj.T_window / N;
-            omega_k = k * obj.omega_c;
-            
-            phasor = 0;
-            for i = 1:N
-                tau = (i-1) * dt;
-                phasor = phasor + x_time(i) * exp(-1j * omega_k * tau) * dt;
-            end
-            phasor = phasor / obj.T_window;
-        end
-        
-        function x_reconstructed = reconstruct_signal(obj, phasors, t)
-            % 信号重构
-            x_reconstructed = real(phasors{1});
-            for k = 1:obj.k_max
-                x_reconstructed = x_reconstructed + ...
-                    2 * real(phasors{k+1} * exp(1j * k * obj.omega_c * t));
-            end
-        end
-    end
-end
-```
-
-## 5. 典型参数参考
-
-| 应用场景 | 中心频率 | 仿真步长 | 保留谐波 | 加速比 | 精度 |
-|----------|----------|----------|----------|--------|------|
-| 交流输电系统 | 50/60 Hz | 50-100 μs | 基波+3次 | 5-10倍 | 误差<1% |
-| MMC-HVDC | 50 Hz | 50 μs | 基波+7次 | 15-25倍 | 误差<0.5% |
-| 风电并网 | 50 Hz | 100 μs | 基波+5次 | 10-20倍 | 误差<2% |
-| 大规模电网 | 50 Hz | 200 μs | 基波 | 50-100倍 | 误差<5% |
-
-## 相关方法
-- [[switching-function|开关函数法]] - 与动态相量结合使用
-- [[average-value-model|平均值模型]] - 动态相量的低阶近似
-- [[numerical-integration|数值积分]] - 移频模型离散化
-- [[thevenin-norton-equivalent|戴维南-诺顿等效]] - 移频等效电路
-- [[discretization-methods|离散化方法]] - 复数域离散化技术
-
-## 相关模型
-- [[mmc-model|MMC模型]] - 基频动态相量在MMC建模中的应用
-- [[vsc-model|VSC模型]] - 移频变换在VSC建模中的应用
-- [[transmission-line-model|输电线路模型]] - 移频传输线模型实现
-- [[synchronous-machine-model|同步电机模型]] - 动态相量电机模型
-- [[dfig-model|DFIG模型]] - 风机变流器移频建模
-
-## 相关主题
-- [[real-time-simulation|实时仿真]] - 动态相量加速实时仿真技术
-- [[multirate-method|多速率方法]] - 多时间尺度仿真协调
-- [[harmonic-analysis|谐波分析]] - 动态相量谐波提取方法
-- [[frequency-dependent-modeling|频率相关建模]] - 频域建模方法
-
-## 7. 适用边界与限制
-
-### 7.1 适用条件
-- **带限信号**: 信号频谱集中，带宽远小于中心频率
-- **缓变幅值**: 信号幅值/相位变化远慢于载波周期
-- **已知中心频率**: 系统基波频率明确且稳定
-- **周期性稳态**: 适用于稳态或准稳态分析
-
-### 7.2 失效边界
-- **宽频暂态**: 故障引起的高频分量（>10次谐波）
-- **强非线性**: 铁磁饱和、电弧等非线性现象
-- **快速切换**: 保护动作、开关操作等瞬态过程
-- **频率偏移**: 系统频率大幅偏移额定值
-
-### 7.3 精度边界
-| 应用场景 | 幅值误差 | 相位误差 | 暂态误差 | 适用频段 |
-|----------|---------|---------|----------|----------|
-| 稳态运行 | <0.5% | <0.3° | - | 基波+7次 |
-| 功率阶跃 | <2% | <1° | <5% | 基波+5次 |
-| 故障暂态 | <5% | <2° | <15% | 基波+3次 |
-| 机电振荡 | <1% | <0.5° | <3% | 基波 |
-
-## 8. 来源论文
-
-| 论文 | 年份 | 核心贡献 |
-|------|------|----------|
-| 电力系统移频电磁暂态仿真原理及应用综述 | 2022 | 系统梳理移频仿真三大关键技术，比较三种复数信号构造方法 |
-| A Dynamic Phasor Model of an MMC with Extended Frequency Range for EMT Simulations | 2018 | 基频动态相量BFDP，计算效率提升15-25倍，精度<0.5% |
-| 模块化多电平换流器时间尺度变换建模和仿真 | 2022 | 时间尺度变换与动态相量结合，仿真速度提升206倍 |
-| 一种用于LCC-HVDC系统小干扰稳定性分析的改进动态相量模型 | 2022 | 改进动态相量用于小干扰稳定性分析 |
-
----
-
-*本页面基于Karpathy LLM Wiki Pattern构建，内容来自682篇EMT领域学术文献的深度分析*
+- [[average-value-model]]：平均值模型通常只保留低频平均量；动态相量可保留多个频率包络，边界更接近频谱截断。
+- [[switching-function]]：开关函数可作为动态相量方程中的调制输入；若开关函数高频分量被截断，开关纹波不会被完整表达。
+- [[harmonic-analysis]]：谐波分析偏向频谱诊断；动态相量把选定谐波作为状态随时间推进。
+- [[state-space-method]]：动态相量模型常最终写成复数或实数扩展的状态空间方程。
+- [[real-time-simulation]]：动态相量可降低实时计算压力，但是否满足实时 deadline 取决于硬件、步长、阶数和接口实现。

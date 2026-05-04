@@ -7,186 +7,63 @@ created: "2026-05-02"
 
 # EMT Simulation (电磁暂态仿真)
 
-## 概述
+## 定义与边界
 
-电磁暂态(EMT)仿真是电力系统分析的重要工具，通过求解描述网络动态行为的微分方程组，模拟电力系统在各种扰动下的暂态过程。EMT仿真能够详细模拟电力电子开关动作、故障暂态、雷电冲击等快速电磁过程，时间尺度从微秒到数秒。
+电磁暂态仿真是对电力系统相域网络、元件微分方程、开关事件和控制系统进行时域求解的仿真范式。它主要用于研究 [[electromagnetic-transient]]、开关暂态、雷电冲击、故障波形、电力电子控制和保护动作等快速过程。
 
-## 基本原理
+EMT 仿真不是所有动态仿真的最高保真替代品。若研究对象是长期经济调度、慢速频率恢复或市场出清，正序潮流、机电暂态或优化模型可能更合适；若使用平均值模型或等值模型，结论应随模型层级降级。
 
-### 数学基础
-EMT仿真基于以下基本方程：
-- **基尔霍夫定律**: KCL和KVL
-- **元件特性**: 电阻、电感、电容的微分方程
-- **电磁耦合**: 变压器、线路的耦合关系
+## EMT 中的作用
 
-状态方程形式：
-$$\dot{\mathbf{x}} = \mathbf{A}\mathbf{x} + \mathbf{B}\mathbf{u}$$
-$$\mathbf{y} = \mathbf{C}\mathbf{x} + \mathbf{D}\mathbf{u}$$
+EMT 的价值在于保留对相别、瞬时波形、开关时刻、非线性元件和控制采样敏感的动态。典型问题包括：
 
-### 数值积分
-- [[trapezoidal-rule]] - 梯形法则
-- [[backward-euler]] - 后向欧拉
-- [[numerical-integration]] - 数值积分
-- 步长: 微秒级到毫秒级
+- [[switching-transient]]、[[lightning-overvoltage]] 和 [[fault-analysis]] 中的峰值、波前、暂态能量和保护判据。
+- [[vsc-hvdc]]、[[mmc-model]]、[[facts]]、[[pv-power-plant]] 等电力电子系统的控制交互和限流行为。
+- [[frequency-domain-analysis]] 或 [[harmonic-analysis]] 发现风险后，用时域波形交叉验证振荡、谐波和非线性触发。
+- [[real-time-simulation]] 与 [[hil-simulation]] 中的控制保护闭环验证。
 
-### 求解方法
-- **节点导纳法**: [[nodal-admittance-matrix]]
-- **状态空间法**: [[state-space-method]]
-- **混合法**: 结合两者优势
+## 主要分支与机制
 
-## 建模特点
+- 网络方程：常以 [[nodal-admittance-matrix]] 组织相域节点电压和支路电流，配合伴随电路或状态方程形成离散步进。
+- 状态方程：[[state-space-method]] 适合连续状态、控制器和多端口元件建模，可与节点方程组合。
+- 数值积分：[[trapezoidal-rule]]、[[backward-euler]] 和其他 [[numerical-integration]] 方法决定数值阻尼、稳定性和事件后振荡风险。
+- 开关与非线性：[[ideal-switch-model]]、[[detailed-switch-model]]、[[magnetic-saturation-modeling]] 和非线性迭代决定模型能否反映关键物理过程。
+- 多尺度扩展：[[average-value-model]]、[[dynamic-phasor]]、[[multirate-method]]、[[co-simulation]] 和 [[parallel-computing]] 用于在计算负担和保真度之间折中。
 
-### 详细程度
-- **开关器件**: IGBT、晶闸管详细模型
-- [[ideal-switch-model]] - 理想开关
-- [[detailed-switch-model]] - 详细开关
-- **分布参数**: 输电线路行波模型
-- [[transmission-line-model]] - 线路模型
+## 形式化表达
 
-### 非线性处理
-- **饱和**: 变压器磁饱和
-- [[magnetic-saturation-modeling]] - 磁饱和
-- **电弧**: 断路器电弧模型
-- `arcing-model` - 电弧模型
+EMT 步进通常可以写成离散化后的网络代数方程和元件状态更新：
 
-### 控制系统
-- **详细控制**: 控制器完整实现
-- `control-system-modeling` - 控制系统
-- **采样**: 离散时间控制
-- `discrete-control` - 离散控制
+$$
+Y_k v_k = i^{\mathrm{hist}}_k + i^{\mathrm{src}}_k,\qquad
+x_{k+1}=F_h(x_k,v_k,u_k,s_k)
+$$
 
-## 时间尺度
+其中 $Y_k$ 是可能随拓扑或等值改变的节点导纳矩阵，$v_k$ 是节点电压，$i^{\mathrm{hist}}_k$ 是伴随电路历史源，$x_k$ 是元件或控制状态，$s_k$ 表示开关和事件状态。不同 EMT 工具和方法的差别，主要体现在 $Y_k$ 的组装方式、$F_h$ 的积分公式和事件处理策略。
 
-### EMT范围
-- **雷电**: 微秒级(μs)
-- **开关**: 毫秒级(ms)
-- **故障**: 周波级(10-100ms)
-- **机电**: 百毫秒到秒级
+## 适用边界与失败模式
 
-### 与机电暂态对比
-| 特性 | EMT | 机电暂态 |
-|------|-----|----------|
-| 时间步长 | μs-ms | ms-10ms |
-| 网络模型 | 三相详细 | 正序简化 |
-| 电机模型 | 详细 | 经典/简化 |
-| 开关 | 详细 | 平均值 |
-| 计算量 | 大 | 小 |
+- 时间步长不能用单一经验比例代替验证；需要根据最高关注频率、开关事件、控制采样和数值稳定性选择。
+- EMT 详细波形依赖参数质量。线路频变参数、变压器饱和、控制器限幅和保护定值缺失时，结果只能作为场景分析。
+- 梯形积分在开关事件和刚性系统中可能产生数值振荡；后向欧拉或阻尼处理会改变高频响应，需要说明取舍。
+- 大规模 EMT 可能因初始化、非线性迭代、矩阵重构和事件密度而失败；加速方法必须报告基准和误差边界。
 
-### 混合仿真
-- [[hybrid-simulation]] - 混合仿真
-- [[co-simulation]] - 联合仿真
-- **接口**: EMT-机电暂态接口
+## 代表性来源
 
-## 主要应用
+- [[emtp-modeling-of-electromagnetic-transients-power-delivery-ieee-transactions-on]] 是 EMT 建模传统的来源入口，适合追踪 EMTP 型时域建模思想。
+- [[a-combined-state-space-nodal-method-for-the-simulation-of-power-system-transient]] 支撑状态空间与节点方法组合的机制讨论。
+- [[a-comparative-study-of-electromagnetic-transient-simulations-using-companion-cir]] 可用于比较伴随电路 EMT 实现的数值差异。
+- [[accuracy-evaluation-of-electromagnetic-transients-simulation-algorithms]] 提醒算法精度需要绑定测试系统和指标，而不是用“高精度”概括。
 
-### 过电压分析
-- **操作过电压**: 开关操作
-- [[switching-transient]] - 开关过电压
-- **雷电过电压**: 雷击影响
-- [[lightning-overvoltage]] - 雷电过电压
-- **谐振过电压**: 系统谐振
-- [[analysis-and-mitigation-of-subsynchronous-resonance-in-series-compensated-wind-p]] - 谐振
+## 与相关页面的关系
 
-### 电力电子
-- **换流器**: VSC、LCC、MMC
-- [[vsc-model]] - VSC换流器
-- [[mmc-model]] - MMC换流器
-- **FACTS**: SVC、STATCOM
-- [[facts]] - 灵活交流输电
+- [[electromagnetic-transient]] 定义现象对象；本页定义仿真范式。
+- [[emt-mathematical-foundation]] 更适合承载 KCL/KVL、微分代数方程和离散化推导。
+- [[real-time-simulation]] 讨论实时 deadline；它是 EMT 的一种执行约束，不是所有 EMT 的默认形态。
+- [[frequency-domain-analysis]] 提供频域识别和阻抗视角；EMT 提供时域非线性和事件验证。
 
-### 继电保护
-- **保护测试**: 保护定值验证
-- `relay-testing` - 保护测试
-- **故障分析**: 复杂故障
-- [[fault-analysis]] - 故障分析
+## 开放问题
 
-### 可再生能源
-- **风机**: 全功率/双馈
-- [[real-time-simulation-for-detailed-wind-turbine-model-based-on-heterogeneous-comp]] - 风力发电机
-- **光伏**: 逆变器控制
-- `pv-model` - 光伏模型
-
-## 商业软件
-
-### PSCAD/EMTDC
-- **特点**: 图形化、易用
-- **元件库**: 丰富的元件库
-- **自定义**: Fortran/C自定义模型
-- **应用**: 学术研究、工业
-
-### EMTP-RV
-- **特点**: 工业标准
-- **功能**: 全面的分析功能
-- **模型**: 高精度模型
-- **应用**: 工程咨询、规划
-
-### MATLAB/Simulink
-- **特点**: 灵活、可扩展
-- **Simscape**: 物理建模
-- **仿真**: 多领域联合
-- **应用**: 研究、教学
-
-### RTDS
-- **特点**: 实时仿真
-- [[real-time-simulation]] - 实时仿真
-- **HIL**: 硬件在环测试
-- [[hil-simulation]] - 硬件在环
-
-## 建模要点
-
-### 数据准备
-- **网络数据**: 线路参数、变压器
-- **设备数据**: 发电机、负荷
-- **控制数据**: 控制器参数
-
-### 步长选择
-- **稳定性**: 满足数值稳定
-- **精度**: 足够精度
-- **效率**: 计算效率
-- **原则**: 最小时间常数的1/10
-
-### 初始条件
-- [[steady-state-initialization]] - 稳态初始化
-- **潮流**: 基于潮流结果
-- **快照**: 保存/加载状态
-
-## 结果分析
-
-### 波形分析
-- **时域波形**: 电压、电流波形
-- **FFT分析**: 频谱分析
-- `fft-analysis` - FFT分析
-- **谐波**: 谐波含量
-
-### 统计量
-- **峰值**: 最大过电压
-- **有效值**: RMS值
-- **能量**: 能量累积
-
-### 可视化
-- **动画**: 电压分布动画
-- `visualization` - 可视化
-- **3D**: 三维场分布
-
-## 并行计算
-- [[parallel-computing]] - 并行计算
-- [[gpu-parallel-acceleration]] - GPU加速
-- **分网**: 网络分区并行
-- **实时**: 实时仿真
-
-## 发展趋势
-- **大规模**: 万节点级系统
-- [[large-scale-system-simulation]] - 大规模仿真
-- **实时仿真**: 硬件在环
-- [[real-time-simulation]] - 实时仿真
-- **云仿真**: 云端计算资源
-
-## 相关主题
-- [[electromagnetic-transient]] - 电磁暂态
-- [[lessons-learned-in-porting-offline-large-scale-power-system-simulation-to-real-t]] - 电力系统仿真
-- [[lightning-transient-analysis]] - 暂态分析
-- [[coupling-model-for-time-domain-analysis-of-nonparallel-overhead-wires-and-buried]] - 时域分析
-
-## 来源论文
-
-参见 [[index]] 获取更多EMT仿真相关文献。
+- 如何为黑盒电力电子设备建立既可共享又可验证的 EMT 模型。
+- 如何在大规模系统中系统报告模型层级、参数来源、步长、误差和计算性能。
+- 如何把频域稳定性、机电暂态和 EMT 波形验证组织成一致的证据链。
