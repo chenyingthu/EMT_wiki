@@ -1,0 +1,96 @@
+---
+title: "数字距离保护 (Digital Distance Protection)"
+type: method
+tags: [distance-protection, digital-relay, impedance-algorithm, fault-location, dft]
+created: "2026-05-02"
+---
+
+# 数字距离保护 (Digital Distance Protection)
+
+## 定义与边界
+
+数字距离保护是在采样值或数字相量基础上实现 [[methods/distance-protection.md]] 的方法集合。它包括采样、抗混叠、相量或参数估计、故障回路构造、阻抗区判别、闭锁和出口逻辑。数字实现可以表达更复杂的动作区域和滤波策略，但不自动保证更快、更准或对所有故障更可靠；性能必须绑定数据窗、采样频率、信号质量、硬件延迟、故障类型和验证场景。
+
+本页不新增未绑定来源的采样率、动作时间或测距精度数值。若某一论文给出具体数字，应保留在对应 source 页并注明工况。
+
+## 输入与输出
+
+输入包括：
+
+- 保护端电压、电流采样序列或同步相量。
+- 采样系统参数：采样间隔、抗混叠滤波器、量化精度和时间同步方式。
+- 线路参数、零序补偿、故障选相和动作特性边界。
+- 保护逻辑状态：启动、记忆电压、振荡闭锁、负荷限制和定值区。
+
+输出包括：
+
+- 基频相量、暂态参数或等效故障回路阻抗。
+- 动作区内外判定、分区延时、闭锁或跳闸命令。
+- 用于录波和复核的中间量，例如故障相、零序/负序量、测量阻抗轨迹和滤波状态。
+
+## 核心机制
+
+### 数字相量提取
+
+工频距离保护常先从采样序列中提取基频分量。例如离散傅里叶形式可写成：
+
+$$
+X_1 = \frac{2}{N}\sum_{k=0}^{N-1}x_k e^{-j2\pi k/N}.
+$$
+
+全窗和短窗滤波存在速度与频谱抑制能力的权衡。直流偏移、频率偏移、CT/CVT 暂态、谐波和噪声都会影响相量质量。因此，不能把“短窗”直接写成必然更快且同等准确；必须说明验证条件。
+
+### 时域和参数辨识算法
+
+除相量法外，数字距离保护还可用微分方程或参数辨识方法估计线路电阻、电感和故障距离。[[sources/a-new-distance-relaying-algorithm-based-on-complex-differential-equation-for-sym.md]] 代表一种把短窗傅里叶滤波后的对称分量与复数微分方程结合的路线；其价值在于说明频域滤波和时域求解可以组合，但当前页面证据不支持把具体采样率、动作时间或成功率写成通用结论。
+
+[[sources/a-novel-distance-protection-algorithm-in-frequency-domain-based-on-parameter-ide.md]] 代表用频域线性参数辨识处理单相接地远端高阻故障的路线。该方法的证据边界包括 R-L 集中参数模型、单端量测、零序网络假设和仿真范围；不应外推到所有相间故障、多端线路或电力电子主导电网。
+
+### 阻抗区判别
+
+得到阻抗或参数后，数字保护可用圆、四边形或多边形边界判断动作：
+
+$$
+Z_m \in \Omega_{\text{trip}}
+$$
+
+其中 $\Omega_{\text{trip}}$ 是由方向线、电抗线、电阻边界、负荷限制和分区延时共同定义的动作域。数字实现的灵活性来自逻辑和边界可编程，但其安全性仍需由故障集、非故障扰动和闭锁逻辑验证。
+
+## 方法步骤
+
+1. 信号采集：从 CT/VT 或电子式互感器获得电压、电流采样。
+2. 信号调理：抗混叠、去直流、频率跟踪或同步校正。
+3. 故障启动和选相：用突变量、零序/负序或相电流差识别故障回路。
+4. 量测估计：用 DFT、短窗滤波、微分方程或参数辨识求相量或阻抗。
+5. 补偿与修正：加入零序补偿、平行线互感补偿、记忆电压或过渡电阻处理。
+6. 动作逻辑：执行方向判别、分区判别、负荷限制、振荡闭锁和延时配合。
+7. 闭环验证：在 EMT 或录波回放中核查保护出口对断路器和网络状态的反馈。
+
+## 适用边界与失败模式
+
+- 短数据窗可能改善响应速度，但对直流偏移、非整数谐波和频率偏移更敏感。
+- DFT 类相量法对稳定基频分量友好，但在故障初期可能受暂态分量影响。
+- 微分方程和参数辨识法依赖线路模型假设；若分布电容、互感、噪声或测量误差显著，参数可辨识性可能下降。
+- 记忆电压可帮助近端故障方向判别，但故障前电压异常或系统振荡时需要额外闭锁。
+- 数字保护的“算法正确”不等于“装置闭环正确”；采样链路、互感器暂态、通信、断路器模型和定值管理都可能改变结果。
+
+## 代表性证据
+
+- [[sources/a-new-distance-relaying-algorithm-based-on-complex-differential-equation-for-sym.md]] 支持“对称分量故障回路 + 复数微分方程”的算法路线，且明确当前证据缺少可核验的泛化数值指标。
+- [[sources/a-novel-distance-protection-algorithm-in-frequency-domain-based-on-parameter-ide.md]] 支持“频域参数辨识 + 矩阵束提取暂态分量”的路线，但其结论主要绑定单相接地和 R-L 模型。
+- [[sources/using-tacs-functions-within-empt-to-teach-protective-relaying-fundamentals-power.md]] 支持采样、滤波和跳闸逻辑可在 EMTP/TACS 中构造成闭环教学模型；该来源不是工程产品认证证据。
+- [[sources/protection-system-representation-in-the-electromagnetic-transients-program-power.md]] 支持保护系统与 EMT 网络逐时步交互的框架性证据。
+
+## 与相关页面的关系
+
+- [[methods/distance-protection.md]] 给出距离保护的一般方法边界。
+- [[methods/impedance-relay.md]] 关注阻抗元件和动作区几何。
+- [[methods/impedance-measurement.md]] 关注阻抗测量概念。
+- [[methods/fourier-filtering.md]]、[[methods/time-domain-impedance-estimation.md]] 和 [[methods/parameter-identification.md]] 分别对应相量滤波、时域估计和参数辨识路线。
+- [[topics/protection-relay-modeling.md]] 关注数字保护在 EMT 中的整体建模。
+
+## 开放问题
+
+- 需要把算法级验证、装置级闭环验证和现场录波验证分层整理，避免把仿真算例写成工程通用能力。
+- 面向新能源和电力电子主导系统的数字距离保护，需要重新评估故障电流限幅、频率偏移和控制模式切换对阻抗轨迹的影响。
+- 需要补充与标准、装置手册和实际录波相互核对的证据，以支撑采样率、数据窗和动作时间等数值。

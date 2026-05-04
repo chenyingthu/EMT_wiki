@@ -1,0 +1,108 @@
+---
+title: "经济调度 (Economic Dispatch)"
+type: method
+tags: [economic-dispatch, generation, optimization, lambda-iteration, lagrange, power-system-operation]
+created: "2026-05-02"
+---
+
+# 经济调度 (Economic Dispatch)
+
+## 定义与边界
+
+经济调度（Economic Dispatch, ED）是在给定负荷、机组可用状态和运行约束下，分配各发电单元有功出力以满足某个运行目标的优化问题。常见目标包括燃料成本、排放成本、网损或它们的加权组合。
+
+经济调度不是电磁暂态（EMT）核心求解方法。它通常运行在调度、稳态或准稳态时间尺度上，输出运行点、出力计划或边界条件；EMT 仿真则求解瞬时电压、电流和设备控制动态。将经济调度结果用于 EMT 研究时，应把它视为工况生成和初始化来源，而不是 EMT 网络方程、伴随电路或开关暂态的替代。
+
+## 输入与输出
+
+典型输入包括：
+
+- 机组成本或报价曲线；
+- 机组有功出力上下限、爬坡限制和可用状态；
+- 系统负荷、备用需求和外部交换计划；
+- 是否考虑网损、线路约束和无功/电压约束的建模选择。
+
+典型输出包括：
+
+- 各机组有功出力设定值；
+- 系统边际成本或拉格朗日乘子；
+- 约束是否紧绑定及相应的影子价格；
+- 可作为 [[methods/power-flow-calculation.md]] 或 [[methods/steady-state-initialization.md]] 输入的稳态运行点。
+
+## 数学形式
+
+基本经济调度可写为：
+
+$$
+\min_{P_G} \sum_{i=1}^{N_G} C_i(P_{Gi})
+$$
+
+满足功率平衡：
+
+$$
+\sum_{i=1}^{N_G} P_{Gi} = P_D + P_{loss}
+$$
+
+以及机组出力边界：
+
+$$
+P_{Gi}^{min} \leq P_{Gi} \leq P_{Gi}^{max}
+$$
+
+其中 $P_{Gi}$ 为第 $i$ 台机组有功出力，$P_D$ 为负荷有功需求，$P_{loss}$ 为由网络模型给出的有功损耗。若不显式考虑网络，则 $P_{loss}$ 可被忽略或作为外部估计量处理；若纳入线路约束和电压约束，问题会接近或并入 [[methods/optimal-power-flow.md]]。
+
+在可微凸成本和无紧绑定不等式约束的简化条件下，最优性条件可表示为等微增率：
+
+$$
+\frac{dC_i}{dP_{Gi}} = \lambda
+$$
+
+有网损修正时，增量损耗会改变各机组的等价边际成本。该条件是简化模型下的解析解释，不应外推为所有调度模型的通用求解公式。
+
+## 求解路线
+
+常见求解路线包括：
+
+- 拉格朗日乘子或 $\lambda$ 迭代：适合简化、可微且约束较少的经济调度模型。
+- 二次规划或凸优化：适合二次成本、线性约束或经过近似线性化的模型。
+- 非线性规划：适合考虑网损、阀点效应或非线性运行约束的模型。
+- 混合整数优化：当机组启停状态、最小开停机时间或离散控制动作被纳入时使用。
+
+启发式算法和机器学习近似可以作为研究或工程辅助工具，但其可行性、最优性和越限处理必须回到具体算例、约束集合和验证流程中说明。
+
+## 与 EMT 仿真的关系
+
+经济调度与 EMT 的连接主要发生在工况层：
+
+- 为 EMT 算例提供发电机有功出力、负荷水平和潮流目标；
+- 与 [[methods/power-flow-calculation.md]] 联合生成同步机、变压器、线路和换流器的稳态初值；
+- 在 [[methods/electromechanical-electromagnetic-hybrid-simulation.md]] 中，机电侧或调度侧可给出慢时间尺度的运行点，EMT 侧保留局部瞬时动态；
+- 对含新能源和电力电子设备的研究，可作为 [[topics/renewable-energy-integration.md]] 工况筛选的一部分。
+
+经济调度本身通常不解析开关波形、谐波、暂态过电压、换流器保护动作或快速控制环细节。这些问题需要 EMT 模型、控制器模型和时域仿真支撑。
+
+## 适用边界与失败模式
+
+经济调度结果的可信度取决于模型边界：
+
+- 若忽略网络约束，结果可能满足总功率平衡但导致局部线路或电压越限；
+- 若成本曲线、机组限值或负荷预测不可靠，最优解只对错误输入最优；
+- 若将慢时间尺度计划直接用于快速暂态，可能掩盖控制器限幅、保护动作和设备动态；
+- 若把单一场景的经济性结果外推到所有系统，会混淆算例结论和领域规律。
+
+## 代表性来源
+
+- [[sources/damping-of-subsynchronous-control-interactions-in-large-scale-pv-installations-t.md]]：可作为“运行优化/调度设定参与动态安全控制”的相关证据；具体控制效果和时间裕度必须绑定原文测试系统。
+- [[sources/electromechanical-transient-modeling-of-modular-multilevel-converter-based-multi.md]]：展示交直流系统运行点和潮流初始化对后续动态模型的重要性，但不把经济调度本身写成 EMT 求解器。
+- [[sources/a-hybrid-simulation-tool-for-the-study-of-pv-integration-impacts-on-distribution.md]]：说明慢时间尺度相量/QSTS 计算可与 EMT 局部模型协同；其结论应限制在原文接口和配电网场景内。
+
+## 与相关页面的关系
+
+- [[methods/power-flow-calculation.md]] 给出稳态网络方程和节点电压，是把调度出力转化为网络运行点的常用环节。
+- [[methods/optimal-power-flow.md]] 将经济目标与潮流方程、线路约束、电压约束等统一进一个优化模型。
+- [[methods/steady-state-initialization.md]] 说明如何把稳态运行点转换为 EMT 初始状态。
+- [[topics/emt-simulation.md]] 关注瞬时值时域仿真，与经济调度处于不同建模层级。
+
+## 证据边界
+
+本页只给出经济调度的通用模型结构和与 EMT 的接口边界，未声称特定算法在某类系统中具有固定精度、速度或最优性。具体成本系数、市场规则、机组参数和求解器性能需要绑定相应数据源、工程规程或论文算例后再写入。
