@@ -59,7 +59,7 @@ sources: ["EMT_Doc/09/Duarte 等 - 2023 - Assessment of the transmission line th
 ## 使用的方法
 
 - [[全波fdtd法|全波FDTD法]]
-- [[传输线理论|传输线理论]]
+- [[topics/transmission-line-theory|传输线理论]]
 - [[拟tem近似|拟TEM近似]]
 - [[闭式近似公式|闭式近似公式]]
 - [[接地返回参数计算|接地返回参数计算]]

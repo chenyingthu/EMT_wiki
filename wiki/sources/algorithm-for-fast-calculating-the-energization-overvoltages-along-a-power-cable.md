@@ -59,7 +59,7 @@ sources: ["EMT_Doc/06/Li 等 - 2022 - Algorithm for fast calculating the energiz
 ## 使用的方法
 
 - [[模态理论|模态理论]]
-- [[数值拉普拉斯逆变换|数值拉普拉斯逆变换]]
+- [[methods/numerical-inverse-laplace-transform|数值拉普拉斯逆变换]]
 - [[拉普拉斯变换|拉普拉斯变换]]
 - [[methods/modal-analysis|相模变换]]
 - [[电报方程求解|电报方程求解]]

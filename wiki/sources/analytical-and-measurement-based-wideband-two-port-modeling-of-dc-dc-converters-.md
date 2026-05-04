@@ -61,7 +61,7 @@ sources: ["EMT_Doc/09/Alameri和Gomez - 2023 - Analytical and measurement-based 
 - [[拉普拉斯域分析|拉普拉斯域分析]]
 - [[模式平均法|模式平均法]]
 - [[双端口导纳建模|双端口导纳建模]]
-- [[数值拉普拉斯逆变换|数值拉普拉斯逆变换]]
+- [[methods/numerical-inverse-laplace-transform|数值拉普拉斯逆变换]]
 - [[基于测量的模型重构|基于测量的模型重构]]
 
 ## 涉及的模型

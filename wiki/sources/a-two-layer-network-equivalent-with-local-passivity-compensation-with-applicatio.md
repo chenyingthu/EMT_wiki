@@ -74,7 +74,7 @@ sources: ["EMT_Doc/04/TPWRS.2019.2918229.pdf.pdf"]
 
 - [[topics/co-simulation|混合仿真]]
 - [[topics/network-equivalent|网络等值]]
-- [[无源性保证|无源性保证]]
+- [[methods/passivity-enforcement|无源性保证]]
 - [[宽频动态建模|宽频动态建模]]
 - [[topics/hybrid-acdc-network|交直流电网]]
 

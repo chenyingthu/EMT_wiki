@@ -137,16 +137,16 @@ $$\kappa(\mathbf{A}^T\mathbf{A}) = \kappa(\mathbf{A})^2$$
 
 - [[numerical-integration]] - 数值积分
 - [[modal-analysis]] - 模态分析中的拟合
-- [[system-identification]] - 系统辨识
+- 系统辨识
 
 ## 与相关页面的关系
 
 - [[vector-fitting]] - 频变特性拟合的核心算法
 - [[parameter-identification]] - 系统参数辨识
 - [[frequency-dependent-modeling]] - 频变建模应用
-- [[curve-fitting]] - 曲线拟合方法
-- [[svd]] - SVD分解求解
-- [[qr-decomposition]] - QR分解求解
+- 曲线拟合方法
+- SVD 分解求解
+- QR 分解求解
 
 ## 开放问题
 

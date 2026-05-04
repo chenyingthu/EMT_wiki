@@ -80,7 +80,7 @@ CISS的实现前提是可获得GVSC平均值模型及外环控制参数。它以
 - [[topics/hybrid-acdc-network|多端直流电网]]
 - [[methods/grid-forming-control|构网型控制]]
 - [[黑盒模型|黑盒模型]]
-- [[交直流混合系统|交直流混合系统]]
+- [[topics/hybrid-acdc-system|交直流混合系统]]
 
 ## 主要发现
 

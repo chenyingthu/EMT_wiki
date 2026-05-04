@@ -59,7 +59,7 @@ sources: ["EMT_Doc/17/Yu 等 - 2022 - Electromechanical transient modelling and 
 ## 使用的方法
 
 - [[topics/electromechanical-transient|机电暂态建模]]
-- [[矢量控制|矢量控制]]
+- [[methods/vector-control|矢量控制]]
 - [[一阶惯性等效|一阶惯性等效]]
 - [[methods/nodal-analysis|等效电路法]]
 - [[电磁暂态对比验证|电磁暂态对比验证]]

@@ -64,7 +64,7 @@ sources: ["EMT_Doc/07&08/Xu et al. - 2026 - An enhanced K-means two-step cluster
 - [[kd树加速搜索|KD树加速搜索]]
 - [[davies-bouldin指数|Davies-Bouldin指数]]
 - [[动态等值建模|动态等值建模]]
-- [[矢量控制|矢量控制]]
+- [[methods/vector-control|矢量控制]]
 
 ## 涉及的模型
 

@@ -61,7 +61,7 @@ sources: ["EMT_Doc/05/Gao 等 - 2023 - Accuracy Enhancement of Shifted Frequency
 - [[移频电磁暂态仿真|移频电磁暂态仿真]]
 - [[根匹配法|根匹配法]]
 - [[嵌入式小步长|嵌入式小步长]]
-- [[希尔伯特变换|希尔伯特变换]]
+- [[methods/hilbert-transform|希尔伯特变换]]
 - [[methods/numerical-integration|梯形积分法]]
 
 ## 涉及的模型

@@ -56,7 +56,7 @@ sources: ["EMT_Doc/04/pesgm.2012.6345135.pdf.pdf"]
 ## 使用的方法
 
 - [[methods/average-value-model|动态平均值建模]]
-- [[矢量控制|矢量控制]]
+- [[methods/vector-control|矢量控制]]
 - [[正弦脉宽调制|正弦脉宽调制]]
 - [[受控源等效建模|受控源等效建模]]
 - [[开关时刻插值算法|开关时刻插值算法]]

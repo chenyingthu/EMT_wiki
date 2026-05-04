@@ -85,7 +85,7 @@ sources: ["EMT_Doc/10/Wang 等 - 2013 - Comparison between electromechanical tra
 
 
 - [[低频振荡分析|低频振荡分析]]
-- [[交直流混合系统|交直流混合系统]]
+- [[topics/hybrid-acdc-system|交直流混合系统]]
 - [[topics/co-simulation|混合仿真]]
 - [[methods/modal-analysis|模态分析]]
 - [[直流输电系统建模|直流输电系统建模]]

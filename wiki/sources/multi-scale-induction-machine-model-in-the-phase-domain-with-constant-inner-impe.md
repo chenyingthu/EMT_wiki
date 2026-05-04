@@ -62,7 +62,7 @@ sources: ["EMT_Doc/27&28/Multi-Scale Induction Machine Model in the Phase Domain
 - [[topics/dynamic-phasor|动态相量法]]
 - [[methods/nodal-analysis|相域建模]]
 - [[methods/norton-equivalent|诺顿等效]]
-- [[希尔伯特变换|希尔伯特变换]]
+- [[methods/hilbert-transform|希尔伯特变换]]
 - [[topics/co-simulation|多尺度仿真]]
 
 ## 涉及的模型
