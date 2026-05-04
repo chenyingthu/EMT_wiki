@@ -70,7 +70,7 @@ sources: ["EMT_Doc/31/j.epsr.2021.107281.pdf.pdf"]
 - [[models/grounding-system-model|接地系统]]
 - [[水平接地极|水平接地极]]
 - [[网格接地极|网格接地极]]
-- [[雷电流源|雷电流源]]
+- [[topics/grounding-lightning-overvoltage|雷电流源]]
 - [[models/grounding-system-model|频变土壤模型]]
 - [[atp等效电路|ATP等效电路]]
 

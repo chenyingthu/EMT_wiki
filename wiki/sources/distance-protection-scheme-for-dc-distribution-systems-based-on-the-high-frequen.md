@@ -59,7 +59,7 @@ sources: ["EMT_Doc/13&14/files/TPWRD.2019.2909130.pdf.pdf"]
 ## 使用的方法
 
 - [[高频阻抗等效建模|高频阻抗等效建模]]
-- [[距离保护|距离保护]]
+- [[models/distance-relay|距离保护]]
 - [[频谱分析|频谱分析]]
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[故障暂态分量提取|故障暂态分量提取]]
@@ -75,7 +75,7 @@ sources: ["EMT_Doc/13&14/files/TPWRD.2019.2909130.pdf.pdf"]
 
 - [[直流配电网保护|直流配电网保护]]
 - [[高频故障特征分析|高频故障特征分析]]
-- [[距离保护|距离保护]]
+- [[models/distance-relay|距离保护]]
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[故障区段识别|故障区段识别]]
 

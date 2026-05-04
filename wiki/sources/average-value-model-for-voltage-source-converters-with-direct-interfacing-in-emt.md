@@ -61,7 +61,7 @@ sources: ["EMT_Doc/09/Ebrahimi和Jatskevich - 2023 - Average-Value Model for Vol
 - [[methods/average-value-model|平均值建模]]
 - [[直接接口技术|直接接口技术]]
 - [[methods/nodal-analysis|节点分析法]]
-- [[dq坐标变换|dq坐标变换]]
+- [[models/coordinate-transformation-model|dq坐标变换]]
 
 ## 涉及的模型
 

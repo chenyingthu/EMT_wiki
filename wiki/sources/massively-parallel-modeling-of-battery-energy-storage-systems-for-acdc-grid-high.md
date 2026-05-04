@@ -72,7 +72,7 @@ sources: ["EMT_Doc/25/Lin 等 - 2023 - Massively Parallel Modeling of Battery En
 - [[topics/power-electronics|电力电子变流器]]
 - [[戴维南等效电池模型|戴维南等效电池模型]]
 - [[topics/hybrid-acdc-network|交直流电网]]
-- [[ieee-118节点系统|IEEE 118节点系统]]
+- [[test-systems/ieee-118-bus-system|IEEE 118节点系统]]
 
 ## 相关主题
 

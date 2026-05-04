@@ -62,7 +62,7 @@ sources: ["EMT_Doc/01/Rupasinghe 等 - 2019 - A Dynamic Phasor Model of an MMC W
 - [[基频动态相量建模|基频动态相量建模]]
 - [[最近电平逼近调制|最近电平逼近调制]]
 - [[电容电压平衡算法|电容电压平衡算法]]
-- [[节点导纳矩阵求解|节点导纳矩阵求解]]
+- [[methods/nodal-analysis|节点导纳矩阵求解]]
 
 ## 涉及的模型
 

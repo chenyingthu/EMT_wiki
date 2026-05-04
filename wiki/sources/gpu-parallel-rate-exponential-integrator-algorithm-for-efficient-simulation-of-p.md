@@ -73,7 +73,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/Paull 等 - 2026 - GPU Parallel-Rate
 ## 相关主题
 
 - [[topics/emt-simulation|电磁暂态仿真]]
-- [[gpu并行加速|GPU并行加速]]
+- [[methods/gpu-accelerated-simulation|GPU并行加速]]
 - [[大时间步长积分|大时间步长积分]]
 - [[开关事件检测|开关事件检测]]
 - [[topics/emt-simulation|离线仿真]]

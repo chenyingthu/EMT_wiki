@@ -70,7 +70,7 @@ sources: ["EMT_Doc/02/Colqui 等 - 2022 - A modified implementation of the Folde
 - [[三相输电线路|三相输电线路]]
 - [[改进折叠线等效模型-mfle|改进折叠线等效模型(MFLE)]]
 - [[models/transmission-line-model|通用线路模型(ULM)]]
-- [[jmarti模型|JMarti模型]]
+- [[models/frequency-dependent-line-model|JMarti模型]]
 
 ## 相关主题
 

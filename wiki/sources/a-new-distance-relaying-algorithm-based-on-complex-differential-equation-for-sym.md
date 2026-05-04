@@ -70,7 +70,7 @@ sources: ["EMT_Doc/02/Rosołowski 等 - 1997 - A new distance relaying algorithm
 
 ## 相关主题
 
-- [[距离保护|距离保护]]
+- [[models/distance-relay|距离保护]]
 - [[数字继电保护|数字继电保护]]
 - [[高阻故障检测|高阻故障检测]]
 - [[平行线路保护|平行线路保护]]

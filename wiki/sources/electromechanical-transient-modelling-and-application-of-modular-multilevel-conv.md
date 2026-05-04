@@ -75,7 +75,7 @@ sources: ["EMT_Doc/17/Yu 等 - 2022 - Electromechanical transient modelling and 
 
 - [[topics/electromechanical-transient|机电暂态仿真]]
 - [[mmc-model|MMC]]
-- [[暂态稳定性分析|暂态稳定性分析]]
+- [[topics/transient-stability-analysis|暂态稳定性分析]]
 - [[故障穿越|故障穿越]]
 - [[交直流系统解耦|交直流系统解耦]]
 

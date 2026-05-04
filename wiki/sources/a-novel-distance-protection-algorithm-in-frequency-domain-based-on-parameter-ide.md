@@ -75,7 +75,7 @@ sources: ["EMT_Doc/13&14/files/A novel distance protection algorithm in frequenc
 
 ## 相关主题
 
-- [[距离保护|距离保护]]
+- [[models/distance-relay|距离保护]]
 - [[methods/fault-analysis-methods|单相接地故障]]
 - [[超越动作抑制|超越动作抑制]]
 - [[故障测距|故障测距]]

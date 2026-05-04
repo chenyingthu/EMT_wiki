@@ -67,7 +67,7 @@ sources: ["EMT_Doc/10/Mudunkotuwa和Filizadeh - 2018 - Co-simulation of electric
 
 ## 涉及的模型
 
-- [[ieee-118节点系统|IEEE 118节点系统]]
+- [[test-systems/ieee-118-bus-system|IEEE 118节点系统]]
 - [[topics/wind-farm-modeling|风电场]]
 - [[topics/power-electronics|电力电子变流器]]
 - [[topics/transmission-network|输电网络]]

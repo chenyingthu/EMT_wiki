@@ -58,7 +58,7 @@ sources: ["EMT_Doc/17/Yamanaka 等 - 2021 - Equivalent Circuit Model of a Transm
 
 ## 使用的方法
 
-- [[有限差分时域法-fdtd|有限差分时域法(FDTD)]]
+- [[methods/fdtd|有限差分时域法(FDTD)]]
 - [[methods/average-value-model|等效电路建模]]
 - [[细线近似法|细线近似法]]
 - [[阶梯近似法|阶梯近似法]]

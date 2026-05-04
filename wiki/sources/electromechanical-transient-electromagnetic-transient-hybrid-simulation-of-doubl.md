@@ -76,7 +76,7 @@ sources: ["EMT_Doc/17/Gu 等 - 2015 - Electromechanical transient-electromagneti
 
 - [[topics/co-simulation|混合仿真]]
 - [[风电场等值建模|风电场等值建模]]
-- [[暂态稳定性分析|暂态稳定性分析]]
+- [[topics/transient-stability-analysis|暂态稳定性分析]]
 - [[故障动态响应|故障动态响应]]
 - [[控制系统建模|控制系统建模]]
 

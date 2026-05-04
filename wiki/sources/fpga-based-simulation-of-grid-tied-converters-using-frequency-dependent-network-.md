@@ -71,7 +71,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/Hajizadeh 等 - 2026 - FPGA-based si
 - [[vsc-model|VSC]]
 - [[并网变流器|并网变流器]]
 - [[models/transmission-line-model|输电线路]]
-- [[负荷|负荷]]
+- [[topics/load-modeling|负荷]]
 - [[fdne-model|FDNE]]
 
 ## 相关主题

@@ -77,7 +77,7 @@ sources: ["EMT_Doc/15/Efficient GPU-based electromagnetic transient simulation f
 ## 相关主题
 
 - [[topics/emt-simulation|电磁暂态仿真]]
-- [[gpu并行加速|GPU并行加速]]
+- [[methods/gpu-accelerated-simulation|GPU并行加速]]
 - [[topics/real-time-simulation|实时仿真]]
 - [[methods/automatic-code-generation|自动代码生成]]
 - [[大规模配电网仿真|大规模配电网仿真]]

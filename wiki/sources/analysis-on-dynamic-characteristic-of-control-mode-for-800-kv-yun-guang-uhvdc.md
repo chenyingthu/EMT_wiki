@@ -73,7 +73,7 @@ sources: ["EMT_Doc/07&08/Analysis on dynamic characteristic of control mode for 
 
 - [[12脉动换流器|12脉动换流器]]
 - [[models/transformer-model|换流变压器]]
-- [[平波电抗器|平波电抗器]]
+- [[models/dc-rlc-filter|平波电抗器]]
 - [[分布参数直流输电线路|分布参数直流输电线路]]
 - [[交直流滤波器|交直流滤波器]]
 

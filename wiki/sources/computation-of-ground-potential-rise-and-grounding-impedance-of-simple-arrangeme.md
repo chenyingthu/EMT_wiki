@@ -70,7 +70,7 @@ sources: ["EMT_Doc/11/De Araújo 等 - 2021 - Computation of ground potential ri
 - [[垂直接地极|垂直接地极]]
 - [[交叉接地极|交叉接地极]]
 - [[频变分层土壤模型|频变分层土壤模型]]
-- [[雷电流源|雷电流源]]
+- [[topics/grounding-lightning-overvoltage|雷电流源]]
 - [[接地系统等效电路|接地系统等效电路]]
 
 ## 相关主题

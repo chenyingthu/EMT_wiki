@@ -73,7 +73,7 @@ sources: ["EMT_Doc/25/Cheng 等 - 2025 - Machine-Learning-Reinforced Massively P
 - [[储能电池系统|储能电池系统]]
 - [[topics/wind-farm-modeling|风电场]]
 - [[topics/microgrid|微电网]]
-- [[ieee-118节点系统|IEEE 118节点系统]]
+- [[test-systems/ieee-118-bus-system|IEEE 118节点系统]]
 
 ## 相关主题
 

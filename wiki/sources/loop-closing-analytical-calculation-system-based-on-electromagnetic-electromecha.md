@@ -75,7 +75,7 @@ sources: ["EMT_Doc/25/Zhu 等 - 2012 - Loop closing analytical calculation syste
 - [[models/transmission-line-model|输电线路]]
 - [[models/transformer-model|变压器]]
 - [[models/synchronous-machine-model|同步发电机]]
-- [[负荷|负荷]]
+- [[topics/load-modeling|负荷]]
 - [[电容器|电容器]]
 - [[电抗器|电抗器]]
 

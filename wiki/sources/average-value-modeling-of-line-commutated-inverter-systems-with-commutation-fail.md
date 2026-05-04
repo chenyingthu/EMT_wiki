@@ -68,7 +68,7 @@ sources: ["EMT_Doc/09/Hong 等 - 2022 - Average-Value Modeling of Line-Commutate
 - [[lcc-model|LCC]]
 - [[六脉冲晶闸管逆变器|六脉冲晶闸管逆变器]]
 - [[vsc-hvdc|VSC-HVDC]]
-- [[平波电抗器|平波电抗器]]
+- [[models/dc-rlc-filter|平波电抗器]]
 - [[models/transmission-line-model|输电线路]]
 - [[methods/nodal-analysis|戴维南等效电路]]
 

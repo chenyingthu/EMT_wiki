@@ -74,7 +74,7 @@ sources: ["EMT_Doc/27&28/Multi-FPGA digital hardware design for detailed large-s
 - [[models/transformer-model|变压器]]
 - [[线性集总rlcg元件|线性集总RLCG元件]]
 - [[非线性元件|非线性元件]]
-- [[负荷|负荷]]
+- [[topics/load-modeling|负荷]]
 - [[models/circuit-breaker-model|断路器]]
 
 ## 相关主题

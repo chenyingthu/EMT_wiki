@@ -77,7 +77,7 @@ sources: ["EMT_Doc/05/Aluthge 等 - 2026 - Accelerating electromagnetic transien
 ## 相关主题
 
 - [[topics/emt-simulation|电磁暂态仿真]]
-- [[gpu并行加速|GPU并行加速]]
+- [[methods/gpu-accelerated-simulation|GPU并行加速]]
 - [[topics/large-scale-grid-simulation|大规模电网仿真]]
 - [[高频开关动态|高频开关动态]]
 - [[methods/sparse-matrix-solver|稀疏矩阵求解]]

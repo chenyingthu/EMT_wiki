@@ -58,7 +58,7 @@ Lightning-induced voltage analysis on a three-phase compact distribution Alberto
 
 ## 使用的方法
 
-- [[有限差分时域法-fdtd|有限差分时域法(FDTD)]]
+- [[methods/fdtd|有限差分时域法(FDTD)]]
 - [[marti传输线模型|Marti传输线模型]]
 - [[methods/vector-fitting|矢量拟合]]
 - [[伯德渐近法|伯德渐近法]]

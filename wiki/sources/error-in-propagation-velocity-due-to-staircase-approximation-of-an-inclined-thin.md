@@ -58,7 +58,7 @@ sources: ["EMT_Doc/18/Noda 等 - 2004 - Error in propagation velocity due to sta
 
 ## 使用的方法
 
-- [[有限差分时域法-fdtd|有限差分时域法(FDTD)]]
+- [[methods/fdtd|有限差分时域法(FDTD)]]
 - [[阶梯近似算法-sca|阶梯近似算法(SCA)]]
 - [[麦克斯韦方程直接求解|麦克斯韦方程直接求解]]
 - [[高斯脉冲激励|高斯脉冲激励]]

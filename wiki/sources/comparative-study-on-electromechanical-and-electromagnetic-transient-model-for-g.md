@@ -61,7 +61,7 @@ sources: ["EMT_Doc/10/Sun 等 - 2014 - Comparative study on electromechanical an
 - [[传递函数建模|传递函数建模]]
 - [[methods/average-value-model|平均值模型]]
 - [[pq解耦控制|PQ解耦控制]]
-- [[dq坐标变换|dq坐标变换]]
+- [[models/coordinate-transformation-model|dq坐标变换]]
 - [[对比仿真验证|对比仿真验证]]
 
 ## 涉及的模型

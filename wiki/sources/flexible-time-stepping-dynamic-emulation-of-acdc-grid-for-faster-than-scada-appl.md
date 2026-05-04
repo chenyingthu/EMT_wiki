@@ -67,7 +67,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/tpwrs.2020.3038850.pdf.pdf"]
 
 ## 涉及的模型
 
-- [[ieee-118节点系统|IEEE 118节点系统]]
+- [[test-systems/ieee-118-bus-system|IEEE 118节点系统]]
 - [[9阶同步电机模型|9阶同步电机模型]]
 - [[vsc-hvdc|VSC-HVDC]]
 - [[交流输电网络|交流输电网络]]

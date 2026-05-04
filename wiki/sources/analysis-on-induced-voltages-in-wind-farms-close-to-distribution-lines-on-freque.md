@@ -69,7 +69,7 @@ sources: ["EMT_Doc/07&08/Da Silva et al. - 2022 - Analysis on Induced Voltages i
 - [[架空配电线路-dl|架空配电线路(DL)]]
 - [[接地系统-环形网与垂直接地极|接地系统(环形网与垂直接地极)]]
 - [[频率相关土壤|频率相关土壤]]
-- [[雷电流源|雷电流源]]
+- [[topics/grounding-lightning-overvoltage|雷电流源]]
 
 ## 相关主题
 

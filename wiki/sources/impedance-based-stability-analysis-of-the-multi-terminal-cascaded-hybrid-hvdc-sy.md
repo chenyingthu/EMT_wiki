@@ -71,7 +71,7 @@ sources: ["EMT_Doc/22/Xu 等 - 2025 - Impedance Based Stability Analysis of the 
 - [[vsc-hvdc|VSC-HVDC]]
 - [[topics/hybrid-acdc-network|交直流电网]]
 - [[直流滤波器|直流滤波器]]
-- [[平波电抗器|平波电抗器]]
+- [[models/dc-rlc-filter|平波电抗器]]
 
 ## 相关主题
 

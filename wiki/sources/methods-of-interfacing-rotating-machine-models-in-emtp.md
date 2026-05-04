@@ -62,7 +62,7 @@ sources: ["EMT_Doc/26/Wang 等 - 2010 - Methods of interfacing rotating machine 
 - [[methods/state-space-method|状态变量法]]
 - [[间接接口技术|间接接口技术]]
 - [[直接接口技术|直接接口技术]]
-- [[park变换|Park变换]]
+- [[models/coordinate-transformation-model|Park变换]]
 - [[耦合电路相域建模|耦合电路相域建模]]
 
 ## 涉及的模型

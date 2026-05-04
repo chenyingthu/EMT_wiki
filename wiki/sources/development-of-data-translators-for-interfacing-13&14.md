@@ -74,7 +74,7 @@ sources: ["EMT_Doc/13&14/files/tpwrd.2012.2227836.pdf.pdf"]
 - [[pi型线路|PI型线路]]
 - [[rlc支路|RLC支路]]
 - [[models/ideal-switch-model|理想开关]]
-- [[负荷|负荷]]
+- [[topics/load-modeling|负荷]]
 
 ## 相关主题
 

@@ -59,7 +59,7 @@ sources: ["EMT_Doc/15/Electromagnetic disturbances in gas-insulated substations 
 ## 使用的方法
 
 - [[models/transmission-line-model|传输线模型]]
-- [[有限差分时域法-fdtd|有限差分时域法(FDTD)]]
+- [[methods/fdtd|有限差分时域法(FDTD)]]
 - [[电磁暂态程序-emtp|电磁暂态程序(EMTP)]]
 - [[同轴传播模式参数法|同轴传播模式参数法]]
 - [[集中电容等效|集中电容等效]]
