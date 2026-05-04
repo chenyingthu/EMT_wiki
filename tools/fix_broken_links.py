@@ -67,8 +67,29 @@ def fix_backslash_links(links_dict, existing):
                         print(f"  修复失败 {filepath}: {e}")
     return fixed
 
+def should_create_page(link_name):
+    """判断是否应该为此链接创建页面"""
+    # 过滤掉通用词汇
+    generic_words = {'wikilink', 'link', 'page', 'url', 'ref', 'note', 'source', 'file'}
+    if link_name.lower() in generic_words:
+        return False
+
+    # 过滤掉太短的词汇（少于3个字符）
+    if len(link_name) < 3:
+        return False
+
+    # 过滤掉纯数字
+    if link_name.isdigit():
+        return False
+
+    return True
+
 def create_stub_page(link_name, link_type='method'):
     """创建一个stub页面"""
+    # 检查是否应该创建页面
+    if not should_create_page(link_name):
+        return False, "Filtered by generic word filter"
+
     # 根据链接名称确定类型
     if any(kw in link_name for kw in ['model', 'machine', 'transformer', 'inverter', 'mmc', 'vsc', 'lcc']):
         link_type = 'model'
