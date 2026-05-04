@@ -1,3 +1,10 @@
+---
+title: "谐波分析方法 (Harmonic Analysis Methods)"
+type: method
+tags: [harmonic-analysis, fft, frequency-domain, thd, power-quality, spectrum]
+created: "2026-05-04"
+---
+
 # 谐波分析方法 (Harmonic Analysis Methods)
 
 ## 定义与边界
@@ -55,6 +62,33 @@ $$Z(j\omega)=\frac{V(j\omega)}{I(j\omega)}$$
 - FFT 幅值精度受采样同步、窗函数和基频漂移影响；用频谱解释保护误动时还要考虑互感器带宽和滤波链路。
 - 频域线性叠加不能充分描述磁饱和、电弧、限流控制和开关饱和引起的谐波间耦合。
 
+### 谐波间耦合
+
+非线性设备引起的谐波耦合：
+$$I_h = f(V_1, V_2, ..., V_H, \theta_1, \theta_2, ..., \theta_H)$$
+
+调制产生的边带频率：
+$$f_{side} = |h_1 f_1 \pm h_2 f_2|$$
+
+### 间谐波与次谐波
+
+间谐波频率：
+$$f_{inter} = h f_1 \pm \Delta f$$
+
+次谐波频率：
+$$f_{sub} = \frac{f_1}{h}, \quad h = 2, 3, ...$$
+
+### 典型谐波源特征
+
+| 谐波源 | 主要特征谐波 | 幅值规律 | 相位特征 |
+|--------|--------------|----------|----------|
+| 六脉动整流 | 5, 7, 11, 13... | $1/h$ | 反对称 |
+| 十二脉动整流 | 11, 13, 23, 25... | $1/h$ | 多组相位差30° |
+| PWM逆变器 | 载波频率附近 | 与调制比相关 | 取决于载波相位 |
+| 变压器饱和 | 3, 5, 7... | 与剩磁相关 | 零序3次谐波 |
+| 电弧炉 | 2, 3, 4, 5... | 随机分布 | 时变非平稳 |
+| 荧光灯 | 3, 5, 7, 9... | 较大3次 | 三相不平衡 |
+
 ## 代表性来源
 
 | 来源 | 可支撑的内容 | 使用边界 |
@@ -72,3 +106,54 @@ $$Z(j\omega)=\frac{V(j\omega)}{I(j\omega)}$$
 - [[harmonic-transfer-coefficient]] 和 [[harmonic-interaction]] 关注谐波传播与交互机理。
 - [[magnetic-saturation-modeling]]、[[lcc-model]]、[[vsc-model]] 和 [[mmc-model]] 是常见谐波来源或调制对象。
 - [[frequency-dependent-modeling]]、[[wideband-modeling]] 和 [[passivity-enforcement]] 决定宽频阻抗模型能否可靠进入 EMT。
+
+## 形式化表达补充
+
+### 总谐波畸变率(THD)
+
+电压THD定义：
+$$\text{THD}_V = \frac{\sqrt{\sum_{h=2}^{H}V_h^2}}{V_1} \times 100\%$$
+
+电流THD定义：
+$$\text{THD}_I = \frac{\sqrt{\sum_{h=2}^{H}I_h^2}}{I_1} \times 100\%$$
+
+其中 $V_1$、$I_1$ 为基波幅值，$H$ 为考虑的最高谐波次数。
+
+### 总需求畸变率(TDD)
+
+$$\text{TDD}_I = \frac{\sqrt{\sum_{h=2}^{H}I_h^2}}{I_L} \times 100\%$$
+
+其中 $I_L$ 为额定负载电流。
+
+### 谐波功率
+
+第 $h$ 次谐波功率：
+$$P_h = V_h I_h \cos(\phi_h)$$
+
+总谐波功率（通常近似为零）：
+$$P_H = \sum_{h=2}^{H} P_h$$
+
+### 谐波阻抗矩阵
+
+多导体系统谐波阻抗：
+$$\mathbf{V}_h = \mathbf{Z}_h \mathbf{I}_h$$
+
+其中 $\mathbf{Z}_h$ 为第 $h$ 次谐波阻抗矩阵。
+
+### FFT频率分辨率
+
+频率分辨率：
+$$\Delta f = \frac{f_s}{N} = \frac{1}{T_{window}}$$
+
+其中 $f_s$ 为采样频率，$N$ 为采样点数，$T_{window}$ 为窗口长度。
+
+### 窗函数频谱泄漏抑制
+
+汉宁窗：
+$$w(n) = 0.5 - 0.5\cos\left(\frac{2\pi n}{N-1}\right)$$
+
+汉明窗：
+$$w(n) = 0.54 - 0.46\cos\left(\frac{2\pi n}{N-1}\right)$$
+
+布莱克曼窗：
+$$w(n) = 0.42 - 0.5\cos\left(\frac{2\pi n}{N-1}\right) + 0.08\cos\left(\frac{4\pi n}{N-1}\right)$$
