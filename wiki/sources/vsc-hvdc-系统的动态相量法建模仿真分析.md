@@ -60,7 +60,7 @@ sources: ["EMT_Doc/26/Sun和Kong - 2008 - Modeling and simulation analysis of VS
 
 ## 使用的方法
 
-- [[动态相量法|动态相量法]]
+- [[topics/dynamic-phasor|动态相量法]]
 - [[时变傅里叶级数展开|时变傅里叶级数展开]]
 - [[开关函数建模|开关函数建模]]
 - [[高次项忽略与模型简化|高次项忽略与模型简化]]
@@ -76,7 +76,7 @@ sources: ["EMT_Doc/26/Sun和Kong - 2008 - Modeling and simulation analysis of VS
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[机电暂态仿真|机电暂态仿真]]
 - [[电力系统混合仿真|电力系统混合仿真]]
 - [[高压直流输电|高压直流输电]]

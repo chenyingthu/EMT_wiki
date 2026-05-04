@@ -58,18 +58,18 @@ sources: ["EMT_Doc/12/Damping_of_Subsynchronous_Control_Interactions_in_Large-Sc
 
 ## 使用的方法
 
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[机电暂态仿真|机电暂态仿真]]
-- [[混合仿真|混合仿真]]
+- [[topics/co-simulation|混合仿真]]
 - [[fpga硬件仿真|FPGA硬件仿真]]
-- [[并行计算|并行计算]]
-- [[特征值分析|特征值分析]]
+- [[topics/parallel-computing|并行计算]]
+- [[methods/eigenvalue-analysis|特征值分析]]
 - [[功率-电压接口|功率-电压接口]]
 
 ## 涉及的模型
 
-- [[光伏电站|光伏电站]]
-- [[电压源换流器|电压源换流器]]
+- [[topics/pv-power-plant|光伏电站]]
+- [[models/vsc-model|电压源换流器]]
 - [[交流电网|交流电网]]
 - [[串联补偿输电线路|串联补偿输电线路]]
 - [[pv-statcom|PV-STATCOM]]
@@ -79,10 +79,10 @@ sources: ["EMT_Doc/12/Damping_of_Subsynchronous_Control_Interactions_in_Large-Sc
 - [[次同步控制交互|次同步控制交互]]
 - [[超实时仿真|超实时仿真]]
 - [[硬件仿真|硬件仿真]]
-- [[混合仿真|混合仿真]]
+- [[topics/co-simulation|混合仿真]]
 - [[弱电网稳定性|弱电网稳定性]]
 - [[光伏并网|光伏并网]]
-- [[并行计算|并行计算]]
+- [[topics/parallel-computing|并行计算]]
 
 ## 主要发现
 

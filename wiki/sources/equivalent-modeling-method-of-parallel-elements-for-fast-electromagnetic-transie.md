@@ -58,9 +58,9 @@ sources: ["EMT_Doc/18/Sun和Xu - 2023 - Equivalent Modeling Method of Parallel E
 
 ## 使用的方法
 
-- [[梯形积分法|梯形积分法]]
+- [[methods/numerical-integration|梯形积分法]]
 - [[二值电阻等值|二值电阻等值]]
-- [[诺顿等效|诺顿等效]]
+- [[methods/norton-equivalent|诺顿等效]]
 - [[叠加定理|叠加定理]]
 - [[端口解耦|端口解耦]]
 - [[多线程并行计算|多线程并行计算]]
@@ -76,10 +76,10 @@ sources: ["EMT_Doc/18/Sun和Xu - 2023 - Equivalent Modeling Method of Parallel E
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[并行计算|并行计算]]
+- [[topics/emt-simulation|电磁暂态仿真]]
+- [[topics/parallel-computing|并行计算]]
 - [[等效建模|等效建模]]
-- [[仿真加速|仿真加速]]
+- [[topics/parallel-computing|仿真加速]]
 - [[系统级仿真|系统级仿真]]
 
 ## 主要发现

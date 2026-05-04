@@ -75,7 +75,7 @@ sources: ["EMT_Doc/06/Huang和Vittal - 2018 - Advanced EMT and Phasor-Domain Hyb
 ## 相关主题
 
 - [[合闸过电压计算|合闸过电压计算]]
-- [[频率相关建模|频率相关建模]]
+- [[topics/frequency-dependent-modeling|频率相关建模]]
 - [[电磁暂态仿真加速|电磁暂态仿真加速]]
 - [[输电线路模态分析|输电线路模态分析]]
 - [[复频域时域转换|复频域时域转换]]

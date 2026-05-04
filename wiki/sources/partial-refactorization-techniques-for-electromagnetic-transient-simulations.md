@@ -78,7 +78,7 @@ sources: ["EMT_Doc/31/Bruned 等 - 2025 - Partial Refactorization Techniques for
 - [[稀疏矩阵求解|稀疏矩阵求解]]
 - [[网络方程求解|网络方程求解]]
 - [[电力电子开关暂态|电力电子开关暂态]]
-- [[大规模电网仿真|大规模电网仿真]]
+- [[topics/large-scale-grid-simulation|大规模电网仿真]]
 
 ## 主要发现
 

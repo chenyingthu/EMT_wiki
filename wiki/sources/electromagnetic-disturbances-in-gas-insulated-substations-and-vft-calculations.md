@@ -58,7 +58,7 @@ sources: ["EMT_Doc/15/Electromagnetic disturbances in gas-insulated substations 
 
 ## 使用的方法
 
-- [[传输线模型|传输线模型]]
+- [[models/transmission-line-model|传输线模型]]
 - [[有限差分时域法-fdtd|有限差分时域法(FDTD)]]
 - [[电磁暂态程序-emtp|电磁暂态程序(EMTP)]]
 - [[同轴传播模式参数法|同轴传播模式参数法]]
@@ -81,9 +81,9 @@ sources: ["EMT_Doc/15/Electromagnetic disturbances in gas-insulated substations 
 - [[超快暂态-vft|超快暂态(VFT)]]
 - [[电磁干扰-emd|电磁干扰(EMD)]]
 - [[高频暂态过电压|高频暂态过电压]]
-- [[绝缘配合|绝缘配合]]
+- [[topics/insulation-coordination|绝缘配合]]
 - [[控制回路电磁兼容|控制回路电磁兼容]]
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 
 ## 主要发现
 

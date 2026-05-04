@@ -60,7 +60,7 @@ sources: ["EMT_Doc/09/Ebrahimi和Jatskevich - 2023 - Average-Value Model for Vol
 
 - [[平均值建模|平均值建模]]
 - [[直接接口技术|直接接口技术]]
-- [[节点分析法|节点分析法]]
+- [[methods/nodal-analysis|节点分析法]]
 - [[dq坐标变换|dq坐标变换]]
 
 ## 涉及的模型
@@ -71,10 +71,10 @@ sources: ["EMT_Doc/09/Ebrahimi和Jatskevich - 2023 - Average-Value Model for Vol
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[大时间步长仿真|大时间步长仿真]]
 - [[vsc-model|VSC]]
-- [[数值稳定性|数值稳定性]]
+- [[methods/numerical-integration|数值稳定性]]
 
 ## 主要发现
 

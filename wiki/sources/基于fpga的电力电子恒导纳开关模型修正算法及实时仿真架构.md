@@ -59,7 +59,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/Wang 等 - 2024 - Fixed-admittance S
 ## 使用的方法
 
 - [[电磁暂态程序-emtp-算法|电磁暂态程序(EMTP)算法]]
-- [[节点分析法|节点分析法]]
+- [[methods/nodal-analysis|节点分析法]]
 - [[初始误差修正算法|初始误差修正算法]]
 - [[基于状态机框架的dsp硬核资源复用技术|基于状态机框架的DSP硬核资源复用技术]]
 - [[fpga硬件加速与实时仿真架构设计|FPGA硬件加速与实时仿真架构设计]]
@@ -73,7 +73,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/Wang 等 - 2024 - Fixed-admittance S
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[电力电子实时仿真|电力电子实时仿真]]
 - [[fpga硬件加速|FPGA硬件加速]]
 - [[虚拟功率损耗抑制|虚拟功率损耗抑制]]

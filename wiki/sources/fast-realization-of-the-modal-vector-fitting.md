@@ -59,7 +59,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/tpwrd.2008.2005462.pdf.pdf"]
 ## 使用的方法
 
 - [[模态矢量拟合|模态矢量拟合]]
-- [[矢量拟合|矢量拟合]]
+- [[methods/vector-fitting|矢量拟合]]
 - [[有理拟合|有理拟合]]
 - [[极点-留数建模|极点-留数建模]]
 - [[最小二乘优化|最小二乘优化]]
@@ -74,9 +74,9 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/tpwrd.2008.2005462.pdf.pdf"]
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[频率相关建模|频率相关建模]]
-- [[网络等值|网络等值]]
+- [[topics/emt-simulation|电磁暂态仿真]]
+- [[topics/frequency-dependent-modeling|频率相关建模]]
+- [[topics/network-equivalent|网络等值]]
 - [[宽频带建模|宽频带建模]]
 - [[高阻抗终端误差抑制|高阻抗终端误差抑制]]
 

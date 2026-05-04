@@ -59,10 +59,10 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/OJPEL.2020.3016296.pdf.pdf"]
 ## 使用的方法
 
 - [[拓扑重构|拓扑重构]]
-- [[网络等值|网络等值]]
-- [[多速率仿真|多速率仿真]]
+- [[topics/network-equivalent|网络等值]]
+- [[methods/multirate-method|多速率仿真]]
 - [[cpu-gpu异构计算|CPU/GPU异构计算]]
-- [[节点分析法|节点分析法]]
+- [[methods/nodal-analysis|节点分析法]]
 - [[伴随电路离散化|伴随电路离散化]]
 
 ## 涉及的模型
@@ -75,8 +75,8 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/OJPEL.2020.3016296.pdf.pdf"]
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[并行计算|并行计算]]
+- [[topics/emt-simulation|电磁暂态仿真]]
+- [[topics/parallel-computing|并行计算]]
 - [[异构计算|异构计算]]
 - [[器件级建模|器件级建模]]
 - [[高性能计算|高性能计算]]

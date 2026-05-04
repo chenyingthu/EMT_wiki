@@ -62,7 +62,7 @@ sources: ["EMT_Doc/01/Cao 等 - 2025 - A Bridge-Arm-Module-Based Fixed-Admittanc
 - [[固定导纳建模|固定导纳建模]]
 - [[后向欧拉法|后向欧拉法]]
 - [[交叉重初始化-cri|交叉重初始化(CRI)]]
-- [[诺顿等效|诺顿等效]]
+- [[methods/norton-equivalent|诺顿等效]]
 
 ## 涉及的模型
 
@@ -73,8 +73,8 @@ sources: ["EMT_Doc/01/Cao 等 - 2025 - A Bridge-Arm-Module-Based Fixed-Admittanc
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[实时仿真|实时仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
+- [[topics/real-time-simulation|实时仿真]]
 - [[换流器建模|换流器建模]]
 - [[虚拟功率损耗|虚拟功率损耗]]
 - [[状态切换误差修正|状态切换误差修正]]

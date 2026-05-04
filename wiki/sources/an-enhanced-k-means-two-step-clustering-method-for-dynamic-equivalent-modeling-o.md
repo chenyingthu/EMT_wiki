@@ -69,7 +69,7 @@ sources: ["EMT_Doc/07&08/Xu et al. - 2026 - An enhanced K-means two-step cluster
 ## 涉及的模型
 
 - [[dfig-model|DFIG]]
-- [[风电场|风电场]]
+- [[topics/wind-farm-modeling|风电场]]
 - [[转子侧变流器|转子侧变流器]]
 - [[网侧变流器|网侧变流器]]
 - [[电磁暂态详细模型|电磁暂态详细模型]]
@@ -77,9 +77,9 @@ sources: ["EMT_Doc/07&08/Xu et al. - 2026 - An enhanced K-means two-step cluster
 ## 相关主题
 
 - [[动态等值建模|动态等值建模]]
-- [[低电压穿越|低电压穿越]]
+- [[methods/lvrt|低电压穿越]]
 - [[风电场聚合|风电场聚合]]
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[电力系统稳定性分析|电力系统稳定性分析]]
 
 ## 主要发现

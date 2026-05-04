@@ -74,11 +74,11 @@ sources: ["EMT_Doc/06/Huang和Vittal - 2018 - Advanced EMT and Phasor-Domain Hyb
 
 ## 相关主题
 
-- [[混合仿真|混合仿真]]
+- [[topics/co-simulation|混合仿真]]
 - [[输配电一体化|输配电一体化]]
 - [[仿真模式切换|仿真模式切换]]
-- [[计算效率优化|计算效率优化]]
-- [[网络等值|网络等值]]
+- [[topics/computational-efficiency|计算效率优化]]
+- [[topics/network-equivalent|网络等值]]
 
 ## 主要发现
 

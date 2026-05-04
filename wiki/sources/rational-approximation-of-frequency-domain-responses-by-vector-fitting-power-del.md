@@ -58,26 +58,26 @@ sources: ["EMT_Doc/32/VF_paper.pdf"]
 
 ## 使用的方法
 
-- [[矢量拟合|矢量拟合]]
-- [[有理函数逼近|有理函数逼近]]
+- [[methods/vector-fitting|矢量拟合]]
+- [[methods/rational-function-approximation|有理函数逼近]]
 - [[极点迁移法|极点迁移法]]
 - [[最小二乘法|最小二乘法]]
 - [[部分分式展开|部分分式展开]]
 
 ## 涉及的模型
 
-- [[变压器|变压器]]
+- [[models/transformer-model|变压器]]
 - [[网络等值模型|网络等值模型]]
-- [[输电线路|输电线路]]
+- [[models/transmission-line-model|输电线路]]
 - [[频变参数模型|频变参数模型]]
 
 ## 相关主题
 
-- [[频率相关建模|频率相关建模]]
-- [[网络等值|网络等值]]
+- [[topics/frequency-dependent-modeling|频率相关建模]]
+- [[topics/network-equivalent|网络等值]]
 - [[变压器建模|变压器建模]]
 - [[频域响应拟合|频域响应拟合]]
-- [[时域仿真|时域仿真]]
+- [[topics/emt-simulation|时域仿真]]
 
 ## 主要发现
 

@@ -75,10 +75,10 @@ sources: ["EMT_Doc/11/De Araújo 等 - 2021 - Computation of ground potential ri
 
 ## 相关主题
 
-- [[电磁暂态|电磁暂态]]
+- [[topics/emt-simulation|电磁暂态]]
 - [[接地阻抗计算|接地阻抗计算]]
 - [[地电位升|地电位升]]
-- [[频率相关建模|频率相关建模]]
+- [[topics/frequency-dependent-modeling|频率相关建模]]
 - [[分层土壤|分层土壤]]
 - [[雷击暂态分析|雷击暂态分析]]
 

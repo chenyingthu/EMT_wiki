@@ -69,12 +69,12 @@ sources: ["EMT_Doc/17/Xu 等 - 2016 - Enhanced high-speed electromagnetic transi
 
 - [[mmc-model|MMC]]
 - [[多端直流电网|多端直流电网]]
-- [[半桥子模块|半桥子模块]]
+- [[models/half-bridge-submodule|半桥子模块]]
 - [[直流输电系统|直流输电系统]]
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[高速仿真|高速仿真]]
 - [[mmc-model|MMC]]
 - [[多端直流电网|多端直流电网]]

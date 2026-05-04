@@ -64,7 +64,7 @@ sources: ["EMT_Doc/35/Bruned 等 - 2023 - Sparse solver application for parallel
 - [[填充元减少技术|填充元减少技术]]
 - [[部分重分解技术|部分重分解技术]]
 - [[选主元技术|选主元技术]]
-- [[节点分析法|节点分析法]]
+- [[methods/nodal-analysis|节点分析法]]
 - [[硬件在环仿真|硬件在环仿真]]
 - [[补偿法|补偿法]]
 

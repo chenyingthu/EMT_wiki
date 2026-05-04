@@ -58,7 +58,7 @@ sources: ["EMT_Doc/29/EBRAHIMI 等 - 2024 - Numerically Efficient Average-Value 
 
 ## 使用的方法
 
-- [[节点分析法|节点分析法]]
+- [[methods/nodal-analysis|节点分析法]]
 - [[平均值建模|平均值建模]]
 - [[直接接口技术|直接接口技术]]
 - [[电导矩阵法|电导矩阵法]]
@@ -74,9 +74,9 @@ sources: ["EMT_Doc/29/EBRAHIMI 等 - 2024 - Numerically Efficient Average-Value 
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[大时间步长仿真|大时间步长仿真]]
-- [[数值稳定性|数值稳定性]]
+- [[methods/numerical-integration|数值稳定性]]
 - [[电力电子系统建模|电力电子系统建模]]
 - [[节点接口技术|节点接口技术]]
 

@@ -58,7 +58,7 @@ sources: ["EMT_Doc/02/Colqui 等 - 2022 - A modified implementation of the Folde
 
 ## 使用的方法
 
-- [[矢量拟合|矢量拟合]]
+- [[methods/vector-fitting|矢量拟合]]
 - [[折叠线等效模型|折叠线等效模型]]
 - [[正交变换|正交变换]]
 - [[clarke矩阵解耦|Clarke矩阵解耦]]
@@ -69,14 +69,14 @@ sources: ["EMT_Doc/02/Colqui 等 - 2022 - A modified implementation of the Folde
 
 - [[三相输电线路|三相输电线路]]
 - [[改进折叠线等效模型-mfle|改进折叠线等效模型(MFLE)]]
-- [[通用线路模型-ulm|通用线路模型(ULM)]]
+- [[models/transmission-line-model|通用线路模型(ULM)]]
 - [[jmarti模型|JMarti模型]]
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[输电线路建模|输电线路建模]]
-- [[频率相关建模|频率相关建模]]
+- [[topics/emt-simulation|电磁暂态仿真]]
+- [[models/transmission-line-model|输电线路建模]]
+- [[topics/frequency-dependent-modeling|频率相关建模]]
 - [[大型电网仿真|大型电网仿真]]
 - [[仿真步长优化|仿真步长优化]]
 - [[模态解耦|模态解耦]]

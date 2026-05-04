@@ -70,16 +70,16 @@ sources: ["EMT_Doc/05/Lin 等 - 2021 - Adaptive Heterogeneous Transient Analysis
 - [[风力发电机|风力发电机]]
 - [[交直流电网|交直流电网]]
 - [[多端直流电网|多端直流电网]]
-- [[变压器|变压器]]
+- [[models/transformer-model|变压器]]
 - [[变流器|变流器]]
-- [[感应电机|感应电机]]
+- [[models/induction-machine-model|感应电机]]
 
 ## 相关主题
 
-- [[混合仿真|混合仿真]]
-- [[并行计算|并行计算]]
-- [[风电场建模|风电场建模]]
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/co-simulation|混合仿真]]
+- [[topics/parallel-computing|并行计算]]
+- [[topics/wind-farm-modeling|风电场建模]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[机电暂态仿真|机电暂态仿真]]
 - [[异构计算架构|异构计算架构]]
 - [[系统稳定性分析|系统稳定性分析]]

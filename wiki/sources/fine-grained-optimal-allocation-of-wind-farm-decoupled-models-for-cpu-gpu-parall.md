@@ -58,7 +58,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/Liu 等 - 2026 - Fine-Grained Optima
 
 ## 使用的方法
 
-- [[节点分析法|节点分析法]]
+- [[methods/nodal-analysis|节点分析法]]
 - [[电容电感支路解耦法|电容电感支路解耦法]]
 - [[整数非线性规划|整数非线性规划]]
 - [[自底向上量化方法|自底向上量化方法]]
@@ -67,17 +67,17 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/Liu 等 - 2026 - Fine-Grained Optima
 ## 涉及的模型
 
 - [[dfig-model|DFIG]]
-- [[风电场|风电场]]
+- [[topics/wind-farm-modeling|风电场]]
 - [[解耦模型|解耦模型]]
 - [[控制系统|控制系统]]
 - [[电气系统|电气系统]]
 
 ## 相关主题
 
-- [[并行计算|并行计算]]
+- [[topics/parallel-computing|并行计算]]
 - [[异构计算|异构计算]]
-- [[风电场建模|风电场建模]]
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/wind-farm-modeling|风电场建模]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[最优分配|最优分配]]
 
 ## 主要发现

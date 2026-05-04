@@ -76,7 +76,7 @@ sources: ["EMT_Doc/13&14/files/TPWRD.2017.2774806.pdf.pdf"]
 
 ## 相关主题
 
-- [[实时仿真|实时仿真]]
+- [[topics/real-time-simulation|实时仿真]]
 - [[硬件在环-hil|硬件在环(HIL)]]
 - [[电热耦合仿真|电热耦合仿真]]
 - [[fpga并行计算|FPGA并行计算]]

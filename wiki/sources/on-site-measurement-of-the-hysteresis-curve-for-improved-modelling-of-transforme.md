@@ -73,11 +73,11 @@ sources: ["EMT_Doc/29/Velásquez 等 - 2023 - On-site measurement of the hystere
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[励磁涌流分析|励磁涌流分析]]
 - [[磁滞特性建模|磁滞特性建模]]
 - [[饱和曲线测量|饱和曲线测量]]
-- [[谐波分析|谐波分析]]
+- [[methods/harmonic-analysis-methods|谐波分析]]
 - [[现场测试|现场测试]]
 
 ## 主要发现

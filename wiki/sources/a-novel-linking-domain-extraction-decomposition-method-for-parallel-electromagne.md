@@ -61,20 +61,20 @@ sources: ["EMT_Doc/03/tpwrd.2020.2998397.pdf.pdf"]
 - [[连接域提取分解法|连接域提取分解法]]
 - [[舒尔补法|舒尔补法]]
 - [[woodbury矩阵恒等式|Woodbury矩阵恒等式]]
-- [[并行计算|并行计算]]
+- [[topics/parallel-computing|并行计算]]
 - [[fpga-gpu硬件加速|FPGA/GPU硬件加速]]
 
 ## 涉及的模型
 
 - [[大规模交直流电网|大规模交直流电网]]
 - [[mmc-model|MMC]]
-- [[输电线路|输电线路]]
+- [[models/transmission-line-model|输电线路]]
 - [[线性网络导纳矩阵|线性网络导纳矩阵]]
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[并行计算|并行计算]]
+- [[topics/emt-simulation|电磁暂态仿真]]
+- [[topics/parallel-computing|并行计算]]
 - [[网络分解|网络分解]]
 - [[矩阵求逆加速|矩阵求逆加速]]
 - [[fpga-gpu硬件实现|FPGA/GPU硬件实现]]

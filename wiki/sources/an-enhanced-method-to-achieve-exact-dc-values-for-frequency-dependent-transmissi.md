@@ -58,8 +58,8 @@ sources: ["EMT_Doc/07&08/De Silva and Liu - 2023 - An Enhanced Method to Achieve
 
 ## 使用的方法
 
-- [[矢量拟合|矢量拟合]]
-- [[有理函数逼近|有理函数逼近]]
+- [[methods/vector-fitting|矢量拟合]]
+- [[methods/rational-function-approximation|有理函数逼近]]
 - [[递归卷积|递归卷积]]
 - [[最小二乘法|最小二乘法]]
 - [[直流校正|直流校正]]
@@ -68,16 +68,16 @@ sources: ["EMT_Doc/07&08/De Silva and Liu - 2023 - An Enhanced Method to Achieve
 
 ## 涉及的模型
 
-- [[通用线路模型-ulm|通用线路模型(ULM)]]
+- [[models/transmission-line-model|通用线路模型(ULM)]]
 - [[频率相关输电线路模型|频率相关输电线路模型]]
-- [[地下电缆|地下电缆]]
+- [[models/cable-model|地下电缆]]
 - [[架空线路|架空线路]]
 - [[高压直流输电线路|高压直流输电线路]]
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[频率相关建模|频率相关建模]]
+- [[topics/emt-simulation|电磁暂态仿真]]
+- [[topics/frequency-dependent-modeling|频率相关建模]]
 - [[曲线拟合|曲线拟合]]
 - [[高压直流输电|高压直流输电]]
 - [[时域仿真稳定性|时域仿真稳定性]]

@@ -59,7 +59,7 @@ sources: ["EMT_Doc/27&28/Multi-scale formulation of admittance-based modeling of
 ## 使用的方法
 
 - [[节点导纳矩阵建模|节点导纳矩阵建模]]
-- [[动态相量法|动态相量法]]
+- [[topics/dynamic-phasor|动态相量法]]
 - [[频率自适应暂态仿真-fast|频率自适应暂态仿真(FAST)]]
 - [[折叠线等效变换|折叠线等效变换]]
 - [[变步长算法|变步长算法]]
@@ -68,15 +68,15 @@ sources: ["EMT_Doc/27&28/Multi-scale formulation of admittance-based modeling of
 ## 涉及的模型
 
 - [[电缆|电缆]]
-- [[输电线路|输电线路]]
+- [[models/transmission-line-model|输电线路]]
 - [[频变线路模型|频变线路模型]]
 - [[节点导纳模型|节点导纳模型]]
 
 ## 相关主题
 
 - [[多尺度仿真|多尺度仿真]]
-- [[频率相关建模|频率相关建模]]
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/frequency-dependent-modeling|频率相关建模]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[机电暂态联合仿真|机电暂态联合仿真]]
 - [[变步长仿真|变步长仿真]]
 

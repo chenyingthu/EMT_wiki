@@ -58,15 +58,15 @@ sources: ["EMT_Doc/22/j.ijepes.2009.01.002.pdf.pdf"]
 
 ## 使用的方法
 
-- [[动态相量法|动态相量法]]
-- [[混合仿真|混合仿真]]
+- [[topics/dynamic-phasor|动态相量法]]
+- [[topics/co-simulation|混合仿真]]
 - [[机电暂态仿真|机电暂态仿真]]
 - [[时变傅里叶级数展开|时变傅里叶级数展开]]
 - [[接口算法|接口算法]]
 
 ## 涉及的模型
 
-- [[svc|SVC]]
+- [[models/svc-model|SVC]]
 - [[tcr|TCR]]
 - [[交流机电暂态模型|交流机电暂态模型]]
 - [[rlc滤波器|RLC滤波器]]
@@ -75,12 +75,12 @@ sources: ["EMT_Doc/22/j.ijepes.2009.01.002.pdf.pdf"]
 
 ## 相关主题
 
-- [[混合仿真|混合仿真]]
+- [[topics/co-simulation|混合仿真]]
 - [[动态相量建模|动态相量建模]]
 - [[暂态稳定分析|暂态稳定分析]]
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[facts设备建模|FACTS设备建模]]
-- [[谐波分析|谐波分析]]
+- [[methods/harmonic-analysis-methods|谐波分析]]
 
 ## 主要发现
 

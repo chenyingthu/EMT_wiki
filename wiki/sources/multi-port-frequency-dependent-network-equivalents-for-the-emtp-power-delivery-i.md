@@ -66,17 +66,17 @@ sources: ["EMT_Doc/27&28/Multi-Port Frequency Dependent Network Equivalents for 
 
 ## 涉及的模型
 
-- [[输电线路|输电线路]]
-- [[变压器|变压器]]
+- [[models/transmission-line-model|输电线路]]
+- [[models/transformer-model|变压器]]
 - [[串并联补偿装置|串并联补偿装置]]
 - [[fdne-model|FDNE]]
 - [[rlc集中参数模块|RLC集中参数模块]]
 
 ## 相关主题
 
-- [[频率相关建模|频率相关建模]]
-- [[网络等值|网络等值]]
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/frequency-dependent-modeling|频率相关建模]]
+- [[topics/network-equivalent|网络等值]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[大规模系统降阶|大规模系统降阶]]
 - [[统计性多案例仿真|统计性多案例仿真]]
 

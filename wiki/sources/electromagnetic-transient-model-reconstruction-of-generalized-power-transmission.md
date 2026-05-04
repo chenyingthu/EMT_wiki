@@ -65,17 +65,17 @@ sources: ["EMT_Doc/16/Gomez - 2025 - Electromagnetic Transient Model Reconstruct
 
 ## 涉及的模型
 
-- [[输电线路|输电线路]]
+- [[models/transmission-line-model|输电线路]]
 - [[混合架空-电缆线路|混合架空-电缆线路]]
 - [[频率相关模型|频率相关模型]]
 - [[二端口线路模型|二端口线路模型]]
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[频率相关建模|频率相关建模]]
+- [[topics/emt-simulation|电磁暂态仿真]]
+- [[topics/frequency-dependent-modeling|频率相关建模]]
 - [[测量驱动建模|测量驱动建模]]
-- [[宽频建模|宽频建模]]
+- [[methods/wideband-modeling|宽频建模]]
 - [[线路模型重构|线路模型重构]]
 
 ## 主要发现

@@ -57,11 +57,11 @@ sources: ["EMT_Doc/04/Leal和Conti - 2023 - A Thévenin-Type Version of the Exte
 
 ## 使用的方法
 
-- [[矢量拟合|矢量拟合]]
+- [[methods/vector-fitting|矢量拟合]]
 - [[戴维南等效变换|戴维南等效变换]]
 - [[递归卷积算法|递归卷积算法]]
 - [[模态域变换|模态域变换]]
-- [[有理函数逼近|有理函数逼近]]
+- [[methods/rational-function-approximation|有理函数逼近]]
 
 ## 涉及的模型
 
@@ -74,7 +74,7 @@ sources: ["EMT_Doc/04/Leal和Conti - 2023 - A Thévenin-Type Version of the Exte
 ## 相关主题
 
 - [[雷击感应电压|雷击感应电压]]
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[频率相关线路建模|频率相关线路建模]]
 - [[外部电磁场耦合|外部电磁场耦合]]
 - [[配电线路过电压|配电线路过电压]]

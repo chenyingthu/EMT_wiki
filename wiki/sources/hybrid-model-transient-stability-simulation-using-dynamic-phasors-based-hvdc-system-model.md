@@ -58,7 +58,7 @@ sources: ["EMT_Doc/22/Zhu 等 - 2006 - Hybrid-model transient stability simulati
 
 ## 使用的方法
 
-- [[动态相量法|动态相量法]]
+- [[topics/dynamic-phasor|动态相量法]]
 - [[开关函数法|开关函数法]]
 - [[牛顿-拉夫逊法|牛顿-拉夫逊法]]
 - [[传统相量法|传统相量法]]
@@ -73,7 +73,7 @@ sources: ["EMT_Doc/22/Zhu 等 - 2006 - Hybrid-model transient stability simulati
 ## 相关主题
 
 - [[暂态稳定分析|暂态稳定分析]]
-- [[混合仿真|混合仿真]]
+- [[topics/co-simulation|混合仿真]]
 - [[交直流电力系统|交直流电力系统]]
 - [[动态相量建模|动态相量建模]]
 

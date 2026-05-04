@@ -76,11 +76,11 @@ sources: ["EMT_Doc/07&08/Analysing a power transformer's internal response to sy
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[谐振过电压|谐振过电压]]
 - [[变压器内部响应|变压器内部响应]]
 - [[混合建模|混合建模]]
-- [[频率相关建模|频率相关建模]]
+- [[topics/frequency-dependent-modeling|频率相关建模]]
 - [[系统暂态分析|系统暂态分析]]
 
 ## 主要发现

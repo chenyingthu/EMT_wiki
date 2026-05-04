@@ -63,7 +63,7 @@ sources: ["EMT_Doc/05/tpwrs.2003.814846.pdf.pdf"]
 - [[模态变换|模态变换]]
 - [[transmission-line-model|Bergeron线路模型]]
 - [[频变线路建模|频变线路建模]]
-- [[时域仿真|时域仿真]]
+- [[topics/emt-simulation|时域仿真]]
 
 ## 涉及的模型
 
@@ -73,9 +73,9 @@ sources: ["EMT_Doc/05/tpwrs.2003.814846.pdf.pdf"]
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[频率相关建模|频率相关建模]]
-- [[输电线路建模|输电线路建模]]
+- [[topics/emt-simulation|电磁暂态仿真]]
+- [[topics/frequency-dependent-modeling|频率相关建模]]
+- [[models/transmission-line-model|输电线路建模]]
 - [[模态解耦|模态解耦]]
 
 ## 主要发现

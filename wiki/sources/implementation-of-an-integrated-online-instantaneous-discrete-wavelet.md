@@ -70,7 +70,7 @@ sources: ["EMT_Doc/23/Mahmoudpour 等 - 2015 - Implementation of an integrated o
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[在线信号分解|在线信号分解]]
 - [[小波变换|小波变换]]
 - [[atp-emtp二次开发|ATP-EMTP二次开发]]

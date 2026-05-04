@@ -64,7 +64,7 @@ sources: ["EMT_Doc/10/Wang 等 - 2013 - Comparison between electromechanical tra
 
 - [[tls-esprit算法|TLS-ESPRIT算法]]
 - [[隐式梯形积分法|隐式梯形积分法]]
-- [[节点分析法|节点分析法]]
+- [[methods/nodal-analysis|节点分析法]]
 - [[机电-电磁暂态混合仿真|机电-电磁暂态混合仿真]]
 - [[准稳态等值建模|准稳态等值建模]]
 
@@ -74,11 +74,11 @@ sources: ["EMT_Doc/10/Wang 等 - 2013 - Comparison between electromechanical tra
 
 - [[直流准稳态模型|直流准稳态模型]]
 - [[12脉冲换流器|12脉冲换流器]]
-- [[换流变压器|换流变压器]]
+- [[models/transformer-model|换流变压器]]
 - [[平波电抗器|平波电抗器]]
 - [[交直流滤波器|交直流滤波器]]
 - [[直流线路t型集中参数模型|直流线路T型集中参数模型]]
-- [[同步发电机|同步发电机]]
+- [[models/synchronous-machine-model|同步发电机]]
 
 
 ## 相关主题
@@ -86,8 +86,8 @@ sources: ["EMT_Doc/10/Wang 等 - 2013 - Comparison between electromechanical tra
 
 - [[低频振荡分析|低频振荡分析]]
 - [[交直流混合系统|交直流混合系统]]
-- [[混合仿真|混合仿真]]
-- [[模态分析|模态分析]]
+- [[topics/co-simulation|混合仿真]]
+- [[methods/modal-analysis|模态分析]]
 - [[直流输电系统建模|直流输电系统建模]]
 
 

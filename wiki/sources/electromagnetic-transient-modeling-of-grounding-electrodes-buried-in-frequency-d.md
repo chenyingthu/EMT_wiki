@@ -79,7 +79,7 @@ Electromagnetic transient modeling of grounding electrodes buried in frequency d
 - [[土壤含水量变化|土壤含水量变化]]
 - [[雷电暂态保护|雷电暂态保护]]
 - [[地电位升分析|地电位升分析]]
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 
 ## 主要发现
 

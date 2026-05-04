@@ -57,8 +57,8 @@ Electrical Power and Energy Systems 148 (2023) 108928 0142-0615/© 2022 Elsevier
 
 ## 使用的方法
 
-- [[节点分析法|节点分析法]]
-- [[梯形积分法|梯形积分法]]
+- [[methods/nodal-analysis|节点分析法]]
+- [[methods/numerical-integration|梯形积分法]]
 - [[内部节点消元|内部节点消元]]
 - [[相间解耦|相间解耦]]
 - [[多线程并行计算|多线程并行计算]]
@@ -69,16 +69,16 @@ Electrical Power and Energy Systems 148 (2023) 108928 0142-0615/© 2022 Elsevier
 - [[pmsg|PMSG]]
 - [[全功率变流器|全功率变流器]]
 - [[lc滤波器|LC滤波器]]
-- [[变压器|变压器]]
-- [[输电线路|输电线路]]
+- [[models/transformer-model|变压器]]
+- [[models/transmission-line-model|输电线路]]
 - [[风力发电机|风力发电机]]
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[风电场建模|风电场建模]]
-- [[并行计算|并行计算]]
-- [[网络等值|网络等值]]
+- [[topics/emt-simulation|电磁暂态仿真]]
+- [[topics/wind-farm-modeling|风电场建模]]
+- [[topics/parallel-computing|并行计算]]
+- [[topics/network-equivalent|网络等值]]
 - [[海上风电|海上风电]]
 
 ## 主要发现

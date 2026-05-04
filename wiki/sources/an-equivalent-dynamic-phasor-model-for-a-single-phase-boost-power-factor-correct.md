@@ -58,9 +58,9 @@ sources: ["EMT_Doc/07&08/An Equivalent Dynamic Phasor Model for a Single-Phase B
 
 ## 使用的方法
 
-- [[动态相量法|动态相量法]]
+- [[topics/dynamic-phasor|动态相量法]]
 - [[符号函数变换|符号函数变换]]
-- [[小信号分析|小信号分析]]
+- [[methods/small-signal-analysis|小信号分析]]
 - [[等效建模|等效建模]]
 - [[线性化分析|线性化分析]]
 
@@ -77,8 +77,8 @@ sources: ["EMT_Doc/07&08/An Equivalent Dynamic Phasor Model for a Single-Phase B
 - [[动态相量建模|动态相量建模]]
 - [[功率因数校正|功率因数校正]]
 - [[控制器参数整定|控制器参数整定]]
-- [[谐波分析|谐波分析]]
-- [[仿真加速|仿真加速]]
+- [[methods/harmonic-analysis-methods|谐波分析]]
+- [[topics/parallel-computing|仿真加速]]
 - [[电力电子变换器|电力电子变换器]]
 
 ## 主要发现

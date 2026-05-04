@@ -72,7 +72,7 @@ sources: ["EMT_Doc/09/Cao - 2006 - Application of EMTP in the research of UHV AC
 ## 涉及的模型
 
 
-- [[同步电机|同步电机]]
+- [[models/synchronous-machine-model|同步电机]]
 - [[j-marti输电线路模型|J.Marti输电线路模型]]
 - [[饱和变压器|饱和变压器]]
 - [[并联电抗器|并联电抗器]]
@@ -90,7 +90,7 @@ sources: ["EMT_Doc/09/Cao - 2006 - Application of EMTP in the research of UHV AC
 - [[谐振过电压|谐振过电压]]
 - [[潜供电流熄弧|潜供电流熄弧]]
 - [[暂态恢复电压|暂态恢复电压]]
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 
 
 ## 主要发现

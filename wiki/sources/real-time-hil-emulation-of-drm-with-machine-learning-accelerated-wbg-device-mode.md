@@ -74,8 +74,8 @@ sources: ["EMT_Doc/32/Zhang 等 - 2023 - Real-Time HIL Emulation of DRM With Mac
 
 ## 相关主题
 
-- [[实时仿真|实时仿真]]
-- [[硬件在环|硬件在环]]
+- [[topics/real-time-simulation|实时仿真]]
+- [[methods/hil-simulation|硬件在环]]
 - [[机器学习加速建模|机器学习加速建模]]
 - [[变步长仿真|变步长仿真]]
 - [[fpga并行架构|FPGA并行架构]]

@@ -72,9 +72,9 @@ sources: ["EMT_Doc/07&08/An Equivalent Hybrid Model for a Large-Scale Modular Mu
 
 ## 相关主题
 
-- [[实时仿真|实时仿真]]
-- [[混合仿真|混合仿真]]
-- [[硬件在环|硬件在环]]
+- [[topics/real-time-simulation|实时仿真]]
+- [[topics/co-simulation|混合仿真]]
+- [[methods/hil-simulation|硬件在环]]
 - [[vsc-model|VSC]]
 - [[mmc-model|MMC]]
 

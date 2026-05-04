@@ -58,8 +58,8 @@ sources: ["EMT_Doc/27&28/Modelling of circuit breakers in the electromagnetic tr
 
 ## 使用的方法
 
-- [[梯形积分法|梯形积分法]]
-- [[节点分析法|节点分析法]]
+- [[methods/numerical-integration|梯形积分法]]
+- [[methods/nodal-analysis|节点分析法]]
 - [[补偿法|补偿法]]
 - [[预测校正迭代法|预测校正迭代法]]
 - [[参数估计|参数估计]]
@@ -69,8 +69,8 @@ sources: ["EMT_Doc/27&28/Modelling of circuit breakers in the electromagnetic tr
 - [[断路器|断路器]]
 - [[动态电弧模型|动态电弧模型]]
 - [[vsc-hvdc|VSC-HVDC]]
-- [[变压器|变压器]]
-- [[同步电机|同步电机]]
+- [[models/transformer-model|变压器]]
+- [[models/synchronous-machine-model|同步电机]]
 
 ## 相关主题
 

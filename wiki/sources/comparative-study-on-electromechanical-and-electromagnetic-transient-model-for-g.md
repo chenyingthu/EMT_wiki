@@ -59,7 +59,7 @@ sources: ["EMT_Doc/10/Sun 等 - 2014 - Comparative study on electromechanical an
 ## 使用的方法
 
 - [[传递函数建模|传递函数建模]]
-- [[平均值模型|平均值模型]]
+- [[methods/average-value-model|平均值模型]]
 - [[pq解耦控制|PQ解耦控制]]
 - [[dq坐标变换|dq坐标变换]]
 - [[对比仿真验证|对比仿真验证]]
@@ -78,9 +78,9 @@ sources: ["EMT_Doc/10/Sun 等 - 2014 - Comparative study on electromechanical an
 
 - [[机电暂态建模|机电暂态建模]]
 - [[大规模光伏电站仿真|大规模光伏电站仿真]]
-- [[新能源并网|新能源并网]]
-- [[模型降阶|模型降阶]]
-- [[仿真加速|仿真加速]]
+- [[topics/renewable-energy-integration|新能源并网]]
+- [[methods/model-order-reduction|模型降阶]]
+- [[topics/parallel-computing|仿真加速]]
 
 ## 主要发现
 

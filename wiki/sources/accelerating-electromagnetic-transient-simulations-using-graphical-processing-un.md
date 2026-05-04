@@ -63,25 +63,25 @@ sources: ["EMT_Doc/05/Aluthge 等 - 2026 - Accelerating electromagnetic transien
 - [[woodbury公式|Woodbury公式]]
 - [[补偿法|补偿法]]
 - [[gpu稀疏求解|GPU稀疏求解]]
-- [[节点分析法|节点分析法]]
+- [[methods/nodal-analysis|节点分析法]]
 
 ## 涉及的模型
 
 - [[ieee-39节点系统|IEEE 39节点系统]]
-- [[变压器|变压器]]
-- [[同步发电机|同步发电机]]
+- [[models/transformer-model|变压器]]
+- [[models/synchronous-machine-model|同步发电机]]
 - [[π型输电线路|π型输电线路]]
 - [[逆变器接口电源|逆变器接口电源]]
 - [[电力电子换流器|电力电子换流器]]
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[gpu并行加速|GPU并行加速]]
-- [[大规模电网仿真|大规模电网仿真]]
+- [[topics/large-scale-grid-simulation|大规模电网仿真]]
 - [[高频开关动态|高频开关动态]]
 - [[稀疏矩阵求解|稀疏矩阵求解]]
-- [[新能源并网|新能源并网]]
+- [[topics/renewable-energy-integration|新能源并网]]
 
 ## 主要发现
 

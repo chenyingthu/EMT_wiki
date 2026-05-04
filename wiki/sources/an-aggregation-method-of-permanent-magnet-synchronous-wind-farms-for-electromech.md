@@ -75,8 +75,8 @@ sources: ["EMT_Doc/06/Yang 等 - 2011 - An aggregation method of permanent magne
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[风电场建模|风电场建模]]
+- [[topics/emt-simulation|电磁暂态仿真]]
+- [[topics/wind-farm-modeling|风电场建模]]
 - [[模型聚合|模型聚合]]
 - [[电网故障响应|电网故障响应]]
 - [[电压跌落分析|电压跌落分析]]

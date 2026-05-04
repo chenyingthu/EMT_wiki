@@ -58,7 +58,7 @@ sources: ["EMT_Doc/26/Wang 等 - 2010 - Methods of interfacing rotating machine 
 
 ## 使用的方法
 
-- [[节点分析法|节点分析法]]
+- [[methods/nodal-analysis|节点分析法]]
 - [[状态变量法|状态变量法]]
 - [[间接接口技术|间接接口技术]]
 - [[直接接口技术|直接接口技术]]
@@ -67,8 +67,8 @@ sources: ["EMT_Doc/26/Wang 等 - 2010 - Methods of interfacing rotating machine 
 
 ## 涉及的模型
 
-- [[同步电机|同步电机]]
-- [[感应电机|感应电机]]
+- [[models/synchronous-machine-model|同步电机]]
+- [[models/induction-machine-model|感应电机]]
 - [[相域模型|相域模型]]
 - [[dq0参考系模型|dq0参考系模型]]
 - [[刚体机械模型|刚体机械模型]]
@@ -76,11 +76,11 @@ sources: ["EMT_Doc/26/Wang 等 - 2010 - Methods of interfacing rotating machine 
 ## 相关主题
 
 - [[接口技术|接口技术]]
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[emtp工具|EMTP工具]]
 - [[状态变量仿真|状态变量仿真]]
 - [[旋转电机建模|旋转电机建模]]
-- [[数值稳定性|数值稳定性]]
+- [[methods/numerical-integration|数值稳定性]]
 - [[不对称工况分析|不对称工况分析]]
 
 ## 主要发现

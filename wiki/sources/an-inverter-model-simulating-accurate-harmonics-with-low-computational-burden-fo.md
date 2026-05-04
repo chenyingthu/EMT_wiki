@@ -60,7 +60,7 @@ sources: ["EMT_Doc/07&08/An Inverter Model Simulating Accurate Harmonics With Lo
 
 - [[时间平均法-tam|时间平均法(TAM)]]
 - [[电压插值法|电压插值法]]
-- [[梯形积分法|梯形积分法]]
+- [[methods/numerical-integration|梯形积分法]]
 - [[后向欧拉法|后向欧拉法]]
 - [[电路平均模型|电路平均模型]]
 - [[开关模型|开关模型]]
@@ -74,8 +74,8 @@ sources: ["EMT_Doc/07&08/An Inverter Model Simulating Accurate Harmonics With Lo
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[谐波分析|谐波分析]]
+- [[topics/emt-simulation|电磁暂态仿真]]
+- [[methods/harmonic-analysis-methods|谐波分析]]
 - [[离线仿真加速|离线仿真加速]]
 - [[电力电子变换器建模|电力电子变换器建模]]
 - [[大时间步长仿真|大时间步长仿真]]

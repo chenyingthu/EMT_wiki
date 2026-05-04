@@ -55,11 +55,11 @@ sources: ["EMT_Doc/04/tpwrs.2012.2227845.pdf.pdf"]
 
 ## 使用的方法
 
-- [[矢量拟合|矢量拟合]]
+- [[methods/vector-fitting|矢量拟合]]
 - [[频率扫描|频率扫描]]
 - [[伴随电路法|伴随电路法]]
 - [[傅里叶分析|傅里叶分析]]
-- [[有理函数逼近|有理函数逼近]]
+- [[methods/rational-function-approximation|有理函数逼近]]
 
 ## 涉及的模型
 
@@ -72,10 +72,10 @@ sources: ["EMT_Doc/04/tpwrs.2012.2227845.pdf.pdf"]
 
 ## 相关主题
 
-- [[电磁暂态分析|电磁暂态分析]]
+- [[topics/emt-simulation|电磁暂态分析]]
 - [[动态等值|动态等值]]
-- [[频率相关建模|频率相关建模]]
-- [[风电场建模|风电场建模]]
+- [[topics/frequency-dependent-modeling|频率相关建模]]
+- [[topics/wind-farm-modeling|风电场建模]]
 - [[降阶建模|降阶建模]]
 - [[宽频带响应|宽频带响应]]
 

@@ -76,7 +76,7 @@ sources: ["EMT_Doc/13&14/files/DQ_Admittance_Model_Extraction_for_IBRs_via_Gauss
 
 - [[导纳模型提取|导纳模型提取]]
 - [[稳定性分析|稳定性分析]]
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[系统辨识|系统辨识]]
 - [[风电机组建模|风电机组建模]]
 

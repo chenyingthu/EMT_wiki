@@ -183,28 +183,28 @@ updated: 2026-05-03
 
 | 页面 | 摘要 |
 |------|------|
-| [[ieee-14-bus-system\|IEEE 14节点系统]] | 小型教学测试系统，5台发电机，用于入门学习和算法验证 |
-| [[ieee-30-bus-system\|IEEE 30节点系统]] | 优化研究标准系统，6台发电机，最优潮流和电容器配置测试 |
-| [[ieee-39-bus-system\|IEEE 39节点系统]] | 新英格兰测试系统，10台发电机，暂态稳定分析标准 |
-| [[ieee-57-bus-system\|IEEE 57节点系统]] | 配电与输电混合系统，7台发电机，配电网分析常用 |
-| [[ieee-118-bus-system\|IEEE 118节点系统]] | 大规模系统，54台发电机，阻塞管理和电力市场研究 |
-| [[wscc-9-bus-system\|WSCC 9节点系统]] | 经典暂态稳定测试系统，3台发电机，Anderson教材标准算例 |
-| [[cigre-hvdc-benchmark\|CIGRE HVDC Benchmark]] | HVDC国际基准系统，1000MW/±500kV，LCC-HVDC模型验证标准 |
-| [[nordic-32-system\|Nordic 32系统]] | 北欧电力系统简化模型，20台发电机，长期电压稳定研究 |
-| [[vsc-hvdc-five-terminal\|VSC-HVDC五端测试系统]] | MTDC多端直流标准测试系统，5端VSC换流站，主从/下垂/电压裕度控制验证平台 |
-| [[mmc-21-level-hvdc\|MMC-HVDC 21电平系统]] | 中等规模MMC测试系统，400-500MW，学术界标准测试平台 |
-| [[mmc-41-level-hvdc\|MMC-HVDC 41电平系统]] | 中等规模MMC测试系统，640MW，EAVM验证标准平台 |
-| [[mmc-201-level-hvdc\|MMC-HVDC 201电平系统]] | 超大规模MMC测试系统，1000-3000MW，节点消去算法测试平台 |
-| [[dfig-wind-farm\|DFIG风电场]] | 双馈风电场测试系统，17/100台机组，风电并网与故障穿越研究 |
-| [[pmsg-offshore-wind-farm\|PMSG海上风电场]] | 永磁直驱海上风电场，5-10MW机组，全功率变流器测试平台 |
-| [[vsc-hvdc-two-terminal\|VSC-HVDC两端测试系统]] | 柔性直流标准测试系统，100-1000MW，点对点拓扑验证 |
-| [[luxi-back-to-back-mmc\|鲁西背靠背MMC]] | 中国首个超高压背靠背工程，±350kV/1000MW，4800+子模块 |
-| [[zhangbei-four-terminal-vsc\|张北四端柔性直流]] | 世界首个直流电网工程，±500kV/3000MW，新能源汇集 |
-| [[pv-inverter-test-system\|光伏逆变器测试系统]] | 光伏发电核心设备，3kW-5MW，MPPT/LVRT/孤岛检测测试平台 |
-| [[three-phase-grid-connected-converter\|三相并网变流器测试系统]] | 两电平/三电平/NPC/T型拓扑，LCL滤波器，锁相环同步，功率控制 |
-| [[virtual-synchronous-generator-converter\|虚拟同步机变流器测试系统]] | VSG控制策略，虚拟惯量/阻尼/励磁，构网型控制，惯量支撑能力测试 |
-| [[bess-converter-test-system\|储能变流器PCS测试系统]] | 双向DC/AC变换器，锂电池储能，SOC管理，调频/调峰/黑启动测试 |
-| [[statcom-svg-test-system\|STATCOM/SVG测试系统]] | 级联H桥拓扑，星形/三角形级联，无功补偿，电压支撑，谐波治理 |
+| [[test-systems/ieee-14-bus-system\|IEEE 14节点系统]] | 小型教学测试系统，5台发电机，用于入门学习和算法验证 |
+| [[test-systems/ieee-30-bus-system\|IEEE 30节点系统]] | 优化研究标准系统，6台发电机，最优潮流和电容器配置测试 |
+| [[test-systems/ieee-39-bus-system\|IEEE 39节点系统]] | 新英格兰测试系统，10台发电机，暂态稳定分析标准 |
+| [[test-systems/ieee-57-bus-system\|IEEE 57节点系统]] | 配电与输电混合系统，7台发电机，配电网分析常用 |
+| [[test-systems/ieee-118-bus-system\|IEEE 118节点系统]] | 大规模系统，54台发电机，阻塞管理和电力市场研究 |
+| [[test-systems/wscc-9-bus-system\|WSCC 9节点系统]] | 经典暂态稳定测试系统，3台发电机，Anderson教材标准算例 |
+| [[test-systems/cigre-hvdc-benchmark\|CIGRE HVDC Benchmark]] | HVDC国际基准系统，1000MW/±500kV，LCC-HVDC模型验证标准 |
+| [[test-systems/nordic-32-system\|Nordic 32系统]] | 北欧电力系统简化模型，20台发电机，长期电压稳定研究 |
+| [[test-systems/vsc-hvdc-five-terminal\|VSC-HVDC五端测试系统]] | MTDC多端直流标准测试系统，5端VSC换流站，主从/下垂/电压裕度控制验证平台 |
+| [[test-systems/mmc-21-level-hvdc\|MMC-HVDC 21电平系统]] | 中等规模MMC测试系统，400-500MW，学术界标准测试平台 |
+| [[test-systems/mmc-41-level-hvdc\|MMC-HVDC 41电平系统]] | 中等规模MMC测试系统，640MW，EAVM验证标准平台 |
+| [[test-systems/mmc-201-level-hvdc\|MMC-HVDC 201电平系统]] | 超大规模MMC测试系统，1000-3000MW，节点消去算法测试平台 |
+| [[test-systems/dfig-wind-farm\|DFIG风电场]] | 双馈风电场测试系统，17/100台机组，风电并网与故障穿越研究 |
+| [[test-systems/pmsg-offshore-wind-farm\|PMSG海上风电场]] | 永磁直驱海上风电场，5-10MW机组，全功率变流器测试平台 |
+| [[test-systems/vsc-hvdc-two-terminal\|VSC-HVDC两端测试系统]] | 柔性直流标准测试系统，100-1000MW，点对点拓扑验证 |
+| [[test-systems/luxi-back-to-back-mmc\|鲁西背靠背MMC]] | 中国首个超高压背靠背工程，±350kV/1000MW，4800+子模块 |
+| [[test-systems/zhangbei-four-terminal-vsc\|张北四端柔性直流]] | 世界首个直流电网工程，±500kV/3000MW，新能源汇集 |
+| [[test-systems/pv-inverter-test-system\|光伏逆变器测试系统]] | 光伏发电核心设备，3kW-5MW，MPPT/LVRT/孤岛检测测试平台 |
+| [[test-systems/three-phase-grid-connected-converter\|三相并网变流器测试系统]] | 两电平/三电平/NPC/T型拓扑，LCL滤波器，锁相环同步，功率控制 |
+| [[test-systems/virtual-synchronous-generator-converter\|虚拟同步机变流器测试系统]] | VSG控制策略，虚拟惯量/阻尼/励磁，构网型控制，惯量支撑能力测试 |
+| [[test-systems/bess-converter-test-system\|储能变流器PCS测试系统]] | 双向DC/AC变换器，锂电池储能，SOC管理，调频/调峰/黑启动测试 |
+| [[test-systems/statcom-svg-test-system\|STATCOM/SVG测试系统]] | 级联H桥拓扑，星形/三角形级联，无功补偿，电压支撑，谐波治理 |
 
 ## 来源 (Sources)
 

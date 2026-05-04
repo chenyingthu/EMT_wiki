@@ -58,8 +58,8 @@ sources: ["EMT_Doc/23/Lefebvre和Mahseredjian - 1994 - Improved control systems 
 
 ## 使用的方法
 
-- [[节点分析法|节点分析法]]
-- [[梯形积分法|梯形积分法]]
+- [[methods/nodal-analysis|节点分析法]]
+- [[methods/numerical-integration|梯形积分法]]
 - [[补偿法|补偿法]]
 - [[预测校正法|预测校正法]]
 - [[矩阵三角分解|矩阵三角分解]]
@@ -76,7 +76,7 @@ sources: ["EMT_Doc/23/Lefebvre和Mahseredjian - 1994 - Improved control systems 
 
 - [[控制系统仿真|控制系统仿真]]
 - [[接口延迟补偿|接口延迟补偿]]
-- [[数值稳定性|数值稳定性]]
+- [[methods/numerical-integration|数值稳定性]]
 - [[电力电子仿真|电力电子仿真]]
 - [[分步解耦仿真|分步解耦仿真]]
 

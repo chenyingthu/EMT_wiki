@@ -61,7 +61,7 @@ sources: ["EMT_Doc/23/Beddard 等 - 2016 - Improved Accuracy Average Value Model
 - [[平均值建模法|平均值建模法]]
 - [[等效电路法|等效电路法]]
 - [[闭锁模块技术|闭锁模块技术]]
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 
 ## 涉及的模型
 
@@ -73,11 +73,11 @@ sources: ["EMT_Doc/23/Beddard 等 - 2016 - Improved Accuracy Average Value Model
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[vsc-model|VSC]]
 - [[直流故障分析|直流故障分析]]
 - [[换流器建模|换流器建模]]
-- [[计算效率优化|计算效率优化]]
+- [[topics/computational-efficiency|计算效率优化]]
 
 ## 主要发现
 

@@ -67,7 +67,7 @@ sources: ["EMT_Doc/18/Zhang 等 - 2018 - Fast Detection Method of Commutation Fa
 
 - [[lcc-model|LCC]]
 - [[12脉动换流器|12脉动换流器]]
-- [[换流变压器|换流变压器]]
+- [[models/transformer-model|换流变压器]]
 - [[多馈入直流系统|多馈入直流系统]]
 
 ## 相关主题

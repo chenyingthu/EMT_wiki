@@ -73,9 +73,9 @@ sources: ["EMT_Doc/09/Alameri和Gomez - 2023 - Analytical and measurement-based 
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[宽频建模|宽频建模]]
-- [[频域分析|频域分析]]
+- [[topics/emt-simulation|电磁暂态仿真]]
+- [[methods/wideband-modeling|宽频建模]]
+- [[topics/frequency-domain-analysis|频域分析]]
 - [[电力电子变换器建模|电力电子变换器建模]]
 - [[导纳建模|导纳建模]]
 - [[分布式能源并网|分布式能源并网]]

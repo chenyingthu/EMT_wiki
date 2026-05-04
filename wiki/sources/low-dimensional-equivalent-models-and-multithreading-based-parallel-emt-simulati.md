@@ -73,11 +73,11 @@ sources: ["EMT_Doc/25/Xu 等 - 2025 - Low-Dimensional Equivalent Models and Mult
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[并行计算|并行计算]]
+- [[topics/emt-simulation|电磁暂态仿真]]
+- [[topics/parallel-computing|并行计算]]
 - [[等效建模|等效建模]]
-- [[新能源并网|新能源并网]]
-- [[仿真加速|仿真加速]]
+- [[topics/renewable-energy-integration|新能源并网]]
+- [[topics/parallel-computing|仿真加速]]
 
 ## 主要发现
 

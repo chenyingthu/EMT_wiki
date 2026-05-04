@@ -67,7 +67,7 @@ sources: ["EMT_Doc/07&08/An Electromagnetic Model for the Calculation of Tower S
 ## 涉及的模型
 
 - [[输电杆塔|输电杆塔]]
-- [[接地系统|接地系统]]
+- [[models/grounding-system-model|接地系统]]
 - [[水平接地极|水平接地极]]
 - [[损耗大地模型|损耗大地模型]]
 

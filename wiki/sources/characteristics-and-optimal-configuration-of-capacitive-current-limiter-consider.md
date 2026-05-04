@@ -87,7 +87,7 @@ sources: ["EMT_Doc/10/Li 等 - 2020 - Characteristics and Optimal Configuration 
 - [[限流器优化配置|限流器优化配置]]
 - [[柔性直流输电|柔性直流输电]]
 - [[直流断路器配合|直流断路器配合]]
-- [[电磁暂态分析|电磁暂态分析]]
+- [[topics/emt-simulation|电磁暂态分析]]
 
 
 ## 主要发现

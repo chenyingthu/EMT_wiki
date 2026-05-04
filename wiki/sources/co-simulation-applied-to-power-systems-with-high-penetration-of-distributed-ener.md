@@ -64,7 +64,7 @@ sources: ["EMT_Doc/10/Chagas和Tomim - 2022 - Co-simulation applied to power sys
 - [[transmission-line-model|Bergeron线路模型]]
 - [[行波理论|行波理论]]
 - [[正序建模|正序建模]]
-- [[相域建模|相域建模]]
+- [[methods/nodal-analysis|相域建模]]
 - [[sundials-cvode求解器|SUNDIALS CVODE求解器]]
 - [[主算法同步|主算法同步]]
 
@@ -82,7 +82,7 @@ sources: ["EMT_Doc/10/Chagas和Tomim - 2022 - Co-simulation applied to power sys
 - [[高渗透率分布式能源|高渗透率分布式能源]]
 - [[跨平台仿真|跨平台仿真]]
 - [[动态仿真|动态仿真]]
-- [[计算效率优化|计算效率优化]]
+- [[topics/computational-efficiency|计算效率优化]]
 - [[fmi标准|FMI标准]]
 
 ## 主要发现

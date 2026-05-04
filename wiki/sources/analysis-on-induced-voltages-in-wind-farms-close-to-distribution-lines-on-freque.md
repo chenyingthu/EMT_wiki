@@ -73,7 +73,7 @@ sources: ["EMT_Doc/07&08/Da Silva et al. - 2022 - Analysis on Induced Voltages i
 
 ## 相关主题
 
-- [[电磁暂态分析|电磁暂态分析]]
+- [[topics/emt-simulation|电磁暂态分析]]
 - [[雷击感应过电压|雷击感应过电压]]
 - [[频率相关土壤特性|频率相关土壤特性]]
 - [[风电场接地系统|风电场接地系统]]

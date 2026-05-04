@@ -74,9 +74,9 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/Fast electromagnetic transient simul
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[快速仿真|快速仿真]]
-- [[混合仿真|混合仿真]]
+- [[topics/co-simulation|混合仿真]]
 - [[环流抑制|环流抑制]]
 - [[电压均衡控制|电压均衡控制]]
 - [[直流输电|直流输电]]

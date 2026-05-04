@@ -59,14 +59,14 @@ sources: ["EMT_Doc/09/Wang和Jatskevich - 2010 - Approximate voltage-behind-reac
 ## 使用的方法
 
 - [[隐式梯形积分法|隐式梯形积分法]]
-- [[节点分析法|节点分析法]]
+- [[methods/nodal-analysis|节点分析法]]
 - [[电压后电抗法|电压后电抗法]]
-- [[相域建模|相域建模]]
+- [[methods/nodal-analysis|相域建模]]
 - [[恒定电导矩阵技术|恒定电导矩阵技术]]
 
 ## 涉及的模型
 
-- [[感应电机|感应电机]]
+- [[models/induction-machine-model|感应电机]]
 - [[鼠笼式感应电机|鼠笼式感应电机]]
 - [[相域模型|相域模型]]
 - [[电压后电抗模型|电压后电抗模型]]
@@ -74,7 +74,7 @@ sources: ["EMT_Doc/09/Wang和Jatskevich - 2010 - Approximate voltage-behind-reac
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[电机网络接口|电机网络接口]]
 - [[恒定电导矩阵|恒定电导矩阵]]
 - [[非迭代求解|非迭代求解]]

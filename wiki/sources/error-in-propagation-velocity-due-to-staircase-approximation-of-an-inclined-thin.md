@@ -73,7 +73,7 @@ sources: ["EMT_Doc/18/Noda 等 - 2004 - Error in propagation velocity due to sta
 
 - [[浪涌仿真|浪涌仿真]]
 - [[波速误差分析|波速误差分析]]
-- [[电磁暂态分析|电磁暂态分析]]
+- [[topics/emt-simulation|电磁暂态分析]]
 - [[空间离散化误差|空间离散化误差]]
 - [[快速暂态现象|快速暂态现象]]
 

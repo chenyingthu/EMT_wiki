@@ -59,7 +59,7 @@ sources: ["EMT_Doc/26/Herath 等 - 2019 - Modeling of a Modular Multilevel Conve
 ## 使用的方法
 
 - [[戴维南等效|戴维南等效]]
-- [[节点分析法|节点分析法]]
+- [[methods/nodal-analysis|节点分析法]]
 - [[详细等效模型|详细等效模型]]
 - [[最近电平控制|最近电平控制]]
 - [[状态均衡控制|状态均衡控制]]
@@ -74,9 +74,9 @@ sources: ["EMT_Doc/26/Herath 等 - 2019 - Modeling of a Modular Multilevel Conve
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[储能集成建模|储能集成建模]]
-- [[计算效率优化|计算效率优化]]
+- [[topics/computational-efficiency|计算效率优化]]
 - [[电力电子变换器建模|电力电子变换器建模]]
 - [[详细等效建模|详细等效建模]]
 

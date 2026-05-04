@@ -82,7 +82,7 @@ sources: ["EMT_Doc/06/Ranasinghe 等 - 2024 - Advanced DSOGI PLL with Adaptive B
 - [[暂态稳定性|暂态稳定性]]
 - [[故障穿越|故障穿越]]
 - [[逆变器控制|逆变器控制]]
-- [[新能源并网|新能源并网]]
+- [[topics/renewable-energy-integration|新能源并网]]
 
 ## 主要发现
 

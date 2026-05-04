@@ -58,8 +58,8 @@ sources: ["EMT_Doc/22/Liu 等 - 2020 - Hybrid EMT-TS Simulation Strategies to St
 
 ## 使用的方法
 
-- [[混合仿真|混合仿真]]
-- [[多速率仿真|多速率仿真]]
+- [[topics/co-simulation|混合仿真]]
+- [[methods/multirate-method|多速率仿真]]
 - [[无功注入法|无功注入法]]
 - [[电压灵敏度分析|电压灵敏度分析]]
 - [[动态相量接口|动态相量接口]]
@@ -76,7 +76,7 @@ sources: ["EMT_Doc/22/Liu 等 - 2020 - Hybrid EMT-TS Simulation Strategies to St
 - [[emt-ts混合仿真|EMT-TS混合仿真]]
 - [[mmc-model|MMC]]
 - [[缓冲区划分|缓冲区划分]]
-- [[大规模电网仿真|大规模电网仿真]]
+- [[topics/large-scale-grid-simulation|大规模电网仿真]]
 - [[暂态稳定分析|暂态稳定分析]]
 
 ## 主要发现

@@ -58,22 +58,22 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/j.epsr.2014.07.023.pdf.pdf"]
 
 ## 使用的方法
 
-- [[矢量拟合|矢量拟合]]
+- [[methods/vector-fitting|矢量拟合]]
 - [[transmission-line-model|Bergeron线路模型]]
 - [[时域节点分析|时域节点分析]]
 - [[数值拉普拉斯变换|数值拉普拉斯变换]]
 
 ## 涉及的模型
 
-- [[输电线路|输电线路]]
+- [[models/transmission-line-model|输电线路]]
 - [[transmission-line-model|Bergeron线路模型]]
 - [[π型级联等效电路|π型级联等效电路]]
 
 ## 相关主题
 
-- [[频率相关建模|频率相关建模]]
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[输电线路建模|输电线路建模]]
+- [[topics/frequency-dependent-modeling|频率相关建模]]
+- [[topics/emt-simulation|电磁暂态仿真]]
+- [[models/transmission-line-model|输电线路建模]]
 - [[时域分析|时域分析]]
 - [[集肤效应|集肤效应]]
 

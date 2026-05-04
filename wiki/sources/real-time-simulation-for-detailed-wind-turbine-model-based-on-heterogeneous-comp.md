@@ -59,8 +59,8 @@ sources: ["EMT_Doc/32/Li 等 - 2024 - Real-time simulation for detailed wind tur
 ## 使用的方法
 
 - [[异构计算|异构计算]]
-- [[多速率仿真|多速率仿真]]
-- [[节点分析法|节点分析法]]
+- [[methods/multirate-method|多速率仿真]]
+- [[methods/nodal-analysis|节点分析法]]
 - [[实时操作系统|实时操作系统]]
 - [[有限状态机控制|有限状态机控制]]
 
@@ -69,15 +69,15 @@ sources: ["EMT_Doc/32/Li 等 - 2024 - Real-time simulation for detailed wind tur
 - [[详细风机模型-dwtm|详细风机模型(DWTM)]]
 - [[dfig-model|DFIG]]
 - [[vsc-model|VSC]]
-- [[变压器|变压器]]
+- [[models/transformer-model|变压器]]
 - [[气动与机械动力学模型|气动与机械动力学模型]]
 
 ## 相关主题
 
-- [[实时仿真|实时仿真]]
+- [[topics/real-time-simulation|实时仿真]]
 - [[硬件在环仿真|硬件在环仿真]]
 - [[多时间尺度耦合|多时间尺度耦合]]
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[机电耦合动态|机电耦合动态]]
 
 ## 主要发现

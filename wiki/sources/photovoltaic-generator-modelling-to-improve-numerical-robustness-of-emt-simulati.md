@@ -61,7 +61,7 @@ sources: ["EMT_Doc/31/j.epsr.2011.10.013.pdf.pdf"]
 - [[基本线性系统技术-blst|基本线性系统技术(BLST)]]
 - [[扩展线性系统技术-elst|扩展线性系统技术(ELST)]]
 - [[收敛性分析|收敛性分析]]
-- [[节点分析法|节点分析法]]
+- [[methods/nodal-analysis|节点分析法]]
 - [[pscad-emtdc]]
 
 ## 涉及的模型
@@ -73,8 +73,8 @@ sources: ["EMT_Doc/31/j.epsr.2011.10.013.pdf.pdf"]
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[数值稳定性|数值稳定性]]
+- [[topics/emt-simulation|电磁暂态仿真]]
+- [[methods/numerical-integration|数值稳定性]]
 - [[光伏系统建模|光伏系统建模]]
 - [[局部阴影效应|局部阴影效应]]
 - [[分布式发电|分布式发电]]

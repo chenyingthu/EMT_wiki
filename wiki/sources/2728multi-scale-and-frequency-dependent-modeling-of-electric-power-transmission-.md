@@ -58,7 +58,7 @@ sources: ["EMT_Doc/27&28/Multi-Scale and Frequency-Dependent Modeling of Electri
 
 ## 使用的方法
 
-- [[动态相量法|动态相量法]]
+- [[topics/dynamic-phasor|动态相量法]]
 - [[解析信号|解析信号]]
 - [[频移技术|频移技术]]
 - [[模态分解|模态分解]]
@@ -68,7 +68,7 @@ sources: ["EMT_Doc/27&28/Multi-Scale and Frequency-Dependent Modeling of Electri
 
 ## 涉及的模型
 
-- [[输电线路|输电线路]]
+- [[models/transmission-line-model|输电线路]]
 - [[频变线路模型|频变线路模型]]
 - [[π型等值电路|π型等值电路]]
 - [[多相线路|多相线路]]
@@ -76,10 +76,10 @@ sources: ["EMT_Doc/27&28/Multi-Scale and Frequency-Dependent Modeling of Electri
 ## 相关主题
 
 - [[多尺度建模|多尺度建模]]
-- [[频率相关建模|频率相关建模]]
-- [[电磁暂态|电磁暂态]]
+- [[topics/frequency-dependent-modeling|频率相关建模]]
+- [[topics/emt-simulation|电磁暂态]]
 - [[机电暂态|机电暂态]]
-- [[实时仿真|实时仿真]]
+- [[topics/real-time-simulation|实时仿真]]
 
 ## 主要发现
 

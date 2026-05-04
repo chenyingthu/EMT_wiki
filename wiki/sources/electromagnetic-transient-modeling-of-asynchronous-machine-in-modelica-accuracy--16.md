@@ -62,7 +62,7 @@ sources: ["EMT_Doc/16/Masoom和Mahseredjian - 2024 - Electromagnetic Transient M
 - [[变步长求解器|变步长求解器]]
 - [[坐标变换|坐标变换]]
 - [[磁链状态空间法|磁链状态空间法]]
-- [[梯形积分法|梯形积分法]]
+- [[methods/numerical-integration|梯形积分法]]
 - [[修正增广节点分析法|修正增广节点分析法]]
 
 ## 涉及的模型
@@ -74,7 +74,7 @@ sources: ["EMT_Doc/16/Masoom和Mahseredjian - 2024 - Electromagnetic Transient M
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[基于方程建模|基于方程建模]]
 - [[电机顺序启动|电机顺序启动]]
 - [[故障与孤岛仿真|故障与孤岛仿真]]

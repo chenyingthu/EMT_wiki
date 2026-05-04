@@ -68,17 +68,17 @@ sources: ["EMT_Doc/12/Decision_tree-based_methodology_for_high_impedance_fault_d
 
 - [[高阻故障-hif-电弧模型|高阻故障(HIF)电弧模型]]
 - [[配电系统|配电系统]]
-- [[变压器|变压器]]
-- [[输电线路|输电线路]]
+- [[models/transformer-model|变压器]]
+- [[models/transmission-line-model|输电线路]]
 - [[并联电容器|并联电容器]]
 - [[工业负荷|工业负荷]]
 
 ## 相关主题
 
 - [[高阻故障检测|高阻故障检测]]
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[谐波分析|谐波分析]]
-- [[继电保护|继电保护]]
+- [[topics/emt-simulation|电磁暂态仿真]]
+- [[methods/harmonic-analysis-methods|谐波分析]]
+- [[topics/protection-system|继电保护]]
 - [[模式识别|模式识别]]
 - [[配电系统暂态分析|配电系统暂态分析]]
 

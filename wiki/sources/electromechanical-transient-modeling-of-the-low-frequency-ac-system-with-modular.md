@@ -68,9 +68,9 @@ sources: ["EMT_Doc/17/Yu 等 - 2024 - Electromechanical Transient Modeling of th
 
 - [[m3c|M3C]]
 - [[低频交流系统|低频交流系统]]
-- [[换流变压器|换流变压器]]
+- [[models/transformer-model|换流变压器]]
 - [[新英格兰39节点系统|新英格兰39节点系统]]
-- [[虚拟同步机|虚拟同步机]]
+- [[methods/virtual-synchronous-generator|虚拟同步机]]
 
 ## 相关主题
 

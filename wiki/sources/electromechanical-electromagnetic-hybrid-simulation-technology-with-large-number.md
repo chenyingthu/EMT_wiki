@@ -67,7 +67,7 @@ sources: ["EMT_Doc/17/Chen 等 - 2020 - Electromechanical-electromagnetic Hybrid
 ## 涉及的模型
 
 - [[vsc-hvdc|VSC-HVDC]]
-- [[换流变压器|换流变压器]]
+- [[models/transformer-model|换流变压器]]
 - [[交流滤波器|交流滤波器]]
 - [[六脉冲换流器|六脉冲换流器]]
 - [[直流输电线路|直流输电线路]]

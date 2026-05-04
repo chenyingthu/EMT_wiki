@@ -60,7 +60,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/Gao 等 - 2022 - Fast Simulation Mod
 
 - [[开关状态预测|开关状态预测]]
 - [[有限状态机|有限状态机]]
-- [[节点分析法|节点分析法]]
+- [[methods/nodal-analysis|节点分析法]]
 - [[两步预测法|两步预测法]]
 
 ## 涉及的模型
@@ -74,9 +74,9 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/Gao 等 - 2022 - Fast Simulation Mod
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[电力电子建模|电力电子建模]]
-- [[仿真加速|仿真加速]]
+- [[topics/parallel-computing|仿真加速]]
 - [[开关状态预测|开关状态预测]]
 - [[新能源并网系统|新能源并网系统]]
 

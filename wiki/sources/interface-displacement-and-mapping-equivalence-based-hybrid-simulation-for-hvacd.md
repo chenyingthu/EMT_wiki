@@ -58,11 +58,11 @@ sources: ["EMT_Doc/24/TPWRD.2020.3017084.pdf.pdf"]
 
 ## 使用的方法
 
-- [[动态相量法|动态相量法]]
-- [[混合仿真|混合仿真]]
+- [[topics/dynamic-phasor|动态相量法]]
+- [[topics/co-simulation|混合仿真]]
 - [[接口位移技术|接口位移技术]]
 - [[lambert-w函数分析|Lambert W函数分析]]
-- [[网络等值|网络等值]]
+- [[topics/network-equivalent|网络等值]]
 
 ## 涉及的模型
 
@@ -73,7 +73,7 @@ sources: ["EMT_Doc/24/TPWRD.2020.3017084.pdf.pdf"]
 
 ## 相关主题
 
-- [[混合仿真|混合仿真]]
+- [[topics/co-simulation|混合仿真]]
 - [[接口延迟|接口延迟]]
 - [[交直流电网|交直流电网]]
 - [[动态相量映射|动态相量映射]]

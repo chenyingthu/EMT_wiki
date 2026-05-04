@@ -69,7 +69,7 @@ sources: ["EMT_Doc/17/Sajjadi 等 - 2026 - EMT Model Boundary Determination Usin
 ## 涉及的模型
 
 - [[逆变器型资源-ibr|逆变器型资源(IBR)]]
-- [[同步发电机|同步发电机]]
+- [[models/synchronous-machine-model|同步发电机]]
 - [[输电线路与母线|输电线路与母线]]
 - [[多端口诺顿等值模型|多端口诺顿等值模型]]
 - [[改进kundur两区域系统|改进Kundur两区域系统]]
@@ -80,9 +80,9 @@ sources: ["EMT_Doc/17/Sajjadi 等 - 2026 - EMT Model Boundary Determination Usin
 - [[电磁暂态仿真加速|电磁暂态仿真加速]]
 - [[emt边界划分|EMT边界划分]]
 - [[次同步振荡分析|次同步振荡分析]]
-- [[网络等值|网络等值]]
+- [[topics/network-equivalent|网络等值]]
 - [[高比例新能源系统动态|高比例新能源系统动态]]
-- [[模型降阶|模型降阶]]
+- [[methods/model-order-reduction|模型降阶]]
 
 ## 主要发现
 

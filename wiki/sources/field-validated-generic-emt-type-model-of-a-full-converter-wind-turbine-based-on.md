@@ -58,7 +58,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/TPWRD.2018.2850848.pdf.pdf"]
 
 ## 使用的方法
 
-- [[平均值模型|平均值模型]]
+- [[methods/average-value-model|平均值模型]]
 - [[开关等效电路|开关等效电路]]
 - [[混合建模|混合建模]]
 - [[标幺值控制|标幺值控制]]
@@ -75,9 +75,9 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/TPWRD.2018.2850848.pdf.pdf"]
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[风电场建模|风电场建模]]
-- [[实时仿真|实时仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
+- [[topics/wind-farm-modeling|风电场建模]]
+- [[topics/real-time-simulation|实时仿真]]
 - [[故障穿越|故障穿越]]
 - [[电力电子建模|电力电子建模]]
 - [[现场实测验证|现场实测验证]]

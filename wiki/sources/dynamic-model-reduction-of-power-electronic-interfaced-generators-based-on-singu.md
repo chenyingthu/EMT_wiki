@@ -61,7 +61,7 @@ sources: ["EMT_Doc/13&14/files/j.epsr.2019.106030.pdf.pdf"]
 - [[奇异摄动理论|奇异摄动理论]]
 - [[特征值灵敏度分析|特征值灵敏度分析]]
 - [[多时间尺度划分|多时间尺度划分]]
-- [[模型降阶|模型降阶]]
+- [[methods/model-order-reduction|模型降阶]]
 - [[时域仿真验证|时域仿真验证]]
 
 ## 涉及的模型
@@ -74,11 +74,11 @@ sources: ["EMT_Doc/13&14/files/j.epsr.2019.106030.pdf.pdf"]
 
 ## 相关主题
 
-- [[模型降阶|模型降阶]]
+- [[methods/model-order-reduction|模型降阶]]
 - [[电力电子接口发电机|电力电子接口发电机]]
 - [[多时间尺度动态|多时间尺度动态]]
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[新能源并网|新能源并网]]
+- [[topics/emt-simulation|电磁暂态仿真]]
+- [[topics/renewable-energy-integration|新能源并网]]
 
 ## 主要发现
 

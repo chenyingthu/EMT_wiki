@@ -73,7 +73,7 @@ sources: ["EMT_Doc/17/Ahmadi 等 - 2026 - Enhancements to Terminal Duality-based
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[变压器零序阻抗建模|变压器零序阻抗建模]]
 - [[不对称运行分析|不对称运行分析]]
 - [[实时仿真-rtds|实时仿真(RTDS)]]

@@ -62,7 +62,7 @@ sources: ["EMT_Doc/02/Meng 等 - 2023 - A new sequence domain EMT-level multi-in
 - [[阻抗稳定性分析|阻抗稳定性分析]]
 - [[耦合序域扫描|耦合序域扫描]]
 - [[多输入多输出建模|多输入多输出建模]]
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 
 ## 涉及的模型
 

@@ -74,10 +74,10 @@ sources: ["EMT_Doc/06/j.epsr.2016.07.022.pdf.pdf"]
 
 ## 相关主题
 
-- [[实时仿真|实时仿真]]
+- [[topics/real-time-simulation|实时仿真]]
 - [[硬件在环-hil|硬件在环(HIL)]]
 - [[fpga并行计算|FPGA并行计算]]
-- [[电磁暂态分析|电磁暂态分析]]
+- [[topics/emt-simulation|电磁暂态分析]]
 - [[自动化求解器生成|自动化求解器生成]]
 
 ## 主要发现

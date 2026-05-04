@@ -62,7 +62,7 @@ sources: ["EMT_Doc/22/Chrysochos 等 - 2023 - Impact of solenoid effects on seri
 - [[二维半有限元法|二维半有限元法]]
 - [[矩量法表面算子|矩量法表面算子]]
 - [[js法|Js法]]
-- [[频域分析|频域分析]]
+- [[topics/frequency-domain-analysis|频域分析]]
 - [[大地返回阻抗计算|大地返回阻抗计算]]
 
 ## 涉及的模型
@@ -76,7 +76,7 @@ sources: ["EMT_Doc/22/Chrysochos 等 - 2023 - Impact of solenoid effects on seri
 
 - [[串联阻抗计算|串联阻抗计算]]
 - [[螺线管效应|螺线管效应]]
-- [[频率相关建模|频率相关建模]]
+- [[topics/frequency-dependent-modeling|频率相关建模]]
 - [[海底电缆暂态|海底电缆暂态]]
 - [[模态传播特性|模态传播特性]]
 - [[过电压分析|过电压分析]]

@@ -75,11 +75,11 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/TPWRD.2018.2860586.pdf.pdf"]
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[并行计算|并行计算]]
+- [[topics/emt-simulation|电磁暂态仿真]]
+- [[topics/parallel-computing|并行计算]]
 - [[协同仿真|协同仿真]]
 - [[多步长仿真|多步长仿真]]
-- [[大规模电网仿真|大规模电网仿真]]
+- [[topics/large-scale-grid-simulation|大规模电网仿真]]
 - [[离线仿真|离线仿真]]
 
 ## 主要发现

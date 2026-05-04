@@ -60,7 +60,7 @@ Electromagnetic transient (EMT) and quasi static time series (QSTS) Co-simulatio
 
 - [[联合仿真|联合仿真]]
 - [[准静态时间序列分析|准静态时间序列分析]]
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[戴维南等效提取|戴维南等效提取]]
 - [[com接口通信|COM接口通信]]
 - [[时序潮流计算|时序潮流计算]]
@@ -75,7 +75,7 @@ Electromagnetic transient (EMT) and quasi static time series (QSTS) Co-simulatio
 
 ## 相关主题
 
-- [[混合仿真|混合仿真]]
+- [[topics/co-simulation|混合仿真]]
 - [[可再生能源并网|可再生能源并网]]
 - [[电能质量分析|电能质量分析]]
 - [[配电网仿真|配电网仿真]]

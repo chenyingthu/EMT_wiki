@@ -58,7 +58,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/j.epsr.2020.106716.pdf.pdf"]
 
 ## 使用的方法
 
-- [[状态空间法|状态空间法]]
+- [[methods/state-space-method|状态空间法]]
 - [[极留数有理拟合|极留数有理拟合]]
 - [[改进增广节点分析法-mana|改进增广节点分析法(MANA)]]
 - [[深度流水线调度|深度流水线调度]]
@@ -67,8 +67,8 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/j.epsr.2020.106716.pdf.pdf"]
 
 ## 涉及的模型
 
-- [[通用线路模型-ulm|通用线路模型(ULM)]]
-- [[输电线路|输电线路]]
+- [[models/transmission-line-model|通用线路模型(ULM)]]
+- [[models/transmission-line-model|输电线路]]
 - [[电缆|电缆]]
 - [[诺顿等效电路|诺顿等效电路]]
 

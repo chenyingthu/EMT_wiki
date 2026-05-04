@@ -68,7 +68,7 @@ sources: ["EMT_Doc/39/Bruned 等 - 2020 - Use of efficient task allocation algor
 ## 涉及的模型
 
 - [[vsc-hvdc|VSC-HVDC]]
-- [[风电场|风电场]]
+- [[topics/wind-farm-modeling|风电场]]
 - [[电力电子设备|电力电子设备]]
 - [[输电网|输电网]]
 

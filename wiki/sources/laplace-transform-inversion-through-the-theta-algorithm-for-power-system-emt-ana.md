@@ -72,11 +72,11 @@ sources: ["EMT_Doc/25/Castañón 等 - 2021 - Laplace transform inversion throug
 
 ## 相关主题
 
-- [[电磁暂态分析|电磁暂态分析]]
-- [[频域分析|频域分析]]
+- [[topics/emt-simulation|电磁暂态分析]]
+- [[topics/frequency-domain-analysis|频域分析]]
 - [[拉普拉斯逆变换|拉普拉斯逆变换]]
 - [[数值计算方法|数值计算方法]]
-- [[电力系统仿真|电力系统仿真]]
+- [[topics/emt-simulation|电力系统仿真]]
 
 ## 主要发现
 

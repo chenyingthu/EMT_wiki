@@ -58,18 +58,18 @@ sources: ["EMT_Doc/24/TPWRD.2008.2002889.pdf.pdf"]
 
 ## 使用的方法
 
-- [[混合仿真|混合仿真]]
+- [[topics/co-simulation|混合仿真]]
 - [[网络分割|网络分割]]
-- [[并行计算|并行计算]]
+- [[topics/parallel-computing|并行计算]]
 - [[多速率积分|多速率积分]]
 - [[频率平移|频率平移]]
 - [[数据交换协议|数据交换协议]]
-- [[网络等值|网络等值]]
+- [[topics/network-equivalent|网络等值]]
 
 ## 涉及的模型
 
-- [[同步电机|同步电机]]
-- [[输电线路|输电线路]]
+- [[models/synchronous-machine-model|同步电机]]
+- [[models/transmission-line-model|输电线路]]
 - [[vsc-hvdc|VSC-HVDC]]
 - [[facts装置|FACTS装置]]
 - [[集中参数模型|集中参数模型]]
@@ -77,14 +77,14 @@ sources: ["EMT_Doc/24/TPWRD.2008.2002889.pdf.pdf"]
 
 ## 相关主题
 
-- [[混合仿真|混合仿真]]
-- [[暂态稳定|暂态稳定]]
-- [[电磁暂态|电磁暂态]]
+- [[topics/co-simulation|混合仿真]]
+- [[topics/transient-stability-analysis|暂态稳定]]
+- [[topics/emt-simulation|电磁暂态]]
 - [[接口技术|接口技术]]
-- [[并行计算|并行计算]]
+- [[topics/parallel-computing|并行计算]]
 - [[网络分割|网络分割]]
 - [[频率自适应建模|频率自适应建模]]
-- [[多速率仿真|多速率仿真]]
+- [[methods/multirate-method|多速率仿真]]
 
 ## 主要发现
 

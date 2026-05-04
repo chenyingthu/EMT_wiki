@@ -60,13 +60,13 @@ sources: ["EMT_Doc/25/Ye 等 - 2020 - Large step size electromagnetic transient 
 
 - [[移频相量法-sfp|移频相量法(SFP)]]
 - [[矩阵变换法|矩阵变换法]]
-- [[节点分析法|节点分析法]]
-- [[梯形积分法|梯形积分法]]
+- [[methods/nodal-analysis|节点分析法]]
+- [[methods/numerical-integration|梯形积分法]]
 
 ## 涉及的模型
 
-- [[同步发电机|同步发电机]]
-- [[输电线路|输电线路]]
+- [[models/synchronous-machine-model|同步发电机]]
+- [[models/transmission-line-model|输电线路]]
 - [[大规模交流电网|大规模交流电网]]
 - [[传统emt模型|传统EMT模型]]
 - [[暂态稳定模型|暂态稳定模型]]
@@ -75,9 +75,9 @@ sources: ["EMT_Doc/25/Ye 等 - 2020 - Large step size electromagnetic transient 
 
 - [[大时间步长仿真|大时间步长仿真]]
 - [[宽频带动态分析|宽频带动态分析]]
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[移频分析|移频分析]]
-- [[大规模电网仿真|大规模电网仿真]]
+- [[topics/large-scale-grid-simulation|大规模电网仿真]]
 
 ## 主要发现
 

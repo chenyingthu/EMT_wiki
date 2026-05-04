@@ -70,8 +70,8 @@ sources: ["EMT_Doc/04/tpwrd.2010.2043547.pdf.pdf"]
 
 ## 相关主题
 
-- [[谐波分析|谐波分析]]
-- [[潮流计算|潮流计算]]
+- [[methods/harmonic-analysis-methods|谐波分析]]
+- [[topics/power-flow-calculation|潮流计算]]
 - [[时域稳态仿真|时域稳态仿真]]
 - [[emt初始化|EMT初始化]]
 - [[非正弦稳态|非正弦稳态]]

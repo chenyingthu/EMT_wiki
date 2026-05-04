@@ -75,7 +75,7 @@ sources: ["EMT_Doc/27&28/Neutral conductor current in three-phase networks with 
 - [[电力系统谐波|电力系统谐波]]
 - [[三相不平衡|三相不平衡]]
 - [[中性线电流|中性线电流]]
-- [[电能质量|电能质量]]
+- [[topics/power-quality|电能质量]]
 - [[非线性负载建模|非线性负载建模]]
 
 ## 主要发现

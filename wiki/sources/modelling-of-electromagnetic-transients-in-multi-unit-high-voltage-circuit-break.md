@@ -75,7 +75,7 @@ sources: ["EMT_Doc/27&28/Modelling of electromagnetic transients in multi-unit h
 
 ## 相关主题
 
-- [[电磁暂态|电磁暂态]]
+- [[topics/emt-simulation|电磁暂态]]
 - [[开关暂态|开关暂态]]
 - [[断路器建模|断路器建模]]
 - [[预击穿与重燃|预击穿与重燃]]

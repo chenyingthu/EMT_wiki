@@ -59,28 +59,28 @@ sources: ["EMT_Doc/18/Hassani 等 - 2022 - Evaluation of time-domain and phasor-
 ## 使用的方法
 
 - [[时域法|时域法]]
-- [[动态相量法|动态相量法]]
+- [[topics/dynamic-phasor|动态相量法]]
 - [[三相相量法|三相相量法]]
 - [[正序相量法|正序相量法]]
-- [[梯形积分法|梯形积分法]]
+- [[methods/numerical-integration|梯形积分法]]
 - [[后向欧拉法|后向欧拉法]]
-- [[迭代求解器|迭代求解器]]
+- [[methods/iterative-solvers|迭代求解器]]
 - [[伴随电路法|伴随电路法]]
 - [[稀疏矩阵求解|稀疏矩阵求解]]
 
 ## 涉及的模型
 
-- [[同步电机|同步电机]]
+- [[models/synchronous-machine-model|同步电机]]
 - [[ieee-118测试系统|IEEE-118测试系统]]
 - [[线性网络|线性网络]]
 - [[励磁控制系统|励磁控制系统]]
 
 ## 相关主题
 
-- [[电磁暂态|电磁暂态]]
-- [[暂态稳定|暂态稳定]]
+- [[topics/emt-simulation|电磁暂态]]
+- [[topics/transient-stability-analysis|暂态稳定]]
 - [[动态相量|动态相量]]
-- [[时域仿真|时域仿真]]
+- [[topics/emt-simulation|时域仿真]]
 - [[相量域仿真|相量域仿真]]
 - [[计算性能评估|计算性能评估]]
 - [[不对称工况分析|不对称工况分析]]

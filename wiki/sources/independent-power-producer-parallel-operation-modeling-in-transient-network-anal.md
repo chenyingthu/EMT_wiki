@@ -65,7 +65,7 @@ Independent power producer parallel operation modeling in transient network simu
 
 ## 涉及的模型
 
-- [[同步发电机|同步发电机]]
+- [[models/synchronous-machine-model|同步发电机]]
 - [[ieee-type-i电压调节器|IEEE Type I电压调节器]]
 - [[汽轮机调速器|汽轮机调速器]]
 - [[配电网等效模型|配电网等效模型]]

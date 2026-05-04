@@ -59,8 +59,8 @@ sources: ["EMT_Doc/30/Ouafi 等 - 2023 - Parallelization of EMT simulations for 
 ## 使用的方法
 
 - [[协同仿真|协同仿真]]
-- [[并行计算|并行计算]]
-- [[多速率仿真|多速率仿真]]
+- [[topics/parallel-computing|并行计算]]
+- [[methods/multirate-method|多速率仿真]]
 - [[传输线延迟解耦|传输线延迟解耦]]
 - [[fmi接口|FMI接口]]
 - [[信号量同步|信号量同步]]
@@ -70,21 +70,21 @@ sources: ["EMT_Doc/30/Ouafi 等 - 2023 - Parallelization of EMT simulations for 
 ## 涉及的模型
 
 - [[ibr|IBR]]
-- [[风电场|风电场]]
+- [[topics/wind-farm-modeling|风电场]]
 - [[光伏场|光伏场]]
-- [[输电线路|输电线路]]
+- [[models/transmission-line-model|输电线路]]
 - [[电缆|电缆]]
 - [[igbt变流器|IGBT变流器]]
 - [[详细电路模型|详细电路模型]]
 
 ## 相关主题
 
-- [[并行计算|并行计算]]
+- [[topics/parallel-computing|并行计算]]
 - [[协同仿真|协同仿真]]
-- [[新能源并网|新能源并网]]
-- [[大规模电网仿真|大规模电网仿真]]
-- [[仿真加速|仿真加速]]
-- [[多速率仿真|多速率仿真]]
+- [[topics/renewable-energy-integration|新能源并网]]
+- [[topics/large-scale-grid-simulation|大规模电网仿真]]
+- [[topics/parallel-computing|仿真加速]]
+- [[methods/multirate-method|多速率仿真]]
 
 ## 主要发现
 

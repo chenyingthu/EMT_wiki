@@ -57,24 +57,24 @@ sources: ["EMT_Doc/03/TPWRD.2017.2690145.pdf.pdf"]
 
 - [[分布式混合仿真|分布式混合仿真]]
 - [[两级舒尔补法|两级舒尔补法]]
-- [[节点分析法|节点分析法]]
+- [[methods/nodal-analysis|节点分析法]]
 - [[组合交互协议|组合交互协议]]
-- [[网络等值|网络等值]]
+- [[topics/network-equivalent|网络等值]]
 
 ## 涉及的模型
 
 - [[vsc-model|VSC]]
 - [[非线性动态负荷|非线性动态负荷]]
-- [[同步电机|同步电机]]
-- [[输电线路|输电线路]]
+- [[models/synchronous-machine-model|同步电机]]
+- [[models/transmission-line-model|输电线路]]
 - [[机电暂态模型|机电暂态模型]]
 - [[电磁暂态模型|电磁暂态模型]]
 
 ## 相关主题
 
-- [[混合仿真|混合仿真]]
+- [[topics/co-simulation|混合仿真]]
 - [[分布式仿真|分布式仿真]]
-- [[网络等值|网络等值]]
+- [[topics/network-equivalent|网络等值]]
 - [[接口技术|接口技术]]
 - [[并行协调仿真|并行协调仿真]]
 - [[vsc-model|VSC]]

@@ -68,15 +68,15 @@ CPU based parallel computation of electromagnetic transients for large A. Abusal
 ## 涉及的模型
 
 - [[分布参数输电线路|分布参数输电线路]]
-- [[电缆模型|电缆模型]]
+- [[models/cable-model|电缆模型]]
 - [[非线性开关模型|非线性开关模型]]
 - [[风电机组|风电机组]]
 - [[大规模交流电网|大规模交流电网]]
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[并行计算|并行计算]]
+- [[topics/emt-simulation|电磁暂态仿真]]
+- [[topics/parallel-computing|并行计算]]
 - [[大规模电网|大规模电网]]
 - [[稀疏矩阵求解|稀疏矩阵求解]]
 - [[离线仿真|离线仿真]]

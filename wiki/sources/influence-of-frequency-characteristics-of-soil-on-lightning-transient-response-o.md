@@ -65,17 +65,17 @@ sources: ["EMT_Doc/24/Li 等 - 2016 - Influence of frequency characteristics of 
 
 ## 涉及的模型
 
-- [[架空输电线路|架空输电线路]]
+- [[models/transmission-line-model|架空输电线路]]
 - [[地回路模型|地回路模型]]
 - [[频变土壤模型|频变土壤模型]]
 
 ## 相关主题
 
-- [[电磁暂态分析|电磁暂态分析]]
-- [[频率相关建模|频率相关建模]]
+- [[topics/emt-simulation|电磁暂态分析]]
+- [[topics/frequency-dependent-modeling|频率相关建模]]
 - [[地回路参数|地回路参数]]
 - [[土壤频变特性|土壤频变特性]]
-- [[输电线路建模|输电线路建模]]
+- [[models/transmission-line-model|输电线路建模]]
 
 ## 主要发现
 

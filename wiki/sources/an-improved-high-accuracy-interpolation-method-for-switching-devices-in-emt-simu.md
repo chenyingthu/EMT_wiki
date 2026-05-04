@@ -59,7 +59,7 @@ sources: ["EMT_Doc/07&08/Na et al. - 2023 - An improved high-accuracy interpolat
 ## 使用的方法
 
 - [[后向欧拉法|后向欧拉法]]
-- [[梯形积分法|梯形积分法]]
+- [[methods/numerical-integration|梯形积分法]]
 - [[线性插值|线性插值]]
 - [[瞬时解插值|瞬时解插值]]
 - [[节点分析|节点分析]]
@@ -76,7 +76,7 @@ sources: ["EMT_Doc/07&08/Na et al. - 2023 - An improved high-accuracy interpolat
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[开关不连续性处理|开关不连续性处理]]
 - [[数值振荡抑制|数值振荡抑制]]
 - [[固定步长仿真|固定步长仿真]]

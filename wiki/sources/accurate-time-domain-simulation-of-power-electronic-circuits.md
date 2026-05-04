@@ -58,7 +58,7 @@ sources: ["EMT_Doc/05/Nzale 等 - 2021 - Accurate time-domain simulation of powe
 
 ## 使用的方法
 
-- [[梯形积分法|梯形积分法]]
+- [[methods/numerical-integration|梯形积分法]]
 - [[后向欧拉法|后向欧拉法]]
 - [[改进增广节点分析法|改进增广节点分析法]]
 - [[线性-二次插值法|线性/二次插值法]]
@@ -74,7 +74,7 @@ sources: ["EMT_Doc/05/Nzale 等 - 2021 - Accurate time-domain simulation of powe
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[数值振荡抑制|数值振荡抑制]]
 - [[不连续点处理|不连续点处理]]
 - [[事件定位|事件定位]]

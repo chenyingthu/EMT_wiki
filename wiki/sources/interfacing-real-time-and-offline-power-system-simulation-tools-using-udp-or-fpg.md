@@ -58,11 +58,11 @@ sources: ["EMT_Doc/24/Scheibe 等 - 2022 - Interfacing real-time and offline pow
 
 ## 使用的方法
 
-- [[混合仿真|混合仿真]]
+- [[topics/co-simulation|混合仿真]]
 - [[离散傅里叶变换|离散傅里叶变换]]
 - [[正序变换|正序变换]]
 - [[后向欧拉线性插值|后向欧拉线性插值]]
-- [[多速率仿真|多速率仿真]]
+- [[methods/multirate-method|多速率仿真]]
 - [[理想变压器模型|理想变压器模型]]
 - [[udp通信|UDP通信]]
 - [[aurora协议|Aurora协议]]
@@ -76,9 +76,9 @@ sources: ["EMT_Doc/24/Scheibe 等 - 2022 - Interfacing real-time and offline pow
 
 ## 相关主题
 
-- [[实时仿真|实时仿真]]
+- [[topics/real-time-simulation|实时仿真]]
 - [[离线仿真|离线仿真]]
-- [[混合仿真|混合仿真]]
+- [[topics/co-simulation|混合仿真]]
 - [[电磁暂态与机电暂态接口|电磁暂态与机电暂态接口]]
 - [[暂态稳定分析|暂态稳定分析]]
 - [[数据通信协议|数据通信协议]]

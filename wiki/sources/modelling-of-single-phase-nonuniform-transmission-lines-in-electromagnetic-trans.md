@@ -71,8 +71,8 @@ sources: ["EMT_Doc/27&28/Modelling of single-phase nonuniform transmission lines
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[频率相关建模|频率相关建模]]
+- [[topics/emt-simulation|电磁暂态仿真]]
+- [[topics/frequency-dependent-modeling|频率相关建模]]
 - [[时域行波仿真|时域行波仿真]]
 - [[emtp兼容建模|EMTP兼容建模]]
 

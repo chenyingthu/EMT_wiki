@@ -62,7 +62,7 @@ sources: ["EMT_Doc/18/Gao 等 - 2014 - Fast electromagnetic transient simulation
 - [[simd向量化|SIMD向量化]]
 - [[共享内存并行|共享内存并行]]
 - [[改进emtp算法|改进EMTP算法]]
-- [[节点分析法|节点分析法]]
+- [[methods/nodal-analysis|节点分析法]]
 - [[开关时刻预测校正|开关时刻预测校正]]
 
 ## 涉及的模型

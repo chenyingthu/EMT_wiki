@@ -71,7 +71,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/Zhao 等 - 2018 - GPU Based Parallel
 ## 涉及的模型
 
 - [[风机|风机]]
-- [[风电场|风电场]]
+- [[topics/wind-farm-modeling|风电场]]
 
 ## 相关主题
 

@@ -58,9 +58,9 @@ Electrical Power and Energy Systems 143 (2022) 108459 0142-0615/© 2022 Elsevier
 
 ## 使用的方法
 
-- [[相域建模|相域建模]]
+- [[methods/nodal-analysis|相域建模]]
 - [[恒定电导模型|恒定电导模型]]
-- [[节点分析法|节点分析法]]
+- [[methods/nodal-analysis|节点分析法]]
 - [[梯形积分离散化|梯形积分离散化]]
 - [[嵌入式小步长算法|嵌入式小步长算法]]
 
@@ -72,10 +72,10 @@ Electrical Power and Energy Systems 143 (2022) 108459 0142-0615/© 2022 Elsevier
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[emtp类仿真|EMTP类仿真]]
 - [[综合电力系统|综合电力系统]]
-- [[实时仿真|实时仿真]]
+- [[topics/real-time-simulation|实时仿真]]
 - [[多相电机建模|多相电机建模]]
 
 ## 主要发现

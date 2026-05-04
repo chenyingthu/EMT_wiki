@@ -62,9 +62,9 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/Zhang 等 - 2012 - Frequency depende
 ## 使用的方法
 
 
-- [[矢量拟合|矢量拟合]]
+- [[methods/vector-fitting|矢量拟合]]
 - [[频变网络等值|频变网络等值]]
-- [[无源性强制|无源性强制]]
+- [[methods/passivity-enforcement|无源性强制]]
 - [[高斯消元法|高斯消元法]]
 - [[有理函数拟合|有理函数拟合]]
 
@@ -81,8 +81,8 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/Zhang 等 - 2012 - Frequency depende
 
 
 - [[机电-电磁混合仿真|机电-电磁混合仿真]]
-- [[频率相关建模|频率相关建模]]
-- [[网络等值|网络等值]]
+- [[topics/frequency-dependent-modeling|频率相关建模]]
+- [[topics/network-equivalent|网络等值]]
 - [[无源性保证|无源性保证]]
 - [[接口波形畸变|接口波形畸变]]
 

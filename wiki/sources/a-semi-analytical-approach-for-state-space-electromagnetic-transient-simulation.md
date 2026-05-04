@@ -57,7 +57,7 @@ sources: ["EMT_Doc/03/Xiong 等 - 2024 - A Semi-Analytical Approach for State-Sp
 
 - [[半解析解法|半解析解法]]
 - [[微分变换法|微分变换法]]
-- [[状态空间法|状态空间法]]
+- [[methods/state-space-method|状态空间法]]
 - [[变步长仿真|变步长仿真]]
 - [[密集输出机制|密集输出机制]]
 - [[二分搜索增强二次插值|二分搜索增强二次插值]]
@@ -72,11 +72,11 @@ sources: ["EMT_Doc/03/Xiong 等 - 2024 - A Semi-Analytical Approach for State-Sp
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[状态空间建模|状态空间建模]]
 - [[变步长算法|变步长算法]]
 - [[开关事件处理|开关事件处理]]
-- [[大规模电网仿真|大规模电网仿真]]
+- [[topics/large-scale-grid-simulation|大规模电网仿真]]
 
 ## 主要发现
 

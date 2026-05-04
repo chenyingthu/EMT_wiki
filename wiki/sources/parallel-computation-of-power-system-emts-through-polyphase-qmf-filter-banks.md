@@ -64,7 +64,7 @@ sources: ["EMT_Doc/30/j.epsr.2021.107317.pdf.pdf"]
 - [[多相qmf滤波器组|多相QMF滤波器组]]
 - [[并行处理算法|并行处理算法]]
 - [[分段线性化建模|分段线性化建模]]
-- [[节点分析法|节点分析法]]
+- [[methods/nodal-analysis|节点分析法]]
 
 ## 涉及的模型
 
@@ -75,8 +75,8 @@ sources: ["EMT_Doc/30/j.epsr.2021.107317.pdf.pdf"]
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[并行计算|并行计算]]
+- [[topics/emt-simulation|电磁暂态仿真]]
+- [[topics/parallel-computing|并行计算]]
 - [[超实时仿真|超实时仿真]]
 - [[网络等值降阶|网络等值降阶]]
 - [[fpga硬件加速|FPGA硬件加速]]

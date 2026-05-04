@@ -58,26 +58,26 @@ sources: ["EMT_Doc/32/ACCESS.2018.2862893.pdf.pdf"]
 
 ## 使用的方法
 
-- [[梯形积分法|梯形积分法]]
-- [[节点分析法|节点分析法]]
+- [[methods/numerical-integration|梯形积分法]]
+- [[methods/nodal-analysis|节点分析法]]
 - [[相模变换|相模变换]]
 - [[硬件并行计算|硬件并行计算]]
 - [[联合仿真接口设计|联合仿真接口设计]]
 
 ## 涉及的模型
 
-- [[同步发电机|同步发电机]]
-- [[输电线路|输电线路]]
+- [[models/synchronous-machine-model|同步发电机]]
+- [[models/transmission-line-model|输电线路]]
 - [[励磁系统|励磁系统]]
 - [[调速系统|调速系统]]
 - [[无源元件|无源元件]]
 
 ## 相关主题
 
-- [[实时仿真|实时仿真]]
+- [[topics/real-time-simulation|实时仿真]]
 - [[联合仿真|联合仿真]]
 - [[硬件加速|硬件加速]]
-- [[大规模电网仿真|大规模电网仿真]]
+- [[topics/large-scale-grid-simulation|大规模电网仿真]]
 - [[fpga实现|FPGA实现]]
 
 ## 主要发现

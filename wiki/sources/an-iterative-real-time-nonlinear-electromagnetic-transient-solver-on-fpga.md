@@ -70,17 +70,17 @@ sources: ["EMT_Doc/07&08/Chen and Dinavahi - 2011 - An iterative real-time nonli
 
 - [[避雷器|避雷器]]
 - [[串联补偿线路|串联补偿线路]]
-- [[变压器|变压器]]
+- [[models/transformer-model|变压器]]
 - [[铁磁谐振模型|铁磁谐振模型]]
 - [[线性多端口网络|线性多端口网络]]
 
 ## 相关主题
 
-- [[实时仿真|实时仿真]]
+- [[topics/real-time-simulation|实时仿真]]
 - [[fpga硬件加速|FPGA硬件加速]]
-- [[并行计算|并行计算]]
+- [[topics/parallel-computing|并行计算]]
 - [[非线性网络求解|非线性网络求解]]
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 
 ## 主要发现
 

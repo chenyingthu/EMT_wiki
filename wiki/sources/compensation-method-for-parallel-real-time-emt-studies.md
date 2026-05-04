@@ -62,12 +62,12 @@ sources: ["EMT_Doc/11/Bruned 等 - 2021 - Compensation method for parallel real-
 - [[节点分析|节点分析]]
 - [[戴维南等效|戴维南等效]]
 - [[稀疏lu分解|稀疏LU分解]]
-- [[并行计算|并行计算]]
+- [[topics/parallel-computing|并行计算]]
 - [[网络解耦|网络解耦]]
 
 ## 涉及的模型
 
-- [[配电网|配电网]]
+- [[topics/distribution-network|配电网]]
 - [[r-l线路模型|R-L线路模型]]
 - [[动态负荷模型|动态负荷模型]]
 - [[vsc-hvdc|VSC-HVDC]]
@@ -75,9 +75,9 @@ sources: ["EMT_Doc/11/Bruned 等 - 2021 - Compensation method for parallel real-
 
 ## 相关主题
 
-- [[实时仿真|实时仿真]]
+- [[topics/real-time-simulation|实时仿真]]
 - [[并行仿真|并行仿真]]
-- [[硬件在环|硬件在环]]
+- [[methods/hil-simulation|硬件在环]]
 - [[网络解耦|网络解耦]]
 - [[开关暂态分析|开关暂态分析]]
 

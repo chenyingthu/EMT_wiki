@@ -67,15 +67,15 @@ sources: ["EMT_Doc/10/Leal和De Conti - 2021 - Compact Matrix Formulation for Ca
 
 ## 涉及的模型
 
-- [[输电线路|输电线路]]
-- [[通用线路模型-ulm|通用线路模型(ULM)]]
+- [[models/transmission-line-model|输电线路]]
+- [[models/transmission-line-model|通用线路模型(ULM)]]
 - [[marti频变模型|Marti频变模型]]
 - [[架空线路|架空线路]]
 
 ## 相关主题
 
 - [[雷击感应电压|雷击感应电压]]
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[频变线路建模|频变线路建模]]
 - [[数值分析|数值分析]]
 

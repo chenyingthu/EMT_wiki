@@ -76,7 +76,7 @@ sources: ["EMT_Doc/09/Liu 等 - 2009 - Application of wavelet singular entropy t
 - [[全线相继速动保护|全线相继速动保护]]
 - [[单端量保护|单端量保护]]
 - [[高频暂态信号分析|高频暂态信号分析]]
-- [[继电保护|继电保护]]
+- [[topics/protection-system|继电保护]]
 
 ## 主要发现
 

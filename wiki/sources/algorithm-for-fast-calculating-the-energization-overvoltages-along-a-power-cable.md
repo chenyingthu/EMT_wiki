@@ -74,8 +74,8 @@ sources: ["EMT_Doc/06/Li 等 - 2022 - Algorithm for fast calculating the energiz
 ## 相关主题
 
 - [[合闸过电压|合闸过电压]]
-- [[频率相关建模|频率相关建模]]
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/frequency-dependent-modeling|频率相关建模]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[电缆沿线电压分布|电缆沿线电压分布]]
 - [[快速计算算法|快速计算算法]]
 

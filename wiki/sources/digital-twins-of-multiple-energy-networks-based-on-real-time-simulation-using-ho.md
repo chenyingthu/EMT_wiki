@@ -75,7 +75,7 @@ sources: ["EMT_Doc/13&14/files/Huang 等 - 2023 - Digital twins of multiple ener
 ## 相关主题
 
 - [[数字孪生|数字孪生]]
-- [[实时仿真|实时仿真]]
+- [[topics/real-time-simulation|实时仿真]]
 - [[多能网协同|多能网协同]]
 - [[动态能流分析|动态能流分析]]
 - [[超实时仿真|超实时仿真]]

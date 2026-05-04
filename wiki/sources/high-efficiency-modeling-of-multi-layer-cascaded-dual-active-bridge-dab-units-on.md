@@ -76,8 +76,8 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/Qi 等 - 2024 - High Efficiency Mode
 
 ## 相关主题
 
-- [[实时仿真|实时仿真]]
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/real-time-simulation|实时仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[高频开关建模|高频开关建模]]
 - [[电力电子聚合建模|电力电子聚合建模]]
 - [[节点导纳矩阵优化|节点导纳矩阵优化]]

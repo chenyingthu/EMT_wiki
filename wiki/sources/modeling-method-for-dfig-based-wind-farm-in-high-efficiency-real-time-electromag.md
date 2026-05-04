@@ -60,7 +60,7 @@ sources: ["EMT_Doc/26/Liu 等 - 2025 - Modeling Method for DFIG-Based Wind Farm 
 
 - [[延迟解耦法|延迟解耦法]]
 - [[多级嵌套快速同步求解-m-nfss|多级嵌套快速同步求解(M-NFSS)]]
-- [[节点分析法|节点分析法]]
+- [[methods/nodal-analysis|节点分析法]]
 - [[开关函数模型|开关函数模型]]
 - [[离散化建模|离散化建模]]
 
@@ -69,14 +69,14 @@ sources: ["EMT_Doc/26/Liu 等 - 2025 - Modeling Method for DFIG-Based Wind Farm 
 - [[dfig-model|DFIG]]
 - [[风力发电机|风力发电机]]
 - [[背靠背变流器|背靠背变流器]]
-- [[变压器|变压器]]
+- [[models/transformer-model|变压器]]
 - [[滤波器|滤波器]]
-- [[风电场|风电场]]
+- [[topics/wind-farm-modeling|风电场]]
 
 ## 相关主题
 
 - [[实时电磁暂态仿真|实时电磁暂态仿真]]
-- [[风电场建模|风电场建模]]
+- [[topics/wind-farm-modeling|风电场建模]]
 - [[电路复杂度降低|电路复杂度降低]]
 - [[硬件资源优化|硬件资源优化]]
 - [[阻抗特性分析|阻抗特性分析]]

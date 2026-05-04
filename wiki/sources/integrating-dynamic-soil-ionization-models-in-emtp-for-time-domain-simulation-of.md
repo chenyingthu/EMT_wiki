@@ -60,7 +60,7 @@ sources: ["EMT_Doc/24/Meyberg 等 - 2026 - Integrating dynamic soil ionization m
 
 - [[动态链接库集成|动态链接库集成]]
 - [[变电阻率法|变电阻率法]]
-- [[时域仿真|时域仿真]]
+- [[topics/emt-simulation|时域仿真]]
 - [[等位面法|等位面法]]
 - [[有限差分时域法对比|有限差分时域法对比]]
 
@@ -73,7 +73,7 @@ sources: ["EMT_Doc/24/Meyberg 等 - 2026 - Integrating dynamic soil ionization m
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[接地电阻计算|接地电阻计算]]
 - [[土壤电离效应|土壤电离效应]]
 - [[雷击冲击特性|雷击冲击特性]]

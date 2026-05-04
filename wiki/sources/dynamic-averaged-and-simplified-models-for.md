@@ -69,17 +69,17 @@ sources: ["EMT_Doc/13&14/files/TPWRD.2013.2251912.pdf.pdf"]
 
 - [[mmc-model|MMC]]
 - [[vsc-model|VSC]]
-- [[半桥子模块|半桥子模块]]
+- [[models/half-bridge-submodule|半桥子模块]]
 - [[igbt阀|IGBT阀]]
 - [[桥臂电抗器|桥臂电抗器]]
-- [[平均值模型|平均值模型]]
+- [[methods/average-value-model|平均值模型]]
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[动态平均值建模|动态平均值建模]]
 - [[mmc-model|MMC]]
-- [[计算效率优化|计算效率优化]]
+- [[topics/computational-efficiency|计算效率优化]]
 - [[降阶模型|降阶模型]]
 - [[大电网暂态分析|大电网暂态分析]]
 

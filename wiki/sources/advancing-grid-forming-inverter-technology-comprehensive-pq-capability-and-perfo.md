@@ -58,9 +58,9 @@ sources: ["EMT_Doc/06/Nurunnabi 等 - 2025 - Advancing Grid-Forming Inverter Tec
 
 ## 使用的方法
 
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[实时硬件在环验证|实时硬件在环验证]]
-- [[下垂控制|下垂控制]]
+- [[methods/droop-control|下垂控制]]
 - [[增强型电压调节|增强型电压调节]]
 - [[pq能力边界算法|PQ能力边界算法]]
 - [[pwm饱和约束建模|PWM饱和约束建模]]

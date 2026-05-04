@@ -76,7 +76,7 @@ sources: ["EMT_Doc/07&08/An Extended Habedank's Equation-Based EMTP Model of Pan
 - [[受电弓电弧|受电弓电弧]]
 - [[弓网离线交互|弓网离线交互]]
 - [[高速铁路供电系统|高速铁路供电系统]]
-- [[电磁暂态建模|电磁暂态建模]]
+- [[topics/emt-simulation|电磁暂态建模]]
 - [[电弧参数扩展|电弧参数扩展]]
 
 ## 主要发现

@@ -74,8 +74,8 @@ sources: ["EMT_Doc/13&14/files/TPWRD.2015.2424223.pdf.pdf"]
 
 ## 相关主题
 
-- [[电磁暂态|电磁暂态]]
-- [[频率相关建模|频率相关建模]]
+- [[topics/emt-simulation|电磁暂态]]
+- [[topics/frequency-dependent-modeling|频率相关建模]]
 - [[涡流效应|涡流效应]]
 - [[变压器高频建模|变压器高频建模]]
 - [[电路等效|电路等效]]

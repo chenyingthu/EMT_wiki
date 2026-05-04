@@ -73,7 +73,7 @@ sources: ["EMT_Doc/25/Sun 等 - 2024 - Inverter-Based Resources Model Verificati
 ## 相关主题
 
 - [[模型验证|模型验证]]
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[回放仿真|回放仿真]]
 - [[新能源并网建模|新能源并网建模]]
 - [[实测数据驱动|实测数据驱动]]

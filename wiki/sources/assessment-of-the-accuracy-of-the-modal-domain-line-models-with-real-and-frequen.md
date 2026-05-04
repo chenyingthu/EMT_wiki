@@ -61,13 +61,13 @@ sources: ["EMT_Doc/09/Rezende 等 - 2024 - Assessment of the accuracy of the mod
 - [[模域模型|模域模型]]
 - [[相域模型|相域模型]]
 - [[通用线路模型|通用线路模型]]
-- [[频域分析|频域分析]]
-- [[时域仿真|时域仿真]]
+- [[topics/frequency-domain-analysis|频域分析]]
+- [[topics/emt-simulation|时域仿真]]
 - [[频率相关土壤参数建模|频率相关土壤参数建模]]
 
 ## 涉及的模型
 
-- [[架空输电线路|架空输电线路]]
+- [[models/transmission-line-model|架空输电线路]]
 - [[下挂地线|下挂地线]]
 - [[避雷线|避雷线]]
 - [[多导体传输线|多导体传输线]]
@@ -76,8 +76,8 @@ sources: ["EMT_Doc/09/Rezende 等 - 2024 - Assessment of the accuracy of the mod
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[输电线路建模|输电线路建模]]
+- [[topics/emt-simulation|电磁暂态仿真]]
+- [[models/transmission-line-model|输电线路建模]]
 - [[雷电过电压评估|雷电过电压评估]]
 - [[土壤电阻率影响|土壤电阻率影响]]
 - [[线路几何不对称性|线路几何不对称性]]

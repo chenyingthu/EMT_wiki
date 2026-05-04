@@ -58,7 +58,7 @@ sources: ["EMT_Doc/17/Zhao 等 - 2023 - Equivalent model of nearest level modula
 
 ## 使用的方法
 
-- [[平均值模型|平均值模型]]
+- [[methods/average-value-model|平均值模型]]
 - [[电压闭环控制|电压闭环控制]]
 - [[等效电路建模|等效电路建模]]
 - [[离散元件建模|离散元件建模]]
@@ -72,8 +72,8 @@ sources: ["EMT_Doc/17/Zhao 等 - 2023 - Equivalent model of nearest level modula
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[最近电平调制|最近电平调制]]
+- [[topics/emt-simulation|电磁暂态仿真]]
+- [[methods/nearest-level-modulation|最近电平调制]]
 - [[电容电压均衡|电容电压均衡]]
 - [[快速仿真|快速仿真]]
 

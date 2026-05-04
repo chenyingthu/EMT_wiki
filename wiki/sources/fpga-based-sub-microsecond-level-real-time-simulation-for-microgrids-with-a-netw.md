@@ -70,14 +70,14 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/Xu 等 - 2020 - FPGA-Based Sub-Micro
 - [[配电线路-电缆|配电线路/电缆]]
 - [[π型等效电路|π型等效电路]]
 - [[分布式电源-dg|分布式电源(DG)]]
-- [[微电网|微电网]]
+- [[topics/microgrid|微电网]]
 
 ## 相关主题
 
-- [[实时仿真|实时仿真]]
+- [[topics/real-time-simulation|实时仿真]]
 - [[fpga仿真|FPGA仿真]]
 - [[网络解耦|网络解耦]]
-- [[混合仿真|混合仿真]]
+- [[topics/co-simulation|混合仿真]]
 - [[亚微秒级仿真|亚微秒级仿真]]
 - [[微电网建模|微电网建模]]
 

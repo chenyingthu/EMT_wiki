@@ -65,17 +65,17 @@ sources: ["EMT_Doc/18/Tang 等 - 2010 - Experimental research on high-voltage tr
 
 ## 涉及的模型
 
-- [[同步电机|同步电机]]
-- [[变压器|变压器]]
-- [[输电线路|输电线路]]
+- [[models/synchronous-machine-model|同步电机]]
+- [[models/transformer-model|变压器]]
+- [[models/transmission-line-model|输电线路]]
 - [[电流互感器|电流互感器]]
 - [[电压互感器|电压互感器]]
 - [[线路保护装置|线路保护装置]]
 
 ## 相关主题
 
-- [[混合仿真|混合仿真]]
-- [[实时仿真|实时仿真]]
+- [[topics/co-simulation|混合仿真]]
+- [[topics/real-time-simulation|实时仿真]]
 - [[继电保护测试|继电保护测试]]
 - [[故障重现|故障重现]]
 - [[ct饱和特性|CT饱和特性]]

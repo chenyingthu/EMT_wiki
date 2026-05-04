@@ -58,7 +58,7 @@ sources: ["EMT_Doc/04/tec.2019.2944332.pdf.pdf"]
 
 ## 使用的方法
 
-- [[平均值模型|平均值模型]]
+- [[methods/average-value-model|平均值模型]]
 - [[阻塞模块法|阻塞模块法]]
 - [[戴维南等效|戴维南等效]]
 - [[开关函数法|开关函数法]]
@@ -67,7 +67,7 @@ sources: ["EMT_Doc/04/tec.2019.2944332.pdf.pdf"]
 ## 涉及的模型
 
 - [[mmc-model|MMC]]
-- [[半桥子模块|半桥子模块]]
+- [[models/half-bridge-submodule|半桥子模块]]
 - [[全桥子模块|全桥子模块]]
 - [[混合桥子模块|混合桥子模块]]
 - [[mmc-model|MMC]]
@@ -75,7 +75,7 @@ sources: ["EMT_Doc/04/tec.2019.2944332.pdf.pdf"]
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[vsc-model|VSC]]
 - [[多电平换流器|多电平换流器]]
 - [[直流极间故障|直流极间故障]]

@@ -59,7 +59,7 @@ sources: ["EMT_Doc/13&14/files/TPWRS.2018.2885240.pdf.pdf"]
 ## 使用的方法
 
 - [[在线递推最小二乘辨识|在线递推最小二乘辨识]]
-- [[矢量拟合|矢量拟合]]
+- [[methods/vector-fitting|矢量拟合]]
 - [[kron节点消去法|Kron节点消去法]]
 - [[暂态稳定分析|暂态稳定分析]]
 - [[离散域z变换建模|离散域z变换建模]]
@@ -69,20 +69,20 @@ sources: ["EMT_Doc/13&14/files/TPWRS.2018.2885240.pdf.pdf"]
 
 - [[fdne-model|FDNE]]
 - [[tsa等值模型|TSA等值模型]]
-- [[同步发电机|同步发电机]]
+- [[models/synchronous-machine-model|同步发电机]]
 - [[聚合发电机模型|聚合发电机模型]]
 - [[多端口输电网络|多端口输电网络]]
 - [[ieee-39-68节点系统|IEEE 39/68节点系统]]
 
 ## 相关主题
 
-- [[实时仿真|实时仿真]]
-- [[混合仿真|混合仿真]]
-- [[网络等值|网络等值]]
-- [[频率相关建模|频率相关建模]]
-- [[无源性强制|无源性强制]]
-- [[模型降阶|模型降阶]]
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/real-time-simulation|实时仿真]]
+- [[topics/co-simulation|混合仿真]]
+- [[topics/network-equivalent|网络等值]]
+- [[topics/frequency-dependent-modeling|频率相关建模]]
+- [[methods/passivity-enforcement|无源性强制]]
+- [[methods/model-order-reduction|模型降阶]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 
 ## 主要发现
 

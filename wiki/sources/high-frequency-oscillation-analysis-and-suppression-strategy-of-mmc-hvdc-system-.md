@@ -63,7 +63,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/Zhang 等 - 2022 - High-frequency os
 - [[小扰动线性化|小扰动线性化]]
 - [[h-鲁棒控制|H∞鲁棒控制]]
 - [[混合灵敏度优化|混合灵敏度优化]]
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 
 ## 涉及的模型
 

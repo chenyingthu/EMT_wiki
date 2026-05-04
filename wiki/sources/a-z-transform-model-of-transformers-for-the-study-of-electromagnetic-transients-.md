@@ -67,7 +67,7 @@ sources: ["EMT_Doc/05/A Z-transform model of transformers for the study of elect
 
 ## 涉及的模型
 
-- [[变压器|变压器]]
+- [[models/transformer-model|变压器]]
 - [[自耦变压器|自耦变压器]]
 - [[绕组对|绕组对]]
 - [[短路阻抗模型|短路阻抗模型]]
@@ -75,8 +75,8 @@ sources: ["EMT_Doc/05/A Z-transform model of transformers for the study of elect
 
 ## 相关主题
 
-- [[电磁暂态|电磁暂态]]
-- [[频率相关建模|频率相关建模]]
+- [[topics/emt-simulation|电磁暂态]]
+- [[topics/frequency-dependent-modeling|频率相关建模]]
 - [[变压器建模|变压器建模]]
 - [[雷电过电压|雷电过电压]]
 - [[母线切换暂态|母线切换暂态]]

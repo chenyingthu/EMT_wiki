@@ -58,25 +58,25 @@ sources: ["EMT_Doc/10/Dey 等 - 2021 - Comparison of dynamic phasor, discrete-ti
 
 ## 使用的方法
 
-- [[动态相量法|动态相量法]]
+- [[topics/dynamic-phasor|动态相量法]]
 - [[离散时间建模|离散时间建模]]
 - [[频率扫描法|频率扫描法]]
-- [[矢量拟合|矢量拟合]]
-- [[特征值分析|特征值分析]]
+- [[methods/vector-fitting|矢量拟合]]
+- [[methods/eigenvalue-analysis|特征值分析]]
 
 ## 涉及的模型
 
-- [[tcsc|TCSC]]
-- [[同步发电机|同步发电机]]
+- [[models/tcsc-model|TCSC]]
+- [[models/synchronous-machine-model|同步发电机]]
 - [[汽轮发电机组|汽轮发电机组]]
 - [[tcsc控制器|TCSC控制器]]
-- [[锁相环|锁相环]]
+- [[topics/phase-locked-loop|锁相环]]
 
 ## 相关主题
 
 - [[次同步谐振|次同步谐振]]
 - [[次同步扭振交互|次同步扭振交互]]
-- [[频率相关建模|频率相关建模]]
+- [[topics/frequency-dependent-modeling|频率相关建模]]
 - [[线性时不变建模|线性时不变建模]]
 - [[电力电子系统建模|电力电子系统建模]]
 

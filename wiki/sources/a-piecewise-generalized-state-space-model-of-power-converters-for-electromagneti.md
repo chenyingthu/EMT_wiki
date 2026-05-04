@@ -70,11 +70,11 @@ sources: ["EMT_Doc/03/Wang 等 - 2019 - A Piecewise Generalized State Space Mode
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[新能源并网|新能源并网]]
+- [[topics/emt-simulation|电磁暂态仿真]]
+- [[topics/renewable-energy-integration|新能源并网]]
 - [[变流器建模|变流器建模]]
 - [[高效仿真|高效仿真]]
-- [[谐波分析|谐波分析]]
+- [[methods/harmonic-analysis-methods|谐波分析]]
 
 ## 主要发现
 

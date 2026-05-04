@@ -61,7 +61,7 @@ sources: ["EMT_Doc/26/Ramirez 等 - 2003 - Modeling nonuniform transmission line
 - [[行波法|行波法]]
 - [[数值拉普拉斯变换|数值拉普拉斯变换]]
 - [[特征线法|特征线法]]
-- [[有理函数逼近|有理函数逼近]]
+- [[methods/rational-function-approximation|有理函数逼近]]
 - [[状态空间实现|状态空间实现]]
 - [[复深度法|复深度法]]
 
@@ -74,10 +74,10 @@ sources: ["EMT_Doc/26/Ramirez 等 - 2003 - Modeling nonuniform transmission line
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[频率相关建模|频率相关建模]]
+- [[topics/emt-simulation|电磁暂态仿真]]
+- [[topics/frequency-dependent-modeling|频率相关建模]]
 - [[非均匀线路建模|非均匀线路建模]]
-- [[时域仿真|时域仿真]]
+- [[topics/emt-simulation|时域仿真]]
 - [[输电线路参数计算|输电线路参数计算]]
 
 ## 主要发现

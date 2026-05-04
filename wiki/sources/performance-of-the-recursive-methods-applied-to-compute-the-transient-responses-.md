@@ -60,14 +60,14 @@ sources: ["EMT_Doc/31/j.epsr.2021.107281.pdf.pdf"]
 
 - [[递归卷积法|递归卷积法]]
 - [[递归梯形积分法|递归梯形积分法]]
-- [[矢量拟合|矢量拟合]]
+- [[methods/vector-fitting|矢量拟合]]
 - [[矩量法|矩量法]]
 - [[数值拉普拉斯变换|数值拉普拉斯变换]]
 - [[频时变换|频时变换]]
 
 ## 涉及的模型
 
-- [[接地系统|接地系统]]
+- [[models/grounding-system-model|接地系统]]
 - [[水平接地极|水平接地极]]
 - [[网格接地极|网格接地极]]
 - [[雷电流源|雷电流源]]
@@ -76,12 +76,12 @@ sources: ["EMT_Doc/31/j.epsr.2021.107281.pdf.pdf"]
 
 ## 相关主题
 
-- [[电磁暂态|电磁暂态]]
+- [[topics/emt-simulation|电磁暂态]]
 - [[地电位升|地电位升]]
-- [[接地系统|接地系统]]
-- [[频率相关建模|频率相关建模]]
+- [[models/grounding-system-model|接地系统]]
+- [[topics/frequency-dependent-modeling|频率相关建模]]
 - [[雷击暂态分析|雷击暂态分析]]
-- [[时域仿真|时域仿真]]
+- [[topics/emt-simulation|时域仿真]]
 
 ## 主要发现
 

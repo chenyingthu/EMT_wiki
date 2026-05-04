@@ -77,7 +77,7 @@ sources: ["EMT_Doc/27&28/Modeling of MMC-based STATCOM with embedded energy stor
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[储能集成建模|储能集成建模]]
 - [[mmc-model|MMC]]
 - [[statcom控制|STATCOM控制]]

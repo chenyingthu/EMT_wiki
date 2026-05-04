@@ -69,17 +69,17 @@ sources: ["EMT_Doc/18/Kouki 等 - 2022 - Exhaustive modal analysis of large-scal
 
 - [[大规模互联电力系统|大规模互联电力系统]]
 - [[欧洲电网模型|欧洲电网模型]]
-- [[同步发电机|同步发电机]]
+- [[models/synchronous-machine-model|同步发电机]]
 - [[电力电子变流器|电力电子变流器]]
 - [[动态设备集群|动态设备集群]]
 
 ## 相关主题
 
-- [[模态分析|模态分析]]
+- [[methods/modal-analysis|模态分析]]
 - [[小干扰稳定性|小干扰稳定性]]
 - [[耦合模态识别|耦合模态识别]]
 - [[高比例电力电子系统|高比例电力电子系统]]
-- [[模型降阶|模型降阶]]
+- [[methods/model-order-reduction|模型降阶]]
 - [[区域间振荡|区域间振荡]]
 
 ## 主要发现

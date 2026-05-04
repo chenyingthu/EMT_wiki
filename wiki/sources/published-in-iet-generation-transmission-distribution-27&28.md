@@ -72,10 +72,10 @@ sources: ["EMT_Doc/27&28/New model for overhead lossy multiconductor transmissio
 
 ## 相关主题
 
-- [[电磁暂态分析|电磁暂态分析]]
-- [[频率相关建模|频率相关建模]]
-- [[时域仿真|时域仿真]]
-- [[输电线路建模|输电线路建模]]
+- [[topics/emt-simulation|电磁暂态分析]]
+- [[topics/frequency-dependent-modeling|频率相关建模]]
+- [[topics/emt-simulation|时域仿真]]
+- [[models/transmission-line-model|输电线路建模]]
 
 ## 主要发现
 

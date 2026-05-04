@@ -58,11 +58,11 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/Xu 等 - 2019 - Generalized Electrom
 
 ## 使用的方法
 
-- [[节点分析法|节点分析法]]
+- [[methods/nodal-analysis|节点分析法]]
 - [[伴随电路法|伴随电路法]]
 - [[拓扑自动识别|拓扑自动识别]]
 - [[矩阵分块消元|矩阵分块消元]]
-- [[诺顿等效|诺顿等效]]
+- [[methods/norton-equivalent|诺顿等效]]
 
 ## 涉及的模型
 
@@ -74,10 +74,10 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/Xu 等 - 2019 - Generalized Electrom
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[等效建模|等效建模]]
 - [[柔性直流输电|柔性直流输电]]
-- [[实时仿真|实时仿真]]
+- [[topics/real-time-simulation|实时仿真]]
 - [[直流故障穿越|直流故障穿越]]
 
 ## 主要发现

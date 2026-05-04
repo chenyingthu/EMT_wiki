@@ -60,14 +60,14 @@ sources: ["EMT_Doc/07&08/An FPGA based electromagnetic transient analysis of pow
 
 - [[共轭梯度法|共轭梯度法]]
 - [[预处理共轭梯度法|预处理共轭梯度法]]
-- [[节点分析法|节点分析法]]
+- [[methods/nodal-analysis|节点分析法]]
 - [[稀疏矩阵压缩存储|稀疏矩阵压缩存储]]
 - [[流水线浮点运算|流水线浮点运算]]
 - [[emtp型数值积分|EMTP型数值积分]]
 
 ## 涉及的模型
 
-- [[配电网|配电网]]
+- [[topics/distribution-network|配电网]]
 - [[配电变压器|配电变压器]]
 - [[配电馈线|配电馈线]]
 - [[rlc无源网络|RLC无源网络]]
@@ -75,9 +75,9 @@ sources: ["EMT_Doc/07&08/An FPGA based electromagnetic transient analysis of pow
 
 ## 相关主题
 
-- [[实时仿真|实时仿真]]
+- [[topics/real-time-simulation|实时仿真]]
 - [[硬件加速|硬件加速]]
-- [[并行计算|并行计算]]
+- [[topics/parallel-computing|并行计算]]
 - [[网络矩阵求解|网络矩阵求解]]
 - [[配电网动态仿真|配电网动态仿真]]
 

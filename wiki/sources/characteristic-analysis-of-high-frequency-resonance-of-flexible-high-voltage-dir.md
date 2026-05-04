@@ -58,19 +58,19 @@ sources: ["EMT_Doc/10/Guo 等 - 2020 - Characteristic Analysis of High-frequency
 
 ## 使用的方法
 
-- [[阻抗建模|阻抗建模]]
-- [[状态空间法|状态空间法]]
-- [[小信号分析|小信号分析]]
+- [[methods/impedance-modeling|阻抗建模]]
+- [[methods/state-space-method|状态空间法]]
+- [[methods/small-signal-analysis|小信号分析]]
 - [[dq坐标系变换|dq坐标系变换]]
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[阻尼控制|阻尼控制]]
 
 ## 涉及的模型
 
 - [[mmc-model|MMC]]
-- [[换流变压器|换流变压器]]
+- [[models/transformer-model|换流变压器]]
 - [[交流输电线路|交流输电线路]]
-- [[锁相环|锁相环]]
+- [[topics/phase-locked-loop|锁相环]]
 - [[环流抑制控制器|环流抑制控制器]]
 - [[双闭环控制器|双闭环控制器]]
 

@@ -59,21 +59,21 @@ sources: ["EMT_Doc/27&28/Multi-Scale Induction Machine Model in the Phase Domain
 ## 使用的方法
 
 - [[解析信号法|解析信号法]]
-- [[动态相量法|动态相量法]]
-- [[相域建模|相域建模]]
-- [[诺顿等效|诺顿等效]]
+- [[topics/dynamic-phasor|动态相量法]]
+- [[methods/nodal-analysis|相域建模]]
+- [[methods/norton-equivalent|诺顿等效]]
 - [[希尔伯特变换|希尔伯特变换]]
 - [[多尺度仿真|多尺度仿真]]
 
 ## 涉及的模型
 
-- [[感应电机|感应电机]]
+- [[models/induction-machine-model|感应电机]]
 - [[电力系统网络|电力系统网络]]
 - [[定转子绕组|定转子绕组]]
 
 ## 相关主题
 
-- [[电磁暂态|电磁暂态]]
+- [[topics/emt-simulation|电磁暂态]]
 - [[机电暂态|机电暂态]]
 - [[多尺度仿真|多尺度仿真]]
 - [[动态相量建模|动态相量建模]]

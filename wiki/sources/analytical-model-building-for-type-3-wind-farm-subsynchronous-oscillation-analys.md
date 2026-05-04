@@ -60,7 +60,7 @@ sources: ["EMT_Doc/09/Fan和Miao - 2021 - Analytical model building for Type-3 w
 
 - [[dq坐标系解析建模|dq坐标系解析建模]]
 - [[模块化建模|模块化建模]]
-- [[状态空间法|状态空间法]]
+- [[methods/state-space-method|状态空间法]]
 - [[数值摄动线性化|数值摄动线性化]]
 - [[小信号特征值分析|小信号特征值分析]]
 - [[大信号时域仿真|大信号时域仿真]]
@@ -77,7 +77,7 @@ sources: ["EMT_Doc/09/Fan和Miao - 2021 - Analytical model building for Type-3 w
 ## 相关主题
 
 - [[次同步谐振-ssr|次同步谐振(SSR)]]
-- [[风电场建模|风电场建模]]
+- [[topics/wind-farm-modeling|风电场建模]]
 - [[动态建模|动态建模]]
 - [[弱电网稳定性|弱电网稳定性]]
 - [[变流器控制|变流器控制]]

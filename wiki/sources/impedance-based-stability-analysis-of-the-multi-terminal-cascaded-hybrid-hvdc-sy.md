@@ -58,11 +58,11 @@ sources: ["EMT_Doc/22/Xu 等 - 2025 - Impedance Based Stability Analysis of the 
 
 ## 使用的方法
 
-- [[阻抗建模|阻抗建模]]
+- [[methods/impedance-modeling|阻抗建模]]
 - [[谐波状态空间法|谐波状态空间法]]
 - [[阻抗重塑|阻抗重塑]]
 - [[灵敏度分析|灵敏度分析]]
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 
 ## 涉及的模型
 
@@ -79,7 +79,7 @@ sources: ["EMT_Doc/22/Xu 等 - 2025 - Impedance Based Stability Analysis of the 
 - [[多端混合直流输电|多端混合直流输电]]
 - [[振荡传播机理|振荡传播机理]]
 - [[阻抗重塑|阻抗重塑]]
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 
 ## 主要发现
 

@@ -58,7 +58,7 @@ sources: ["EMT_Doc/27&28/Multi-rate real time hybrid simulation of controllable 
 
 ## 使用的方法
 
-- [[多速率仿真|多速率仿真]]
+- [[methods/multirate-method|多速率仿真]]
 - [[cpu-fpga协同仿真|CPU-FPGA协同仿真]]
 - [[离散电感解耦法|离散电感解耦法]]
 - [[关联离散电路模型|关联离散电路模型]]
@@ -75,9 +75,9 @@ sources: ["EMT_Doc/27&28/Multi-rate real time hybrid simulation of controllable 
 
 ## 相关主题
 
-- [[实时仿真|实时仿真]]
-- [[混合仿真|混合仿真]]
-- [[多速率仿真|多速率仿真]]
+- [[topics/real-time-simulation|实时仿真]]
+- [[topics/co-simulation|混合仿真]]
+- [[methods/multirate-method|多速率仿真]]
 - [[异构并行计算|异构并行计算]]
 - [[高压直流输电建模|高压直流输电建模]]
 - [[开关暂态分析|开关暂态分析]]

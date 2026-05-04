@@ -61,7 +61,7 @@ sources: ["EMT_Doc/27&28/Multi-timescale simulator of nonlinear electrical eleme
 - [[移位等效相量法-sep|移位等效相量法(SEP)]]
 - [[动态相量法-dp|动态相量法(DP)]]
 - [[牛顿-拉夫逊迭代|牛顿-拉夫逊迭代]]
-- [[梯形积分法|梯形积分法]]
+- [[methods/numerical-integration|梯形积分法]]
 - [[伴随模型法|伴随模型法]]
 - [[混合仿真接口|混合仿真接口]]
 
@@ -75,10 +75,10 @@ sources: ["EMT_Doc/27&28/Multi-timescale simulator of nonlinear electrical eleme
 ## 相关主题
 
 - [[多时间尺度仿真|多时间尺度仿真]]
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[非线性元件建模|非线性元件建模]]
 - [[包络跟踪|包络跟踪]]
-- [[谐波分析|谐波分析]]
+- [[methods/harmonic-analysis-methods|谐波分析]]
 - [[大步长仿真|大步长仿真]]
 
 ## 主要发现

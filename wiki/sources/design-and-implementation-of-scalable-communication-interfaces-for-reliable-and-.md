@@ -69,7 +69,7 @@ sources: ["EMT_Doc/12/Design_and_Implementation_of_Scalable_Communication_Interf
 ## 涉及的模型
 
 - [[ibr|IBR]]
-- [[光伏电站|光伏电站]]
+- [[topics/pv-power-plant|光伏电站]]
 - [[电池储能系统|电池储能系统]]
 - [[柴油发电机|柴油发电机]]
 - [[ieee-123节点配电网|IEEE 123节点配电网]]
@@ -77,9 +77,9 @@ sources: ["EMT_Doc/12/Design_and_Implementation_of_Scalable_Communication_Interf
 
 ## 相关主题
 
-- [[实时仿真|实时仿真]]
+- [[topics/real-time-simulation|实时仿真]]
 - [[协同仿真|协同仿真]]
-- [[混合仿真|混合仿真]]
+- [[topics/co-simulation|混合仿真]]
 - [[通信接口设计|通信接口设计]]
 - [[逆变器资源接入|逆变器资源接入]]
 - [[延迟管理|延迟管理]]

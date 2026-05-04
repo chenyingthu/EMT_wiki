@@ -65,7 +65,7 @@ sources: ["EMT_Doc/26/Dehkordi 等 - 2026 - Modeling of cross-magnetization effe
 
 ## 涉及的模型
 
-- [[同步电机|同步电机]]
+- [[models/synchronous-machine-model|同步电机]]
 - [[凸极同步发电机|凸极同步发电机]]
 - [[隐极同步发电机|隐极同步发电机]]
 - [[电磁暂态等效电路|电磁暂态等效电路]]
@@ -74,7 +74,7 @@ sources: ["EMT_Doc/26/Dehkordi 等 - 2026 - Modeling of cross-magnetization effe
 
 - [[磁饱和建模|磁饱和建模]]
 - [[交叉磁化效应|交叉磁化效应]]
-- [[实时仿真|实时仿真]]
+- [[topics/real-time-simulation|实时仿真]]
 - [[电磁暂态程序|电磁暂态程序]]
 - [[发电机带载能力分析|发电机带载能力分析]]
 

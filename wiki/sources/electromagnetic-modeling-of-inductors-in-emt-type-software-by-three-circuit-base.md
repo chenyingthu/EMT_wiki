@@ -74,7 +74,7 @@ sources: ["EMT_Doc/15/Electromagnetic modeling of inductors in EMT-type software
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[电感器建模|电感器建模]]
 - [[磁路等效|磁路等效]]
 - [[磁饱和建模|磁饱和建模]]

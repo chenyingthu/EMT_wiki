@@ -66,12 +66,12 @@ sources: ["EMT_Doc/27&28/Multiphase power flow solutions using EMTP and Newtons 
 
 ## 涉及的模型
 
-- [[同步电机|同步电机]]
+- [[models/synchronous-machine-model|同步电机]]
 - [[pq负荷|PQ负荷]]
 - [[电压源|电压源]]
 - [[电流源|电流源]]
-- [[输电线路|输电线路]]
-- [[变压器|变压器]]
+- [[models/transmission-line-model|输电线路]]
+- [[models/transformer-model|变压器]]
 
 ## 相关主题
 

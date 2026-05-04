@@ -76,9 +76,9 @@ sources: ["EMT_Doc/13&14/files/Double-Ended_Fault-Locating_Method_for_Parallel_L
 
 - [[故障测距|故障测距]]
 - [[零序互感耦合|零序互感耦合]]
-- [[继电保护|继电保护]]
-- [[输电线路建模|输电线路建模]]
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/protection-system|继电保护]]
+- [[models/transmission-line-model|输电线路建模]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 
 ## 主要发现
 

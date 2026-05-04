@@ -58,11 +58,11 @@ sources: ["EMT_Doc/07&08/Analysis of Frequency-Dependent Network Equivalents in 
 
 ## 使用的方法
 
-- [[矢量拟合|矢量拟合]]
+- [[methods/vector-fitting|矢量拟合]]
 - [[动态谐波域法|动态谐波域法]]
 - [[状态空间表示|状态空间表示]]
 - [[平衡实现理论|平衡实现理论]]
-- [[梯形积分法|梯形积分法]]
+- [[methods/numerical-integration|梯形积分法]]
 - [[节点导纳分析|节点导纳分析]]
 
 ## 涉及的模型
@@ -73,11 +73,11 @@ sources: ["EMT_Doc/07&08/Analysis of Frequency-Dependent Network Equivalents in 
 
 ## 相关主题
 
-- [[频率相关建模|频率相关建模]]
-- [[网络等值|网络等值]]
-- [[谐波分析|谐波分析]]
-- [[电磁暂态分析|电磁暂态分析]]
-- [[模型降阶|模型降阶]]
+- [[topics/frequency-dependent-modeling|频率相关建模]]
+- [[topics/network-equivalent|网络等值]]
+- [[methods/harmonic-analysis-methods|谐波分析]]
+- [[topics/emt-simulation|电磁暂态分析]]
+- [[methods/model-order-reduction|模型降阶]]
 
 ## 主要发现
 

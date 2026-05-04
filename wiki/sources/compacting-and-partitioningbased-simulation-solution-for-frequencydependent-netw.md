@@ -58,11 +58,11 @@ sources: ["EMT_Doc/10/Hu 等 - 2015 - Compacting and partitioning-based simulati
 
 ## 使用的方法
 
-- [[矢量拟合|矢量拟合]]
+- [[methods/vector-fitting|矢量拟合]]
 - [[奇异值分解|奇异值分解]]
 - [[状态空间实现|状态空间实现]]
-- [[梯形积分法|梯形积分法]]
-- [[并行计算|并行计算]]
+- [[methods/numerical-integration|梯形积分法]]
+- [[topics/parallel-computing|并行计算]]
 - [[模型压缩|模型压缩]]
 
 ## 涉及的模型
@@ -73,10 +73,10 @@ sources: ["EMT_Doc/10/Hu 等 - 2015 - Compacting and partitioning-based simulati
 
 ## 相关主题
 
-- [[实时仿真|实时仿真]]
-- [[并行计算|并行计算]]
-- [[频率相关建模|频率相关建模]]
-- [[网络等值|网络等值]]
+- [[topics/real-time-simulation|实时仿真]]
+- [[topics/parallel-computing|并行计算]]
+- [[topics/frequency-dependent-modeling|频率相关建模]]
+- [[topics/network-equivalent|网络等值]]
 - [[计算加速|计算加速]]
 
 ## 主要发现

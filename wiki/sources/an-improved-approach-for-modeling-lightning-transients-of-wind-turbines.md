@@ -69,7 +69,7 @@ sources: ["EMT_Doc/07&08/An improved approach for modeling lightning transients 
 - [[风力发电机|风力发电机]]
 - [[风机叶片|风机叶片]]
 - [[风机塔筒|风机塔筒]]
-- [[接地系统|接地系统]]
+- [[models/grounding-system-model|接地系统]]
 - [[动态接触部件|动态接触部件]]
 
 ## 相关主题

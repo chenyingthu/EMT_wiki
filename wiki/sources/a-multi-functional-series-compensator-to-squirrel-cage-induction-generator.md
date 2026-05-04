@@ -72,7 +72,7 @@ sources: ["EMT_Doc/02/Jiang 等 - 2015 - A multi-functional series compensator t
 
 ## 相关主题
 
-- [[低电压穿越|低电压穿越]]
+- [[methods/lvrt|低电压穿越]]
 - [[故障限流|故障限流]]
 - [[电压快速恢复|电压快速恢复]]
 - [[多模式切换控制|多模式切换控制]]

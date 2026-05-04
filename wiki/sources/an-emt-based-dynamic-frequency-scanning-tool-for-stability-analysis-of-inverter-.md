@@ -76,9 +76,9 @@ sources: ["EMT_Doc/07&08/An EMT based dynamic frequency scanning tool for stabil
 ## 相关主题
 
 - [[稳定性分析|稳定性分析]]
-- [[构网型控制|构网型控制]]
+- [[methods/grid-forming-control|构网型控制]]
 - [[频率扫描|频率扫描]]
-- [[阻抗建模|阻抗建模]]
+- [[methods/impedance-modeling|阻抗建模]]
 - [[逆变器并网系统|逆变器并网系统]]
 - [[临界短路比|临界短路比]]
 

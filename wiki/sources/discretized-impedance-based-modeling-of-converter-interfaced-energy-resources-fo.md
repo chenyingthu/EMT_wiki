@@ -63,7 +63,7 @@ sources: ["EMT_Doc/13&14/files/Vahabzadeh 等 - 2025 - Discretized Impedance-Bas
 - [[戴维南等效电路|戴维南等效电路]]
 - [[状态变量法|状态变量法]]
 - [[数值离散化|数值离散化]]
-- [[平均值模型|平均值模型]]
+- [[methods/average-value-model|平均值模型]]
 
 ## 涉及的模型
 
@@ -78,8 +78,8 @@ sources: ["EMT_Doc/13&14/files/Vahabzadeh 等 - 2025 - Discretized Impedance-Bas
 - [[实时电磁暂态仿真|实时电磁暂态仿真]]
 - [[状态变量仿真|状态变量仿真]]
 - [[换流器接口建模|换流器接口建模]]
-- [[计算效率优化|计算效率优化]]
-- [[数值稳定性|数值稳定性]]
+- [[topics/computational-efficiency|计算效率优化]]
+- [[methods/numerical-integration|数值稳定性]]
 - [[电力系统暂态分析|电力系统暂态分析]]
 
 ## 主要发现

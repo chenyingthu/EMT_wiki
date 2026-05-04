@@ -62,7 +62,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/Shi和Liu - 2024 - Fixed-admittance 
 - [[伴随离散电路模型|伴随离散电路模型]]
 - [[虚拟阻抗补偿|虚拟阻抗补偿]]
 - [[恒导纳建模|恒导纳建模]]
-- [[诺顿等效|诺顿等效]]
+- [[methods/norton-equivalent|诺顿等效]]
 
 ## 涉及的模型
 

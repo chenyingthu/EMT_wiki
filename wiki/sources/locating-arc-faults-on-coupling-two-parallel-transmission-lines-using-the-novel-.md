@@ -80,7 +80,7 @@ sources: ["EMT_Doc/25/Shu 等 - 2009 - Locating arc faults on coupling two paral
 
 
 - [[故障测距|故障测距]]
-- [[电磁暂态分析|电磁暂态分析]]
+- [[topics/emt-simulation|电磁暂态分析]]
 - [[线路解耦|线路解耦]]
 - [[电弧故障定位|电弧故障定位]]
 

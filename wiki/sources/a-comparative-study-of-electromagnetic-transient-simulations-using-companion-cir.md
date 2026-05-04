@@ -61,7 +61,7 @@ sources: ["EMT_Doc/01/Sinkar 等 - 2021 - A Comparative Study of Electromagnetic
 - [[伴随电路法|伴随电路法]]
 - [[描述符状态空间方程|描述符状态空间方程]]
 - [[修正节点分析|修正节点分析]]
-- [[梯形积分法|梯形积分法]]
+- [[methods/numerical-integration|梯形积分法]]
 - [[并行接口技术|并行接口技术]]
 
 ## 涉及的模型
@@ -73,10 +73,10 @@ sources: ["EMT_Doc/01/Sinkar 等 - 2021 - A Comparative Study of Electromagnetic
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[网络方程建模|网络方程建模]]
 - [[混合仿真接口|混合仿真接口]]
-- [[并行计算|并行计算]]
+- [[topics/parallel-computing|并行计算]]
 - [[系统特征值分析|系统特征值分析]]
 
 ## 主要发现

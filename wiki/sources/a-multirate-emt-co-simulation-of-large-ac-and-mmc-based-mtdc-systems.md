@@ -66,20 +66,20 @@ sources: ["EMT_Doc/02/Shu 等 - 2018 - A Multirate EMT Co-Simulation of Large AC
 ## 涉及的模型
 
 - [[mmc-model|MMC]]
-- [[mtdc|MTDC]]
+- [[topics/hybrid-acdc-network|MTDC]]
 - [[大型交流系统|大型交流系统]]
 - [[戴维南等效模型|戴维南等效模型]]
 - [[诺顿等效模型|诺顿等效模型]]
 
 ## 相关主题
 
-- [[多速率仿真|多速率仿真]]
+- [[methods/multirate-method|多速率仿真]]
 - [[协同仿真|协同仿真]]
 - [[接口建模|接口建模]]
 - [[网络分割|网络分割]]
-- [[数值稳定性|数值稳定性]]
+- [[methods/numerical-integration|数值稳定性]]
 - [[mmc-model|MMC]]
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 
 ## 主要发现
 

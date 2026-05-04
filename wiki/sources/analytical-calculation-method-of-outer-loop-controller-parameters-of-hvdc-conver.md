@@ -58,12 +58,12 @@ sources: ["EMT_Doc/09/Li 等 - 2023 - Analytical Calculation Method of Outer Loo
 
 ## 使用的方法
 
-- [[状态空间法|状态空间法]]
+- [[methods/state-space-method|状态空间法]]
 - [[零极点分布分析|零极点分布分析]]
 - [[特征根参与因子法|特征根参与因子法]]
 - [[准稳态建模|准稳态建模]]
 - [[频域裕度分析|频域裕度分析]]
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 
 ## 涉及的模型
 
@@ -73,7 +73,7 @@ sources: ["EMT_Doc/09/Li 等 - 2023 - Analytical Calculation Method of Outer Loo
 - [[锁相环-pll|锁相环(PLL)]]
 - [[双闭环控制系统|双闭环控制系统]]
 - [[pcc等效电容|PCC等效电容]]
-- [[换流变压器|换流变压器]]
+- [[models/transformer-model|换流变压器]]
 
 ## 相关主题
 
@@ -81,9 +81,9 @@ sources: ["EMT_Doc/09/Li 等 - 2023 - Analytical Calculation Method of Outer Loo
 - [[柔性直流输电|柔性直流输电]]
 - [[控制器参数整定|控制器参数整定]]
 - [[小干扰稳定性分析|小干扰稳定性分析]]
-- [[阻抗建模|阻抗建模]]
+- [[methods/impedance-modeling|阻抗建模]]
 - [[锁相环交互|锁相环交互]]
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 
 ## 主要发现
 

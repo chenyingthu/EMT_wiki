@@ -59,7 +59,7 @@ sources: ["EMT_Doc/06/Parvari 等 - 2023 - An accelerated detailed equivalent mo
 ## 使用的方法
 
 - [[戴维南等效电路|戴维南等效电路]]
-- [[梯形积分法|梯形积分法]]
+- [[methods/numerical-integration|梯形积分法]]
 - [[节点导纳矩阵优化|节点导纳矩阵优化]]
 - [[电磁暂态离散化|电磁暂态离散化]]
 
@@ -72,7 +72,7 @@ sources: ["EMT_Doc/06/Parvari 等 - 2023 - An accelerated detailed equivalent mo
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[mmc-model|MMC]]
 - [[计算加速|计算加速]]
 - [[直流故障闭锁|直流故障闭锁]]

@@ -59,25 +59,25 @@ sources: ["EMT_Doc/03/Yonezawa - 2023 - A phase-domain synchronous machine model
 ## 使用的方法
 
 - [[磁路建模|磁路建模]]
-- [[相域建模|相域建模]]
+- [[methods/nodal-analysis|相域建模]]
 - [[电-磁电路耦合求解|电-磁电路耦合求解]]
-- [[节点分析法|节点分析法]]
+- [[methods/nodal-analysis|节点分析法]]
 
 ## 涉及的模型
 
-- [[同步电机|同步电机]]
+- [[models/synchronous-machine-model|同步电机]]
 - [[电枢绕组|电枢绕组]]
 - [[励磁绕组|励磁绕组]]
 - [[阻尼绕组|阻尼绕组]]
-- [[变压器|变压器]]
+- [[models/transformer-model|变压器]]
 
 ## 相关主题
 
-- [[电磁暂态分析|电磁暂态分析]]
+- [[topics/emt-simulation|电磁暂态分析]]
 - [[空间谐波分析|空间谐波分析]]
 - [[三相不平衡建模|三相不平衡建模]]
 - [[内部故障仿真|内部故障仿真]]
-- [[相域建模|相域建模]]
+- [[methods/nodal-analysis|相域建模]]
 
 ## 主要发现
 

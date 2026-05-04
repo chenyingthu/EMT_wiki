@@ -76,9 +76,9 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/tpwrs.2020.3038850.pdf.pdf"]
 ## 相关主题
 
 - [[超scada仿真|超SCADA仿真]]
-- [[实时仿真|实时仿真]]
+- [[topics/real-time-simulation|实时仿真]]
 - [[硬件仿真|硬件仿真]]
-- [[并行计算|并行计算]]
+- [[topics/parallel-computing|并行计算]]
 - [[动态安全评估|动态安全评估]]
 - [[交直流混合电网|交直流混合电网]]
 - [[暂态稳定分析|暂态稳定分析]]

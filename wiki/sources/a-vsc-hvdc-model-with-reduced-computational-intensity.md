@@ -67,12 +67,12 @@ sources: ["EMT_Doc/04/pesgm.2012.6345135.pdf.pdf"]
 - [[vsc-model|VSC]]
 - [[三电平npc换流器|三电平NPC换流器]]
 - [[直流链路电容|直流链路电容]]
-- [[换流变压器|换流变压器]]
+- [[models/transformer-model|换流变压器]]
 
 ## 相关主题
 
-- [[仿真加速|仿真加速]]
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/parallel-computing|仿真加速]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[系统级建模|系统级建模]]
 - [[暂态特性分析|暂态特性分析]]
 - [[柔性直流输电|柔性直流输电]]

@@ -67,18 +67,18 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/TPWRD.2015.2449754.pdf.pdf"]
 ## 涉及的模型
 
 - [[fdne-model|FDNE]]
-- [[输电线路|输电线路]]
+- [[models/transmission-line-model|输电线路]]
 - [[集中参数电路|集中参数电路]]
 - [[开关设备|开关设备]]
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[频域仿真|频域仿真]]
-- [[网络等值|网络等值]]
+- [[topics/network-equivalent|网络等值]]
 - [[变步长仿真|变步长仿真]]
 - [[开关暂态分析|开关暂态分析]]
-- [[频率相关建模|频率相关建模]]
+- [[topics/frequency-dependent-modeling|频率相关建模]]
 
 ## 主要发现
 

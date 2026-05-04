@@ -67,7 +67,7 @@ sources: ["EMT_Doc/15/Electro-mechanical transient modeling of MMC based multi-t
 ## 涉及的模型
 
 - [[mmc-model|MMC]]
-- [[mtdc|MTDC]]
+- [[topics/hybrid-acdc-network|MTDC]]
 - [[ieee-39节点交流系统|IEEE 39节点交流系统]]
 - [[直流线路|直流线路]]
 - [[接地短路故障模型|接地短路故障模型]]

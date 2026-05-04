@@ -76,7 +76,7 @@ sources: ["EMT_Doc/17/Yamanaka 等 - 2021 - Equivalent Circuit Model of a Transm
 
 - [[雷击过电压|雷击过电压]]
 - [[反击闪络|反击闪络]]
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[三维电磁场分析|三维电磁场分析]]
 - [[杆塔防雷建模|杆塔防雷建模]]
 

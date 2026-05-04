@@ -75,8 +75,8 @@ sources: ["EMT_Doc/32/j.epsr.2014.03.016.pdf.pdf"]
 ## 相关主题
 
 - [[邻近效应建模|邻近效应建模]]
-- [[频率相关建模|频率相关建模]]
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/frequency-dependent-modeling|频率相关建模]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[电缆参数计算|电缆参数计算]]
 - [[护套间模态传播|护套间模态传播]]
 

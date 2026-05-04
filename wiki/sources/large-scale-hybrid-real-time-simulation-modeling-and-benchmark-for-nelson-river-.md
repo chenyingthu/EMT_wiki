@@ -61,29 +61,29 @@ sources: ["EMT_Doc/25/Zhou 等 - 2021 - Large-scale hybrid real time simulation 
 - [[实时数字仿真|实时数字仿真]]
 - [[硬件在环仿真|硬件在环仿真]]
 - [[模块化建模|模块化建模]]
-- [[频率相关建模|频率相关建模]]
+- [[topics/frequency-dependent-modeling|频率相关建模]]
 - [[网络动态等值|网络动态等值]]
 - [[处理器负载优化|处理器负载优化]]
 
 ## 涉及的模型
 
 - [[lcc-model|LCC]]
-- [[换流变压器|换流变压器]]
-- [[同步调相机|同步调相机]]
+- [[models/transformer-model|换流变压器]]
+- [[models/synchronous-machine-model|同步调相机]]
 - [[频率相关输电线路|频率相关输电线路]]
 - [[交流滤波器|交流滤波器]]
-- [[同步发电机|同步发电机]]
+- [[models/synchronous-machine-model|同步发电机]]
 - [[vsc-hvdc|VSC-HVDC]]
 
 ## 相关主题
 
-- [[实时仿真|实时仿真]]
-- [[混合仿真|混合仿真]]
-- [[硬件在环|硬件在环]]
+- [[topics/real-time-simulation|实时仿真]]
+- [[topics/co-simulation|混合仿真]]
+- [[methods/hil-simulation|硬件在环]]
 - [[vsc-hvdc|VSC-HVDC]]
 - [[系统调试|系统调试]]
-- [[频率相关建模|频率相关建模]]
-- [[网络等值|网络等值]]
+- [[topics/frequency-dependent-modeling|频率相关建模]]
+- [[topics/network-equivalent|网络等值]]
 
 ## 主要发现
 

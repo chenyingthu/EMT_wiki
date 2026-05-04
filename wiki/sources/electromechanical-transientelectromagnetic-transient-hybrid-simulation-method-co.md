@@ -58,7 +58,7 @@ sources: ["EMT_Doc/17/Liu 等 - 2010 - Electromechanical transientelectromagneti
 
 ## 使用的方法
 
-- [[混合仿真|混合仿真]]
+- [[topics/co-simulation|混合仿真]]
 - [[诺顿等值|诺顿等值]]
 - [[补偿法|补偿法]]
 - [[最小二乘法|最小二乘法]]
@@ -69,8 +69,8 @@ sources: ["EMT_Doc/17/Liu 等 - 2010 - Electromechanical transientelectromagneti
 
 - [[vsc-hvdc|VSC-HVDC]]
 - [[换流器|换流器]]
-- [[换流变压器|换流变压器]]
-- [[同步发电机|同步发电机]]
+- [[models/transformer-model|换流变压器]]
+- [[models/synchronous-machine-model|同步发电机]]
 - [[动态负荷|动态负荷]]
 - [[交流电网|交流电网]]
 
@@ -78,10 +78,10 @@ sources: ["EMT_Doc/17/Liu 等 - 2010 - Electromechanical transientelectromagneti
 
 - [[机电-电磁混合仿真|机电-电磁混合仿真]]
 - [[不对称故障|不对称故障]]
-- [[网络等值|网络等值]]
+- [[topics/network-equivalent|网络等值]]
 - [[接口交互技术|接口交互技术]]
 - [[正负序参数处理|正负序参数处理]]
-- [[大规模电网仿真|大规模电网仿真]]
+- [[topics/large-scale-grid-simulation|大规模电网仿真]]
 
 ## 主要发现
 

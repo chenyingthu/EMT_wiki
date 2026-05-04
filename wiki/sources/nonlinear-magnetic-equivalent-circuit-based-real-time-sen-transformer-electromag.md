@@ -69,18 +69,18 @@ sources: ["EMT_Doc/27&28/Nonlinear Magnetic Equivalent Circuit-Based Real-Time S
 
 - [[sen变压器|Sen变压器]]
 - [[多绕组变压器|多绕组变压器]]
-- [[输电线路|输电线路]]
+- [[models/transmission-line-model|输电线路]]
 - [[分接开关|分接开关]]
 - [[三维有限元模型|三维有限元模型]]
 
 ## 相关主题
 
-- [[实时仿真|实时仿真]]
+- [[topics/real-time-simulation|实时仿真]]
 - [[硬件在环仿真|硬件在环仿真]]
 - [[fpga实现|FPGA实现]]
 - [[非线性磁路建模|非线性磁路建模]]
 - [[潮流控制|潮流控制]]
-- [[并行计算|并行计算]]
+- [[topics/parallel-computing|并行计算]]
 
 ## 主要发现
 

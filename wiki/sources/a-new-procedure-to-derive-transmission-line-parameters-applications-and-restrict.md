@@ -57,25 +57,25 @@ sources: ["EMT_Doc/02/Kurokawa 等 - 2006 - A new procedure to derive transmissi
 
 - [[模态变换|模态变换]]
 - [[相域分析|相域分析]]
-- [[频率相关建模|频率相关建模]]
+- [[topics/frequency-dependent-modeling|频率相关建模]]
 - [[卡森公式|卡森公式]]
 - [[贝塞尔函数|贝塞尔函数]]
 - [[参数反演|参数反演]]
 
 ## 涉及的模型
 
-- [[架空输电线路|架空输电线路]]
+- [[models/transmission-line-model|架空输电线路]]
 - [[多相输电线路|多相输电线路]]
 - [[频变线路模型|频变线路模型]]
 - [[大地回路模型|大地回路模型]]
 
 ## 相关主题
 
-- [[电磁暂态|电磁暂态]]
-- [[频率相关建模|频率相关建模]]
+- [[topics/emt-simulation|电磁暂态]]
+- [[topics/frequency-dependent-modeling|频率相关建模]]
 - [[输电线路参数计算|输电线路参数计算]]
 - [[开关暂态分析|开关暂态分析]]
-- [[模态分析|模态分析]]
+- [[methods/modal-analysis|模态分析]]
 
 ## 主要发现
 

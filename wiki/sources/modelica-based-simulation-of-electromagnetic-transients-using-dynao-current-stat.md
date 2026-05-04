@@ -69,14 +69,14 @@ sources: ["EMT_Doc/26/Masoom 等 - 2021 - Modelica-based simulation of electroma
 ## 涉及的模型
 
 - [[输电线路-cp-wb模型|输电线路(CP/WB模型)]]
-- [[同步电机|同步电机]]
+- [[models/synchronous-machine-model|同步电机]]
 - [[电力变压器|电力变压器]]
 - [[避雷器|避雷器]]
 - [[电力控制器|电力控制器]]
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[modelica建模|Modelica建模]]
 - [[混合仿真架构|混合仿真架构]]
 - [[大规模系统仿真|大规模系统仿真]]

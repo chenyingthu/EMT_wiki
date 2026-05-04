@@ -75,7 +75,7 @@ Dynamic Average Modeling of Front-End Diode Rectifier Loads Considering Disconti
 - [[断续导通模式|断续导通模式]]
 - [[不平衡运行|不平衡运行]]
 - [[系统级暂态分析|系统级暂态分析]]
-- [[负荷建模|负荷建模]]
+- [[topics/load-modeling|负荷建模]]
 
 ## 主要发现
 

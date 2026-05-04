@@ -59,25 +59,25 @@ sources: ["EMT_Doc/09/Lessa 等 - 2012 - Application of π circuits for simulati
 ## 使用的方法
 
 - [[状态变量法|状态变量法]]
-- [[梯形积分法|梯形积分法]]
+- [[methods/numerical-integration|梯形积分法]]
 - [[π型电路级联|π型电路级联]]
 - [[并联rl支路频率拟合|并联RL支路频率拟合]]
 - [[矩阵数值求解|矩阵数值求解]]
 
 ## 涉及的模型
 
-- [[输电线路|输电线路]]
+- [[models/transmission-line-model|输电线路]]
 - [[π型等效电路|π型等效电路]]
 - [[电晕效应模型|电晕效应模型]]
 - [[频变参数模型|频变参数模型]]
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[行波分析|行波分析]]
-- [[频率相关建模|频率相关建模]]
+- [[topics/frequency-dependent-modeling|频率相关建模]]
 - [[数值振荡抑制|数值振荡抑制]]
-- [[输电线路建模|输电线路建模]]
+- [[models/transmission-line-model|输电线路建模]]
 
 ## 主要发现
 

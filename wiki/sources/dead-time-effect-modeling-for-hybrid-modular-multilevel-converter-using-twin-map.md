@@ -61,7 +61,7 @@ Dead-time effect modeling for hybrid modular multilevel converter using , Jianzh
 - [[孪生映射法|孪生映射法]]
 - [[戴维南等效|戴维南等效]]
 - [[二极管h桥建模|二极管H桥建模]]
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[状态空间模型对比|状态空间模型对比]]
 
 ## 涉及的模型

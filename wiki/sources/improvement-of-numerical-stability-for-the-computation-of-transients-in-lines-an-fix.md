@@ -59,23 +59,23 @@ sources: ["EMT_Doc/23/Kocar 等 - 2010 - Improvement of Numerical Stability for 
 ## 使用的方法
 
 - [[部分分式展开|部分分式展开]]
-- [[有理函数逼近|有理函数逼近]]
+- [[methods/rational-function-approximation|有理函数逼近]]
 - [[约束线性最小二乘法|约束线性最小二乘法]]
 - [[特征线法|特征线法]]
-- [[状态空间法|状态空间法]]
+- [[methods/state-space-method|状态空间法]]
 
 ## 涉及的模型
 
-- [[输电线路|输电线路]]
+- [[models/transmission-line-model|输电线路]]
 - [[电力电缆|电力电缆]]
 - [[通用线路模型|通用线路模型]]
 - [[宽频模型|宽频模型]]
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[数值稳定性分析|数值稳定性分析]]
-- [[频率相关建模|频率相关建模]]
+- [[topics/frequency-dependent-modeling|频率相关建模]]
 - [[宽频线路建模|宽频线路建模]]
 - [[时域卷积计算|时域卷积计算]]
 

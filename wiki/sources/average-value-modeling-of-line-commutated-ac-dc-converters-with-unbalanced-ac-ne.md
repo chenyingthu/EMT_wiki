@@ -72,9 +72,9 @@ sources: ["EMT_Doc/09/Ebrahimi 等 - 2021 - Average-Value Modeling of Line-Commu
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[不平衡工况分析|不平衡工况分析]]
-- [[谐波分析|谐波分析]]
+- [[methods/harmonic-analysis-methods|谐波分析]]
 - [[系统级快速仿真|系统级快速仿真]]
 - [[频域阻抗预测|频域阻抗预测]]
 

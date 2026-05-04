@@ -58,11 +58,11 @@ sources: ["EMT_Doc/24/Zhu 等 - 2021 - Interface Displacement and Dynamic Phasor
 
 ## 使用的方法
 
-- [[动态相量法|动态相量法]]
+- [[topics/dynamic-phasor|动态相量法]]
 - [[接口位移技术|接口位移技术]]
 - [[lambert-w函数|Lambert W函数]]
 - [[混合仿真接口技术|混合仿真接口技术]]
-- [[网络等值|网络等值]]
+- [[topics/network-equivalent|网络等值]]
 
 ## 涉及的模型
 
@@ -73,7 +73,7 @@ sources: ["EMT_Doc/24/Zhu 等 - 2021 - Interface Displacement and Dynamic Phasor
 
 ## 相关主题
 
-- [[混合仿真|混合仿真]]
+- [[topics/co-simulation|混合仿真]]
 - [[接口延迟|接口延迟]]
 - [[动态相量|动态相量]]
 - [[交直流电网|交直流电网]]

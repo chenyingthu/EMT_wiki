@@ -60,7 +60,7 @@ sources: ["EMT_Doc/17/Meredith - 1997 - EMTP modeling of electromagnetic transie
 
 - [[有限截面法|有限截面法]]
 - [[π节等效电路|π节等效电路]]
-- [[频率相关建模|频率相关建模]]
+- [[topics/frequency-dependent-modeling|频率相关建模]]
 - [[径向波传播建模|径向波传播建模]]
 - [[非线性材料建模|非线性材料建模]]
 
@@ -74,8 +74,8 @@ sources: ["EMT_Doc/17/Meredith - 1997 - EMTP modeling of electromagnetic transie
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[频率相关建模|频率相关建模]]
+- [[topics/emt-simulation|电磁暂态仿真]]
+- [[topics/frequency-dependent-modeling|频率相关建模]]
 - [[电缆暂态建模|电缆暂态建模]]
 - [[导体内波传播|导体内波传播]]
 - [[非线性材料建模|非线性材料建模]]

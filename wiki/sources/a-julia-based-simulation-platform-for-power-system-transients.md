@@ -59,11 +59,11 @@ sources: ["EMT_Doc/02/Naidjate 等 - 2025 - A Julia-Based Simulation Platform fo
 ## 使用的方法
 
 - [[改进增广节点分析法-mana|改进增广节点分析法(MANA)]]
-- [[梯形积分法|梯形积分法]]
+- [[methods/numerical-integration|梯形积分法]]
 - [[牛顿迭代法|牛顿迭代法]]
 - [[分段线性化|分段线性化]]
 - [[稀疏矩阵求解|稀疏矩阵求解]]
-- [[并行计算|并行计算]]
+- [[topics/parallel-computing|并行计算]]
 - [[符号分解优化|符号分解优化]]
 
 ## 涉及的模型
@@ -72,16 +72,16 @@ sources: ["EMT_Doc/02/Naidjate 等 - 2025 - A Julia-Based Simulation Platform fo
 - [[理想变压器|理想变压器]]
 - [[非线性电感|非线性电感]]
 - [[非线性电阻|非线性电阻]]
-- [[输电线路|输电线路]]
-- [[同步电机|同步电机]]
+- [[models/transmission-line-model|输电线路]]
+- [[models/synchronous-machine-model|同步电机]]
 - [[同步电机控制系统|同步电机控制系统]]
 - [[开关|开关]]
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[高性能计算|高性能计算]]
-- [[并行计算|并行计算]]
+- [[topics/parallel-computing|并行计算]]
 - [[网络方程求解|网络方程求解]]
 - [[电力系统暂态分析|电力系统暂态分析]]
 

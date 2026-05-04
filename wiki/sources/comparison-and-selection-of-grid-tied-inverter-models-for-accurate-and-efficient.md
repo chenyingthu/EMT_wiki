@@ -58,7 +58,7 @@ sources: ["EMT_Doc/10/Sano 等 - 2022 - Comparison and Selection of Grid-Tied In
 
 ## 使用的方法
 
-- [[节点分析法|节点分析法]]
+- [[methods/nodal-analysis|节点分析法]]
 - [[固定步长仿真|固定步长仿真]]
 - [[平均值建模|平均值建模]]
 - [[电压插值法|电压插值法]]
@@ -70,19 +70,19 @@ sources: ["EMT_Doc/10/Sano 等 - 2022 - Comparison and Selection of Grid-Tied In
 - [[并网逆变器|并网逆变器]]
 - [[三相桥式逆变器|三相桥式逆变器]]
 - [[开关模型|开关模型]]
-- [[平均值模型|平均值模型]]
+- [[methods/average-value-model|平均值模型]]
 - [[电压插值模型|电压插值模型]]
 - [[受控电流注入模型|受控电流注入模型]]
 - [[简化电流注入模型|简化电流注入模型]]
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[模型对比与选型|模型对比与选型]]
-- [[谐波分析|谐波分析]]
+- [[methods/harmonic-analysis-methods|谐波分析]]
 - [[暂态稳定性分析|暂态稳定性分析]]
-- [[计算效率优化|计算效率优化]]
-- [[新能源并网|新能源并网]]
+- [[topics/computational-efficiency|计算效率优化]]
+- [[topics/renewable-energy-integration|新能源并网]]
 
 ## 主要发现
 

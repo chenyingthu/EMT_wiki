@@ -58,13 +58,13 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/Masoom 等 - 2026 - Fast investigati
 
 ## 使用的方法
 
-- [[特征值分析|特征值分析]]
+- [[methods/eigenvalue-analysis|特征值分析]]
 - [[modelica方程建模|Modelica方程建模]]
 - [[微分代数方程线性化|微分代数方程线性化]]
 - [[状态空间矩阵提取|状态空间矩阵提取]]
 - [[阻抗扫描|阻抗扫描]]
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[模态分析|模态分析]]
+- [[topics/emt-simulation|电磁暂态仿真]]
+- [[methods/modal-analysis|模态分析]]
 
 ## 涉及的模型
 

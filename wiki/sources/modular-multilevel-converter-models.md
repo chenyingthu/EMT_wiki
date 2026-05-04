@@ -58,10 +58,10 @@ sources: ["EMT_Doc/27&28/Modular Multilevel Converter Models for Electromagnetic
 
 ## 使用的方法
 
-- [[平均值模型|平均值模型]]
+- [[methods/average-value-model|平均值模型]]
 - [[开关函数法|开关函数法]]
 - [[等效电路法|等效电路法]]
-- [[梯形积分法|梯形积分法]]
+- [[methods/numerical-integration|梯形积分法]]
 - [[后向欧拉法|后向欧拉法]]
 - [[迭代求解算法|迭代求解算法]]
 
@@ -70,12 +70,12 @@ sources: ["EMT_Doc/27&28/Modular Multilevel Converter Models for Electromagnetic
 - [[mmc-model|MMC]]
 - [[vsc-model|VSC]]
 - [[vsc-hvdc|VSC-HVDC]]
-- [[半桥子模块|半桥子模块]]
+- [[models/half-bridge-submodule|半桥子模块]]
 - [[igbt开关模型|IGBT开关模型]]
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[mmc-model|MMC]]
 - [[模型简化与等效|模型简化与等效]]
 - [[数值振荡抑制|数值振荡抑制]]

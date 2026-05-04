@@ -58,11 +58,11 @@ sources: ["EMT_Doc/05/Luo 等 - 2022 - Active Damping Control and Parameter Calc
 
 ## 使用的方法
 
-- [[阻抗建模|阻抗建模]]
-- [[状态空间法|状态空间法]]
+- [[methods/impedance-modeling|阻抗建模]]
+- [[methods/state-space-method|状态空间法]]
 - [[有源阻尼控制|有源阻尼控制]]
 - [[参数解析计算|参数解析计算]]
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 
 ## 涉及的模型
 

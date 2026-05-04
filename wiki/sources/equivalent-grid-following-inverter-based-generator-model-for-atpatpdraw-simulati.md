@@ -72,11 +72,11 @@ sources: ["EMT_Doc/17/Luchini 等 - 2023 - Equivalent grid-following inverter-ba
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[逆变器并网资源建模|逆变器并网资源建模]]
 - [[故障穿越特性|故障穿越特性]]
 - [[电网故障分析|电网故障分析]]
-- [[计算效率优化|计算效率优化]]
+- [[topics/computational-efficiency|计算效率优化]]
 
 ## 主要发现
 

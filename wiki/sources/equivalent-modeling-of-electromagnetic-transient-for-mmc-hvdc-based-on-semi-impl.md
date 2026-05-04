@@ -61,7 +61,7 @@ sources: ["EMT_Doc/18/Zhao 等 - 2021 - Equivalent modeling of electromagnetic t
 - [[戴维南等效|戴维南等效]]
 - [[嵌套迭代|嵌套迭代]]
 - [[理想开关模型|理想开关模型]]
-- [[梯形积分法|梯形积分法]]
+- [[methods/numerical-integration|梯形积分法]]
 - [[滞回比较触发|滞回比较触发]]
 
 ## 涉及的模型
@@ -73,11 +73,11 @@ sources: ["EMT_Doc/18/Zhao 等 - 2021 - Equivalent modeling of electromagnetic t
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[等效建模|等效建模]]
 - [[柔性直流送出系统|柔性直流送出系统]]
 - [[功率盈余控制|功率盈余控制]]
-- [[仿真加速|仿真加速]]
+- [[topics/parallel-computing|仿真加速]]
 
 ## 主要发现
 

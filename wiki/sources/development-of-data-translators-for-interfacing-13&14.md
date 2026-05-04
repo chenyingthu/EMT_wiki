@@ -65,11 +65,11 @@ sources: ["EMT_Doc/13&14/files/tpwrd.2012.2227836.pdf.pdf"]
 
 ## 涉及的模型
 
-- [[变压器|变压器]]
+- [[models/transformer-model|变压器]]
 - [[断路器|断路器]]
 - [[继电保护装置|继电保护装置]]
-- [[同步电机|同步电机]]
-- [[感应电机|感应电机]]
+- [[models/synchronous-machine-model|同步电机]]
+- [[models/induction-machine-model|感应电机]]
 - [[分布式电源|分布式电源]]
 - [[pi型线路|PI型线路]]
 - [[rlc支路|RLC支路]]

@@ -59,24 +59,24 @@ sources: ["EMT_Doc/13&14/files/J.EPSR.2021.107305.pdf-1.pdf"]
 ## 使用的方法
 
 - [[频变相域建模|频变相域建模]]
-- [[并行计算|并行计算]]
+- [[topics/parallel-computing|并行计算]]
 - [[流水线技术|流水线技术]]
-- [[诺顿等效|诺顿等效]]
+- [[methods/norton-equivalent|诺顿等效]]
 - [[卷积运算|卷积运算]]
 
 ## 涉及的模型
 
-- [[输电线路|输电线路]]
+- [[models/transmission-line-model|输电线路]]
 - [[频变相域模型|频变相域模型]]
 - [[通用线路模型|通用线路模型]]
 
 ## 相关主题
 
-- [[实时仿真|实时仿真]]
+- [[topics/real-time-simulation|实时仿真]]
 - [[fpga硬件实现|FPGA硬件实现]]
-- [[频率相关建模|频率相关建模]]
-- [[并行计算|并行计算]]
-- [[电磁暂态分析|电磁暂态分析]]
+- [[topics/frequency-dependent-modeling|频率相关建模]]
+- [[topics/parallel-computing|并行计算]]
+- [[topics/emt-simulation|电磁暂态分析]]
 
 ## 主要发现
 

@@ -58,7 +58,7 @@ sources: ["EMT_Doc/13&14/files/Direct_Interfacing_of_Parametric_Average-Value_Mo
 
 ## 使用的方法
 
-- [[节点分析法|节点分析法]]
+- [[methods/nodal-analysis|节点分析法]]
 - [[参数化平均值建模|参数化平均值建模]]
 - [[直接接口技术|直接接口技术]]
 - [[方程线性化|方程线性化]]
@@ -73,12 +73,12 @@ sources: ["EMT_Doc/13&14/files/Direct_Interfacing_of_Parametric_Average-Value_Mo
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[实时仿真|实时仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
+- [[topics/real-time-simulation|实时仿真]]
 - [[大步长仿真|大步长仿真]]
 - [[节点分析|节点分析]]
 - [[平均值建模|平均值建模]]
-- [[数值稳定性|数值稳定性]]
+- [[methods/numerical-integration|数值稳定性]]
 
 ## 主要发现
 

@@ -78,7 +78,7 @@ sources: ["EMT_Doc/24/Alipio 等 - 2023 - Influence of a lossy ground on the lig
 - [[雷击反击跳闸率|雷击反击跳闸率]]
 - [[频变土壤参数建模|频变土壤参数建模]]
 - [[大地返回阻抗|大地返回阻抗]]
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[过电压分析|过电压分析]]
 - [[线路防雷性能|线路防雷性能]]
 

@@ -58,8 +58,8 @@ sources: ["EMT_Doc/13&14/files/TPWRS.2017.2766269.pdf.pdf"]
 
 ## 使用的方法
 
-- [[动态相量法|动态相量法]]
-- [[诺顿等效|诺顿等效]]
+- [[topics/dynamic-phasor|动态相量法]]
+- [[methods/norton-equivalent|诺顿等效]]
 - [[戴维南等效|戴维南等效]]
 - [[系统分区法|系统分区法]]
 - [[时变傅里叶级数|时变傅里叶级数]]
@@ -68,16 +68,16 @@ sources: ["EMT_Doc/13&14/files/TPWRS.2017.2766269.pdf.pdf"]
 
 - [[lcc-model|LCC]]
 - [[交流电网|交流电网]]
-- [[输电线路|输电线路]]
+- [[models/transmission-line-model|输电线路]]
 - [[换流器|换流器]]
 
 ## 相关主题
 
-- [[混合仿真|混合仿真]]
+- [[topics/co-simulation|混合仿真]]
 - [[接口模型|接口模型]]
 - [[交直流系统交互|交直流系统交互]]
 - [[换流器近区故障|换流器近区故障]]
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 
 ## 主要发现
 

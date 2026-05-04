@@ -58,26 +58,26 @@ sources: ["EMT_Doc/23/De Silva和Zhang - 2026 - Improving numerical efficiency o
 
 ## 使用的方法
 
-- [[模型降阶|模型降阶]]
+- [[methods/model-order-reduction|模型降阶]]
 - [[模态截断|模态截断]]
 - [[平衡截断|平衡截断]]
-- [[矢量拟合|矢量拟合]]
-- [[有理函数逼近|有理函数逼近]]
+- [[methods/vector-fitting|矢量拟合]]
+- [[methods/rational-function-approximation|有理函数逼近]]
 - [[递归卷积|递归卷积]]
 
 ## 涉及的模型
 
 - [[频变输电线路模型|频变输电线路模型]]
 - [[通用线路模型|通用线路模型]]
-- [[地下电缆|地下电缆]]
+- [[models/cable-model|地下电缆]]
 - [[多回电缆系统|多回电缆系统]]
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[频率相关建模|频率相关建模]]
-- [[模型降阶|模型降阶]]
-- [[实时仿真|实时仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
+- [[topics/frequency-dependent-modeling|频率相关建模]]
+- [[methods/model-order-reduction|模型降阶]]
+- [[topics/real-time-simulation|实时仿真]]
 - [[数值效率优化|数值效率优化]]
 
 ## 主要发现

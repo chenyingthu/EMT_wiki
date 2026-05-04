@@ -60,14 +60,14 @@ sources: ["EMT_Doc/13&14/files/A novel distance protection algorithm in frequenc
 
 - [[parameter-identification|参数辨识]]
 - [[矩阵束算法|矩阵束算法]]
-- [[频域分析|频域分析]]
+- [[topics/frequency-domain-analysis|频域分析]]
 - [[相模变换|相模变换]]
 - [[线性方程求解|线性方程求解]]
 - [[r-l模型|R-L模型]]
 
 ## 涉及的模型
 
-- [[输电线路|输电线路]]
+- [[models/transmission-line-model|输电线路]]
 - [[r-l模型|R-L模型]]
 - [[零序网络|零序网络]]
 - [[双端电源系统|双端电源系统]]

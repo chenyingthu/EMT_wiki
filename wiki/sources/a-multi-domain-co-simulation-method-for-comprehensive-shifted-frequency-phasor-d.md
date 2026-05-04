@@ -58,7 +58,7 @@ sources: ["EMT_Doc/02/Shu 等 - 2019 - A Multi-Domain Co-Simulation Method for C
 - [[移频相量法|移频相量法]]
 - [[多域协同仿真|多域协同仿真]]
 - [[混合多域传输线模型接口|混合多域传输线模型接口]]
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[系统分区解耦|系统分区解耦]]
 
 ## 涉及的模型

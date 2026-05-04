@@ -66,20 +66,20 @@ sources: ["EMT_Doc/06/Ramirez 等 - 2024 - Advanced Wideband LineCable Modeling 
 
 ## 涉及的模型
 
-- [[通用线路模型-ulm|通用线路模型(ULM)]]
-- [[输电线路|输电线路]]
-- [[地下电缆|地下电缆]]
+- [[models/transmission-line-model|通用线路模型(ULM)]]
+- [[models/transmission-line-model|输电线路]]
+- [[models/cable-model|地下电缆]]
 - [[频变电缆模型-fdcm|频变电缆模型(FDCM)]]
 - [[多导体电缆系统|多导体电缆系统]]
 
 ## 相关主题
 
 - [[宽频线路电缆建模|宽频线路电缆建模]]
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[数值稳定性|数值稳定性]]
+- [[topics/emt-simulation|电磁暂态仿真]]
+- [[methods/numerical-integration|数值稳定性]]
 - [[无源性违规|无源性违规]]
 - [[频率相关参数|频率相关参数]]
-- [[时域仿真|时域仿真]]
+- [[topics/emt-simulation|时域仿真]]
 
 ## 主要发现
 

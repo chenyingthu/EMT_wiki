@@ -59,11 +59,11 @@ sources: ["EMT_Doc/25/Lin 等 - 2023 - Massively Parallel Modeling of Battery En
 
 - [[emt-ts联合仿真|EMT-TS联合仿真]]
 - [[cpu-gpu异构并行计算|CPU-GPU异构并行计算]]
-- [[多速率仿真|多速率仿真]]
+- [[methods/multirate-method|多速率仿真]]
 - [[多流异步处理|多流异步处理]]
 - [[向量化建模|向量化建模]]
 - [[传输线链接-tll-模型|传输线链接(TLL)模型]]
-- [[状态空间法|状态空间法]]
+- [[methods/state-space-method|状态空间法]]
 - [[后向欧拉离散|后向欧拉离散]]
 
 ## 涉及的模型
@@ -77,11 +77,11 @@ sources: ["EMT_Doc/25/Lin 等 - 2023 - Massively Parallel Modeling of Battery En
 ## 相关主题
 
 - [[高性能计算|高性能计算]]
-- [[并行计算|并行计算]]
-- [[混合仿真|混合仿真]]
-- [[电磁暂态|电磁暂态]]
-- [[暂态稳定|暂态稳定]]
-- [[大规模电网仿真|大规模电网仿真]]
+- [[topics/parallel-computing|并行计算]]
+- [[topics/co-simulation|混合仿真]]
+- [[topics/emt-simulation|电磁暂态]]
+- [[topics/transient-stability-analysis|暂态稳定]]
+- [[topics/large-scale-grid-simulation|大规模电网仿真]]
 
 ## 主要发现
 

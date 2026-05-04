@@ -68,7 +68,7 @@ sources: ["EMT_Doc/10/Azevedo 等 - 2024 - Comparison of soil modeling concernin
 ## 涉及的模型
 
 - [[风力发电机|风力发电机]]
-- [[接地系统|接地系统]]
+- [[models/grounding-system-model|接地系统]]
 - [[机舱与塔基|机舱与塔基]]
 - [[雷电流源|雷电流源]]
 - [[频变土壤模型|频变土壤模型]]

@@ -76,8 +76,8 @@ sources: ["EMT_Doc/01/Chen 等 - 2010 - A hybrid parallel computation algorithm 
 
 ## 相关主题
 
-- [[并行计算|并行计算]]
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/parallel-computing|并行计算]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[系统切分与负载均衡|系统切分与负载均衡]]
 - [[超实时仿真|超实时仿真]]
 - [[综合电力系统|综合电力系统]]

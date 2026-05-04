@@ -72,7 +72,7 @@ sources: ["EMT_Doc/09/Shafieipour 等 - 2020 - Application of Duality-Based Equi
 
 ## 相关主题
 
-- [[电磁暂态建模|电磁暂态建模]]
+- [[topics/emt-simulation|电磁暂态建模]]
 - [[变压器饱和特性|变压器饱和特性]]
 - [[励磁涌流仿真|励磁涌流仿真]]
 - [[剩磁效应分析|剩磁效应分析]]

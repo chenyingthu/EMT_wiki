@@ -58,19 +58,19 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/Cao 等 - 2023 - Faster-Than-Real-Ti
 
 ## 使用的方法
 
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[机电暂态仿真|机电暂态仿真]]
 - [[多fpga并行计算|多FPGA并行计算]]
 - [[动态电压注入接口|动态电压注入接口]]
 - [[显式四阶龙格库塔法|显式四阶龙格库塔法]]
-- [[混合仿真|混合仿真]]
+- [[topics/co-simulation|混合仿真]]
 
 ## 涉及的模型
 
-- [[同步电机|同步电机]]
+- [[models/synchronous-machine-model|同步电机]]
 - [[九阶同步发电机模型|九阶同步发电机模型]]
-- [[输电线路|输电线路]]
-- [[变压器|变压器]]
+- [[models/transmission-line-model|输电线路]]
+- [[models/transformer-model|变压器]]
 - [[多端直流电网|多端直流电网]]
 - [[换流器|换流器]]
 
@@ -79,7 +79,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/Cao 等 - 2023 - Faster-Than-Real-Ti
 - [[动态安全分析|动态安全分析]]
 - [[超实时仿真|超实时仿真]]
 - [[硬件仿真|硬件仿真]]
-- [[并行计算|并行计算]]
+- [[topics/parallel-computing|并行计算]]
 - [[交直流混合电网|交直流混合电网]]
 - [[故障预想分析|故障预想分析]]
 

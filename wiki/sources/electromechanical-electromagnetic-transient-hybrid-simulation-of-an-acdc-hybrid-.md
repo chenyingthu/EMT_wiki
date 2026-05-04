@@ -73,7 +73,7 @@ sources: ["EMT_Doc/17/Xiong 等 - 2020 - Electromechanical-electromagnetic trans
 
 - [[vsc-hvdc|VSC-HVDC]]
 - [[lcc-model|LCC]]
-- [[换流变压器|换流变压器]]
+- [[models/transformer-model|换流变压器]]
 - [[交直流滤波器|交直流滤波器]]
 - [[平波电抗器|平波电抗器]]
 - [[直流输电线路|直流输电线路]]
@@ -83,7 +83,7 @@ sources: ["EMT_Doc/17/Xiong 等 - 2020 - Electromechanical-electromagnetic trans
 ## 相关主题
 
 
-- [[混合仿真|混合仿真]]
+- [[topics/co-simulation|混合仿真]]
 - [[特高压直流分层接入|特高压直流分层接入]]
 - [[交直流混联电网|交直流混联电网]]
 - [[机电-电磁暂态接口|机电-电磁暂态接口]]

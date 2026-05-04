@@ -74,7 +74,7 @@ sources: ["EMT_Doc/09/Huang和Vittal - 2016 - Application of Electromagnetic Tra
 
 ## 相关主题
 
-- [[混合仿真|混合仿真]]
+- [[topics/co-simulation|混合仿真]]
 - [[故障诱发延迟电压恢复|故障诱发延迟电压恢复]]
 - [[不对称故障仿真|不对称故障仿真]]
 - [[电机堵转传播|电机堵转传播]]

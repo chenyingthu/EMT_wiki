@@ -78,7 +78,7 @@ sources: ["EMT_Doc/17/González 等 - 2015 - EMTP model of a bidirectional multi
 - [[配电网建模|配电网建模]]
 - [[电能质量分析|电能质量分析]]
 - [[双向功率流动|双向功率流动]]
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[电压暂降与不平衡抑制|电压暂降与不平衡抑制]]
 - [[固态变压器|固态变压器]]
 

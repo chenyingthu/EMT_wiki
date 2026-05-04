@@ -72,10 +72,10 @@ Rational function approximations of characteristic impedance and propagation coe
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[频率相关建模|频率相关建模]]
-- [[输电线路建模|输电线路建模]]
-- [[网络等值|网络等值]]
+- [[topics/emt-simulation|电磁暂态仿真]]
+- [[topics/frequency-dependent-modeling|频率相关建模]]
+- [[models/transmission-line-model|输电线路建模]]
+- [[topics/network-equivalent|网络等值]]
 
 ## 主要发现
 

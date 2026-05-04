@@ -72,9 +72,9 @@ sources: ["EMT_Doc/25/Zhu 等 - 2012 - Loop closing analytical calculation syste
 ## 涉及的模型
 
 
-- [[输电线路|输电线路]]
-- [[变压器|变压器]]
-- [[同步发电机|同步发电机]]
+- [[models/transmission-line-model|输电线路]]
+- [[models/transformer-model|变压器]]
+- [[models/synchronous-machine-model|同步发电机]]
 - [[负荷|负荷]]
 - [[电容器|电容器]]
 - [[电抗器|电抗器]]
@@ -83,11 +83,11 @@ sources: ["EMT_Doc/25/Zhu 等 - 2012 - Loop closing analytical calculation syste
 ## 相关主题
 
 
-- [[混合仿真|混合仿真]]
+- [[topics/co-simulation|混合仿真]]
 - [[电网合环分析|电网合环分析]]
 - [[网络自动划分|网络自动划分]]
 - [[模型自动转换|模型自动转换]]
-- [[并行计算|并行计算]]
+- [[topics/parallel-computing|并行计算]]
 - [[冲击电流分析|冲击电流分析]]
 
 

@@ -60,7 +60,7 @@ sources: ["EMT_Doc/24/Jalili-Marandi 等 - 2009 - Interfacing Techniques for Tra
 
 - [[混合仿真接口技术|混合仿真接口技术]]
 - [[网络分割|网络分割]]
-- [[并行计算|并行计算]]
+- [[topics/parallel-computing|并行计算]]
 - [[多速率积分|多速率积分]]
 - [[频移法|频移法]]
 - [[时间步长同步|时间步长同步]]
@@ -68,8 +68,8 @@ sources: ["EMT_Doc/24/Jalili-Marandi 等 - 2009 - Interfacing Techniques for Tra
 
 ## 涉及的模型
 
-- [[同步电机|同步电机]]
-- [[输电线路|输电线路]]
+- [[models/synchronous-machine-model|同步电机]]
+- [[models/transmission-line-model|输电线路]]
 - [[vsc-hvdc|VSC-HVDC]]
 - [[facts装置|FACTS装置]]
 - [[电力电子变换器|电力电子变换器]]
@@ -78,14 +78,14 @@ sources: ["EMT_Doc/24/Jalili-Marandi 等 - 2009 - Interfacing Techniques for Tra
 
 ## 相关主题
 
-- [[混合仿真|混合仿真]]
+- [[topics/co-simulation|混合仿真]]
 - [[暂态稳定分析|暂态稳定分析]]
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[接口技术|接口技术]]
-- [[并行计算|并行计算]]
+- [[topics/parallel-computing|并行计算]]
 - [[网络分割|网络分割]]
 - [[频率自适应建模|频率自适应建模]]
-- [[大规模电网仿真|大规模电网仿真]]
+- [[topics/large-scale-grid-simulation|大规模电网仿真]]
 
 ## 主要发现
 

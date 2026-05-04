@@ -70,17 +70,17 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/Hajizadeh 等 - 2026 - FPGA-based si
 - [[statcom|STATCOM]]
 - [[vsc-model|VSC]]
 - [[并网变流器|并网变流器]]
-- [[输电线路|输电线路]]
+- [[models/transmission-line-model|输电线路]]
 - [[负荷|负荷]]
 - [[fdne-model|FDNE]]
 
 ## 相关主题
 
-- [[实时仿真|实时仿真]]
+- [[topics/real-time-simulation|实时仿真]]
 - [[超实时仿真|超实时仿真]]
 - [[fpga硬件加速|FPGA硬件加速]]
-- [[电磁暂态仿真|电磁暂态仿真]]
-- [[硬件在环|硬件在环]]
+- [[topics/emt-simulation|电磁暂态仿真]]
+- [[methods/hil-simulation|硬件在环]]
 - [[资源优化|资源优化]]
 
 ## 主要发现

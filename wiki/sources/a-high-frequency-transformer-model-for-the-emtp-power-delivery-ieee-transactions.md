@@ -58,7 +58,7 @@ sources: ["EMT_Doc/01/Morched 等 - 1993 - A High Frequency Transformer Model fo
 
 ## 使用的方法
 
-- [[有理函数逼近|有理函数逼近]]
+- [[methods/rational-function-approximation|有理函数逼近]]
 - [[节点导纳矩阵法|节点导纳矩阵法]]
 - [[多端口π型等效电路|多端口π型等效电路]]
 - [[rlc网络综合|RLC网络综合]]
@@ -75,7 +75,7 @@ sources: ["EMT_Doc/01/Morched 等 - 1993 - A High Frequency Transformer Model fo
 
 - [[高频建模|高频建模]]
 - [[频率相关特性|频率相关特性]]
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[变压器端口等效|变压器端口等效]]
 - [[杂散电容与损耗建模|杂散电容与损耗建模]]
 

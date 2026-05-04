@@ -58,29 +58,29 @@ sources: ["EMT_Doc/10/Mudunkotuwa和Filizadeh - 2018 - Co-simulation of electric
 
 ## 使用的方法
 
-- [[动态相量法|动态相量法]]
-- [[多速率仿真|多速率仿真]]
+- [[topics/dynamic-phasor|动态相量法]]
+- [[methods/multirate-method|多速率仿真]]
 - [[傅里叶级数展开|傅里叶级数展开]]
-- [[梯形积分法|梯形积分法]]
+- [[methods/numerical-integration|梯形积分法]]
 - [[节点导纳矩阵法|节点导纳矩阵法]]
 - [[接口数据映射算法|接口数据映射算法]]
 
 ## 涉及的模型
 
 - [[ieee-118节点系统|IEEE 118节点系统]]
-- [[风电场|风电场]]
+- [[topics/wind-farm-modeling|风电场]]
 - [[电力电子变流器|电力电子变流器]]
 - [[输电网络|输电网络]]
 - [[旋转电机|旋转电机]]
 
 ## 相关主题
 
-- [[混合仿真|混合仿真]]
-- [[多速率仿真|多速率仿真]]
+- [[topics/co-simulation|混合仿真]]
+- [[methods/multirate-method|多速率仿真]]
 - [[网络分区|网络分区]]
-- [[谐波分析|谐波分析]]
-- [[数值稳定性|数值稳定性]]
-- [[风电场建模|风电场建模]]
+- [[methods/harmonic-analysis-methods|谐波分析]]
+- [[methods/numerical-integration|数值稳定性]]
+- [[topics/wind-farm-modeling|风电场建模]]
 
 ## 主要发现
 

@@ -73,7 +73,7 @@ sources: ["EMT_Doc/16/Choi 等 - 2025 - Electromagnetic Transient Simulation of 
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[声明式建模|声明式建模]]
 - [[电机顺序启动|电机顺序启动]]
 - [[故障与孤岛仿真|故障与孤岛仿真]]

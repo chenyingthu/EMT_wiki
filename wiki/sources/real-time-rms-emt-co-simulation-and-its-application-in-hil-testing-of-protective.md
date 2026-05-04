@@ -59,16 +59,16 @@ sources: ["EMT_Doc/32/j.epsr.2021.107326.pdf.pdf"]
 ## 使用的方法
 
 - [[rms-emt联合仿真|RMS-EMT联合仿真]]
-- [[多速率仿真|多速率仿真]]
+- [[methods/multirate-method|多速率仿真]]
 - [[transmission-line-model|Bergeron线路模型]]
 - [[曲线拟合|曲线拟合]]
 - [[相量波形转换|相量波形转换]]
-- [[诺顿等效|诺顿等效]]
-- [[硬件在环|硬件在环]]
+- [[methods/norton-equivalent|诺顿等效]]
+- [[methods/hil-simulation|硬件在环]]
 
 ## 涉及的模型
 
-- [[输电线路|输电线路]]
+- [[models/transmission-line-model|输电线路]]
 - [[继电保护装置|继电保护装置]]
 - [[三相耦合线路|三相耦合线路]]
 - [[rms相量模型|RMS相量模型]]
@@ -76,9 +76,9 @@ sources: ["EMT_Doc/32/j.epsr.2021.107326.pdf.pdf"]
 
 ## 相关主题
 
-- [[实时仿真|实时仿真]]
-- [[混合仿真|混合仿真]]
-- [[硬件在环|硬件在环]]
+- [[topics/real-time-simulation|实时仿真]]
+- [[topics/co-simulation|混合仿真]]
+- [[methods/hil-simulation|硬件在环]]
 - [[多域仿真|多域仿真]]
 - [[继电保护测试|继电保护测试]]
 - [[网络解耦|网络解耦]]

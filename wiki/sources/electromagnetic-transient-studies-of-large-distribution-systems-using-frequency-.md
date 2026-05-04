@@ -68,17 +68,17 @@ Electromagnetic transient studies of large distribution systems using frequency 
 
 - [[分布参数线路|分布参数线路]]
 - [[集中参数线路|集中参数线路]]
-- [[变压器|变压器]]
+- [[models/transformer-model|变压器]]
 - [[断路器|断路器]]
 - [[架空线|架空线]]
-- [[地下电缆|地下电缆]]
+- [[models/cable-model|地下电缆]]
 
 ## 相关主题
 
-- [[电磁暂态分析|电磁暂态分析]]
+- [[topics/emt-simulation|电磁暂态分析]]
 - [[配电网建模|配电网建模]]
 - [[频域建模|频域建模]]
-- [[网络等值|网络等值]]
+- [[topics/network-equivalent|网络等值]]
 - [[故障暂态分析|故障暂态分析]]
 - [[开关操作仿真|开关操作仿真]]
 

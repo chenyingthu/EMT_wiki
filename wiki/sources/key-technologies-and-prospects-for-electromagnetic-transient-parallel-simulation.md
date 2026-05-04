@@ -69,8 +69,8 @@ sources: ["EMT_Doc/25/Jiang 等 - 2024 - Key Technologies and Prospects for Elec
 - [[多区域戴维南等效法|多区域戴维南等效法]]
 - [[状态空间节点法|状态空间节点法]]
 - [[延迟插入法|延迟插入法]]
-- [[多速率仿真|多速率仿真]]
-- [[机电电磁混合仿真|机电电磁混合仿真]]
+- [[methods/multirate-method|多速率仿真]]
+- [[topics/electromechanical-electromagnetic-hybrid|机电电磁混合仿真]]
 - [[频率相关等值|频率相关等值]]
 
 
@@ -84,19 +84,19 @@ sources: ["EMT_Doc/25/Jiang 等 - 2024 - Key Technologies and Prospects for Elec
 - [[分布式电源|分布式电源]]
 - [[有源配电网|有源配电网]]
 - [[分布参数输电线路|分布参数输电线路]]
-- [[同步发电机|同步发电机]]
+- [[models/synchronous-machine-model|同步发电机]]
 
 
 ## 相关主题
 
 
-- [[并行计算|并行计算]]
-- [[多速率仿真|多速率仿真]]
+- [[topics/parallel-computing|并行计算]]
+- [[methods/multirate-method|多速率仿真]]
 - [[硬件加速|硬件加速]]
-- [[机电电磁混合仿真|机电电磁混合仿真]]
-- [[实时仿真|实时仿真]]
-- [[网络等值|网络等值]]
-- [[硬件在环|硬件在环]]
+- [[topics/electromechanical-electromagnetic-hybrid|机电电磁混合仿真]]
+- [[topics/real-time-simulation|实时仿真]]
+- [[topics/network-equivalent|网络等值]]
+- [[methods/hil-simulation|硬件在环]]
 - [[新型电力系统|新型电力系统]]
 
 

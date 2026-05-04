@@ -73,10 +73,10 @@ sources: ["EMT_Doc/37/TPWRD.2014.2332557.pdf-1.pdf"]
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[直流故障分析|直流故障分析]]
 - [[模型降阶与等效|模型降阶与等效]]
-- [[仿真加速|仿真加速]]
+- [[topics/parallel-computing|仿真加速]]
 - [[vsc-model|VSC]]
 
 ## 主要发现

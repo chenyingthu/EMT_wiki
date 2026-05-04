@@ -58,12 +58,12 @@ sources: ["EMT_Doc/06/van der Meer 等 - 2015 - Advanced Hybrid Transient Stabil
 
 ## 使用的方法
 
-- [[混合仿真|混合仿真]]
-- [[平均值模型|平均值模型]]
+- [[topics/co-simulation|混合仿真]]
+- [[methods/average-value-model|平均值模型]]
 - [[数值接口技术|数值接口技术]]
 - [[交互协议|交互协议]]
 - [[戴维南等效更新|戴维南等效更新]]
-- [[动态相量法|动态相量法]]
+- [[topics/dynamic-phasor|动态相量法]]
 
 ## 涉及的模型
 
@@ -76,12 +76,12 @@ sources: ["EMT_Doc/06/van der Meer 等 - 2015 - Advanced Hybrid Transient Stabil
 
 ## 相关主题
 
-- [[混合仿真|混合仿真]]
+- [[topics/co-simulation|混合仿真]]
 - [[暂态稳定分析|暂态稳定分析]]
 - [[vsc-model|VSC]]
 - [[多端直流电网|多端直流电网]]
 - [[交直流系统接口|交直流系统接口]]
-- [[新能源并网|新能源并网]]
+- [[topics/renewable-energy-integration|新能源并网]]
 
 ## 主要发现
 

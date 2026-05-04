@@ -69,12 +69,12 @@ sources: ["EMT_Doc/09/Hong 等 - 2022 - Average-Value Modeling of Line-Commutate
 - [[六脉冲晶闸管逆变器|六脉冲晶闸管逆变器]]
 - [[vsc-hvdc|VSC-HVDC]]
 - [[平波电抗器|平波电抗器]]
-- [[输电线路|输电线路]]
+- [[models/transmission-line-model|输电线路]]
 - [[戴维南等效电路|戴维南等效电路]]
 
 ## 相关主题
 
-- [[电磁暂态仿真|电磁暂态仿真]]
+- [[topics/emt-simulation|电磁暂态仿真]]
 - [[换相失败|换相失败]]
 - [[传统高压直流输电|传统高压直流输电]]
 - [[系统级仿真|系统级仿真]]
