@@ -49,6 +49,8 @@ updated: 2026-05-03
 | [[transmission-line-modeling\|输电线路与电缆建模]] | Bergeron模型、频变线路、行波传播、宽频建模 |
 | [[mmc-modeling\|MMC建模]] | 详细开关模型、平均值模型、戴维南等效、自适应框架 |
 | [[electromechanical-electromagnetic-hybrid\|机电-电磁混合仿真]] | 接口技术、FDNE等值、多速率协同、实时仿真 |
+| [[power-system-network\|电力系统网络]] | 电力系统网络拓扑、潮流计算、EMT集成与网络等值 |
+| [[fault-ride-through\|故障穿越]] | 新能源并网故障穿越要求、LVRT/HVRT控制、并网准则验证 |
 | [[transformer-modeling\|变压器建模]] | 铁芯饱和、磁滞、励磁涌流、宽频建模、内部故障 |
 | [[power-electronic-device-modeling\|电力电子设备建模]] | IGBT、MMC、VSC、开关建模、平均值模型、实时仿真 |
 | [[model-order-reduction\|模型降阶与动态等值]] | MOR、FDNE、戴维南等效、Kron消去、Brune综合 |
@@ -133,6 +135,8 @@ updated: 2026-05-03
 | [[droop-control-model\|下垂控制]] | P-f/Q-V下垂、虚拟同步机、微电网功率均分 |
 | [[gfl-inverter-model\|跟网型变流器]] | GFL、电流控制、PLL、弱电网稳定性、新能源并网 |
 | [[gfm-inverter-model\|构网型变流器]] | GFM、VSM、虚拟惯量、100%新能源、孤岛运行 |
+| [[submodule-model\|子模块模型]] | MMC半桥/全桥子模块、电容均压、开关建模、故障分析 |
+| [[electromechanical-model\|机电暂态模型]] | 摇摆方程、发电机简化模型、机电-电磁接口、混合仿真 |
 | [[energy-storage-converter-model\|储能变流器]] | PCS、双向变换、SOC管理、调频、并离网切换 |
 | [[hybrid-converter-model\|混合AC/DC变流器]] | 多端口、DAB、CHB、能量路由器、PET |
 | [[voltage-current-sensor-model\|电压电流传感器]] | PT/CT、霍尔传感器、罗氏线圈、饱和特性、测量精度 |
