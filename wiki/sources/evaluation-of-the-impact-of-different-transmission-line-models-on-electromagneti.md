@@ -69,7 +69,7 @@ sources: ["EMT_Doc/18/Schroeder 等 - 2018 - Evaluation of the impact of differe
 - [[杆塔接地系统|杆塔接地系统]]
 - [[models/transmission-line-model|输电线路]]
 - [[绝缘子串|绝缘子串]]
-- [[频变土壤模型|频变土壤模型]]
+- [[models/grounding-system-model|频变土壤模型]]
 - [[宽带接地等效电路|宽带接地等效电路]]
 
 ## 相关主题

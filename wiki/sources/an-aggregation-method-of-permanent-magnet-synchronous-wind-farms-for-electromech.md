@@ -66,7 +66,7 @@ sources: ["EMT_Doc/06/Yang 等 - 2011 - An aggregation method of permanent magne
 
 ## 涉及的模型
 
-- [[pmsg|PMSG]]
+- [[models/pmsm-model|PMSG]]
 - [[全功率变流器|全功率变流器]]
 - [[升压变压器|升压变压器]]
 - [[集电线路|集电线路]]

@@ -59,16 +59,16 @@ sources: ["EMT_Doc/40/0142-0615%2883%2990035-2.pdf.pdf"]
 ## 使用的方法
 
 - [[numerical-integration]]
-- [[state-space]]
+- [[methods/state-space-method]]
 
 ## 涉及的模型
 
-- [[transmission-line]]
+- [[models/transmission-line-model]]
 - [[network-equivalent]]
 
 ## 相关主题
 
-- [[frequency-dependent]]
+- [[topics/frequency-dependent-modeling]]
 - [[passivity]]
 
 ## 主要发现

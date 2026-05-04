@@ -72,10 +72,10 @@ sources: ["EMT_Doc/27&28/Multirate Method for Dynamic Phasor Simulation of Large
 ## 相关主题
 
 - [[topics/emt-simulation|电磁暂态仿真]]
-- [[动态相量建模|动态相量建模]]
+- [[topics/dynamic-phasor|动态相量建模]]
 - [[methods/multirate-method|多速率仿真]]
 - [[topics/large-scale-grid-simulation|大规模电网仿真]]
-- [[暂态稳定分析|暂态稳定分析]]
+- [[topics/electromechanical-transient|暂态稳定分析]]
 
 ## 主要发现
 

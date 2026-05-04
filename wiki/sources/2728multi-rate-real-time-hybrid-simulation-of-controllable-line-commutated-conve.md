@@ -70,7 +70,7 @@ sources: ["EMT_Doc/27&28/Multi-rate real time hybrid simulation of controllable 
 - [[lcc-model|LCC]]
 - [[igbt阀组|IGBT阀组]]
 - [[晶闸管阀组|晶闸管阀组]]
-- [[直流输电线路|直流输电线路]]
+- [[models/transmission-line-model|直流输电线路]]
 - [[金属氧化物避雷器|金属氧化物避雷器]]
 
 ## 相关主题

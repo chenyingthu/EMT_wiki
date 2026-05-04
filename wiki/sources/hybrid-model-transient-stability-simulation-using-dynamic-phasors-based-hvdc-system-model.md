@@ -66,16 +66,16 @@ sources: ["EMT_Doc/22/Zhu 等 - 2006 - Hybrid-model transient stability simulati
 ## 涉及的模型
 
 - [[lcc-model|LCC]]
-- [[交流电网|交流电网]]
+- [[topics/large-scale-grid-simulation|交流电网]]
 - [[换流桥|换流桥]]
 - [[多馈入直流系统|多馈入直流系统]]
 
 ## 相关主题
 
-- [[暂态稳定分析|暂态稳定分析]]
+- [[topics/electromechanical-transient|暂态稳定分析]]
 - [[topics/co-simulation|混合仿真]]
 - [[交直流电力系统|交直流电力系统]]
-- [[动态相量建模|动态相量建模]]
+- [[topics/dynamic-phasor|动态相量建模]]
 
 ## 主要发现
 

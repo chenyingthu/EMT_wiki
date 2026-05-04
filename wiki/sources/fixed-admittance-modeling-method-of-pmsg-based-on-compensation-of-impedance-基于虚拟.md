@@ -66,7 +66,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/Shi和Liu - 2024 - Fixed-admittance 
 
 ## 涉及的模型
 
-- [[pmsg|PMSG]]
+- [[models/pmsm-model|PMSG]]
 - [[全功率换流器|全功率换流器]]
 - [[风力机|风力机]]
 - [[pd相域模型|PD相域模型]]

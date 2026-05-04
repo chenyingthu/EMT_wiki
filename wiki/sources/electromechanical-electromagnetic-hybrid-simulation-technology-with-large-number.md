@@ -70,7 +70,7 @@ sources: ["EMT_Doc/17/Chen 等 - 2020 - Electromechanical-electromagnetic Hybrid
 - [[models/transformer-model|换流变压器]]
 - [[交流滤波器|交流滤波器]]
 - [[六脉冲换流器|六脉冲换流器]]
-- [[直流输电线路|直流输电线路]]
+- [[models/transmission-line-model|直流输电线路]]
 - [[频率相关线路模型|频率相关线路模型]]
 - [[简化控制保护模型|简化控制保护模型]]
 

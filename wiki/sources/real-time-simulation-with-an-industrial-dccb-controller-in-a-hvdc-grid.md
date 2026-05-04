@@ -58,22 +58,22 @@ sources: ["EMT_Doc/33/Rault 等 - 2020 - Real-time simulation with an industrial
 
 ## 使用的方法
 
-- [[real-time]]
+- [[topics/real-time-simulation]]
 - [[co-simulation]]
 
 ## 涉及的模型
 
 - [[mmc-model]]
-- [[cable]]
-- [[frequency-dependent]]
+- [[models/cable-model]]
+- [[topics/frequency-dependent-modeling]]
 
 ## 相关主题
 
-- [[hvdc]]
+- [[topics/vsc-hvdc]]
 - [[vsc-hvdc]]
-- [[real-time]]
+- [[topics/real-time-simulation]]
 - [[co-simulation]]
-- [[mmc]]
+- [[models/mmc-model]]
 
 ## 主要发现
 

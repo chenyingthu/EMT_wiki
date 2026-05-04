@@ -61,7 +61,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/j.epsr.2014.07.023.pdf.pdf"]
 - [[methods/vector-fitting|矢量拟合]]
 - [[transmission-line-model|Bergeron线路模型]]
 - [[时域节点分析|时域节点分析]]
-- [[数值拉普拉斯变换|数值拉普拉斯变换]]
+- [[methods/numerical-integration|数值拉普拉斯变换]]
 
 ## 涉及的模型
 

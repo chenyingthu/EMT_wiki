@@ -78,7 +78,7 @@ sources: ["EMT_Doc/07&08/Na et al. - 2023 - An improved high-accuracy interpolat
 
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[开关不连续性处理|开关不连续性处理]]
-- [[数值振荡抑制|数值振荡抑制]]
+- [[methods/numerical-integration|数值振荡抑制]]
 - [[固定步长仿真|固定步长仿真]]
 - [[电力电子开关建模|电力电子开关建模]]
 

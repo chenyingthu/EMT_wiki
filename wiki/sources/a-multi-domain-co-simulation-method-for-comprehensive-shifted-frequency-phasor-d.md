@@ -66,8 +66,8 @@ sources: ["EMT_Doc/02/Shu 等 - 2019 - A Multi-Domain Co-Simulation Method for C
 - [[sfp模型|SFP模型]]
 - [[emt模型|EMT模型]]
 - [[mmc-model|MMC]]
-- [[多端直流电网|多端直流电网]]
-- [[交流电网|交流电网]]
+- [[topics/hybrid-acdc-network|多端直流电网]]
+- [[topics/large-scale-grid-simulation|交流电网]]
 - [[cigre交直流测试系统|CIGRE交直流测试系统]]
 
 ## 相关主题

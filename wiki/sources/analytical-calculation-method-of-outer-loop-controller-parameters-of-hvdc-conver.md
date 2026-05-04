@@ -78,7 +78,7 @@ sources: ["EMT_Doc/09/Li 等 - 2023 - Analytical Calculation Method of Outer Loo
 ## 相关主题
 
 - [[弱交流电网|弱交流电网]]
-- [[柔性直流输电|柔性直流输电]]
+- [[topics/vsc-hvdc|柔性直流输电]]
 - [[控制器参数整定|控制器参数整定]]
 - [[小干扰稳定性分析|小干扰稳定性分析]]
 - [[methods/impedance-modeling|阻抗建模]]

@@ -59,7 +59,7 @@ sources: ["EMT_Doc/33/TPWRD.2019.2900070.pdf.pdf"]
 ## 使用的方法
 
 - [[dynamic-phasor]]
-- [[state-space]]
+- [[methods/state-space-method]]
 
 ## 涉及的模型
 
@@ -68,7 +68,7 @@ sources: ["EMT_Doc/33/TPWRD.2019.2900070.pdf.pdf"]
 
 ## 相关主题
 
-- [[mmc]]
+- [[models/mmc-model]]
 - [[vsc-hvdc]]
 - [[dynamic-phasor]]
 

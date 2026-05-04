@@ -58,7 +58,7 @@ sources: ["EMT_Doc/30/j.epsr.2021.107317.pdf.pdf"]
 
 ## 使用的方法
 
-- [[数值拉普拉斯变换|数值拉普拉斯变换]]
+- [[methods/numerical-integration|数值拉普拉斯变换]]
 - [[kron网络降阶|Kron网络降阶]]
 - [[长卷积计算|长卷积计算]]
 - [[多相qmf滤波器组|多相QMF滤波器组]]

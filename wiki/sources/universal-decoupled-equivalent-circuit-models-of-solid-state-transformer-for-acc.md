@@ -64,12 +64,12 @@ sources: ["EMT_Doc/39/Li 等 - 2025 - Universal Decoupled Equivalent Circuit Mod
 
 ## 涉及的模型
 
-- [[transformer]]
+- [[models/transformer-model]]
 - [[vsc-model]]
 
 ## 相关主题
 
-- [[real-time]]
+- [[topics/real-time-simulation]]
 - [[numerical-integration]]
 - [[nodal-analysis]]
 

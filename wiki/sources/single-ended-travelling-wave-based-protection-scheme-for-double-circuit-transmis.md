@@ -59,15 +59,15 @@ Single-ended travelling wave-based protection scheme for double-circuit Guangbin
 ## 使用的方法
 
 - [[dynamic-phasor]]
-- [[parallel]]
+- [[topics/parallel-computing]]
 
 ## 涉及的模型
 
-- [[transmission-line]]
+- [[models/transmission-line-model]]
 
 ## 相关主题
 
-- [[transmission-line]]
+- [[models/transmission-line-model]]
 - [[dynamic-phasor]]
 
 ## 主要发现

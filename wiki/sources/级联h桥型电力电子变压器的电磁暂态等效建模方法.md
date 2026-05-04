@@ -63,12 +63,12 @@ sources: ["EMT_Doc/16/丁江萍 等 - 2020 - 级联H桥型电力电子变压器�
 
 ## 涉及的模型
 
-- [[transformer]]
+- [[models/transformer-model]]
 
 ## 相关主题
 
 - [[network-equivalent]]
-- [[transformer]]
+- [[models/transformer-model]]
 
 ## 主要发现
 

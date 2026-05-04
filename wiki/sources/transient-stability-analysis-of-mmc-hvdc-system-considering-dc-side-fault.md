@@ -58,21 +58,21 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/tpwrd.2015.2492983.pdf.pdf"]
 
 ## 使用的方法
 
-- [[parallel]]
+- [[topics/parallel-computing]]
 - [[nodal-analysis]]
 - [[numerical-integration]]
 
 ## 涉及的模型
 
-- [[transmission-line]]
-- [[synchronous-machine]]
+- [[models/transmission-line-model]]
+- [[models/synchronous-machine-model]]
 - [[mmc-model]]
 
 ## 相关主题
 
-- [[real-time]]
-- [[hvdc]]
-- [[mmc]]
+- [[topics/real-time-simulation]]
+- [[topics/vsc-hvdc]]
+- [[models/mmc-model]]
 
 ## 主要发现
 

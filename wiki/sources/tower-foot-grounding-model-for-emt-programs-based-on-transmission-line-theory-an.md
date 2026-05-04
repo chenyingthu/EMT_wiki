@@ -58,18 +58,18 @@ sources: ["EMT_Doc/38/Alipio 等 - 2023 - Tower-foot grounding model for EMT pro
 
 ## 使用的方法
 
-- [[transmission-line]]
-- [[frequency-dependent]]
+- [[models/transmission-line-model]]
+- [[topics/frequency-dependent-modeling]]
 - [[numerical-integration]]
 
 ## 涉及的模型
 
-- [[transmission-line]]
+- [[models/transmission-line-model]]
 
 ## 相关主题
 
-- [[transmission-line]]
-- [[frequency-dependent]]
+- [[models/transmission-line-model]]
+- [[topics/frequency-dependent-modeling]]
 
 ## 主要发现
 

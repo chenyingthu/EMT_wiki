@@ -58,7 +58,7 @@ sources: ["EMT_Doc/30/Ouafi 等 - 2023 - Parallelization of EMT simulations for 
 
 ## 使用的方法
 
-- [[协同仿真|协同仿真]]
+- [[topics/co-simulation|协同仿真]]
 - [[topics/parallel-computing|并行计算]]
 - [[methods/multirate-method|多速率仿真]]
 - [[传输线延迟解耦|传输线延迟解耦]]
@@ -80,7 +80,7 @@ sources: ["EMT_Doc/30/Ouafi 等 - 2023 - Parallelization of EMT simulations for 
 ## 相关主题
 
 - [[topics/parallel-computing|并行计算]]
-- [[协同仿真|协同仿真]]
+- [[topics/co-simulation|协同仿真]]
 - [[topics/renewable-energy-integration|新能源并网]]
 - [[topics/large-scale-grid-simulation|大规模电网仿真]]
 - [[topics/parallel-computing|仿真加速]]

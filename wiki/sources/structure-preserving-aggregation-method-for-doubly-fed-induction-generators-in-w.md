@@ -58,7 +58,7 @@ sources: ["EMT_Doc/36/Li 等 - 2022 - Structure Preserving Aggregation Method fo
 
 ## 使用的方法
 
-- [[state-space]]
+- [[methods/state-space-method]]
 - [[network-equivalent]]
 
 ## 涉及的模型
@@ -67,8 +67,8 @@ sources: ["EMT_Doc/36/Li 等 - 2022 - Structure Preserving Aggregation Method fo
 
 ## 相关主题
 
-- [[wind-farm]]
-- [[dfig]]
+- [[topics/wind-farm-modeling]]
+- [[models/dfig-model]]
 
 ## 主要发现
 

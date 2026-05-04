@@ -72,9 +72,9 @@ sources: ["EMT_Doc/40/叶华 等 - 2017 - 含VSC-HVDC交直流系统多尺度暂
 
 - [[多尺度暂态建模|多尺度暂态建模]]
 - [[topics/emt-simulation|电磁暂态]]
-- [[机电暂态|机电暂态]]
+- [[topics/electromechanical-transient|机电暂态]]
 - [[topics/co-simulation|混合仿真]]
-- [[柔性直流输电|柔性直流输电]]
+- [[topics/vsc-hvdc|柔性直流输电]]
 
 ## 主要发现
 

@@ -62,7 +62,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/j.ijepes.2016.01.051.pdf.pdf"]
 - [[methods/vector-fitting|矢量拟合]]
 - [[级联电路建模|级联电路建模]]
 - [[状态矩阵法|状态矩阵法]]
-- [[数值拉普拉斯变换|数值拉普拉斯变换]]
+- [[methods/numerical-integration|数值拉普拉斯变换]]
 
 ## 涉及的模型
 

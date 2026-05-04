@@ -75,7 +75,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/tpwrd.2014.2351397.pdf.pdf"]
 ## 相关主题
 
 - [[topics/emt-simulation|电磁暂态仿真]]
-- [[高压直流输电|高压直流输电]]
+- [[topics/vsc-hvdc|高压直流输电]]
 - [[电压均衡控制|电压均衡控制]]
 - [[快速仿真|快速仿真]]
 - [[pscad建模|PSCAD建模]]

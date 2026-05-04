@@ -71,12 +71,12 @@ sources: ["EMT_Doc/10/Bruned 等 - 2026 - Co-simulation and compensation method 
 - [[逆变器接口资源-ibr|逆变器接口资源(IBR)]]
 - [[输电线路模型|输电线路模型]]
 - [[非线性设备模型|非线性设备模型]]
-- [[戴维南等效电路|戴维南等效电路]]
+- [[methods/nodal-analysis|戴维南等效电路]]
 
 ## 相关主题
 
 - [[topics/emt-simulation|电磁暂态仿真]]
-- [[协同仿真|协同仿真]]
+- [[topics/co-simulation|协同仿真]]
 - [[topics/parallel-computing|并行计算]]
 - [[无延迟网络解耦|无延迟网络解耦]]
 - [[逆变器并网系统|逆变器并网系统]]

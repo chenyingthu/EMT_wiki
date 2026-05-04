@@ -79,7 +79,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/j.epsr.2021.107399.pdf.pdf"]
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[频率相关土壤建模|频率相关土壤建模]]
 - [[topics/network-equivalent|网络等值]]
-- [[防雷保护|防雷保护]]
+- [[topics/grounding-lightning-overvoltage|防雷保护]]
 - [[暂态过电压分析|暂态过电压分析]]
 
 ## 主要发现

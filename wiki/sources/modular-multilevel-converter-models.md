@@ -78,7 +78,7 @@ sources: ["EMT_Doc/27&28/Modular Multilevel Converter Models for Electromagnetic
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[mmc-model|MMC]]
 - [[模型简化与等效|模型简化与等效]]
-- [[数值振荡抑制|数值振荡抑制]]
+- [[methods/numerical-integration|数值振荡抑制]]
 - [[暂态事件分析|暂态事件分析]]
 
 ## 主要发现

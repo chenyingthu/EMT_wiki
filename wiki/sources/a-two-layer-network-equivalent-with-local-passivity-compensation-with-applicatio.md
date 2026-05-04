@@ -67,7 +67,7 @@ sources: ["EMT_Doc/04/TPWRS.2019.2918229.pdf.pdf"]
 ## 涉及的模型
 
 - [[mmc-model|MMC]]
-- [[交流电网|交流电网]]
+- [[topics/large-scale-grid-simulation|交流电网]]
 - [[fdne-model|FDNE]]
 
 ## 相关主题

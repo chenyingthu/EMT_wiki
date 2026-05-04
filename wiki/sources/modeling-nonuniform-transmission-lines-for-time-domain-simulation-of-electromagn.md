@@ -59,7 +59,7 @@ sources: ["EMT_Doc/26/Ramirez 等 - 2003 - Modeling nonuniform transmission line
 ## 使用的方法
 
 - [[行波法|行波法]]
-- [[数值拉普拉斯变换|数值拉普拉斯变换]]
+- [[methods/numerical-integration|数值拉普拉斯变换]]
 - [[特征线法|特征线法]]
 - [[methods/rational-function-approximation|有理函数逼近]]
 - [[状态空间实现|状态空间实现]]

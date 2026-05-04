@@ -77,7 +77,7 @@ sources: ["EMT_Doc/17/Ahmadi 等 - 2026 - Enhancements to Terminal Duality-based
 - [[变压器零序阻抗建模|变压器零序阻抗建模]]
 - [[不对称运行分析|不对称运行分析]]
 - [[实时仿真-rtds|实时仿真(RTDS)]]
-- [[数值振荡抑制|数值振荡抑制]]
+- [[methods/numerical-integration|数值振荡抑制]]
 
 ## 主要发现
 

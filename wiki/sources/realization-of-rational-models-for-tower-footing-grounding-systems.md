@@ -63,14 +63,14 @@ sources: ["EMT_Doc/33/Lima 等 - 2026 - Realization of rational models for tower
 
 ## 涉及的模型
 
-- [[fdne]]
+- [[models/fdne-model]]
 - [[network-equivalent]]
-- [[transmission-line]]
+- [[models/transmission-line-model]]
 
 ## 相关主题
 
-- [[harmonic]]
-- [[frequency-dependent]]
+- [[methods/harmonic-analysis-methods]]
+- [[topics/frequency-dependent-modeling]]
 
 ## 主要发现
 

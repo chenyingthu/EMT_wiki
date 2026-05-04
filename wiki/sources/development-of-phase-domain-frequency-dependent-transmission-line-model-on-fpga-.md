@@ -68,7 +68,7 @@ sources: ["EMT_Doc/13&14/files/J.EPSR.2021.107305.pdf-1.pdf"]
 
 - [[models/transmission-line-model|输电线路]]
 - [[频变相域模型|频变相域模型]]
-- [[通用线路模型|通用线路模型]]
+- [[models/transmission-line-model|通用线路模型]]
 
 ## 相关主题
 

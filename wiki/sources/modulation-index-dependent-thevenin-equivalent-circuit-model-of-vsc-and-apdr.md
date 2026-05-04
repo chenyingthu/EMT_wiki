@@ -72,7 +72,7 @@ sources: ["EMT_Doc/37/TPWRD.2015.2465812.pdf.pdf"]
 - [[反并联二极管整流器-apdr|反并联二极管整流器(APDR)]]
 - [[models/vsc-model|两电平换流器]]
 - [[多端直流系统-mtdc|多端直流系统(MTDC)]]
-- [[直流输电线路|直流输电线路]]
+- [[models/transmission-line-model|直流输电线路]]
 
 ## 相关主题
 

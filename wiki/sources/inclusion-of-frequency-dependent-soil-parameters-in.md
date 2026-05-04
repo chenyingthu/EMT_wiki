@@ -59,7 +59,7 @@ sources: ["EMT_Doc/23/de Lima和Portela - 2007 - Inclusion of Frequency-Dependen
 ## 使用的方法
 
 - [[高斯-克朗罗德数值积分|高斯-克朗罗德数值积分]]
-- [[数值拉普拉斯变换|数值拉普拉斯变换]]
+- [[methods/numerical-integration|数值拉普拉斯变换]]
 - [[methods/nodal-analysis|相域建模]]
 - [[methods/modal-analysis|模态分析]]
 - [[双空间傅里叶积分变换|双空间傅里叶积分变换]]
@@ -69,7 +69,7 @@ sources: ["EMT_Doc/23/de Lima和Portela - 2007 - Inclusion of Frequency-Dependen
 - [[models/transmission-line-model|架空输电线路]]
 - [[models/cable-model|地下电缆]]
 - [[大地返回阻抗模型|大地返回阻抗模型]]
-- [[频变土壤模型|频变土壤模型]]
+- [[models/grounding-system-model|频变土壤模型]]
 
 ## 相关主题
 

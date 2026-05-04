@@ -64,9 +64,9 @@ sources: ["EMT_Doc/32/吴盼 等 - 2020 - 基于CPU-FPGA异构平台的虚拟同
 
 
 - [[fixed-admittance]]
-- [[parallel]]
+- [[topics/parallel-computing]]
 - [[nodal-analysis]]
-- [[real-time]]
+- [[topics/real-time-simulation]]
 
 ## 涉及的模型
 
@@ -76,7 +76,7 @@ sources: ["EMT_Doc/32/吴盼 等 - 2020 - 基于CPU-FPGA异构平台的虚拟同
 ## 相关主题
 
 
-- [[real-time]]
+- [[topics/real-time-simulation]]
 - [[co-simulation]]
 
 ## 主要发现

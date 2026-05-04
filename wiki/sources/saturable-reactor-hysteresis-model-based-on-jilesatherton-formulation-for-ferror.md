@@ -63,12 +63,12 @@ Saturable reactor hysteresis model based on Jiles–Atherton formulation for Wen
 
 ## 涉及的模型
 
-- [[transformer]]
+- [[models/transformer-model]]
 
 ## 相关主题
 
 - [[ferroresonance]]
-- [[harmonic]]
+- [[methods/harmonic-analysis-methods]]
 
 ## 主要发现
 

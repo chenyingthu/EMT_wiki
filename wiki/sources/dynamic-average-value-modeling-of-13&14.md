@@ -69,7 +69,7 @@ sources: ["EMT_Doc/13&14/files/TPWRD.2014.2340870.pdf.pdf"]
 - [[十二脉冲换流器|十二脉冲换流器]]
 - [[models/transformer-model|换流变压器]]
 - [[交流滤波器|交流滤波器]]
-- [[直流输电线路|直流输电线路]]
+- [[models/transmission-line-model|直流输电线路]]
 - [[平波电抗器|平波电抗器]]
 - [[弱交流电网|弱交流电网]]
 

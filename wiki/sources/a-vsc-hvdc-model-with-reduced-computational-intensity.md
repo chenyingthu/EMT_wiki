@@ -75,7 +75,7 @@ sources: ["EMT_Doc/04/pesgm.2012.6345135.pdf.pdf"]
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[系统级建模|系统级建模]]
 - [[暂态特性分析|暂态特性分析]]
-- [[柔性直流输电|柔性直流输电]]
+- [[topics/vsc-hvdc|柔性直流输电]]
 
 ## 主要发现
 

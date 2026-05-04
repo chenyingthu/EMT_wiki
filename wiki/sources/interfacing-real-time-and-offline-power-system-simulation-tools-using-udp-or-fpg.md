@@ -80,7 +80,7 @@ sources: ["EMT_Doc/24/Scheibe 等 - 2022 - Interfacing real-time and offline pow
 - [[离线仿真|离线仿真]]
 - [[topics/co-simulation|混合仿真]]
 - [[电磁暂态与机电暂态接口|电磁暂态与机电暂态接口]]
-- [[暂态稳定分析|暂态稳定分析]]
+- [[topics/electromechanical-transient|暂态稳定分析]]
 - [[数据通信协议|数据通信协议]]
 
 ## 主要发现

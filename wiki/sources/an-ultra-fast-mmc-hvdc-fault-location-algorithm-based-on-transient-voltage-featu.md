@@ -67,7 +67,7 @@ sources: ["EMT_Doc/07&08/Zhang et al. - 2024 - An ultra-fast MMC-HVDC fault loca
 
 - [[mmc-model|MMC]]
 - [[mmc-model|MMC]]
-- [[直流输电线路|直流输电线路]]
+- [[models/transmission-line-model|直流输电线路]]
 - [[混合直流断路器-hdccb|混合直流断路器(HDCCB)]]
 
 ## 相关主题

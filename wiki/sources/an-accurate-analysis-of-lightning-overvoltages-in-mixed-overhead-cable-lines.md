@@ -60,9 +60,9 @@ sources: ["EMT_Doc/06/j.epsr.2021.107052.pdf.pdf"]
 
 - [[扩展传输线方法|扩展传输线方法]]
 - [[经典传输线方法|经典传输线方法]]
-- [[频变土壤模型|频变土壤模型]]
+- [[models/grounding-system-model|频变土壤模型]]
 - [[混合电磁模型|混合电磁模型]]
-- [[数值拉普拉斯变换|数值拉普拉斯变换]]
+- [[methods/numerical-integration|数值拉普拉斯变换]]
 - [[methods/modal-analysis|模态分析]]
 
 ## 涉及的模型

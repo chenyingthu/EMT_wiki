@@ -75,7 +75,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/TPWRS.2009.2016587.pdf.pdf"]
 
 - [[多尺度仿真|多尺度仿真]]
 - [[topics/emt-simulation|电磁暂态]]
-- [[机电暂态|机电暂态]]
+- [[topics/electromechanical-transient|机电暂态]]
 - [[动态相量|动态相量]]
 - [[频率自适应建模|频率自适应建模]]
 

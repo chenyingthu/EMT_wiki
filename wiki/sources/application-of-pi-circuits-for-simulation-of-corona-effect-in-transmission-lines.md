@@ -76,7 +76,7 @@ sources: ["EMT_Doc/09/Lessa 等 - 2012 - Application of π circuits for simulati
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[行波分析|行波分析]]
 - [[topics/frequency-dependent-modeling|频率相关建模]]
-- [[数值振荡抑制|数值振荡抑制]]
+- [[methods/numerical-integration|数值振荡抑制]]
 - [[models/transmission-line-model|输电线路建模]]
 
 ## 主要发现

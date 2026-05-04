@@ -76,7 +76,7 @@ sources: ["EMT_Doc/26/Mao 等 - 2025 - Modeling and application of DQ-sequence d
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[状态空间模型|状态空间模型]]
 - [[小信号稳定性分析|小信号稳定性分析]]
-- [[动态相量建模|动态相量建模]]
+- [[topics/dynamic-phasor|动态相量建模]]
 
 ## 主要发现
 

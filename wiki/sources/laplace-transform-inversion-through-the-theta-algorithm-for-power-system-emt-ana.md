@@ -58,7 +58,7 @@ sources: ["EMT_Doc/25/Castañón 等 - 2021 - Laplace transform inversion throug
 
 ## 使用的方法
 
-- [[数值拉普拉斯变换|数值拉普拉斯变换]]
+- [[methods/numerical-integration|数值拉普拉斯变换]]
 - [[theta算法|Theta算法]]
 - [[无穷级数加速法|无穷级数加速法]]
 - [[padé逼近|Padé逼近]]

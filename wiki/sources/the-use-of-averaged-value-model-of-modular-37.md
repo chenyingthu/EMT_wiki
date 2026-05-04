@@ -59,7 +59,7 @@ sources: ["EMT_Doc/37/TPWRD.2014.2332557.pdf.pdf"]
 ## 使用的方法
 
 - [[average-value-model]]
-- [[state-space]]
+- [[methods/state-space-method]]
 
 ## 涉及的模型
 
@@ -70,8 +70,8 @@ sources: ["EMT_Doc/37/TPWRD.2014.2332557.pdf.pdf"]
 ## 相关主题
 
 - [[vsc-hvdc]]
-- [[hvdc]]
-- [[mmc]]
+- [[topics/vsc-hvdc]]
+- [[models/mmc-model]]
 
 ## 主要发现
 

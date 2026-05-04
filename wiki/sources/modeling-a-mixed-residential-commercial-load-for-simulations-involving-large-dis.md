@@ -78,7 +78,7 @@ sources: ["EMT_Doc/26/Khodabakhchian - 1997 - Modeling a mixed residential-comme
 
 - [[topics/load-modeling|负荷建模]]
 - [[大扰动仿真|大扰动仿真]]
-- [[暂态稳定分析|暂态稳定分析]]
+- [[topics/electromechanical-transient|暂态稳定分析]]
 - [[电压稳定分析|电压稳定分析]]
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[现场数据验证|现场数据验证]]

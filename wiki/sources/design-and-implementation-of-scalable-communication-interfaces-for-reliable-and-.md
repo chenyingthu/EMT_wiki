@@ -58,7 +58,7 @@ sources: ["EMT_Doc/12/Design_and_Implementation_of_Scalable_Communication_Interf
 
 ## 使用的方法
 
-- [[协同仿真|协同仿真]]
+- [[topics/co-simulation|协同仿真]]
 - [[实时数据外推|实时数据外推]]
 - [[一阶低通滤波|一阶低通滤波]]
 - [[延迟补偿|延迟补偿]]
@@ -78,7 +78,7 @@ sources: ["EMT_Doc/12/Design_and_Implementation_of_Scalable_Communication_Interf
 ## 相关主题
 
 - [[topics/real-time-simulation|实时仿真]]
-- [[协同仿真|协同仿真]]
+- [[topics/co-simulation|协同仿真]]
 - [[topics/co-simulation|混合仿真]]
 - [[通信接口设计|通信接口设计]]
 - [[逆变器资源接入|逆变器资源接入]]

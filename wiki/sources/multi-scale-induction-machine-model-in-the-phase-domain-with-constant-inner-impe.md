@@ -74,9 +74,9 @@ sources: ["EMT_Doc/27&28/Multi-Scale Induction Machine Model in the Phase Domain
 ## 相关主题
 
 - [[topics/emt-simulation|电磁暂态]]
-- [[机电暂态|机电暂态]]
+- [[topics/electromechanical-transient|机电暂态]]
 - [[多尺度仿真|多尺度仿真]]
-- [[动态相量建模|动态相量建模]]
+- [[topics/dynamic-phasor|动态相量建模]]
 - [[频率自适应仿真|频率自适应仿真]]
 
 ## 主要发现

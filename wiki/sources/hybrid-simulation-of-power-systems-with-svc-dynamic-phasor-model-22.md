@@ -76,8 +76,8 @@ sources: ["EMT_Doc/22/j.ijepes.2009.01.002.pdf.pdf"]
 ## 相关主题
 
 - [[topics/co-simulation|混合仿真]]
-- [[动态相量建模|动态相量建模]]
-- [[暂态稳定分析|暂态稳定分析]]
+- [[topics/dynamic-phasor|动态相量建模]]
+- [[topics/electromechanical-transient|暂态稳定分析]]
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[facts设备建模|FACTS设备建模]]
 - [[methods/harmonic-analysis-methods|谐波分析]]

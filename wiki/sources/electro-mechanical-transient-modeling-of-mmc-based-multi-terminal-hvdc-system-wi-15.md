@@ -69,16 +69,16 @@ sources: ["EMT_Doc/15/Electro-mechanical transient modeling of MMC based multi-t
 - [[mmc-model|MMC]]
 - [[多端直流系统|多端直流系统]]
 - [[二阶直流侧等效电路|二阶直流侧等效电路]]
-- [[交流电网|交流电网]]
+- [[topics/large-scale-grid-simulation|交流电网]]
 - [[级联控制模型|级联控制模型]]
 
 ## 相关主题
 
 - [[直流故障仿真|直流故障仿真]]
-- [[暂态稳定分析|暂态稳定分析]]
+- [[topics/electromechanical-transient|暂态稳定分析]]
 - [[机电暂态建模|机电暂态建模]]
 - [[交直流混合系统|交直流混合系统]]
-- [[多端直流电网|多端直流电网]]
+- [[topics/hybrid-acdc-network|多端直流电网]]
 
 ## 主要发现
 

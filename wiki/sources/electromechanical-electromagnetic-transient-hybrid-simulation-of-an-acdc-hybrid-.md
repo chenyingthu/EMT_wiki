@@ -76,7 +76,7 @@ sources: ["EMT_Doc/17/Xiong 等 - 2020 - Electromechanical-electromagnetic trans
 - [[models/transformer-model|换流变压器]]
 - [[交直流滤波器|交直流滤波器]]
 - [[平波电抗器|平波电抗器]]
-- [[直流输电线路|直流输电线路]]
+- [[models/transmission-line-model|直流输电线路]]
 - [[500kv-1000kv交流电网|500kV/1000kV交流电网]]
 
 

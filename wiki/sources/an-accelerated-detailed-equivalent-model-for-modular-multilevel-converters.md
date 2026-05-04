@@ -58,7 +58,7 @@ sources: ["EMT_Doc/06/Parvari 等 - 2023 - An accelerated detailed equivalent mo
 
 ## 使用的方法
 
-- [[戴维南等效电路|戴维南等效电路]]
+- [[methods/nodal-analysis|戴维南等效电路]]
 - [[methods/numerical-integration|梯形积分法]]
 - [[节点导纳矩阵优化|节点导纳矩阵优化]]
 - [[电磁暂态离散化|电磁暂态离散化]]

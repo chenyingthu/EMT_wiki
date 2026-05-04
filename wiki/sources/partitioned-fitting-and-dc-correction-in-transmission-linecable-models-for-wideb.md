@@ -69,7 +69,7 @@ HVDC线路/电缆的EMT仿真需要同一个线路模型同时覆盖接近直流
 
 - [[models/transmission-line-model|输电线路]]
 - [[电缆|电缆]]
-- [[通用线路模型|通用线路模型]]
+- [[models/transmission-line-model|通用线路模型]]
 - [[频率相关电缆模型|频率相关电缆模型]]
 - [[高压直流输电线路|高压直流输电线路]]
 
@@ -78,7 +78,7 @@ HVDC线路/电缆的EMT仿真需要同一个线路模型同时覆盖接近直流
 - [[宽频电磁暂态仿真|宽频电磁暂态仿真]]
 - [[topics/frequency-dependent-modeling|频率相关建模]]
 - [[methods/numerical-integration|数值稳定性]]
-- [[高压直流输电|高压直流输电]]
+- [[topics/vsc-hvdc|高压直流输电]]
 - [[时域实现|时域实现]]
 
 ## 主要发现

@@ -66,7 +66,7 @@ sources: ["EMT_Doc/09/Ebrahimi 等 - 2021 - Average-Value Modeling of Line-Commu
 ## 涉及的模型
 
 - [[lcc-model|LCC]]
-- [[交流电网|交流电网]]
+- [[topics/large-scale-grid-simulation|交流电网]]
 - [[直流侧rlc滤波器|直流侧RLC滤波器]]
 - [[戴维南等效电源|戴维南等效电源]]
 

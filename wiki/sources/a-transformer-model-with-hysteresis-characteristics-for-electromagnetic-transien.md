@@ -74,7 +74,7 @@ sources: ["EMT_Doc/04/Wu 等 - 2017 - A Transformer Model With Hysteresis Charac
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[励磁涌流|励磁涌流]]
 - [[磁滞特性建模|磁滞特性建模]]
-- [[高压直流输电|高压直流输电]]
+- [[topics/vsc-hvdc|高压直流输电]]
 - [[methods/harmonic-analysis-methods|谐波分析]]
 
 ## 主要发现

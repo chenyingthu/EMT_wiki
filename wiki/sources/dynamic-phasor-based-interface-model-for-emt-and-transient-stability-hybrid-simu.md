@@ -60,14 +60,14 @@ sources: ["EMT_Doc/13&14/files/TPWRS.2017.2766269.pdf.pdf"]
 
 - [[topics/dynamic-phasor|动态相量法]]
 - [[methods/norton-equivalent|诺顿等效]]
-- [[戴维南等效|戴维南等效]]
+- [[methods/nodal-analysis|戴维南等效]]
 - [[系统分区法|系统分区法]]
 - [[时变傅里叶级数|时变傅里叶级数]]
 
 ## 涉及的模型
 
 - [[lcc-model|LCC]]
-- [[交流电网|交流电网]]
+- [[topics/large-scale-grid-simulation|交流电网]]
 - [[models/transmission-line-model|输电线路]]
 - [[换流器|换流器]]
 

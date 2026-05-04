@@ -68,7 +68,7 @@ sources: ["EMT_Doc/13&14/files/j.ijepes.2020.106163.pdf.pdf"]
 
 - [[models/cable-model|地下电缆]]
 - [[交叉互联电缆|交叉互联电缆]]
-- [[频变土壤模型|频变土壤模型]]
+- [[models/grounding-system-model|频变土壤模型]]
 - [[恒定土壤模型|恒定土壤模型]]
 - [[大地返回阻抗模型|大地返回阻抗模型]]
 

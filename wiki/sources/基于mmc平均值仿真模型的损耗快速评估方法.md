@@ -67,8 +67,8 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/Sun和Hao - 2024 - Fast Loss Evaluat
 
 ## 相关主题
 
-- [[mmc]]
-- [[hvdc]]
+- [[models/mmc-model]]
+- [[topics/vsc-hvdc]]
 
 ## 主要发现
 

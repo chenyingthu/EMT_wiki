@@ -60,7 +60,7 @@ sources: ["EMT_Doc/01/Shu 等 - 2021 - A Harmonic Phasor Domain Cosimulation Met
 
 - [[谐波相量法|谐波相量法]]
 - [[topics/emt-simulation|电磁暂态仿真]]
-- [[协同仿真|协同仿真]]
+- [[topics/co-simulation|协同仿真]]
 - [[methods/nodal-analysis|节点分析法]]
 - [[解耦时序协调|解耦时序协调]]
 
@@ -68,7 +68,7 @@ sources: ["EMT_Doc/01/Shu 等 - 2021 - A Harmonic Phasor Domain Cosimulation Met
 
 - [[vsc-model|VSC]]
 - [[mmc-model|MMC]]
-- [[交流电网|交流电网]]
+- [[topics/large-scale-grid-simulation|交流电网]]
 - [[topics/hybrid-acdc-network|直流电网]]
 - [[models/transmission-line-model|输电线路]]
 

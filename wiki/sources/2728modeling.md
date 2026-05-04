@@ -70,7 +70,7 @@ sources: ["EMT_Doc/27&28/Modeling_of_LCC_HVDC_Systems_Using_Dynam.pdf"]
 
 ## 相关主题
 
-- [[高压直流输电|高压直流输电]]
+- [[topics/vsc-hvdc|高压直流输电]]
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[大扰动暂态分析|大扰动暂态分析]]
 - [[topics/real-time-simulation|实时仿真]]

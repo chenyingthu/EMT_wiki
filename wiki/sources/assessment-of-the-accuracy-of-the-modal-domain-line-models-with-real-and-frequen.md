@@ -60,7 +60,7 @@ sources: ["EMT_Doc/09/Rezende 等 - 2024 - Assessment of the accuracy of the mod
 
 - [[模域模型|模域模型]]
 - [[相域模型|相域模型]]
-- [[通用线路模型|通用线路模型]]
+- [[models/transmission-line-model|通用线路模型]]
 - [[topics/frequency-domain-analysis|频域分析]]
 - [[topics/emt-simulation|时域仿真]]
 - [[频率相关土壤参数建模|频率相关土壤参数建模]]
@@ -72,7 +72,7 @@ sources: ["EMT_Doc/09/Rezende 等 - 2024 - Assessment of the accuracy of the mod
 - [[避雷线|避雷线]]
 - [[多导体传输线|多导体传输线]]
 - [[fdline模型|fdLine模型]]
-- [[通用线路模型|通用线路模型]]
+- [[models/transmission-line-model|通用线路模型]]
 
 ## 相关主题
 

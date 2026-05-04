@@ -68,7 +68,7 @@ sources: ["EMT_Doc/23/De Silva和Zhang - 2026 - Improving numerical efficiency o
 ## 涉及的模型
 
 - [[频变输电线路模型|频变输电线路模型]]
-- [[通用线路模型|通用线路模型]]
+- [[models/transmission-line-model|通用线路模型]]
 - [[models/cable-model|地下电缆]]
 - [[多回电缆系统|多回电缆系统]]
 

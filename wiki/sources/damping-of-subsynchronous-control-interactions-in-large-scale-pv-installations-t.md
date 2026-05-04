@@ -70,7 +70,7 @@ sources: ["EMT_Doc/12/Damping_of_Subsynchronous_Control_Interactions_in_Large-Sc
 
 - [[topics/pv-power-plant|光伏电站]]
 - [[models/vsc-model|电压源换流器]]
-- [[交流电网|交流电网]]
+- [[topics/large-scale-grid-simulation|交流电网]]
 - [[串联补偿输电线路|串联补偿输电线路]]
 - [[pv-statcom|PV-STATCOM]]
 
@@ -81,7 +81,7 @@ sources: ["EMT_Doc/12/Damping_of_Subsynchronous_Control_Interactions_in_Large-Sc
 - [[硬件仿真|硬件仿真]]
 - [[topics/co-simulation|混合仿真]]
 - [[弱电网稳定性|弱电网稳定性]]
-- [[光伏并网|光伏并网]]
+- [[topics/pv-power-plant|光伏并网]]
 - [[topics/parallel-computing|并行计算]]
 
 ## 主要发现

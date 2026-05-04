@@ -74,7 +74,7 @@ sources: ["EMT_Doc/07&08/An Equivalent Dynamic Phasor Model for a Single-Phase B
 
 ## 相关主题
 
-- [[动态相量建模|动态相量建模]]
+- [[topics/dynamic-phasor|动态相量建模]]
 - [[功率因数校正|功率因数校正]]
 - [[控制器参数整定|控制器参数整定]]
 - [[methods/harmonic-analysis-methods|谐波分析]]

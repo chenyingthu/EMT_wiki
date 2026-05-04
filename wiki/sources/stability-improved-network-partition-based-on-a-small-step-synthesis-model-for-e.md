@@ -64,13 +64,13 @@ International Journal of Electrical Power and Energy Systems Stability-improved 
 
 ## 涉及的模型
 
-- [[wind-farm]]
+- [[topics/wind-farm-modeling]]
 
 ## 相关主题
 
-- [[parallel]]
+- [[topics/parallel-computing]]
 - [[multirate]]
-- [[real-time]]
+- [[topics/real-time-simulation]]
 
 ## 主要发现
 

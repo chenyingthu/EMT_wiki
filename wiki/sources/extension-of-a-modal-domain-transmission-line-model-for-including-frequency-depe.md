@@ -67,7 +67,7 @@ sources: ["EMT_Doc/18/De Conti和Emídio - 2016 - Extension of a modal-domain tr
 ## 涉及的模型
 
 - [[架空配电线路|架空配电线路]]
-- [[频变土壤模型|频变土壤模型]]
+- [[models/grounding-system-model|频变土壤模型]]
 - [[marti线路模型|Marti线路模型]]
 - [[地回路阻抗模型|地回路阻抗模型]]
 

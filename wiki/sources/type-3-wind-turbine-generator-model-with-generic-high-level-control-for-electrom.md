@@ -58,17 +58,17 @@ sources: ["EMT_Doc/39/Stepanov 等 - 2026 - Type-3 wind turbine generator model 
 
 ## 使用的方法
 
-- [[state-space]]
+- [[methods/state-space-method]]
 - [[numerical-integration]]
 
 ## 涉及的模型
 
-- [[dfig]]
+- [[models/dfig-model]]
 - [[dfig-model]]
 
 ## 相关主题
 
-- [[wind-farm]]
+- [[topics/wind-farm-modeling]]
 - [[dynamic-phasor]]
 
 ## 主要发现

@@ -81,7 +81,7 @@ sources: ["EMT_Doc/25/Jiang 等 - 2024 - Key Technologies and Prospects for Elec
 - [[vsc-model|VSC]]
 - [[vsc-hvdc|VSC-HVDC]]
 - [[dfig-model|DFIG]]
-- [[分布式电源|分布式电源]]
+- [[topics/distributed-generation|分布式电源]]
 - [[有源配电网|有源配电网]]
 - [[分布参数输电线路|分布参数输电线路]]
 - [[models/synchronous-machine-model|同步发电机]]

@@ -69,7 +69,7 @@ sources: ["EMT_Doc/35/Melgoza-Vázquez - 2026 - Simulation of electromagnetic tr
 ## 相关主题
 
 - [[numerical-integration]]
-- [[harmonic]]
+- [[methods/harmonic-analysis-methods]]
 
 ## 主要发现
 

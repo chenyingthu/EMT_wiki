@@ -64,11 +64,11 @@ sources: ["EMT_Doc/40/徐政 - 1996 - 耦合长线电磁暂态分析的扩展Ber
 
 ## 涉及的模型
 
-- [[transmission-line]]
+- [[models/transmission-line-model]]
 
 ## 相关主题
 
-- [[transmission-line]]
+- [[models/transmission-line-model]]
 
 ## 主要发现
 

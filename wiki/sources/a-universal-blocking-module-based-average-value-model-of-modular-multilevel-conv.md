@@ -60,7 +60,7 @@ sources: ["EMT_Doc/04/tec.2019.2944332.pdf.pdf"]
 
 - [[methods/average-value-model|平均值模型]]
 - [[阻塞模块法|阻塞模块法]]
-- [[戴维南等效|戴维南等效]]
+- [[methods/nodal-analysis|戴维南等效]]
 - [[开关函数法|开关函数法]]
 - [[解析损耗计算|解析损耗计算]]
 

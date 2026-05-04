@@ -77,7 +77,7 @@ sources: ["EMT_Doc/22/Liu 等 - 2020 - Hybrid EMT-TS Simulation Strategies to St
 - [[mmc-model|MMC]]
 - [[缓冲区划分|缓冲区划分]]
 - [[topics/large-scale-grid-simulation|大规模电网仿真]]
-- [[暂态稳定分析|暂态稳定分析]]
+- [[topics/electromechanical-transient|暂态稳定分析]]
 
 ## 主要发现
 

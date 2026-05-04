@@ -69,12 +69,12 @@ sources: ["EMT_Doc/39/李亚楼 等 - 2020 - 多样性子模块混合型MMC统�
 
 
 - [[mmc-model]]
-- [[mmc]]
+- [[models/mmc-model]]
 
 ## 相关主题
 
 
-- [[hvdc]]
+- [[topics/vsc-hvdc]]
 - [[vsc-hvdc]]
 
 ## 主要发现

@@ -70,7 +70,7 @@ sources: ["EMT_Doc/09/Hong 等 - 2022 - Average-Value Modeling of Line-Commutate
 - [[vsc-hvdc|VSC-HVDC]]
 - [[平波电抗器|平波电抗器]]
 - [[models/transmission-line-model|输电线路]]
-- [[戴维南等效电路|戴维南等效电路]]
+- [[methods/nodal-analysis|戴维南等效电路]]
 
 ## 相关主题
 

@@ -60,18 +60,18 @@ Simulation of electromagnetic transients with Modelica, accuracy and performance
 
 - [[numerical-integration]]
 - [[nodal-analysis]]
-- [[state-space]]
+- [[methods/state-space-method]]
 
 ## 涉及的模型
 
-- [[transmission-line]]
+- [[models/transmission-line-model]]
 - [[fixed-admittance]]
-- [[frequency-dependent]]
+- [[topics/frequency-dependent-modeling]]
 
 ## 相关主题
 
-- [[harmonic]]
-- [[frequency-dependent]]
+- [[methods/harmonic-analysis-methods]]
+- [[topics/frequency-dependent-modeling]]
 - [[numerical-integration]]
 
 ## 主要发现

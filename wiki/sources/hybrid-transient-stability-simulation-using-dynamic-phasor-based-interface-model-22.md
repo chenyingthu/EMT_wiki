@@ -67,17 +67,17 @@ sources: ["EMT_Doc/22/j.epsr.2005.09.017.pdf-1.pdf"]
 ## 涉及的模型
 
 - [[lcc-model|LCC]]
-- [[交流电网|交流电网]]
+- [[topics/large-scale-grid-simulation|交流电网]]
 - [[多馈入直流系统|多馈入直流系统]]
 - [[换流器开关模型|换流器开关模型]]
 
 ## 相关主题
 
 - [[topics/co-simulation|混合仿真]]
-- [[暂态稳定分析|暂态稳定分析]]
+- [[topics/electromechanical-transient|暂态稳定分析]]
 - [[交直流互联系统|交直流互联系统]]
 - [[接口算法|接口算法]]
-- [[动态相量建模|动态相量建模]]
+- [[topics/dynamic-phasor|动态相量建模]]
 
 ## 主要发现
 

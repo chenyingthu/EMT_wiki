@@ -554,7 +554,7 @@ L_arm × di_arm/dt = v_dc/2 - v_arm_avg - v_ac - R_arm × i_arm
 - [[ieee-39-bus-system|IEEE 39节点系统]] - 传统交流系统测试基准
 - [[mmc-hvdc-5-level|MMC-HVDC 5电平测试系统]] - 小功率实验室规模
 - [[cigre-hvdc-benchmark|CIGRE HVDC基准系统]] - 传统两电平HVDC
-- [[ieee-14-bus|IEEE 14节点系统]] - 小型交流系统测试
+- [[test-systems/ieee-14-bus-system|IEEE 14节点系统]] - 小型交流系统测试
 
 ## 参考文献
 

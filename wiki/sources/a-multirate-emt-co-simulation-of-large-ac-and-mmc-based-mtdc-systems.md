@@ -61,7 +61,7 @@ sources: ["EMT_Doc/02/Shu 等 - 2018 - A Multirate EMT Co-Simulation of Large AC
 - [[根匹配算法|根匹配算法]]
 - [[滑动窗口预测|滑动窗口预测]]
 - [[逐步校正与平均技术|逐步校正与平均技术]]
-- [[数值振荡抑制|数值振荡抑制]]
+- [[methods/numerical-integration|数值振荡抑制]]
 
 ## 涉及的模型
 
@@ -74,7 +74,7 @@ sources: ["EMT_Doc/02/Shu 等 - 2018 - A Multirate EMT Co-Simulation of Large AC
 ## 相关主题
 
 - [[methods/multirate-method|多速率仿真]]
-- [[协同仿真|协同仿真]]
+- [[topics/co-simulation|协同仿真]]
 - [[接口建模|接口建模]]
 - [[网络分割|网络分割]]
 - [[methods/numerical-integration|数值稳定性]]

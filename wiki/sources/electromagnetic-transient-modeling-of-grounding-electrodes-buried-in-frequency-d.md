@@ -68,7 +68,7 @@ Electromagnetic transient modeling of grounding electrodes buried in frequency d
 
 - [[垂直接地极|垂直接地极]]
 - [[水平接地极|水平接地极]]
-- [[频变土壤模型|频变土壤模型]]
+- [[models/grounding-system-model|频变土壤模型]]
 - [[雷击回击电流波形|雷击回击电流波形]]
 - [[emt等效电路|EMT等效电路]]
 

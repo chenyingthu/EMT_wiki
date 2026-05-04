@@ -76,7 +76,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/Xu 等 - 2019 - Generalized Electrom
 
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[等效建模|等效建模]]
-- [[柔性直流输电|柔性直流输电]]
+- [[topics/vsc-hvdc|柔性直流输电]]
 - [[topics/real-time-simulation|实时仿真]]
 - [[直流故障穿越|直流故障穿越]]
 

@@ -67,7 +67,7 @@ sources: ["EMT_Doc/24/Li 等 - 2016 - Influence of frequency characteristics of 
 
 - [[models/transmission-line-model|架空输电线路]]
 - [[地回路模型|地回路模型]]
-- [[频变土壤模型|频变土壤模型]]
+- [[models/grounding-system-model|频变土壤模型]]
 
 ## 相关主题
 

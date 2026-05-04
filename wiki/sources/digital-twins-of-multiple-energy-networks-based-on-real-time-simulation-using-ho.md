@@ -60,7 +60,7 @@ sources: ["EMT_Doc/13&14/files/Huang 等 - 2023 - Digital twins of multiple ener
 
 - [[全纯嵌入法|全纯嵌入法]]
 - [[收敛半径模型|收敛半径模型]]
-- [[协同仿真|协同仿真]]
+- [[topics/co-simulation|协同仿真]]
 - [[机理驱动建模|机理驱动建模]]
 - [[偏微分方程解析求解|偏微分方程解析求解]]
 

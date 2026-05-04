@@ -68,7 +68,7 @@ sources: ["EMT_Doc/18/Kulasza 等 - 2022 - Extending the Frequency Bandwidth of 
 
 - [[models/synchronous-machine-model|同步电机]]
 - [[vsc-hvdc|VSC-HVDC]]
-- [[交流电网|交流电网]]
+- [[topics/large-scale-grid-simulation|交流电网]]
 - [[非线性电感模型|非线性电感模型]]
 
 ## 相关主题

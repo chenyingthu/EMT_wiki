@@ -73,7 +73,7 @@ sources: ["EMT_Doc/02/Rupasinghe 等 - 2023 - A multi-solver framework for co-si
 
 ## 相关主题
 
-- [[协同仿真|协同仿真]]
+- [[topics/co-simulation|协同仿真]]
 - [[methods/multirate-method|多速率仿真]]
 - [[频率自适应仿真|频率自适应仿真]]
 - [[topics/emt-simulation|电磁暂态仿真]]

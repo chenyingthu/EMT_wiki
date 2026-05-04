@@ -58,7 +58,7 @@ sources: ["EMT_Doc/26/Herath 等 - 2019 - Modeling of a Modular Multilevel Conve
 
 ## 使用的方法
 
-- [[戴维南等效|戴维南等效]]
+- [[methods/nodal-analysis|戴维南等效]]
 - [[methods/nodal-analysis|节点分析法]]
 - [[详细等效模型|详细等效模型]]
 - [[最近电平控制|最近电平控制]]

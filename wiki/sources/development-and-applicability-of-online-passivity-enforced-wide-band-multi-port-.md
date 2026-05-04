@@ -61,7 +61,7 @@ sources: ["EMT_Doc/13&14/files/TPWRS.2018.2885240.pdf.pdf"]
 - [[在线递推最小二乘辨识|在线递推最小二乘辨识]]
 - [[methods/vector-fitting|矢量拟合]]
 - [[kron节点消去法|Kron节点消去法]]
-- [[暂态稳定分析|暂态稳定分析]]
+- [[topics/electromechanical-transient|暂态稳定分析]]
 - [[离散域z变换建模|离散域z变换建模]]
 - [[发电机相干性分组|发电机相干性分组]]
 

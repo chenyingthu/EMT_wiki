@@ -71,7 +71,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/Cao 等 - 2023 - Faster-Than-Real-Ti
 - [[九阶同步发电机模型|九阶同步发电机模型]]
 - [[models/transmission-line-model|输电线路]]
 - [[models/transformer-model|变压器]]
-- [[多端直流电网|多端直流电网]]
+- [[topics/hybrid-acdc-network|多端直流电网]]
 - [[换流器|换流器]]
 
 ## 相关主题

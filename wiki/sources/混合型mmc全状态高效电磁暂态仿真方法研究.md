@@ -69,9 +69,9 @@ sources: ["EMT_Doc/33/连攀杰 等 - 2021 - 混合型MMC全状态高效电磁�
 
 ## 相关主题
 
-- [[mmc]]
-- [[hvdc]]
-- [[real-time]]
+- [[models/mmc-model]]
+- [[topics/vsc-hvdc]]
+- [[topics/real-time-simulation]]
 
 ## 主要发现
 

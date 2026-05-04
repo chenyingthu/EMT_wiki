@@ -59,7 +59,7 @@ sources: ["EMT_Doc/17/Xu 等 - 2016 - Enhanced high-speed electromagnetic transi
 ## 使用的方法
 
 - [[后向欧拉法|后向欧拉法]]
-- [[戴维南等效|戴维南等效]]
+- [[methods/nodal-analysis|戴维南等效]]
 - [[伴随模型|伴随模型]]
 - [[理想开关模型|理想开关模型]]
 - [[最近电平控制|最近电平控制]]
@@ -68,7 +68,7 @@ sources: ["EMT_Doc/17/Xu 等 - 2016 - Enhanced high-speed electromagnetic transi
 ## 涉及的模型
 
 - [[mmc-model|MMC]]
-- [[多端直流电网|多端直流电网]]
+- [[topics/hybrid-acdc-network|多端直流电网]]
 - [[子模块|子模块]]
 - [[igbt半桥|IGBT半桥]]
 
@@ -77,7 +77,7 @@ sources: ["EMT_Doc/17/Xu 等 - 2016 - Enhanced high-speed electromagnetic transi
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[高速仿真|高速仿真]]
 - [[mmc-model|MMC]]
-- [[多端直流电网|多端直流电网]]
+- [[topics/hybrid-acdc-network|多端直流电网]]
 - [[电容电压平衡|电容电压平衡]]
 - [[计算加速|计算加速]]
 

@@ -75,7 +75,7 @@ sources: ["EMT_Doc/05/Nzale 等 - 2021 - Accurate time-domain simulation of powe
 ## 相关主题
 
 - [[topics/emt-simulation|电磁暂态仿真]]
-- [[数值振荡抑制|数值振荡抑制]]
+- [[methods/numerical-integration|数值振荡抑制]]
 - [[不连续点处理|不连续点处理]]
 - [[事件定位|事件定位]]
 - [[状态重初始化|状态重初始化]]

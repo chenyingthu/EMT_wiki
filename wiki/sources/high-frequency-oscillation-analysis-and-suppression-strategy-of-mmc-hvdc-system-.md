@@ -69,7 +69,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/Zhang 等 - 2022 - High-frequency os
 
 - [[mmc-model|MMC]]
 - [[mmc-model|MMC]]
-- [[交流电网|交流电网]]
+- [[topics/large-scale-grid-simulation|交流电网]]
 - [[锁相环-pll|锁相环(PLL)]]
 - [[双闭环pi控制器|双闭环PI控制器]]
 - [[环流抑制控制器|环流抑制控制器]]

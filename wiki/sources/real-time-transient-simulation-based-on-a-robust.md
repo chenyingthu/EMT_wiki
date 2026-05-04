@@ -59,20 +59,20 @@ sources: ["EMT_Doc/33/tpwrs.2007.907963.pdf.pdf"]
 ## 使用的方法
 
 - [[vector-fitting]]
-- [[parallel]]
-- [[real-time]]
+- [[topics/parallel-computing]]
+- [[topics/real-time-simulation]]
 
 ## 涉及的模型
 
-- [[fdne]]
+- [[models/fdne-model]]
 - [[network-equivalent]]
-- [[transmission-line]]
+- [[models/transmission-line-model]]
 
 ## 相关主题
 
-- [[frequency-dependent]]
+- [[topics/frequency-dependent-modeling]]
 - [[passivity]]
-- [[real-time]]
+- [[topics/real-time-simulation]]
 
 ## 主要发现
 

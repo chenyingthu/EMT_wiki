@@ -60,7 +60,7 @@ sources: ["EMT_Doc/34/Parvari 等 - 2026 - Revisiting dynamic phasors and their 
 
 - [[dynamic-phasor]]
 - [[numerical-integration]]
-- [[state-space]]
+- [[methods/state-space-method]]
 
 ## 涉及的模型
 
@@ -71,7 +71,7 @@ sources: ["EMT_Doc/34/Parvari 等 - 2026 - Revisiting dynamic phasors and their 
 
 - [[dynamic-phasor]]
 - [[co-simulation]]
-- [[harmonic]]
+- [[methods/harmonic-analysis-methods]]
 
 ## 主要发现
 

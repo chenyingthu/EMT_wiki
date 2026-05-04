@@ -66,7 +66,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/Zhao 等 - 2018 - GPU Based Parallel
 
 
 - [[numerical-integration]]
-- [[parallel]]
+- [[topics/parallel-computing]]
 
 ## 涉及的模型
 
@@ -76,7 +76,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/Zhao 等 - 2018 - GPU Based Parallel
 ## 相关主题
 
 
-- [[wind-farm]]
+- [[topics/wind-farm-modeling]]
 
 ## 主要发现
 

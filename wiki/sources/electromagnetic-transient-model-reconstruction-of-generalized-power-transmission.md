@@ -58,7 +58,7 @@ sources: ["EMT_Doc/16/Gomez - 2025 - Electromagnetic Transient Model Reconstruct
 
 ## 使用的方法
 
-- [[数值拉普拉斯变换|数值拉普拉斯变换]]
+- [[methods/numerical-integration|数值拉普拉斯变换]]
 - [[二端口导纳模型|二端口导纳模型]]
 - [[最小范数最小二乘法|最小范数最小二乘法]]
 - [[黑盒建模|黑盒建模]]

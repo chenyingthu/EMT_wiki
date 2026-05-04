@@ -77,9 +77,9 @@ sources: ["EMT_Doc/06/van der Meer 等 - 2015 - Advanced Hybrid Transient Stabil
 ## 相关主题
 
 - [[topics/co-simulation|混合仿真]]
-- [[暂态稳定分析|暂态稳定分析]]
+- [[topics/electromechanical-transient|暂态稳定分析]]
 - [[vsc-model|VSC]]
-- [[多端直流电网|多端直流电网]]
+- [[topics/hybrid-acdc-network|多端直流电网]]
 - [[交直流系统接口|交直流系统接口]]
 - [[topics/renewable-energy-integration|新能源并网]]
 

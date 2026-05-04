@@ -79,7 +79,7 @@ sources: ["EMT_Doc/07&08/De Silva and Liu - 2023 - An Enhanced Method to Achieve
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[topics/frequency-dependent-modeling|频率相关建模]]
 - [[曲线拟合|曲线拟合]]
-- [[高压直流输电|高压直流输电]]
+- [[topics/vsc-hvdc|高压直流输电]]
 - [[时域仿真稳定性|时域仿真稳定性]]
 - [[直流响应校正|直流响应校正]]
 

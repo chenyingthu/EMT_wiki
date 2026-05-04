@@ -60,16 +60,16 @@ sources: ["EMT_Doc/34/tpwrd.2009.2035916.pdf.pdf"]
 
 - [[passivity]]
 - [[vector-fitting]]
-- [[frequency-dependent]]
+- [[topics/frequency-dependent-modeling]]
 
 ## 涉及的模型
 
-- [[transmission-line]]
-- [[cable]]
+- [[models/transmission-line-model]]
+- [[models/cable-model]]
 
 ## 相关主题
 
-- [[hvdc]]
+- [[topics/vsc-hvdc]]
 - [[passivity]]
 
 ## 主要发现

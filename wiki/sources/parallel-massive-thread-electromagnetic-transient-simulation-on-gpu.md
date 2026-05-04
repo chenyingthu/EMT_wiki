@@ -67,7 +67,7 @@ sources: ["EMT_Doc/30/Zhou和Dinavahi - 2014 - Parallel Massive-Thread Electroma
 ## 涉及的模型
 
 - [[线性无源元件|线性无源元件]]
-- [[通用线路模型|通用线路模型]]
+- [[models/transmission-line-model|通用线路模型]]
 - [[通用同步电机模型|通用同步电机模型]]
 - [[models/transmission-line-model|输电线路]]
 - [[models/synchronous-machine-model|同步电机]]

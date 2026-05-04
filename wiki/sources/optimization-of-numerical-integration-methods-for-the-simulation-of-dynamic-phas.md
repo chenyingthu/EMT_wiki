@@ -73,7 +73,7 @@ sources: ["EMT_Doc/30/j.ijepes.2009.03.033.pdf.pdf"]
 ## 相关主题
 
 - [[topics/emt-simulation|电磁暂态仿真]]
-- [[动态相量建模|动态相量建模]]
+- [[topics/dynamic-phasor|动态相量建模]]
 - [[数值积分优化|数值积分优化]]
 - [[频域误差分析|频域误差分析]]
 

@@ -72,7 +72,7 @@ sources: ["EMT_Doc/17/Liu 等 - 2010 - Electromechanical transientelectromagneti
 - [[models/transformer-model|换流变压器]]
 - [[models/synchronous-machine-model|同步发电机]]
 - [[动态负荷|动态负荷]]
-- [[交流电网|交流电网]]
+- [[topics/large-scale-grid-simulation|交流电网]]
 
 ## 相关主题
 

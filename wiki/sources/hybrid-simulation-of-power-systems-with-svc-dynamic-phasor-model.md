@@ -75,7 +75,7 @@ sources: ["EMT_Doc/22/Zhijun 等 - 2009 - Hybrid simulation of power systems wit
 ## 相关主题
 
 - [[topics/co-simulation|混合仿真]]
-- [[动态相量建模|动态相量建模]]
+- [[topics/dynamic-phasor|动态相量建模]]
 - [[机电-电磁暂态混合|机电-电磁暂态混合]]
 - [[facts设备仿真|FACTS设备仿真]]
 - [[大电网动态仿真|大电网动态仿真]]

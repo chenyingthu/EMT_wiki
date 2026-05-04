@@ -70,12 +70,12 @@ Electrical Power and Energy Systems 148 (2023) 108967 0142-0615/© 2023 Elsevier
 - [[引下线模型|引下线模型]]
 - [[避雷线与相导线|避雷线与相导线]]
 - [[models/grounding-system-model|接地系统]]
-- [[频变土壤模型|频变土壤模型]]
+- [[models/grounding-system-model|频变土壤模型]]
 
 ## 相关主题
 
 - [[雷电暂态响应|雷电暂态响应]]
-- [[防雷保护|防雷保护]]
+- [[topics/grounding-lightning-overvoltage|防雷保护]]
 - [[反击闪络率|反击闪络率]]
 - [[波阻抗计算|波阻抗计算]]
 - [[经验公式|经验公式]]

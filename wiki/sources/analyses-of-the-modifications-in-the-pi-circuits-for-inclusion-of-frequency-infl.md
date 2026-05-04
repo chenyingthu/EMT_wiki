@@ -75,7 +75,7 @@ sources: ["EMT_Doc/07&08/Analyses of the modifications in the 蟺 circuits for i
 
 - [[topics/frequency-dependent-modeling|频率相关建模]]
 - [[topics/emt-simulation|电磁暂态仿真]]
-- [[数值振荡抑制|数值振荡抑制]]
+- [[methods/numerical-integration|数值振荡抑制]]
 - [[线路参数等值|线路参数等值]]
 - [[emtp算法|EMTP算法]]
 

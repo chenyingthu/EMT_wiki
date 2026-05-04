@@ -78,7 +78,7 @@ sources: ["EMT_Doc/27&28/Multi-Scale and Frequency-Dependent Modeling of Electri
 - [[多尺度建模|多尺度建模]]
 - [[topics/frequency-dependent-modeling|频率相关建模]]
 - [[topics/emt-simulation|电磁暂态]]
-- [[机电暂态|机电暂态]]
+- [[topics/electromechanical-transient|机电暂态]]
 - [[topics/real-time-simulation|实时仿真]]
 
 ## 主要发现

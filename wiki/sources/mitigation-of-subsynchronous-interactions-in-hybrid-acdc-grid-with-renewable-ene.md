@@ -80,7 +80,7 @@ sources: ["EMT_Doc/26/Cao 等 - 2021 - Mitigation of Subsynchronous Interactions
 - [[超实时仿真|超实时仿真]]
 - [[fpga并行加速|FPGA并行加速]]
 - [[机电暂态协同仿真|机电暂态协同仿真]]
-- [[暂态稳定分析|暂态稳定分析]]
+- [[topics/electromechanical-transient|暂态稳定分析]]
 
 ## 主要发现
 

@@ -60,12 +60,12 @@ sources: ["EMT_Doc/39/59.574917.pdf.pdf"]
 
 - [[numerical-integration]]
 - [[nodal-analysis]]
-- [[state-space]]
+- [[methods/state-space-method]]
 
 ## 涉及的模型
 
-- [[transmission-line]]
-- [[transformer]]
+- [[models/transmission-line-model]]
+- [[models/transformer-model]]
 
 ## 相关主题
 

@@ -67,14 +67,14 @@ sources: ["EMT_Doc/26/Yao 等 - 2008 - Modeling and simulation of VSC-HVDC with 
 
 - [[vsc-model|VSC]]
 - [[电压源型换流器|电压源型换流器]]
-- [[直流输电线路|直流输电线路]]
+- [[models/transmission-line-model|直流输电线路]]
 - [[直流电容|直流电容]]
 - [[换流电抗|换流电抗]]
 
 ## 相关主题
 
 - [[topics/emt-simulation|电磁暂态仿真]]
-- [[动态相量建模|动态相量建模]]
+- [[topics/dynamic-phasor|动态相量建模]]
 - [[暂态过程分析|暂态过程分析]]
 - [[methods/model-order-reduction|模型降阶]]
 - [[高频开关简化|高频开关简化]]

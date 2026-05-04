@@ -77,7 +77,7 @@ sources: ["EMT_Doc/10/Li 等 - 2020 - Characteristics and Optimal Configuration 
 - [[直流电抗器|直流电抗器]]
 - [[电容型限流器|电容型限流器]]
 - [[混合式直流断路器|混合式直流断路器]]
-- [[直流输电线路|直流输电线路]]
+- [[models/transmission-line-model|直流输电线路]]
 
 
 ## 相关主题
@@ -85,7 +85,7 @@ sources: ["EMT_Doc/10/Li 等 - 2020 - Characteristics and Optimal Configuration 
 
 - [[直流电网故障抑制|直流电网故障抑制]]
 - [[限流器优化配置|限流器优化配置]]
-- [[柔性直流输电|柔性直流输电]]
+- [[topics/vsc-hvdc|柔性直流输电]]
 - [[直流断路器配合|直流断路器配合]]
 - [[topics/emt-simulation|电磁暂态分析]]
 

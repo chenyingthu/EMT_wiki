@@ -60,7 +60,7 @@ sources: ["EMT_Doc/11/Bruned 等 - 2021 - Compensation method for parallel real-
 
 - [[补偿法|补偿法]]
 - [[节点分析|节点分析]]
-- [[戴维南等效|戴维南等效]]
+- [[methods/nodal-analysis|戴维南等效]]
 - [[稀疏lu分解|稀疏LU分解]]
 - [[topics/parallel-computing|并行计算]]
 - [[网络解耦|网络解耦]]

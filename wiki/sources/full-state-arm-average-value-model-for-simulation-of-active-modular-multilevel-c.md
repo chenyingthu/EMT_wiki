@@ -65,7 +65,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/Tang 等 - 2022 - Full-state Arm Ave
 - [[动态平均化理论|动态平均化理论]]
 - [[离散化伴随模型|离散化伴随模型]]
 - [[methods/numerical-integration|梯形积分法]]
-- [[戴维南等效电路|戴维南等效电路]]
+- [[methods/nodal-analysis|戴维南等效电路]]
 - [[平均值建模|平均值建模]]
 
 
@@ -83,7 +83,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/Tang 等 - 2022 - Full-state Arm Ave
 
 
 - [[topics/emt-simulation|电磁暂态仿真]]
-- [[柔性直流输电|柔性直流输电]]
+- [[topics/vsc-hvdc|柔性直流输电]]
 - [[换流器闭锁|换流器闭锁]]
 - [[储能集成|储能集成]]
 - [[全状态仿真|全状态仿真]]

@@ -79,7 +79,7 @@ sources: ["EMT_Doc/24/Jalili-Marandi 等 - 2009 - Interfacing Techniques for Tra
 ## 相关主题
 
 - [[topics/co-simulation|混合仿真]]
-- [[暂态稳定分析|暂态稳定分析]]
+- [[topics/electromechanical-transient|暂态稳定分析]]
 - [[topics/emt-simulation|电磁暂态仿真]]
 - [[接口技术|接口技术]]
 - [[topics/parallel-computing|并行计算]]

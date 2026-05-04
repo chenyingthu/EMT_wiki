@@ -64,11 +64,11 @@ sources: ["EMT_Doc/37/Fini 等 - 2026 - The fdLoad model for accurate frequency 
 
 ## 涉及的模型
 
-- [[frequency-dependent]]
+- [[topics/frequency-dependent-modeling]]
 
 ## 相关主题
 
-- [[frequency-dependent]]
+- [[topics/frequency-dependent-modeling]]
 - [[dynamic-phasor]]
 
 ## 主要发现

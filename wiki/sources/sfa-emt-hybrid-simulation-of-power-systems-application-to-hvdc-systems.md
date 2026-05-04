@@ -65,11 +65,11 @@ sources: ["EMT_Doc/34/Tarazona 等 - 2026 - SFA-EMT hybrid simulation of power s
 
 ## 涉及的模型
 
-- [[hvdc]]
+- [[topics/vsc-hvdc]]
 
 ## 相关主题
 
-- [[hvdc]]
+- [[topics/vsc-hvdc]]
 - [[co-simulation]]
 - [[multirate]]
 

@@ -69,8 +69,8 @@ sources: ["EMT_Doc/37/Agudelo 等 - 2023 - Switch-Averaged Frequency Domain Simu
 
 ## 相关主题
 
-- [[harmonic]]
-- [[frequency-dependent]]
+- [[methods/harmonic-analysis-methods]]
+- [[topics/frequency-dependent-modeling]]
 
 ## 主要发现
 

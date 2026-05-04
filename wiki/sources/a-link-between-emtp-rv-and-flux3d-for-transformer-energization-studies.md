@@ -68,7 +68,7 @@ sources: ["EMT_Doc/02/Dennetière 等 - 2009 - A link between EMTP-RV and FLUX3D
 - [[铁芯|铁芯]]
 - [[绕组|绕组]]
 - [[rl阻抗|RL阻抗]]
-- [[戴维南等效电路|戴维南等效电路]]
+- [[methods/nodal-analysis|戴维南等效电路]]
 - [[三维有限元变压器模型|三维有限元变压器模型]]
 
 ## 相关主题

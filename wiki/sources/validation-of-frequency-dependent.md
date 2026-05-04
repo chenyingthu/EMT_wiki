@@ -58,20 +58,20 @@ sources: ["EMT_Doc/40/tpwrd.2004.837676.pdf.pdf"]
 
 ## 使用的方法
 
-- [[frequency-dependent]]
+- [[topics/frequency-dependent-modeling]]
 - [[numerical-integration]]
 - [[nodal-analysis]]
 
 ## 涉及的模型
 
-- [[transmission-line]]
-- [[cable]]
+- [[models/transmission-line-model]]
+- [[models/cable-model]]
 
 ## 相关主题
 
-- [[frequency-dependent]]
-- [[transmission-line]]
-- [[cable]]
+- [[topics/frequency-dependent-modeling]]
+- [[models/transmission-line-model]]
+- [[models/cable-model]]
 
 ## 主要发现
 

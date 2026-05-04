@@ -63,8 +63,8 @@ sources: ["EMT_Doc/39/s0142-0615%2898%2900042-8.pdf.pdf"]
 
 ## 涉及的模型
 
-- [[transmission-line]]
-- [[frequency-dependent]]
+- [[models/transmission-line-model]]
+- [[topics/frequency-dependent-modeling]]
 
 ## 相关主题
 

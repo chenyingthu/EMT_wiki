@@ -66,7 +66,7 @@ Electrical Power and Energy Systems 148 (2023) 108928 0142-0615/© 2022 Elsevier
 
 ## 涉及的模型
 
-- [[pmsg|PMSG]]
+- [[models/pmsm-model|PMSG]]
 - [[全功率变流器|全功率变流器]]
 - [[lc滤波器|LC滤波器]]
 - [[models/transformer-model|变压器]]

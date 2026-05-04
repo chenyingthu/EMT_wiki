@@ -69,7 +69,7 @@ sources: ["EMT_Doc/15/Efficient GPU-based electromagnetic transient simulation f
 ## 涉及的模型
 
 - [[ieee-33节点配电系统|IEEE 33节点配电系统]]
-- [[分布式电源|分布式电源]]
+- [[topics/distributed-generation|分布式电源]]
 - [[电力电子变换器|电力电子变换器]]
 - [[基本电气元件|基本电气元件]]
 - [[交直流混合电网|交直流混合电网]]

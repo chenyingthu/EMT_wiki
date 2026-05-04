@@ -69,7 +69,7 @@ sources: ["EMT_Doc/05/Lin 等 - 2021 - Adaptive Heterogeneous Transient Analysis
 - [[dfig-model|DFIG]]
 - [[风力发电机|风力发电机]]
 - [[交直流电网|交直流电网]]
-- [[多端直流电网|多端直流电网]]
+- [[topics/hybrid-acdc-network|多端直流电网]]
 - [[models/transformer-model|变压器]]
 - [[变流器|变流器]]
 - [[models/induction-machine-model|感应电机]]
