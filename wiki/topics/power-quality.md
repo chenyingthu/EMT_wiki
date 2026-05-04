@@ -102,6 +102,8 @@ $$V_{sag} = \frac{Z_{fault}}{Z_{source} + Z_{fault}}$$
 - [[lightning-transient-analysis]] - 雷击暂态分析
 - [[emt-simulation]] - EMT仿真基础
 - [[power-system-network]] - 电力系统网络
+- [[electromagnetic-transient]] - 电磁暂态
+- [[power-system-network]] - 电力系统网络
 
 ---
 

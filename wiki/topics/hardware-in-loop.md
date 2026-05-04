@@ -101,6 +101,8 @@ $$|Z_{sim}| < |Z_{real}|$$
 - [[fpga-real-time-simulation]] - FPGA实时仿真
 - [[power-electronics]] - 电力电子技术
 - [[protection-relay-modeling]] - 继电保护建模
+- [[electromagnetic-transient]] - 电磁暂态
+- [[power-system-network]] - 电力系统网络
 
 ---
 

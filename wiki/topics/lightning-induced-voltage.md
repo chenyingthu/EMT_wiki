@@ -132,6 +132,8 @@ $$\mathbf{V}_{ind} = \mathbf{Z}_{mutual} \cdot \mathbf{I}_{lightning}$$
 - [[distributed-parameter-line]] - 分布参数线路
 - [[grounding-system-model]] - 接地系统模型
 - [[insulator-string-model]] - 绝缘子串模型
+- [[electromagnetic-transient]] - 电磁暂态
+- [[power-system-network]] - 电力系统网络
 
 ## 开放问题
 

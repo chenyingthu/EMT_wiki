@@ -92,6 +92,8 @@ $$t_{block} < 5\text{ms}$$
 - [[fault-ride-through]] - 故障穿越
 - [[vsc-hvdc]] - VSC-HVDC系统
 - [[protection-relay-modeling]] - 继电保护建模
+- [[electromagnetic-transient]] - 电磁暂态
+- [[power-system-network]] - 电力系统网络
 
 ## 代表性来源
 

@@ -76,6 +76,8 @@ $\alpha$为触发角。
 - [[electromechanical-electromagnetic-hybrid-simulation]] - 机电电磁混合仿真
 - [[co-simulation]] - 协同仿真技术
 - [[hybrid-acdc-network]] - 交直流混合电网
+- [[electromagnetic-transient]] - 电磁暂态
+- [[power-system-network]] - 电力系统网络
 
 ## 代表性来源
 
