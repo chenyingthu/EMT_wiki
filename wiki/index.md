@@ -68,6 +68,8 @@ updated: 2026-05-03
 | [[time-domain-modeling\|时域建模]] | 微分方程、DAE求解、数值积分、暂态分析 |
 | [[hardware-in-loop\|硬件在环仿真]] | HIL测试、实时仿真、控制器验证、功率级HIL |
 | [[large-time-step-simulation\|大步长仿真]] | LTS加速、隐式积分、多速率、模型简化 |
+| [[power-quality\|电能质量]] | 谐波畸变、电压暂降、闪变、不平衡、EMT分析 |
+| [[dc-fault-blocking\|直流故障闭锁]] | MTDC保护、故障阻断、全桥MMC、故障隔离 |
 
 ## 方法 (Methods)
 
@@ -105,6 +107,13 @@ updated: 2026-05-03
 | [[bilinear-transform\|双线性变换]] | Tustin变换、离散化、预畸变、控制器实现 |
 | [[companion-circuit-model\|伴随电路模型]] | 梯形积分、离散等效、历史电流源、节点分析 |
 | [[nearest-level-control\|最近电平控制]] | MMC调制、电平数选择、电容排序、低开关频率 |
+| [[circulating-current-suppression\|环流抑制控制]] | MMC环流抑制、二倍频负序、PR控制、电压注入 |
+| [[state-space-averaging\|状态空间平均法]] | SSA、小信号分析、开关变换器、线性化模型 |
+| [[heidler-function\|Heidler雷电流函数]] | 雷击电流、回击模型、波形参数、标准波形 |
+| [[curve-fitting\|曲线拟合]] | 参数估计、最小二乘、非线性拟合、饱和特性 |
+| [[declarative-modeling\|声明式建模]] | 方程建模、无因果、Modelica、组件复用 |
+| [[quasi-tem-approximation\|准TEM近似]] | 有损线路、地回路、频变参数、Carson公式 |
+| [[variable-time-step-solver\|变步长求解器]] | 自适应积分、误差控制、Runge-Kutta、Gear法 |
 | [[multithread-parallel-computing\|多线程并行]] | OpenMP/pthreads、MATE分网、任务并行、负载均衡 |
 | [[discrete-fourier-transform\|离散傅里叶变换]] | DFT/FFT、窗函数、频谱分析、谐波诊断 |
 | [[grid-forming-control\|构网型控制]] | GFM、下垂控制、虚拟同步机、孤岛运行 |
@@ -155,6 +164,8 @@ updated: 2026-05-03
 | [[constant-power-load\|恒功率负载]] | CPL负阻抗、稳定性分析、有源阻尼、微网应用 |
 | [[thevenin-equivalent-model\|戴维南等效模型]] | 电压源等效、网络简化、最大功率传输、多端口等效 |
 | [[distribution-transformer\|配电变压器]] | 配电降压、连接组别、电压调整、谐波传递 |
+| [[induction-machine\|感应电机]] | 异步电机、鼠笼/绕线式、滑差、电磁转矩、启动 |
+| [[solid-state-transformer\|固态变压器]] | SST、电力电子变压器、AC-DC-AC、智能变压器 |
 | [[energy-storage-converter-model\|储能变流器]] | PCS、双向变换、SOC管理、调频、并离网切换 |
 | [[hybrid-converter-model\|混合AC/DC变流器]] | 多端口、DAB、CHB、能量路由器、PET |
 | [[voltage-current-sensor-model\|电压电流传感器]] | PT/CT、霍尔传感器、罗氏线圈、饱和特性、测量精度 |
