@@ -81,7 +81,9 @@ $$\mathbf{X} = -[d\mathbf{A}_1 + (1-d)\mathbf{A}_2]^{-1}[d\mathbf{B}_1 + (1-d)\m
 - [[bilinear-transform]] - 双线性变换
 - [[numerical-integration]] - 数值积分方法
 - [[state-space-method]] - 状态空间法
-
+- [[vector-fitting]]
+- [[nodal-analysis]]
+- [[passivity-enforcement]]
 ## 代表性来源
 
 - Middlebrook, R.D. and Ćuk, S., "A General Unified Approach to Modelling Switching-Converter Power Stages," *PESC*, 1976.

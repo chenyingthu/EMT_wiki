@@ -90,7 +90,9 @@ $$Z_c = \sqrt{\frac{R + j\omega L}{G + j\omega C}}$$
 - [[earth-return-impedance]] - 地回路阻抗
 - [[numerical-integration]] - 数值积分方法
 - [[state-space-method]] - 状态空间法
-
+- [[vector-fitting]]
+- [[average-value-model]]
+- [[nodal-analysis]]
 ## 代表性来源
 
 - Carson, J.R., "Wave Propagation in Overhead Wires," *BSTJ*, 1926.

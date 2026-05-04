@@ -111,3 +111,6 @@ $$T_h = \frac{V_{2h}}{V_{1h}} = \frac{1}{|1 + hZ_k/Z_{load}|}$$
 ---
 
 *本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*
+- [[mmc-model]]
+- [[transmission-line-model]]
+- [[synchronous-machine-model]]

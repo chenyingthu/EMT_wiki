@@ -94,7 +94,9 @@ $$t_{block} < 5\text{ms}$$
 - [[protection-relay-modeling]] - 继电保护建模
 - [[electromagnetic-transient]] - 电磁暂态
 - [[power-system-network]] - 电力系统网络
-
+- [[emt-simulation]]
+- [[real-time-simulation]]
+- [[co-simulation]]
 ## 代表性来源
 
 - Marquardt, R., "Modular Multilevel Converter with DC Short Circuit Current Limitation," *EPE*, 2011.

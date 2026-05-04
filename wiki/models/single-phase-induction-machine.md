@@ -130,7 +130,9 @@ $$I_{start} = (5-7) I_N$$
 - [[power-quality]] - 电能质量分析
 - [[test-systems/ieee-14-bus-system]] - IEEE 14节点测试系统
 - [[emt-simulation]] - EMT仿真基础
-
+- [[mmc-model]]
+- [[transmission-line-model]]
+- [[transformer-model]]
 ## 开放问题
 
 - 变频驱动的单相电机控制

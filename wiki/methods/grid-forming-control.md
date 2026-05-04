@@ -128,7 +128,9 @@ GFM需设计加速面积小于减速面积。
 - [[pll-model]] - 锁相环模型
 - [[numerical-integration]] - 数值积分方法
 - [[state-space-method]] - 状态空间法
-
+- [[vector-fitting]]
+- [[average-value-model]]
+- [[nodal-analysis]]
 ## 开放问题
 
 - 100%电力电子系统的稳定性理论

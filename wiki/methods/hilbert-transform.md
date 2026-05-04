@@ -137,7 +137,9 @@ $$\omega(t) = \frac{x(t)\dot{\hat{x}}(t) - \hat{x}(t)\dot{x}(t)}{x^2(t) + \hat{x
 - [[harmonic-analysis-methods]] - 谐波分析方法
 - [[numerical-integration]] - 数值积分方法
 - [[state-space-method]] - 状态空间法
-
+- [[vector-fitting]]
+- [[average-value-model]]
+- [[nodal-analysis]]
 ## 开放问题
 
 - 多分量信号的精确瞬时频率定义

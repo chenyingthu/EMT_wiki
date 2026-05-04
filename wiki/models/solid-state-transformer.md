@@ -97,7 +97,9 @@ $m_1$、$m_2$为PWM调制比，$n$为高频变压器变比。
 - [[transformer-model]] - 传统变压器模型
 - [[test-systems/ieee-14-bus-system]] - IEEE 14节点测试系统
 - [[emt-simulation]] - EMT仿真基础
-
+- [[transmission-line-model]]
+- [[synchronous-machine-model]]
+- [[fdne-model]]
 ## 代表性来源
 
 - McMurray, W., "The Thyristor Electronic Transformer," *IEEE IGA*, 1968.

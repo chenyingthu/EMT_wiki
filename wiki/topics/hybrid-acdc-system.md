@@ -78,7 +78,9 @@ $\alpha$为触发角。
 - [[hybrid-acdc-network]] - 交直流混合电网
 - [[electromagnetic-transient]] - 电磁暂态
 - [[power-system-network]] - 电力系统网络
-
+- [[emt-simulation]]
+- [[real-time-simulation]]
+- [[facts]]
 ## 代表性来源
 
 - Arrillaga, J. and Liu, Y.H., "Flexible Power Transmission: The HVDC Options," *Wiley*, 2007.

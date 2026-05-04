@@ -90,7 +90,9 @@ $$t_{peak} \approx \tau_1(10\tau_2/\tau_1)^{1/10}$$
 - [[bergeron-model]] - 贝杰龙模型
 - [[numerical-integration]] - 数值积分方法
 - [[state-space-method]] - 状态空间法
-
+- [[vector-fitting]]
+- [[average-value-model]]
+- [[nodal-analysis]]
 ## 代表性来源
 
 - Heidler, F., "Traveling Current Source Model for LEMP Calculation," *ICLP*, 1985.

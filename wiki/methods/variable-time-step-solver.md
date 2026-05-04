@@ -85,7 +85,9 @@ $$t_{switch}: g(t_{switch}) = 0$$
 - [[interpolation-method]] - 插值方法
 - [[numerical-integration]] - 数值积分方法
 - [[state-space-method]] - 状态空间法
-
+- [[vector-fitting]]
+- [[average-value-model]]
+- [[nodal-analysis]]
 ## 代表性来源
 
 - Hairer, E., et al., "Solving ODE I & II," *Springer*, 1993.

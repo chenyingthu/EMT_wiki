@@ -134,7 +134,9 @@ $$\mathbf{V}_{ind} = \mathbf{Z}_{mutual} \cdot \mathbf{I}_{lightning}$$
 - [[insulator-string-model]] - 绝缘子串模型
 - [[electromagnetic-transient]] - 电磁暂态
 - [[power-system-network]] - 电力系统网络
-
+- [[emt-simulation]]
+- [[real-time-simulation]]
+- [[co-simulation]]
 ## 开放问题
 
 - 高比例分布式电源接入对感应过电压的影响

@@ -124,7 +124,9 @@ $$f_{sw} = \frac{f_0}{N} \cdot \frac{V_{dc}}{2V_{SM}}$$
 - [[vector-control]] - 矢量控制
 - [[numerical-integration]] - 数值积分方法
 - [[state-space-method]] - 状态空间法
-
+- [[vector-fitting]]
+- [[nodal-analysis]]
+- [[passivity-enforcement]]
 ## 开放问题
 
 - 低电平数MMC的改进NLC

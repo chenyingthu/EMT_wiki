@@ -107,3 +107,6 @@ $$|Z_{sim}| < |Z_{real}|$$
 ---
 
 *本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*
+- [[emt-simulation]]
+- [[co-simulation]]
+- [[vsc-hvdc]]

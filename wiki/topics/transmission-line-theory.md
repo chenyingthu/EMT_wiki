@@ -90,7 +90,9 @@ $$\Gamma = \frac{Z_L - Z_c}{Z_L + Z_c}$$
 - [[distributed-parameter-line]] - 分布参数线路
 - [[electromagnetic-transient]] - 电磁暂态
 - [[power-system-network]] - 电力系统网络
-
+- [[emt-simulation]]
+- [[real-time-simulation]]
+- [[co-simulation]]
 ## 代表性来源
 
 - Dommel, H.W., "Digital Computer Solution of Electromagnetic Transients in Single-and Multiphase Networks," *IEEE PAS*, 1969.
