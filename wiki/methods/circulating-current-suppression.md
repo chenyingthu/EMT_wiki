@@ -83,6 +83,11 @@ $$I_{2f,suppressed} < 0.1 I_{2f,nominal}$$
 - [[state-space-method]] - 状态空间法
 - [[coordinate-transformation]] - 坐标变换方法
 - [[average-value-model]] - 平均值模型
+- [[nearest-level-control]] - 最近电平控制
+- [[vector-control]] - 矢量控制
+- [[submodule-model]] - 子模块模型
+- [[numerical-integration]] - 数值积分方法
+- [[state-space-method]] - 状态空间法
 
 ## 代表性来源
 

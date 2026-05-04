@@ -91,6 +91,11 @@ $$\mathbf{\theta}_{k+1} = \mathbf{\theta}_k + (\mathbf{J}^T\mathbf{J})^{-1}\math
 - [[transmission-line-model]] - 输电线路模型（频变参数拟合）
 - [[transformer-model]] - 变压器模型（饱和特性拟合）
 - [[least-squares]] - 最小二乘法
+- [[numerical-integration]] - 数值积分
+- [[optimization-methods]] - 优化方法
+- [[wideband-modeling]] - 宽频建模
+- [[numerical-integration]] - 数值积分方法
+- [[state-space-method]] - 状态空间法
 
 ## 代表性来源
 

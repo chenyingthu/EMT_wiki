@@ -88,6 +88,8 @@ $$Z_c = \sqrt{\frac{R + j\omega L}{G + j\omega C}}$$
 - [[wideband-modeling]] - 宽频建模
 - [[frequency-dependent-modeling]] - 频率相关建模
 - [[earth-return-impedance]] - 地回路阻抗
+- [[numerical-integration]] - 数值积分方法
+- [[state-space-method]] - 状态空间法
 
 ## 代表性来源
 

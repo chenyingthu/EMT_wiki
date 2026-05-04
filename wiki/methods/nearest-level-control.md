@@ -122,6 +122,8 @@ $$f_{sw} = \frac{f_0}{N} \cdot \frac{V_{dc}}{2V_{SM}}$$
 - [[circulating-current-suppression]] - 环流抑制控制
 - [[submodule-model]] - 子模块模型
 - [[vector-control]] - 矢量控制
+- [[numerical-integration]] - 数值积分方法
+- [[state-space-method]] - 状态空间法
 
 ## 开放问题
 

@@ -79,6 +79,8 @@ $$\mathbf{X} = -[d\mathbf{A}_1 + (1-d)\mathbf{A}_2]^{-1}[d\mathbf{B}_1 + (1-d)\m
 - [[small-signal-analysis]] - 小信号分析
 - [[numerical-integration]] - 数值积分方法
 - [[bilinear-transform]] - 双线性变换
+- [[numerical-integration]] - 数值积分方法
+- [[state-space-method]] - 状态空间法
 
 ## 代表性来源
 

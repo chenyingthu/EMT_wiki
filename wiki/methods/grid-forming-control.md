@@ -126,6 +126,8 @@ GFM需设计加速面积小于减速面积。
 - [[droop-control-model]] - 下垂控制模型
 - [[microgrid-distribution-network]] - 微电网应用
 - [[pll-model]] - 锁相环模型
+- [[numerical-integration]] - 数值积分方法
+- [[state-space-method]] - 状态空间法
 
 ## 开放问题
 

@@ -83,6 +83,8 @@ $$t_{switch}: g(t_{switch}) = 0$$
 - [[switch-modeling]] - 开关建模（事件处理）
 - [[trapezoidal-rule]] - 梯形积分法
 - [[interpolation-method]] - 插值方法
+- [[numerical-integration]] - 数值积分方法
+- [[state-space-method]] - 状态空间法
 
 ## 代表性来源
 

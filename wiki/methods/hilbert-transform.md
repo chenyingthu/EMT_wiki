@@ -135,6 +135,8 @@ $$\omega(t) = \frac{x(t)\dot{\hat{x}}(t) - \hat{x}(t)\dot{x}(t)}{x^2(t) + \hat{x
 - [[small-signal-analysis]] - 小信号分析
 - [[power-quality]] - 电能质量分析
 - [[harmonic-analysis-methods]] - 谐波分析方法
+- [[numerical-integration]] - 数值积分方法
+- [[state-space-method]] - 状态空间法
 
 ## 开放问题
 

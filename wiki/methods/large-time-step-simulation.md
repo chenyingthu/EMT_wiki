@@ -111,6 +111,8 @@ $$\Delta t_{new} = \Delta t_{old} \cdot \left(\frac{\epsilon}{\|e\|}\right)^{1/p
 - [[multirate-method]] - 多速率
 - [[model-order-reduction]] - 模型降阶
 - [[stiff-system-handling]] - 刚性系统处理
+- [[numerical-integration]] - 数值积分方法
+- [[state-space-method]] - 状态空间法
 
 ---
 
