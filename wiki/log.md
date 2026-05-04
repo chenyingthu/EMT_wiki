@@ -384,9 +384,9 @@
 **新增方法页**:
 | 方法页 | 相关来源数 | 核心内容 | 引用来源 |
 |--------|-----------|----------|----------|
-| [[thevenin-norton-equivalent\|戴维南-诺顿等效]] | 115篇 | 网络等效理论、MANA框架、局部重分解、MMC桥臂等效 | 2016 Partial refactorization based machine modeling |
-| [[switching-function\|开关函数法]] | 64篇 | PWM开关函数、占空比计算、状态空间平均、GSSA | 2015 MMC高效建模综述、2023加速DEM模型 |
-| [[dynamic-phasor\|动态相量法]] | 69篇 | 频谱搬移、复包络仿真、移频变换、BFDP | 2022移频仿真综述、2018 MMC-BFDP模型 |
+| [[thevenin-norton-equivalent|戴维南-诺顿等效]] | 115篇 | 网络等效理论、MANA框架、局部重分解、MMC桥臂等效 | 2016 Partial refactorization based machine modeling |
+| [[switching-function|开关函数法]] | 64篇 | PWM开关函数、占空比计算、状态空间平均、GSSA | 2015 MMC高效建模综述、2023加速DEM模型 |
+| [[dynamic-phasor|动态相量法]] | 69篇 | 频谱搬移、复包络仿真、移频变换、BFDP | 2022移频仿真综述、2018 MMC-BFDP模型 |
 
 **页面结构**: 遵循标准8节结构（定义、理论、应用、实现、参数、相关主题、边界、来源）
 **质量指标**: 每个方法页包含4+数学公式、2+代码示例、1+参数表、6+相关链接
