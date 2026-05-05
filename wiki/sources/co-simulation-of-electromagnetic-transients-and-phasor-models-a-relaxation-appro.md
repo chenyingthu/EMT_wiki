@@ -58,18 +58,18 @@ sources: ["EMT_Doc/10/Plumier 等 - 2016 - Co-Simulation of electromagnetic tran
 
 ## 使用的方法
 
-- [[松弛迭代法|松弛迭代法]]
+- 松弛迭代法
 - [[multirate-method|多速率仿真]]
-- [[时间插值|时间插值]]
-- [[相量提取|相量提取]]
-- [[多端口戴维南等效|多端口戴维南等效]]
-- [[边界变量预测|边界变量预测]]
+- 时间插值
+- 相量提取
+- 多端口戴维南等效
+- 边界变量预测
 
 ## 涉及的模型
 
-- [[相量模式模型|相量模式模型]]
+- 相量模式模型
 - [[emt-simulation|电磁暂态模型]]
-- [[频率相关网络等效|频率相关网络等效]]
+- 频率相关网络等效
 - [[戴维南等效网络|戴维南等效网络]]
 - [[synchronous-machine-model|同步电机]]
 - [[transmission-network|输电网络]]
@@ -80,8 +80,8 @@ sources: ["EMT_Doc/10/Plumier 等 - 2016 - Co-Simulation of electromagnetic tran
 - [[co-simulation|联合仿真]]
 - [[network-equivalent|网络等值]]
 - [[multirate-method|多速率仿真]]
-- [[边界条件处理|边界条件处理]]
-- [[迭代收敛加速|迭代收敛加速]]
+- 边界条件处理
+- 迭代收敛加速
 
 ## 主要发现
 

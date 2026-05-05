@@ -17,6 +17,9 @@ created: "2026-05-04"
 
 - 待补充
 
+
+基于相关研究的技术应用：
+
 ## 主要分支与机制
 
 - 待补充
@@ -32,11 +35,17 @@ created: "2026-05-04"
 ## 与相关页面的关系
 
 - [[emt-simulation]] - EMT仿真基础
-
+- [[power-system]]
+- [[electromagnetic-transient]]
 ## 代表性来源
 
-- 待补充
-
+- [[control-and-simulation-of-a-grid-forming-inverter-for-hybrid-pv-battery-plants-i]]
 ---
 
 *本页面为自动生成的stub，需要进一步补充完善。*
+
+- [[control-and-simulation-of-a-grid-forming-inverter-for-hybrid-pv-battery-plants-i]]
+- [[comparison-and-selection-of-grid-tied-inverter-models-for-accurate-and-efficient]]
+- [[advancing-grid-forming-inverter-technology-comprehensive-pq-capability-and-perfo]]
+- [[equivalent-grid-following-inverter-based-generator-model-for-atpatpdraw-simulati]]
+- [[real-time-simulation-with-an-industrial-dccb-controller-in-a-hvdc-grid]]

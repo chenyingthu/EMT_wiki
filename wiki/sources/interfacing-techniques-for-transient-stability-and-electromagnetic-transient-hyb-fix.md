@@ -61,9 +61,9 @@ sources: ["EMT_Doc/24/TPWRD.2008.2002889.pdf.pdf"]
 - [[co-simulation|混合仿真]]
 - [[network-partitioning|网络分割]]
 - [[parallel-computing|并行计算]]
-- [[多速率积分|多速率积分]]
-- [[频率平移|频率平移]]
-- [[数据交换协议|数据交换协议]]
+- 多速率积分
+- 频率平移
+- 数据交换协议
 - [[network-equivalent|网络等值]]
 
 ## 涉及的模型

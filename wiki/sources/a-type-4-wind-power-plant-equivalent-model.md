@@ -56,28 +56,28 @@ sources: ["EMT_Doc/04/tpwrs.2012.2227845.pdf.pdf"]
 ## 使用的方法
 
 - [[vector-fitting|矢量拟合]]
-- [[频率扫描|频率扫描]]
+- 频率扫描
 - [[companion-circuit|伴随电路法]]
-- [[傅里叶分析|傅里叶分析]]
+- 傅里叶分析
 - [[vector-fitting|有理函数逼近]]
 
 ## 涉及的模型
 
-- [[type-4风电场|Type-4风电场]]
-- [[type-4直驱风机|Type-4直驱风机]]
+- Type-4风电场
+- Type-4直驱风机
 - [[fdne-model|FDNE]]
-- [[dlfe低频动态等值模型|DLFE低频动态等值模型]]
-- [[集电系统|集电系统]]
+- DLFE低频动态等值模型
+- 集电系统
 - [[grid-side-converter|网侧变流器]]
 
 ## 相关主题
 
 - [[emt-simulation|电磁暂态分析]]
-- [[动态等值|动态等值]]
+- 动态等值
 - [[frequency-dependent-modeling|频率相关建模]]
 - [[wind-farm-modeling|风电场建模]]
 - [[model-order-reduction|降阶建模]]
-- [[宽频带响应|宽频带响应]]
+- 宽频带响应
 
 ## 主要发现
 

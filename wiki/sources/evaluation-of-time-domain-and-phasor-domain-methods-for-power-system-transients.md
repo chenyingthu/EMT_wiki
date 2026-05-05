@@ -58,10 +58,10 @@ sources: ["EMT_Doc/18/Hassani 等 - 2022 - Evaluation of time-domain and phasor-
 
 ## 使用的方法
 
-- [[时域法|时域法]]
+- 时域法
 - [[dynamic-phasor|动态相量法]]
-- [[三相相量法|三相相量法]]
-- [[正序相量法|正序相量法]]
+- 三相相量法
+- 正序相量法
 - [[numerical-integration|梯形积分法]]
 - [[numerical-integration|后向欧拉法]]
 - [[iterative-solvers|迭代求解器]]
@@ -71,9 +71,9 @@ sources: ["EMT_Doc/18/Hassani 等 - 2022 - Evaluation of time-domain and phasor-
 ## 涉及的模型
 
 - [[synchronous-machine-model|同步电机]]
-- [[ieee-118测试系统|IEEE-118测试系统]]
-- [[线性网络|线性网络]]
-- [[励磁控制系统|励磁控制系统]]
+- IEEE-118测试系统
+- 线性网络
+- 励磁控制系统
 
 ## 相关主题
 
@@ -81,9 +81,9 @@ sources: ["EMT_Doc/18/Hassani 等 - 2022 - Evaluation of time-domain and phasor-
 - [[transient-stability-analysis|暂态稳定]]
 - [[vsc-hvdc-系统的动态相量法建模仿真分析|动态相量]]
 - [[emt-simulation|时域仿真]]
-- [[相量域仿真|相量域仿真]]
-- [[计算性能评估|计算性能评估]]
-- [[不对称工况分析|不对称工况分析]]
+- 相量域仿真
+- 计算性能评估
+- 不对称工况分析
 
 ## 主要发现
 

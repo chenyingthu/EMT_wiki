@@ -58,17 +58,17 @@ Supplementary techniques for 2S-DIRK-based EMT simulations T. Noda a,∗ , T. Ki
 
 ## 使用的方法
 
-- [[两阶段对角隐式runge-kutta方法-2s-dirk|两阶段对角隐式Runge-Kutta方法 (2S-DIRK)]]
-- [[梯形积分法-trapezoidal-method|梯形积分法 (Trapezoidal method)]]
-- [[临界阻尼调整法-cda|临界阻尼调整法 (CDA)]]
-- [[针对电源与开关的补充数值离散技术|针对电源与开关的补充数值离散技术]]
+- 两阶段对角隐式Runge-Kutta方法 (2S-DIRK)
+- 梯形积分法 (Trapezoidal method)
+- 临界阻尼调整法 (CDA)
+- 针对电源与开关的补充数值离散技术
 
 ## 涉及的模型
 
 - [[一种用于电磁暂态仿真的两电平电压源型换流器解耦模型|电压源]]
-- [[电流源|电流源]]
+- 电流源
 - [[igbt-model|开关器件]]
-- [[电感与电容元件|电感与电容元件]]
+- 电感与电容元件
 - [[power-electronics|电力电子变流器]]
 
 ## 相关主题
@@ -76,8 +76,8 @@ Supplementary techniques for 2S-DIRK-based EMT simulations T. Noda a,∗ , T. Ki
 - [[电磁暂态-emt-仿真|电磁暂态(EMT)仿真]]
 - [[数值积分算法|数值积分算法]]
 - [[numerical-integration|数值振荡抑制]]
-- [[开关暂态建模|开关暂态建模]]
-- [[电力系统数字仿真|电力系统数字仿真]]
+- 开关暂态建模
+- 电力系统数字仿真
 
 ## 主要发现
 

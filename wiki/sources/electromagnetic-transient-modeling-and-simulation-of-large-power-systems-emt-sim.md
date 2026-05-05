@@ -59,14 +59,14 @@ sources: ["EMT_Doc/16/Filizadeh 等 - 2025 - Electromagnetic Transient Modeling 
 ## 使用的方法
 
 - [[parallel-computing|并行计算]]
-- [[传播延迟模型|传播延迟模型]]
-- [[块对角矩阵求解|块对角矩阵求解]]
+- 传播延迟模型
+- 块对角矩阵求解
 - [[average-value-model|补偿法]]
-- [[节点与状态空间联合分析|节点与状态空间联合分析]]
+- 节点与状态空间联合分析
 - [[dynamic-phasor|动态相量法]]
 - [[multirate-method|多速率仿真]]
-- [[混合协同仿真|混合协同仿真]]
-- [[自动初始化|自动初始化]]
+- 混合协同仿真
+- 自动初始化
 
 ## 涉及的模型
 
@@ -84,12 +84,12 @@ sources: ["EMT_Doc/16/Filizadeh 等 - 2025 - Electromagnetic Transient Modeling 
 
 - [[large-scale-grid-simulation|大规模电网仿真]]
 - [[parallel-computing|并行计算]]
-- [[混合协同仿真|混合协同仿真]]
+- 混合协同仿真
 - [[multirate-method|多速率仿真]]
 - [[dynamic-phasor|动态相量建模]]
 - [[逆变器型资源|逆变器型资源]]
 - [[parallel-computing|网络解耦]]
-- [[自动初始化|自动初始化]]
+- 自动初始化
 
 ## 主要发现
 

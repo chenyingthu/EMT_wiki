@@ -59,26 +59,26 @@ sources: ["EMT_Doc/27&28/Nonlinear Magnetic Equivalent Circuit-Based Real-Time S
 ## 使用的方法
 
 - [[磁等效电路法|磁等效电路法]]
-- [[preisach磁滞模型|Preisach磁滞模型]]
-- [[频变等效网络|频变等效网络]]
+- Preisach磁滞模型
+- 频变等效网络
 - [[nodal-analysis|节点导纳矩阵法]]
-- [[并行流水线架构|并行流水线架构]]
-- [[硬件描述语言|硬件描述语言]]
+- 并行流水线架构
+- 硬件描述语言
 
 ## 涉及的模型
 
-- [[sen变压器|Sen变压器]]
+- Sen变压器
 - [[多绕组变压器|多绕组变压器]]
 - [[transmission-line-model|输电线路]]
-- [[分接开关|分接开关]]
-- [[三维有限元模型|三维有限元模型]]
+- 分接开关
+- 三维有限元模型
 
 ## 相关主题
 
 - [[real-time-simulation|实时仿真]]
 - [[hil-simulation|硬件在环仿真]]
-- [[fpga实现|FPGA实现]]
-- [[非线性磁路建模|非线性磁路建模]]
+- FPGA实现
+- 非线性磁路建模
 - [[协调分布式潮流控制器串并联变流器能量交换的等效模型|潮流控制]]
 - [[parallel-computing|并行计算]]
 

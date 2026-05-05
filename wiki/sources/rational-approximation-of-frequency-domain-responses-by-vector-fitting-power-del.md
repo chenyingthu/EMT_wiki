@@ -60,14 +60,14 @@ sources: ["EMT_Doc/32/VF_paper.pdf"]
 
 - [[vector-fitting|矢量拟合]]
 - [[vector-fitting|有理函数逼近]]
-- [[极点迁移法|极点迁移法]]
+- 极点迁移法
 - [[least-squares|最小二乘法]]
 - [[partial-fraction-expansion|部分分式展开]]
 
 ## 涉及的模型
 
 - [[transformer-model|变压器]]
-- [[网络等值模型|网络等值模型]]
+- 网络等值模型
 - [[transmission-line-model|输电线路]]
 - [[频变参数模型|频变参数模型]]
 
@@ -76,7 +76,7 @@ sources: ["EMT_Doc/32/VF_paper.pdf"]
 - [[frequency-dependent-modeling|频率相关建模]]
 - [[network-equivalent|网络等值]]
 - [[变压器建模|变压器建模]]
-- [[频域响应拟合|频域响应拟合]]
+- 频域响应拟合
 - [[emt-simulation|时域仿真]]
 
 ## 主要发现

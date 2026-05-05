@@ -60,30 +60,30 @@ sources: ["EMT_Doc/10/Chagas和Tomim - 2022 - Co-simulation applied to power sys
 
 - [[co-simulation|联合仿真]]
 - [[功能模型接口-fmi|功能模型接口(FMI)]]
-- [[虚构传输线法|虚构传输线法]]
+- 虚构传输线法
 - [[transmission-line-model|Bergeron线路模型]]
-- [[行波理论|行波理论]]
-- [[正序建模|正序建模]]
+- 行波理论
+- 正序建模
 - [[nodal-analysis|相域建模]]
-- [[sundials-cvode求解器|SUNDIALS CVODE求解器]]
-- [[主算法同步|主算法同步]]
+- SUNDIALS CVODE求解器
+- 主算法同步
 
 ## 涉及的模型
 
-- [[输电网-11节点|输电网(11节点)]]
-- [[配电网-38节点-ieee-34节点|配电网(38节点/IEEE 34节点)]]
-- [[分布式能源-der|分布式能源(DER)]]
-- [[静态电源与负荷|静态电源与负荷]]
-- [[功能模型单元-fmu|功能模型单元(FMU)]]
+- 输电网(11节点)
+- 配电网(38节点/IEEE 34节点)
+- 分布式能源(DER)
+- 静态电源与负荷
+- 功能模型单元(FMU)
 
 ## 相关主题
 
 - [[co-simulation|联合仿真]]
-- [[高渗透率分布式能源|高渗透率分布式能源]]
-- [[跨平台仿真|跨平台仿真]]
-- [[动态仿真|动态仿真]]
+- 高渗透率分布式能源
+- 跨平台仿真
+- 动态仿真
 - [[large-scale-system-simulation|计算效率优化]]
-- [[fmi标准|FMI标准]]
+- FMI标准
 
 ## 主要发现
 

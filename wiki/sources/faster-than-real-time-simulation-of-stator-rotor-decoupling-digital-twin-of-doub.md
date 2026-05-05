@@ -62,11 +62,11 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/Chen 等 - 2023 - Faster-than-real-t
 ## 使用的方法
 
 
-- [[虚拟电容等效法|虚拟电容等效法]]
+- 虚拟电容等效法
 - [[parallel-computing|并行计算]]
-- [[流水线优化|流水线优化]]
-- [[中点积分法|中点积分法]]
-- [[verilog硬件描述|Verilog硬件描述]]
+- 流水线优化
+- 中点积分法
+- Verilog硬件描述
 
 
 ## 涉及的模型
@@ -74,8 +74,8 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/Chen 等 - 2023 - Faster-than-real-t
 
 - [[dfig-model|DFIG]]
 - [[异步电机|异步电机]]
-- [[t型等效电路|T型等效电路]]
-- [[数字镜像ip核|数字镜像IP核]]
+- T型等效电路
+- 数字镜像IP核
 
 
 ## 相关主题
@@ -85,7 +85,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/Chen 等 - 2023 - Faster-than-real-t
 - [[parallel-computing|并行计算]]
 - [[fpga加速|FPGA加速]]
 - [[emt-simulation|电磁暂态仿真]]
-- [[数字孪生|数字孪生]]
+- 数字孪生
 - [[wind-farm-modeling|风电场建模]]
 
 

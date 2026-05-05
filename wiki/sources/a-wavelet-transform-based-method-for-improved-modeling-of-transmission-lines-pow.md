@@ -58,8 +58,8 @@ sources: ["EMT_Doc/05/tpwrs.2003.814846.pdf.pdf"]
 
 ## 使用的方法
 
-- [[离散小波变换|离散小波变换]]
-- [[多分辨率分析|多分辨率分析]]
+- 离散小波变换
+- 多分辨率分析
 - [[modal-analysis|模态变换]]
 - [[transmission-line-model|Bergeron线路模型]]
 - [[频变线路建模|频变线路建模]]

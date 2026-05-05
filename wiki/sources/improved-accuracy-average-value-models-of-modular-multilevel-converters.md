@@ -58,9 +58,9 @@ sources: ["EMT_Doc/23/Beddard 等 - 2016 - Improved Accuracy Average Value Model
 
 ## 使用的方法
 
-- [[平均值建模法|平均值建模法]]
+- 平均值建模法
 - [[nodal-analysis|等效电路法]]
-- [[闭锁模块技术|闭锁模块技术]]
+- 闭锁模块技术
 - [[emt-simulation|电磁暂态仿真]]
 
 ## 涉及的模型
@@ -69,7 +69,7 @@ sources: ["EMT_Doc/23/Beddard 等 - 2016 - Improved Accuracy Average Value Model
 - [[mmc-model|MMC]]
 - [[vsc-model|VSC]]
 - [[mmc-model|子模块]]
-- [[改进型平均值模型|改进型平均值模型]]
+- 改进型平均值模型
 
 ## 相关主题
 

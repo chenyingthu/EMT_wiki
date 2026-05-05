@@ -61,7 +61,7 @@ sources: ["EMT_Doc/22/j.epsr.2005.09.017.pdf-1.pdf"]
 - [[dynamic-phasor|动态相量法]]
 - [[switching-function-method|开关函数法]]
 - [[nodal-analysis|牛顿-拉夫逊法]]
-- [[混合仿真算法|混合仿真算法]]
+- 混合仿真算法
 - [[electromechanical-transient|机电暂态建模]]
 
 ## 涉及的模型
@@ -69,13 +69,13 @@ sources: ["EMT_Doc/22/j.epsr.2005.09.017.pdf-1.pdf"]
 - [[lcc-model|LCC]]
 - [[large-scale-grid-simulation|交流电网]]
 - [[hybrid-acdc-network|多馈入直流系统]]
-- [[换流器开关模型|换流器开关模型]]
+- 换流器开关模型
 
 ## 相关主题
 
 - [[co-simulation|混合仿真]]
 - [[electromechanical-transient|暂态稳定分析]]
-- [[交直流互联系统|交直流互联系统]]
+- 交直流互联系统
 - [[co-simulation|接口算法]]
 - [[dynamic-phasor|动态相量建模]]
 

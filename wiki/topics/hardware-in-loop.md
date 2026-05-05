@@ -94,6 +94,10 @@ $$|Z_{sim}| < |Z_{real}|$$
 - IEEE Std. 1547 - HIL测试要求
 - RTDS用户手册
 
+
+- [[a-component-level-modeling-and-fine-grained-simulation-method-for-renewable-ener]]
+- [[advanced-hybrid-transient-stability-and-emt-simulation-for-vsc-hvdc-systems]]
+- [[co-simulation-of-electromagnetic-transients-and-phasor-models-a-relaxation-appro]]
 ## 与相关页面的关系
 
 - [[real-time-simulation]] - 实时仿真

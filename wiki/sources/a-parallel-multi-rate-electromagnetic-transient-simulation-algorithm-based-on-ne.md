@@ -57,9 +57,9 @@ sources: ["EMT_Doc/03/Mu 等 - 2014 - A parallel multi-rate electromagnetic tran
 
 ## 使用的方法
 
-- [[全隐式积分|全隐式积分]]
-- [[内插值法|内插值法]]
-- [[传输线等效模型|传输线等效模型]]
+- 全隐式积分
+- 内插值法
+- 传输线等效模型
 - [[multirate-method|多速率仿真]]
 - [[parallel-computing|并行计算]]
 - [[state-space-method|状态空间分析]]
@@ -67,7 +67,7 @@ sources: ["EMT_Doc/03/Mu 等 - 2014 - A parallel multi-rate electromagnetic tran
 ## 涉及的模型
 
 - [[transmission-line-model|传输线模型]]
-- [[戴维南等值电路|戴维南等值电路]]
+- 戴维南等值电路
 - [[state-space-method|状态空间模型]]
 
 ## 相关主题
@@ -75,7 +75,7 @@ sources: ["EMT_Doc/03/Mu 等 - 2014 - A parallel multi-rate electromagnetic tran
 - [[emt-simulation|电磁暂态仿真]]
 - [[multirate-method|多速率仿真]]
 - [[parallel-computing|并行计算]]
-- [[网络分解|网络分解]]
+- 网络分解
 - [[small-signal-analysis|稳定性分析]]
 
 ## 主要发现

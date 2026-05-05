@@ -63,10 +63,10 @@ sources: ["EMT_Doc/25/Zhu 等 - 2012 - Loop closing analytical calculation syste
 
 
 - [[electromechanical-electromagnetic-hybrid-simulation|机电-电磁暂态混合仿真]]
-- [[最大级数搜索算法|最大级数搜索算法]]
-- [[戴维南-诺顿等值接口|戴维南/诺顿等值接口]]
-- [[序相量与瞬时值变换|序相量与瞬时值变换]]
-- [[单机多核并行计算|单机多核并行计算]]
+- 最大级数搜索算法
+- 戴维南/诺顿等值接口
+- 序相量与瞬时值变换
+- 单机多核并行计算
 
 
 ## 涉及的模型
@@ -84,11 +84,11 @@ sources: ["EMT_Doc/25/Zhu 等 - 2012 - Loop closing analytical calculation syste
 
 
 - [[co-simulation|混合仿真]]
-- [[电网合环分析|电网合环分析]]
-- [[网络自动划分|网络自动划分]]
-- [[模型自动转换|模型自动转换]]
+- 电网合环分析
+- 网络自动划分
+- 模型自动转换
 - [[parallel-computing|并行计算]]
-- [[冲击电流分析|冲击电流分析]]
+- 冲击电流分析
 
 
 ## 主要发现

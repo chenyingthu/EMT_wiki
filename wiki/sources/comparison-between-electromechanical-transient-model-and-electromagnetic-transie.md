@@ -62,33 +62,33 @@ sources: ["EMT_Doc/10/Wang 等 - 2013 - Comparison between electromechanical tra
 ## 使用的方法
 
 
-- [[tls-esprit算法|TLS-ESPRIT算法]]
+- TLS-ESPRIT算法
 - [[numerical-integration|隐式梯形积分法]]
 - [[nodal-analysis|节点分析法]]
 - [[electromechanical-electromagnetic-hybrid-simulation|机电-电磁暂态混合仿真]]
-- [[准稳态等值建模|准稳态等值建模]]
+- 准稳态等值建模
 
 
 ## 涉及的模型
 
 
-- [[直流准稳态模型|直流准稳态模型]]
-- [[12脉冲换流器|12脉冲换流器]]
+- 直流准稳态模型
+- 12脉冲换流器
 - [[transformer-model|换流变压器]]
 - [[dc-rlc-filter|平波电抗器]]
 - [[交直流滤波器|交直流滤波器]]
-- [[直流线路t型集中参数模型|直流线路T型集中参数模型]]
+- 直流线路T型集中参数模型
 - [[synchronous-machine-model|同步发电机]]
 
 
 ## 相关主题
 
 
-- [[低频振荡分析|低频振荡分析]]
+- 低频振荡分析
 - [[hybrid-acdc-system|交直流混合系统]]
 - [[co-simulation|混合仿真]]
 - [[modal-analysis|模态分析]]
-- [[直流输电系统建模|直流输电系统建模]]
+- 直流输电系统建模
 
 
 ## 主要发现

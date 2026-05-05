@@ -62,9 +62,9 @@ sources: ["EMT_Doc/18/Zhang 等 - 2021 - Fast Electromagnetic Transient Modeling
 ## 使用的方法
 
 
-- [[节点电压法|节点电压法]]
-- [[内节点收缩|内节点收缩]]
-- [[同步开关预判|同步开关预判]]
+- 节点电压法
+- 内节点收缩
+- 同步开关预判
 - [[norton-equivalent|诺顿等效]]
 
 
@@ -74,16 +74,16 @@ sources: ["EMT_Doc/18/Zhang 等 - 2021 - Fast Electromagnetic Transient Modeling
 - [[vsc-model|VSC]]
 - [[mmc-model|半桥子模块]]
 - [[固态变压器|固态变压器]]
-- [[igbt-二极管|IGBT/二极管]]
+- IGBT/二极管
 
 
 ## 相关主题
 
 
 - [[emt-simulation|电磁暂态仿真]]
-- [[快速建模|快速建模]]
-- [[开关状态预判|开关状态预判]]
-- [[电力电子网络|电力电子网络]]
+- 快速建模
+- 开关状态预判
+- 电力电子网络
 
 
 ## 主要发现

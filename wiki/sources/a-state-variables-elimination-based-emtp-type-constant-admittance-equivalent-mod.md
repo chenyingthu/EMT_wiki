@@ -58,17 +58,17 @@ sources: ["EMT_Doc/03/Xu 等 - 2025 - A State Variables Elimination-Based EMTP-T
 
 ## 使用的方法
 
-- [[状态变量消去法|状态变量消去法]]
+- 状态变量消去法
 - [[nodal-analysis|节点分析法]]
 - [[state-space-method|状态空间法]]
-- [[矩阵分裂技术|矩阵分裂技术]]
-- [[节点消去法|节点消去法]]
-- [[恒定导纳等效建模|恒定导纳等效建模]]
+- 矩阵分裂技术
+- 节点消去法
+- 恒定导纳等效建模
 
 ## 涉及的模型
 
 - [[power-electronics|电力电子变换器]]
-- [[光伏电厂|光伏电厂]]
+- 光伏电厂
 - [[power-electronics|电力电子变压器]]
 - [[mmc-model|模块化多电平换流器]]
 - [[vsc-model|电压源换流器]]
@@ -78,7 +78,7 @@ sources: ["EMT_Doc/03/Xu 等 - 2025 - A State Variables Elimination-Based EMTP-T
 - [[emt-simulation|电磁暂态仿真]]
 - [[average-value-model|等效建模]]
 - [[model-order-reduction|模型降阶]]
-- [[恒定导纳矩阵|恒定导纳矩阵]]
+- 恒定导纳矩阵
 - [[仿真效率优化|仿真效率优化]]
 
 ## 主要发现

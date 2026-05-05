@@ -60,16 +60,16 @@ sources: ["EMT_Doc/02/Rupasinghe 等 - 2023 - A multi-solver framework for co-si
 
 - [[multirate-method|多速率仿真]]
 - [[dynamic-phasor|动态相量法]]
-- [[频率自适应暂态仿真|频率自适应暂态仿真]]
-- [[暂态稳定求解|暂态稳定求解]]
-- [[协同仿真接口技术|协同仿真接口技术]]
+- 频率自适应暂态仿真
+- 暂态稳定求解
+- 协同仿真接口技术
 
 ## 涉及的模型
 
 - [[mmc-model|MMC]]
 - [[power-electronics|电力电子变换器]]
 - [[average-value-model|平均值模型]]
-- [[118节点测试系统|118节点测试系统]]
+- 118节点测试系统
 
 ## 相关主题
 

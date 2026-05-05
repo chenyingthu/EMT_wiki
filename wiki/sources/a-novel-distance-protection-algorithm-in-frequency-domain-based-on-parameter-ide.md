@@ -59,28 +59,28 @@ sources: ["EMT_Doc/13&14/files/A novel distance protection algorithm in frequenc
 ## 使用的方法
 
 - [[parameter-identification|参数辨识]]
-- [[矩阵束算法|矩阵束算法]]
+- 矩阵束算法
 - [[frequency-domain-analysis|频域分析]]
 - [[modal-analysis|相模变换]]
-- [[线性方程求解|线性方程求解]]
-- [[r-l模型|R-L模型]]
+- 线性方程求解
+- R-L模型
 
 ## 涉及的模型
 
 - [[transmission-line-model|输电线路]]
-- [[r-l模型|R-L模型]]
-- [[零序网络|零序网络]]
-- [[双端电源系统|双端电源系统]]
-- [[故障分量网络|故障分量网络]]
+- R-L模型
+- 零序网络
+- 双端电源系统
+- 故障分量网络
 
 ## 相关主题
 
 - [[distance-relay|距离保护]]
 - [[fault-analysis-methods|单相接地故障]]
-- [[超越动作抑制|超越动作抑制]]
+- 超越动作抑制
 - [[故障测距|故障测距]]
-- [[暂态信号处理|暂态信号处理]]
-- [[高阻接地|高阻接地]]
+- 暂态信号处理
+- 高阻接地
 
 ## 主要发现
 

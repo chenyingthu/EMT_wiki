@@ -58,29 +58,29 @@ sources: ["EMT_Doc/32/j.epsr.2021.107326.pdf.pdf"]
 
 ## 使用的方法
 
-- [[rms-emt联合仿真|RMS-EMT联合仿真]]
+- RMS-EMT联合仿真
 - [[multirate-method|多速率仿真]]
 - [[transmission-line-model|Bergeron线路模型]]
 - [[曲线拟合|曲线拟合]]
-- [[相量波形转换|相量波形转换]]
+- 相量波形转换
 - [[norton-equivalent|诺顿等效]]
 - [[hil-simulation|硬件在环]]
 
 ## 涉及的模型
 
 - [[transmission-line-model|输电线路]]
-- [[继电保护装置|继电保护装置]]
-- [[三相耦合线路|三相耦合线路]]
-- [[rms相量模型|RMS相量模型]]
-- [[emt电磁暂态模型|EMT电磁暂态模型]]
+- 继电保护装置
+- 三相耦合线路
+- RMS相量模型
+- EMT电磁暂态模型
 
 ## 相关主题
 
 - [[real-time-simulation|实时仿真]]
 - [[co-simulation|混合仿真]]
 - [[hil-simulation|硬件在环]]
-- [[多域仿真|多域仿真]]
-- [[继电保护测试|继电保护测试]]
+- 多域仿真
+- 继电保护测试
 - [[parallel-computing|网络解耦]]
 
 ## 主要发现

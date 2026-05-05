@@ -58,11 +58,11 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/j.ijepes.2019.105546.pdf.pdf"]
 
 ## 使用的方法
 
-- [[混合建模方法|混合建模方法]]
-- [[arma算法|ARMA算法]]
-- [[频变等效电路|频变等效电路]]
-- [[双端口网络法|双端口网络法]]
-- [[atp-emtp时域仿真|ATP-EMTP时域仿真]]
+- 混合建模方法
+- ARMA算法
+- 频变等效电路
+- 双端口网络法
+- ATP-EMTP时域仿真
 
 ## 涉及的模型
 
@@ -70,15 +70,15 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/j.ijepes.2019.105546.pdf.pdf"]
 - [[transformer-model|变压器]]
 - [[surge-arrester-model|避雷器]]
 - [[π型等效电路|π型等效电路]]
-- [[频变导纳支路|频变导纳支路]]
+- 频变导纳支路
 
 ## 相关主题
 
 - [[emt-simulation|电磁暂态仿真]]
 - [[frequency-dependent-modeling|频率相关建模]]
 - [[insulation-coordination|绝缘配合]]
-- [[快速暂态分析|快速暂态分析]]
-- [[接地网等值|接地网等值]]
+- 快速暂态分析
+- 接地网等值
 
 ## 主要发现
 

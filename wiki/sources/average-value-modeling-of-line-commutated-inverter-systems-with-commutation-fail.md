@@ -58,15 +58,15 @@ sources: ["EMT_Doc/09/Hong 等 - 2022 - Average-Value Modeling of Line-Commutate
 
 ## 使用的方法
 
-- [[参数化平均值模型|参数化平均值模型]]
-- [[电流源接口技术|电流源接口技术]]
-- [[自动故障检测算法|自动故障检测算法]]
-- [[连续代数方程建模|连续代数方程建模]]
+- 参数化平均值模型
+- 电流源接口技术
+- 自动故障检测算法
+- 连续代数方程建模
 
 ## 涉及的模型
 
 - [[lcc-model|LCC]]
-- [[六脉冲晶闸管逆变器|六脉冲晶闸管逆变器]]
+- 六脉冲晶闸管逆变器
 - [[vsc-hvdc|VSC-HVDC]]
 - [[dc-rlc-filter|平波电抗器]]
 - [[transmission-line-model|输电线路]]
@@ -76,10 +76,10 @@ sources: ["EMT_Doc/09/Hong 等 - 2022 - Average-Value Modeling of Line-Commutate
 
 - [[emt-simulation|电磁暂态仿真]]
 - [[换相失败|换相失败]]
-- [[传统高压直流输电|传统高压直流输电]]
+- 传统高压直流输电
 - [[large-scale-system-simulation|系统级仿真]]
-- [[交流电压跌落|交流电压跌落]]
-- [[故障检测|故障检测]]
+- 交流电压跌落
+- 故障检测
 
 ## 主要发现
 

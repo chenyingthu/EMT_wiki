@@ -60,28 +60,28 @@ sources: ["EMT_Doc/26/Wang 等 - 2010 - Methods of interfacing rotating machine 
 
 - [[nodal-analysis|节点分析法]]
 - [[state-space-method|状态变量法]]
-- [[间接接口技术|间接接口技术]]
+- 间接接口技术
 - [[直接接口技术|直接接口技术]]
 - [[coordinate-transformation-model|Park变换]]
-- [[耦合电路相域建模|耦合电路相域建模]]
+- 耦合电路相域建模
 
 ## 涉及的模型
 
 - [[synchronous-machine-model|同步电机]]
 - [[induction-machine-model|感应电机]]
 - [[nodal-analysis|相域模型]]
-- [[dq0参考系模型|dq0参考系模型]]
-- [[刚体机械模型|刚体机械模型]]
+- dq0参考系模型
+- 刚体机械模型
 
 ## 相关主题
 
 - [[co-simulation|接口技术]]
 - [[emt-simulation|电磁暂态仿真]]
-- [[emtp工具|EMTP工具]]
+- EMTP工具
 - [[状态变量仿真|状态变量仿真]]
-- [[旋转电机建模|旋转电机建模]]
+- 旋转电机建模
 - [[numerical-integration|数值稳定性]]
-- [[不对称工况分析|不对称工况分析]]
+- 不对称工况分析
 
 ## 主要发现
 

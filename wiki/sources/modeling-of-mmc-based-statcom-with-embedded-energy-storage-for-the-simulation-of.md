@@ -58,31 +58,31 @@ sources: ["EMT_Doc/27&28/Modeling of MMC-based STATCOM with embedded energy stor
 
 ## 使用的方法
 
-- [[详细模型-dm|详细模型(DM)]]
+- 详细模型(DM)
 - [[详细等效模型-dem|详细等效模型(DEM)]]
-- [[桥臂等效模型-aem|桥臂等效模型(AEM)]]
+- 桥臂等效模型(AEM)
 - [[average-value-model|平均值模型]]
-- [[级联控制策略|级联控制策略]]
-- [[双端口电路建模|双端口电路建模]]
+- 级联控制策略
+- 双端口电路建模
 
 ## 涉及的模型
 
 - [[mmc-model|MMC]]
 - [[statcom|STATCOM]]
 - [[full-bridge-smb|全桥子模块]]
-- [[超级电容|超级电容]]
-- [[蓄电池|蓄电池]]
+- 超级电容
+- 蓄电池
 - [[dc-dc-converter|DC/DC变换器]]
 - [[耦合变压器|耦合变压器]]
 
 ## 相关主题
 
 - [[emt-simulation|电磁暂态仿真]]
-- [[储能集成建模|储能集成建模]]
+- 储能集成建模
 - [[mmc-model|MMC]]
-- [[statcom控制|STATCOM控制]]
-- [[暂态性能分析|暂态性能分析]]
-- [[电网频率支撑|电网频率支撑]]
+- STATCOM控制
+- 暂态性能分析
+- 电网频率支撑
 
 ## 主要发现
 

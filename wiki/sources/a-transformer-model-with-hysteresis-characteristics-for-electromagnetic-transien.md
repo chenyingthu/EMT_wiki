@@ -55,25 +55,25 @@ sources: ["EMT_Doc/04/Wu 等 - 2017 - A Transformer Model With Hysteresis Charac
 
 ## 使用的方法
 
-- [[自定义建模-ud|自定义建模(UD)]]
-- [[可变电感法|可变电感法]]
-- [[分段线性插值法|分段线性插值法]]
-- [[延时比较法|延时比较法]]
-- [[闭环控制逻辑|闭环控制逻辑]]
+- 自定义建模(UD)
+- 可变电感法
+- 分段线性插值法
+- 延时比较法
+- 闭环控制逻辑
 
 ## 涉及的模型
 
 - [[三相变压器|三相变压器]]
 - [[transformer-model|换流变压器]]
 - [[transformer-model|非线性电感]]
-- [[bctran模型|BCTRAN模型]]
-- [[umec模型|UMEC模型]]
+- BCTRAN模型
+- UMEC模型
 
 ## 相关主题
 
 - [[emt-simulation|电磁暂态仿真]]
 - [[励磁涌流|励磁涌流]]
-- [[磁滞特性建模|磁滞特性建模]]
+- 磁滞特性建模
 - [[vsc-hvdc|高压直流输电]]
 - [[harmonic-analysis-methods|谐波分析]]
 

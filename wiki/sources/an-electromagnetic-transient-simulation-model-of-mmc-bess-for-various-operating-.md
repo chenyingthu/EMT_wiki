@@ -59,26 +59,26 @@ sources: ["EMT_Doc/07&08/An Electromagnetic Transient Simulation Model of MMC-BE
 ## 使用的方法
 
 - [[详细等效模型-dem|详细等效模型(DEM)]]
-- [[pscad辅助开关与插值算法|PSCAD辅助开关与插值算法]]
-- [[补充决策公式|补充决策公式]]
-- [[加速计算方法|加速计算方法]]
+- PSCAD辅助开关与插值算法
+- 补充决策公式
+- 加速计算方法
 - [[nodal-analysis|节点分析法]]
 
 ## 涉及的模型
 
 - [[mmc-model|MMC]]
 - [[子模块-sm|子模块(SM)]]
-- [[buck-boost变换器|Buck-Boost变换器]]
-- [[详细开关模型-dsm|详细开关模型(DSM)]]
+- Buck-Boost变换器
+- 详细开关模型(DSM)
 - [[average-value-model|平均值模型]]
 
 ## 相关主题
 
 - [[emt-simulation|电磁暂态仿真]]
-- [[换流器闭锁状态|换流器闭锁状态]]
-- [[电池断开仿真|电池断开仿真]]
-- [[交直流故障分析|交直流故障分析]]
-- [[仿真加速优化|仿真加速优化]]
+- 换流器闭锁状态
+- 电池断开仿真
+- 交直流故障分析
+- 仿真加速优化
 
 ## 主要发现
 

@@ -60,14 +60,14 @@ sources: ["EMT_Doc/27&28/Multirate Method for Dynamic Phasor Simulation of Large
 
 - [[dynamic-phasor|动态相量法]]
 - [[multirate-method|多速率仿真]]
-- [[插值与平均耦合|插值与平均耦合]]
-- [[误差校验步长控制|误差校验步长控制]]
+- 插值与平均耦合
+- 误差校验步长控制
 
 ## 涉及的模型
 
 - [[synchronous-machine-model|同步电机]]
-- [[发电机控制器|发电机控制器]]
-- [[交流输电网络|交流输电网络]]
+- 发电机控制器
+- 交流输电网络
 
 ## 相关主题
 

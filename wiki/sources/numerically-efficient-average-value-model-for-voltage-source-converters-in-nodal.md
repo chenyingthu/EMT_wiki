@@ -61,16 +61,16 @@ sources: ["EMT_Doc/29/EBRAHIMI 等 - 2024 - Numerically Efficient Average-Value 
 - [[nodal-analysis|节点分析法]]
 - [[average-value-model|平均值建模]]
 - [[直接接口技术|直接接口技术]]
-- [[电导矩阵法|电导矩阵法]]
+- 电导矩阵法
 - [[非迭代求解|非迭代求解]]
 
 ## 涉及的模型
 
 - [[vsc-model|VSC]]
 - [[detailed-switch-model|详细开关模型]]
-- [[传统受控源平均值模型|传统受控源平均值模型]]
-- [[直流侧电容|直流侧电容]]
-- [[戴维南等效电网|戴维南等效电网]]
+- 传统受控源平均值模型
+- 直流侧电容
+- 戴维南等效电网
 
 ## 相关主题
 
@@ -78,7 +78,7 @@ sources: ["EMT_Doc/29/EBRAHIMI 等 - 2024 - Numerically Efficient Average-Value 
 - [[multirate-method|大时间步长仿真]]
 - [[numerical-integration|数值稳定性]]
 - [[电力电子系统建模|电力电子系统建模]]
-- [[节点接口技术|节点接口技术]]
+- 节点接口技术
 
 ## 主要发现
 

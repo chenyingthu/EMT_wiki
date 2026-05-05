@@ -59,23 +59,23 @@ sources: ["EMT_Doc/07&08/An Equivalent Dynamic Phasor Model for a Single-Phase B
 ## 使用的方法
 
 - [[dynamic-phasor|动态相量法]]
-- [[符号函数变换|符号函数变换]]
+- 符号函数变换
 - [[small-signal-analysis|小信号分析]]
 - [[average-value-model|等效建模]]
-- [[线性化分析|线性化分析]]
+- 线性化分析
 
 ## 涉及的模型
 
-- [[单相boost-pfc变换器|单相Boost PFC变换器]]
-- [[二极管整流桥|二极管整流桥]]
-- [[等效有源整流器|等效有源整流器]]
+- 单相Boost PFC变换器
+- 二极管整流桥
+- 等效有源整流器
 - [[2728一种用于lcc-hvdc系统小干扰稳定性分析的改进动态相量模型|动态相量模型]]
-- [[小信号模型|小信号模型]]
+- 小信号模型
 
 ## 相关主题
 
 - [[dynamic-phasor|动态相量建模]]
-- [[功率因数校正|功率因数校正]]
+- 功率因数校正
 - [[控制器参数整定|控制器参数整定]]
 - [[harmonic-analysis-methods|谐波分析]]
 - [[parallel-computing|仿真加速]]

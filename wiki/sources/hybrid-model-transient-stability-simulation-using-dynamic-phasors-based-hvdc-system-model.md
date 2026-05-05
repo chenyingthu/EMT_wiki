@@ -61,20 +61,20 @@ sources: ["EMT_Doc/22/Zhu 等 - 2006 - Hybrid-model transient stability simulati
 - [[dynamic-phasor|动态相量法]]
 - [[switching-function-method|开关函数法]]
 - [[nodal-analysis|牛顿-拉夫逊法]]
-- [[传统相量法|传统相量法]]
+- 传统相量法
 
 ## 涉及的模型
 
 - [[lcc-model|LCC]]
 - [[large-scale-grid-simulation|交流电网]]
-- [[换流桥|换流桥]]
+- 换流桥
 - [[hybrid-acdc-network|多馈入直流系统]]
 
 ## 相关主题
 
 - [[electromechanical-transient|暂态稳定分析]]
 - [[co-simulation|混合仿真]]
-- [[交直流电力系统|交直流电力系统]]
+- 交直流电力系统
 - [[dynamic-phasor|动态相量建模]]
 
 ## 主要发现

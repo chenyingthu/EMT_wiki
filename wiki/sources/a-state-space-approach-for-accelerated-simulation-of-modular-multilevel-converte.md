@@ -61,22 +61,22 @@ sources: ["EMT_Doc/04/Zhao 等 - 2026 - A state-space approach for accelerated s
 - [[state-space-method|状态空间法]]
 - [[model-order-reduction|降阶建模]]
 - [[numerical-integration|数值积分]]
-- [[分段线性开关模型|分段线性开关模型]]
-- [[电容电压均衡算法|电容电压均衡算法]]
+- 分段线性开关模型
+- 电容电压均衡算法
 
 ## 涉及的模型
 
 - [[mmc-model|MMC]]
 - [[hbsm|HBSM]]
 - [[mmc-model|MMC]]
-- [[电力网络|电力网络]]
+- 电力网络
 
 ## 相关主题
 
 - [[emt-simulation|电磁暂态仿真]]
 - [[parallel-computing|仿真加速]]
 - [[state-space-method|状态空间建模]]
-- [[大规模电力电子系统|大规模电力电子系统]]
+- 大规模电力电子系统
 - [[电容电压均衡|电容电压均衡]]
 
 ## 主要发现

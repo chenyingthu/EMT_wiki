@@ -58,13 +58,13 @@ sources: ["EMT_Doc/24/Jalili-Marandi 等 - 2009 - Interfacing Techniques for Tra
 
 ## 使用的方法
 
-- [[混合仿真接口技术|混合仿真接口技术]]
+- 混合仿真接口技术
 - [[network-partitioning|网络分割]]
 - [[parallel-computing|并行计算]]
-- [[多速率积分|多速率积分]]
-- [[频移法|频移法]]
-- [[时间步长同步|时间步长同步]]
-- [[数据交换协议|数据交换协议]]
+- 多速率积分
+- 频移法
+- 时间步长同步
+- 数据交换协议
 
 ## 涉及的模型
 
@@ -73,7 +73,7 @@ sources: ["EMT_Doc/24/Jalili-Marandi 等 - 2009 - Interfacing Techniques for Tra
 - [[vsc-hvdc|VSC-HVDC]]
 - [[facts装置|FACTS装置]]
 - [[power-electronics|电力电子变换器]]
-- [[集中参数元件|集中参数元件]]
+- 集中参数元件
 - [[分布参数线路|分布参数线路]]
 
 ## 相关主题

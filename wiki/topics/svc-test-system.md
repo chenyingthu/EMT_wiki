@@ -17,9 +17,21 @@ created: "2026-05-04"
 
 - 待补充
 
+
+基于相关研究的技术应用：
+
 ## 主要分支与机制
 
 - 待补充
+
+
+## 验证与测试
+
+基于相关研究的验证证据：
+
+- **数值结果**: 50 Hz, 0.01 s
+
+- **数值结果**: 50 Hz, 0.01 s
 
 ## 形式化表达
 
@@ -32,11 +44,17 @@ created: "2026-05-04"
 ## 与相关页面的关系
 
 - [[emt-simulation]] - EMT仿真基础
-
+- [[power-system]]
+- [[electromagnetic-transient]]
 ## 代表性来源
 
-- 待补充
-
+- [[hybrid-simulation-of-power-systems-with-svc-dynamic-phasor-model]]
 ---
 
 *本页面为自动生成的stub，需要进一步补充完善。*
+
+- [[hybrid-simulation-of-power-systems-with-svc-dynamic-phasor-model]]
+- [[hybrid-simulation-of-power-systems-with-svc-dynamic-phasor-model-22]]
+- [[frequency-adaptive-power-system-modeling-for]]
+- [[a-testing-tool-for-converter-dominated-power-system-stochastic-electromagnetic-t]]
+- [[hybrid-svc-vsc-modeling-approaches-for-hardware-in-the-loop-simulation]]

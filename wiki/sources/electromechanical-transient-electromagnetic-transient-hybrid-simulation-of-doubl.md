@@ -58,26 +58,26 @@ sources: ["EMT_Doc/17/Gu 等 - 2015 - Electromechanical transient-electromagneti
 
 ## 使用的方法
 
-- [[dq0坐标变换|dq0坐标变换]]
+- dq0坐标变换
 - [[numerical-integration|梯形积分法]]
-- [[戴维南等值|戴维南等值]]
+- 戴维南等值
 - [[co-simulation|混合仿真接口]]
-- [[单台机等值|单台机等值]]
+- 单台机等值
 
 ## 涉及的模型
 
 - [[dfig-model|DFIG]]
-- [[双质量块轴系模型|双质量块轴系模型]]
-- [[转子侧换流器|转子侧换流器]]
-- [[网侧换流器|网侧换流器]]
+- 双质量块轴系模型
+- 转子侧换流器
+- 网侧换流器
 - [[synchronous-machine-model|同步发电机]]
 
 ## 相关主题
 
 - [[co-simulation|混合仿真]]
-- [[风电场等值建模|风电场等值建模]]
+- 风电场等值建模
 - [[transient-stability-analysis|暂态稳定性分析]]
-- [[故障动态响应|故障动态响应]]
+- 故障动态响应
 - [[控制系统建模|控制系统建模]]
 
 ## 主要发现

@@ -60,18 +60,18 @@ sources: ["EMT_Doc/15/Efficient GPU-based electromagnetic transient simulation f
 
 - [[nodal-analysis|节点分析法]]
 - [[gpu-accelerated-simulation|GPU并行计算]]
-- [[面向线程的模型变换|面向线程的模型变换]]
+- 面向线程的模型变换
 - [[automatic-code-generation|自动代码生成]]
-- [[融合乘加运算|融合乘加运算]]
-- [[分层有向无环图建模|分层有向无环图建模]]
-- [[simt并行架构|SIMT并行架构]]
+- 融合乘加运算
+- 分层有向无环图建模
+- SIMT并行架构
 
 ## 涉及的模型
 
-- [[ieee-33节点配电系统|IEEE 33节点配电系统]]
+- IEEE 33节点配电系统
 - [[distributed-generation|分布式电源]]
 - [[power-electronics|电力电子变换器]]
-- [[基本电气元件|基本电气元件]]
+- 基本电气元件
 - [[hybrid-acdc-network|交直流混合电网]]
 
 ## 相关主题
@@ -80,7 +80,7 @@ sources: ["EMT_Doc/15/Efficient GPU-based electromagnetic transient simulation f
 - [[gpu-accelerated-simulation|GPU并行加速]]
 - [[real-time-simulation|实时仿真]]
 - [[automatic-code-generation|自动代码生成]]
-- [[大规模配电网仿真|大规模配电网仿真]]
+- 大规模配电网仿真
 - [[parallel-computing|异构计算]]
 
 ## 主要发现

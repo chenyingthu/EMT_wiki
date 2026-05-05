@@ -59,27 +59,27 @@ sources: ["EMT_Doc/27&28/Multi-rate real time hybrid simulation of controllable 
 ## 使用的方法
 
 - [[multirate-method|多速率仿真]]
-- [[cpu-fpga协同仿真|CPU-FPGA协同仿真]]
-- [[离散电感解耦法|离散电感解耦法]]
-- [[关联离散电路模型|关联离散电路模型]]
-- [[参数优化|参数优化]]
+- CPU-FPGA协同仿真
+- 离散电感解耦法
+- 关联离散电路模型
+- 参数优化
 
 ## 涉及的模型
 
 - [[lcc-model|LCC]]
 - [[lcc-model|LCC]]
-- [[igbt阀组|IGBT阀组]]
+- IGBT阀组
 - [[晶闸管阀组|晶闸管阀组]]
 - [[transmission-line-model|直流输电线路]]
-- [[金属氧化物避雷器|金属氧化物避雷器]]
+- 金属氧化物避雷器
 
 ## 相关主题
 
 - [[real-time-simulation|实时仿真]]
 - [[co-simulation|混合仿真]]
 - [[multirate-method|多速率仿真]]
-- [[异构并行计算|异构并行计算]]
-- [[高压直流输电建模|高压直流输电建模]]
+- 异构并行计算
+- 高压直流输电建模
 - [[emt-simulation|开关暂态分析]]
 
 ## 主要发现

@@ -58,29 +58,29 @@ sources: ["EMT_Doc/24/Alipio 等 - 2023 - Influence of a lossy ground on the lig
 
 ## 使用的方法
 
-- [[sunde大地返回阻抗公式|Sunde大地返回阻抗公式]]
-- [[marti输电线路模型|Marti输电线路模型]]
-- [[alipio-visacro频变土壤模型|Alipio-Visacro频变土壤模型]]
+- Sunde大地返回阻抗公式
+- Marti输电线路模型
+- Alipio-Visacro频变土壤模型
 - [[heidler雷电流函数|Heidler雷电流函数]]
-- [[atp电磁暂态仿真|ATP电磁暂态仿真]]
-- [[carson公式对比|Carson公式对比]]
+- ATP电磁暂态仿真
+- Carson公式对比
 
 ## 涉及的模型
 
-- [[138kv-230kv架空输电线路|138kV/230kV架空输电线路]]
-- [[杆塔接地阻抗|杆塔接地阻抗]]
+- 138kV/230kV架空输电线路
+- 杆塔接地阻抗
 - [[绝缘子串|绝缘子串]]
-- [[频变损耗大地模型|频变损耗大地模型]]
+- 频变损耗大地模型
 - [[grounding-lightning-overvoltage|雷电流源]]
 
 ## 相关主题
 
-- [[雷击反击跳闸率|雷击反击跳闸率]]
-- [[频变土壤参数建模|频变土壤参数建模]]
+- 雷击反击跳闸率
+- 频变土壤参数建模
 - [[大地返回阻抗|大地返回阻抗]]
 - [[emt-simulation|电磁暂态仿真]]
 - [[过电压分析|过电压分析]]
-- [[线路防雷性能|线路防雷性能]]
+- 线路防雷性能
 
 ## 主要发现
 

@@ -59,10 +59,10 @@ sources: ["EMT_Doc/30/j.epsr.2021.107168.pdf.pdf"]
 ## 使用的方法
 
 - [[parallel-computing|并行计算]]
-- [[openmp多线程技术|OpenMP多线程技术]]
-- [[动态链接库接口|动态链接库接口]]
-- [[诺顿等效电路法|诺顿等效电路法]]
-- [[电容均压算法|电容均压算法]]
+- OpenMP多线程技术
+- 动态链接库接口
+- 诺顿等效电路法
+- 电容均压算法
 - [[nodal-analysis|节点分析法]]
 
 ## 涉及的模型
@@ -78,9 +78,9 @@ sources: ["EMT_Doc/30/j.epsr.2021.107168.pdf.pdf"]
 - [[emt-simulation|电磁暂态仿真]]
 - [[parallel-computing|并行计算]]
 - [[emt-simulation|离线仿真]]
-- [[多核cpu加速|多核CPU加速]]
+- 多核CPU加速
 - [[mmc-model|MMC]]
-- [[电容均压|电容均压]]
+- 电容均压
 
 ## 主要发现
 

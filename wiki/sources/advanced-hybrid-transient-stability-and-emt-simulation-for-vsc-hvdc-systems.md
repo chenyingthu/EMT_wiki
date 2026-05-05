@@ -60,9 +60,9 @@ sources: ["EMT_Doc/06/van der Meer 等 - 2015 - Advanced Hybrid Transient Stabil
 
 - [[co-simulation|混合仿真]]
 - [[average-value-model|平均值模型]]
-- [[数值接口技术|数值接口技术]]
-- [[交互协议|交互协议]]
-- [[戴维南等效更新|戴维南等效更新]]
+- 数值接口技术
+- 交互协议
+- 戴维南等效更新
 - [[dynamic-phasor|动态相量法]]
 
 ## 涉及的模型
@@ -70,9 +70,9 @@ sources: ["EMT_Doc/06/van der Meer 等 - 2015 - Advanced Hybrid Transient Stabil
 - [[vsc-model|VSC]]
 - [[vsc-model|VSC]]
 - [[hybrid-acdc-network|多端直流系统]]
-- [[海上风电场|海上风电场]]
-- [[锁相环模型|锁相环模型]]
-- [[故障穿越模型|故障穿越模型]]
+- 海上风电场
+- 锁相环模型
+- 故障穿越模型
 
 ## 相关主题
 
@@ -80,7 +80,7 @@ sources: ["EMT_Doc/06/van der Meer 等 - 2015 - Advanced Hybrid Transient Stabil
 - [[electromechanical-transient|暂态稳定分析]]
 - [[vsc-model|VSC]]
 - [[hybrid-acdc-network|多端直流电网]]
-- [[交直流系统接口|交直流系统接口]]
+- 交直流系统接口
 - [[renewable-energy-integration|新能源并网]]
 
 ## 主要发现

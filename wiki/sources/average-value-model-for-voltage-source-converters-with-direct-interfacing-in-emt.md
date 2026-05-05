@@ -66,7 +66,7 @@ sources: ["EMT_Doc/09/Ebrahimi和Jatskevich - 2023 - Average-Value Model for Vol
 ## 涉及的模型
 
 - [[vsc-model|VSC]]
-- [[交直流系统|交直流系统]]
+- 交直流系统
 - [[nodal-analysis|戴维南等效电路]]
 
 ## 相关主题

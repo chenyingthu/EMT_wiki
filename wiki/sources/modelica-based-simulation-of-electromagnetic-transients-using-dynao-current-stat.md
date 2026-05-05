@@ -58,31 +58,31 @@ sources: ["EMT_Doc/26/Masoom 等 - 2021 - Modelica-based simulation of electroma
 
 ## 使用的方法
 
-- [[混合c-modelica建模|混合C++/Modelica建模]]
-- [[非因果方程建模|非因果方程建模]]
-- [[模型与求解器解耦|模型与求解器解耦]]
-- [[变步长变阶bdf积分法|变步长变阶BDF积分法]]
-- [[隐式欧拉法|隐式欧拉法]]
-- [[稀疏lu分解-klu-nicslu|稀疏LU分解(KLU/NICSLU)]]
-- [[虚拟方程预编译技术|虚拟方程预编译技术]]
+- 混合C++/Modelica建模
+- 非因果方程建模
+- 模型与求解器解耦
+- 变步长变阶BDF积分法
+- 隐式欧拉法
+- 稀疏LU分解(KLU/NICSLU)
+- 虚拟方程预编译技术
 
 ## 涉及的模型
 
-- [[输电线路-cp-wb模型|输电线路(CP/WB模型)]]
+- 输电线路(CP/WB模型)
 - [[synchronous-machine-model|同步电机]]
 - [[transformer-model|电力变压器]]
 - [[surge-arrester-model|避雷器]]
-- [[电力控制器|电力控制器]]
+- 电力控制器
 
 ## 相关主题
 
 - [[emt-simulation|电磁暂态仿真]]
-- [[modelica建模|Modelica建模]]
-- [[混合仿真架构|混合仿真架构]]
+- Modelica建模
+- 混合仿真架构
 - [[large-scale-system-simulation|大规模系统仿真]]
 - [[数值求解器集成|数值求解器集成]]
-- [[仿真性能优化|仿真性能优化]]
-- [[非因果建模|非因果建模]]
+- 仿真性能优化
+- 非因果建模
 
 ## 主要发现
 

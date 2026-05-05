@@ -63,7 +63,7 @@ sources: ["EMT_Doc/27&28/Multi-Scale and Frequency-Dependent Modeling of Electri
 - [[频移技术|频移技术]]
 - [[modal-analysis|模态分解]]
 - [[partial-fraction-expansion|部分分式展开]]
-- [[数值递归卷积|数值递归卷积]]
+- 数值递归卷积
 - [[co-simulation|多尺度仿真]]
 
 ## 涉及的模型
@@ -71,11 +71,11 @@ sources: ["EMT_Doc/27&28/Multi-Scale and Frequency-Dependent Modeling of Electri
 - [[transmission-line-model|输电线路]]
 - [[transmission-line-model|频变线路模型]]
 - [[π型等值电路|π型等值电路]]
-- [[多相线路|多相线路]]
+- 多相线路
 
 ## 相关主题
 
-- [[多尺度建模|多尺度建模]]
+- 多尺度建模
 - [[frequency-dependent-modeling|频率相关建模]]
 - [[emt-simulation|电磁暂态]]
 - [[electromechanical-transient|机电暂态]]

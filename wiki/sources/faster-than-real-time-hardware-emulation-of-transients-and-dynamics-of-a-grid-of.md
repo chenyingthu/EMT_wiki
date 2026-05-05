@@ -60,17 +60,17 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/Cao 等 - 2023 - Faster-Than-Real-Ti
 
 - [[emt-simulation|电磁暂态仿真]]
 - [[暂态稳定仿真|暂态稳定仿真]]
-- [[动态电压注入接口|动态电压注入接口]]
+- 动态电压注入接口
 - [[fpga-real-time-simulation|FPGA并行计算]]
 - [[real-time-simulation|超实时仿真]]
 
 ## 涉及的模型
 
 - [[microgrid|微电网]]
-- [[光伏阵列|光伏阵列]]
-- [[双馈感应发电机|双馈感应发电机]]
+- 光伏阵列
+- 双馈感应发电机
 - [[bess-model|电池储能系统]]
-- [[交流主网|交流主网]]
+- 交流主网
 - [[power-electronics|电力电子变流器]]
 
 ## 相关主题
@@ -78,9 +78,9 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/Cao 等 - 2023 - Faster-Than-Real-Ti
 - [[real-time-simulation|超实时仿真]]
 - [[co-simulation|混合仿真]]
 - [[parallel-computing|并行计算]]
-- [[动态安全评估|动态安全评估]]
+- 动态安全评估
 - [[hil-simulation|硬件在环仿真]]
-- [[微电网群建模|微电网群建模]]
+- 微电网群建模
 
 ## 主要发现
 

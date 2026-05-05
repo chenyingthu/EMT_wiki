@@ -58,19 +58,19 @@ sources: ["EMT_Doc/07&08/An Inverter Model Simulating Accurate Harmonics With Lo
 
 ## 使用的方法
 
-- [[时间平均法-tam|时间平均法(TAM)]]
-- [[电压插值法|电压插值法]]
+- 时间平均法(TAM)
+- 电压插值法
 - [[numerical-integration|梯形积分法]]
 - [[numerical-integration|后向欧拉法]]
-- [[电路平均模型|电路平均模型]]
+- 电路平均模型
 - [[switch-modeling|开关模型]]
 
 ## 涉及的模型
 
 - [[gfl-inverter-model|并网逆变器]]
-- [[半桥逆变器|半桥逆变器]]
-- [[逆变器桥臂等效电路|逆变器桥臂等效电路]]
-- [[pwm调制模型|PWM调制模型]]
+- 半桥逆变器
+- 逆变器桥臂等效电路
+- PWM调制模型
 
 ## 相关主题
 

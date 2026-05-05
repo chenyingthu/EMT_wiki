@@ -58,9 +58,9 @@ sources: ["EMT_Doc/06/Li 等 - 2022 - Algorithm for fast calculating the energiz
 
 ## 使用的方法
 
-- [[模态理论|模态理论]]
+- 模态理论
 - [[numerical-inverse-laplace-transform|数值拉普拉斯逆变换]]
-- [[拉普拉斯变换|拉普拉斯变换]]
+- 拉普拉斯变换
 - [[modal-analysis|相模变换]]
 - [[电报方程求解|电报方程求解]]
 
@@ -68,16 +68,16 @@ sources: ["EMT_Doc/06/Li 等 - 2022 - Algorithm for fast calculating the energiz
 
 - [[电力电缆|电力电缆]]
 - [[cross-bonded-cable|交叉互联电缆]]
-- [[频变相位模型|频变相位模型]]
+- 频变相位模型
 - [[分布参数模型|分布参数模型]]
 
 ## 相关主题
 
-- [[合闸过电压|合闸过电压]]
+- 合闸过电压
 - [[frequency-dependent-modeling|频率相关建模]]
 - [[emt-simulation|电磁暂态仿真]]
-- [[电缆沿线电压分布|电缆沿线电压分布]]
-- [[快速计算算法|快速计算算法]]
+- 电缆沿线电压分布
+- 快速计算算法
 
 ## 主要发现
 

@@ -58,24 +58,24 @@ sources: ["EMT_Doc/23/Kuranage 等 - 2023 - Improved methods for optimization of
 
 ## 使用的方法
 
-- [[优化驱动电磁暂态仿真-oe-emts|优化驱动电磁暂态仿真(OE-EMTS)]]
-- [[参数筛选法|参数筛选法]]
-- [[遗传算法-ga|遗传算法(GA)]]
+- 优化驱动电磁暂态仿真(OE-EMTS)
+- 参数筛选法
+- 遗传算法(GA)
 - [[parallel-computing|并行计算]]
-- [[混合优化算法|混合优化算法]]
+- 混合优化算法
 
 ## 涉及的模型
 
-- [[type-4风电机组控制器|Type-4风电机组控制器]]
+- Type-4风电机组控制器
 - [[并网变流器|并网变流器]]
-- [[pscad-emtdc仿真模型|PSCAD/EMTDC仿真模型]]
+- PSCAD/EMTDC仿真模型
 
 ## 相关主题
 
 - [[emt-simulation|电磁暂态仿真]]
-- [[优化算法|优化算法]]
+- 优化算法
 - [[parallel-computing|并行计算]]
-- [[可再生能源并网|可再生能源并网]]
+- 可再生能源并网
 - [[控制器参数整定|控制器参数整定]]
 - [[基于仿真的优化设计|基于仿真的优化设计]]
 

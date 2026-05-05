@@ -59,16 +59,16 @@ Rational function approximations of characteristic impedance and propagation coe
 ## 使用的方法
 
 - [[vector-fitting|有理函数拟合]]
-- [[bode渐近线法|Bode渐近线法]]
-- [[非线性最小二乘法|非线性最小二乘法]]
+- Bode渐近线法
+- 非线性最小二乘法
 - [[递归卷积|递归卷积]]
 - [[modal-analysis|相模变换]]
 
 ## 涉及的模型
 
 - [[频变输电线路模型|频变输电线路模型]]
-- [[j-r-marti模型|J.R. Marti模型]]
-- [[分布参数线路模型|分布参数线路模型]]
+- J.R. Marti模型
+- 分布参数线路模型
 
 ## 相关主题
 

@@ -17,6 +17,9 @@ created: "2026-05-04"
 
 - 待补充
 
+
+基于相关研究的技术应用：
+
 ## 主要分支与机制
 
 - 待补充
@@ -32,11 +35,17 @@ created: "2026-05-04"
 ## 与相关页面的关系
 
 - [[emt-simulation]] - EMT仿真基础
-
+- [[power-system]]
+- [[electromagnetic-transient]]
 ## 代表性来源
 
-- 待补充
-
+- [[nodal-reduced-induction-machine-modeling-for]]
 ---
 
 *本页面为自动生成的stub，需要进一步补充完善。*
+
+- [[nodal-reduced-induction-machine-modeling-for]]
+- [[time-domain-implementation-of-damping-factor-white-box-transformer-model-for-inc]]
+- [[an-improved-high-frequency-white-box-lossy-transformer-model-for-the-calculation]]
+- [[electromagnetic-transient-modeling-of-asynchronous-machine-in-modelica-accuracy-]]
+- [[passivity-enforcement-for-transmission-line-models]]

@@ -58,27 +58,27 @@ sources: ["EMT_Doc/11/Hernández-Ramírez 等 - 2024 - Comprehensive D Q impedan
 
 ## 使用的方法
 
-- [[谐波平衡法|谐波平衡法]]
-- [[时频混合解析法|时频混合解析法]]
-- [[dq阻抗建模|DQ阻抗建模]]
-- [[频域电报方程|频域电报方程]]
+- 谐波平衡法
+- 时频混合解析法
+- DQ阻抗建模
+- 频域电报方程
 - [[frequency-scanning|频率扫描法]]
-- [[奈奎斯特稳定判据|奈奎斯特稳定判据]]
+- 奈奎斯特稳定判据
 
 ## 涉及的模型
 
 - [[power-electronics|电力电子变流器]]
-- [[频变输电线路|频变输电线路]]
+- 频变输电线路
 - [[分布参数模型|分布参数模型]]
-- [[pwm延时模型|PWM延时模型]]
+- PWM延时模型
 
 ## 相关主题
 
-- [[谐波稳定性|谐波稳定性]]
+- 谐波稳定性
 - [[impedance-modeling|阻抗建模]]
 - [[frequency-dependent-modeling|频率相关建模]]
 - [[small-signal-analysis|小信号稳定性分析]]
-- [[实时仿真验证|实时仿真验证]]
+- 实时仿真验证
 - [[emt-simulation|电磁暂态分析]]
 
 ## 主要发现

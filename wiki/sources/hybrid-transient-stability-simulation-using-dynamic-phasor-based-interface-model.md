@@ -60,22 +60,22 @@ sources: ["EMT_Doc/22/Liu 等 - 2020 - Hybrid EMT-TS Simulation Strategies to St
 
 - [[co-simulation|混合仿真]]
 - [[multirate-method|多速率仿真]]
-- [[无功注入法|无功注入法]]
-- [[电压灵敏度分析|电压灵敏度分析]]
-- [[动态相量接口|动态相量接口]]
+- 无功注入法
+- 电压灵敏度分析
+- 动态相量接口
 
 ## 涉及的模型
 
 - [[mmc-model|MMC]]
 - [[vsc-hvdc|VSC-HVDC]]
-- [[东部互联电网|东部互联电网]]
-- [[cdc6t直流模型|CDC6T直流模型]]
+- 东部互联电网
+- CDC6T直流模型
 
 ## 相关主题
 
-- [[emt-ts混合仿真|EMT-TS混合仿真]]
+- EMT-TS混合仿真
 - [[mmc-model|MMC]]
-- [[缓冲区划分|缓冲区划分]]
+- 缓冲区划分
 - [[large-scale-grid-simulation|大规模电网仿真]]
 - [[electromechanical-transient|暂态稳定分析]]
 

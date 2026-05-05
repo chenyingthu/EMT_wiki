@@ -59,7 +59,7 @@ sources: ["EMT_Doc/13&14/files/Yu 等 - 2024 - Efficient electromagnetic transie
 ## 使用的方法
 
 - [[nodal-analysis|节点分析法]]
-- [[细粒度网络解耦|细粒度网络解耦]]
+- 细粒度网络解耦
 - [[多线程并行计算|多线程并行计算]]
 - [[switching-function-method|开关函数法]]
 - [[transmission-line-model|集中参数模型]]
@@ -69,7 +69,7 @@ sources: ["EMT_Doc/13&14/files/Yu 等 - 2024 - Efficient electromagnetic transie
 - [[dfig-model|DFIG]]
 - [[vsc-model|VSC]]
 - [[transformer-model|变压器]]
-- [[lcl滤波器|LCL滤波器]]
+- LCL滤波器
 - [[transmission-line-model|输电线路]]
 - [[wind-farm-modeling|风电场]]
 

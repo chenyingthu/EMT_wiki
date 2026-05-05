@@ -58,9 +58,9 @@ sources: ["EMT_Doc/07&08/Zhang et al. - 2024 - An ultra-fast MMC-HVDC fault loca
 
 ## 使用的方法
 
-- [[集中参数rlc建模|集中参数RLC建模]]
-- [[回归神经网络-rnn|回归神经网络(RNN)]]
-- [[暂态特征提取|暂态特征提取]]
+- 集中参数RLC建模
+- 回归神经网络(RNN)
+- 暂态特征提取
 - [[传递函数分析|传递函数分析]]
 
 ## 涉及的模型
@@ -68,15 +68,15 @@ sources: ["EMT_Doc/07&08/Zhang et al. - 2024 - An ultra-fast MMC-HVDC fault loca
 - [[mmc-model|MMC]]
 - [[mmc-model|MMC]]
 - [[transmission-line-model|直流输电线路]]
-- [[混合直流断路器-hdccb|混合直流断路器(HDCCB)]]
+- 混合直流断路器(HDCCB)
 
 ## 相关主题
 
-- [[故障定位|故障定位]]
+- 故障定位
 - [[mmc-model|MMC]]
-- [[暂态电压分析|暂态电压分析]]
-- [[数据驱动保护|数据驱动保护]]
-- [[高阻故障定位|高阻故障定位]]
+- 暂态电压分析
+- 数据驱动保护
+- 高阻故障定位
 
 ## 主要发现
 

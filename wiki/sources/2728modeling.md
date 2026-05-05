@@ -60,19 +60,19 @@ sources: ["EMT_Doc/27&28/Modeling_of_LCC_HVDC_Systems_Using_Dynam.pdf"]
 
 - [[dynamic-phasor|动态相量法]]
 - [[average-value-model|动态平均值建模]]
-- [[时变傅里叶系数展开|时变傅里叶系数展开]]
+- 时变傅里叶系数展开
 
 ## 涉及的模型
 
 - [[lcc-model|LCC]]
-- [[电网换相换流器|电网换相换流器]]
-- [[交直流互联网络|交直流互联网络]]
+- 电网换相换流器
+- 交直流互联网络
 
 ## 相关主题
 
 - [[vsc-hvdc|高压直流输电]]
 - [[emt-simulation|电磁暂态仿真]]
-- [[大扰动暂态分析|大扰动暂态分析]]
+- 大扰动暂态分析
 - [[real-time-simulation|实时仿真]]
 - [[large-scale-system-simulation|计算效率优化]]
 

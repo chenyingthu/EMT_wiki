@@ -59,9 +59,9 @@ sources: ["EMT_Doc/22/Le-Huy和Tremblay - 2023 - Hybrid SVC-VSC modeling approac
 ## 使用的方法
 
 - [[emt-simulation|电磁暂态仿真]]
-- [[小步长仿真|小步长仿真]]
-- [[常规大步长仿真|常规大步长仿真]]
-- [[等效电压源建模|等效电压源建模]]
+- 小步长仿真
+- 常规大步长仿真
+- 等效电压源建模
 - [[hil-simulation|硬件在环仿真]]
 
 ## 涉及的模型
@@ -71,16 +71,16 @@ sources: ["EMT_Doc/22/Le-Huy和Tremblay - 2023 - Hybrid SVC-VSC modeling approac
 - [[mmc-model|MMC]]
 - [[tsc|TSC]]
 - [[耦合变压器|耦合变压器]]
-- [[控制保护系统|控制保护系统]]
+- 控制保护系统
 
 ## 相关主题
 
 - [[real-time-simulation|实时仿真]]
 - [[hil-simulation|硬件在环仿真]]
-- [[混合无功补偿|混合无功补偿]]
-- [[svc改造|SVC改造]]
-- [[控制保护测试|控制保护测试]]
-- [[仿真步长对比|仿真步长对比]]
+- 混合无功补偿
+- SVC改造
+- 控制保护测试
+- 仿真步长对比
 
 ## 主要发现
 

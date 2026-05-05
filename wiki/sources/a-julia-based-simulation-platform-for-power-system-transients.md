@@ -64,18 +64,18 @@ sources: ["EMT_Doc/02/Naidjate 等 - 2025 - A Julia-Based Simulation Platform fo
 - [[分段线性化|分段线性化]]
 - [[sparse-matrix-solver|稀疏矩阵求解]]
 - [[parallel-computing|并行计算]]
-- [[符号分解优化|符号分解优化]]
+- 符号分解优化
 
 ## 涉及的模型
 
 - [[rlc支路|RLC支路]]
-- [[理想变压器|理想变压器]]
+- 理想变压器
 - [[transformer-model|非线性电感]]
-- [[非线性电阻|非线性电阻]]
+- 非线性电阻
 - [[transmission-line-model|输电线路]]
 - [[synchronous-machine-model|同步电机]]
-- [[同步电机控制系统|同步电机控制系统]]
-- [[开关|开关]]
+- 同步电机控制系统
+- 开关
 
 ## 相关主题
 

@@ -59,20 +59,20 @@ sources: ["EMT_Doc/31/j.epsr.2021.107281.pdf.pdf"]
 ## 使用的方法
 
 - [[递归卷积法|递归卷积法]]
-- [[递归梯形积分法|递归梯形积分法]]
+- 递归梯形积分法
 - [[vector-fitting|矢量拟合]]
-- [[矩量法|矩量法]]
+- 矩量法
 - [[numerical-integration|数值拉普拉斯变换]]
-- [[频时变换|频时变换]]
+- 频时变换
 
 ## 涉及的模型
 
 - [[grounding-system-model|接地系统]]
 - [[水平接地极|水平接地极]]
-- [[网格接地极|网格接地极]]
+- 网格接地极
 - [[grounding-lightning-overvoltage|雷电流源]]
 - [[grounding-system-model|频变土壤模型]]
-- [[atp等效电路|ATP等效电路]]
+- ATP等效电路
 
 ## 相关主题
 

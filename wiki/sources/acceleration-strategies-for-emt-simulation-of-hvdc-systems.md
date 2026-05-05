@@ -58,30 +58,30 @@ sources: ["EMT_Doc/05/Allabadi 等 - 2026 - Acceleration strategies for EMT Simu
 
 ## 使用的方法
 
-- [[传输线并行化-tlp|传输线并行化(TLP)]]
-- [[控制系统并行化-ctrlp|控制系统并行化(CtrlP)]]
-- [[优化顺序求解器-oseqctrl|优化顺序求解器(OSeqCtrl)]]
+- 传输线并行化(TLP)
+- 控制系统并行化(CtrlP)
+- 优化顺序求解器(OSeqCtrl)
 - [[功能模型接口-fmi|功能模型接口(FMI)]]
-- [[非迭代雅可比法-nij|非迭代雅可比法(NIJ)]]
-- [[主从协同仿真|主从协同仿真]]
+- 非迭代雅可比法(NIJ)
+- 主从协同仿真
 
 ## 涉及的模型
 
 - [[mmc-model|MMC]]
 - [[dfig-model|DFIG]]
 - [[wind-farm-modeling|风电场]]
-- [[直流电缆|直流电缆]]
-- [[宽带线路模型|宽带线路模型]]
-- [[电网等值电源|电网等值电源]]
+- 直流电缆
+- 宽带线路模型
+- 电网等值电源
 
 ## 相关主题
 
 - [[emt-simulation|电磁暂态仿真]]
-- [[多端直流输电-mtdc|多端直流输电(MTDC)]]
+- 多端直流输电(MTDC)
 - [[parallel-computing|并行计算]]
 - [[emt-simulation|离线仿真]]
-- [[控制系统加速|控制系统加速]]
-- [[混合加速策略|混合加速策略]]
+- 控制系统加速
+- 混合加速策略
 
 ## 主要发现
 

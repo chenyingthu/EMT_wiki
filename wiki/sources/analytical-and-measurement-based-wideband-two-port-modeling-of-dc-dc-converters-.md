@@ -58,17 +58,17 @@ sources: ["EMT_Doc/09/Alameri和Gomez - 2023 - Analytical and measurement-based 
 
 ## 使用的方法
 
-- [[拉普拉斯域分析|拉普拉斯域分析]]
-- [[模式平均法|模式平均法]]
-- [[双端口导纳建模|双端口导纳建模]]
+- 拉普拉斯域分析
+- 模式平均法
+- 双端口导纳建模
 - [[numerical-inverse-laplace-transform|数值拉普拉斯逆变换]]
-- [[基于测量的模型重构|基于测量的模型重构]]
+- 基于测量的模型重构
 
 ## 涉及的模型
 
-- [[buck变换器|Buck变换器]]
-- [[boost变换器|Boost变换器]]
-- [[双端口导纳模型|双端口导纳模型]]
+- Buck变换器
+- Boost变换器
+- 双端口导纳模型
 - [[黑盒模型|黑盒模型]]
 
 ## 相关主题
@@ -77,8 +77,8 @@ sources: ["EMT_Doc/09/Alameri和Gomez - 2023 - Analytical and measurement-based 
 - [[wideband-modeling|宽频建模]]
 - [[frequency-domain-analysis|频域分析]]
 - [[电力电子变换器建模|电力电子变换器建模]]
-- [[导纳建模|导纳建模]]
-- [[分布式能源并网|分布式能源并网]]
+- 导纳建模
+- 分布式能源并网
 
 ## 主要发现
 

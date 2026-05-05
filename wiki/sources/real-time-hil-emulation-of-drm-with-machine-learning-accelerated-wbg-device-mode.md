@@ -58,28 +58,28 @@ sources: ["EMT_Doc/32/Zhang 等 - 2023 - Real-Time HIL Emulation of DRM With Mac
 
 ## 使用的方法
 
-- [[传输线法-tlm|传输线法(TLM)]]
-- [[门控循环单元-gru|门控循环单元(GRU)]]
-- [[电磁暂态-emt-建模|电磁暂态(EMT)建模]]
-- [[物理特征神经网络-pfnn|物理特征神经网络(PFNN)]]
+- 传输线法(TLM)
+- 门控循环单元(GRU)
+- 电磁暂态(EMT)建模
+- 物理特征神经网络(PFNN)
 - [[fpga-real-time-simulation|FPGA并行计算]]
-- [[硬件在环-hil-仿真|硬件在环(HIL)仿真]]
+- 硬件在环(HIL)仿真
 
 ## 涉及的模型
 
-- [[直流铁路微电网-drm|直流铁路微电网(DRM)]]
-- [[氮化镓高电子迁移率晶体管-gan-hemt|氮化镓高电子迁移率晶体管(GaN HEMT)]]
-- [[碳化硅绝缘栅双极型晶体管-sic-igbt|碳化硅绝缘栅双极型晶体管(SiC IGBT)]]
-- [[宽禁带功率器件|宽禁带功率器件]]
+- 直流铁路微电网(DRM)
+- 氮化镓高电子迁移率晶体管(GaN HEMT)
+- 碳化硅绝缘栅双极型晶体管(SiC IGBT)
+- 宽禁带功率器件
 
 ## 相关主题
 
 - [[real-time-simulation|实时仿真]]
 - [[hil-simulation|硬件在环]]
-- [[机器学习加速建模|机器学习加速建模]]
+- 机器学习加速建模
 - [[multirate-method|变步长仿真]]
-- [[fpga并行架构|FPGA并行架构]]
-- [[功率器件级建模|功率器件级建模]]
+- FPGA并行架构
+- 功率器件级建模
 
 ## 主要发现
 

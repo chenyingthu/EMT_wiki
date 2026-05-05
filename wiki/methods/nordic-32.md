@@ -32,11 +32,11 @@ created: "2026-05-04"
 ## 与相关页面的关系
 
 - [[emt-simulation]] - EMT仿真基础
-
+- [[power-system]]
+- [[electromagnetic-transient]]
 ## 代表性来源
 
-- 待补充
-
+- [[shooting-method-based-modular-multilevel-converter-initialization-for-electromag]]
 ---
 
 *本页面为自动生成的stub，需要进一步补充完善。*

@@ -59,7 +59,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/TPWRD.2015.2449754.pdf.pdf"]
 ## 使用的方法
 
 - [[频域分析法|频域分析法]]
-- [[可变时间步长|可变时间步长]]
+- 可变时间步长
 - [[网络等值技术|网络等值技术]]
 - [[nodal-analysis|节点导纳矩阵求解]]
 - [[vector-fitting|有理函数拟合]]
@@ -68,13 +68,13 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/TPWRD.2015.2449754.pdf.pdf"]
 
 - [[fdne-model|FDNE]]
 - [[transmission-line-model|输电线路]]
-- [[集中参数电路|集中参数电路]]
-- [[开关设备|开关设备]]
+- 集中参数电路
+- 开关设备
 
 ## 相关主题
 
 - [[emt-simulation|电磁暂态仿真]]
-- [[频域仿真|频域仿真]]
+- 频域仿真
 - [[network-equivalent|网络等值]]
 - [[multirate-method|变步长仿真]]
 - [[emt-simulation|开关暂态分析]]

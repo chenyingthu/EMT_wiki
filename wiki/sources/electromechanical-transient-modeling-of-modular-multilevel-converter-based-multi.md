@@ -61,7 +61,7 @@ sources: ["EMT_Doc/17/Liu 等 - 2014 - Electromechanical transient modeling of m
 - [[electromechanical-transient|机电暂态建模]]
 - [[power-flow-calculation|潮流计算]]
 - [[nodal-analysis|等效电路法]]
-- [[动态过程定量分析|动态过程定量分析]]
+- 动态过程定量分析
 - [[nodal-analysis|节点分析]]
 
 ## 涉及的模型
@@ -76,10 +76,10 @@ sources: ["EMT_Doc/17/Liu 等 - 2014 - Electromechanical transient modeling of m
 ## 相关主题
 
 - [[electromechanical-transient|机电暂态仿真]]
-- [[多端直流输电|多端直流输电]]
-- [[电力系统稳定性|电力系统稳定性]]
-- [[交直流潮流|交直流潮流]]
-- [[故障隔离|故障隔离]]
+- 多端直流输电
+- 电力系统稳定性
+- 交直流潮流
+- 故障隔离
 - [[model-order-reduction|模型降阶]]
 
 ## 主要发现

@@ -58,24 +58,24 @@ sources: ["EMT_Doc/02/Feng 等 - 2023 - A Novel Decoupled EMT Approach and Paral
 
 ## 使用的方法
 
-- [[统一磁等效电路法-umec|统一磁等效电路法(UMEC)]]
-- [[割集解耦法|割集解耦法]]
-- [[高精度高速等效模型-hem|高精度高速等效模型(HEM)]]
-- [[多核并行计算|多核并行计算]]
+- 统一磁等效电路法(UMEC)
+- 割集解耦法
+- 高精度高速等效模型(HEM)
+- 多核并行计算
 
 ## 涉及的模型
 
-- [[模块化固态变压器-msst|模块化固态变压器(MSST)]]
-- [[多主动桥-mab|多主动桥(MAB)]]
-- [[双主动桥-dab|双主动桥(DAB)]]
+- 模块化固态变压器(MSST)
+- 多主动桥(MAB)
+- 双主动桥(DAB)
 - [[多绕组变压器|多绕组变压器]]
-- [[级联h桥拓扑|级联H桥拓扑]]
+- 级联H桥拓扑
 
 ## 相关主题
 
 - [[emt-simulation|电磁暂态建模]]
 - [[parallel-computing|并行仿真]]
-- [[解耦建模|解耦建模]]
+- 解耦建模
 - [[power-electronics|电力电子变压器]]
 - [[parallel-computing|仿真加速]]
 

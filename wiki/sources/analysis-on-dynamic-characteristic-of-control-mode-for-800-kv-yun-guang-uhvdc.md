@@ -63,18 +63,18 @@ sources: ["EMT_Doc/07&08/Analysis on dynamic characteristic of control mode for 
 
 
 - [[emt-simulation|电磁暂态仿真]]
-- [[pi控制|PI控制]]
-- [[低压限流控制-vdcol|低压限流控制(VDCOL)]]
-- [[详细换流器建模|详细换流器建模]]
+- PI控制
+- 低压限流控制(VDCOL)
+- 详细换流器建模
 
 
 ## 涉及的模型
 
 
-- [[12脉动换流器|12脉动换流器]]
+- 12脉动换流器
 - [[transformer-model|换流变压器]]
 - [[dc-rlc-filter|平波电抗器]]
-- [[分布参数直流输电线路|分布参数直流输电线路]]
+- 分布参数直流输电线路
 - [[交直流滤波器|交直流滤波器]]
 
 
@@ -82,10 +82,10 @@ sources: ["EMT_Doc/07&08/Analysis on dynamic characteristic of control mode for 
 
 
 - [[特高压直流输电|特高压直流输电]]
-- [[交直流相互作用|交直流相互作用]]
+- 交直流相互作用
 - [[换相失败|换相失败]]
-- [[控制策略对比|控制策略对比]]
-- [[故障动态特性|故障动态特性]]
+- 控制策略对比
+- 故障动态特性
 
 
 ## 主要发现

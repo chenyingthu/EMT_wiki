@@ -58,19 +58,19 @@ sources: ["EMT_Doc/25/Cheng 等 - 2025 - Machine-Learning-Reinforced Massively P
 
 ## 使用的方法
 
-- [[人工神经网络-ann|人工神经网络(ANN)]]
-- [[多层感知机-mlp|多层感知机(MLP)]]
-- [[门控循环单元-gru|门控循环单元(GRU)]]
-- [[蒙特卡洛数据生成|蒙特卡洛数据生成]]
-- [[实体组件系统-ecs-架构|实体组件系统(ECS)架构]]
-- [[gpu实例化技术|GPU实例化技术]]
+- 人工神经网络(ANN)
+- 多层感知机(MLP)
+- 门控循环单元(GRU)
+- 蒙特卡洛数据生成
+- 实体组件系统(ECS)架构
+- GPU实例化技术
 - [[cpu-gpu异构并行计算|CPU-GPU异构并行计算]]
 
 ## 涉及的模型
 
-- [[光伏阵列-pv|光伏阵列(PV)]]
+- 光伏阵列(PV)
 - [[dfig-model|DFIG]]
-- [[储能电池系统|储能电池系统]]
+- 储能电池系统
 - [[wind-farm-modeling|风电场]]
 - [[microgrid|微电网]]
 - [[ieee-118-bus-system|IEEE 118节点系统]]
@@ -78,12 +78,12 @@ sources: ["EMT_Doc/25/Cheng 等 - 2025 - Machine-Learning-Reinforced Massively P
 ## 相关主题
 
 - [[emt-simulation|电磁暂态仿真]]
-- [[大规模新能源并网|大规模新能源并网]]
+- 大规模新能源并网
 - [[parallel-computing|并行计算]]
-- [[机器学习建模|机器学习建模]]
-- [[gpu加速仿真|GPU加速仿真]]
-- [[数据驱动建模|数据驱动建模]]
-- [[新能源场站建模|新能源场站建模]]
+- 机器学习建模
+- GPU加速仿真
+- 数据驱动建模
+- 新能源场站建模
 
 ## 主要发现
 

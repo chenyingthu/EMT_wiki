@@ -56,18 +56,18 @@ sources: ["EMT_Doc/02/Kurokawa 等 - 2006 - A new procedure to derive transmissi
 ## 使用的方法
 
 - [[modal-analysis|模态变换]]
-- [[相域分析|相域分析]]
+- 相域分析
 - [[frequency-dependent-modeling|频率相关建模]]
 - [[卡森公式|卡森公式]]
-- [[贝塞尔函数|贝塞尔函数]]
-- [[参数反演|参数反演]]
+- 贝塞尔函数
+- 参数反演
 
 ## 涉及的模型
 
 - [[transmission-line-model|架空输电线路]]
 - [[多相输电线路|多相输电线路]]
 - [[transmission-line-model|频变线路模型]]
-- [[大地回路模型|大地回路模型]]
+- 大地回路模型
 
 ## 相关主题
 

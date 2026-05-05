@@ -60,8 +60,8 @@ sources: ["EMT_Doc/07&08/Na et al. - 2023 - An improved high-accuracy interpolat
 
 - [[numerical-integration|后向欧拉法]]
 - [[numerical-integration|梯形积分法]]
-- [[线性插值|线性插值]]
-- [[瞬时解插值|瞬时解插值]]
+- 线性插值
+- 瞬时解插值
 - [[nodal-analysis|节点分析]]
 - [[numerical-integration|固定步长仿真]]
 
@@ -70,17 +70,17 @@ sources: ["EMT_Doc/07&08/Na et al. - 2023 - An improved high-accuracy interpolat
 - [[igbt-model|IGBT]]
 - [[晶闸管|晶闸管]]
 - [[diode-model|二极管]]
-- [[电感|电感]]
+- 电感
 - [[一种用于电磁暂态仿真的两电平电压源型换流器解耦模型|电压源]]
 - [[电力电子电路|电力电子电路]]
 
 ## 相关主题
 
 - [[emt-simulation|电磁暂态仿真]]
-- [[开关不连续性处理|开关不连续性处理]]
+- 开关不连续性处理
 - [[numerical-integration|数值振荡抑制]]
 - [[numerical-integration|固定步长仿真]]
-- [[电力电子开关建模|电力电子开关建模]]
+- 电力电子开关建模
 
 ## 主要发现
 

@@ -58,16 +58,16 @@ sources: ["EMT_Doc/13&14/files/J.EPSR.2021.107305.pdf-1.pdf"]
 
 ## 使用的方法
 
-- [[频变相域建模|频变相域建模]]
+- 频变相域建模
 - [[parallel-computing|并行计算]]
-- [[流水线技术|流水线技术]]
+- 流水线技术
 - [[norton-equivalent|诺顿等效]]
-- [[卷积运算|卷积运算]]
+- 卷积运算
 
 ## 涉及的模型
 
 - [[transmission-line-model|输电线路]]
-- [[频变相域模型|频变相域模型]]
+- 频变相域模型
 - [[transmission-line-model|通用线路模型]]
 
 ## 相关主题

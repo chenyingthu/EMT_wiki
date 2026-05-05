@@ -58,7 +58,7 @@ sources: ["EMT_Doc/27&28/Multiprocessor based generator module for a real-time p
 
 ## 使用的方法
 
-- [[多处理器并行计算|多处理器并行计算]]
+- 多处理器并行计算
 - [[numerical-integration|梯形积分法]]
 - [[浮点运算|浮点运算]]
 - [[coordinate-transformation-model|dq坐标变换]]
@@ -67,10 +67,10 @@ sources: ["EMT_Doc/27&28/Multiprocessor based generator module for a real-time p
 ## 涉及的模型
 
 - [[synchronous-machine-model|同步发电机]]
-- [[励磁控制系统-avr|励磁控制系统(AVR)]]
-- [[调速系统-gov|调速系统(GOV)]]
-- [[模拟三相正弦振荡器|模拟三相正弦振荡器]]
-- [[输电线路与变压器|输电线路与变压器]]
+- 励磁控制系统(AVR)
+- 调速系统(GOV)
+- 模拟三相正弦振荡器
+- 输电线路与变压器
 
 ## 相关主题
 
@@ -78,7 +78,7 @@ sources: ["EMT_Doc/27&28/Multiprocessor based generator module for a real-time p
 - [[co-simulation|混合仿真]]
 - [[parallel-computing|并行计算]]
 - [[emt-simulation|电磁暂态仿真]]
-- [[发电机动态建模|发电机动态建模]]
+- 发电机动态建模
 
 ## 主要发现
 

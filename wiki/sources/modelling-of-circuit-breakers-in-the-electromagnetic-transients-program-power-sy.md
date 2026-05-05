@@ -61,24 +61,24 @@ sources: ["EMT_Doc/27&28/Modelling of circuit breakers in the electromagnetic tr
 - [[numerical-integration|梯形积分法]]
 - [[nodal-analysis|节点分析法]]
 - [[average-value-model|补偿法]]
-- [[预测校正迭代法|预测校正迭代法]]
-- [[参数估计|参数估计]]
+- 预测校正迭代法
+- 参数估计
 
 ## 涉及的模型
 
 - [[circuit-breaker-model|断路器]]
-- [[动态电弧模型|动态电弧模型]]
+- 动态电弧模型
 - [[vsc-hvdc|VSC-HVDC]]
 - [[transformer-model|变压器]]
 - [[synchronous-machine-model|同步电机]]
 
 ## 相关主题
 
-- [[断路器建模|断路器建模]]
-- [[电弧动态特性|电弧动态特性]]
-- [[电流开断仿真|电流开断仿真]]
-- [[暂态恢复电压|暂态恢复电压]]
-- [[热与介质击穿|热与介质击穿]]
+- 断路器建模
+- 电弧动态特性
+- 电流开断仿真
+- 暂态恢复电压
+- 热与介质击穿
 
 ## 主要发现
 

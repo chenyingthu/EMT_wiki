@@ -58,19 +58,19 @@ sources: ["EMT_Doc/15/Efficient modeling of modular multilevel HVDC converters (
 
 ## 使用的方法
 
-- [[导纳矩阵分割|导纳矩阵分割]]
-- [[时变戴维南等效|时变戴维南等效]]
-- [[嵌套快速同步求解|嵌套快速同步求解]]
+- 导纳矩阵分割
+- 时变戴维南等效
+- 嵌套快速同步求解
 - [[nodal-analysis|节点分析法]]
-- [[电容电压平衡控制|电容电压平衡控制]]
+- 电容电压平衡控制
 
 ## 涉及的模型
 
 - [[mmc-model|MMC]]
 - [[vsc-model|VSC]]
 - [[vsc-hvdc|VSC-HVDC]]
-- [[功率子模块|功率子模块]]
-- [[igbt-二极管开关|IGBT/二极管开关]]
+- 功率子模块
+- IGBT/二极管开关
 
 ## 相关主题
 

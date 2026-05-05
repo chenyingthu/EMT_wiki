@@ -58,31 +58,31 @@ sources: ["EMT_Doc/27&28/Modeling synchronous voltage source converters in trans
 
 ## 使用的方法
 
-- [[emtp仿真-bpa-atp|EMTP仿真(BPA-ATP)]]
-- [[tacs受控开关建模|TACS受控开关建模]]
-- [[atp-models控制语言|ATP-Models控制语言]]
-- [[基频等效电路法|基频等效电路法]]
-- [[多脉冲谐波抵消技术|多脉冲谐波抵消技术]]
-- [[逐步初始化算法|逐步初始化算法]]
+- EMTP仿真(BPA-ATP)
+- TACS受控开关建模
+- ATP-Models控制语言
+- 基频等效电路法
+- 多脉冲谐波抵消技术
+- 逐步初始化算法
 
 ## 涉及的模型
 
 - [[vsc-model|VSC]]
-- [[statcon-静止同步补偿器|Statcon(静止同步补偿器)]]
-- [[bes-电池储能系统|BES(电池储能系统)]]
-- [[gto晶闸管阀|GTO晶闸管阀]]
-- [[耦合变压器阵列|耦合变压器阵列]]
-- [[直流侧电容-电池|直流侧电容/电池]]
+- Statcon(静止同步补偿器)
+- BES(电池储能系统)
+- GTO晶闸管阀
+- 耦合变压器阵列
+- 直流侧电容/电池
 
 ## 相关主题
 
-- [[输电系统规划|输电系统规划]]
-- [[无功补偿|无功补偿]]
+- 输电系统规划
+- 无功补偿
 - [[emt-simulation|电磁暂态仿真]]
 - [[electromechanical-transient|暂态稳定分析]]
 - [[power-flow-calculation|潮流计算]]
 - [[vsc-model|VSC]]
-- [[谐波抑制|谐波抑制]]
+- 谐波抑制
 
 ## 主要发现
 

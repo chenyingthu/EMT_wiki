@@ -58,18 +58,18 @@ sources: ["EMT_Doc/10/Leal和De Conti - 2021 - Compact Matrix Formulation for Ca
 
 ## 使用的方法
 
-- [[紧凑矩阵运算|紧凑矩阵运算]]
-- [[卷积积分|卷积积分]]
-- [[指数项拟合|指数项拟合]]
+- 紧凑矩阵运算
+- 卷积积分
+- 指数项拟合
 - [[numerical-integration|数值积分法]]
 - [[modal-analysis|相模变换]]
-- [[集中源等效|集中源等效]]
+- 集中源等效
 
 ## 涉及的模型
 
 - [[transmission-line-model|输电线路]]
 - [[transmission-line-model|通用线路模型(ULM)]]
-- [[marti频变模型|Marti频变模型]]
+- Marti频变模型
 - [[transmission-line-model|架空线路]]
 
 ## 相关主题
@@ -77,7 +77,7 @@ sources: ["EMT_Doc/10/Leal和De Conti - 2021 - Compact Matrix Formulation for Ca
 - [[雷击感应电压|雷击感应电压]]
 - [[emt-simulation|电磁暂态仿真]]
 - [[频变线路建模|频变线路建模]]
-- [[数值分析|数值分析]]
+- 数值分析
 
 ## 主要发现
 

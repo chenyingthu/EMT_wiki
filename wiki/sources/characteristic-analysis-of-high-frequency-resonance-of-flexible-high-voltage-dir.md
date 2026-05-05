@@ -61,9 +61,9 @@ sources: ["EMT_Doc/10/Guo 等 - 2020 - Characteristic Analysis of High-frequency
 - [[impedance-modeling|阻抗建模]]
 - [[state-space-method|状态空间法]]
 - [[small-signal-analysis|小信号分析]]
-- [[dq坐标系变换|dq坐标系变换]]
+- dq坐标系变换
 - [[emt-simulation|电磁暂态仿真]]
-- [[阻尼控制|阻尼控制]]
+- 阻尼控制
 
 ## 涉及的模型
 
@@ -72,16 +72,16 @@ sources: ["EMT_Doc/10/Guo 等 - 2020 - Characteristic Analysis of High-frequency
 - [[交流输电线路|交流输电线路]]
 - [[phase-locked-loop|锁相环]]
 - [[环流抑制控制器|环流抑制控制器]]
-- [[双闭环控制器|双闭环控制器]]
+- 双闭环控制器
 
 ## 相关主题
 
 - [[vsc-model|VSC]]
-- [[高频振荡|高频振荡]]
+- 高频振荡
 - [[阻抗特性分析|阻抗特性分析]]
-- [[系统稳定性|系统稳定性]]
-- [[阻尼控制|阻尼控制]]
-- [[电压前馈|电压前馈]]
+- 系统稳定性
+- 阻尼控制
+- 电压前馈
 
 ## 主要发现
 

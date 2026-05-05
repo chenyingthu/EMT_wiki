@@ -58,10 +58,10 @@ sources: ["EMT_Doc/05/Lin 等 - 2021 - Adaptive Heterogeneous Transient Analysis
 
 ## 使用的方法
 
-- [[emt-ds协同仿真|EMT-DS协同仿真]]
+- EMT-DS协同仿真
 - [[cpu-gpu异构并行计算|CPU-GPU异构并行计算]]
-- [[拓扑重构与内部解耦|拓扑重构与内部解耦]]
-- [[梯形积分法离散化|梯形积分法离散化]]
+- 拓扑重构与内部解耦
+- 梯形积分法离散化
 - [[state-space-method|状态空间建模]]
 
 ## 涉及的模型
@@ -71,7 +71,7 @@ sources: ["EMT_Doc/05/Lin 等 - 2021 - Adaptive Heterogeneous Transient Analysis
 - [[hybrid-acdc-network|交直流电网]]
 - [[hybrid-acdc-network|多端直流电网]]
 - [[transformer-model|变压器]]
-- [[变流器|变流器]]
+- 变流器
 - [[induction-machine-model|感应电机]]
 
 ## 相关主题
@@ -81,8 +81,8 @@ sources: ["EMT_Doc/05/Lin 等 - 2021 - Adaptive Heterogeneous Transient Analysis
 - [[wind-farm-modeling|风电场建模]]
 - [[emt-simulation|电磁暂态仿真]]
 - [[electromechanical-transient|机电暂态仿真]]
-- [[异构计算架构|异构计算架构]]
-- [[系统稳定性分析|系统稳定性分析]]
+- 异构计算架构
+- 系统稳定性分析
 
 ## 主要发现
 

@@ -58,26 +58,26 @@ sources: ["EMT_Doc/29/j.epsr.2006.08.027.pdf.pdf"]
 
 ## 使用的方法
 
-- [[增广节点分析法|增广节点分析法]]
+- 增广节点分析法
 - [[nodal-analysis|牛顿迭代法]]
 - [[numerical-integration|梯形积分法]]
-- [[谐波稳态求解|谐波稳态求解]]
+- 谐波稳态求解
 - [[power-flow-calculation|潮流计算]]
 
 ## 涉及的模型
 
-- [[理想电压源|理想电压源]]
-- [[理想变压器|理想变压器]]
+- 理想电压源
+- 理想变压器
 - [[ideal-switch-model|理想开关]]
 - [[synchronous-machine-model|电机模型]]
-- [[非线性设备|非线性设备]]
+- 非线性设备
 - [[控制系统|控制系统]]
 
 ## 相关主题
 
 - [[emt-simulation|电磁暂态仿真]]
-- [[数值计算方法|数值计算方法]]
-- [[仿真软件架构|仿真软件架构]]
+- 数值计算方法
+- 仿真软件架构
 - [[nodal-analysis|网络方程求解]]
 - [[steady-state-initialization|稳态初始化]]
 

@@ -59,8 +59,8 @@ sources: ["EMT_Doc/26/Mao 等 - 2025 - Modeling and application of DQ-sequence d
 ## 使用的方法
 
 - [[dynamic-phasor|动态相量法]]
-- [[dq序动态相量法|dq序动态相量法]]
-- [[瞬时对称分量分解|瞬时对称分量分解]]
+- dq序动态相量法
+- 瞬时对称分量分解
 - [[coordinate-transformation-model|Park变换]]
 - [[state-space-method|状态空间建模]]
 
@@ -72,7 +72,7 @@ sources: ["EMT_Doc/26/Mao 等 - 2025 - Modeling and application of DQ-sequence d
 
 ## 相关主题
 
-- [[非对称工况建模|非对称工况建模]]
+- 非对称工况建模
 - [[emt-simulation|电磁暂态仿真]]
 - [[state-space-method|状态空间模型]]
 - [[small-signal-analysis|小信号稳定性分析]]

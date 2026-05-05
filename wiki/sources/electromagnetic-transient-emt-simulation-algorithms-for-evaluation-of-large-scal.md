@@ -58,21 +58,21 @@ sources: ["EMT_Doc/15/Electromagnetic transient (EMT) simulation algorithms for 
 
 ## 使用的方法
 
-- [[混合离散化|混合离散化]]
-- [[多阶积分法|多阶积分法]]
+- 混合离散化
+- 多阶积分法
 - [[state-space-method|状态空间法]]
-- [[微分代数方程聚类聚合|微分代数方程聚类聚合]]
-- [[数值刚度分离|数值刚度分离]]
-- [[时间常数分离|时间常数分离]]
+- 微分代数方程聚类聚合
+- 数值刚度分离
+- 时间常数分离
 
 ## 涉及的模型
 
-- [[超快充系统-xfc|超快充系统(XFC)]]
-- [[两电平三相逆变器|两电平三相逆变器]]
-- [[dc-dc升压变换器|DC-DC升压变换器]]
+- 超快充系统(XFC)
+- 两电平三相逆变器
+- DC-DC升压变换器
 - [[distribution-network|配电网]]
-- [[输电网|输电网]]
-- [[ieee标准测试系统|IEEE标准测试系统]]
+- 输电网
+- IEEE标准测试系统
 - [[synchronous-machine-model|同步发电机]]
 - [[transformer-model|变压器]]
 - [[transmission-line-model|输电线路]]
@@ -80,10 +80,10 @@ sources: ["EMT_Doc/15/Electromagnetic transient (EMT) simulation algorithms for 
 ## 相关主题
 
 - [[emt-simulation|电磁暂态仿真]]
-- [[超快充系统建模|超快充系统建模]]
-- [[输配电网协同仿真|输配电网协同仿真]]
-- [[仿真加速算法|仿真加速算法]]
-- [[高渗透率电力电子电网|高渗透率电力电子电网]]
+- 超快充系统建模
+- 输配电网协同仿真
+- 仿真加速算法
+- 高渗透率电力电子电网
 - [[large-scale-system-simulation|大规模系统仿真]]
 
 ## 主要发现

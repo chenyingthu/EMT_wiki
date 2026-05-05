@@ -60,8 +60,8 @@ sources: ["EMT_Doc/05/Luo 等 - 2022 - Active Damping Control and Parameter Calc
 
 - [[impedance-modeling|阻抗建模]]
 - [[state-space-method|状态空间法]]
-- [[有源阻尼控制|有源阻尼控制]]
-- [[参数解析计算|参数解析计算]]
+- 有源阻尼控制
+- 参数解析计算
 - [[emt-simulation|电磁暂态仿真]]
 
 ## 涉及的模型
@@ -69,16 +69,16 @@ sources: ["EMT_Doc/05/Luo 等 - 2022 - Active Damping Control and Parameter Calc
 - [[vsc-model|VSC]]
 - [[双向dc-dc变换器|双向DC-DC变换器]]
 - [[bess-model|电池储能系统]]
-- [[直流配电网|直流配电网]]
-- [[直流限流电抗器|直流限流电抗器]]
+- 直流配电网
+- 直流限流电抗器
 
 ## 相关主题
 
-- [[谐振稳定性|谐振稳定性]]
+- 谐振稳定性
 - [[阻抗特性分析|阻抗特性分析]]
-- [[直流配电网|直流配电网]]
-- [[有源阻尼控制|有源阻尼控制]]
-- [[参数整定|参数整定]]
+- 直流配电网
+- 有源阻尼控制
+- 参数整定
 
 ## 主要发现
 

@@ -58,27 +58,27 @@ sources: ["EMT_Doc/17/Meredith - 1997 - EMTP modeling of electromagnetic transie
 
 ## 使用的方法
 
-- [[有限截面法|有限截面法]]
-- [[π节等效电路|π节等效电路]]
+- 有限截面法
+- π节等效电路
 - [[frequency-dependent-modeling|频率相关建模]]
-- [[径向波传播建模|径向波传播建模]]
-- [[非线性材料建模|非线性材料建模]]
+- 径向波传播建模
+- 非线性材料建模
 
 ## 涉及的模型
 
-- [[同轴电缆|同轴电缆]]
+- 同轴电缆
 - [[transmission-line-model|架空线路]]
 - [[管型电缆|管型电缆]]
-- [[变压器铁芯|变压器铁芯]]
+- 变压器铁芯
 - [[surge-arrester-model|避雷器]]
 
 ## 相关主题
 
 - [[emt-simulation|电磁暂态仿真]]
 - [[frequency-dependent-modeling|频率相关建模]]
-- [[电缆暂态建模|电缆暂态建模]]
-- [[导体内波传播|导体内波传播]]
-- [[非线性材料建模|非线性材料建模]]
+- 电缆暂态建模
+- 导体内波传播
+- 非线性材料建模
 
 ## 主要发现
 

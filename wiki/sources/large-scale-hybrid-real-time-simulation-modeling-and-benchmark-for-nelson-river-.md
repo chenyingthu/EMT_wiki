@@ -60,10 +60,10 @@ sources: ["EMT_Doc/25/Zhou 等 - 2021 - Large-scale hybrid real time simulation 
 
 - [[real-time-simulation|实时数字仿真]]
 - [[hil-simulation|硬件在环仿真]]
-- [[模块化建模|模块化建模]]
+- 模块化建模
 - [[frequency-dependent-modeling|频率相关建模]]
-- [[网络动态等值|网络动态等值]]
-- [[处理器负载优化|处理器负载优化]]
+- 网络动态等值
+- 处理器负载优化
 
 ## 涉及的模型
 
@@ -81,7 +81,7 @@ sources: ["EMT_Doc/25/Zhou 等 - 2021 - Large-scale hybrid real time simulation 
 - [[co-simulation|混合仿真]]
 - [[hil-simulation|硬件在环]]
 - [[vsc-hvdc|VSC-HVDC]]
-- [[系统调试|系统调试]]
+- 系统调试
 - [[frequency-dependent-modeling|频率相关建模]]
 - [[network-equivalent|网络等值]]
 

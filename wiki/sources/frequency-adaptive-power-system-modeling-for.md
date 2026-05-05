@@ -58,12 +58,12 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/TPWRS.2009.2016587.pdf.pdf"]
 
 ## 使用的方法
 
-- [[频率自适应仿真-fast|频率自适应仿真(FAST)]]
+- 频率自适应仿真(FAST)
 - [[dynamic-phasor|动态相量法]]
 - [[numerical-integration|梯形积分法]]
 - [[伴随模型法|伴随模型法]]
 - [[nodal-analysis|节点分析法]]
-- [[解析信号处理|解析信号处理]]
+- 解析信号处理
 
 ## 涉及的模型
 

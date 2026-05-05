@@ -60,16 +60,16 @@ sources: ["EMT_Doc/17/Yu 等 - 2022 - Electromechanical transient modelling and 
 
 - [[electromechanical-transient|机电暂态建模]]
 - [[vector-control|矢量控制]]
-- [[一阶惯性等效|一阶惯性等效]]
+- 一阶惯性等效
 - [[nodal-analysis|等效电路法]]
-- [[电磁暂态对比验证|电磁暂态对比验证]]
+- 电磁暂态对比验证
 
 ## 涉及的模型
 
 - [[mmc-model|MMC]]
-- [[储能子系统-ess|储能子系统(ESS)]]
+- 储能子系统(ESS)
 - [[双向dc-dc变换器|双向DC-DC变换器]]
-- [[两端直流输电系统|两端直流输电系统]]
+- 两端直流输电系统
 
 ## 相关主题
 
@@ -77,7 +77,7 @@ sources: ["EMT_Doc/17/Yu 等 - 2022 - Electromechanical transient modelling and 
 - [[mmc-model|MMC]]
 - [[transient-stability-analysis|暂态稳定性分析]]
 - [[故障穿越|故障穿越]]
-- [[交直流系统解耦|交直流系统解耦]]
+- 交直流系统解耦
 
 ## 主要发现
 

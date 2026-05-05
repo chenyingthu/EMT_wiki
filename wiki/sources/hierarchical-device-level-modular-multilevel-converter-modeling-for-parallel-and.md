@@ -58,18 +58,18 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/OJPEL.2020.3016296.pdf.pdf"]
 
 ## 使用的方法
 
-- [[拓扑重构|拓扑重构]]
+- 拓扑重构
 - [[network-equivalent|网络等值]]
 - [[multirate-method|多速率仿真]]
-- [[cpu-gpu异构计算|CPU/GPU异构计算]]
+- CPU/GPU异构计算
 - [[nodal-analysis|节点分析法]]
-- [[伴随电路离散化|伴随电路离散化]]
+- 伴随电路离散化
 
 ## 涉及的模型
 
 - [[mmc-model|MMC]]
 - [[igbt-model|IGBT]]
-- [[续流二极管|续流二极管]]
+- 续流二极管
 - [[vsc-hvdc|VSC-HVDC]]
 - [[mmc-model|子模块]]
 

@@ -59,14 +59,14 @@ sources: ["EMT_Doc/13&14/files/TPWRD.2014.2340870.pdf.pdf"]
 ## 使用的方法
 
 - [[average-value-model|动态平均值建模]]
-- [[参数化方法|参数化方法]]
+- 参数化方法
 - [[nodal-analysis|节点分析法]]
 - [[state-space-method|状态变量法]]
 
 ## 涉及的模型
 
 - [[lcc-model|LCC]]
-- [[十二脉冲换流器|十二脉冲换流器]]
+- 十二脉冲换流器
 - [[transformer-model|换流变压器]]
 - [[交流滤波器|交流滤波器]]
 - [[transmission-line-model|直流输电线路]]
@@ -77,10 +77,10 @@ sources: ["EMT_Doc/13&14/files/TPWRD.2014.2340870.pdf.pdf"]
 
 - [[vsc-hvdc|VSC-HVDC]]
 - [[emt-simulation|电磁暂态仿真]]
-- [[大信号暂态分析|大信号暂态分析]]
+- 大信号暂态分析
 - [[large-scale-system-simulation|系统级仿真]]
-- [[动态等值|动态等值]]
-- [[换流器控制|换流器控制]]
+- 动态等值
+- 换流器控制
 
 ## 主要发现
 

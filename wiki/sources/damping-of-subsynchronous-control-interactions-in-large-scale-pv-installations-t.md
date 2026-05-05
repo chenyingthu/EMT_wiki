@@ -61,10 +61,10 @@ sources: ["EMT_Doc/12/Damping_of_Subsynchronous_Control_Interactions_in_Large-Sc
 - [[emt-simulation|电磁暂态仿真]]
 - [[electromechanical-transient|机电暂态仿真]]
 - [[co-simulation|混合仿真]]
-- [[fpga硬件仿真|FPGA硬件仿真]]
+- FPGA硬件仿真
 - [[parallel-computing|并行计算]]
 - [[eigenvalue-analysis|特征值分析]]
-- [[功率-电压接口|功率-电压接口]]
+- 功率-电压接口
 
 ## 涉及的模型
 
@@ -76,11 +76,11 @@ sources: ["EMT_Doc/12/Damping_of_Subsynchronous_Control_Interactions_in_Large-Sc
 
 ## 相关主题
 
-- [[次同步控制交互|次同步控制交互]]
+- 次同步控制交互
 - [[real-time-simulation|超实时仿真]]
 - [[硬件仿真|硬件仿真]]
 - [[co-simulation|混合仿真]]
-- [[弱电网稳定性|弱电网稳定性]]
+- 弱电网稳定性
 - [[pv-power-plant|光伏并网]]
 - [[parallel-computing|并行计算]]
 

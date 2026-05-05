@@ -58,12 +58,12 @@ sources: ["EMT_Doc/27&28/Multi-FPGA digital hardware design for detailed large-s
 
 ## 使用的方法
 
-- [[功能分解法|功能分解法]]
-- [[全流水线并行计算|全流水线并行计算]]
+- 功能分解法
+- 全流水线并行计算
 - [[multirate-method|多速率仿真]]
 - [[numerical-integration|梯形积分法]]
-- [[全牛顿迭代法|全牛顿迭代法]]
-- [[离散时间等效|离散时间等效]]
+- 全牛顿迭代法
+- 离散时间等效
 
 ## 涉及的模型
 
@@ -72,18 +72,18 @@ sources: ["EMT_Doc/27&28/Multi-FPGA digital hardware design for detailed large-s
 - [[transmission-line-model|通用线路模型(ULM)]]
 - [[synchronous-machine-model|同步电机]]
 - [[transformer-model|变压器]]
-- [[线性集总rlcg元件|线性集总RLCG元件]]
-- [[非线性元件|非线性元件]]
+- 线性集总RLCG元件
+- 非线性元件
 - [[load-modeling|负荷]]
 - [[circuit-breaker-model|断路器]]
 
 ## 相关主题
 
 - [[real-time-simulation|实时仿真]]
-- [[多fpga并行计算|多FPGA并行计算]]
+- 多FPGA并行计算
 - [[frequency-dependent-modeling|频率相关建模]]
 - [[大规模电力系统仿真|大规模电力系统仿真]]
-- [[数字硬件仿真|数字硬件仿真]]
+- 数字硬件仿真
 
 ## 主要发现
 

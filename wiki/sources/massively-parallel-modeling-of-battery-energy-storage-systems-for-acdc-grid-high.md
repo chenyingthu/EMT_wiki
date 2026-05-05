@@ -57,20 +57,20 @@ sources: ["EMT_Doc/25/Lin 等 - 2023 - Massively Parallel Modeling of Battery En
 
 ## 使用的方法
 
-- [[emt-ts联合仿真|EMT-TS联合仿真]]
+- EMT-TS联合仿真
 - [[cpu-gpu异构并行计算|CPU-GPU异构并行计算]]
 - [[multirate-method|多速率仿真]]
-- [[多流异步处理|多流异步处理]]
-- [[向量化建模|向量化建模]]
-- [[传输线链接-tll-模型|传输线链接(TLL)模型]]
+- 多流异步处理
+- 向量化建模
+- 传输线链接(TLL)模型
 - [[state-space-method|状态空间法]]
-- [[后向欧拉离散|后向欧拉离散]]
+- 后向欧拉离散
 
 ## 涉及的模型
 
-- [[电池储能系统-bess|电池储能系统(BESS)]]
+- 电池储能系统(BESS)
 - [[power-electronics|电力电子变流器]]
-- [[戴维南等效电池模型|戴维南等效电池模型]]
+- 戴维南等效电池模型
 - [[hybrid-acdc-network|交直流电网]]
 - [[ieee-118-bus-system|IEEE 118节点系统]]
 

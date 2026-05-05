@@ -61,17 +61,17 @@ sources: ["EMT_Doc/31/59.76692.pdf.pdf"]
 - [[nodal-analysis|节点分析]]
 - [[numerical-integration|梯形积分法]]
 - [[average-value-model|补偿法]]
-- [[戴维南等值|戴维南等值]]
+- 戴维南等值
 - [[state-space-method|状态空间法]]
-- [[非线性支路建模|非线性支路建模]]
+- 非线性支路建模
 
 ## 涉及的模型
 
-- [[自然换相六脉动换流器|自然换相六脉动换流器]]
+- 自然换相六脉动换流器
 - [[transformer-model|换流变压器]]
-- [[交直流网络|交直流网络]]
-- [[电力电子阀|电力电子阀]]
-- [[tacs控制系统|TACS控制系统]]
+- 交直流网络
+- 电力电子阀
+- TACS控制系统
 
 ## 相关主题
 
@@ -79,7 +79,7 @@ sources: ["EMT_Doc/31/59.76692.pdf.pdf"]
 - [[power-electronics|换流器建模]]
 - [[co-simulation|混合仿真接口]]
 - [[numerical-integration|数值振荡抑制]]
-- [[变拓扑网络求解|变拓扑网络求解]]
+- 变拓扑网络求解
 
 ## 主要发现
 

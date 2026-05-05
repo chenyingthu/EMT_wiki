@@ -62,7 +62,7 @@ sources: ["EMT_Doc/26/Herath 等 - 2019 - Modeling of a Modular Multilevel Conve
 - [[nodal-analysis|节点分析法]]
 - [[average-value-model|详细等效模型]]
 - [[最近电平控制|最近电平控制]]
-- [[状态均衡控制|状态均衡控制]]
+- 状态均衡控制
 
 ## 涉及的模型
 
@@ -75,10 +75,10 @@ sources: ["EMT_Doc/26/Herath 等 - 2019 - Modeling of a Modular Multilevel Conve
 ## 相关主题
 
 - [[emt-simulation|电磁暂态仿真]]
-- [[储能集成建模|储能集成建模]]
+- 储能集成建模
 - [[large-scale-system-simulation|计算效率优化]]
 - [[电力电子变换器建模|电力电子变换器建模]]
-- [[详细等效建模|详细等效建模]]
+- 详细等效建模
 
 ## 主要发现
 

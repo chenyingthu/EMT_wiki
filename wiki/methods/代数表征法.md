@@ -32,7 +32,8 @@ created: "2026-05-04"
 ## 与相关页面的关系
 
 - [[emt-simulation]] - EMT仿真基础
-
+- [[power-system]]
+- [[electromagnetic-transient]]
 ## 代表性来源
 
 - 待补充

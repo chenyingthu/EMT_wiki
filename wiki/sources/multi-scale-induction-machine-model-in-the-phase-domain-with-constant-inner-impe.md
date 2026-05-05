@@ -58,7 +58,7 @@ sources: ["EMT_Doc/27&28/Multi-Scale Induction Machine Model in the Phase Domain
 
 ## 使用的方法
 
-- [[解析信号法|解析信号法]]
+- 解析信号法
 - [[dynamic-phasor|动态相量法]]
 - [[nodal-analysis|相域建模]]
 - [[norton-equivalent|诺顿等效]]
@@ -69,7 +69,7 @@ sources: ["EMT_Doc/27&28/Multi-Scale Induction Machine Model in the Phase Domain
 
 - [[induction-machine-model|感应电机]]
 - [[电力系统网络|电力系统网络]]
-- [[定转子绕组|定转子绕组]]
+- 定转子绕组
 
 ## 相关主题
 

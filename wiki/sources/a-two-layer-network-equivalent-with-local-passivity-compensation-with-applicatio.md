@@ -59,10 +59,10 @@ sources: ["EMT_Doc/04/TPWRS.2019.2918229.pdf.pdf"]
 ## 使用的方法
 
 - [[fdne-model|FDNE]]
-- [[局部无源性补偿|局部无源性补偿]]
-- [[辅助有理函数拟合|辅助有理函数拟合]]
-- [[扰动测试法|扰动测试法]]
-- [[ts-emt混合仿真|TS-EMT混合仿真]]
+- 局部无源性补偿
+- 辅助有理函数拟合
+- 扰动测试法
+- TS-EMT混合仿真
 
 ## 涉及的模型
 
@@ -75,7 +75,7 @@ sources: ["EMT_Doc/04/TPWRS.2019.2918229.pdf.pdf"]
 - [[co-simulation|混合仿真]]
 - [[network-equivalent|网络等值]]
 - [[passivity-enforcement|无源性保证]]
-- [[宽频动态建模|宽频动态建模]]
+- 宽频动态建模
 - [[hybrid-acdc-network|交直流电网]]
 
 ## 主要发现

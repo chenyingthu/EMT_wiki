@@ -59,17 +59,17 @@ sources: ["EMT_Doc/04/tec.2019.2944332.pdf.pdf"]
 ## 使用的方法
 
 - [[average-value-model|平均值模型]]
-- [[阻塞模块法|阻塞模块法]]
+- 阻塞模块法
 - [[nodal-analysis|戴维南等效]]
 - [[switching-function-method|开关函数法]]
-- [[解析损耗计算|解析损耗计算]]
+- 解析损耗计算
 
 ## 涉及的模型
 
 - [[mmc-model|MMC]]
 - [[mmc-model|半桥子模块]]
 - [[full-bridge-smb|全桥子模块]]
-- [[混合桥子模块|混合桥子模块]]
+- 混合桥子模块
 - [[mmc-model|MMC]]
 - [[average-value-model|详细等效模型]]
 
@@ -77,10 +77,10 @@ sources: ["EMT_Doc/04/tec.2019.2944332.pdf.pdf"]
 
 - [[emt-simulation|电磁暂态仿真]]
 - [[vsc-model|VSC]]
-- [[多电平换流器|多电平换流器]]
-- [[直流极间故障|直流极间故障]]
-- [[阻塞与解锁运行|阻塞与解锁运行]]
-- [[半导体损耗建模|半导体损耗建模]]
+- 多电平换流器
+- 直流极间故障
+- 阻塞与解锁运行
+- 半导体损耗建模
 
 ## 主要发现
 

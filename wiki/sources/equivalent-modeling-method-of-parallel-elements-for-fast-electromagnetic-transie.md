@@ -59,20 +59,20 @@ sources: ["EMT_Doc/18/Sun和Xu - 2023 - Equivalent Modeling Method of Parallel E
 ## 使用的方法
 
 - [[numerical-integration|梯形积分法]]
-- [[二值电阻等值|二值电阻等值]]
+- 二值电阻等值
 - [[norton-equivalent|诺顿等效]]
-- [[叠加定理|叠加定理]]
-- [[端口解耦|端口解耦]]
+- 叠加定理
+- 端口解耦
 - [[多线程并行计算|多线程并行计算]]
 
 ## 涉及的模型
 
-- [[电力电子变压器-pet|电力电子变压器(PET)]]
-- [[级联h桥型pet-chb-pet|级联H桥型PET(CHB-PET)]]
-- [[功率模块-pm|功率模块(PM)]]
-- [[h桥单元|H桥单元]]
+- 电力电子变压器(PET)
+- 级联H桥型PET(CHB-PET)
+- 功率模块(PM)
+- H桥单元
 - [[transformer-model|高频隔离变压器]]
-- [[igbt-二极管开关组|IGBT-二极管开关组]]
+- IGBT-二极管开关组
 
 ## 相关主题
 

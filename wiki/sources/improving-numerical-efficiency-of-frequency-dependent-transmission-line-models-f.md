@@ -59,8 +59,8 @@ sources: ["EMT_Doc/23/De Silva和Zhang - 2026 - Improving numerical efficiency o
 ## 使用的方法
 
 - [[model-order-reduction|模型降阶]]
-- [[模态截断|模态截断]]
-- [[平衡截断|平衡截断]]
+- 模态截断
+- 平衡截断
 - [[vector-fitting|矢量拟合]]
 - [[vector-fitting|有理函数逼近]]
 - [[recursive-convolution|递归卷积]]
@@ -70,7 +70,7 @@ sources: ["EMT_Doc/23/De Silva和Zhang - 2026 - Improving numerical efficiency o
 - [[频变输电线路模型|频变输电线路模型]]
 - [[transmission-line-model|通用线路模型]]
 - [[cable-model|地下电缆]]
-- [[多回电缆系统|多回电缆系统]]
+- 多回电缆系统
 
 ## 相关主题
 

@@ -17,6 +17,9 @@ created: "2026-05-04"
 
 - 待补充
 
+
+基于相关研究的技术应用：
+
 ## 主要分支与机制
 
 - 待补充
@@ -32,11 +35,16 @@ created: "2026-05-04"
 ## 与相关页面的关系
 
 - [[emt-simulation]] - EMT仿真基础
-
+- [[power-system]]
+- [[electromagnetic-transient]]
 ## 代表性来源
 
-- 待补充
-
+- [[real-time-transient-simulation-based-on-a-robust]]
 ---
 
 *本页面为自动生成的stub，需要进一步补充完善。*
+
+- [[real-time-transient-simulation-based-on-a-robust]]
+- [[a-robust-and-efficient-iterative-scheme-for-the-emt-simulations-of-nonlinear-cir-fix]]
+- [[robust-passivity-enforcement-scheme-for]]
+- [[photovoltaic-generator-modelling-to-improve-numerical-robustness-of-emt-simulati]]

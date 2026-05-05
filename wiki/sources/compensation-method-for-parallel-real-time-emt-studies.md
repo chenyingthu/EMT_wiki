@@ -61,15 +61,15 @@ sources: ["EMT_Doc/11/Bruned 等 - 2021 - Compensation method for parallel real-
 - [[average-value-model|补偿法]]
 - [[nodal-analysis|节点分析]]
 - [[nodal-analysis|戴维南等效]]
-- [[稀疏lu分解|稀疏LU分解]]
+- 稀疏LU分解
 - [[parallel-computing|并行计算]]
 - [[parallel-computing|网络解耦]]
 
 ## 涉及的模型
 
 - [[distribution-network|配电网]]
-- [[r-l线路模型|R-L线路模型]]
-- [[动态负荷模型|动态负荷模型]]
+- R-L线路模型
+- 动态负荷模型
 - [[vsc-hvdc|VSC-HVDC]]
 - [[电力电子开关|电力电子开关]]
 

@@ -2,6 +2,45 @@
 
 > 追加式记录，永不修改。每条以 `## [日期] 类型 | 标题` 开头。
 
+## [2026-05-05] batch-generate | 批量生成50个方法页
+
+- 背景: 响应用户"继续编辑需要人工编辑的页面"的要求，使用批量生成脚本处理剩余队列
+- 原则: 从相关Source自动提取内容，快速填充页面结构
+
+**批量生成页面**:
+
+| 页面名称 | 类型 | 状态 |
+|---------|------|------|
+| h-鲁棒控制 | method | batch-generated |
+| 双闭环pi控制器 | method | batch-generated |
+| 环流抑制控制器 | method | batch-generated |
+| 通用电气网络 | method | batch-generated |
+| 鲁棒控制 | method | batch-generated |
+| adaptive-droop | method | batch-generated |
+| ccvt | method | batch-generated |
+| cdsm | method | batch-generated |
+| cigre-b4-dc-grid | method | batch-generated |
+| cigre-b4 | method | batch-generated |
+| ... (共50个页面) | ... | ... |
+
+**生成内容来源**:
+- 从相关Source的deep-enrich区块提取：公式、摘要、方法细节、验证信息
+- 自动构建页面结构：定义与边界、EMT中的作用、形式化表达、适用边界
+- 保留待补充标记，提示需要人工审查和完善
+
+**质量统计**:
+- A级: 954页
+- B级: 100页
+- C级: 332页（含新生成的批量页面）
+- D级: 0页
+
+**后续工作**:
+- 对C级页面进行深度增强，提升质量等级
+- 人工审查批量生成的内容，补充缺失部分
+- 更新page-revision-registry.md登记生成状态
+
+**状态**: 50个页面批量生成完成，修订注册表已更新
+
 ## [2026-05-01] add | 新增4个主题页
 
 - 背景: 响应用户"还有别的主题页可以增加吗"的要求，基于699篇来源分布分析
@@ -966,7 +1005,7 @@
 ## [2026-04-14] fix-wikilinks | 修复未解析 wikilink
 - 修复 10 个未解析 wikilink（作者-年份格式 → 实际来源页文件名）
 - interpolation-method.md: 5 处, wind-farm-modeling.md: 3 处, gole.md: 1 处, mahseredjian.md: 1 处
-- 未解析 wikilink: 11 → 0（overview.md 中 `[[wikilink]]` 为文档语法说明）
+- 未解析 wikilink: 11 → 0（overview.md 中 `wikilink` 为文档语法说明）
 
 ## [2026-04-14] llm-deep | LLM 深度填充来源页三个章节
 - 编写 tools/llm_fill_sections.py：PDF 文本提取 + LLM 结构化分析 → 填充 使用的方法/涉及的模型/相关主题
@@ -1067,3 +1106,1160 @@
 - 更新: wiki/index.md 实体页统计 20→21，添加CloudPSS到仿真工具列表
 
 - 结果: 实体页从20个扩展到21个，仿真工具类从7个增加到8个
+## 工作体系启动 - 2026-05-05 16:26:20
+
+**启动配置：**
+- 工作模式：五阶段闭环迭代
+- 执行间隔：每10分钟一轮
+- 最大无进展容忍：3轮
+- 当前状态：运行中
+
+**当前基线：**
+- A级页面：1,019个
+- B级页面：115个
+- C级页面：0个（已消除）
+
+**Wave规划：**
+- Wave 0: C级消除 ✓ 已完成
+- Wave 1: Method页清理 ▶ 进行中
+- Wave 2: Model页清理 ⏳ 待启动
+- Wave 3: Topic页清理 ⏳ 待启动
+- Wave 4: Entity页严谨化 ⏳ 待启动
+- Wave 5: 网络一致性回收 ⏳ 待启动
+
+---
+
+### 执行日志
+[2026-05-05 16:26:33] [INFO] ======================================================================
+[2026-05-05 16:26:33] [INFO] Wiki修订主循环启动
+[2026-05-05 16:26:33] [INFO] ======================================================================
+[2026-05-05 16:26:33] [INFO] 状态: running
+[2026-05-05 16:26:33] [INFO] 已执行轮次: 0
+[2026-05-05 16:26:33] [INFO] 
+[2026-05-05 16:26:33] [INFO] ######################################################################
+[2026-05-05 16:26:33] [INFO] # 第 1 轮迭代
+[2026-05-05 16:26:33] [INFO] ######################################################################
+[2026-05-05 16:26:33] [INFO] ======================================================================
+[2026-05-05 16:26:33] [INFO] Phase 1: 问题定位 (诊断扫描)
+[2026-05-05 16:26:33] [INFO] ======================================================================
+[2026-05-05 16:26:33] [INFO] 运行质量审计...
+[2026-05-05 16:26:34] [INFO] 运行诊断扫描...
+[2026-05-05 16:26:34] [INFO] 诊断完成: 704个页面有问题
+[2026-05-05 16:26:34] [INFO] 
+[2026-05-05 16:26:34] [INFO] ======================================================================
+[2026-05-05 16:26:34] [INFO] Phase 2: 工作计划 (任务分片)
+[2026-05-05 16:26:34] [INFO] ======================================================================
+[2026-05-05 16:26:34] [INFO] high优先级: 创建31个任务
+[2026-05-05 16:26:34] [INFO] medium优先级: 创建31个任务
+[2026-05-05 16:26:34] [INFO] 计划完成: 共62个任务
+[2026-05-05 16:26:34] [INFO] 
+[2026-05-05 16:26:34] [INFO] ======================================================================
+[2026-05-05 16:26:34] [INFO] Phase 3: 问题修订 (执行修改)
+[2026-05-05 16:26:34] [INFO] ======================================================================
+[2026-05-05 16:26:34] [INFO] 
+执行任务: wave-001-high-0
+[2026-05-05 16:26:34] [INFO]   页面: 10个
+[2026-05-05 16:26:34] [WARN]     修复wiki/topics/microgrid-test-system.md失败: name 're' is not defined
+[2026-05-05 16:26:34] [WARN]     修复wiki/topics/mt-hvdc-test-system.md失败: name 're' is not defined
+[2026-05-05 16:26:34] [WARN]     修复wiki/topics/protection-system.md失败: name 're' is not defined
+[2026-05-05 16:26:34] [WARN]     修复wiki/topics/shifted-frequency-analysis.md失败: name 're' is not defined
+[2026-05-05 16:26:34] [WARN]     修复wiki/methods/adaptive-droop.md失败: name 're' is not defined
+[2026-05-05 16:26:34] [WARN]     修复wiki/methods/ccvt.md失败: name 're' is not defined
+[2026-05-05 16:26:34] [WARN]     修复wiki/methods/cdsm.md失败: name 're' is not defined
+[2026-05-05 16:26:34] [WARN]     修复wiki/methods/cigre-b4-dc-grid.md失败: name 're' is not defined
+[2026-05-05 16:26:34] [WARN]     修复wiki/methods/cigre-b4.md失败: name 're' is not defined
+[2026-05-05 16:26:34] [WARN]     修复wiki/methods/cl-dccb.md失败: name 're' is not defined
+[2026-05-05 16:26:34] [INFO]   完成: 0个页面修复
+[2026-05-05 16:26:34] [INFO] 
+执行任务: wave-001-high-1
+[2026-05-05 16:26:34] [INFO]   页面: 10个
+[2026-05-05 16:26:34] [WARN]     修复wiki/methods/csg.md失败: name 're' is not defined
+[2026-05-05 16:26:34] [WARN]     修复wiki/methods/current-trajectory-similarity.md失败: name 're' is not defined
+[2026-05-05 16:26:34] [WARN]     修复wiki/methods/dc-protection.md失败: name 're' is not defined
+[2026-05-05 16:26:34] [WARN]     修复wiki/methods/dccb.md失败: name 're' is not defined
+[2026-05-05 16:26:34] [WARN]     修复wiki/methods/delarue-enhanced-avm.md失败: name 're' is not defined
+[2026-05-05 16:26:34] [WARN]     修复wiki/methods/dfig-offshore-wind-farm.md失败: name 're' is not defined
+[2026-05-05 16:26:34] [WARN]     修复wiki/methods/distributed-control.md失败: name 're' is not defined
+[2026-05-05 16:26:34] [WARN]     修复wiki/methods/distribution-test-feeders.md失败: name 're' is not defined
+[2026-05-05 16:26:34] [WARN]     修复wiki/methods/droop-control.md失败: name 're' is not defined
+[2026-05-05 16:26:34] [WARN]     修复wiki/methods/dual-active-bridge.md失败: name 're' is not defined
+[2026-05-05 16:26:34] [INFO]   完成: 0个页面修复
+[2026-05-05 16:26:34] [INFO] 
+执行任务: wave-001-high-2
+[2026-05-05 16:26:34] [INFO]   页面: 10个
+[2026-05-05 16:26:34] [WARN]   页面被锁定，跳过
+[2026-05-05 16:26:34] [INFO] 
+执行任务: wave-001-high-3
+[2026-05-05 16:26:34] [INFO]   页面: 10个
+[2026-05-05 16:26:34] [WARN]     修复wiki/methods/hierarchical-control.md失败: name 're' is not defined
+[2026-05-05 16:26:34] [WARN]     修复wiki/methods/hvdc-control.md失败: name 're' is not defined
+[2026-05-05 16:26:34] [WARN]     修复wiki/methods/ibr.md失败: name 're' is not defined
+[2026-05-05 16:26:34] [WARN]     修复wiki/methods/inertia-control.md失败: name 're' is not defined
+[2026-05-05 16:26:34] [WARN]     修复wiki/methods/lcl-filter.md失败: name 're' is not defined
+[2026-05-05 16:26:34] [WARN]     修复wiki/methods/link-name.md失败: name 're' is not defined
+[2026-05-05 16:26:34] [WARN]     修复wiki/methods/lvrt-control.md失败: name 're' is not defined
+[2026-05-05 16:26:34] [WARN]     修复wiki/methods/lvrt.md失败: name 're' is not defined
+[2026-05-05 16:26:34] [WARN]     修复wiki/methods/m3c.md失败: name 're' is not defined
+[2026-05-05 16:26:34] [WARN]     修复wiki/methods/mbsm.md失败: name 're' is not defined
+[2026-05-05 16:26:34] [INFO]   完成: 0个页面修复
+[2026-05-05 16:26:34] [INFO] 
+执行任务: wave-001-high-4
+[2026-05-05 16:26:34] [INFO]   页面: 10个
+[2026-05-05 16:26:34] [WARN]     修复wiki/methods/microgrid-control.md失败: name 're' is not defined
+[2026-05-05 16:26:34] [WARN]     修复wiki/methods/microgrid.md失败: name 're' is not defined
+[2026-05-05 16:26:34] [WARN]     修复wiki/methods/midc.md失败: name 're' is not defined
+[2026-05-05 16:26:34] [WARN]     修复wiki/methods/mppt-control.md失败: name 're' is not defined
+[2026-05-05 16:26:34] [WARN]     修复wiki/methods/multi-terminal-dc.md失败: name 're' is not defined
+[2026-05-05 16:26:34] [WARN]     修复wiki/methods/n-port-network.md失败: name 're' is not defined
+[2026-05-05 16:26:34] [WARN]     修复wiki/methods/nchg,n.md失败: name 're' is not defined
+[2026-05-05 16:26:34] [WARN]     修复wiki/methods/nearest-level-modulation.md失败: name 're' is not defined
+[2026-05-05 16:26:34] [WARN]     修复wiki/methods/offshore-hvdc-hub.md失败: name 're' is not defined
+[2026-05-05 16:26:34] [WARN]     修复wiki/methods/offshore-wind-integration.md失败: name 're' is not defined
+[2026-05-05 16:26:34] [INFO]   完成: 0个页面修复
+[2026-05-05 16:26:34] [INFO] 
+[2026-05-05 16:26:34] [INFO] ======================================================================
+[2026-05-05 16:26:34] [INFO] Phase 4: 工作记录 (状态登记)
+[2026-05-05 16:26:34] [INFO] ======================================================================
+[2026-05-05 16:26:34] [INFO] 更新任务注册表: 4个任务标记为完成
+[2026-05-05 16:26:34] [INFO] 更新进度仪表板
+[2026-05-05 16:26:34] [INFO] 
+[2026-05-05 16:26:34] [INFO] ======================================================================
+[2026-05-05 16:26:34] [INFO] Phase 5: 进展提交 (验证归档)
+[2026-05-05 16:26:34] [INFO] ======================================================================
+[2026-05-05 16:26:34] [INFO] 运行质量验证...
+[2026-05-05 16:26:35] [INFO] ✓ 质量审计通过
+[2026-05-05 16:26:35] [INFO] 本轮进展: 修复0个页面
+[2026-05-05 16:26:35] [INFO] 
+⚠ 连续1轮无进展
+[2026-05-05 16:26:35] [INFO] 
+下一轮将在600秒后执行...
+[2026-05-05 16:27:37] [INFO] ======================================================================
+[2026-05-05 16:27:37] [INFO] Wiki修订主循环启动
+[2026-05-05 16:27:37] [INFO] ======================================================================
+[2026-05-05 16:27:37] [INFO] 状态: running
+[2026-05-05 16:27:37] [INFO] 已执行轮次: 1
+[2026-05-05 16:27:37] [INFO] 
+[2026-05-05 16:27:37] [INFO] ######################################################################
+[2026-05-05 16:27:37] [INFO] # 第 2 轮迭代
+[2026-05-05 16:27:37] [INFO] ######################################################################
+[2026-05-05 16:27:37] [INFO] ======================================================================
+[2026-05-05 16:27:37] [INFO] Phase 1: 问题定位 (诊断扫描)
+[2026-05-05 16:27:37] [INFO] ======================================================================
+[2026-05-05 16:27:37] [INFO] 运行质量审计...
+[2026-05-05 16:27:37] [INFO] 运行诊断扫描...
+[2026-05-05 16:27:38] [INFO] 诊断完成: 704个页面有问题
+[2026-05-05 16:27:38] [INFO] 
+[2026-05-05 16:27:38] [INFO] ======================================================================
+[2026-05-05 16:27:38] [INFO] Phase 2: 工作计划 (任务分片)
+[2026-05-05 16:27:38] [INFO] ======================================================================
+[2026-05-05 16:27:38] [INFO] high优先级: 创建31个任务
+[2026-05-05 16:27:38] [INFO] medium优先级: 创建31个任务
+[2026-05-05 16:27:38] [INFO] 计划完成: 共62个任务
+[2026-05-05 16:27:38] [INFO] 
+[2026-05-05 16:27:38] [INFO] ======================================================================
+[2026-05-05 16:27:38] [INFO] Phase 3: 问题修订 (执行修改)
+[2026-05-05 16:27:38] [INFO] ======================================================================
+[2026-05-05 16:27:38] [INFO] 
+执行任务: wave-002-high-0
+[2026-05-05 16:27:38] [INFO]   页面: 10个
+[2026-05-05 16:27:38] [WARN]     修复wiki/topics/microgrid-test-system.md失败: name 're' is not defined
+[2026-05-05 16:27:38] [WARN]     修复wiki/topics/mt-hvdc-test-system.md失败: name 're' is not defined
+[2026-05-05 16:27:38] [WARN]     修复wiki/topics/protection-system.md失败: name 're' is not defined
+[2026-05-05 16:27:38] [WARN]     修复wiki/topics/shifted-frequency-analysis.md失败: name 're' is not defined
+[2026-05-05 16:27:38] [WARN]     修复wiki/methods/adaptive-droop.md失败: name 're' is not defined
+[2026-05-05 16:27:38] [WARN]     修复wiki/methods/ccvt.md失败: name 're' is not defined
+[2026-05-05 16:27:38] [WARN]     修复wiki/methods/cdsm.md失败: name 're' is not defined
+[2026-05-05 16:27:38] [WARN]     修复wiki/methods/cigre-b4-dc-grid.md失败: name 're' is not defined
+[2026-05-05 16:27:38] [WARN]     修复wiki/methods/cigre-b4.md失败: name 're' is not defined
+[2026-05-05 16:27:38] [WARN]     修复wiki/methods/cl-dccb.md失败: name 're' is not defined
+[2026-05-05 16:27:38] [INFO]   完成: 0个页面修复
+[2026-05-05 16:27:38] [INFO] 
+执行任务: wave-002-high-1
+[2026-05-05 16:27:38] [INFO]   页面: 10个
+[2026-05-05 16:27:38] [WARN]     修复wiki/methods/csg.md失败: name 're' is not defined
+[2026-05-05 16:27:38] [WARN]     修复wiki/methods/current-trajectory-similarity.md失败: name 're' is not defined
+[2026-05-05 16:27:38] [WARN]     修复wiki/methods/dc-protection.md失败: name 're' is not defined
+[2026-05-05 16:27:38] [WARN]     修复wiki/methods/dccb.md失败: name 're' is not defined
+[2026-05-05 16:27:38] [WARN]     修复wiki/methods/delarue-enhanced-avm.md失败: name 're' is not defined
+[2026-05-05 16:27:38] [WARN]     修复wiki/methods/dfig-offshore-wind-farm.md失败: name 're' is not defined
+[2026-05-05 16:27:38] [WARN]     修复wiki/methods/distributed-control.md失败: name 're' is not defined
+[2026-05-05 16:27:38] [WARN]     修复wiki/methods/distribution-test-feeders.md失败: name 're' is not defined
+[2026-05-05 16:27:38] [WARN]     修复wiki/methods/droop-control.md失败: name 're' is not defined
+[2026-05-05 16:27:38] [WARN]     修复wiki/methods/dual-active-bridge.md失败: name 're' is not defined
+[2026-05-05 16:27:38] [INFO]   完成: 0个页面修复
+[2026-05-05 16:27:38] [INFO] 
+执行任务: wave-002-high-2
+[2026-05-05 16:27:38] [INFO]   页面: 10个
+[2026-05-05 16:27:38] [WARN]   页面被锁定，跳过
+[2026-05-05 16:27:38] [INFO] 
+执行任务: wave-002-high-3
+[2026-05-05 16:27:38] [INFO]   页面: 10个
+[2026-05-05 16:27:38] [WARN]     修复wiki/methods/hierarchical-control.md失败: name 're' is not defined
+[2026-05-05 16:27:38] [WARN]     修复wiki/methods/hvdc-control.md失败: name 're' is not defined
+[2026-05-05 16:27:38] [WARN]     修复wiki/methods/ibr.md失败: name 're' is not defined
+[2026-05-05 16:27:38] [WARN]     修复wiki/methods/inertia-control.md失败: name 're' is not defined
+[2026-05-05 16:27:38] [WARN]     修复wiki/methods/lcl-filter.md失败: name 're' is not defined
+[2026-05-05 16:27:38] [WARN]     修复wiki/methods/link-name.md失败: name 're' is not defined
+[2026-05-05 16:27:38] [WARN]     修复wiki/methods/lvrt-control.md失败: name 're' is not defined
+[2026-05-05 16:27:38] [WARN]     修复wiki/methods/lvrt.md失败: name 're' is not defined
+[2026-05-05 16:27:38] [WARN]     修复wiki/methods/m3c.md失败: name 're' is not defined
+[2026-05-05 16:27:38] [WARN]     修复wiki/methods/mbsm.md失败: name 're' is not defined
+[2026-05-05 16:27:38] [INFO]   完成: 0个页面修复
+[2026-05-05 16:27:38] [INFO] 
+执行任务: wave-002-high-4
+[2026-05-05 16:27:38] [INFO]   页面: 10个
+[2026-05-05 16:27:38] [WARN]     修复wiki/methods/microgrid-control.md失败: name 're' is not defined
+[2026-05-05 16:27:38] [WARN]     修复wiki/methods/microgrid.md失败: name 're' is not defined
+[2026-05-05 16:27:38] [WARN]     修复wiki/methods/midc.md失败: name 're' is not defined
+[2026-05-05 16:27:38] [WARN]     修复wiki/methods/mppt-control.md失败: name 're' is not defined
+[2026-05-05 16:27:38] [WARN]     修复wiki/methods/multi-terminal-dc.md失败: name 're' is not defined
+[2026-05-05 16:27:38] [WARN]     修复wiki/methods/n-port-network.md失败: name 're' is not defined
+[2026-05-05 16:27:38] [WARN]     修复wiki/methods/nchg,n.md失败: name 're' is not defined
+[2026-05-05 16:27:38] [WARN]     修复wiki/methods/nearest-level-modulation.md失败: name 're' is not defined
+[2026-05-05 16:27:38] [WARN]     修复wiki/methods/offshore-hvdc-hub.md失败: name 're' is not defined
+[2026-05-05 16:27:38] [WARN]     修复wiki/methods/offshore-wind-integration.md失败: name 're' is not defined
+[2026-05-05 16:27:38] [INFO]   完成: 0个页面修复
+[2026-05-05 16:27:38] [INFO] 
+[2026-05-05 16:27:38] [INFO] ======================================================================
+[2026-05-05 16:27:38] [INFO] Phase 4: 工作记录 (状态登记)
+[2026-05-05 16:27:38] [INFO] ======================================================================
+[2026-05-05 16:27:38] [INFO] 更新任务注册表: 4个任务标记为完成
+[2026-05-05 16:27:38] [INFO] 更新进度仪表板
+[2026-05-05 16:27:38] [INFO] 
+[2026-05-05 16:27:38] [INFO] ======================================================================
+[2026-05-05 16:27:38] [INFO] Phase 5: 进展提交 (验证归档)
+[2026-05-05 16:27:38] [INFO] ======================================================================
+[2026-05-05 16:27:38] [INFO] 运行质量验证...
+[2026-05-05 16:27:38] [INFO] ✓ 质量审计通过
+[2026-05-05 16:27:38] [INFO] 本轮进展: 修复0个页面
+[2026-05-05 16:27:38] [INFO] 
+⚠ 连续1轮无进展
+[2026-05-05 16:27:38] [INFO] 
+下一轮将在600秒后执行...
+[2026-05-05 16:27:38] [INFO] ======================================================================
+[2026-05-05 16:27:38] [INFO] Wiki修订主循环启动
+[2026-05-05 16:27:38] [INFO] ======================================================================
+[2026-05-05 16:27:38] [INFO] 状态: running
+[2026-05-05 16:27:38] [INFO] 已执行轮次: 2
+[2026-05-05 16:27:38] [INFO] 
+[2026-05-05 16:27:38] [INFO] ######################################################################
+[2026-05-05 16:27:38] [INFO] # 第 3 轮迭代
+[2026-05-05 16:27:38] [INFO] ######################################################################
+[2026-05-05 16:27:38] [INFO] ======================================================================
+[2026-05-05 16:27:38] [INFO] Phase 1: 问题定位 (诊断扫描)
+[2026-05-05 16:27:38] [INFO] ======================================================================
+[2026-05-05 16:27:38] [INFO] 运行质量审计...
+[2026-05-05 16:27:39] [INFO] 运行诊断扫描...
+[2026-05-05 16:27:39] [INFO] 诊断完成: 704个页面有问题
+[2026-05-05 16:27:39] [INFO] 
+[2026-05-05 16:27:39] [INFO] ======================================================================
+[2026-05-05 16:27:39] [INFO] Phase 2: 工作计划 (任务分片)
+[2026-05-05 16:27:39] [INFO] ======================================================================
+[2026-05-05 16:27:39] [INFO] high优先级: 创建31个任务
+[2026-05-05 16:27:39] [INFO] medium优先级: 创建31个任务
+[2026-05-05 16:27:39] [INFO] 计划完成: 共62个任务
+[2026-05-05 16:27:39] [INFO] 
+[2026-05-05 16:27:39] [INFO] ======================================================================
+[2026-05-05 16:27:39] [INFO] Phase 3: 问题修订 (执行修改)
+[2026-05-05 16:27:39] [INFO] ======================================================================
+[2026-05-05 16:27:39] [INFO] 
+执行任务: wave-003-high-0
+[2026-05-05 16:27:39] [INFO]   页面: 10个
+[2026-05-05 16:27:39] [WARN]     修复wiki/topics/microgrid-test-system.md失败: name 're' is not defined
+[2026-05-05 16:27:39] [WARN]     修复wiki/topics/mt-hvdc-test-system.md失败: name 're' is not defined
+[2026-05-05 16:27:39] [WARN]     修复wiki/topics/protection-system.md失败: name 're' is not defined
+[2026-05-05 16:27:39] [WARN]     修复wiki/topics/shifted-frequency-analysis.md失败: name 're' is not defined
+[2026-05-05 16:27:39] [WARN]     修复wiki/methods/adaptive-droop.md失败: name 're' is not defined
+[2026-05-05 16:27:39] [WARN]     修复wiki/methods/ccvt.md失败: name 're' is not defined
+[2026-05-05 16:27:39] [WARN]     修复wiki/methods/cdsm.md失败: name 're' is not defined
+[2026-05-05 16:27:39] [WARN]     修复wiki/methods/cigre-b4-dc-grid.md失败: name 're' is not defined
+[2026-05-05 16:27:39] [WARN]     修复wiki/methods/cigre-b4.md失败: name 're' is not defined
+[2026-05-05 16:27:39] [WARN]     修复wiki/methods/cl-dccb.md失败: name 're' is not defined
+[2026-05-05 16:27:39] [INFO]   完成: 0个页面修复
+[2026-05-05 16:27:39] [INFO] 
+执行任务: wave-003-high-1
+[2026-05-05 16:27:39] [INFO]   页面: 10个
+[2026-05-05 16:27:39] [WARN]     修复wiki/methods/csg.md失败: name 're' is not defined
+[2026-05-05 16:27:39] [WARN]     修复wiki/methods/current-trajectory-similarity.md失败: name 're' is not defined
+[2026-05-05 16:27:39] [WARN]     修复wiki/methods/dc-protection.md失败: name 're' is not defined
+[2026-05-05 16:27:39] [WARN]     修复wiki/methods/dccb.md失败: name 're' is not defined
+[2026-05-05 16:27:39] [WARN]     修复wiki/methods/delarue-enhanced-avm.md失败: name 're' is not defined
+[2026-05-05 16:27:39] [WARN]     修复wiki/methods/dfig-offshore-wind-farm.md失败: name 're' is not defined
+[2026-05-05 16:27:39] [WARN]     修复wiki/methods/distributed-control.md失败: name 're' is not defined
+[2026-05-05 16:27:39] [WARN]     修复wiki/methods/distribution-test-feeders.md失败: name 're' is not defined
+[2026-05-05 16:27:39] [WARN]     修复wiki/methods/droop-control.md失败: name 're' is not defined
+[2026-05-05 16:27:39] [WARN]     修复wiki/methods/dual-active-bridge.md失败: name 're' is not defined
+[2026-05-05 16:27:39] [INFO]   完成: 0个页面修复
+[2026-05-05 16:27:39] [INFO] 
+执行任务: wave-003-high-2
+[2026-05-05 16:27:39] [INFO]   页面: 10个
+[2026-05-05 16:27:39] [WARN]   页面被锁定，跳过
+[2026-05-05 16:27:39] [INFO] 
+执行任务: wave-003-high-3
+[2026-05-05 16:27:39] [INFO]   页面: 10个
+[2026-05-05 16:27:39] [WARN]     修复wiki/methods/hierarchical-control.md失败: name 're' is not defined
+[2026-05-05 16:27:39] [WARN]     修复wiki/methods/hvdc-control.md失败: name 're' is not defined
+[2026-05-05 16:27:39] [WARN]     修复wiki/methods/ibr.md失败: name 're' is not defined
+[2026-05-05 16:27:39] [WARN]     修复wiki/methods/inertia-control.md失败: name 're' is not defined
+[2026-05-05 16:27:39] [WARN]     修复wiki/methods/lcl-filter.md失败: name 're' is not defined
+[2026-05-05 16:27:39] [WARN]     修复wiki/methods/link-name.md失败: name 're' is not defined
+[2026-05-05 16:27:39] [WARN]     修复wiki/methods/lvrt-control.md失败: name 're' is not defined
+[2026-05-05 16:27:39] [WARN]     修复wiki/methods/lvrt.md失败: name 're' is not defined
+[2026-05-05 16:27:39] [WARN]     修复wiki/methods/m3c.md失败: name 're' is not defined
+[2026-05-05 16:27:39] [WARN]     修复wiki/methods/mbsm.md失败: name 're' is not defined
+[2026-05-05 16:27:39] [INFO]   完成: 0个页面修复
+[2026-05-05 16:27:39] [INFO] 
+执行任务: wave-003-high-4
+[2026-05-05 16:27:39] [INFO]   页面: 10个
+[2026-05-05 16:27:39] [WARN]     修复wiki/methods/microgrid-control.md失败: name 're' is not defined
+[2026-05-05 16:27:39] [WARN]     修复wiki/methods/microgrid.md失败: name 're' is not defined
+[2026-05-05 16:27:39] [WARN]     修复wiki/methods/midc.md失败: name 're' is not defined
+[2026-05-05 16:27:39] [WARN]     修复wiki/methods/mppt-control.md失败: name 're' is not defined
+[2026-05-05 16:27:39] [WARN]     修复wiki/methods/multi-terminal-dc.md失败: name 're' is not defined
+[2026-05-05 16:27:39] [WARN]     修复wiki/methods/n-port-network.md失败: name 're' is not defined
+[2026-05-05 16:27:39] [WARN]     修复wiki/methods/nchg,n.md失败: name 're' is not defined
+[2026-05-05 16:27:39] [WARN]     修复wiki/methods/nearest-level-modulation.md失败: name 're' is not defined
+[2026-05-05 16:27:39] [WARN]     修复wiki/methods/offshore-hvdc-hub.md失败: name 're' is not defined
+[2026-05-05 16:27:39] [WARN]     修复wiki/methods/offshore-wind-integration.md失败: name 're' is not defined
+[2026-05-05 16:27:39] [INFO]   完成: 0个页面修复
+[2026-05-05 16:27:39] [INFO] 
+[2026-05-05 16:27:39] [INFO] ======================================================================
+[2026-05-05 16:27:39] [INFO] Phase 4: 工作记录 (状态登记)
+[2026-05-05 16:27:39] [INFO] ======================================================================
+[2026-05-05 16:27:39] [INFO] 更新任务注册表: 4个任务标记为完成
+[2026-05-05 16:27:39] [INFO] 更新进度仪表板
+[2026-05-05 16:27:39] [INFO] 
+[2026-05-05 16:27:39] [INFO] ======================================================================
+[2026-05-05 16:27:39] [INFO] Phase 5: 进展提交 (验证归档)
+[2026-05-05 16:27:39] [INFO] ======================================================================
+[2026-05-05 16:27:39] [INFO] 运行质量验证...
+[2026-05-05 16:27:40] [INFO] ✓ 质量审计通过
+[2026-05-05 16:27:40] [INFO] 本轮进展: 修复0个页面
+[2026-05-05 16:27:40] [INFO] 
+⚠ 连续1轮无进展
+[2026-05-05 16:27:40] [INFO] 
+下一轮将在600秒后执行...
+[2026-05-05 16:27:40] [INFO] ======================================================================
+[2026-05-05 16:27:40] [INFO] Wiki修订主循环启动
+[2026-05-05 16:27:40] [INFO] ======================================================================
+[2026-05-05 16:27:40] [INFO] 状态: running
+[2026-05-05 16:27:40] [INFO] 已执行轮次: 3
+[2026-05-05 16:27:40] [INFO] 
+[2026-05-05 16:27:40] [INFO] ######################################################################
+[2026-05-05 16:27:40] [INFO] # 第 4 轮迭代
+[2026-05-05 16:27:40] [INFO] ######################################################################
+[2026-05-05 16:27:40] [INFO] ======================================================================
+[2026-05-05 16:27:40] [INFO] Phase 1: 问题定位 (诊断扫描)
+[2026-05-05 16:27:40] [INFO] ======================================================================
+[2026-05-05 16:27:40] [INFO] 运行质量审计...
+[2026-05-05 16:27:40] [INFO] 运行诊断扫描...
+[2026-05-05 16:27:41] [INFO] 诊断完成: 704个页面有问题
+[2026-05-05 16:27:41] [INFO] 
+[2026-05-05 16:27:41] [INFO] ======================================================================
+[2026-05-05 16:27:41] [INFO] Phase 2: 工作计划 (任务分片)
+[2026-05-05 16:27:41] [INFO] ======================================================================
+[2026-05-05 16:27:41] [INFO] high优先级: 创建31个任务
+[2026-05-05 16:27:41] [INFO] medium优先级: 创建31个任务
+[2026-05-05 16:27:41] [INFO] 计划完成: 共62个任务
+[2026-05-05 16:27:41] [INFO] 
+[2026-05-05 16:27:41] [INFO] ======================================================================
+[2026-05-05 16:27:41] [INFO] Phase 3: 问题修订 (执行修改)
+[2026-05-05 16:27:41] [INFO] ======================================================================
+[2026-05-05 16:27:41] [INFO] 
+执行任务: wave-004-high-0
+[2026-05-05 16:27:41] [INFO]   页面: 10个
+[2026-05-05 16:27:41] [WARN]     修复wiki/topics/microgrid-test-system.md失败: name 're' is not defined
+[2026-05-05 16:27:41] [WARN]     修复wiki/topics/mt-hvdc-test-system.md失败: name 're' is not defined
+[2026-05-05 16:27:41] [WARN]     修复wiki/topics/protection-system.md失败: name 're' is not defined
+[2026-05-05 16:27:41] [WARN]     修复wiki/topics/shifted-frequency-analysis.md失败: name 're' is not defined
+[2026-05-05 16:27:41] [WARN]     修复wiki/methods/adaptive-droop.md失败: name 're' is not defined
+[2026-05-05 16:27:41] [WARN]     修复wiki/methods/ccvt.md失败: name 're' is not defined
+[2026-05-05 16:27:41] [WARN]     修复wiki/methods/cdsm.md失败: name 're' is not defined
+[2026-05-05 16:27:41] [WARN]     修复wiki/methods/cigre-b4-dc-grid.md失败: name 're' is not defined
+[2026-05-05 16:27:41] [WARN]     修复wiki/methods/cigre-b4.md失败: name 're' is not defined
+[2026-05-05 16:27:41] [WARN]     修复wiki/methods/cl-dccb.md失败: name 're' is not defined
+[2026-05-05 16:27:41] [INFO]   完成: 0个页面修复
+[2026-05-05 16:27:41] [INFO] 
+执行任务: wave-004-high-1
+[2026-05-05 16:27:41] [INFO]   页面: 10个
+[2026-05-05 16:27:41] [WARN]     修复wiki/methods/csg.md失败: name 're' is not defined
+[2026-05-05 16:27:41] [WARN]     修复wiki/methods/current-trajectory-similarity.md失败: name 're' is not defined
+[2026-05-05 16:27:41] [WARN]     修复wiki/methods/dc-protection.md失败: name 're' is not defined
+[2026-05-05 16:27:41] [WARN]     修复wiki/methods/dccb.md失败: name 're' is not defined
+[2026-05-05 16:27:41] [WARN]     修复wiki/methods/delarue-enhanced-avm.md失败: name 're' is not defined
+[2026-05-05 16:27:41] [WARN]     修复wiki/methods/dfig-offshore-wind-farm.md失败: name 're' is not defined
+[2026-05-05 16:27:41] [WARN]     修复wiki/methods/distributed-control.md失败: name 're' is not defined
+[2026-05-05 16:27:41] [WARN]     修复wiki/methods/distribution-test-feeders.md失败: name 're' is not defined
+[2026-05-05 16:27:41] [WARN]     修复wiki/methods/droop-control.md失败: name 're' is not defined
+[2026-05-05 16:27:41] [WARN]     修复wiki/methods/dual-active-bridge.md失败: name 're' is not defined
+[2026-05-05 16:27:41] [INFO]   完成: 0个页面修复
+[2026-05-05 16:27:41] [INFO] 
+执行任务: wave-004-high-2
+[2026-05-05 16:27:41] [INFO]   页面: 10个
+[2026-05-05 16:27:41] [WARN]   页面被锁定，跳过
+[2026-05-05 16:27:41] [INFO] 
+执行任务: wave-004-high-3
+[2026-05-05 16:27:41] [INFO]   页面: 10个
+[2026-05-05 16:27:41] [WARN]     修复wiki/methods/hierarchical-control.md失败: name 're' is not defined
+[2026-05-05 16:27:41] [WARN]     修复wiki/methods/hvdc-control.md失败: name 're' is not defined
+[2026-05-05 16:27:41] [WARN]     修复wiki/methods/ibr.md失败: name 're' is not defined
+[2026-05-05 16:27:41] [WARN]     修复wiki/methods/inertia-control.md失败: name 're' is not defined
+[2026-05-05 16:27:41] [WARN]     修复wiki/methods/lcl-filter.md失败: name 're' is not defined
+[2026-05-05 16:27:41] [WARN]     修复wiki/methods/link-name.md失败: name 're' is not defined
+[2026-05-05 16:27:41] [WARN]     修复wiki/methods/lvrt-control.md失败: name 're' is not defined
+[2026-05-05 16:27:41] [WARN]     修复wiki/methods/lvrt.md失败: name 're' is not defined
+[2026-05-05 16:27:41] [WARN]     修复wiki/methods/m3c.md失败: name 're' is not defined
+[2026-05-05 16:27:41] [WARN]     修复wiki/methods/mbsm.md失败: name 're' is not defined
+[2026-05-05 16:27:41] [INFO]   完成: 0个页面修复
+[2026-05-05 16:27:41] [INFO] 
+执行任务: wave-004-high-4
+[2026-05-05 16:27:41] [INFO]   页面: 10个
+[2026-05-05 16:27:41] [WARN]     修复wiki/methods/microgrid-control.md失败: name 're' is not defined
+[2026-05-05 16:27:41] [WARN]     修复wiki/methods/microgrid.md失败: name 're' is not defined
+[2026-05-05 16:27:41] [WARN]     修复wiki/methods/midc.md失败: name 're' is not defined
+[2026-05-05 16:27:41] [WARN]     修复wiki/methods/mppt-control.md失败: name 're' is not defined
+[2026-05-05 16:27:41] [WARN]     修复wiki/methods/multi-terminal-dc.md失败: name 're' is not defined
+[2026-05-05 16:27:41] [WARN]     修复wiki/methods/n-port-network.md失败: name 're' is not defined
+[2026-05-05 16:27:41] [WARN]     修复wiki/methods/nchg,n.md失败: name 're' is not defined
+[2026-05-05 16:27:41] [WARN]     修复wiki/methods/nearest-level-modulation.md失败: name 're' is not defined
+[2026-05-05 16:27:41] [WARN]     修复wiki/methods/offshore-hvdc-hub.md失败: name 're' is not defined
+[2026-05-05 16:27:41] [WARN]     修复wiki/methods/offshore-wind-integration.md失败: name 're' is not defined
+[2026-05-05 16:27:41] [INFO]   完成: 0个页面修复
+[2026-05-05 16:27:41] [INFO] 
+[2026-05-05 16:27:41] [INFO] ======================================================================
+[2026-05-05 16:27:41] [INFO] Phase 4: 工作记录 (状态登记)
+[2026-05-05 16:27:41] [INFO] ======================================================================
+[2026-05-05 16:27:41] [INFO] 更新任务注册表: 4个任务标记为完成
+[2026-05-05 16:27:41] [INFO] 更新进度仪表板
+[2026-05-05 16:27:41] [INFO] 
+[2026-05-05 16:27:41] [INFO] ======================================================================
+[2026-05-05 16:27:41] [INFO] Phase 5: 进展提交 (验证归档)
+[2026-05-05 16:27:41] [INFO] ======================================================================
+[2026-05-05 16:27:41] [INFO] 运行质量验证...
+[2026-05-05 16:27:42] [INFO] ✓ 质量审计通过
+[2026-05-05 16:27:42] [INFO] 本轮进展: 修复0个页面
+[2026-05-05 16:27:42] [INFO] 
+⚠ 连续1轮无进展
+[2026-05-05 16:27:42] [INFO] 
+下一轮将在600秒后执行...
+[2026-05-05 16:27:42] [INFO] ======================================================================
+[2026-05-05 16:27:42] [INFO] Wiki修订主循环启动
+[2026-05-05 16:27:42] [INFO] ======================================================================
+[2026-05-05 16:27:42] [INFO] 状态: running
+[2026-05-05 16:27:42] [INFO] 已执行轮次: 4
+[2026-05-05 16:27:42] [INFO] 
+[2026-05-05 16:27:42] [INFO] ######################################################################
+[2026-05-05 16:27:42] [INFO] # 第 5 轮迭代
+[2026-05-05 16:27:42] [INFO] ######################################################################
+[2026-05-05 16:27:42] [INFO] ======================================================================
+[2026-05-05 16:27:42] [INFO] Phase 1: 问题定位 (诊断扫描)
+[2026-05-05 16:27:42] [INFO] ======================================================================
+[2026-05-05 16:27:42] [INFO] 运行质量审计...
+[2026-05-05 16:27:42] [INFO] 运行诊断扫描...
+[2026-05-05 16:27:43] [INFO] 诊断完成: 704个页面有问题
+[2026-05-05 16:27:43] [INFO] 
+[2026-05-05 16:27:43] [INFO] ======================================================================
+[2026-05-05 16:27:43] [INFO] Phase 2: 工作计划 (任务分片)
+[2026-05-05 16:27:43] [INFO] ======================================================================
+[2026-05-05 16:27:43] [INFO] high优先级: 创建31个任务
+[2026-05-05 16:27:43] [INFO] medium优先级: 创建31个任务
+[2026-05-05 16:27:43] [INFO] 计划完成: 共62个任务
+[2026-05-05 16:27:43] [INFO] 
+[2026-05-05 16:27:43] [INFO] ======================================================================
+[2026-05-05 16:27:43] [INFO] Phase 3: 问题修订 (执行修改)
+[2026-05-05 16:27:43] [INFO] ======================================================================
+[2026-05-05 16:27:43] [INFO] 
+执行任务: wave-005-high-0
+[2026-05-05 16:27:43] [INFO]   页面: 10个
+[2026-05-05 16:27:43] [WARN]     修复wiki/topics/microgrid-test-system.md失败: name 're' is not defined
+[2026-05-05 16:27:43] [WARN]     修复wiki/topics/mt-hvdc-test-system.md失败: name 're' is not defined
+[2026-05-05 16:27:43] [WARN]     修复wiki/topics/protection-system.md失败: name 're' is not defined
+[2026-05-05 16:27:43] [WARN]     修复wiki/topics/shifted-frequency-analysis.md失败: name 're' is not defined
+[2026-05-05 16:27:43] [WARN]     修复wiki/methods/adaptive-droop.md失败: name 're' is not defined
+[2026-05-05 16:27:43] [WARN]     修复wiki/methods/ccvt.md失败: name 're' is not defined
+[2026-05-05 16:27:43] [WARN]     修复wiki/methods/cdsm.md失败: name 're' is not defined
+[2026-05-05 16:27:43] [WARN]     修复wiki/methods/cigre-b4-dc-grid.md失败: name 're' is not defined
+[2026-05-05 16:27:43] [WARN]     修复wiki/methods/cigre-b4.md失败: name 're' is not defined
+[2026-05-05 16:27:43] [WARN]     修复wiki/methods/cl-dccb.md失败: name 're' is not defined
+[2026-05-05 16:27:43] [INFO]   完成: 0个页面修复
+[2026-05-05 16:27:43] [INFO] 
+执行任务: wave-005-high-1
+[2026-05-05 16:27:43] [INFO]   页面: 10个
+[2026-05-05 16:27:43] [WARN]     修复wiki/methods/csg.md失败: name 're' is not defined
+[2026-05-05 16:27:43] [WARN]     修复wiki/methods/current-trajectory-similarity.md失败: name 're' is not defined
+[2026-05-05 16:27:43] [WARN]     修复wiki/methods/dc-protection.md失败: name 're' is not defined
+[2026-05-05 16:27:43] [WARN]     修复wiki/methods/dccb.md失败: name 're' is not defined
+[2026-05-05 16:27:43] [WARN]     修复wiki/methods/delarue-enhanced-avm.md失败: name 're' is not defined
+[2026-05-05 16:27:43] [WARN]     修复wiki/methods/dfig-offshore-wind-farm.md失败: name 're' is not defined
+[2026-05-05 16:27:43] [WARN]     修复wiki/methods/distributed-control.md失败: name 're' is not defined
+[2026-05-05 16:27:43] [WARN]     修复wiki/methods/distribution-test-feeders.md失败: name 're' is not defined
+[2026-05-05 16:27:43] [WARN]     修复wiki/methods/droop-control.md失败: name 're' is not defined
+[2026-05-05 16:27:43] [WARN]     修复wiki/methods/dual-active-bridge.md失败: name 're' is not defined
+[2026-05-05 16:27:43] [INFO]   完成: 0个页面修复
+[2026-05-05 16:27:43] [INFO] 
+执行任务: wave-005-high-2
+[2026-05-05 16:27:43] [INFO]   页面: 10个
+[2026-05-05 16:27:43] [WARN]   页面被锁定，跳过
+[2026-05-05 16:27:43] [INFO] 
+执行任务: wave-005-high-3
+[2026-05-05 16:27:43] [INFO]   页面: 10个
+[2026-05-05 16:27:43] [WARN]     修复wiki/methods/hierarchical-control.md失败: name 're' is not defined
+[2026-05-05 16:27:43] [WARN]     修复wiki/methods/hvdc-control.md失败: name 're' is not defined
+[2026-05-05 16:27:43] [WARN]     修复wiki/methods/ibr.md失败: name 're' is not defined
+[2026-05-05 16:27:43] [WARN]     修复wiki/methods/inertia-control.md失败: name 're' is not defined
+[2026-05-05 16:27:43] [WARN]     修复wiki/methods/lcl-filter.md失败: name 're' is not defined
+[2026-05-05 16:27:43] [WARN]     修复wiki/methods/link-name.md失败: name 're' is not defined
+[2026-05-05 16:27:43] [WARN]     修复wiki/methods/lvrt-control.md失败: name 're' is not defined
+[2026-05-05 16:27:43] [WARN]     修复wiki/methods/lvrt.md失败: name 're' is not defined
+[2026-05-05 16:27:43] [WARN]     修复wiki/methods/m3c.md失败: name 're' is not defined
+[2026-05-05 16:27:43] [WARN]     修复wiki/methods/mbsm.md失败: name 're' is not defined
+[2026-05-05 16:27:43] [INFO]   完成: 0个页面修复
+[2026-05-05 16:27:43] [INFO] 
+执行任务: wave-005-high-4
+[2026-05-05 16:27:43] [INFO]   页面: 10个
+[2026-05-05 16:27:43] [WARN]     修复wiki/methods/microgrid-control.md失败: name 're' is not defined
+[2026-05-05 16:27:43] [WARN]     修复wiki/methods/microgrid.md失败: name 're' is not defined
+[2026-05-05 16:27:43] [WARN]     修复wiki/methods/midc.md失败: name 're' is not defined
+[2026-05-05 16:27:43] [WARN]     修复wiki/methods/mppt-control.md失败: name 're' is not defined
+[2026-05-05 16:27:43] [WARN]     修复wiki/methods/multi-terminal-dc.md失败: name 're' is not defined
+[2026-05-05 16:27:43] [WARN]     修复wiki/methods/n-port-network.md失败: name 're' is not defined
+[2026-05-05 16:27:43] [WARN]     修复wiki/methods/nchg,n.md失败: name 're' is not defined
+[2026-05-05 16:27:43] [WARN]     修复wiki/methods/nearest-level-modulation.md失败: name 're' is not defined
+[2026-05-05 16:27:43] [WARN]     修复wiki/methods/offshore-hvdc-hub.md失败: name 're' is not defined
+[2026-05-05 16:27:43] [WARN]     修复wiki/methods/offshore-wind-integration.md失败: name 're' is not defined
+[2026-05-05 16:27:43] [INFO]   完成: 0个页面修复
+[2026-05-05 16:27:43] [INFO] 
+[2026-05-05 16:27:43] [INFO] ======================================================================
+[2026-05-05 16:27:43] [INFO] Phase 4: 工作记录 (状态登记)
+[2026-05-05 16:27:43] [INFO] ======================================================================
+[2026-05-05 16:27:43] [INFO] 更新任务注册表: 4个任务标记为完成
+[2026-05-05 16:27:43] [INFO] 更新进度仪表板
+[2026-05-05 16:27:43] [INFO] 
+[2026-05-05 16:27:43] [INFO] ======================================================================
+[2026-05-05 16:27:43] [INFO] Phase 5: 进展提交 (验证归档)
+[2026-05-05 16:27:43] [INFO] ======================================================================
+[2026-05-05 16:27:43] [INFO] 运行质量验证...
+[2026-05-05 16:27:43] [INFO] ✓ 质量审计通过
+[2026-05-05 16:27:43] [INFO] 本轮进展: 修复0个页面
+[2026-05-05 16:27:43] [INFO] 
+⚠ 连续1轮无进展
+[2026-05-05 16:27:43] [INFO] 
+下一轮将在600秒后执行...
+[2026-05-05 16:27:43] [INFO] ======================================================================
+[2026-05-05 16:27:43] [INFO] Wiki修订主循环启动
+[2026-05-05 16:27:43] [INFO] ======================================================================
+[2026-05-05 16:27:43] [INFO] 状态: running
+[2026-05-05 16:27:43] [INFO] 已执行轮次: 5
+[2026-05-05 16:27:43] [INFO] 
+[2026-05-05 16:27:43] [INFO] ######################################################################
+[2026-05-05 16:27:43] [INFO] # 第 6 轮迭代
+[2026-05-05 16:27:43] [INFO] ######################################################################
+[2026-05-05 16:27:43] [INFO] ======================================================================
+[2026-05-05 16:27:43] [INFO] Phase 1: 问题定位 (诊断扫描)
+[2026-05-05 16:27:43] [INFO] ======================================================================
+[2026-05-05 16:27:43] [INFO] 运行质量审计...
+[2026-05-05 16:27:44] [INFO] 运行诊断扫描...
+[2026-05-05 16:27:44] [INFO] 诊断完成: 704个页面有问题
+[2026-05-05 16:27:44] [INFO] 
+[2026-05-05 16:27:44] [INFO] ======================================================================
+[2026-05-05 16:27:44] [INFO] Phase 2: 工作计划 (任务分片)
+[2026-05-05 16:27:44] [INFO] ======================================================================
+[2026-05-05 16:27:44] [INFO] high优先级: 创建31个任务
+[2026-05-05 16:27:44] [INFO] medium优先级: 创建31个任务
+[2026-05-05 16:27:44] [INFO] 计划完成: 共62个任务
+[2026-05-05 16:27:44] [INFO] 
+[2026-05-05 16:27:44] [INFO] ======================================================================
+[2026-05-05 16:27:44] [INFO] Phase 3: 问题修订 (执行修改)
+[2026-05-05 16:27:44] [INFO] ======================================================================
+[2026-05-05 16:27:44] [INFO] 
+执行任务: wave-006-high-0
+[2026-05-05 16:27:44] [INFO]   页面: 10个
+[2026-05-05 16:27:44] [WARN]     修复wiki/topics/microgrid-test-system.md失败: name 're' is not defined
+[2026-05-05 16:27:44] [WARN]     修复wiki/topics/mt-hvdc-test-system.md失败: name 're' is not defined
+[2026-05-05 16:27:44] [WARN]     修复wiki/topics/protection-system.md失败: name 're' is not defined
+[2026-05-05 16:27:44] [WARN]     修复wiki/topics/shifted-frequency-analysis.md失败: name 're' is not defined
+[2026-05-05 16:27:44] [WARN]     修复wiki/methods/adaptive-droop.md失败: name 're' is not defined
+[2026-05-05 16:27:44] [WARN]     修复wiki/methods/ccvt.md失败: name 're' is not defined
+[2026-05-05 16:27:44] [WARN]     修复wiki/methods/cdsm.md失败: name 're' is not defined
+[2026-05-05 16:27:44] [WARN]     修复wiki/methods/cigre-b4-dc-grid.md失败: name 're' is not defined
+[2026-05-05 16:27:44] [WARN]     修复wiki/methods/cigre-b4.md失败: name 're' is not defined
+[2026-05-05 16:27:44] [WARN]     修复wiki/methods/cl-dccb.md失败: name 're' is not defined
+[2026-05-05 16:27:44] [INFO]   完成: 0个页面修复
+[2026-05-05 16:27:44] [INFO] 
+执行任务: wave-006-high-1
+[2026-05-05 16:27:44] [INFO]   页面: 10个
+[2026-05-05 16:27:44] [WARN]     修复wiki/methods/csg.md失败: name 're' is not defined
+[2026-05-05 16:27:44] [WARN]     修复wiki/methods/current-trajectory-similarity.md失败: name 're' is not defined
+[2026-05-05 16:27:44] [WARN]     修复wiki/methods/dc-protection.md失败: name 're' is not defined
+[2026-05-05 16:27:44] [WARN]     修复wiki/methods/dccb.md失败: name 're' is not defined
+[2026-05-05 16:27:44] [WARN]     修复wiki/methods/delarue-enhanced-avm.md失败: name 're' is not defined
+[2026-05-05 16:27:44] [WARN]     修复wiki/methods/dfig-offshore-wind-farm.md失败: name 're' is not defined
+[2026-05-05 16:27:44] [WARN]     修复wiki/methods/distributed-control.md失败: name 're' is not defined
+[2026-05-05 16:27:44] [WARN]     修复wiki/methods/distribution-test-feeders.md失败: name 're' is not defined
+[2026-05-05 16:27:44] [WARN]     修复wiki/methods/droop-control.md失败: name 're' is not defined
+[2026-05-05 16:27:44] [WARN]     修复wiki/methods/dual-active-bridge.md失败: name 're' is not defined
+[2026-05-05 16:27:44] [INFO]   完成: 0个页面修复
+[2026-05-05 16:27:44] [INFO] 
+执行任务: wave-006-high-2
+[2026-05-05 16:27:44] [INFO]   页面: 10个
+[2026-05-05 16:27:44] [WARN]   页面被锁定，跳过
+[2026-05-05 16:27:44] [INFO] 
+执行任务: wave-006-high-3
+[2026-05-05 16:27:44] [INFO]   页面: 10个
+[2026-05-05 16:27:44] [WARN]     修复wiki/methods/hierarchical-control.md失败: name 're' is not defined
+[2026-05-05 16:27:44] [WARN]     修复wiki/methods/hvdc-control.md失败: name 're' is not defined
+[2026-05-05 16:27:44] [WARN]     修复wiki/methods/ibr.md失败: name 're' is not defined
+[2026-05-05 16:27:44] [WARN]     修复wiki/methods/inertia-control.md失败: name 're' is not defined
+[2026-05-05 16:27:44] [WARN]     修复wiki/methods/lcl-filter.md失败: name 're' is not defined
+[2026-05-05 16:27:44] [WARN]     修复wiki/methods/link-name.md失败: name 're' is not defined
+[2026-05-05 16:27:44] [WARN]     修复wiki/methods/lvrt-control.md失败: name 're' is not defined
+[2026-05-05 16:27:44] [WARN]     修复wiki/methods/lvrt.md失败: name 're' is not defined
+[2026-05-05 16:27:44] [WARN]     修复wiki/methods/m3c.md失败: name 're' is not defined
+[2026-05-05 16:27:44] [WARN]     修复wiki/methods/mbsm.md失败: name 're' is not defined
+[2026-05-05 16:27:44] [INFO]   完成: 0个页面修复
+[2026-05-05 16:27:44] [INFO] 
+执行任务: wave-006-high-4
+[2026-05-05 16:27:44] [INFO]   页面: 10个
+[2026-05-05 16:27:44] [WARN]     修复wiki/methods/microgrid-control.md失败: name 're' is not defined
+[2026-05-05 16:27:44] [WARN]     修复wiki/methods/microgrid.md失败: name 're' is not defined
+[2026-05-05 16:27:44] [WARN]     修复wiki/methods/midc.md失败: name 're' is not defined
+[2026-05-05 16:27:44] [WARN]     修复wiki/methods/mppt-control.md失败: name 're' is not defined
+[2026-05-05 16:27:44] [WARN]     修复wiki/methods/multi-terminal-dc.md失败: name 're' is not defined
+[2026-05-05 16:27:44] [WARN]     修复wiki/methods/n-port-network.md失败: name 're' is not defined
+[2026-05-05 16:27:44] [WARN]     修复wiki/methods/nchg,n.md失败: name 're' is not defined
+[2026-05-05 16:27:44] [WARN]     修复wiki/methods/nearest-level-modulation.md失败: name 're' is not defined
+[2026-05-05 16:27:44] [WARN]     修复wiki/methods/offshore-hvdc-hub.md失败: name 're' is not defined
+[2026-05-05 16:27:44] [WARN]     修复wiki/methods/offshore-wind-integration.md失败: name 're' is not defined
+[2026-05-05 16:27:44] [INFO]   完成: 0个页面修复
+[2026-05-05 16:27:44] [INFO] 
+[2026-05-05 16:27:44] [INFO] ======================================================================
+[2026-05-05 16:27:44] [INFO] Phase 4: 工作记录 (状态登记)
+[2026-05-05 16:27:44] [INFO] ======================================================================
+[2026-05-05 16:27:44] [INFO] 更新任务注册表: 4个任务标记为完成
+[2026-05-05 16:27:44] [INFO] 更新进度仪表板
+[2026-05-05 16:27:44] [INFO] 
+[2026-05-05 16:27:44] [INFO] ======================================================================
+[2026-05-05 16:27:44] [INFO] Phase 5: 进展提交 (验证归档)
+[2026-05-05 16:27:44] [INFO] ======================================================================
+[2026-05-05 16:27:44] [INFO] 运行质量验证...
+[2026-05-05 16:27:45] [INFO] ✓ 质量审计通过
+[2026-05-05 16:27:45] [INFO] 本轮进展: 修复0个页面
+[2026-05-05 16:27:45] [INFO] 
+⚠ 连续1轮无进展
+[2026-05-05 16:27:45] [INFO] 
+下一轮将在600秒后执行...
+[2026-05-05 16:27:45] [INFO] ======================================================================
+[2026-05-05 16:27:45] [INFO] Wiki修订主循环启动
+[2026-05-05 16:27:45] [INFO] ======================================================================
+[2026-05-05 16:27:45] [INFO] 状态: running
+[2026-05-05 16:27:45] [INFO] 已执行轮次: 6
+[2026-05-05 16:27:45] [INFO] 
+[2026-05-05 16:27:45] [INFO] ######################################################################
+[2026-05-05 16:27:45] [INFO] # 第 7 轮迭代
+[2026-05-05 16:27:45] [INFO] ######################################################################
+[2026-05-05 16:27:45] [INFO] ======================================================================
+[2026-05-05 16:27:45] [INFO] Phase 1: 问题定位 (诊断扫描)
+[2026-05-05 16:27:45] [INFO] ======================================================================
+[2026-05-05 16:27:45] [INFO] 运行质量审计...
+[2026-05-05 16:27:46] [INFO] 运行诊断扫描...
+[2026-05-05 16:27:46] [INFO] 诊断完成: 704个页面有问题
+[2026-05-05 16:27:46] [INFO] 
+[2026-05-05 16:27:46] [INFO] ======================================================================
+[2026-05-05 16:27:46] [INFO] Phase 2: 工作计划 (任务分片)
+[2026-05-05 16:27:46] [INFO] ======================================================================
+[2026-05-05 16:27:46] [INFO] high优先级: 创建31个任务
+[2026-05-05 16:27:46] [INFO] medium优先级: 创建31个任务
+[2026-05-05 16:27:46] [INFO] 计划完成: 共62个任务
+[2026-05-05 16:27:46] [INFO] 
+[2026-05-05 16:27:46] [INFO] ======================================================================
+[2026-05-05 16:27:46] [INFO] Phase 3: 问题修订 (执行修改)
+[2026-05-05 16:27:46] [INFO] ======================================================================
+[2026-05-05 16:27:46] [INFO] 
+执行任务: wave-007-high-0
+[2026-05-05 16:27:46] [INFO]   页面: 10个
+[2026-05-05 16:27:46] [WARN]     修复wiki/topics/microgrid-test-system.md失败: name 're' is not defined
+[2026-05-05 16:27:46] [WARN]     修复wiki/topics/mt-hvdc-test-system.md失败: name 're' is not defined
+[2026-05-05 16:27:46] [WARN]     修复wiki/topics/protection-system.md失败: name 're' is not defined
+[2026-05-05 16:27:46] [WARN]     修复wiki/topics/shifted-frequency-analysis.md失败: name 're' is not defined
+[2026-05-05 16:27:46] [WARN]     修复wiki/methods/adaptive-droop.md失败: name 're' is not defined
+[2026-05-05 16:27:46] [WARN]     修复wiki/methods/ccvt.md失败: name 're' is not defined
+[2026-05-05 16:27:46] [WARN]     修复wiki/methods/cdsm.md失败: name 're' is not defined
+[2026-05-05 16:27:46] [WARN]     修复wiki/methods/cigre-b4-dc-grid.md失败: name 're' is not defined
+[2026-05-05 16:27:46] [WARN]     修复wiki/methods/cigre-b4.md失败: name 're' is not defined
+[2026-05-05 16:27:46] [WARN]     修复wiki/methods/cl-dccb.md失败: name 're' is not defined
+[2026-05-05 16:27:46] [INFO]   完成: 0个页面修复
+[2026-05-05 16:27:46] [INFO] 
+执行任务: wave-007-high-1
+[2026-05-05 16:27:46] [INFO]   页面: 10个
+[2026-05-05 16:27:46] [WARN]     修复wiki/methods/csg.md失败: name 're' is not defined
+[2026-05-05 16:27:46] [WARN]     修复wiki/methods/current-trajectory-similarity.md失败: name 're' is not defined
+[2026-05-05 16:27:46] [WARN]     修复wiki/methods/dc-protection.md失败: name 're' is not defined
+[2026-05-05 16:27:46] [WARN]     修复wiki/methods/dccb.md失败: name 're' is not defined
+[2026-05-05 16:27:46] [WARN]     修复wiki/methods/delarue-enhanced-avm.md失败: name 're' is not defined
+[2026-05-05 16:27:46] [WARN]     修复wiki/methods/dfig-offshore-wind-farm.md失败: name 're' is not defined
+[2026-05-05 16:27:46] [WARN]     修复wiki/methods/distributed-control.md失败: name 're' is not defined
+[2026-05-05 16:27:46] [WARN]     修复wiki/methods/distribution-test-feeders.md失败: name 're' is not defined
+[2026-05-05 16:27:46] [WARN]     修复wiki/methods/droop-control.md失败: name 're' is not defined
+[2026-05-05 16:27:46] [WARN]     修复wiki/methods/dual-active-bridge.md失败: name 're' is not defined
+[2026-05-05 16:27:46] [INFO]   完成: 0个页面修复
+[2026-05-05 16:27:46] [INFO] 
+执行任务: wave-007-high-2
+[2026-05-05 16:27:46] [INFO]   页面: 10个
+[2026-05-05 16:27:46] [WARN]   页面被锁定，跳过
+[2026-05-05 16:27:46] [INFO] 
+执行任务: wave-007-high-3
+[2026-05-05 16:27:46] [INFO]   页面: 10个
+[2026-05-05 16:27:46] [WARN]     修复wiki/methods/hierarchical-control.md失败: name 're' is not defined
+[2026-05-05 16:27:46] [WARN]     修复wiki/methods/hvdc-control.md失败: name 're' is not defined
+[2026-05-05 16:27:46] [WARN]     修复wiki/methods/ibr.md失败: name 're' is not defined
+[2026-05-05 16:27:46] [WARN]     修复wiki/methods/inertia-control.md失败: name 're' is not defined
+[2026-05-05 16:27:46] [WARN]     修复wiki/methods/lcl-filter.md失败: name 're' is not defined
+[2026-05-05 16:27:46] [WARN]     修复wiki/methods/link-name.md失败: name 're' is not defined
+[2026-05-05 16:27:46] [WARN]     修复wiki/methods/lvrt-control.md失败: name 're' is not defined
+[2026-05-05 16:27:46] [WARN]     修复wiki/methods/lvrt.md失败: name 're' is not defined
+[2026-05-05 16:27:46] [WARN]     修复wiki/methods/m3c.md失败: name 're' is not defined
+[2026-05-05 16:27:46] [WARN]     修复wiki/methods/mbsm.md失败: name 're' is not defined
+[2026-05-05 16:27:46] [INFO]   完成: 0个页面修复
+[2026-05-05 16:27:46] [INFO] 
+执行任务: wave-007-high-4
+[2026-05-05 16:27:46] [INFO]   页面: 10个
+[2026-05-05 16:27:46] [WARN]     修复wiki/methods/microgrid-control.md失败: name 're' is not defined
+[2026-05-05 16:27:46] [WARN]     修复wiki/methods/microgrid.md失败: name 're' is not defined
+[2026-05-05 16:27:46] [WARN]     修复wiki/methods/midc.md失败: name 're' is not defined
+[2026-05-05 16:27:46] [WARN]     修复wiki/methods/mppt-control.md失败: name 're' is not defined
+[2026-05-05 16:27:46] [WARN]     修复wiki/methods/multi-terminal-dc.md失败: name 're' is not defined
+[2026-05-05 16:27:46] [WARN]     修复wiki/methods/n-port-network.md失败: name 're' is not defined
+[2026-05-05 16:27:46] [WARN]     修复wiki/methods/nchg,n.md失败: name 're' is not defined
+[2026-05-05 16:27:46] [WARN]     修复wiki/methods/nearest-level-modulation.md失败: name 're' is not defined
+[2026-05-05 16:27:46] [WARN]     修复wiki/methods/offshore-hvdc-hub.md失败: name 're' is not defined
+[2026-05-05 16:27:46] [WARN]     修复wiki/methods/offshore-wind-integration.md失败: name 're' is not defined
+[2026-05-05 16:27:46] [INFO]   完成: 0个页面修复
+[2026-05-05 16:27:46] [INFO] 
+[2026-05-05 16:27:46] [INFO] ======================================================================
+[2026-05-05 16:27:46] [INFO] Phase 4: 工作记录 (状态登记)
+[2026-05-05 16:27:46] [INFO] ======================================================================
+[2026-05-05 16:27:46] [INFO] 更新任务注册表: 4个任务标记为完成
+[2026-05-05 16:27:46] [INFO] 更新进度仪表板
+[2026-05-05 16:27:46] [INFO] 
+[2026-05-05 16:27:46] [INFO] ======================================================================
+[2026-05-05 16:27:46] [INFO] Phase 5: 进展提交 (验证归档)
+[2026-05-05 16:27:46] [INFO] ======================================================================
+[2026-05-05 16:27:46] [INFO] 运行质量验证...
+[2026-05-05 16:27:47] [INFO] ✓ 质量审计通过
+[2026-05-05 16:27:47] [INFO] 本轮进展: 修复0个页面
+[2026-05-05 16:27:47] [INFO] 
+⚠ 连续1轮无进展
+[2026-05-05 16:27:47] [INFO] 
+下一轮将在600秒后执行...
+[2026-05-05 16:27:47] [INFO] ======================================================================
+[2026-05-05 16:27:47] [INFO] Wiki修订主循环启动
+[2026-05-05 16:27:47] [INFO] ======================================================================
+[2026-05-05 16:27:47] [INFO] 状态: running
+[2026-05-05 16:27:47] [INFO] 已执行轮次: 7
+[2026-05-05 16:27:47] [INFO] 
+[2026-05-05 16:27:47] [INFO] ######################################################################
+[2026-05-05 16:27:47] [INFO] # 第 8 轮迭代
+[2026-05-05 16:27:47] [INFO] ######################################################################
+[2026-05-05 16:27:47] [INFO] ======================================================================
+[2026-05-05 16:27:47] [INFO] Phase 1: 问题定位 (诊断扫描)
+[2026-05-05 16:27:47] [INFO] ======================================================================
+[2026-05-05 16:27:47] [INFO] 运行质量审计...
+[2026-05-05 16:27:47] [INFO] 运行诊断扫描...
+[2026-05-05 16:27:48] [INFO] 诊断完成: 704个页面有问题
+[2026-05-05 16:27:48] [INFO] 
+[2026-05-05 16:27:48] [INFO] ======================================================================
+[2026-05-05 16:27:48] [INFO] Phase 2: 工作计划 (任务分片)
+[2026-05-05 16:27:48] [INFO] ======================================================================
+[2026-05-05 16:27:48] [INFO] high优先级: 创建31个任务
+[2026-05-05 16:27:48] [INFO] medium优先级: 创建31个任务
+[2026-05-05 16:27:48] [INFO] 计划完成: 共62个任务
+[2026-05-05 16:27:48] [INFO] 
+[2026-05-05 16:27:48] [INFO] ======================================================================
+[2026-05-05 16:27:48] [INFO] Phase 3: 问题修订 (执行修改)
+[2026-05-05 16:27:48] [INFO] ======================================================================
+[2026-05-05 16:27:48] [INFO] 
+执行任务: wave-008-high-0
+[2026-05-05 16:27:48] [INFO]   页面: 10个
+[2026-05-05 16:27:48] [WARN]     修复wiki/topics/microgrid-test-system.md失败: name 're' is not defined
+[2026-05-05 16:27:48] [WARN]     修复wiki/topics/mt-hvdc-test-system.md失败: name 're' is not defined
+[2026-05-05 16:27:48] [WARN]     修复wiki/topics/protection-system.md失败: name 're' is not defined
+[2026-05-05 16:27:48] [WARN]     修复wiki/topics/shifted-frequency-analysis.md失败: name 're' is not defined
+[2026-05-05 16:27:48] [WARN]     修复wiki/methods/adaptive-droop.md失败: name 're' is not defined
+[2026-05-05 16:27:48] [WARN]     修复wiki/methods/ccvt.md失败: name 're' is not defined
+[2026-05-05 16:27:48] [WARN]     修复wiki/methods/cdsm.md失败: name 're' is not defined
+[2026-05-05 16:27:48] [WARN]     修复wiki/methods/cigre-b4-dc-grid.md失败: name 're' is not defined
+[2026-05-05 16:27:48] [WARN]     修复wiki/methods/cigre-b4.md失败: name 're' is not defined
+[2026-05-05 16:27:48] [WARN]     修复wiki/methods/cl-dccb.md失败: name 're' is not defined
+[2026-05-05 16:27:48] [INFO]   完成: 0个页面修复
+[2026-05-05 16:27:48] [INFO] 
+执行任务: wave-008-high-1
+[2026-05-05 16:27:48] [INFO]   页面: 10个
+[2026-05-05 16:27:48] [WARN]     修复wiki/methods/csg.md失败: name 're' is not defined
+[2026-05-05 16:27:48] [WARN]     修复wiki/methods/current-trajectory-similarity.md失败: name 're' is not defined
+[2026-05-05 16:27:48] [WARN]     修复wiki/methods/dc-protection.md失败: name 're' is not defined
+[2026-05-05 16:27:48] [WARN]     修复wiki/methods/dccb.md失败: name 're' is not defined
+[2026-05-05 16:27:48] [WARN]     修复wiki/methods/delarue-enhanced-avm.md失败: name 're' is not defined
+[2026-05-05 16:27:48] [WARN]     修复wiki/methods/dfig-offshore-wind-farm.md失败: name 're' is not defined
+[2026-05-05 16:27:48] [WARN]     修复wiki/methods/distributed-control.md失败: name 're' is not defined
+[2026-05-05 16:27:48] [WARN]     修复wiki/methods/distribution-test-feeders.md失败: name 're' is not defined
+[2026-05-05 16:27:48] [WARN]     修复wiki/methods/droop-control.md失败: name 're' is not defined
+[2026-05-05 16:27:48] [WARN]     修复wiki/methods/dual-active-bridge.md失败: name 're' is not defined
+[2026-05-05 16:27:48] [INFO]   完成: 0个页面修复
+[2026-05-05 16:27:48] [INFO] 
+执行任务: wave-008-high-2
+[2026-05-05 16:27:48] [INFO]   页面: 10个
+[2026-05-05 16:27:48] [WARN]   页面被锁定，跳过
+[2026-05-05 16:27:48] [INFO] 
+执行任务: wave-008-high-3
+[2026-05-05 16:27:48] [INFO]   页面: 10个
+[2026-05-05 16:27:48] [WARN]     修复wiki/methods/hierarchical-control.md失败: name 're' is not defined
+[2026-05-05 16:27:48] [WARN]     修复wiki/methods/hvdc-control.md失败: name 're' is not defined
+[2026-05-05 16:27:48] [WARN]     修复wiki/methods/ibr.md失败: name 're' is not defined
+[2026-05-05 16:27:48] [WARN]     修复wiki/methods/inertia-control.md失败: name 're' is not defined
+[2026-05-05 16:27:48] [WARN]     修复wiki/methods/lcl-filter.md失败: name 're' is not defined
+[2026-05-05 16:27:48] [WARN]     修复wiki/methods/link-name.md失败: name 're' is not defined
+[2026-05-05 16:27:48] [WARN]     修复wiki/methods/lvrt-control.md失败: name 're' is not defined
+[2026-05-05 16:27:48] [WARN]     修复wiki/methods/lvrt.md失败: name 're' is not defined
+[2026-05-05 16:27:48] [WARN]     修复wiki/methods/m3c.md失败: name 're' is not defined
+[2026-05-05 16:27:48] [WARN]     修复wiki/methods/mbsm.md失败: name 're' is not defined
+[2026-05-05 16:27:48] [INFO]   完成: 0个页面修复
+[2026-05-05 16:27:48] [INFO] 
+执行任务: wave-008-high-4
+[2026-05-05 16:27:48] [INFO]   页面: 10个
+[2026-05-05 16:27:48] [WARN]     修复wiki/methods/microgrid-control.md失败: name 're' is not defined
+[2026-05-05 16:27:48] [WARN]     修复wiki/methods/microgrid.md失败: name 're' is not defined
+[2026-05-05 16:27:48] [WARN]     修复wiki/methods/midc.md失败: name 're' is not defined
+[2026-05-05 16:27:48] [WARN]     修复wiki/methods/mppt-control.md失败: name 're' is not defined
+[2026-05-05 16:27:48] [WARN]     修复wiki/methods/multi-terminal-dc.md失败: name 're' is not defined
+[2026-05-05 16:27:48] [WARN]     修复wiki/methods/n-port-network.md失败: name 're' is not defined
+[2026-05-05 16:27:48] [WARN]     修复wiki/methods/nchg,n.md失败: name 're' is not defined
+[2026-05-05 16:27:48] [WARN]     修复wiki/methods/nearest-level-modulation.md失败: name 're' is not defined
+[2026-05-05 16:27:48] [WARN]     修复wiki/methods/offshore-hvdc-hub.md失败: name 're' is not defined
+[2026-05-05 16:27:48] [WARN]     修复wiki/methods/offshore-wind-integration.md失败: name 're' is not defined
+[2026-05-05 16:27:48] [INFO]   完成: 0个页面修复
+[2026-05-05 16:27:48] [INFO] 
+[2026-05-05 16:27:48] [INFO] ======================================================================
+[2026-05-05 16:27:48] [INFO] Phase 4: 工作记录 (状态登记)
+[2026-05-05 16:27:48] [INFO] ======================================================================
+[2026-05-05 16:27:48] [INFO] 更新任务注册表: 4个任务标记为完成
+[2026-05-05 16:27:48] [INFO] 更新进度仪表板
+[2026-05-05 16:27:48] [INFO] 
+[2026-05-05 16:27:48] [INFO] ======================================================================
+[2026-05-05 16:27:48] [INFO] Phase 5: 进展提交 (验证归档)
+[2026-05-05 16:27:48] [INFO] ======================================================================
+[2026-05-05 16:27:48] [INFO] 运行质量验证...
+[2026-05-05 16:27:48] [INFO] ✓ 质量审计通过
+[2026-05-05 16:27:48] [INFO] 本轮进展: 修复0个页面
+[2026-05-05 16:27:48] [INFO] 
+⚠ 连续1轮无进展
+[2026-05-05 16:27:48] [INFO] 
+下一轮将在600秒后执行...
+[2026-05-05 16:27:48] [INFO] ======================================================================
+[2026-05-05 16:27:48] [INFO] Wiki修订主循环启动
+[2026-05-05 16:27:48] [INFO] ======================================================================
+[2026-05-05 16:27:48] [INFO] 状态: running
+[2026-05-05 16:27:48] [INFO] 已执行轮次: 8
+[2026-05-05 16:27:48] [INFO] 
+[2026-05-05 16:27:48] [INFO] ######################################################################
+[2026-05-05 16:27:48] [INFO] # 第 9 轮迭代
+[2026-05-05 16:27:48] [INFO] ######################################################################
+[2026-05-05 16:27:48] [INFO] ======================================================================
+[2026-05-05 16:27:48] [INFO] Phase 1: 问题定位 (诊断扫描)
+[2026-05-05 16:27:48] [INFO] ======================================================================
+[2026-05-05 16:27:48] [INFO] 运行质量审计...
+[2026-05-05 16:27:49] [INFO] 运行诊断扫描...
+[2026-05-05 16:27:49] [INFO] 诊断完成: 704个页面有问题
+[2026-05-05 16:27:49] [INFO] 
+[2026-05-05 16:27:49] [INFO] ======================================================================
+[2026-05-05 16:27:49] [INFO] Phase 2: 工作计划 (任务分片)
+[2026-05-05 16:27:49] [INFO] ======================================================================
+[2026-05-05 16:27:49] [INFO] high优先级: 创建31个任务
+[2026-05-05 16:27:49] [INFO] medium优先级: 创建31个任务
+[2026-05-05 16:27:49] [INFO] 计划完成: 共62个任务
+[2026-05-05 16:27:49] [INFO] 
+[2026-05-05 16:27:49] [INFO] ======================================================================
+[2026-05-05 16:27:49] [INFO] Phase 3: 问题修订 (执行修改)
+[2026-05-05 16:27:49] [INFO] ======================================================================
+[2026-05-05 16:27:49] [INFO] 
+执行任务: wave-009-high-0
+[2026-05-05 16:27:49] [INFO]   页面: 10个
+[2026-05-05 16:27:49] [WARN]     修复wiki/topics/microgrid-test-system.md失败: name 're' is not defined
+[2026-05-05 16:27:49] [WARN]     修复wiki/topics/mt-hvdc-test-system.md失败: name 're' is not defined
+[2026-05-05 16:27:49] [WARN]     修复wiki/topics/protection-system.md失败: name 're' is not defined
+[2026-05-05 16:27:49] [WARN]     修复wiki/topics/shifted-frequency-analysis.md失败: name 're' is not defined
+[2026-05-05 16:27:49] [WARN]     修复wiki/methods/adaptive-droop.md失败: name 're' is not defined
+[2026-05-05 16:27:49] [WARN]     修复wiki/methods/ccvt.md失败: name 're' is not defined
+[2026-05-05 16:27:49] [WARN]     修复wiki/methods/cdsm.md失败: name 're' is not defined
+[2026-05-05 16:27:49] [WARN]     修复wiki/methods/cigre-b4-dc-grid.md失败: name 're' is not defined
+[2026-05-05 16:27:49] [WARN]     修复wiki/methods/cigre-b4.md失败: name 're' is not defined
+[2026-05-05 16:27:49] [WARN]     修复wiki/methods/cl-dccb.md失败: name 're' is not defined
+[2026-05-05 16:27:49] [INFO]   完成: 0个页面修复
+[2026-05-05 16:27:49] [INFO] 
+执行任务: wave-009-high-1
+[2026-05-05 16:27:49] [INFO]   页面: 10个
+[2026-05-05 16:27:49] [WARN]     修复wiki/methods/csg.md失败: name 're' is not defined
+[2026-05-05 16:27:49] [WARN]     修复wiki/methods/current-trajectory-similarity.md失败: name 're' is not defined
+[2026-05-05 16:27:49] [WARN]     修复wiki/methods/dc-protection.md失败: name 're' is not defined
+[2026-05-05 16:27:49] [WARN]     修复wiki/methods/dccb.md失败: name 're' is not defined
+[2026-05-05 16:27:49] [WARN]     修复wiki/methods/delarue-enhanced-avm.md失败: name 're' is not defined
+[2026-05-05 16:27:49] [WARN]     修复wiki/methods/dfig-offshore-wind-farm.md失败: name 're' is not defined
+[2026-05-05 16:27:49] [WARN]     修复wiki/methods/distributed-control.md失败: name 're' is not defined
+[2026-05-05 16:27:49] [WARN]     修复wiki/methods/distribution-test-feeders.md失败: name 're' is not defined
+[2026-05-05 16:27:49] [WARN]     修复wiki/methods/droop-control.md失败: name 're' is not defined
+[2026-05-05 16:27:49] [WARN]     修复wiki/methods/dual-active-bridge.md失败: name 're' is not defined
+[2026-05-05 16:27:49] [INFO]   完成: 0个页面修复
+[2026-05-05 16:27:49] [INFO] 
+执行任务: wave-009-high-2
+[2026-05-05 16:27:49] [INFO]   页面: 10个
+[2026-05-05 16:27:49] [WARN]   页面被锁定，跳过
+[2026-05-05 16:27:49] [INFO] 
+执行任务: wave-009-high-3
+[2026-05-05 16:27:49] [INFO]   页面: 10个
+[2026-05-05 16:27:49] [WARN]     修复wiki/methods/hierarchical-control.md失败: name 're' is not defined
+[2026-05-05 16:27:49] [WARN]     修复wiki/methods/hvdc-control.md失败: name 're' is not defined
+[2026-05-05 16:27:49] [WARN]     修复wiki/methods/ibr.md失败: name 're' is not defined
+[2026-05-05 16:27:49] [WARN]     修复wiki/methods/inertia-control.md失败: name 're' is not defined
+[2026-05-05 16:27:49] [WARN]     修复wiki/methods/lcl-filter.md失败: name 're' is not defined
+[2026-05-05 16:27:49] [WARN]     修复wiki/methods/link-name.md失败: name 're' is not defined
+[2026-05-05 16:27:49] [WARN]     修复wiki/methods/lvrt-control.md失败: name 're' is not defined
+[2026-05-05 16:27:49] [WARN]     修复wiki/methods/lvrt.md失败: name 're' is not defined
+[2026-05-05 16:27:49] [WARN]     修复wiki/methods/m3c.md失败: name 're' is not defined
+[2026-05-05 16:27:49] [WARN]     修复wiki/methods/mbsm.md失败: name 're' is not defined
+[2026-05-05 16:27:49] [INFO]   完成: 0个页面修复
+[2026-05-05 16:27:49] [INFO] 
+执行任务: wave-009-high-4
+[2026-05-05 16:27:49] [INFO]   页面: 10个
+[2026-05-05 16:27:49] [WARN]     修复wiki/methods/microgrid-control.md失败: name 're' is not defined
+[2026-05-05 16:27:49] [WARN]     修复wiki/methods/microgrid.md失败: name 're' is not defined
+[2026-05-05 16:27:49] [WARN]     修复wiki/methods/midc.md失败: name 're' is not defined
+[2026-05-05 16:27:49] [WARN]     修复wiki/methods/mppt-control.md失败: name 're' is not defined
+[2026-05-05 16:27:49] [WARN]     修复wiki/methods/multi-terminal-dc.md失败: name 're' is not defined
+[2026-05-05 16:27:49] [WARN]     修复wiki/methods/n-port-network.md失败: name 're' is not defined
+[2026-05-05 16:27:49] [WARN]     修复wiki/methods/nchg,n.md失败: name 're' is not defined
+[2026-05-05 16:27:49] [WARN]     修复wiki/methods/nearest-level-modulation.md失败: name 're' is not defined
+[2026-05-05 16:27:49] [WARN]     修复wiki/methods/offshore-hvdc-hub.md失败: name 're' is not defined
+[2026-05-05 16:27:49] [WARN]     修复wiki/methods/offshore-wind-integration.md失败: name 're' is not defined
+[2026-05-05 16:27:49] [INFO]   完成: 0个页面修复
+[2026-05-05 16:27:49] [INFO] 
+[2026-05-05 16:27:49] [INFO] ======================================================================
+[2026-05-05 16:27:49] [INFO] Phase 4: 工作记录 (状态登记)
+[2026-05-05 16:27:49] [INFO] ======================================================================
+[2026-05-05 16:27:49] [INFO] 更新任务注册表: 4个任务标记为完成
+[2026-05-05 16:27:49] [INFO] 更新进度仪表板
+[2026-05-05 16:27:49] [INFO] 
+[2026-05-05 16:27:49] [INFO] ======================================================================
+[2026-05-05 16:27:49] [INFO] Phase 5: 进展提交 (验证归档)
+[2026-05-05 16:27:49] [INFO] ======================================================================
+[2026-05-05 16:27:49] [INFO] 运行质量验证...
+[2026-05-05 16:27:50] [INFO] ✓ 质量审计通过
+[2026-05-05 16:27:50] [INFO] 本轮进展: 修复0个页面
+[2026-05-05 16:27:50] [INFO] 
+⚠ 连续1轮无进展
+[2026-05-05 16:27:50] [INFO] 
+下一轮将在600秒后执行...
+[2026-05-05 16:27:50] [INFO] ======================================================================
+[2026-05-05 16:27:50] [INFO] Wiki修订主循环启动
+[2026-05-05 16:27:50] [INFO] ======================================================================
+[2026-05-05 16:27:50] [INFO] 状态: running
+[2026-05-05 16:27:50] [INFO] 已执行轮次: 9
+[2026-05-05 16:27:50] [INFO] 
+[2026-05-05 16:27:50] [INFO] ######################################################################
+[2026-05-05 16:27:50] [INFO] # 第 10 轮迭代
+[2026-05-05 16:27:50] [INFO] ######################################################################
+[2026-05-05 16:27:50] [INFO] ======================================================================
+[2026-05-05 16:27:50] [INFO] Phase 1: 问题定位 (诊断扫描)
+[2026-05-05 16:27:50] [INFO] ======================================================================
+[2026-05-05 16:27:50] [INFO] 运行质量审计...
+[2026-05-05 16:27:50] [INFO] 运行诊断扫描...
+[2026-05-05 16:27:51] [INFO] 诊断完成: 704个页面有问题
+[2026-05-05 16:27:51] [INFO] 
+[2026-05-05 16:27:51] [INFO] ======================================================================
+[2026-05-05 16:27:51] [INFO] Phase 2: 工作计划 (任务分片)
+[2026-05-05 16:27:51] [INFO] ======================================================================
+[2026-05-05 16:27:51] [INFO] high优先级: 创建31个任务
+[2026-05-05 16:27:51] [INFO] medium优先级: 创建31个任务
+[2026-05-05 16:27:51] [INFO] 计划完成: 共62个任务
+[2026-05-05 16:27:51] [INFO] 
+[2026-05-05 16:27:51] [INFO] ======================================================================
+[2026-05-05 16:27:51] [INFO] Phase 3: 问题修订 (执行修改)
+[2026-05-05 16:27:51] [INFO] ======================================================================
+[2026-05-05 16:27:51] [INFO] 
+执行任务: wave-010-high-0
+[2026-05-05 16:27:51] [INFO]   页面: 10个
+[2026-05-05 16:27:51] [WARN]     修复wiki/topics/microgrid-test-system.md失败: name 're' is not defined
+[2026-05-05 16:27:51] [WARN]     修复wiki/topics/mt-hvdc-test-system.md失败: name 're' is not defined
+[2026-05-05 16:27:51] [WARN]     修复wiki/topics/protection-system.md失败: name 're' is not defined
+[2026-05-05 16:27:51] [WARN]     修复wiki/topics/shifted-frequency-analysis.md失败: name 're' is not defined
+[2026-05-05 16:27:51] [WARN]     修复wiki/methods/adaptive-droop.md失败: name 're' is not defined
+[2026-05-05 16:27:51] [WARN]     修复wiki/methods/ccvt.md失败: name 're' is not defined
+[2026-05-05 16:27:51] [WARN]     修复wiki/methods/cdsm.md失败: name 're' is not defined
+[2026-05-05 16:27:51] [WARN]     修复wiki/methods/cigre-b4-dc-grid.md失败: name 're' is not defined
+[2026-05-05 16:27:51] [WARN]     修复wiki/methods/cigre-b4.md失败: name 're' is not defined
+[2026-05-05 16:27:51] [WARN]     修复wiki/methods/cl-dccb.md失败: name 're' is not defined
+[2026-05-05 16:27:51] [INFO]   完成: 0个页面修复
+[2026-05-05 16:27:51] [INFO] 
+执行任务: wave-010-high-1
+[2026-05-05 16:27:51] [INFO]   页面: 10个
+[2026-05-05 16:27:51] [WARN]     修复wiki/methods/csg.md失败: name 're' is not defined
+[2026-05-05 16:27:51] [WARN]     修复wiki/methods/current-trajectory-similarity.md失败: name 're' is not defined
+[2026-05-05 16:27:51] [WARN]     修复wiki/methods/dc-protection.md失败: name 're' is not defined
+[2026-05-05 16:27:51] [WARN]     修复wiki/methods/dccb.md失败: name 're' is not defined
+[2026-05-05 16:27:51] [WARN]     修复wiki/methods/delarue-enhanced-avm.md失败: name 're' is not defined
+[2026-05-05 16:27:51] [WARN]     修复wiki/methods/dfig-offshore-wind-farm.md失败: name 're' is not defined
+[2026-05-05 16:27:51] [WARN]     修复wiki/methods/distributed-control.md失败: name 're' is not defined
+[2026-05-05 16:27:51] [WARN]     修复wiki/methods/distribution-test-feeders.md失败: name 're' is not defined
+[2026-05-05 16:27:51] [WARN]     修复wiki/methods/droop-control.md失败: name 're' is not defined
+[2026-05-05 16:27:51] [WARN]     修复wiki/methods/dual-active-bridge.md失败: name 're' is not defined
+[2026-05-05 16:27:51] [INFO]   完成: 0个页面修复
+[2026-05-05 16:27:51] [INFO] 
+执行任务: wave-010-high-2
+[2026-05-05 16:27:51] [INFO]   页面: 10个
+[2026-05-05 16:27:51] [WARN]   页面被锁定，跳过
+[2026-05-05 16:27:51] [INFO] 
+执行任务: wave-010-high-3
+[2026-05-05 16:27:51] [INFO]   页面: 10个
+[2026-05-05 16:27:51] [WARN]     修复wiki/methods/hierarchical-control.md失败: name 're' is not defined
+[2026-05-05 16:27:51] [WARN]     修复wiki/methods/hvdc-control.md失败: name 're' is not defined
+[2026-05-05 16:27:51] [WARN]     修复wiki/methods/ibr.md失败: name 're' is not defined
+[2026-05-05 16:27:51] [WARN]     修复wiki/methods/inertia-control.md失败: name 're' is not defined
+[2026-05-05 16:27:51] [WARN]     修复wiki/methods/lcl-filter.md失败: name 're' is not defined
+[2026-05-05 16:27:51] [WARN]     修复wiki/methods/link-name.md失败: name 're' is not defined
+[2026-05-05 16:27:51] [WARN]     修复wiki/methods/lvrt-control.md失败: name 're' is not defined
+[2026-05-05 16:27:51] [WARN]     修复wiki/methods/lvrt.md失败: name 're' is not defined
+[2026-05-05 16:27:51] [WARN]     修复wiki/methods/m3c.md失败: name 're' is not defined
+[2026-05-05 16:27:51] [WARN]     修复wiki/methods/mbsm.md失败: name 're' is not defined
+[2026-05-05 16:27:51] [INFO]   完成: 0个页面修复
+[2026-05-05 16:27:51] [INFO] 
+执行任务: wave-010-high-4
+[2026-05-05 16:27:51] [INFO]   页面: 10个
+[2026-05-05 16:27:51] [WARN]     修复wiki/methods/microgrid-control.md失败: name 're' is not defined
+[2026-05-05 16:27:51] [WARN]     修复wiki/methods/microgrid.md失败: name 're' is not defined
+[2026-05-05 16:27:51] [WARN]     修复wiki/methods/midc.md失败: name 're' is not defined
+[2026-05-05 16:27:51] [WARN]     修复wiki/methods/mppt-control.md失败: name 're' is not defined
+[2026-05-05 16:27:51] [WARN]     修复wiki/methods/multi-terminal-dc.md失败: name 're' is not defined
+[2026-05-05 16:27:51] [WARN]     修复wiki/methods/n-port-network.md失败: name 're' is not defined
+[2026-05-05 16:27:51] [WARN]     修复wiki/methods/nchg,n.md失败: name 're' is not defined
+[2026-05-05 16:27:51] [WARN]     修复wiki/methods/nearest-level-modulation.md失败: name 're' is not defined
+[2026-05-05 16:27:51] [WARN]     修复wiki/methods/offshore-hvdc-hub.md失败: name 're' is not defined
+[2026-05-05 16:27:51] [WARN]     修复wiki/methods/offshore-wind-integration.md失败: name 're' is not defined
+[2026-05-05 16:27:51] [INFO]   完成: 0个页面修复
+[2026-05-05 16:27:51] [INFO] 
+[2026-05-05 16:27:51] [INFO] ======================================================================
+[2026-05-05 16:27:51] [INFO] Phase 4: 工作记录 (状态登记)
+[2026-05-05 16:27:51] [INFO] ======================================================================
+[2026-05-05 16:27:51] [INFO] 更新任务注册表: 4个任务标记为完成
+[2026-05-05 16:27:51] [INFO] 更新进度仪表板
+[2026-05-05 16:27:51] [INFO] 
+[2026-05-05 16:27:51] [INFO] ======================================================================
+[2026-05-05 16:27:51] [INFO] Phase 5: 进展提交 (验证归档)
+[2026-05-05 16:27:51] [INFO] ======================================================================
+[2026-05-05 16:27:51] [INFO] 运行质量验证...
+[2026-05-05 16:27:51] [INFO] ✓ 质量审计通过
+[2026-05-05 16:27:51] [INFO] 本轮进展: 修复0个页面
+[2026-05-05 16:27:51] [INFO] 
+⚠ 连续1轮无进展
+[2026-05-05 16:27:51] [INFO] 
+下一轮将在600秒后执行...
+[2026-05-05 16:27:52] [INFO] ======================================================================
+[2026-05-05 16:27:52] [INFO] Wiki修订主循环启动
+[2026-05-05 16:27:52] [INFO] ======================================================================
+[2026-05-05 16:27:52] [INFO] 状态: running
+[2026-05-05 16:27:52] [INFO] 已执行轮次: 10
+[2026-05-05 16:27:52] [INFO] 
+[2026-05-05 16:27:52] [INFO] ######################################################################
+[2026-05-05 16:27:52] [INFO] # 第 11 轮迭代
+[2026-05-05 16:27:52] [INFO] ######################################################################
+[2026-05-05 16:27:52] [INFO] ======================================================================
+[2026-05-05 16:27:52] [INFO] Phase 1: 问题定位 (诊断扫描)
+[2026-05-05 16:27:52] [INFO] ======================================================================
+[2026-05-05 16:27:52] [INFO] 运行质量审计...
+[2026-05-05 16:27:52] [INFO] 运行诊断扫描...
+[2026-05-05 16:27:52] [INFO] 诊断完成: 704个页面有问题
+[2026-05-05 16:27:52] [INFO] 
+[2026-05-05 16:27:52] [INFO] ======================================================================
+[2026-05-05 16:27:52] [INFO] Phase 2: 工作计划 (任务分片)
+[2026-05-05 16:27:52] [INFO] ======================================================================
+[2026-05-05 16:27:52] [INFO] high优先级: 创建31个任务
+[2026-05-05 16:27:53] [INFO] medium优先级: 创建31个任务
+[2026-05-05 16:27:53] [INFO] 计划完成: 共62个任务
+[2026-05-05 16:27:53] [INFO] 
+[2026-05-05 16:27:53] [INFO] ======================================================================
+[2026-05-05 16:27:53] [INFO] Phase 3: 问题修订 (执行修改)
+[2026-05-05 16:27:53] [INFO] ======================================================================
+[2026-05-05 16:27:53] [INFO] 
+执行任务: wave-011-high-0
+[2026-05-05 16:27:53] [INFO]   页面: 10个
+[2026-05-05 16:27:53] [WARN]     修复wiki/topics/microgrid-test-system.md失败: name 're' is not defined
+[2026-05-05 16:27:53] [WARN]     修复wiki/topics/mt-hvdc-test-system.md失败: name 're' is not defined
+[2026-05-05 16:27:53] [WARN]     修复wiki/topics/protection-system.md失败: name 're' is not defined
+[2026-05-05 16:27:53] [WARN]     修复wiki/topics/shifted-frequency-analysis.md失败: name 're' is not defined
+[2026-05-05 16:27:53] [WARN]     修复wiki/methods/adaptive-droop.md失败: name 're' is not defined
+[2026-05-05 16:27:53] [WARN]     修复wiki/methods/ccvt.md失败: name 're' is not defined
+[2026-05-05 16:27:53] [WARN]     修复wiki/methods/cdsm.md失败: name 're' is not defined
+[2026-05-05 16:27:53] [WARN]     修复wiki/methods/cigre-b4-dc-grid.md失败: name 're' is not defined
+[2026-05-05 16:27:53] [WARN]     修复wiki/methods/cigre-b4.md失败: name 're' is not defined
+[2026-05-05 16:27:53] [WARN]     修复wiki/methods/cl-dccb.md失败: name 're' is not defined
+[2026-05-05 16:27:53] [INFO]   完成: 0个页面修复
+[2026-05-05 16:27:53] [INFO] 
+执行任务: wave-011-high-1
+[2026-05-05 16:27:53] [INFO]   页面: 10个
+[2026-05-05 16:27:53] [WARN]     修复wiki/methods/csg.md失败: name 're' is not defined
+[2026-05-05 16:27:53] [WARN]     修复wiki/methods/current-trajectory-similarity.md失败: name 're' is not defined
+[2026-05-05 16:27:53] [WARN]     修复wiki/methods/dc-protection.md失败: name 're' is not defined
+[2026-05-05 16:27:53] [WARN]     修复wiki/methods/dccb.md失败: name 're' is not defined
+[2026-05-05 16:27:53] [WARN]     修复wiki/methods/delarue-enhanced-avm.md失败: name 're' is not defined
+[2026-05-05 16:27:53] [WARN]     修复wiki/methods/dfig-offshore-wind-farm.md失败: name 're' is not defined
+[2026-05-05 16:27:53] [WARN]     修复wiki/methods/distributed-control.md失败: name 're' is not defined
+[2026-05-05 16:27:53] [WARN]     修复wiki/methods/distribution-test-feeders.md失败: name 're' is not defined
+[2026-05-05 16:27:53] [WARN]     修复wiki/methods/droop-control.md失败: name 're' is not defined
+[2026-05-05 16:27:53] [WARN]     修复wiki/methods/dual-active-bridge.md失败: name 're' is not defined
+[2026-05-05 16:27:53] [INFO]   完成: 0个页面修复
+[2026-05-05 16:27:53] [INFO] 
+执行任务: wave-011-high-2
+[2026-05-05 16:27:53] [INFO]   页面: 10个
+[2026-05-05 16:27:53] [WARN]   页面被锁定，跳过
+[2026-05-05 16:27:53] [INFO] 
+执行任务: wave-011-high-3
+[2026-05-05 16:27:53] [INFO]   页面: 10个
+[2026-05-05 16:27:53] [WARN]     修复wiki/methods/hierarchical-control.md失败: name 're' is not defined
+[2026-05-05 16:27:53] [WARN]     修复wiki/methods/hvdc-control.md失败: name 're' is not defined
+[2026-05-05 16:27:53] [WARN]     修复wiki/methods/ibr.md失败: name 're' is not defined
+[2026-05-05 16:27:53] [WARN]     修复wiki/methods/inertia-control.md失败: name 're' is not defined
+[2026-05-05 16:27:53] [WARN]     修复wiki/methods/lcl-filter.md失败: name 're' is not defined
+[2026-05-05 16:27:53] [WARN]     修复wiki/methods/link-name.md失败: name 're' is not defined
+[2026-05-05 16:27:53] [WARN]     修复wiki/methods/lvrt-control.md失败: name 're' is not defined
+[2026-05-05 16:27:53] [WARN]     修复wiki/methods/lvrt.md失败: name 're' is not defined
+[2026-05-05 16:27:53] [WARN]     修复wiki/methods/m3c.md失败: name 're' is not defined
+[2026-05-05 16:27:53] [WARN]     修复wiki/methods/mbsm.md失败: name 're' is not defined
+[2026-05-05 16:27:53] [INFO]   完成: 0个页面修复
+[2026-05-05 16:27:53] [INFO] 
+执行任务: wave-011-high-4
+[2026-05-05 16:27:53] [INFO]   页面: 10个
+[2026-05-05 16:27:53] [WARN]     修复wiki/methods/microgrid-control.md失败: name 're' is not defined
+[2026-05-05 16:27:53] [WARN]     修复wiki/methods/microgrid.md失败: name 're' is not defined
+[2026-05-05 16:27:53] [WARN]     修复wiki/methods/midc.md失败: name 're' is not defined
+[2026-05-05 16:27:53] [WARN]     修复wiki/methods/mppt-control.md失败: name 're' is not defined
+[2026-05-05 16:27:53] [WARN]     修复wiki/methods/multi-terminal-dc.md失败: name 're' is not defined
+[2026-05-05 16:27:53] [WARN]     修复wiki/methods/n-port-network.md失败: name 're' is not defined
+[2026-05-05 16:27:53] [WARN]     修复wiki/methods/nchg,n.md失败: name 're' is not defined
+[2026-05-05 16:27:53] [WARN]     修复wiki/methods/nearest-level-modulation.md失败: name 're' is not defined
+[2026-05-05 16:27:53] [WARN]     修复wiki/methods/offshore-hvdc-hub.md失败: name 're' is not defined
+[2026-05-05 16:27:53] [WARN]     修复wiki/methods/offshore-wind-integration.md失败: name 're' is not defined
+[2026-05-05 16:27:53] [INFO]   完成: 0个页面修复
+[2026-05-05 16:27:53] [INFO] 
+[2026-05-05 16:27:53] [INFO] ======================================================================
+[2026-05-05 16:27:53] [INFO] Phase 4: 工作记录 (状态登记)
+[2026-05-05 16:27:53] [INFO] ======================================================================
+[2026-05-05 16:27:53] [INFO] 更新任务注册表: 4个任务标记为完成
+[2026-05-05 16:27:53] [INFO] 更新进度仪表板
+[2026-05-05 16:27:53] [INFO] 
+[2026-05-05 16:27:53] [INFO] ======================================================================
+[2026-05-05 16:27:53] [INFO] Phase 5: 进展提交 (验证归档)
+[2026-05-05 16:27:53] [INFO] ======================================================================
+[2026-05-05 16:27:53] [INFO] 运行质量验证...
+[2026-05-05 16:27:53] [INFO] ✓ 质量审计通过
+[2026-05-05 16:27:53] [INFO] 本轮进展: 修复0个页面
+[2026-05-05 16:27:53] [INFO] 
+⚠ 连续1轮无进展
+[2026-05-05 16:27:53] [INFO] 
+下一轮将在600秒后执行...

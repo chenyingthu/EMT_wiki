@@ -62,27 +62,27 @@ Analysis of low frequency interactions of DFIG wind turbine systems in Aramis S.
 - [[modal-analysis|模态分析]]
 - [[参与因子分析|参与因子分析]]
 - [[sensitivity-analysis|灵敏度分析]]
-- [[组合扫描技术|组合扫描技术]]
+- 组合扫描技术
 - [[emt-simulation|电磁暂态仿真]]
 
 ## 涉及的模型
 
 - [[dfig-model|DFIG]]
-- [[串补输电线路|串补输电线路]]
-- [[压敏电阻|压敏电阻]]
+- 串补输电线路
+- 压敏电阻
 - [[surge-arrester-model|避雷器]]
 - [[transformer-model|变压器]]
-- [[集电系统|集电系统]]
-- [[等值电网|等值电网]]
+- 集电系统
+- 等值电网
 
 ## 相关主题
 
 - [[次同步谐振|次同步谐振]]
-- [[次同步控制相互作用|次同步控制相互作用]]
+- 次同步控制相互作用
 - [[wind-farm-modeling|风电场建模]]
-- [[串补电网|串补电网]]
-- [[稳定性评估|稳定性评估]]
-- [[控制参数优化|控制参数优化]]
+- 串补电网
+- 稳定性评估
+- 控制参数优化
 
 ## 主要发现
 

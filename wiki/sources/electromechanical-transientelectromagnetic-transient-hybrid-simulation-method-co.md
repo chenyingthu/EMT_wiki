@@ -59,11 +59,11 @@ sources: ["EMT_Doc/17/Liu 等 - 2010 - Electromechanical transientelectromagneti
 ## 使用的方法
 
 - [[co-simulation|混合仿真]]
-- [[诺顿等值|诺顿等值]]
+- 诺顿等值
 - [[average-value-model|补偿法]]
 - [[least-squares|最小二乘法]]
-- [[序网-三相坐标变换|序网-三相坐标变换]]
-- [[迭代交互求解|迭代交互求解]]
+- 序网-三相坐标变换
+- 迭代交互求解
 
 ## 涉及的模型
 
@@ -71,7 +71,7 @@ sources: ["EMT_Doc/17/Liu 等 - 2010 - Electromechanical transientelectromagneti
 - [[power-electronics|换流器]]
 - [[transformer-model|换流变压器]]
 - [[synchronous-machine-model|同步发电机]]
-- [[动态负荷|动态负荷]]
+- 动态负荷
 - [[large-scale-grid-simulation|交流电网]]
 
 ## 相关主题
@@ -79,8 +79,8 @@ sources: ["EMT_Doc/17/Liu 等 - 2010 - Electromechanical transientelectromagneti
 - [[electromechanical-electromagnetic-hybrid-simulation|机电-电磁混合仿真]]
 - [[fault-analysis-methods|不对称故障]]
 - [[network-equivalent|网络等值]]
-- [[接口交互技术|接口交互技术]]
-- [[正负序参数处理|正负序参数处理]]
+- 接口交互技术
+- 正负序参数处理
 - [[large-scale-grid-simulation|大规模电网仿真]]
 
 ## 主要发现

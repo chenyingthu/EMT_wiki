@@ -60,8 +60,8 @@ MTOF的核心实现思路是把EMT数学模型先转成适合硬件流水/并行
 
 - [[numerical-integration|梯形积分法]]
 - [[nodal-analysis|节点分析法]]
-- [[行波法|行波法]]
-- [[浮点运算硬件映射|浮点运算硬件映射]]
+- 行波法
+- 浮点运算硬件映射
 - [[automatic-code-generation|自动代码生成]]
 
 ## 涉及的模型
@@ -78,7 +78,7 @@ MTOF的核心实现思路是把EMT数学模型先转成适合硬件流水/并行
 - [[fpga-real-time-simulation|FPGA硬件加速]]
 - [[automatic-code-generation|自动代码生成]]
 - [[emt-simulation|电磁暂态仿真]]
-- [[电力系统建模|电力系统建模]]
+- 电力系统建模
 
 ## 主要发现
 

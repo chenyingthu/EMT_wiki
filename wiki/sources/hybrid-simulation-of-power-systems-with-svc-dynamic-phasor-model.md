@@ -61,24 +61,24 @@ sources: ["EMT_Doc/22/Zhijun 等 - 2009 - Hybrid simulation of power systems wit
 - [[dynamic-phasor|动态相量法]]
 - [[co-simulation|混合仿真]]
 - [[co-simulation|接口算法]]
-- [[单相等效建模|单相等效建模]]
+- 单相等效建模
 - [[状态空间平均法|状态空间平均法]]
 
 ## 涉及的模型
 
 - [[svc-model|SVC]]
 - [[svc-tcr-model|TCR]]
-- [[交流子系统|交流子系统]]
-- [[rlc滤波器|RLC滤波器]]
+- 交流子系统
+- RLC滤波器
 - [[机电暂态模型|机电暂态模型]]
 
 ## 相关主题
 
 - [[co-simulation|混合仿真]]
 - [[dynamic-phasor|动态相量建模]]
-- [[机电-电磁暂态混合|机电-电磁暂态混合]]
-- [[facts设备仿真|FACTS设备仿真]]
-- [[大电网动态仿真|大电网动态仿真]]
+- 机电-电磁暂态混合
+- FACTS设备仿真
+- 大电网动态仿真
 
 ## 主要发现
 

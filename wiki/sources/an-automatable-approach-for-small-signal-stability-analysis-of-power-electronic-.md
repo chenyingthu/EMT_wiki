@@ -62,26 +62,26 @@ sources: ["EMT_Doc/06/Chindu和Kulkarni - 2023 - An Automatable Approach for Sma
 - [[nodal-analysis|节点分析法]]
 - [[numerical-integration|梯形积分法]]
 - [[lu分解|LU分解]]
-- [[采样数据建模|采样数据建模]]
+- 采样数据建模
 - [[eigenvalue-analysis|特征值分析]]
-- [[颤振消除校正|颤振消除校正]]
+- 颤振消除校正
 
 ## 涉及的模型
 
-- [[rlc电路|RLC电路]]
-- [[buck变换器|Buck变换器]]
-- [[并网statcom|并网STATCOM]]
+- RLC电路
+- Buck变换器
+- 并网STATCOM
 - [[电力电子开关|电力电子开关]]
-- [[闭环控制系统|闭环控制系统]]
+- 闭环控制系统
 
 ## 相关主题
 
 - [[small-signal-analysis|小信号稳定性分析]]
 - [[emt-simulation|电磁暂态仿真]]
-- [[电力电子化电力系统|电力电子化电力系统]]
-- [[采样数据建模|采样数据建模]]
+- 电力电子化电力系统
+- 采样数据建模
 - [[state-space-method|状态空间模型]]
-- [[自动化建模|自动化建模]]
+- 自动化建模
 
 ## 主要发现
 

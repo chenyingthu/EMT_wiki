@@ -58,7 +58,7 @@ sources: ["EMT_Doc/40/叶华 等 - 2017 - 含VSC-HVDC交直流系统多尺度暂
 
 ## 使用的方法
 
-- [[移频分析法|移频分析法]]
+- 移频分析法
 - [[hilbert-transform|希尔伯特变换]]
 - [[co-simulation|多尺度仿真]]
 - [[dynamic-phasor|动态相量法]]
@@ -70,7 +70,7 @@ sources: ["EMT_Doc/40/叶华 等 - 2017 - 含VSC-HVDC交直流系统多尺度暂
 
 ## 相关主题
 
-- [[多尺度暂态建模|多尺度暂态建模]]
+- 多尺度暂态建模
 - [[emt-simulation|电磁暂态]]
 - [[electromechanical-transient|机电暂态]]
 - [[co-simulation|混合仿真]]

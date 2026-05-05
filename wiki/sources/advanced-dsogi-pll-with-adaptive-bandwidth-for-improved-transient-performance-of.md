@@ -60,28 +60,28 @@ sources: ["EMT_Doc/06/Ranasinghe 等 - 2024 - Advanced DSOGI PLL with Adaptive B
 
 - [[dsogi-pll|DSOGI-PLL]]
 - [[srf-pll|SRF-PLL]]
-- [[小信号建模|小信号建模]]
-- [[自适应带宽控制|自适应带宽控制]]
-- [[暂态检测|暂态检测]]
-- [[正序分量计算|正序分量计算]]
-- [[反正切线性化|反正切线性化]]
+- 小信号建模
+- 自适应带宽控制
+- 暂态检测
+- 正序分量计算
+- 反正切线性化
 
 ## 涉及的模型
 
 - [[gfl-inverter-model|并网逆变器]]
 - [[pv-power-plant|光伏系统]]
-- [[弱电网|弱电网]]
+- 弱电网
 - [[transmission-network|输电网络]]
-- [[dsogi-pll模型|DSOGI-PLL模型]]
-- [[srf-pll模型|SRF-PLL模型]]
+- DSOGI-PLL模型
+- SRF-PLL模型
 
 ## 相关主题
 
-- [[锁相环控制|锁相环控制]]
-- [[弱网同步|弱网同步]]
-- [[暂态稳定性|暂态稳定性]]
+- 锁相环控制
+- 弱网同步
+- 暂态稳定性
 - [[故障穿越|故障穿越]]
-- [[逆变器控制|逆变器控制]]
+- 逆变器控制
 - [[renewable-energy-integration|新能源并网]]
 
 ## 主要发现

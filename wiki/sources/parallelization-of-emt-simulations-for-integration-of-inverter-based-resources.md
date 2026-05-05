@@ -61,21 +61,21 @@ sources: ["EMT_Doc/30/Ouafi 等 - 2023 - Parallelization of EMT simulations for 
 - [[co-simulation|协同仿真]]
 - [[parallel-computing|并行计算]]
 - [[multirate-method|多速率仿真]]
-- [[传输线延迟解耦|传输线延迟解耦]]
-- [[fmi接口|FMI接口]]
-- [[信号量同步|信号量同步]]
-- [[双缓冲通信|双缓冲通信]]
-- [[潮流初始化|潮流初始化]]
+- 传输线延迟解耦
+- FMI接口
+- 信号量同步
+- 双缓冲通信
+- 潮流初始化
 
 ## 涉及的模型
 
 - [[ibr|IBR]]
 - [[wind-farm-modeling|风电场]]
-- [[光伏场|光伏场]]
+- 光伏场
 - [[transmission-line-model|输电线路]]
 - [[cable-model|电缆]]
-- [[igbt变流器|IGBT变流器]]
-- [[详细电路模型|详细电路模型]]
+- IGBT变流器
+- 详细电路模型
 
 ## 相关主题
 

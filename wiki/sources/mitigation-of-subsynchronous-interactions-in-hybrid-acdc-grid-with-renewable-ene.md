@@ -58,28 +58,28 @@ sources: ["EMT_Doc/26/Cao 等 - 2021 - Mitigation of Subsynchronous Interactions
 
 ## 使用的方法
 
-- [[超实时仿真-ftrt|超实时仿真(FTRT)]]
-- [[fpga硬件并行计算|FPGA硬件并行计算]]
-- [[emt-动态混合仿真|EMT-动态混合仿真]]
-- [[功率-电压接口技术|功率-电压接口技术]]
-- [[微分代数方程-dae-求解|微分代数方程(DAE)求解]]
+- 超实时仿真(FTRT)
+- FPGA硬件并行计算
+- EMT-动态混合仿真
+- 功率-电压接口技术
+- 微分代数方程(DAE)求解
 
 ## 涉及的模型
 
-- [[同步发电机九阶模型|同步发电机九阶模型]]
-- [[五质量块扭振轴系模型|五质量块扭振轴系模型]]
+- 同步发电机九阶模型
+- 五质量块扭振轴系模型
 - [[vsc-hvdc|VSC-HVDC]]
 - [[串联补偿输电线路|串联补偿输电线路]]
 - [[wind-farm-modeling|风电场]]
-- [[励磁控制系统-avr-pss|励磁控制系统(AVR/PSS)]]
+- 励磁控制系统(AVR/PSS)
 
 ## 相关主题
 
-- [[次同步相互作用-ssi-抑制|次同步相互作用(SSI)抑制]]
+- 次同步相互作用(SSI)抑制
 - [[hybrid-acdc-network|交直流混合电网]]
 - [[real-time-simulation|超实时仿真]]
-- [[fpga并行加速|FPGA并行加速]]
-- [[机电暂态协同仿真|机电暂态协同仿真]]
+- FPGA并行加速
+- 机电暂态协同仿真
 - [[electromechanical-transient|暂态稳定分析]]
 
 ## 主要发现

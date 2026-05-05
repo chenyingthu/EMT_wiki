@@ -61,24 +61,24 @@ sources: ["EMT_Doc/10/Sano 等 - 2022 - Comparison and Selection of Grid-Tied In
 - [[nodal-analysis|节点分析法]]
 - [[numerical-integration|固定步长仿真]]
 - [[average-value-model|平均值建模]]
-- [[电压插值法|电压插值法]]
-- [[电流注入法|电流注入法]]
+- 电压插值法
+- 电流注入法
 - [[状态空间平均法|状态空间平均法]]
 
 ## 涉及的模型
 
 - [[gfl-inverter-model|并网逆变器]]
-- [[三相桥式逆变器|三相桥式逆变器]]
+- 三相桥式逆变器
 - [[switch-modeling|开关模型]]
 - [[average-value-model|平均值模型]]
-- [[电压插值模型|电压插值模型]]
-- [[受控电流注入模型|受控电流注入模型]]
-- [[简化电流注入模型|简化电流注入模型]]
+- 电压插值模型
+- 受控电流注入模型
+- 简化电流注入模型
 
 ## 相关主题
 
 - [[emt-simulation|电磁暂态仿真]]
-- [[模型对比与选型|模型对比与选型]]
+- 模型对比与选型
 - [[harmonic-analysis-methods|谐波分析]]
 - [[transient-stability-analysis|暂态稳定性分析]]
 - [[large-scale-system-simulation|计算效率优化]]

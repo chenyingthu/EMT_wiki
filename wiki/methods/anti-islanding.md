@@ -15,7 +15,9 @@ created: "2026-05-04"
 
 ## EMT中的作用
 
-- 待补充
+基于相关研究的应用：
+
+1. 论文的实现思路是先用局部浪涌试验识别电缆传播特性，再用全长投切试验验证EMTP系统模型。浪涌试验中，2 kV、1.
 
 ## 主要分支与机制
 
@@ -32,11 +34,11 @@ created: "2026-05-04"
 ## 与相关页面的关系
 
 - [[emt-simulation]] - EMT仿真基础
-
+- [[power-system]]
+- [[electromagnetic-transient]]
 ## 代表性来源
 
-- 待补充
-
+- [[surge-and-energization-tests-and-modeling-on-a-225kv-hvac-cable]]
 ---
 
 *本页面为自动生成的stub，需要进一步补充完善。*

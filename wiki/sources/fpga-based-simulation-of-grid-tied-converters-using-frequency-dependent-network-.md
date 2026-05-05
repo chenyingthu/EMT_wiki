@@ -59,10 +59,10 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/Hajizadeh 等 - 2026 - FPGA-based si
 ## 使用的方法
 
 - [[电磁机电暂态混合仿真中的频率相关网络等值|频率相关网络等值]]
-- [[状态空间方程|状态空间方程]]
-- [[向后欧拉法|向后欧拉法]]
-- [[高层次综合|高层次综合]]
-- [[定制浮点运算|定制浮点运算]]
+- 状态空间方程
+- 向后欧拉法
+- 高层次综合
+- 定制浮点运算
 - [[vector-fitting|有理函数拟合]]
 
 ## 涉及的模型
@@ -81,7 +81,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/Hajizadeh 等 - 2026 - FPGA-based si
 - [[fpga-real-time-simulation|FPGA硬件加速]]
 - [[emt-simulation|电磁暂态仿真]]
 - [[hil-simulation|硬件在环]]
-- [[资源优化|资源优化]]
+- 资源优化
 
 ## 主要发现
 

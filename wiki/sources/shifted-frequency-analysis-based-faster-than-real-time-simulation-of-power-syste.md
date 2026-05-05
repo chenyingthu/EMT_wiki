@@ -58,12 +58,12 @@ sources: ["EMT_Doc/34/Zhang 等 - 2024 - Shifted frequency analysis based, faste
 
 ## 使用的方法
 
-- [[移频分析法-sfa|移频分析法(SFA)]]
-- [[基于延迟的线性多步复合法|基于延迟的线性多步复合法]]
+- 移频分析法(SFA)
+- 基于延迟的线性多步复合法
 - [[gpu-accelerated-simulation|GPU并行加速]]
-- [[数据并行与任务并行|数据并行与任务并行]]
+- 数据并行与任务并行
 - [[dynamic-phasor|动态相量法]]
-- [[基于图的线程安全设计|基于图的线程安全设计]]
+- 基于图的线程安全设计
 
 ## 涉及的模型
 

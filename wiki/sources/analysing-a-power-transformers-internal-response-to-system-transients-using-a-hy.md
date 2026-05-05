@@ -58,30 +58,30 @@ sources: ["EMT_Doc/07&08/Analysing a power transformer's internal response to sy
 
 ## 使用的方法
 
-- [[黑箱建模|黑箱建模]]
-- [[灰箱建模|灰箱建模]]
+- 黑箱建模
+- 灰箱建模
 - [[co-simulation|混合建模]]
-- [[频响分析-fra|频响分析(FRA)]]
+- 频响分析(FRA)
 - [[系统辨识|系统辨识]]
 - [[state-space-method|状态空间实现]]
-- [[傅里叶变换|傅里叶变换]]
+- 傅里叶变换
 - [[atp-emtp|EMTP仿真]]
 
 ## 涉及的模型
 
 - [[transformer-model|电力变压器]]
-- [[黑箱导纳矩阵模型|黑箱导纳矩阵模型]]
-- [[灰箱物理结构模型|灰箱物理结构模型]]
-- [[气体绝缘变电站-gis|气体绝缘变电站(GIS)]]
+- 黑箱导纳矩阵模型
+- 灰箱物理结构模型
+- 气体绝缘变电站(GIS)
 
 ## 相关主题
 
 - [[emt-simulation|电磁暂态仿真]]
 - [[谐振过电压|谐振过电压]]
-- [[变压器内部响应|变压器内部响应]]
+- 变压器内部响应
 - [[co-simulation|混合建模]]
 - [[frequency-dependent-modeling|频率相关建模]]
-- [[系统暂态分析|系统暂态分析]]
+- 系统暂态分析
 
 ## 主要发现
 

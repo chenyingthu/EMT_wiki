@@ -60,9 +60,9 @@ sources: ["EMT_Doc/32/pesgm41954.2020.9281694.pdf.pdf"]
 
 - [[nodal-analysis|等效电路法]]
 - [[器件级建模|器件级建模]]
-- [[电热耦合仿真|电热耦合仿真]]
+- 电热耦合仿真
 - [[real-time-simulation|实时仿真]]
-- [[mpsoc硬件加速|MPSoC硬件加速]]
+- MPSoC硬件加速
 
 ## 涉及的模型
 
@@ -74,7 +74,7 @@ sources: ["EMT_Doc/32/pesgm41954.2020.9281694.pdf.pdf"]
 ## 相关主题
 
 - [[real-time-simulation|实时仿真]]
-- [[电热暂态|电热暂态]]
+- 电热暂态
 - [[直流故障穿越|直流故障穿越]]
 - [[mmc-model|MMC]]
 - [[hybrid-acdc-network|多端直流系统]]

@@ -62,9 +62,9 @@ sources: ["EMT_Doc/01/Su 等 - 2025 - A fixed-admittance algorithm for the FPGA-
 
 ## 涉及的模型
 
-- [[混合高压直流断路器-dccb|混合高压直流断路器(DCCB)]]
-- [[金属氧化物压敏电阻-mov|金属氧化物压敏电阻(MOV)]]
-- [[rlc等效行为模型|RLC等效行为模型]]
+- 混合高压直流断路器(DCCB)
+- 金属氧化物压敏电阻(MOV)
+- RLC等效行为模型
 
 ## 相关主题
 

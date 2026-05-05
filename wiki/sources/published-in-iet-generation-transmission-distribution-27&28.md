@@ -59,14 +59,14 @@ sources: ["EMT_Doc/27&28/New model for overhead lossy multiconductor transmissio
 ## 使用的方法
 
 - [[characteristic-method|特征线法]]
-- [[瞬态电阻矩阵|瞬态电阻矩阵]]
+- 瞬态电阻矩阵
 - [[vector-fitting|有理函数拟合]]
 - [[modal-analysis|模态变换]]
-- [[卷积积分|卷积积分]]
+- 卷积积分
 
 ## 涉及的模型
 
-- [[架空多导体输电线路|架空多导体输电线路]]
+- 架空多导体输电线路
 - [[频变参数模型|频变参数模型]]
 - [[诺顿等效电路|诺顿等效电路]]
 

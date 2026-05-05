@@ -62,16 +62,16 @@ sources: ["EMT_Doc/25/Jiang 等 - 2024 - Key Technologies and Prospects for Elec
 ## 使用的方法
 
 
-- [[分网并行算法|分网并行算法]]
-- [[长传输线自然解耦法|长传输线自然解耦法]]
-- [[节点分裂法|节点分裂法]]
-- [[支路切割法|支路切割法]]
-- [[多区域戴维南等效法|多区域戴维南等效法]]
-- [[状态空间节点法|状态空间节点法]]
-- [[延迟插入法|延迟插入法]]
+- 分网并行算法
+- 长传输线自然解耦法
+- 节点分裂法
+- 支路切割法
+- 多区域戴维南等效法
+- 状态空间节点法
+- 延迟插入法
 - [[multirate-method|多速率仿真]]
 - [[electromechanical-electromagnetic-hybrid|机电电磁混合仿真]]
-- [[频率相关等值|频率相关等值]]
+- 频率相关等值
 
 
 ## 涉及的模型
@@ -82,7 +82,7 @@ sources: ["EMT_Doc/25/Jiang 等 - 2024 - Key Technologies and Prospects for Elec
 - [[vsc-hvdc|VSC-HVDC]]
 - [[dfig-model|DFIG]]
 - [[distributed-generation|分布式电源]]
-- [[有源配电网|有源配电网]]
+- 有源配电网
 - [[分布参数输电线路|分布参数输电线路]]
 - [[synchronous-machine-model|同步发电机]]
 
@@ -97,7 +97,7 @@ sources: ["EMT_Doc/25/Jiang 等 - 2024 - Key Technologies and Prospects for Elec
 - [[real-time-simulation|实时仿真]]
 - [[network-equivalent|网络等值]]
 - [[hil-simulation|硬件在环]]
-- [[新型电力系统|新型电力系统]]
+- 新型电力系统
 
 
 ## 主要发现

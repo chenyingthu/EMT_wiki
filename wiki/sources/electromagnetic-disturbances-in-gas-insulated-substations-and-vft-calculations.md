@@ -60,29 +60,29 @@ sources: ["EMT_Doc/15/Electromagnetic disturbances in gas-insulated substations 
 
 - [[transmission-line-model|传输线模型]]
 - [[fdtd|有限差分时域法(FDTD)]]
-- [[电磁暂态程序-emtp|电磁暂态程序(EMTP)]]
-- [[同轴传播模式参数法|同轴传播模式参数法]]
-- [[集中电容等效|集中电容等效]]
+- 电磁暂态程序(EMTP)
+- 同轴传播模式参数法
+- 集中电容等效
 
 ## 涉及的模型
 
-- [[气体绝缘变电站-gis|气体绝缘变电站(GIS)]]
-- [[气体绝缘母线-gib|气体绝缘母线(GIB)]]
-- [[隔离开关-ds|隔离开关(DS)]]
-- [[断路器-cb|断路器(CB)]]
-- [[电流互感器-ct|电流互感器(CT)]]
-- [[电压互感器-vt-cvt|电压互感器(VT/CVT)]]
-- [[控制电缆|控制电缆]]
+- 气体绝缘变电站(GIS)
+- 气体绝缘母线(GIB)
+- 隔离开关(DS)
+- 断路器(CB)
+- 电流互感器(CT)
+- 电压互感器(VT/CVT)
+- 控制电缆
 - [[grounding-system-model|接地网]]
-- [[xlpe电缆|XLPE电缆]]
+- XLPE电缆
 
 ## 相关主题
 
-- [[超快暂态-vft|超快暂态(VFT)]]
-- [[电磁干扰-emd|电磁干扰(EMD)]]
-- [[高频暂态过电压|高频暂态过电压]]
+- 超快暂态(VFT)
+- 电磁干扰(EMD)
+- 高频暂态过电压
 - [[insulation-coordination|绝缘配合]]
-- [[控制回路电磁兼容|控制回路电磁兼容]]
+- 控制回路电磁兼容
 - [[emt-simulation|电磁暂态仿真]]
 
 ## 主要发现

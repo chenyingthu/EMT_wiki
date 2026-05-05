@@ -59,17 +59,17 @@ sources: ["EMT_Doc/13&14/files/Direct_Interfacing_of_Parametric_Average-Value_Mo
 ## 使用的方法
 
 - [[nodal-analysis|节点分析法]]
-- [[参数化平均值建模|参数化平均值建模]]
+- 参数化平均值建模
 - [[直接接口技术|直接接口技术]]
-- [[方程线性化|方程线性化]]
+- 方程线性化
 - [[discretization-methods|离散化]]
 
 ## 涉及的模型
 
-- [[线换相整流器|线换相整流器]]
-- [[ac-dc变换器|AC-DC变换器]]
+- 线换相整流器
+- AC-DC变换器
 - [[戴维南等效网络|戴维南等效网络]]
-- [[直流滤波器|直流滤波器]]
+- 直流滤波器
 
 ## 相关主题
 

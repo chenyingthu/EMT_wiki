@@ -60,8 +60,8 @@ sources: ["EMT_Doc/06/Parvari 等 - 2023 - An accelerated detailed equivalent mo
 
 - [[nodal-analysis|戴维南等效电路]]
 - [[numerical-integration|梯形积分法]]
-- [[节点导纳矩阵优化|节点导纳矩阵优化]]
-- [[电磁暂态离散化|电磁暂态离散化]]
+- 节点导纳矩阵优化
+- 电磁暂态离散化
 
 ## 涉及的模型
 

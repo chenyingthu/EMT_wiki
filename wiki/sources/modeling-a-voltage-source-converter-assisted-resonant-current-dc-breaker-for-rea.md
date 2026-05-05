@@ -59,29 +59,29 @@ sources: ["EMT_Doc/26/Mirhosseini 等 - 2020 - Modeling a voltage source convert
 ## 使用的方法
 
 - [[real-time-simulation|实时仿真]]
-- [[小步长节点分析|小步长节点分析]]
-- [[开关等效电路法|开关等效电路法]]
+- 小步长节点分析
+- 开关等效电路法
 - [[vsc-model|VSC]]
-- [[控制逻辑建模|控制逻辑建模]]
+- 控制逻辑建模
 
 ## 涉及的模型
 
-- [[varc直流断路器|VARC直流断路器]]
+- VARC直流断路器
 - [[vsc-model|VSC]]
-- [[谐振lc电路|谐振LC电路]]
+- 谐振LC电路
 - [[surge-arrester-model|避雷器]]
-- [[限流电抗器|限流电抗器]]
-- [[mtdc电网|MTDC电网]]
-- [[频率相关电缆模型|频率相关电缆模型]]
+- 限流电抗器
+- MTDC电网
+- 频率相关电缆模型
 
 ## 相关主题
 
 - [[real-time-simulation|实时仿真]]
-- [[直流断路器建模|直流断路器建模]]
-- [[多端直流电网保护|多端直流电网保护]]
+- 直流断路器建模
+- 多端直流电网保护
 - [[frequency-dependent-modeling|频率相关建模]]
 - [[large-scale-system-simulation|系统级仿真]]
-- [[故障开断特性|故障开断特性]]
+- 故障开断特性
 
 ## 主要发现
 

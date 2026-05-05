@@ -65,7 +65,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/Zhang 等 - 2012 - Frequency depende
 - [[vector-fitting|矢量拟合]]
 - [[频变网络等值|频变网络等值]]
 - [[passivity-enforcement|无源性强制]]
-- [[高斯消元法|高斯消元法]]
+- 高斯消元法
 - [[vector-fitting|有理函数拟合]]
 
 
@@ -84,7 +84,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/Zhang 等 - 2012 - Frequency depende
 - [[frequency-dependent-modeling|频率相关建模]]
 - [[network-equivalent|网络等值]]
 - [[passivity-enforcement|无源性保证]]
-- [[接口波形畸变|接口波形畸变]]
+- 接口波形畸变
 
 
 ## 主要发现

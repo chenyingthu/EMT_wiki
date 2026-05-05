@@ -58,11 +58,11 @@ sources: ["EMT_Doc/02/Li 等 - 2020 - A multi-area Thevenin equivalent based mul
 
 ## 使用的方法
 
-- [[多速率协同仿真|多速率协同仿真]]
-- [[多区域戴维南等值-mate|多区域戴维南等值(MATE)]]
-- [[输电线路模型-tlm|输电线路模型(TLM)]]
-- [[网络分割技术|网络分割技术]]
-- [[虚拟阻抗控制|虚拟阻抗控制]]
+- 多速率协同仿真
+- 多区域戴维南等值(MATE)
+- 输电线路模型(TLM)
+- 网络分割技术
+- 虚拟阻抗控制
 
 ## 涉及的模型
 
@@ -75,11 +75,11 @@ sources: ["EMT_Doc/02/Li 等 - 2020 - A multi-area Thevenin equivalent based mul
 ## 相关主题
 
 - [[emt-simulation|电磁暂态仿真]]
-- [[换相失败抑制|换相失败抑制]]
+- 换相失败抑制
 - [[network-equivalent|网络等值]]
 - [[multirate-method|多速率仿真]]
-- [[弱交流系统|弱交流系统]]
-- [[控制策略设计|控制策略设计]]
+- 弱交流系统
+- 控制策略设计
 
 ## 主要发现
 

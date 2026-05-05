@@ -59,9 +59,9 @@ sources: ["EMT_Doc/12/Decoupled_Detailed_Equivalent_Model_for_Parallel_and_Multi
 ## 使用的方法
 
 - [[multirate-method|多速率仿真]]
-- [[开关插值技术|开关插值技术]]
+- 开关插值技术
 - [[nodal-analysis|节点分析法]]
-- [[混合并行计算|混合并行计算]]
+- 混合并行计算
 - [[average-value-model|等效电路建模]]
 
 ## 涉及的模型
@@ -78,8 +78,8 @@ sources: ["EMT_Doc/12/Decoupled_Detailed_Equivalent_Model_for_Parallel_and_Multi
 - [[parallel-computing|并行计算]]
 - [[multirate-method|多速率仿真]]
 - [[mmc-model|MMC]]
-- [[储能系统集成|储能系统集成]]
-- [[开关事件补偿|开关事件补偿]]
+- 储能系统集成
+- 开关事件补偿
 
 ## 主要发现
 

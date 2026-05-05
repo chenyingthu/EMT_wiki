@@ -63,17 +63,17 @@ sources: ["EMT_Doc/25/Shu 等 - 2009 - Locating arc faults on coupling two paral
 
 
 - [[modal-analysis|相模变换]]
-- [[时域算法|时域算法]]
+- 时域算法
 - [[least-squares|最小二乘法]]
-- [[阻抗矩阵解耦|阻抗矩阵解耦]]
+- 阻抗矩阵解耦
 
 
 ## 涉及的模型
 
 
-- [[耦合双回输电线路|耦合双回输电线路]]
-- [[电弧故障模型|电弧故障模型]]
-- [[六相系统|六相系统]]
+- 耦合双回输电线路
+- 电弧故障模型
+- 六相系统
 
 
 ## 相关主题
@@ -81,8 +81,8 @@ sources: ["EMT_Doc/25/Shu 等 - 2009 - Locating arc faults on coupling two paral
 
 - [[故障测距|故障测距]]
 - [[emt-simulation|电磁暂态分析]]
-- [[线路解耦|线路解耦]]
-- [[电弧故障定位|电弧故障定位]]
+- 线路解耦
+- 电弧故障定位
 
 
 ## 主要发现

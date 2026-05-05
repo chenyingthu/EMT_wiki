@@ -60,9 +60,9 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/Li 等 - 2021 - High Frequency Stabi
 
 - [[state-space-method|状态空间法]]
 - [[参与因子分析|参与因子分析]]
-- [[根轨迹法|根轨迹法]]
-- [[pade近似|Pade近似]]
-- [[多π模型|多π模型]]
+- 根轨迹法
+- Pade近似
+- 多π模型
 - [[average-value-model|平均值模型]]
 - [[emt-simulation|电磁暂态仿真]]
 
@@ -72,15 +72,15 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/Li 等 - 2021 - High Frequency Stabi
 - [[交流输电线路|交流输电线路]]
 - [[phase-locked-loop|锁相环]]
 - [[环流抑制控制器|环流抑制控制器]]
-- [[交流系统|交流系统]]
+- 交流系统
 
 ## 相关主题
 
-- [[高频振荡|高频振荡]]
+- 高频振荡
 - [[small-signal-analysis|稳定性分析]]
 - [[vsc-model|VSC]]
-- [[小干扰稳定性|小干扰稳定性]]
-- [[大链路延时|大链路延时]]
+- 小干扰稳定性
+- 大链路延时
 
 ## 主要发现
 

@@ -60,18 +60,18 @@ sources: ["EMT_Doc/10/Sultan 等 - 1998 - Combined transient and dynamic analysi
 
 - [[co-simulation|混合仿真]]
 - [[频变网络等值|频变网络等值]]
-- [[戴维南-诺顿等值|戴维南/诺顿等值]]
-- [[最小二乘曲线拟合|最小二乘曲线拟合]]
-- [[基波相量提取|基波相量提取]]
-- [[时间步协调|时间步协调]]
+- 戴维南/诺顿等值
+- 最小二乘曲线拟合
+- 基波相量提取
+- 时间步协调
 
 ## 涉及的模型
 
 - [[vsc-hvdc|VSC-HVDC]]
 - [[facts|FACTS]]
 - [[tcsc-model|TCSC]]
-- [[外部交流电网|外部交流电网]]
-- [[频变等值模型|频变等值模型]]
+- 外部交流电网
+- 频变等值模型
 
 ## 相关主题
 
@@ -79,7 +79,7 @@ sources: ["EMT_Doc/10/Sultan 等 - 1998 - Combined transient and dynamic analysi
 - [[暂态稳定仿真|暂态稳定仿真]]
 - [[frequency-dependent-modeling|频率相关建模]]
 - [[network-equivalent|网络等值]]
-- [[交直流相互作用|交直流相互作用]]
+- 交直流相互作用
 
 ## 主要发现
 

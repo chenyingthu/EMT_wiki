@@ -62,14 +62,14 @@ sources: ["EMT_Doc/23/Zanon 等 - 2021 - Implementation of the universal line mo
 - [[nodal-analysis|相域建模]]
 - [[recursive-convolution|递归卷积]]
 - [[norton-equivalent|诺顿等效]]
-- [[外部模型接口|外部模型接口]]
+- 外部模型接口
 
 ## 涉及的模型
 
 - [[transmission-line-model|通用线路模型(ULM)]]
 - [[transmission-line-model|架空输电线路]]
-- [[频率相关土壤模型|频率相关土壤模型]]
-- [[marti模型|Marti模型]]
+- 频率相关土壤模型
+- Marti模型
 
 ## 相关主题
 
@@ -77,7 +77,7 @@ sources: ["EMT_Doc/23/Zanon 等 - 2021 - Implementation of the universal line mo
 - [[frequency-dependent-modeling|频率相关建模]]
 - [[transmission-line-model|输电线路建模]]
 - [[地回路阻抗计算|地回路阻抗计算]]
-- [[仿真软件集成|仿真软件集成]]
+- 仿真软件集成
 
 ## 主要发现
 

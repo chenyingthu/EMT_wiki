@@ -58,25 +58,25 @@ sources: ["EMT_Doc/26/Ramirez 等 - 2003 - Modeling nonuniform transmission line
 
 ## 使用的方法
 
-- [[行波法|行波法]]
+- 行波法
 - [[numerical-integration|数值拉普拉斯变换]]
 - [[characteristic-method|特征线法]]
 - [[vector-fitting|有理函数逼近]]
 - [[state-space-method|状态空间实现]]
-- [[复深度法|复深度法]]
+- 复深度法
 
 ## 涉及的模型
 
-- [[非均匀输电线路|非均匀输电线路]]
+- 非均匀输电线路
 - [[多相输电线路|多相输电线路]]
-- [[杆塔模型|杆塔模型]]
-- [[对称三相线路|对称三相线路]]
+- 杆塔模型
+- 对称三相线路
 
 ## 相关主题
 
 - [[emt-simulation|电磁暂态仿真]]
 - [[frequency-dependent-modeling|频率相关建模]]
-- [[非均匀线路建模|非均匀线路建模]]
+- 非均匀线路建模
 - [[emt-simulation|时域仿真]]
 - [[输电线路参数计算|输电线路参数计算]]
 

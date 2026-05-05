@@ -15,6 +15,7 @@ updated: "2026-05-03"
 | 状态 | 含义 | 后续 Agent 是否可修改 |
 |------|------|----------------------|
 | `protected` | 页面已完成本轮修订并通过目标验证 | 默认不可修改，除非用户或协调者明确点名 |
+| `batch-generated` | 页面通过批量脚本从Source自动生成 | 可修改，需要人工审查和完善 |
 | `needs-review` | 页面已修订但仍有待核查项 | 可由协调者分配复审任务 |
 | `in-progress` | 页面正在由某个 Agent 处理 | 不可并发修改 |
 | `open` | 尚未进入本轮修订 | 可领取 |
@@ -238,3 +239,53 @@ updated: "2026-05-03"
 | `wiki/topics/ieee-118-bus-system.md` | topic | protected | Codex main takeover agent | 2026-05-04 | quality audit: 87/A; strict audit: 0 findings for page; local wikilink check: 23 links, 0 missing | 已按 topic 页协议改为 IEEE 118 benchmark 边界主题页；后续普通 shard 不应重写 |
 | `wiki/standards/page-revision-protocol.md` | standard | protected | Codex pilot agent | 2026-05-03 | strict audit: 0 findings for page; local format check: 0 trailing whitespace | 后续作为执行规范入口；修改需同步计划和登记表 |
 | `plans/wiki-page-revision-agent-workplan.md` | plan | protected | Codex pilot agent | 2026-05-03 | local format check: 0 trailing whitespace | 后续作为协调计划；修改需记录变更意图 |
+| `wiki/methods/h-鲁棒控制.md` | method | batch-generated | Claude batch agent | 2026-05-05 | batch generate from sources | 批量生成，需要人工审查和完善 |
+| `wiki/methods/双闭环pi控制器.md` | method | batch-generated | Claude batch agent | 2026-05-05 | batch generate from sources | 批量生成，需要人工审查和完善 |
+| `wiki/methods/环流抑制控制器.md` | method | batch-generated | Claude batch agent | 2026-05-05 | batch generate from sources | 批量生成，需要人工审查和完善 |
+| `wiki/methods/通用电气网络.md` | method | batch-generated | Claude batch agent | 2026-05-05 | batch generate from sources | 批量生成，需要人工审查和完善 |
+| `wiki/methods/鲁棒控制.md` | method | batch-generated | Claude batch agent | 2026-05-05 | batch generate from sources | 批量生成，需要人工审查和完善 |
+| `wiki/methods/adaptive-droop.md` | method | batch-generated | Claude batch agent | 2026-05-05 | batch generate from sources | 批量生成，需要人工审查和完善 |
+| `wiki/methods/ccvt.md` | method | batch-generated | Claude batch agent | 2026-05-05 | batch generate from sources | 批量生成，需要人工审查和完善 |
+| `wiki/methods/cdsm.md` | method | batch-generated | Claude batch agent | 2026-05-05 | batch generate from sources | 批量生成，需要人工审查和完善 |
+| `wiki/methods/cigre-b4-dc-grid.md` | method | batch-generated | Claude batch agent | 2026-05-05 | batch generate from sources | 批量生成，需要人工审查和完善 |
+| `wiki/methods/cigre-b4.md` | method | batch-generated | Claude batch agent | 2026-05-05 | batch generate from sources | 批量生成，需要人工审查和完善 |
+| `wiki/methods/cl-dccb.md` | method | batch-generated | Claude batch agent | 2026-05-05 | batch generate from sources | 批量生成，需要人工审查和完善 |
+| `wiki/methods/csg.md` | method | batch-generated | Claude batch agent | 2026-05-05 | batch generate from sources | 批量生成，需要人工审查和完善 |
+| `wiki/methods/current-trajectory-similarity.md` | method | batch-generated | Claude batch agent | 2026-05-05 | batch generate from sources | 批量生成，需要人工审查和完善 |
+| `wiki/methods/dc-protection.md` | method | batch-generated | Claude batch agent | 2026-05-05 | batch generate from sources | 批量生成，需要人工审查和完善 |
+| `wiki/methods/dccb.md` | method | batch-generated | Claude batch agent | 2026-05-05 | batch generate from sources | 批量生成，需要人工审查和完善 |
+| `wiki/methods/delarue-enhanced-avm.md` | method | batch-generated | Claude batch agent | 2026-05-05 | batch generate from sources | 批量生成，需要人工审查和完善 |
+| `wiki/methods/dfig-offshore-wind-farm.md` | method | batch-generated | Claude batch agent | 2026-05-05 | batch generate from sources | 批量生成，需要人工审查和完善 |
+| `wiki/methods/distributed-control.md` | method | batch-generated | Claude batch agent | 2026-05-05 | batch generate from sources | 批量生成，需要人工审查和完善 |
+| `wiki/methods/distribution-test-feeders.md` | method | batch-generated | Claude batch agent | 2026-05-05 | batch generate from sources | 批量生成，需要人工审查和完善 |
+| `wiki/methods/droop-control.md` | method | batch-generated | Claude batch agent | 2026-05-05 | batch generate from sources | 批量生成，需要人工审查和完善 |
+| `wiki/methods/dual-active-bridge.md` | method | batch-generated | Claude batch agent | 2026-05-05 | batch generate from sources | 批量生成，需要人工审查和完善 |
+| `wiki/methods/facts-devices.md` | method | batch-generated | Claude batch agent | 2026-05-05 | batch generate from sources | 批量生成，需要人工审查和完善 |
+| `wiki/methods/fbsm.md` | method | batch-generated | Claude batch agent | 2026-05-05 | batch generate from sources | 批量生成，需要人工审查和完善 |
+| `wiki/methods/filtering.md` | method | batch-generated | Claude batch agent | 2026-05-05 | batch generate from sources | 批量生成，需要人工审查和完善 |
+| `wiki/methods/frequency-control.md` | method | batch-generated | Claude batch agent | 2026-05-05 | batch generate from sources | 批量生成，需要人工审查和完善 |
+| `wiki/methods/frequency-response.md` | method | batch-generated | Claude batch agent | 2026-05-05 | batch generate from sources | 批量生成，需要人工审查和完善 |
+| `wiki/methods/gan-hemt.md` | method | batch-generated | Claude batch agent | 2026-05-05 | batch generate from sources | 批量生成，需要人工审查和完善 |
+| `wiki/methods/gis.md` | method | batch-generated | Claude batch agent | 2026-05-05 | batch generate from sources | 批量生成，需要人工审查和完善 |
+| `wiki/methods/half-bridge-submodule.md` | method | batch-generated | Claude batch agent | 2026-05-05 | batch generate from sources | 批量生成，需要人工审查和完善 |
+| `wiki/methods/hbsm.md` | method | batch-generated | Claude batch agent | 2026-05-05 | batch generate from sources | 批量生成，需要人工审查和完善 |
+| `wiki/methods/hierarchical-control.md` | method | batch-generated | Claude batch agent | 2026-05-05 | batch generate from sources | 批量生成，需要人工审查和完善 |
+| `wiki/methods/hvdc-control.md` | method | batch-generated | Claude batch agent | 2026-05-05 | batch generate from sources | 批量生成，需要人工审查和完善 |
+| `wiki/methods/ibr.md` | method | batch-generated | Claude batch agent | 2026-05-05 | batch generate from sources | 批量生成，需要人工审查和完善 |
+| `wiki/methods/inertia-control.md` | method | batch-generated | Claude batch agent | 2026-05-05 | batch generate from sources | 批量生成，需要人工审查和完善 |
+| `wiki/methods/lcl-filter.md` | method | batch-generated | Claude batch agent | 2026-05-05 | batch generate from sources | 批量生成，需要人工审查和完善 |
+| `wiki/methods/link-name.md` | method | batch-generated | Claude batch agent | 2026-05-05 | batch generate from sources | 批量生成，需要人工审查和完善 |
+| `wiki/methods/lvrt-control.md` | method | batch-generated | Claude batch agent | 2026-05-05 | batch generate from sources | 批量生成，需要人工审查和完善 |
+| `wiki/methods/lvrt.md` | method | batch-generated | Claude batch agent | 2026-05-05 | batch generate from sources | 批量生成，需要人工审查和完善 |
+| `wiki/methods/m3c.md` | method | batch-generated | Claude batch agent | 2026-05-05 | batch generate from sources | 批量生成，需要人工审查和完善 |
+| `wiki/methods/mbsm.md` | method | batch-generated | Claude batch agent | 2026-05-05 | batch generate from sources | 批量生成，需要人工审查和完善 |
+| `wiki/methods/microgrid-control.md` | method | batch-generated | Claude batch agent | 2026-05-05 | batch generate from sources | 批量生成，需要人工审查和完善 |
+| `wiki/methods/microgrid.md` | method | batch-generated | Claude batch agent | 2026-05-05 | batch generate from sources | 批量生成，需要人工审查和完善 |
+| `wiki/methods/midc.md` | method | batch-generated | Claude batch agent | 2026-05-05 | batch generate from sources | 批量生成，需要人工审查和完善 |
+| `wiki/methods/mppt-control.md` | method | batch-generated | Claude batch agent | 2026-05-05 | batch generate from sources | 批量生成，需要人工审查和完善 |
+| `wiki/methods/multi-terminal-dc.md` | method | batch-generated | Claude batch agent | 2026-05-05 | batch generate from sources | 批量生成，需要人工审查和完善 |
+| `wiki/methods/n-port-network.md` | method | batch-generated | Claude batch agent | 2026-05-05 | batch generate from sources | 批量生成，需要人工审查和完善 |
+| `wiki/methods/nchg,n.md` | method | batch-generated | Claude batch agent | 2026-05-05 | batch generate from sources | 批量生成，需要人工审查和完善 |
+| `wiki/methods/nearest-level-modulation.md` | method | batch-generated | Claude batch agent | 2026-05-05 | batch generate from sources | 批量生成，需要人工审查和完善 |
+| `wiki/methods/offshore-hvdc-hub.md` | method | batch-generated | Claude batch agent | 2026-05-05 | batch generate from sources | 批量生成，需要人工审查和完善 |
+| `wiki/methods/offshore-wind-integration.md` | method | batch-generated | Claude batch agent | 2026-05-05 | batch generate from sources | 批量生成，需要人工审查和完善 |

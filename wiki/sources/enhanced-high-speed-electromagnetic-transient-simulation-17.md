@@ -63,22 +63,22 @@ sources: ["EMT_Doc/17/Xu 等 - 2016 - Enhanced high-speed electromagnetic transi
 - [[companion-circuit|伴随模型]]
 - [[ideal-switch-model|理想开关模型]]
 - [[最近电平控制|最近电平控制]]
-- [[电容电压平衡排序算法|电容电压平衡排序算法]]
+- 电容电压平衡排序算法
 
 ## 涉及的模型
 
 - [[mmc-model|MMC]]
 - [[hybrid-acdc-network|多端直流电网]]
 - [[mmc-model|子模块]]
-- [[igbt半桥|IGBT半桥]]
+- IGBT半桥
 
 ## 相关主题
 
 - [[emt-simulation|电磁暂态仿真]]
-- [[高速仿真|高速仿真]]
+- 高速仿真
 - [[mmc-model|MMC]]
 - [[hybrid-acdc-network|多端直流电网]]
-- [[电容电压平衡|电容电压平衡]]
+- 电容电压平衡
 - [[计算加速|计算加速]]
 
 ## 主要发现

@@ -58,28 +58,28 @@ sources: ["EMT_Doc/07&08/An Efficient Half-Bridge MMC Model for EMTP-Type Simula
 
 ## 使用的方法
 
-- [[混合数值积分|混合数值积分]]
-- [[中点法|中点法]]
+- 混合数值积分
+- 中点法
 - [[numerical-integration|梯形法]]
 - [[nodal-analysis|节点分析法]]
 - [[norton-equivalent|诺顿等效]]
-- [[临界阻尼调整|临界阻尼调整]]
-- [[延迟插入法|延迟插入法]]
+- 临界阻尼调整
+- 延迟插入法
 
 ## 涉及的模型
 
 - [[mmc-model|MMC]]
 - [[mmc-model|半桥子模块]]
-- [[桥臂电感|桥臂电感]]
-- [[子模块电容|子模块电容]]
+- 桥臂电感
+- 子模块电容
 
 ## 相关主题
 
 - [[emt-simulation|电磁暂态仿真]]
-- [[恒定电导建模|恒定电导建模]]
-- [[模型解耦|模型解耦]]
+- 恒定电导建模
+- 模型解耦
 - [[大规模电力系统仿真|大规模电力系统仿真]]
-- [[emtp型求解|EMTP型求解]]
+- EMTP型求解
 
 ## 主要发现
 

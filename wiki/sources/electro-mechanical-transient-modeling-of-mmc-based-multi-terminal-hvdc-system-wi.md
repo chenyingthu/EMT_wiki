@@ -58,27 +58,27 @@ sources: ["EMT_Doc/15/Electro-mechanical transient modeling of MMC based multi-t
 
 ## 使用的方法
 
-- [[微分代数方程建模|微分代数方程建模]]
-- [[二阶等效电路推导|二阶等效电路推导]]
-- [[预设故障信息法|预设故障信息法]]
-- [[dq-ri坐标系变换|dq/RI坐标系变换]]
-- [[级联控制策略|级联控制策略]]
+- 微分代数方程建模
+- 二阶等效电路推导
+- 预设故障信息法
+- dq/RI坐标系变换
+- 级联控制策略
 
 ## 涉及的模型
 
 - [[mmc-model|MMC]]
 - [[hybrid-acdc-network|MTDC]]
-- [[ieee-39节点交流系统|IEEE 39节点交流系统]]
-- [[直流线路|直流线路]]
-- [[接地短路故障模型|接地短路故障模型]]
+- IEEE 39节点交流系统
+- 直流线路
+- 接地短路故障模型
 
 ## 相关主题
 
 - [[electromechanical-transient|机电暂态建模]]
-- [[直流故障仿真|直流故障仿真]]
+- 直流故障仿真
 - [[electromechanical-transient|暂态稳定分析]]
 - [[hybrid-acdc-system|交直流混合系统]]
-- [[多端高压直流输电|多端高压直流输电]]
+- 多端高压直流输电
 
 ## 主要发现
 

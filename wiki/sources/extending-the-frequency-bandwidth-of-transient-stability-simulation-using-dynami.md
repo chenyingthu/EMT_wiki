@@ -59,25 +59,25 @@ sources: ["EMT_Doc/18/Kulasza 等 - 2022 - Extending the Frequency Bandwidth of 
 ## 使用的方法
 
 - [[dynamic-phasor|动态相量法]]
-- [[改进节点分析法-mna|改进节点分析法(MNA)]]
-- [[stamp技术|Stamp技术]]
-- [[变步长变阶数值积分-ida|变步长变阶数值积分(IDA)]]
-- [[连续微分代数方程-dae-构建|连续微分代数方程(DAE)构建]]
+- 改进节点分析法(MNA)
+- Stamp技术
+- 变步长变阶数值积分(IDA)
+- 连续微分代数方程(DAE)构建
 
 ## 涉及的模型
 
 - [[synchronous-machine-model|同步电机]]
 - [[vsc-hvdc|VSC-HVDC]]
 - [[large-scale-grid-simulation|交流电网]]
-- [[非线性电感模型|非线性电感模型]]
+- 非线性电感模型
 
 ## 相关主题
 
 - [[暂态稳定仿真|暂态稳定仿真]]
-- [[频带扩展|频带扩展]]
-- [[次同步振荡分析|次同步振荡分析]]
+- 频带扩展
+- 次同步振荡分析
 - [[large-scale-grid-simulation|大规模电网仿真]]
-- [[电力电子设备接入|电力电子设备接入]]
+- 电力电子设备接入
 
 ## 主要发现
 

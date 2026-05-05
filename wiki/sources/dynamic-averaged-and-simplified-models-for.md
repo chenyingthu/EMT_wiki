@@ -59,18 +59,18 @@ sources: ["EMT_Doc/13&14/files/TPWRD.2013.2251912.pdf.pdf"]
 ## 使用的方法
 
 - [[average-value-model|动态平均值建模]]
-- [[详细非线性开关模型|详细非线性开关模型]]
-- [[最近电平逼近调制|最近电平逼近调制]]
-- [[环流抑制控制|环流抑制控制]]
-- [[电容电压均衡控制|电容电压均衡控制]]
-- [[dq矢量控制|dq矢量控制]]
+- 详细非线性开关模型
+- 最近电平逼近调制
+- 环流抑制控制
+- 电容电压均衡控制
+- dq矢量控制
 
 ## 涉及的模型
 
 - [[mmc-model|MMC]]
 - [[vsc-model|VSC]]
 - [[mmc-model|半桥子模块]]
-- [[igbt阀|IGBT阀]]
+- IGBT阀
 - [[arm-reactor|桥臂电抗器]]
 - [[average-value-model|平均值模型]]
 
@@ -80,8 +80,8 @@ sources: ["EMT_Doc/13&14/files/TPWRD.2013.2251912.pdf.pdf"]
 - [[average-value-model|动态平均值建模]]
 - [[mmc-model|MMC]]
 - [[large-scale-system-simulation|计算效率优化]]
-- [[降阶模型|降阶模型]]
-- [[大电网暂态分析|大电网暂态分析]]
+- 降阶模型
+- 大电网暂态分析
 
 ## 主要发现
 

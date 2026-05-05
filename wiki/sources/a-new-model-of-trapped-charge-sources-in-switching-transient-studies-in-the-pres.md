@@ -58,27 +58,27 @@ sources: ["EMT_Doc/02/Akafi-Mobarakeh 等 - 2025 - A New Model of Trapped Charge
 
 ## 使用的方法
 
-- [[有源滤波法|有源滤波法]]
-- [[j-marti频率相关模型|J-Marti频率相关模型]]
-- [[统计开关仿真|统计开关仿真]]
-- [[戴维南等值法|戴维南等值法]]
+- 有源滤波法
+- J-Marti频率相关模型
+- 统计开关仿真
+- 戴维南等值法
 - [[emtp-atpdraw|EMTP/ATPDraw]]
 
 ## 涉及的模型
 
-- [[陷落电荷源|陷落电荷源]]
+- 陷落电荷源
 - [[并联电抗器|并联电抗器]]
 - [[transmission-line-model|输电线路]]
-- [[统计开关|统计开关]]
-- [[系统等值阻抗|系统等值阻抗]]
+- 统计开关
+- 系统等值阻抗
 
 ## 相关主题
 
 - [[switch-modeling|开关暂态]]
 - [[insulation-coordination|绝缘配合]]
-- [[重合闸过电压|重合闸过电压]]
+- 重合闸过电压
 - [[emt-simulation|电磁暂态仿真]]
-- [[并联补偿|并联补偿]]
+- 并联补偿
 
 ## 主要发现
 

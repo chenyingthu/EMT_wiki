@@ -60,14 +60,14 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/j.epsr.2014.07.023.pdf.pdf"]
 
 - [[vector-fitting|矢量拟合]]
 - [[transmission-line-model|Bergeron线路模型]]
-- [[时域节点分析|时域节点分析]]
+- 时域节点分析
 - [[numerical-integration|数值拉普拉斯变换]]
 
 ## 涉及的模型
 
 - [[transmission-line-model|输电线路]]
 - [[transmission-line-model|Bergeron线路模型]]
-- [[π型级联等效电路|π型级联等效电路]]
+- π型级联等效电路
 
 ## 相关主题
 
@@ -75,7 +75,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/j.epsr.2014.07.023.pdf.pdf"]
 - [[emt-simulation|电磁暂态仿真]]
 - [[transmission-line-model|输电线路建模]]
 - [[emt-simulation|时域分析]]
-- [[集肤效应|集肤效应]]
+- 集肤效应
 
 ## 主要发现
 

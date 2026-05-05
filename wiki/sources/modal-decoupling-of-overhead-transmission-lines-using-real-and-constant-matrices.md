@@ -59,16 +59,16 @@ sources: ["EMT_Doc/26/Torrez Caballero 等 - 2017 - Modal decoupling of overhead
 ## 使用的方法
 
 - [[modal-analysis|模态分析]]
-- [[clarke矩阵变换|Clarke矩阵变换]]
-- [[频变模态变换|频变模态变换]]
-- [[分布参数双端口模型|分布参数双端口模型]]
-- [[数值时域变换|数值时域变换]]
+- Clarke矩阵变换
+- 频变模态变换
+- 分布参数双端口模型
+- 数值时域变换
 
 ## 涉及的模型
 
 - [[transmission-line-model|架空输电线路]]
-- [[多导体耦合线路|多导体耦合线路]]
-- [[单相等效传播模式|单相等效传播模式]]
+- 多导体耦合线路
+- 单相等效传播模式
 
 ## 相关主题
 
@@ -76,7 +76,7 @@ sources: ["EMT_Doc/26/Torrez Caballero 等 - 2017 - Modal decoupling of overhead
 - [[transmission-line-model|输电线路建模]]
 - [[模态解耦|模态解耦]]
 - [[frequency-dependent-modeling|频变参数建模]]
-- [[线路长度影响分析|线路长度影响分析]]
+- 线路长度影响分析
 
 ## 主要发现
 

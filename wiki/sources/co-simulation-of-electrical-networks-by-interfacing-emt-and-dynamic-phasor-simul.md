@@ -63,7 +63,7 @@ sources: ["EMT_Doc/10/Mudunkotuwa和Filizadeh - 2018 - Co-simulation of electric
 - [[傅里叶级数展开|傅里叶级数展开]]
 - [[numerical-integration|梯形积分法]]
 - [[nodal-analysis|节点导纳矩阵法]]
-- [[接口数据映射算法|接口数据映射算法]]
+- 接口数据映射算法
 
 ## 涉及的模型
 
@@ -71,7 +71,7 @@ sources: ["EMT_Doc/10/Mudunkotuwa和Filizadeh - 2018 - Co-simulation of electric
 - [[wind-farm-modeling|风电场]]
 - [[power-electronics|电力电子变流器]]
 - [[transmission-network|输电网络]]
-- [[旋转电机|旋转电机]]
+- 旋转电机
 
 ## 相关主题
 

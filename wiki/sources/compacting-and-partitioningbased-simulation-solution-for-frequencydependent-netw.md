@@ -63,12 +63,12 @@ sources: ["EMT_Doc/10/Hu 等 - 2015 - Compacting and partitioning-based simulati
 - [[state-space-method|状态空间实现]]
 - [[numerical-integration|梯形积分法]]
 - [[parallel-computing|并行计算]]
-- [[模型压缩|模型压缩]]
+- 模型压缩
 
 ## 涉及的模型
 
 - [[fdne-model|FDNE]]
-- [[有理函数模型|有理函数模型]]
+- 有理函数模型
 - [[state-space-method|状态空间模型]]
 
 ## 相关主题

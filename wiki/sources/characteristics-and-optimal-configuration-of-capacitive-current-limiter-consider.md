@@ -62,10 +62,10 @@ sources: ["EMT_Doc/10/Li 等 - 2020 - Characteristics and Optimal Configuration 
 ## 使用的方法
 
 
-- [[拉普拉斯变换|拉普拉斯变换]]
-- [[等值电路法|等值电路法]]
-- [[解析计算|解析计算]]
-- [[多目标优化|多目标优化]]
+- 拉普拉斯变换
+- 等值电路法
+- 解析计算
+- 多目标优化
 - [[pscad-emtdc|PSCAD/EMTDC电磁暂态仿真]]
 
 
@@ -74,19 +74,19 @@ sources: ["EMT_Doc/10/Li 等 - 2020 - Characteristics and Optimal Configuration 
 
 - [[mmc-model|MMC]]
 - [[vsc-model|VSC]]
-- [[直流电抗器|直流电抗器]]
-- [[电容型限流器|电容型限流器]]
-- [[混合式直流断路器|混合式直流断路器]]
+- 直流电抗器
+- 电容型限流器
+- 混合式直流断路器
 - [[transmission-line-model|直流输电线路]]
 
 
 ## 相关主题
 
 
-- [[直流电网故障抑制|直流电网故障抑制]]
-- [[限流器优化配置|限流器优化配置]]
+- 直流电网故障抑制
+- 限流器优化配置
 - [[vsc-hvdc|柔性直流输电]]
-- [[直流断路器配合|直流断路器配合]]
+- 直流断路器配合
 - [[emt-simulation|电磁暂态分析]]
 
 

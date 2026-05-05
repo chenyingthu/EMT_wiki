@@ -61,25 +61,25 @@ sources: ["EMT_Doc/27&28/New Compact White-Box Transformer Model for the Calcula
 - [[vector-fitting|矢量拟合]]
 - [[partial-fraction-expansion|部分分式展开]]
 - [[奇异值分解|奇异值分解]]
-- [[低秩矩阵分解|低秩矩阵分解]]
+- 低秩矩阵分解
 - [[有限元法|有限元法]]
-- [[白盒等效电路建模|白盒等效电路建模]]
+- 白盒等效电路建模
 
 ## 涉及的模型
 
 - [[transformer-model|电力变压器]]
-- [[白盒模型|白盒模型]]
-- [[频变电感模型|频变电感模型]]
-- [[涡流阻尼等效回路|涡流阻尼等效回路]]
+- 白盒模型
+- 频变电感模型
+- 涡流阻尼等效回路
 
 ## 相关主题
 
 - [[emt-simulation|电磁暂态仿真]]
 - [[frequency-dependent-modeling|频率相关建模]]
 - [[model-order-reduction|模型降阶]]
-- [[阻尼建模|阻尼建模]]
-- [[atp-emtp应用|ATP-EMTP应用]]
-- [[变压器谐振分析|变压器谐振分析]]
+- 阻尼建模
+- ATP-EMTP应用
+- 变压器谐振分析
 
 ## 主要发现
 

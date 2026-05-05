@@ -58,11 +58,11 @@ sources: ["EMT_Doc/06/Ramirez 等 - 2024 - Advanced Wideband LineCable Modeling 
 
 ## 使用的方法
 
-- [[极点-留数拟合|极点-留数拟合]]
-- [[最小相位函数分析|最小相位函数分析]]
-- [[布伦特优化算法|布伦特优化算法]]
-- [[自适应模式分组|自适应模式分组]]
-- [[频域综合|频域综合]]
+- 极点-留数拟合
+- 最小相位函数分析
+- 布伦特优化算法
+- 自适应模式分组
+- 频域综合
 
 ## 涉及的模型
 
@@ -70,15 +70,15 @@ sources: ["EMT_Doc/06/Ramirez 等 - 2024 - Advanced Wideband LineCable Modeling 
 - [[transmission-line-model|输电线路]]
 - [[cable-model|地下电缆]]
 - [[频变电缆模型-fdcm|频变电缆模型(FDCM)]]
-- [[多导体电缆系统|多导体电缆系统]]
+- 多导体电缆系统
 
 ## 相关主题
 
-- [[宽频线路电缆建模|宽频线路电缆建模]]
+- 宽频线路电缆建模
 - [[emt-simulation|电磁暂态仿真]]
 - [[numerical-integration|数值稳定性]]
-- [[无源性违规|无源性违规]]
-- [[频率相关参数|频率相关参数]]
+- 无源性违规
+- 频率相关参数
 - [[emt-simulation|时域仿真]]
 
 ## 主要发现

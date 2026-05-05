@@ -58,11 +58,11 @@ Dead-time effect modeling for hybrid modular multilevel converter using , Jianzh
 
 ## 使用的方法
 
-- [[孪生映射法|孪生映射法]]
+- 孪生映射法
 - [[nodal-analysis|戴维南等效]]
-- [[二极管h桥建模|二极管H桥建模]]
+- 二极管H桥建模
 - [[emt-simulation|电磁暂态仿真]]
-- [[状态空间模型对比|状态空间模型对比]]
+- 状态空间模型对比
 
 ## 涉及的模型
 
@@ -70,16 +70,16 @@ Dead-time effect modeling for hybrid modular multilevel converter using , Jianzh
 - [[half-bridge-smb|半桥子模块(HBSM)]]
 - [[全桥子模块-fbsm|全桥子模块(FBSM)]]
 - [[戴维南等效模型|戴维南等效模型]]
-- [[详细模型|详细模型]]
+- 详细模型
 - [[state-space-method|状态空间模型]]
 
 ## 相关主题
 
-- [[死区效应建模|死区效应建模]]
+- 死区效应建模
 - [[parallel-computing|电磁暂态仿真加速]]
 - [[mmc-model|MMC]]
 - [[vsc-hvdc|高压直流输电]]
-- [[电力电子等效建模|电力电子等效建模]]
+- 电力电子等效建模
 
 ## 主要发现
 

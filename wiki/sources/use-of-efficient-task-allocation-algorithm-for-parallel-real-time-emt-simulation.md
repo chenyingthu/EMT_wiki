@@ -58,11 +58,11 @@ sources: ["EMT_Doc/39/Bruned 等 - 2020 - Use of efficient task allocation algor
 
 ## 使用的方法
 
-- [[图划分算法|图划分算法]]
-- [[任务分配算法|任务分配算法]]
-- [[启发式算法|启发式算法]]
-- [[精确求解方法|精确求解方法]]
-- [[网络分割技术|网络分割技术]]
+- 图划分算法
+- 任务分配算法
+- 启发式算法
+- 精确求解方法
+- 网络分割技术
 - [[hil-simulation|硬件在环仿真]]
 
 ## 涉及的模型
@@ -70,7 +70,7 @@ sources: ["EMT_Doc/39/Bruned 等 - 2020 - Use of efficient task allocation algor
 - [[vsc-hvdc|VSC-HVDC]]
 - [[wind-farm-modeling|风电场]]
 - [[大规模电力电子设备接入的电力系统混合仿真接口技术综述|电力电子设备]]
-- [[输电网|输电网]]
+- 输电网
 
 ## 相关主题
 

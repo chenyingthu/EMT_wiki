@@ -58,26 +58,26 @@ sources: ["EMT_Doc/01/Cao 等 - 2025 - A Bridge-Arm-Module-Based Fixed-Admittanc
 
 ## 使用的方法
 
-- [[关联离散电路法-adc|关联离散电路法(ADC)]]
-- [[固定导纳建模|固定导纳建模]]
+- 关联离散电路法(ADC)
+- 固定导纳建模
 - [[numerical-integration|后向欧拉法]]
-- [[交叉重初始化-cri|交叉重初始化(CRI)]]
+- 交叉重初始化(CRI)
 - [[norton-equivalent|诺顿等效]]
 
 ## 涉及的模型
 
-- [[桥臂模块-bam|桥臂模块(BAM)]]
+- 桥臂模块(BAM)
 - [[电力电子换流器|电力电子换流器]]
-- [[l-c型adc模型|L/C型ADC模型]]
-- [[开关电阻模型|开关电阻模型]]
+- L/C型ADC模型
+- 开关电阻模型
 
 ## 相关主题
 
 - [[emt-simulation|电磁暂态仿真]]
 - [[real-time-simulation|实时仿真]]
 - [[power-electronics|换流器建模]]
-- [[虚拟功率损耗|虚拟功率损耗]]
-- [[状态切换误差修正|状态切换误差修正]]
+- 虚拟功率损耗
+- 状态切换误差修正
 
 ## 主要发现
 

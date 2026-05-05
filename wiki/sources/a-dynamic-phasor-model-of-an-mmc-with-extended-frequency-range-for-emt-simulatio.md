@@ -59,9 +59,9 @@ sources: ["EMT_Doc/01/Rupasinghe 等 - 2019 - A Dynamic Phasor Model of an MMC W
 ## 使用的方法
 
 - [[dynamic-phasor|动态相量法]]
-- [[基频动态相量建模|基频动态相量建模]]
-- [[最近电平逼近调制|最近电平逼近调制]]
-- [[电容电压平衡算法|电容电压平衡算法]]
+- 基频动态相量建模
+- 最近电平逼近调制
+- 电容电压平衡算法
 - [[nodal-analysis|节点导纳矩阵求解]]
 
 ## 涉及的模型
@@ -69,13 +69,13 @@ sources: ["EMT_Doc/01/Rupasinghe 等 - 2019 - A Dynamic Phasor Model of an MMC W
 - [[mmc-model|MMC]]
 - [[mmc-model|半桥子模块]]
 - [[vsc-model|VSC]]
-- [[背靠背直流系统|背靠背直流系统]]
-- [[12节点交流系统|12节点交流系统]]
+- 背靠背直流系统
+- 12节点交流系统
 
 ## 相关主题
 
 - [[emt-simulation|电磁暂态仿真]]
-- [[扩展频率范围建模|扩展频率范围建模]]
+- 扩展频率范围建模
 - [[harmonic-analysis-methods|谐波分析]]
 - [[large-scale-system-simulation|计算效率优化]]
 - [[vsc-hvdc|VSC-HVDC]]
