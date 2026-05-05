@@ -26,11 +26,36 @@ created: "2026-05-04"
 
 ## 形式化表达
 
-- 待补充
+
+### 核心数学表达
+
+从相关研究提取的关键公式：
+
+$$I_i(V_i)=I_g-I_d(V_i)=I_g-I_o\left(e^{\beta V_i/a}-1\right)$$
+
+$$
+
+*理想PV模块的单二极管模型；端电流等于光生电流减去二极管电流，用于说明PV非线性来源。*
+
+
+**公式2**: $$
+
+$$\beta(T)=\frac{q}{M_s kT}$$
+
+$$I(V)=I_g-I_o\left(e^{\beta(V+R_s I)/a}-1\right)-\frac{V+R_s I}{R_p}$$
+
+$$a_{gen}=a,\quad I_{g,gen}=N_p I_g,\quad I_{o,gen}=N_p I_o,\quad R_{s,gen}=\frac{N_s}{N_p}R_s,\quad R_{p,gen}=\frac{N_s}{N_p}R_p,\quad \beta_{gen}=\frac{\beta}{N_s}$$
+
+
 
 ## 适用边界与失败模式
 
-- 待补充
+
+基于证据边界的分析：
+
+
+
+
 
 ## 与相关页面的关系
 

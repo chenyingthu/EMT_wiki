@@ -26,11 +26,31 @@ created: "2026-05-04"
 
 ## 形式化表达
 
-- 待补充
+
+### 核心数学表达
+
+从相关研究提取的关键公式：
+
+$$x(t)=A(t)\cos\left(\omega t+\varphi(t)\right)$$
+
+$$\frac{dA(t)}{dt}\approx 0,\qquad \frac{d\varphi(t)}{dt}\approx 0$$
+
+$$\frac{dx}{dt}=f(x,t)$$
+
+$$y=\frac{1}{\omega_0}\frac{dx}{dt}$$
+
+$$\begin{bmatrix}u\\v\end{bmatrix}=T(t)\begin{bmatrix}x\\y\end{bmatrix}$$
+
+
 
 ## 适用边界与失败模式
 
-- 待补充
+
+基于证据边界的分析：
+
+
+
+
 
 ## 与相关页面的关系
 

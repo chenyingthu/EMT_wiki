@@ -34,7 +34,30 @@ created: "2026-05-04"
 
 ## 形式化表达
 
-- 待补充
+
+### 核心数学表达
+
+从相关研究提取的关键公式：
+
+$$\begin{cases}J\frac{d\omega}{dt}=\frac{P_m}{\omega_0}-\frac{P_e}{\omega_0}-D(\omega-\omega_0)\\\frac{d\theta}{dt}=\omega\end{cases}$$
+
+$$P_m=P_{ref}+K_f(\omega_n-\omega)$$
+
+$$
+
+*有功功率参考值生成式，体现一次调频下垂特性。*
+
+**公式3**: $$
+
+$$\begin{cases}Q_m=Q_{ref}+K_v(U_n-U)\\e_d=\frac{K}{s}(Q_m-Q_e)\end{cases}$$
+
+$$
+
+*无功-电压积分下垂控制方程，用于模拟同步机励磁调节特性。*
+
+**公式4**: $$
+
+
 
 ## 适用边界与失败模式
 

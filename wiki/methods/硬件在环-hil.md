@@ -30,7 +30,22 @@ created: "2026-05-05"
 
 ## 形式化表达
 
-- 待补充数学模型与公式
+
+### 核心数学表达
+
+从相关研究提取的关键公式：
+
+$$V_{d0}=\frac{3\sqrt{2}}{\pi}V_{LL}$$
+
+$$V_d = V_{d0}\cos\alpha - \frac{3\omega L_c}{\pi} I_d$$
+
+$$V_d = V_{d0}\cos\gamma - \frac{3\omega L_c}{\pi} I_d$$
+
+$$S_{base}=\sqrt{3}V_{LL,base}I_{base},\quad x_{pu}=\frac{x}{x_{base}}$$
+
+$$\Delta t_{interface}=1\times T_s$$
+
+数学模型与公式
 
 ## 适用边界与失败模式
 

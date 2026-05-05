@@ -135,9 +135,12 @@ def enhance_page(page_path, page_info):
                         seen.add(eq)
                         eq_section += f'{eq}\n\n'
 
-                pattern = r'(## 形式化表达\n\n)(- 待补充\n*)'
-                if re.search(pattern, content):
-                    content = re.sub(pattern, r'\1' + eq_section, content)
+                # 使用字符串替换而非正则
+                if '## 形式化表达\n\n- 待补充' in content:
+                    content = content.replace('## 形式化表达\n\n- 待补充', '## 形式化表达\n\n' + eq_section)
+                    changes.append('equations')
+                elif '## 形式化表达\n\n- 待补充\n' in content:
+                    content = content.replace('## 形式化表达\n\n- 待补充\n', '## 形式化表达\n\n' + eq_section)
                     changes.append('equations')
 
         # 增强验证与测试
@@ -159,9 +162,12 @@ def enhance_page(page_path, page_info):
                         new_val += f'- **数值结果**: {", ".join(numbers[:3])}\n'
                     new_val += '\n'
 
-                pattern = r'(## 验证与测试\n\n)(- 待补充\n*)'
-                if re.search(pattern, content):
-                    content = re.sub(pattern, r'\1' + new_val, content)
+                # 使用字符串替换而非正则
+                if '## 验证与测试\n\n- 待补充' in content:
+                    content = content.replace('## 验证与测试\n\n- 待补充', '## 验证与测试\n\n' + new_val)
+                    changes.append('validation')
+                elif '## 验证与测试\n\n- 待补充\n' in content:
+                    content = content.replace('## 验证与测试\n\n- 待补充\n', '## 验证与测试\n\n' + new_val)
                     changes.append('validation')
 
         # 增强适用边界
@@ -175,9 +181,12 @@ def enhance_page(page_path, page_info):
                         new_bound += f'- {item.strip()[:120]}\n'
                     new_bound += '\n'
 
-                pattern = r'(## 适用边界与失败模式\n\n)(- 待补充\n*)'
-                if re.search(pattern, content):
-                    content = re.sub(pattern, r'\1' + new_bound, content)
+                # 使用字符串替换而非正则
+                if '## 适用边界与失败模式\n\n- 待补充' in content:
+                    content = content.replace('## 适用边界与失败模式\n\n- 待补充', '## 适用边界与失败模式\n\n' + new_bound)
+                    changes.append('boundary')
+                elif '## 适用边界与失败模式\n\n- 待补充\n' in content:
+                    content = content.replace('## 适用边界与失败模式\n\n- 待补充\n', '## 适用边界与失败模式\n\n' + new_bound)
                     changes.append('boundary')
 
         # 添加来源引用
@@ -189,10 +198,12 @@ def enhance_page(page_path, page_info):
                     source_name = os.path.basename(source_path).replace('.md', '')
                     new_sources += f'- [[{source_name}]]\n'
 
-                pattern = r'(## 代表性来源\n\n)([^#]+)'
-                match = re.search(pattern, content, re.DOTALL)
-                if match and len(match.group(2).strip().split('\n')) < 5:
-                    content = content[:match.end(2)] + new_sources + content[match.end(2):]
+                # 使用字符串替换
+                if '## 代表性来源\n\n- 待补充' in content:
+                    content = content.replace('## 代表性来源\n\n- 待补充', '## 代表性来源\n\n' + new_sources)
+                    changes.append('sources')
+                elif '## 代表性来源\n\n- 待补充\n' in content:
+                    content = content.replace('## 代表性来源\n\n- 待补充\n', '## 代表性来源\n\n' + new_sources)
                     changes.append('sources')
 
         if changes and content != original:

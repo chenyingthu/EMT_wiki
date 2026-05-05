@@ -28,13 +28,38 @@ created: "2026-05-05"
 
 ## 形式化表达
 
-- 待补充
+
+### 核心数学表达
+
+从相关研究提取的关键公式：
+
+$$u_{scp}(t)=\sum_{i=1}^{k}u_{co,i}(t)=\sum_{i=1}^{k}\left(S_i(t)u_{ci}(t)\right)=\sum_{i=1}^{k}S_i(t)\left(\frac{1}{C_i}\int_{t_0}^{t}i_{ci}(t)\mathrm{d}t+u_{ci}(t_0)\right)=\sum_{i=1}^{k}S_i(t)\left(\frac{1}{C_i}\int_{t_0}^{t}S_i(t)i_{sc}(t)\mathrm{d}t+u_{ci}(t_0)\right)$$
+
+$$
+
+*FBSM串联结构在解锁状态下的实际输出电压表达式。它把每个子模块端口电压写成开关函数与电容电压的乘积，并进一步利用电容电流与串联结构电流之间的关系建立动态平均化基础。*
+
+
+**公式2**: $$
+
+$$S_{run}(t)=\begin{cases}\dfrac{1-e_j}{2}, & \text{上桥臂}\\[4pt]\dfrac{1+e_j}{2}, & \text{下桥臂}\end{cases},\quad j=a,b,c$$
+
+$$u_{sc}(t)=S_{run}(t)\left(\frac{\int_{t_0}^{t}S_{run}(t)i_{sc}(t)\mathrm{d}t}{C_{sc}}+u_{sc}(t_0)\right)=S_{run}(t)\left(\frac{k\int_{t_0}^{t}S_{run}(t)i_{sc}(t)\mathrm{d}t}{C}+ku_c(t_0)\right)$$
+
+$$\begin{cases}u_{scu}(t)=d_{type1}S_{run}(t)\left(\dfrac{k\int_{t_0}^{t}S_{run}(t)i_{sc}(t)\mathrm{d}t}{C}+ku_c(t_0)\right)\\u_{scu1}(t)=d_{type1}\left(\dfrac{k\int_{t_1}^{t}\left(d_{type2}i_{sc1}(t)+d_{type3}i_{sc2}(t)\right)\mathrm{d}t}{C}+ku_c(t_1)\right)\\u_{scu2}(t)=d_{type4}u_{sc1}(t)\\u_{scu3}(t)=d_{type1}\left(\dfrac{k\int_{t_2}^{t}i_{sc3}(t)\mathrm{d}t}{C}+ku_c(t_2)\right)\end{cases}$$
+
+
 
 
 
 ## 适用边界与失败模式
 
-- 待补充
+
+基于证据边界的分析：
+
+
+
+
 
 **潜在失效模式**：
 - 参数设置不当可能导致仿真不稳定

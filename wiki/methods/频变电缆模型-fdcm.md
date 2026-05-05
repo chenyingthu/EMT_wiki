@@ -27,7 +27,22 @@ created: "2026-05-05"
 
 ## 形式化表达
 
-- 待补充数学模型与公式
+
+### 核心数学表达
+
+从相关研究提取的关键公式：
+
+$$-\frac{dV(x,s)}{dx}=Z(s)I(x,s),\qquad -\frac{dI(x,s)}{dx}=Y(s)V(x,s)$$
+
+$$Z(s)=Z_C(s)+Z_E(s)+Z_G(s)$$
+
+$$Z_G(s)=sL_0$$
+
+$$Y(s)=sC_0$$
+
+$$-\frac{dV(x,s)}{dx}=\left(R'(s)+L_0s\right)I(x,s)$$
+
+数学模型与公式
 
 ## 适用边界与失败模式
 

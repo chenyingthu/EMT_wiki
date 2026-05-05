@@ -27,7 +27,22 @@ lc滤波器是电力系统电磁暂态仿真中的重要概念，涉及电力网
 
 ## 形式化表达
 
-- 待补充数学模型与公式
+
+### 核心数学表达
+
+从相关研究提取的关键公式：
+
+$$-\frac{dV(x,s)}{dx}=Z(s)I(x,s),\qquad -\frac{dI(x,s)}{dx}=Y(s)V(x,s)$$
+
+$$Z(s)=Z_C(s)+Z_E(s)+Z_G(s)$$
+
+$$Z_G(s)=sL_0$$
+
+$$Y(s)=sC_0$$
+
+$$-\frac{dV(x,s)}{dx}=\left(R'(s)+L_0s\right)I(x,s)$$
+
+数学模型与公式
 
 ## 适用边界与失败模式
 
@@ -41,7 +56,11 @@ lc滤波器是电力系统电磁暂态仿真中的重要概念，涉及电力网
 - [[electromagnetic-transient]]
 ## 代表性来源
 
-- 待补充学术文献
+
+- [[published-in-iet-generation-transmission-distribution-27&28]]
+- [[基于一致性算法的多虚拟同步机功率振荡协调抑制]]
+- [[large-scale-hybrid-real-time-simulation-modeling-and-benchmark-for-nelson-river-]]
+学术文献
 
 ---
 

@@ -30,7 +30,22 @@ created: "2026-05-05"
 
 ## 形式化表达
 
-- 待补充数学模型与公式
+
+### 核心数学表达
+
+从相关研究提取的关键公式：
+
+$$P(f,V)=P_0\left(\frac{f}{f_0}\right)^{\alpha_f}\left(\frac{V}{V_0}\right)^{\alpha_v}$$
+
+$$Q(f,V)=Q_0\left(\frac{f}{f_0}\right)^{\beta_f}\left(\frac{V}{V_0}\right)^{\beta_v}$$
+
+$$Y(f)=\frac{P(f)-jQ(f)}{V^2}$$
+
+$$Y(f)=\frac{P_0}{V_0^2}\left(\frac{f}{f_0}\right)^{\alpha_f}-j\frac{Q_0}{V_0^2}\left(\frac{f}{f_0}\right)^{\beta_f}$$
+
+$$Y(s)=H\frac{(s+z_1)(s+z_2)}{(s+p_1)}=K_0+\frac{K_1}{s+p_1}+sK_2$$
+
+数学模型与公式
 
 ## 适用边界与失败模式
 
