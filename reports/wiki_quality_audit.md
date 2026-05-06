@@ -7,7 +7,7 @@ This is a heuristic triage report based on `schema/QUALITY.md`. Scores indicate 
 ## Summary
 
 - Pages audited: 1386
-- Grades: A=954, B=432, C=0, D=0
+- Grades: A=955, B=431, C=0, D=0
 - Types: entity=23, method=503, model=89, source=682, topic=89
 
 ## Lowest Scoring Pages
@@ -15,7 +15,6 @@ This is a heuristic triage report based on `schema/QUALITY.md`. Scores indicate 
 | Score | Grade | Type | Page | Main issues |
 |------:|:-----:|------|------|-------------|
 | 65 | B | method | `wiki/methods/current-trajectory-similarity.md` | taxonomy page is short |
-| 65 | B | method | `wiki/methods/ibr.md` | taxonomy page is short |
 | 65 | B | model | `wiki/models/inverter-model.md` | may be mostly index/list content; table-heavy without synthesis |
 | 65 | B | topic | `wiki/topics/fpga-real-time-simulation.md` | may be mostly index/list content; missing mathematical form |
 | 65 | B | topic | `wiki/topics/mt-hvdc-test-system.md` | taxonomy page is short |
@@ -64,6 +63,7 @@ This is a heuristic triage report based on `schema/QUALITY.md`. Scores indicate 
 | 70 | B | method | `wiki/methods/frequency-response.md` | taxonomy page is short |
 | 70 | B | method | `wiki/methods/gan-hemt.md` | taxonomy page is short |
 | 70 | B | method | `wiki/methods/gis.md` | taxonomy page is short |
+| 70 | B | method | `wiki/methods/h-鲁棒控制.md` | taxonomy page is short |
 
 ## Upgrade Queues
 
