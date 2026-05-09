@@ -1,78 +1,75 @@
 ---
-title: "Mbsm"
+title: "多桥子模块统一表示方法 (MBSM)"
 type: method
-tags: [mbsm]
+tags: [mbsm, multi-bridge-submodule, mmc, unified-modeling, average-value-model]
 created: "2026-05-05"
+updated: "2026-05-06"
 ---
 
-# Mbsm
+# 多桥子模块统一表示方法 (MBSM)
 
 ## 定义与边界
 
-本文提出一种结合详细等效模型（DEM）与广义开关函数平均值模型（GSFB-AVM）的统一MMC仿真框架。核心在于构建通用桥臂等效电路（UAM），利用反并联二极管自动识别桥臂电流方向，并通过受控电压源表征桥臂动态。GSFB-AVM基于桥臂等效电容与插入指数，推导适用于半桥、全桥、钳位双桥及混合桥等多种子模块拓扑的广义状态方程，精确计及闭锁/解锁模式下的电容充放电特性与半导体导通压降。DEM则保留各子模块独立电容电压与开关事件。两者通过历史电压数据交互机制实现动态仿真中的无缝平滑切换：GSFB-AVM转DEM时均分平均电压，DEM转GSFB-AVM时累加个体电压。此外，模型采用分段线性V-I特性计...
+MBSM 在这里用于指代面向多种子模块拓扑的统一表示或统一平均值建模思路，即用一套桥臂/子模块状态变量、插入指数和等效接口表示半桥、全桥或混合桥等不同子模块结构。它通常用于减少为每种子模块拓扑分别建模的重复工作。
 
-**边界限定**：待完善。需要进一步研究确定该方法/模型的具体适用条件和失效边界。
+本页讨论的是“统一表示框架”，不把普通 MMC 模型、通用线路公式或任意多桥臂拓扑直接写成 MBSM 方法。
 
-## EMT中的作用
+## EMT 中的作用
 
-基于相关研究，mbsm在EMT仿真中用于解决特定问题。
+在 EMT 仿真中，MBSM 方法主要用于：
 
-基于相关研究，该方法在EMT仿真中的主要应用包括：
-- 特定场景的电磁暂态分析
-- 控制系统设计与验证
-- 故障分析与保护协调
+- 用统一方程组织多种子模块拓扑；
+- 支撑详细模型、平均值模型和等效模型之间的切换或比较；
+- 分析不同子模块拓扑对桥臂能量和端口特性的影响；
+- 降低多拓扑 MMC 模型维护成本。
 
-## 主要分支与机制
+## 常见关注点
 
-- 待补充（需要进一步研究确定具体分支）
+- 不同子模块拓扑能否映射到统一状态和接口变量；
+- 详细、平均值和等效模型之间的表示一致性；
+- 闭锁、故障和模式切换时统一方程是否仍然有效；
+- 统一表示带来的便利与拓扑细节损失之间的折中。
 
-## 形式化表达
+## 关键公式
 
+统一表示常围绕子模块等效输出和插入指数组织，例如：
 
-### 核心数学表达
+$$
+v_{arm} = \sum_{k=1}^{N} s_k \, v_{c,k}
+$$
 
-从相关研究提取的关键公式：
+在平均值或统一等效框架下，也常写成：
 
-$$-\frac{dV(x,s)}{dx}=Z(s)I(x,s),\qquad -\frac{dI(x,s)}{dx}=Y(s)V(x,s)$$
+$$
+v_{arm} \approx m \, v_c^{eq}
+$$
 
-$$Z(s)=Z_C(s)+Z_E(s)+Z_G(s)$$
+其中 $s_k$ 为离散插入状态，$m$ 为等效插入指数，$v_c^{eq}$ 为等效电容电压。关键不是某一条公式，而是不同拓扑能否在同一状态和接口框架下被解释。
 
-$$Z_G(s)=sL_0$$
+## 与相关方法的关系
 
-$$Y(s)=sC_0$$
-
-$$-\frac{dV(x,s)}{dx}=\left(R'(s)+L_0s\right)I(x,s)$$
-
-
-
-
+- [[half-bridge-submodule]] 和 [[fbsm]]：说明统一表示需要覆盖的典型拓扑。
+- [[mmc-model]]：提供整机层背景。
+- [[nearest-level-modulation]]：调制方式会影响统一表示中的插入指数或排序逻辑。
+- [[m3c]]：说明多桥臂统一建模思想与特殊多电平换流器入口的关系。
 
 ## 适用边界与失败模式
 
-
-基于证据边界的分析：
-
-
-
-
-**潜在失效模式**：
-- 参数设置不当可能导致仿真不稳定
-- 特定工况下可能产生数值误差
-- 需要进一步研究确定具体失效边界
-
-## 与相关页面的关系
-
-- [[emt-simulation]] - EMT仿真基础
-- [[power-system]] - 电力系统基础
-- [[control-system]] - 控制系统基础
+- 适用于需要在同一研究或平台中比较多种子模块拓扑的场景。
+- 统一表示会牺牲部分拓扑专有细节，不能自动替代每种子模块的详细器件模型。
+- 若桥臂控制、闭锁模式或故障路径差异很大，统一方程可能失去解释力。
 
 ## 代表性来源
 
-- [[combining-detailed-equivalent-model-with-switching-function-based-average-value-]]
-- [[average-value-modeling-of-line-commutated-ac-dc-converters-with-unbalanced-ac-ne]]
-- [[high-frequency-oscillation-analysis-and-suppression-strategy-of-mmc-hvdc-system-]]
+- [[combining-detailed-equivalent-model-with-switching-function-based-average-value-]]：说明统一框架中详细等效与平均值思路的结合背景。
+- [[an-accelerated-detailed-equivalent-model-for-modular-multilevel-converters]]：说明详细等效建模与桥臂统一表示的相关背景。
+- [[high-frequency-oscillation-analysis-and-suppression-strategy-of-mmc-hvdc-system-]]：提醒统一表示不能脱离动态稳定性和控制结构单独评价。
 
+## 证据边界
 
----
+本页不写无来源的统一模型精度、切换误差或速度提升倍数。所有量化结论都必须绑定对比基线和测试工况。
 
-*本页面由批量生成脚本创建，需要进一步人工审查和完善。*
+## 开放问题
+
+- 当前页尚未继续拆分“统一表示框架”和“统一平均值模型”之间的边界。
+- 不同拓扑差异大到何种程度时不再适合统一表示，后续仍需结合具体 source 页判断。

@@ -24,6 +24,33 @@ Bergeron 模型在 EMT 中主要用于下列任务：
 
 它的价值在于把空间传播问题转成端口延时关系。若研究问题对频变衰减、土壤参数、护套耦合或非换位强耦合敏感，单纯常参数 Bergeron 表示应视为近似。
 
+```mermaid
+graph LR
+    subgraph 线路端口k
+        vk[端电压 v_k] --> ik[端口电流 i_k]
+    end
+    subgraph 传播时延τ
+        direction LR
+        vk -->|正向行波 v⁺| delay["延时 τ = ℓ/u"]
+        delay -->|反向行波 v⁻| vm[远端电压 v_m]
+    end
+    subgraph 线路端口m
+        vm --> im[端口电流 i_m]
+    end
+    subgraph 诺顿等值
+        Ihk["I_h,k(t) = -Y_c·v_m(t-τ) - i_m(t-τ)"]
+        Yc[Y_c = 1/Z_c]
+    end
+    vm --> Ihk
+    delay --> Ihk
+
+    style vk fill:#e3f2fd
+    style vm fill:#e3f2fd
+    style delay fill:#fff3e0
+    style Yc fill:#c8e6c9
+    style Ihk fill:#f3e5f5
+```
+
 ## 核心机制
 
 无损单相线路的电报方程可写为：

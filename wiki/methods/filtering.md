@@ -1,78 +1,58 @@
 ---
-title: "Filtering"
+title: "滤波方法入口 (Filtering)"
 type: method
-tags: [filtering]
+tags: [filtering, signal-processing, harmonic, smoothing, measurement]
 created: "2026-05-05"
+updated: "2026-05-06"
 ---
 
-# Filtering
+# 滤波方法入口 (Filtering)
 
 ## 定义与边界
 
-本文提出一种适用于交流电网不平衡工况的电网换相换流器（LCC）扩展参数化平均值模型（PAVM）。该方法首先将不平衡交流电源电压分解为正序与负序分量，并引入不平衡度因子与相位偏移进行量化。通过Park变换将交流侧电压/电流映射至多个以n倍同步速正/反向旋转的dq参考坐标系中，利用周期平均技术分离出各次谐波的直流分量。模型核心在于构建三维参数化查找表，将交流侧正负序谐波幅值/相位、直流侧平均量及h次纹波分量与系统运行工况建立非线性映射。同时，模型提供动态微分方程与代数相量两种数学表征形式，前者用于精确捕捉暂态过程，后者用于降低计算负担。该PAVM在EMT仿真中可替代详细开关模型，支持大时间步长计算...
+滤波方法是对电压、电流、功率或测量信号中的目标频段、噪声或暂态分量进行提取、抑制或平滑处理的技术集合。在 EMT Wiki 中，本页作为上位入口，承接围绕数字滤波、频谱提取和控制测量滤波展开的方法。
 
-**边界限定**：待完善。需要进一步研究确定该方法/模型的具体适用条件和失效边界。
+本页不是 LCC 不平衡平均值模型页，也不是单一谐波分析模型页。
 
-## EMT中的作用
+## EMT 中的作用
 
-基于相关研究，filtering在EMT仿真中用于解决特定问题。
+滤波方法在 EMT 中常用于：
 
-基于相关研究，该方法在EMT仿真中的主要应用包括：
-- 特定场景的电磁暂态分析
-- 控制系统设计与验证
-- 故障分析与保护协调
+- 提取频率、相量、阻抗或谐振相关特征；
+- 为保护和控制算法提供更稳定的测量量；
+- 分离高频暂态、基波和谐波分量；
+- 减少数值噪声和测量噪声对判据的影响。
 
-## 主要分支与机制
+## 关键公式
 
-- 待补充（需要进一步研究确定具体分支）
+线性滤波最常抽象为卷积或传递函数：
 
-## 形式化表达
+$$
+y(t)=h(t)*x(t)
+$$
 
+离散实现中也常写为差分方程或频域窗函数处理。关键区别在于滤波对象、带宽和是否允许引入额外时延。
 
-### 核心数学表达
+## 与相关方法的关系
 
-从相关研究提取的关键公式：
-
-$$-\frac{dV(x,s)}{dx}=Z(s)I(x,s),\qquad -\frac{dI(x,s)}{dx}=Y(s)V(x,s)$$
-
-$$Z(s)=Z_C(s)+Z_E(s)+Z_G(s)$$
-
-$$Z_G(s)=sL_0$$
-
-$$Y(s)=sC_0$$
-
-$$-\frac{dV(x,s)}{dx}=\left(R'(s)+L_0s\right)I(x,s)$$
-
-
-
-
+- [[fourier-filtering]]：频谱提取和滤波的更具体方法页。
+- [[fft]]：频域分量提取基础。
+- [[phasor-measurement-unit]]：测量链中的滤波背景。
+- [[frequency-response]]：频域分析背景。
+- [[signal-processing]]：更上位的信号处理入口背景。
 
 ## 适用边界与失败模式
 
-
-基于证据边界的分析：
-
-
-
-
-**潜在失效模式**：
-- 参数设置不当可能导致仿真不稳定
-- 特定工况下可能产生数值误差
-- 需要进一步研究确定具体失效边界
-
-## 与相关页面的关系
-
-- [[emt-simulation]] - EMT仿真基础
-- [[power-system]] - 电力系统基础
-- [[control-system]] - 控制系统基础
+- 适用于需要从 EMT 波形中提取较稳定特征的场景。
+- 任何滤波器都会引入带宽和时延折中。
+- 保护和快速控制场景下，过度平滑可能遮蔽真正暂态信息。
 
 ## 代表性来源
 
-- [[average-value-modeling-of-line-commutated-ac-dc-converters-with-unbalanced-ac-ne]]
-- [[high-frequency-oscillation-analysis-and-suppression-strategy-of-mmc-hvdc-system-]]
-- [[a-combined-state-space-nodal-method-for-the-simulation-of-power-system-transient]]
+- [[fourier-filtering]]：当前 Wiki 中的正式频谱滤波方法页。
+- [[phasor-measurement-unit]]：测量链和动态滤波背景。
+- [[average-value-modeling-of-line-commutated-ac-dc-converters-with-unbalanced-ac-ne]]：提醒滤波与平均化不应混同。
 
+## 证据边界
 
----
-
-*本页面由批量生成脚本创建，需要进一步人工审查和完善。*
+本页不写具体滤波器阶数、带宽或最优参数，只作为上位入口。

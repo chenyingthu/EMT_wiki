@@ -38,6 +38,45 @@ $$\hat{x}(t) = x(t) * \frac{1}{\pi t} = \frac{1}{\pi}\int_{-\infty}^{\infty}\fra
 频域表达（作为乘子）：
 $$\mathcal{F}\{\hat{x}(t)\} = -j\cdot\text{sgn}(\omega)\cdot X(\omega)$$
 
+```mermaid
+graph LR
+    subgraph 原始信号
+        Xt["x(t)
+实信号"]
+    end
+    subgraph 希尔伯特变换
+        HT["H{x(t)}
+90°相移"]
+    end
+    subgraph 解析信号
+        Zt["z(t)=x(t)+j·H{x(t)}
+=A(t)·e^{jφ(t)}
+单边谱"]
+    end
+    subgraph 瞬时特征
+        A["瞬时幅值 A(t)
+=|z(t)|"]
+        P["瞬时相位 φ(t)
+=arg[z(t)]"]
+        F["瞬时频率 ω(t)
+=dφ/dt"]
+    end
+
+    Xt --> Zt
+    Xt --> HT
+    HT --> Zt
+    Zt --> A
+    Zt --> P
+    P --> F
+
+    style Xt fill:#e1f5fe
+    style HT fill:#fff3e0
+    style Zt fill:#e8f5e9
+    style A fill:#f3e5f5
+    style P fill:#f3e5f5
+    style F fill:#f3e5f5
+```
+
 ### 2. 解析信号构造
 
 复解析信号由原始信号与希尔伯特变换构成：

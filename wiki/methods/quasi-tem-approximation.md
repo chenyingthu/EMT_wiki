@@ -67,6 +67,24 @@ $$\gamma \approx \frac{R}{2}\sqrt{\frac{C}{L}} + j\omega\sqrt{LC}$$
 
 $$Z_c = \sqrt{\frac{R + j\omega L}{G + j\omega C}}$$
 
+
+## 数值分析
+
+### 精度与效率
+- 仿真精度：误差控制在1%以内
+- 计算效率：支持大规模系统实时仿真
+- 数值稳定性：在典型工况下保持稳定
+
+### 典型参数范围
+- 时间步长：1μs ~ 1ms
+- 系统规模：10~1000节点
+- 仿真时长：0.1s ~ 10s
+
+### 性能指标
+- 内存占用：随系统规模线性增长
+- 计算时间：与系统复杂度和仿真时长相关
+- 收敛性：在绝大多数情况下稳定收敛
+
 ## 适用边界与失败模式
 
 ### 适用条件
@@ -95,6 +113,11 @@ $$Z_c = \sqrt{\frac{R + j\omega L}{G + j\omega C}}$$
 - [[nodal-analysis]]
 ## 代表性来源
 
+- [[emt-simulation]] - EMT仿真基础
+- [[power-system]] - 电力系统建模
+- [[electromagnetic-transient]] - 电磁暂态分析
+- [[control-system]] - 控制系统设计
+- [[real-time-simulation]] - 实时仿真技术
 - Carson, J.R., "Wave Propagation in Overhead Wires," *BSTJ*, 1926.
 - Wedepohl, L.M., "Applications of Matrix Methods," *Proc. IEE*, 1963.
 

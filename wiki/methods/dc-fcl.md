@@ -5,78 +5,39 @@ tags: [dc-fcl]
 created: "2026-05-04"
 ---
 
-# Dc Fcl
+# DC-FCL
 
 ## 定义与边界
 
-本页面为自动创建的method类型页面，用于修复断链。内容待补充。
+DC-FCL 在当前 Wiki 中指直流故障限流器或直流故障限流配置方法。它服务于直流电网、MMC-HVDC 或多端直流系统故障早期的电流上升率和峰值约束，通常与 [[dc-protection]]、[[dccb]]、[[cl-dccb]] 和 [[mtdc-model]] 一起使用。
 
-**边界限定**：待完善。
+## 概念边界
 
-## EMT中的作用
+- DC-FCL 不是直流断路器本体；断路器开断拓扑和保护动作边界应转向 [[dccb]] 或 [[cl-dccb]]。
+- DC-FCL 也不是一般故障分析方法；故障注入、故障类型和保护配合应链接 [[fault-analysis-methods]] 或 [[dc-protection]]。
+- 电抗器、电容型限流器、超导限流器或限流型断路器的结论不能互相外推，必须说明元件类型、动作时序和耐压/能量约束。
+- 本页不保留旧模板中的无来源性能数字、节点规模或通用验证共识。
 
-- 待补充
+## 核心机制
 
+直流故障限流器的核心作用是限制故障电流上升率和峰值。限流器的等效阻抗可写为：
 
-基于相关研究的技术应用：
+$$
+Z_{	ext{FCL}}(s) = R_{	ext{FCL}} + sL_{	ext{FCL}} + Z_{	ext{nonlinear}}(i)
+$$
 
-1.1. 模型从未闭锁MMC出口双极短路的RLC放电等值出发，将换流站用等效电阻、电感、电容表示，其中Rs=2R0/3、Ls=2L0/3、Cs=6C0/N，用以描述子模块电容经桥臂和直流侧放电的暂态。核心状态量是换流站直流故障电流i(t)、直流电压udc、限流器反向电压uFCL、限流电容电压以及各线路支路电流...
+其中 $R_{	ext{FCL}}$ 和 $L_{	ext{FCL}}$ 为线性阻抗分量，$Z_{	ext{nonlinear}}(i)$ 为与电流相关的非线性分量（如超导限流器的失超电阻或电容型限流器的动态电压）。限流效果的评价指标包括故障电流峰值抑制比 $\eta = I_{	ext{peak,with FCL}} / I_{	ext{peak,without FCL}}$ 和电流上升率 $di/dt$。
 
-1.2. 3 ms投入电容型限流器后，电容与MMC等值电容形成新的等效电容项，随充电建立反向电压，从而在故障持续过程中继续压低电流。推广到三端环网时，各支路方程在频域联立求解，故障点电流由两侧线路电流叠加。优化实现上，以Ldc和CFCL为粒子位置，目标为同时减小故障电流和直流电抗器电感，约束包括Ldc不小于0...
+## 链接用法
 
-## 主要分支与机制
+当页面只是需要“直流限流器”英文缩写锚点时链接 [[dc-fcl]]。若讨论保护判据与故障区域识别，优先链接 [[dc-protection]]；若讨论开断设备，链接 [[dccb]] 或 [[cl-dccb]]；若讨论多端直流网络对象，链接 [[mtdc-model]]。
 
-- 待补充
-
-
-## 验证与测试
-
-基于相关研究的验证证据：
-
-- **数值结果**: 200 kV, 6 ms, 6 ms
-
-
-## 形式化表达
-
-
-### 核心数学表达
-
-从相关研究提取的关键公式：
-
-$$-\frac{dV(x,s)}{dx}=Z(s)I(x,s),\qquad -\frac{dI(x,s)}{dx}=Y(s)V(x,s)$$
-
-$$Z(s)=Z_C(s)+Z_E(s)+Z_G(s)$$
-
-$$Z_G(s)=sL_0$$
-
-$$Y(s)=sC_0$$
-
-$$-\frac{dV(x,s)}{dx}=\left(R'(s)+L_0s\right)I(x,s)$$
-
-
-
-## 适用边界与失败模式
-
-
-基于证据边界的分析：
-
-
-
-
-## 与相关页面的关系
-
-- [[emt-simulation]] - EMT仿真基础
-- [[power-system]]
-- [[electromagnetic-transient]]
 ## 代表性来源
 
-- [[analysis-and-prospect-of-development-of-chinas-independent-electromagnetic-trans-fix]]
----
+- [[characteristics-and-optimal-configuration-of-capacitive-current-limiter-consider]]：支撑直流电抗器与电容型限流器协同配置的来源入口，包含 MMC 出口双极短路、动作时序和 PSCAD/EMTDC 验证范围。
+- [[a-new-topology-for-current-limiting-hvdc-circuit-breaker]]：支撑限流型直流断路器拓扑的来源入口，应与普通 FCL 概念分开使用。
+- [[analysis-and-prospect-of-development-of-chinas-independent-electromagnetic-trans-fix]]：把 DC-FCL 作为模块化电力电子装备和国产 EMT 平台能力需求的一部分；该来源是路线图和综述性质，不是单一 FCL 性能证明。
 
-*本页面为自动生成的stub，需要进一步补充完善。*
+## 证据边界
 
-- [[characteristics-and-optimal-configuration-of-capacitive-current-limiter-consider]]
-- [[analysis-and-general-calculation-of-dc-fault-currents-in-mmc-mtdc-grids]]
-- [[a-new-topology-for-current-limiting-hvdc-circuit-breaker]]
-- [[empirical-model-of-a-current-limiting-fuse-using-emtp]]
-- [[a-method-to-calculate-short-circuit-faults-in-high-voltage-dc-grids]]
+DC-FCL 的可信结论必须绑定故障位置、直流电压等级、换流器闭锁状态、限流器投入时刻、断路器动作时刻、元件耐压和能量吸收配置。单篇算例中的电流下降比例、峰值、动作时间或设备参数不能写成所有直流电网的通用指标。

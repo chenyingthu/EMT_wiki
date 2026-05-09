@@ -25,6 +25,38 @@ $$
 
 在 EMTP 类算法中，[[companion-circuit]] 是节点分析的关键接口。动态元件经过 [[numerical-integration]] 离散后转化为本时步导纳和历史源；求得节点电压后，再回代更新支路电流、磁链、电荷或控制状态。
 
+```mermaid
+graph TD
+    subgraph 离散前
+        L[动态元件: L/C/R/线路]
+        V[独立电压源/电流源]
+    end
+    subgraph 伴随电路转化
+        L -->|数值积分| Norton[诺顿等效]
+        Norton --> Geq[等效电导 G_eq]
+        Norton --> Ihist[历史电流源 I_hist]
+        V -->|受控源处理| MANA[增广矩阵行]
+    end
+    subgraph 节点方程求解
+        Geq --> Yn[装配 Y_n 矩阵]
+        Ihist --> In[装配 I_n 向量]
+        Yn --> Solve[求解 Y_n·v_n = I_n]
+        In --> Solve
+        MANA --> Solve
+    end
+    subgraph 回代
+        Solve --> Update[更新支路电压/电流]
+        Update --> State[更新状态变量 x_n→x_{n+1}]
+        State -->|下一时步| Norton
+    end
+
+    style L fill:#e1f5fe
+    style V fill:#e1f5fe
+    style Norton fill:#fff3e0
+    style Solve fill:#c8e6c9
+    style State fill:#f3e5f5
+```
+
 ## 核心机制
 
 线性支路 $(p,q)$ 的导纳 $g$ 对矩阵的贡献为：

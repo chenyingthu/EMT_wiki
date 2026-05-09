@@ -1,78 +1,62 @@
 ---
-title: "Dfig Offshore Wind Farm"
+title: "DFIG 海上风电场建模方法"
 type: method
-tags: [dfig-offshore-wind-farm]
+tags: [dfig-offshore-wind-farm, dfig, offshore-wind, wind-farm, model]
 created: "2026-05-05"
+updated: "2026-05-06"
 ---
 
-# Dfig Offshore Wind Farm
+# DFIG 海上风电场建模方法
 
 ## 定义与边界
 
-Electrical Power and Energy Systems 148 (2023) 108928 0142-0615/© 2022 Elsevier Ltd. All rights reserved. Modeling for large-scale offshore wind farm using multi-thread State Key Laboratory of Alternate Electrical Power System with Renewable Energy Sources, North China Electric Power University (NCE...
+该方法页用于描述以双馈感应发电机（DFIG）为核心的海上风电场 EMT 建模路线。它关注风机、电气集电系统、并网换流器和控制器在海上风电场场景中的组合，而不是一般海上风电并网入口。
 
-**边界限定**：待完善。需要进一步研究确定该方法/模型的具体适用条件和失效边界。
+## EMT 中的作用
 
-## EMT中的作用
+在 EMT 仿真中，DFIG 海上风电场建模常用于：
 
-基于相关研究，dfig-offshore-wind-farm在EMT仿真中用于解决特定问题。
+- 研究风机群、集电网络和并网点之间的动态耦合；
+- 分析 DFIG 控制、转差和直流侧接口对风电场响应的影响；
+- 为海上风电场大规模并行 EMT 研究提供对象边界。
 
-基于相关研究，该方法在EMT仿真中的主要应用包括：
-- 特定场景的电磁暂态分析
-- 控制系统设计与验证
-- 故障分析与保护协调
+## 常见组成
 
-## 主要分支与机制
+- DFIG 风机及其转子侧/网侧控制器；
+- 场内集电网络与海缆送出链路；
+- 升压站、并网点及必要时的 HVDC 送出接口；
+- 场站级有功、无功和故障穿越协调逻辑。
 
-- 待补充（需要进一步研究确定具体分支）
+## 关键公式
 
-## 形式化表达
+DFIG 的转差关系常写为：
 
-### 核心数学表达
+$$
+s = \frac{\omega_s - \omega_r}{\omega_s}
+$$
 
-DFIG转子侧功率：
-$$P_r = s \cdot P_s$$
+其有功/转子侧功率关系在不同等效层级下会有不同写法，但 EMT 研究通常更关心控制器与并网接口的动态耦合，而不仅是单个功率公式。
 
-其中$s$为转差率：
-$$s = rac{\omega_s - \omega_r}{\omega_s}$$
+## 与相关方法的关系
 
-直流母线电压控制：
-$$C_{dc} rac{dv_{dc}}{dt} = P_{gen} - P_{grid}$$
-
-
-
-
-## 适用边界与失败模式
-
-**适用条件**：
-- 双馈感应风力发电机组建模
-- 变速恒频运行范围（$s = \pm 0.3$）
-- 海上风电场并网仿真
-
-**失效边界**：
-- 转差率超出设计范围
-- 直流母线过压/欠压保护动作
-- 电网故障导致Crowbar动作
-
-
-**潜在失效模式**：
-- 参数设置不当可能导致仿真不稳定
-- 特定工况下可能产生数值误差
-- 需要进一步研究确定具体失效边界
-
-## 与相关页面的关系
-
-- [[emt-simulation]] - EMT仿真基础
-- [[power-system]] - 电力系统基础
-- [[control-system]] - 控制系统基础
+- [[offshore-wind-integration]]：更上位的海上风电并网场景页。
+- [[ibr]]：逆变器型资源建模背景。
+- [[wind-farm-hvdc]]：若采用 HVDC 送出，可作为相关背景。
+- [[lvrt-control]]：风电并网故障穿越背景。
+- [[microgrid-control]]：多设备协调控制的相关背景。
+- [[dfig-model]]：设备级 DFIG 模型背景。
 
 ## 代表性来源
 
-- [[modeling-for-large-scale-offshore-wind-farm-using-multi-thread-parallel-computin]]
-- [[efficient-electromagnetic-transient-simulation-for-dfig-based-wind-farms-using-f]]
-- [[modeling-method-for-dfig-based-wind-farm-in-high-efficiency-real-time-electromag]]
+- [[modeling-for-large-scale-offshore-wind-farm-using-multi-thread-parallel-computin]]：大规模海上风电场建模和并行 EMT 背景。
+- [[efficient-electromagnetic-transient-simulation-for-dfig-based-wind-farms-using-f]]：DFIG 风电场 EMT 建模背景。
+- [[modeling-method-for-dfig-based-wind-farm-in-high-efficiency-real-time-electromag]]：高效/实时背景来源。
 
+## 证据边界
 
----
+本页不写无来源功率等级、集电规模或稳定裕度结论，必须绑定具体风电场场景。
 
-*本页面由批量生成脚本创建，需要进一步人工审查和完善。*
+## 开放问题
+
+- DFIG 场站与全功率变流器场站的 EMT 建模边界仍需在相邻页面中继续明确。
+- 当前页尚未展开海缆、升压站和送出方式变化对模型层级选择的影响。

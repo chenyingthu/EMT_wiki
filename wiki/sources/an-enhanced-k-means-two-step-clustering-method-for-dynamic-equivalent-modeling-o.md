@@ -77,7 +77,7 @@ sources: ["EMT_Doc/07&08/Xu et al. - 2026 - An enhanced K-means two-step cluster
 ## 相关主题
 
 - [[动态等值建模|动态等值建模]]
-- [[lvrt|低电压穿越]]
+- [[lvrt-control|低电压穿越]]
 - 风电场聚合
 - [[emt-simulation|电磁暂态仿真]]
 - 电力系统稳定性分析

@@ -1,76 +1,71 @@
 ---
-title: "Pll Design"
+title: "锁相环参数设计方法 (PLL Design)"
 type: method
-tags: [pll-design]
+tags: [pll-design, pll, parameter-tuning, synchronization, inverter-control]
 created: "2026-05-04"
+updated: "2026-05-07"
 ---
 
-# Pll Design
+# 锁相环参数设计方法 (PLL Design)
 
 ## 定义与边界
 
-本页面为自动创建的method类型页面，用于修复断链。内容待补充。
+PLL 设计方法指围绕锁相环带宽、阻尼、滤波结构和暂态整定规则建立的参数设计路线。它关注的是“如何设计和整定 PLL”，而不是把任意惯量控制或线路模型残片误写成 PLL 设计页。
 
-**边界限定**：待完善。
+本页讨论的是 PLL 的参数与结构整定边界，不替代 [[phase-locked-loop]] 作为总入口。
 
-## EMT中的作用
+## EMT 中的作用
 
-- 待补充
+在 EMT 仿真中，PLL 设计方法主要用于：
 
+- 选择 PLL 带宽、阻尼和滤波结构；
+- 评估暂态下的相位误差、频率估计和同步恢复速度；
+- 研究 PLL 参数与弱网、故障和控制外环之间的耦合；
+- 为 GFL 逆变器、HVDC 换流器和混合系统的小信号整定提供背景。
 
-基于相关研究的技术应用：
+## 常见设计目标
 
-## 主要分支与机制
+- 提高同步速度；
+- 控制超调和相位误差；
+- 降低谐波、不平衡和噪声影响；
+- 避免 PLL 与网络阻抗或外环控制耦合失稳。
 
-- 待补充
+## 关键公式
 
-## 形式化表达
-
-
-### 核心数学表达
-
-从相关研究提取的关键公式：
-
-$$J_i\frac{d\Delta\omega_i}{dt}=\frac{P_{mi}}{\omega_0}-\frac{P_{0i}}{\omega_0}-D_i(\omega_i-\omega_0),\qquad P_{mi}=P_{refi}+k_{\omega i}(\omega_0-\omega)$$
-
-$$E_i=\frac{1}{K_{qi}s}\left[Q_{refi}-Q_{0i}+D_{qi}(U_{cni}-U_c)\right]$$
-
-$$P_{0i}=\frac{3U_{ci}U_g\sin\delta_i}{2\omega_0L_i}\approx\frac{3U_{ci}U_g}{2X_i}\delta_i\approx K_i\delta_i,\qquad \delta_i=\int(\omega_i-\omega_{bus})dt$$
-
-$$\frac{\Delta\omega_i(s)}{\Delta\omega_{bus}(s)}=\frac{K_i}{J_i\omega_0s^2+(D_i\omega_0+k_{\omega i})s+K_i}$$
+PLL 设计常围绕带宽和环路参数之间的关系展开。最小抽象可写为：
 
 $$
+G_{pll}(s)=\frac{K_p s + K_i}{s}
+$$
 
-*单台VSC-ESS相对于公共母线频率扰动的二阶频率响应传递函数。分母中二阶项由虚拟惯量决定，一阶项由虚拟阻尼和频率调制系数决定，常数项由同步功率系数决定。*
+其中 $K_p$ 和 $K_i$ 分别为比例与积分参数。具体设计时，还需要结合同步结构、滤波器和网络模型，把带宽、阻尼和暂态检测策略一并考虑。
 
+## 与相关方法的关系
 
-**公式5**: $$
-
-
+- [[phase-locked-loop]]：PLL 作为同步方法的总入口。
+- [[advanced-dsogi-pll-with-adaptive-bandwidth-for-improved-transient-performance-of]]：自适应带宽 PLL 设计的直接背景。
+- [[rmsx002b-augmenting-the-traditional-circuit-model-to-capture-pll-instability]]：PLL 参数与网络交互失稳的背景。
+- [[frequency-control]]：频率控制会依赖 PLL 测量，但 PLL 设计不等同于频率控制设计。
+- [[grid-connected-inverter]]：并网逆变器中的 PLL 设计应用背景。
 
 ## 适用边界与失败模式
 
+- 适用于需要整定并网同步环的场景。
+- 单独优化 PLL 带宽，不一定能保证整个控制系统稳定。
+- 弱网、谐波、不平衡和限流都会改变“看起来合理”的 PLL 参数区间。
+- 单篇论文中的最优参数结论不能直接外推到其他控制器、拓扑或 SCR 条件。
 
-基于证据边界的分析：
-
-
-
-
-
-## 与相关页面的关系
-
-- [[emt-simulation]] - EMT仿真基础
-- [[power-system]]
-- [[electromagnetic-transient]]
 ## 代表性来源
 
-- [[design-and-implementation-of-scalable-communication-interfaces-for-reliable-and-]]
----
+- [[advanced-dsogi-pll-with-adaptive-bandwidth-for-improved-transient-performance-of]]：DSOGI-PLL 带宽与暂态整定背景。
+- [[rmsx002b-augmenting-the-traditional-circuit-model-to-capture-pll-instability]]：PLL 参数与同步失稳背景。
+- [[analytical-calculation-method-of-outer-loop-controller-parameters-of-hvdc-conver]]：说明换流器外环参数设计与 PLL 设计的相关背景。
 
-*本页面为自动生成的stub，需要进一步补充完善。*
+## 证据边界
 
-- [[design-and-implementation-of-scalable-communication-interfaces-for-reliable-and-]]
-- [[analytical-calculation-method-of-outer-loop-controller-parameters-of-hvdc-conver]]
-- [[an-efficient-phase-domain-synchronous-machine-model-with-constant-equivalent-adm]]
-- [[advanced-dsogi-pll-with-adaptive-bandwidth-for-improved-transient-performance-of]]
-- [[fine-grained-hardware-resource-optimization-and-design-for-fpga-based-real-time-]]
+本页不写无来源的最优带宽、最优阻尼或统一 SCR 适用范围。具体参数必须绑定同步结构、网络强度和验证工况。
+
+## 开放问题
+
+- 当前页尚未继续拆分 SRF-PLL、DSOGI-PLL 和其他增强型 PLL 的参数整定差异。
+- PLL 参数如何与限流、外环和弱网稳定性联合整定，后续仍需回到具体 source 页细化。

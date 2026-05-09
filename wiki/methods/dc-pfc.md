@@ -5,80 +5,40 @@ tags: [dc-pfc]
 created: "2026-05-04"
 ---
 
-# Dc Pfc
+# DC-PFC
 
 ## 定义与边界
 
-本页面为自动创建的method类型页面，用于修复断链。内容待补充。
+DC-PFC 是一个需要消歧的缩写入口。在现有来源中，它一方面可能作为直流电网中的 DC power flow controller / 直流潮流控制设备出现，另一方面也容易被误混入 AC/DC 功率因数校正 PFC。当前页面只作为受控入口，避免把这两类对象扩展成同一篇完整方法页。
 
-**边界限定**：待完善。
+## 概念边界
 
-## EMT中的作用
+- 若语境是直流电网设备或国产 EMT 平台的模块化电力电子装备清单，DC-PFC 应理解为直流潮流控制相关设备，并与 [[mtdc-model]]、[[dc-protection]] 和 [[dc-fcl]] 区分。
+- 若语境是交错图腾柱 PFC、Boost PFC 或车载充电器，应链接具体来源页，而不是把它写成直流潮流控制器。
+- 若语境是 FACTS 或 UPFC 的交流潮流控制，应转向 [[facts]]、[[upfc-model]] 或相关来源，不应使用 DC-PFC 缩写。
+- 本页不保留旧页面中线路电报方程、通用 EMT 作用、泛化未来方向和无来源量化说法。
 
-基于相关研究的应用：
+## 核心机制
 
-1. 实现机制分为拓扑重构、电机电磁约束和PFC控制三层。驱动模式下，改进型Miller变换器对4相SRM相电流独立控制；充电模式下闭合开关S后，A、C两相绕组并联参与两相交错图腾柱PFC，交流侧接电网、直流侧接电池/直流母线。核心接口量包括电网
+DC 潮流控制器的核心功能是在直流网络中调节线路功率分配。以串联型 DC-PFC 为例，其注入电压 $\Delta V$ 与线路功率 $P_{ij}$ 的关系为：
 
-2. 8、11.
+$$
+P_{ij} = rac{V_i(V_j + \Delta V - V_i)}{R_{ij}}
+$$
 
-3. 5、22.
+其中 $V_i, V_j$ 为节点 $i, j$ 的直流电压，$R_{ij}$ 为线路电阻，$\Delta V$ 为 PFC 注入的串联电压。当 $\Delta V$ 可正可负时，线路功率可在正常运行范围外双向调节，实现对多端直流网络潮流的主动控制。
 
+## 链接用法
 
-基于相关研究的技术应用：
+只有在原文或页面确实使用 `DC-PFC` 缩写且需要英文锚点时链接 [[dc-pfc]]。讨论单相或图腾柱功率因数校正时，优先链接 [[a-bidirectional-interleaved-totem-pole-pfc-based-integrated-on-board-charger-for]] 或 [[an-equivalent-dynamic-phasor-model-for-a-single-phase-boost-power-factor-correct]]。讨论 MMC-UPFC 或交流潮流控制时，使用 [[mmc-upfc电磁-机电混合仿真技术研究]] 或 [[upfc-model]]。
 
-1.1. 实现机制分为拓扑重构、电机电磁约束和PFC控制三层。驱动模式下，改进型Miller变换器对4相SRM相电流独立控制；充电模式下闭合开关S后，A、C两相绕组并联参与两相交错图腾柱PFC，交流侧接电网、直流侧接电池/直流母线。核心接口量包括电网电压相位与极性、两路电感电流、电池/母线电压、占空比d1/d...
-
-## 主要分支与机制
-
-- 待补充
-
-
-## 验证与测试
-
-基于相关研究的验证证据：
-
-- **数值结果**: 400 V, 2V, 4.61%
-
-- **数值结果**: 500 kV, 500 kV, 2 ms
-
-## 形式化表达
-
-
-### 核心数学表达
-
-从相关研究提取的关键公式：
-
-$$-\frac{dV(x,s)}{dx}=Z(s)I(x,s),\qquad -\frac{dI(x,s)}{dx}=Y(s)V(x,s)$$
-
-$$Z(s)=Z_C(s)+Z_E(s)+Z_G(s)$$
-
-$$Z_G(s)=sL_0$$
-
-$$Y(s)=sC_0$$
-
-$$-\frac{dV(x,s)}{dx}=\left(R'(s)+L_0s\right)I(x,s)$$
-
-
-
-## 适用边界与失败模式
-
-
-基于证据边界的分析：
-
-
-
-
-## 与相关页面的关系
-
-- [[emt-simulation]] - EMT仿真基础
-- [[power-system]]
-- [[electromagnetic-transient]]
 ## 代表性来源
 
-- [[a-bidirectional-interleaved-totem-pole-pfc-based-integrated-on-board-charger-for]]
----
+- [[analysis-and-prospect-of-development-of-chinas-independent-electromagnetic-trans-fix]]：在平台综述中把 DC-PFC 与 DCCB、DC-FCL 并列为模块化电力电子装备；该来源不提供 DC-PFC 单独性能验证。
+- [[a-bidirectional-interleaved-totem-pole-pfc-based-integrated-on-board-charger-for]]：代表 AC/DC 功率因数校正语境，应避免被误归入直流潮流控制设备。
+- [[an-equivalent-dynamic-phasor-model-for-a-single-phase-boost-power-factor-correct]]：代表 Boost PFC 动态相量建模语境，适合 PFC 控制和建模说明。
+- [[mmc-upfc电磁-机电混合仿真技术研究]]：代表交流潮流控制和 UPFC 混合仿真语境，不应与 DC-PFC 缩写混写。
 
-*本页面为自动生成的stub，需要进一步补充完善。*
+## 证据边界
 
-- [[a-bidirectional-interleaved-totem-pole-pfc-based-integrated-on-board-charger-for]]
-- [[mmc-upfc电磁-机电混合仿真技术研究]]
+当前 Wiki 证据不足以把 DC-PFC 写成一个已充分定义的独立方法页。使用本入口时必须说明缩写指向、设备对象和来源语境；不得把 AC/DC 功率因数校正、直流潮流控制和 UPFC 控制指标混用。

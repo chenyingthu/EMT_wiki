@@ -1,76 +1,64 @@
 ---
-title: "Srf Pll"
+title: "同步旋转坐标系锁相环方法 (SRF-PLL)"
 type: method
-tags: [srf-pll]
+tags: [srf-pll, pll, synchronization, grid-following, inverter-control]
 created: "2026-05-04"
+updated: "2026-05-07"
 ---
 
-# Srf Pll
+# 同步旋转坐标系锁相环方法 (SRF-PLL)
 
 ## 定义与边界
 
-本页面为自动创建的method类型页面，用于修复断链。内容待补充。
+SRF-PLL（Synchronous Reference Frame PLL）是并网变流器中经典的同步方法之一，通过将电网电压变换到同步旋转坐标系并消除 q 轴误差来估计相位和频率。
 
-**边界限定**：待完善。
+本页讨论的是 SRF-PLL 作为具体 PLL 分支的边界，不把一般 PLL 总入口、线路模型或无关惯量控制方法混写进来。
 
-## EMT中的作用
+## EMT 中的作用
 
-- 待补充
+在 EMT 仿真中，SRF-PLL 主要用于：
 
+- 为跟网型逆变器提供相位角和频率估计；
+- 研究弱网、故障和不平衡工况下的同步性能；
+- 作为 DSOGI-PLL、改进 PLL 和失稳分析的基准同步结构；
+- 连接同步方法页与并网控制页。
 
-基于相关研究的技术应用：
+## 常见特征
 
-## 主要分支与机制
+- 基于 dq 坐标系误差调节；
+- 带宽和阻尼参数直接影响同步动态；
+- 对谐波、不平衡和弱网阻抗较敏感；
+- 常被用作更复杂 PLL 结构的对照基线。
 
-- 待补充
+## 关键公式
 
-## 形式化表达
-
-
-### 核心数学表达
-
-从相关研究提取的关键公式：
-
-$$J_i\frac{d\Delta\omega_i}{dt}=\frac{P_{mi}}{\omega_0}-\frac{P_{0i}}{\omega_0}-D_i(\omega_i-\omega_0),\qquad P_{mi}=P_{refi}+k_{\omega i}(\omega_0-\omega)$$
-
-$$E_i=\frac{1}{K_{qi}s}\left[Q_{refi}-Q_{0i}+D_{qi}(U_{cni}-U_c)\right]$$
-
-$$P_{0i}=\frac{3U_{ci}U_g\sin\delta_i}{2\omega_0L_i}\approx\frac{3U_{ci}U_g}{2X_i}\delta_i\approx K_i\delta_i,\qquad \delta_i=\int(\omega_i-\omega_{bus})dt$$
-
-$$\frac{\Delta\omega_i(s)}{\Delta\omega_{bus}(s)}=\frac{K_i}{J_i\omega_0s^2+(D_i\omega_0+k_{\omega i})s+K_i}$$
+SRF-PLL 的核心误差可抽象写为：
 
 $$
+v_q \rightarrow 0
+$$
 
-*单台VSC-ESS相对于公共母线频率扰动的二阶频率响应传递函数。分母中二阶项由虚拟惯量决定，一阶项由虚拟阻尼和频率调制系数决定，常数项由同步功率系数决定。*
-
-
-**公式5**: $$
-
-
-
-## 适用边界与失败模式
-
-
-基于证据边界的分析：
-
-
-
-
+即通过控制估计角速度，使同步旋转坐标系下的 q 轴电压收敛到零，从而完成对电网相位的锁定。
 
 ## 与相关页面的关系
 
-- [[emt-simulation]] - EMT仿真基础
-- [[power-system]]
-- [[electromagnetic-transient]]
+- [[phase-locked-loop]]：PLL 总入口。
+- [[pll-design]]：PLL 参数整定背景。
+- [[advanced-dsogi-pll-with-adaptive-bandwidth-for-improved-transient-performance-of]]：改进 DSOGI-PLL 的对照背景。
+- [[rmsx002b-augmenting-the-traditional-circuit-model-to-capture-pll-instability]]：PLL 与网络交互失稳背景。
+- [[grid-connected-inverter]]：跟网并网控制背景。
+
 ## 代表性来源
 
-- [[rmsx002b-augmenting-the-traditional-circuit-model-to-capture-pll-instability]]
----
+- [[rmsx002b-augmenting-the-traditional-circuit-model-to-capture-pll-instability]]：SRF-PLL 与网络失稳相关背景。
+- [[advanced-dsogi-pll-with-adaptive-bandwidth-for-improved-transient-performance-of]]：SRF-PLL 与 DSOGI-PLL 对照背景。
+- [[analytical-calculation-method-of-outer-loop-controller-parameters-of-hvdc-conver]]：换流器控制参数设计中的同步环背景。
 
-*本页面为自动生成的stub，需要进一步补充完善。*
+## 证据边界
 
-- [[rmsx002b-augmenting-the-traditional-circuit-model-to-capture-pll-instability]]
-- [[advanced-dsogi-pll-with-adaptive-bandwidth-for-improved-transient-performance-of]]
-- [[analytical-calculation-method-of-outer-loop-controller-parameters-of-hvdc-conver]]
-- [[an-efficient-phase-domain-synchronous-machine-model-with-constant-equivalent-adm]]
-- [[small-signal-dynamic-phasor-model-of-three-phase-dab-converter-for-solid-state-t]]
+本页不写无来源带宽、阻尼、RMSE 或统一 SCR 适用结论。具体结论必须绑定网络强度、故障类型和控制实现。
+
+## 开放问题
+
+- 当前页尚未继续细分 SRF-PLL 在弱网、谐波和不平衡工况下的改造路线。
+- 与 DSOGI-PLL、观测器型同步器之间的适用边界，后续仍需在相邻页面中继续细化。

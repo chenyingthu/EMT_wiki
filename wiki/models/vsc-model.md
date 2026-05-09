@@ -11,7 +11,74 @@ created: "2026-04-13"
 
 电压源换流器（Voltage Source Converter, VSC）是柔性直流输电和新能源并网的核心设备。相比传统的线路换相换流器（LCC），VSC具有可控性强、谐波小、可向无源网络供电等优势。
 
+```mermaid
+graph TD
+    subgraph 两电平VSC
+        DC1["直流侧 Vdc"]
+        SW1a["S1 (IGBT1)"]
+        SW1b["S4 (IGBT4)"]
+        SW2a["S3 (IGBT3)"]
+        SW2b["S6 (IGBT6)"]
+        SW3a["S5 (IGBT5)"]
+        SW3b["S2 (IGBT2)"]
+        AC1a["A相"]
+        AC1b["B相"]
+        AC1c["C相"]
+
+        DC1 --- SW1a & SW2a & SW3a
+        SW1a --- AC1a --- SW1b
+        SW2a --- AC1b --- SW2b
+        SW3a --- AC1c --- SW3b
+        SW1b & SW2b & SW3b --- DC1_N["直流侧 Vn"]
+    end
+
+    subgraph 三电平VSC (NPC)
+        DC2["直流侧 Vdc"]
+        D1["中点箝位"]
+        D2["中点箝位"]
+        NP["中性点"]
+        SW1["S1"]
+        SW2["S2"]
+        SW3["S3"]
+        SW4["S4"]
+        AC2["A相输出"]
+        D5["箝位二极管×2"]
+
+        DC2 --- SW1
+        SW1 --- SW2
+        SW2 --- AC2
+        SW2 --- D1 --- NP
+        AC2 --- SW3
+        SW3 --- SW4
+        SW4 --- DC2_N["直流侧 Vn"]
+        SW3 --- D2 --- NP
+        D1 & D2 --- NP
+    end
+
+    style DC1 fill:#e3f2fd
+    style DC2 fill:#e3f2fd
+    style AC1a fill:#c8e6c9
+    style AC2 fill:#c8e6c9
+```
+
 ## 主要拓扑
+
+### 1. 两电平VSC
+- 最基本的VSC拓扑
+- 6个IGBT/IGCT开关
+- PWM调制
+- 适用于中小容量应用
+
+### 2. 三电平VSC（NPC）
+- 中点箝位拓扑
+- 减少开关应力
+- 改善谐波特性
+- 适用于风电并网
+
+### 3. 多电平VSC
+- 级联H桥
+- 飞跨电容
+- 接近正弦波输出
 
 ### 1. 两电平VSC
 - 最基本的VSC拓扑

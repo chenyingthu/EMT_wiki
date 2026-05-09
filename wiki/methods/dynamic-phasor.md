@@ -19,6 +19,35 @@ created: "2026-04-30"
 
 它适合回答“某些频带的包络如何变化”，不适合单独回答“开关沿、雷击陡波、保护动作瞬间的全频谱波形如何变化”。若研究目标是子模块器件应力、开关损耗或高频绝缘暂态，应优先使用详细开关模型、[[discretization-methods]] 和常规 [[nodal-analysis]]。
 
+```mermaid
+graph LR
+    subgraph 时域
+        xt["x(t)
+原始信号"]
+    end
+    subgraph 频谱
+        Xf["X(ω)
+频谱"]
+    end
+    subgraph 动态相量
+        Xk["⟨x⟩_k(t)
+第k阶复包络"]
+    end
+    subgraph 移频分析
+        Xs["x_e(t) = x_a·e^{-jω_c t}
+移频包络"]
+    end
+    xt -->|Fourier变换| Xf
+    xt -->|滑动窗+频移| Xk
+    xt -->|Hilbert+频移| Xs
+    Xf -->|带通滤波+下变频| Xk
+    Xf -->|单边带搬移| Xs
+
+    style xt fill:#e1f5fe
+    style Xf fill:#fff3e0
+    style Xk fill:#c8e6c9
+    style Xs fill:#f3e5f5
+
 ## 核心机制
 
 动态相量的核心是频谱搬移和截断。若信号可表示为 $x(t)\approx \sum_{k=-K}^{K}X_k(t)e^{jk\omega_s t}$，则 $X_k(t)$ 是慢变包络；微分和乘积在相量域中分别变为
@@ -55,6 +84,40 @@ created: "2026-04-30"
 | $K=1$（基波+一阶谐波） | VSC/HVDC基本动态 | 低 | 含主要谐波 |
 | $K=2\sim3$ | MMC环流、谐波耦合 | 中等 | 较好 |
 | $K\geq5$ | 宽频振荡、详细分析 | 较高 | 接近全EMT |
+
+```mermaid
+flowchart LR
+    subgraph 原始信号
+        xt["x(t)
+时域信号"]
+    end
+    subgraph 频谱搬移
+        direction LR
+        Xf["X(ω)
+双边频谱"]
+        Bp["带通滤波
+保留kω₀附近"]
+        Shift["频率搬移
+乘以 e^{-jkω₀t}"]
+        Lp["低通滤波
+截取基带"]
+    end
+    subgraph 结果
+        Xk["⟨x⟩_k(t)
+k阶动态相量
+慢变复包络"]
+    end
+
+    xt -->|傅里叶变换| Xf
+    Xf --> Bp --> Shift --> Lp --> Xk
+
+    style xt fill:#e1f5fe
+    style Xf fill:#fff3e0
+    style Bp fill:#f5f5f5
+    style Shift fill:#f5f5f5
+    style Lp fill:#f5f5f5
+    style Xk fill:#c8e6c9
+```
 
 ### 与其他方法的对比
 
@@ -118,7 +181,7 @@ $$x_{dp}(t) = x_a(t)e^{-j\omega_c t}$$
 ## 与相关页面的关系
 
 - [[average-value-model]]：平均值模型通常只保留低频平均量；动态相量可保留多个频率包络，边界更接近频谱截断。
-- [[switching-function]]：开关函数可作为动态相量方程中的调制输入；若开关函数高频分量被截断，开关纹波不会被完整表达。
+- [[switching-function-method]]：开关函数可作为动态相量方程中的调制输入；若开关函数高频分量被截断，开关纹波不会被完整表达。
 - [[harmonic-analysis]]：谐波分析偏向频谱诊断；动态相量把选定谐波作为状态随时间推进。
 - [[state-space-method]]：动态相量模型常最终写成复数或实数扩展的状态空间方程。
 - [[real-time-simulation]]：动态相量可降低实时计算压力，但是否满足实时 deadline 取决于硬件、步长、阶数和接口实现。

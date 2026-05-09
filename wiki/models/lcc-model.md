@@ -11,6 +11,57 @@ created: "2026-04-14"
 
 线路换相换流器（Line-Commutated Converter, LCC）是传统高压直流输电（HVDC）的核心设备。与电压源换流器（VSC）不同，LCC使用晶闸管作为开关器件，依赖交流电网电压实现换相。
 
+```mermaid
+graph TD
+    subgraph 六脉动LCC换流器
+        ACa["A相"]
+        ACb["B相"]
+        ACc["C相"]
+        T1["VT1"]
+        T3["VT3"]
+        T5["VT5"]
+        T4["VT4"]
+        T6["VT6"]
+        T2["VT2"]
+        DC_P["直流+极"]
+        DC_N["直流-极"]
+
+        ACa --> T1 & T4
+        ACb --> T3 & T6
+        ACc --> T5 & T2
+        T1 & T3 & T5 --> DC_P
+        T4 & T6 & T2 --> DC_N
+    end
+
+    subgraph 十二脉动LCC (串联)
+        Y1["Y-Y换流变
+6脉动桥1"]
+        Y2["Y-Δ换流变
+6脉动桥2
+30°相移"]
+        DC_H["直流+极"]
+        DC_L["直流-极"]
+
+        DC_H --> Y1
+        Y1 --> Y2
+        Y2 --> DC_L
+    end
+
+    style ACa fill:#e1f5fe
+    style ACb fill:#e1f5fe
+    style ACc fill:#e1f5fe
+    style T1 fill:#ffccbc
+    style T3 fill:#ffccbc
+    style T5 fill:#ffccbc
+    style T4 fill:#ffccbc
+    style T6 fill:#ffccbc
+    style T2 fill:#ffccbc
+    style DC_P fill:#c8e6c9
+    style DC_N fill:#c8e6c9
+    style Y1 fill:#e8f5e9
+    style Y2 fill:#e8f5e9
+```
+
 ## 主要特点
 
 - 晶闸管开关器件，不可控关断
@@ -37,6 +88,31 @@ created: "2026-04-14"
 - 适用于混合仿真
 
 ## 主要故障模式
+
+```mermaid
+sequenceDiagram
+    participant A as A相电压
+    participant B as B相电压
+    participant C as C相电压
+    participant VT1 as VT1
+    participant VT3 as VT3
+
+    Note over A,C: 正常换相过程
+    A->>VT1: VT1导通 (A相)
+    Note over VT1: 晶闸管触发
+    B->>VT3: VT3导通 (B相)
+    Note over VT1,VT3: 换相开始: VT1→VT3<br/>换相电流从A相转移到B相
+    Note over VT1: VT1电流下降
+    Note over VT3: VT3电流上升
+    Note over VT1,VT3: 换相角 μ
+    VT1-->>A: VT1关断<br/>需施加反压时间 > t_q
+    Note over A: 熄弧角 γ<br/>γ < γ_min → 换相失败
+
+    Note over A: 换相失败<br/>• 交流电压跌落<br/>• 关断角不足<br/>• 直流电压崩溃
+
+    style VT1 fill:#ffccbc
+    style VT3 fill:#c8e6c9
+```
 
 ### 换相失败
 - 交流电压跌落导致换相不成功
@@ -319,7 +395,7 @@ $\tau$ 为传播时延，允许交流侧采用大步长 $\Delta T = n\cdot\Delta
 ## 4. 前沿研究方向
 
 ### 4.1 异构多速率实时仿真架构
-基于CPU-FPGA协同的仿真框架成为主流，FPGA侧实现2 μs步长捕捉晶闸管级换相细节，CPU侧处理50–100 μs步长的交流网络。关键突破在于**离散电感解耦方法**，通过最小损耗误差准则推导最优导纳参数，消除传统试错调参，使0–5 kHz频带内阻抗误差<3.3%。
+基于CPU-FPGA协同的仿真框架成为主流，FPGA侧实现2 μs步长捕捉晶闸管级换相细节，CPU侧处理50–100 μs步长的交流网络。关键贡献在于**离散电感解耦方法**，通过最小损耗误差准则推导最优导纳参数，消除传统试错调参，使0–5 kHz频带内阻抗误差<3.3%。
 
 ### 4.2 换相失败免疫建模与预测
 最新研究聚焦于**混合串联换流阀（HSCV）**建模，将晶闸管与IGBT串联，利用IGBT主动关断能力（关断时间~226.9 ns）为晶闸管争取额外门极恢复时间（~263 μs）。建模需考虑两者关断时间3个数量级的差异，以及动态均压支路设计。

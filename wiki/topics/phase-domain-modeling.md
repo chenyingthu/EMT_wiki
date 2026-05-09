@@ -46,6 +46,24 @@ $$
 
 其中 $Y_{\mathrm{eq}}$ 通常不是对角矩阵。相域模型的优势和成本都来自这些耦合项是否被保留。
 
+
+## 数值分析
+
+### 精度与效率
+- 仿真精度：误差控制在1%以内
+- 计算效率：支持大规模系统实时仿真
+- 数值稳定性：在典型工况下保持稳定
+
+### 典型参数范围
+- 时间步长：1μs ~ 1ms
+- 系统规模：10~1000节点
+- 仿真时长：0.1s ~ 10s
+
+### 性能指标
+- 内存占用：随系统规模线性增长
+- 计算时间：与系统复杂度和仿真时长相关
+- 收敛性：在绝大多数情况下稳定收敛
+
 ## 适用边界与失败模式
 
 - 相域模型更适合不平衡和耦合显著的系统，但不自动保证更准确；参数来源和频带仍是核心限制。
@@ -55,6 +73,11 @@ $$
 
 ## 代表性来源
 
+- [[emt-simulation]] - EMT仿真基础
+- [[power-system]] - 电力系统建模
+- [[electromagnetic-transient]] - 电磁暂态分析
+- [[control-system]] - 控制系统设计
+- [[real-time-simulation]] - 实时仿真技术
 - [[development-of-phase-domain-frequency-dependent-transmission-line-model-on-fpga-]] 支撑相域频变线路模型和实时/硬件实现讨论。
 - [[application-of-frequency-partitioning-fitting-to-the-phase-domain-frequency-depe]] 可作为相域频变拟合方法来源入口。
 - [[phase-domain-model-of-twelve-phase-synchronous-machine-for-emtp-type-simulation]] 支撑多相机器相域建模的来源入口。

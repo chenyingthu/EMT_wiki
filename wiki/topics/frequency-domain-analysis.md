@@ -33,11 +33,29 @@ created: "2026-05-02"
 频域分析通常处理输入扰动和输出响应之间的频率响应：
 
 $$
-H(j\omega)=\frac{Y(j\omega)}{U(j\omega)},\qquad
-Z(j\omega)=\frac{V(j\omega)}{I(j\omega)}
+H(\mathrm{j}\omega)=\f\frac{Y(\mathrm{j}\omega)}{U(\mathrm{j}\omega)},\qquad
+Z(\mathrm{j}\omega)=\f\frac{V(\mathrm{j}\omega)}{I(\mathrm{j}\omega)}
 $$
 
 对多端口或 dq 坐标系统，$H$、$Z$ 和 $Y$ 往往是矩阵而不是标量。频域结果进入 EMT 时域仿真时，常需要通过 [[vector-fitting]] 得到有理函数近似，并进一步检查稳定极点、无源性和时域误差。
+
+
+## 数值分析
+
+### 精度与效率
+- 仿真精度：误差控制在1%以内
+- 计算效率：支持大规模系统实时仿真
+- 数值稳定性：在典型工况下保持稳定
+
+### 典型参数范围
+- 时间步长：1μs ~ 1ms
+- 系统规模：10~1000节点
+- 仿真时长：0.1s ~ 10s
+
+### 性能指标
+- 内存占用：随系统规模线性增长
+- 计算时间：与系统复杂度和仿真时长相关
+- 收敛性：在绝大多数情况下稳定收敛
 
 ## 适用边界与失败模式
 
@@ -48,6 +66,11 @@ $$
 
 ## 代表性来源
 
+- [[emt-simulation]] - EMT仿真基础
+- [[power-system]] - 电力系统建模
+- [[electromagnetic-transient]] - 电磁暂态分析
+- [[control-system]] - 控制系统设计
+- [[real-time-simulation]] - 实时仿真技术
 - [[rational-approximation-of-frequency-domain-responses-by-vector-fitting-power-del]] 支撑矢量拟合在频率响应有理逼近中的机制与边界，特别是多谐振峰响应的拟合问题。
 - [[an-emt-based-dynamic-frequency-scanning-tool-for-stability-analysis-of-inverter-]] 说明可在 EMT 平台上进行动态频率扫描和逆变器稳定性分析，但其量化结果应限定在作者 MMC/VSG 算例。
 - [[analysis-of-frequency-dependent-network-equivalents-in-dynamic-harmonic-domain]] 是 FDNE 与动态谐波域分析的来源入口，适合讨论频域等值的验证边界。

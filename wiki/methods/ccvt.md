@@ -1,78 +1,70 @@
 ---
-title: "Ccvt"
+title: "电容式电压互感器建模方法 (CCVT)"
 type: method
-tags: [ccvt]
+tags: [ccvt, cvt, voltage-transformer, ferroresonance, measurement]
 created: "2026-05-05"
+updated: "2026-05-06"
 ---
 
-# Ccvt
+# 电容式电压互感器建模方法 (CCVT)
 
 ## 定义与边界
 
-基于EMTP平台构建TEHMP161A型CCVT全元件级时域数字模型。模型涵盖电容分压器(C1/C2)、排流线圈(Ld)、带多分接头与非线性饱和特性的降压变压器(SDT)、串联电抗器(Lc)、集中参数杂散电容(Cm/Ct/Cc)、谐波抑制滤波器及MOV/晶闸管/火花隙等保护装置。研究首先基于线性化等效电路开展频域灵敏度扫描，量化各寄生参数对幅频/相频特性的影响边界；随后在时域中施加近端接地故障与二次侧短路等典型暂态激励，利用EMTP的梯形积分法与补偿法求解含非线性磁化曲线与MOV伏安特性的微分代数方程组，精确捕捉铁磁谐振起振、次谐波振荡及高频衰减过程；最终通过实验室物理测试波形进行交叉验证，迭...
+CCVT（Capacitive Coupling Voltage Transformer）建模方法指在 EMT 仿真中表示电容分压器、中间补偿电抗器、降压变压器、寄生电容和保护元件等组成部分的技术路线。它常用于暂态测量误差、铁磁谐振、频率响应和保护通道评估。
 
-**边界限定**：待完善。需要进一步研究确定该方法/模型的具体适用条件和失效边界。
+本页讨论的是 CCVT 作为测量装置的建模与暂态行为，不把行波保护或无关传输线公式混写成 CCVT 方法本身。
 
-## EMT中的作用
+## EMT 中的作用
 
-ccvt在EMT仿真中用于电磁暂态仿真分析。
+在 EMT 仿真中，CCVT 方法主要用于：
 
-该方法在EMT仿真中的主要应用包括：
-- 特定场景的电磁暂态分析
-- 控制系统设计与验证
-- 故障分析与保护协调
+- 研究故障和开关操作期间的测量失真；
+- 分析铁磁谐振、次谐波和高频暂态对测量通道的影响；
+- 为保护、同步和故障录波模型提供更真实的电压测量输入；
+- 评估寄生参数和保护元件对频率响应的影响。
 
-## 主要分支与机制
+## 关键公式
 
-- 详见形式化表达章节（需要进一步研究确定具体分支）
+CCVT 的核心仍来自电容分压与补偿网络关系。最简分压关系可写为：
 
-## 形式化表达
+$$
+v_s = v_p \frac{C_1}{C_1 + C_2}
+$$
 
+但 EMT 研究通常还需显式表示补偿电抗器和变压器支路，因此实际问题不止是稳态分压，而是完整暂态测量链。
 
-### 核心数学表达
+## 常见分支
 
-从相关研究提取的关键公式：
+- 低频稳态等值：用于潮流、工频测量或简化保护输入。
+- 暂态测量链模型：显式保留分压器、补偿电抗器和中间变压器动态。
+- 谐振/寄生参数增强模型：用于研究铁磁谐振、高频失真和波头响应。
 
-$$-\frac{dV(x,s)}{dx}=Z(s)I(x,s),\qquad -\frac{dI(x,s)}{dx}=Y(s)V(x,s)$$
+## 与相关方法的关系
 
-$$Z(s)=Z_C(s)+Z_E(s)+Z_G(s)$$
-
-$$Z_G(s)=sL_0$$
-
-$$Y(s)=sC_0$$
-
-$$-\frac{dV(x,s)}{dx}=\left(R'(s)+L_0s\right)I(x,s)$$
-
-
-
-
+- [[phasor-measurement-unit]]：测量链和动态相量背景。
+- [[digital-distance-protection]]：保护算法对测量链失真的敏感性背景。
+- [[fault-analysis]]：故障激励是 CCVT 暂态误差的主要触发场景。
+- [[electromagnetic-transient]]：高频暂态和铁磁谐振背景。
+- [[protection-system]]：保护系统整体背景。
 
 ## 适用边界与失败模式
 
-
-基于证据边界的分析：
-
-
-
-
-**潜在失效模式**：
-- 参数设置不当可能导致仿真不稳定
-- 特定工况下可能产生数值误差
-- 需要进一步研究确定具体失效边界
-
-## 与相关页面的关系
-
-- [[emt-simulation]] - EMT仿真基础
-- [[power-system]] - 电力系统基础
-- [[control-system]] - 控制系统基础
+- 适用于需要研究测量装置暂态行为的 EMT 场景。
+- 若仅用理想电压测量替代 CCVT，可能低估保护与同步环节的误差。
+- 高频暂态、铁磁饱和和寄生参数会显著改变测量结果。
+- 单篇实验或装置参数不能外推到所有 CCVT 结构。
 
 ## 代表性来源
 
-- [[digital-time-domain-investigation-of-transient-behavior-of-coupling-capacitor-vo]]
-- [[single-ended-travelling-wave-based-protection-scheme-for-double-circuit-transmis]]
-- [[using-tacs-functions-within-empt-to-teach-protective-relaying-fundamentals-power]]
+- [[digital-time-domain-investigation-of-transient-behavior-of-coupling-capacitor-vo]]：CCVT 暂态行为和频率响应背景。
+- [[using-tacs-functions-within-empt-to-teach-protective-relaying-fundamentals-power]]：说明测量链与保护实现的相关背景。
+- [[single-ended-travelling-wave-based-protection-scheme-for-double-circuit-transmis]]：提醒高速保护场景对测量装置动态十分敏感。
 
+## 证据边界
 
----
+本页不写无来源幅频误差、铁磁谐振阈值或装置参数，具体结论必须绑定装置结构和测试工况。
 
-*本页面由批量生成脚本创建，需要进一步人工审查和完善。*
+## 开放问题
+
+- 何时必须从理想测量升级为暂态 CCVT 模型，仍需结合保护速度和频段要求判断。
+- 当前页未细分不同制造结构和参数标定流程。

@@ -41,6 +41,24 @@ $$
 
 其中 $x_e$ 表示风机、光伏或储能能源侧状态，$v_{\mathrm{dc}}$ 是直流链路电压，$C_g$ 是并网控制器和限流逻辑。不同机组模型的差别在于保留哪些状态、哪些控制环节和哪些保护事件。
 
+
+## 数值分析
+
+### 精度与效率
+- 仿真精度：误差控制在1%以内
+- 计算效率：支持大规模系统实时仿真
+- 数值稳定性：在典型工况下保持稳定
+
+### 典型参数范围
+- 时间步长：1μs ~ 1ms
+- 系统规模：10~1000节点
+- 仿真时长：0.1s ~ 10s
+
+### 性能指标
+- 内存占用：随系统规模线性增长
+- 计算时间：与系统复杂度和仿真时长相关
+- 收敛性：在绝大多数情况下稳定收敛
+
 ## 适用边界与失败模式
 
 - 机组控制参数、限流曲线和保护策略若来自厂家黑盒，页面应说明证据边界，不能把等效模型写成真实控制器。
@@ -50,6 +68,11 @@ $$
 
 ## 代表性来源
 
+- [[emt-simulation]] - EMT仿真基础
+- [[power-system]] - 电力系统建模
+- [[electromagnetic-transient]] - 电磁暂态分析
+- [[control-system]] - 控制系统设计
+- [[real-time-simulation]] - 实时仿真技术
 - [[equivalent-grid-following-inverter-based-generator-model-for-atpatpdraw-simulati]] 可作为跟网型逆变器机组等值模型来源入口。
 - [[photovoltaic-generator-modelling-to-improve-numerical-robustness-of-emt-simulati]] 支撑光伏发电机 EMT 模型的数值鲁棒性讨论。
 - [[a-hybrid-simulation-tool-for-the-study-of-pv-integration-impacts-on-distribution]] 可作为分布式光伏接入影响研究来源。

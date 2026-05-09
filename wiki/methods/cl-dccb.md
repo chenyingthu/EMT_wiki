@@ -1,78 +1,77 @@
 ---
-title: "Cl Dccb"
+title: "电流限制型直流断路器方法 (CL-DCCB)"
 type: method
-tags: [cl-dccb]
+tags: [cl-dccb, current-limiting-dccb, hvdc-protection, dc-fault]
 created: "2026-05-05"
+updated: "2026-05-06"
 ---
 
-# Cl Dccb
+# 电流限制型直流断路器方法 (CL-DCCB)
 
 ## 定义与边界
 
-本文提出了一种基于诺顿等效和分段线性化的混合式高压直流断路器(HHB)实时仿真建模方法。针对实时计算约束，将详细的非线性半导体模型（IGBT/二极管）简化为双值电阻模型，将金属氧化物避雷器(MOV)简化为多段分段线性电阻。通过预计算各主支路单元的等效电阻和诺顿等效电流源，将原本复杂的非线性电路求解转化为线性代数方程求解，满足实时仿真的计算时序要求。同时构建了包含物理MMC控制器和12个DCCB控制器的三端直流电网硬件在环(HIL)测试平台，实现了控制器硬件与实时仿真器的闭环交互。...
+CL-DCCB 指电流限制型直流断路器，其核心特征是在故障切除前先通过特定支路或控制策略抑制故障电流上升，再完成开断与隔离。它是 DCCB 的一个特定方法分支，而不是所有直流断路器方案的统称。
 
-**边界限定**：待完善。需要进一步研究确定该方法/模型的具体适用条件和失效边界。
+## EMT 中的作用
 
-## EMT中的作用
+在 EMT 仿真中，CL-DCCB 方法主要用于：
 
-基于相关研究，cl-dccb在EMT仿真中用于解决特定问题。
+- 研究故障初始阶段的电流限制效果；
+- 比较限流支路、主开断支路和吸能支路之间的时序；
+- 评估 CL-DCCB 与直流保护判据之间的协同；
+- 分析其在 MTDC 网络中的选择性隔离价值。
 
-基于相关研究，该方法在EMT仿真中的主要应用包括：
-- 特定场景的电磁暂态分析
-- 控制系统设计与验证
-- 故障分析与保护协调
+## 关键机制
 
-## 主要分支与机制
+CL-DCCB 的建模通常包含：
 
-- 待补充（需要进一步研究确定具体分支）
+- 故障电流检测；
+- 限流支路投入或限流元件响应；
+- 主开断支路电流转移；
+- 吸能与绝缘恢复。
 
-## 形式化表达
+## 常见分支
 
+- 电感/阻抗限流型：先抬高故障通道等效阻抗，再转入开断。
+- 主支路-旁路协同型：通过主支路与辅助支路的换流时序限制电流峰值。
+- 控制器主导型：把限流逻辑与保护判据、站级控制器联动设计。
 
-### 核心数学表达
+## 关键公式
 
-从相关研究提取的关键公式：
+若用简单等效描述限流效果，则可把故障电流动态写成：
 
-$$-\frac{dV(x,s)}{dx}=Z(s)I(x,s),\qquad -\frac{dI(x,s)}{dx}=Y(s)V(x,s)$$
+$$
+L_{eq}\frac{di_f}{dt} = V_{dc} - v_{cl}(i_f) - v_{fault}
+$$
 
-$$Z(s)=Z_C(s)+Z_E(s)+Z_G(s)$$
+其中 $v_{cl}(i_f)$ 表示限流支路或限流元件在故障电流下建立的等效电压。这个表达强调 CL-DCCB 与普通 DCCB 的差异在于“先限流再开断”的动态过程。
 
-$$Z_G(s)=sL_0$$
+## 与相关方法的关系
 
-$$Y(s)=sC_0$$
-
-$$-\frac{dV(x,s)}{dx}=\left(R'(s)+L_0s\right)I(x,s)$$
-
-
-
-
+- [[dccb]]：CL-DCCB 是 DCCB 的特定实现路线。
+- [[dc-protection]]：保护启动逻辑决定何时投入限流和开断动作。
+- [[multi-terminal-dc]]：多端网络中限流能力会影响选择性隔离效果。
+- [[offshore-hvdc-hub]]：复杂直流枢纽是 CL-DCCB 的重要应用背景。
+- [[cigre-b4-dc-grid]]：提供直流电网测试场景入口。
 
 ## 适用边界与失败模式
 
-
-基于证据边界的分析：
-
-
-
-
-**潜在失效模式**：
-- 参数设置不当可能导致仿真不稳定
-- 特定工况下可能产生数值误差
-- 需要进一步研究确定具体失效边界
-
-## 与相关页面的关系
-
-- [[emt-simulation]] - EMT仿真基础
-- [[power-system]] - 电力系统基础
-- [[control-system]] - 控制系统基础
+- 适用于故障电流上升极快、需要在开断前控制电流水平的场景。
+- 限流支路设计不足会导致后续主开断支路承受过大应力。
+- 额外限流元件会带来更复杂的时序和能量分配问题。
+- 不能把某个实时仿真平台上的 CL-DCCB 控制器实现当成通用方法结论。
 
 ## 代表性来源
 
-- [[real-time-simulation-with-an-industrial-dccb-controller-in-a-hvdc-grid]]
-- [[low-complexity-graph-based-traveling-wave-models-for-hvdc-grids-with-hybrid-tran]]
-- [[analysis-and-prospect-of-development-of-chinas-independent-electromagnetic-trans-fix]]
+- [[real-time-simulation-with-an-industrial-dccb-controller-in-a-hvdc-grid]]：说明 CL-DCCB 控制器与实时闭环验证背景。
+- [[low-complexity-graph-based-traveling-wave-models-for-hvdc-grids-with-hybrid-tran]]：说明直流故障区段识别与断路器配合背景。
+- [[analysis-and-prospect-of-development-of-chinas-independent-electromagnetic-trans-fix]]：可作为直流断路与 EMT 装备路线的相关背景。
 
+## 证据边界
 
----
+本页不写无来源限流倍数、开断时间或器件应力极限。具体能力必须绑定拓扑和测试工况。
 
-*本页面由批量生成脚本创建，需要进一步人工审查和完善。*
+## 开放问题
+
+- 不同 CL-DCCB 分支在器件应力、损耗和选择性上的取舍仍需落到具体拓扑比较。
+- 当前页未展开限流支路与保护采样窗口之间的时序耦合。

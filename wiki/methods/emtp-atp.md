@@ -5,78 +5,41 @@ tags: [emtp-atp]
 created: "2026-05-04"
 ---
 
-# Emtp Atp
+# EMTP-ATP
 
 ## 定义与边界
 
-本页面为自动创建的method类型页面，用于修复断链。内容待补充。
+EMTP-ATP 是 ATP 版 EMTP 的工具名/生态名入口，不是独立数值方法页。当前 Wiki 已有工具实体 [[atp-emtp]] 和 [[emtp]]；本页仅作为旧的 method 路径下的受控入口，防止 `emtp-atp` 链接扩展成与工具实体并行的完整文章。
 
-**边界限定**：待完善。
+## 概念边界
 
-## EMT中的作用
+- 讨论 ATP 作为仿真平台、ATPDraw、TACS/MODELS、输入文件或复现实验时，应优先链接 [[atp-emtp]]。
+- 讨论 EMTP / EMTP-RV 工具生态、Dommel 型程序或商业工具边界时，应链接 [[emtp]]。
+- 讨论伴随电路、梯形积分、节点分析或输电线路模型时，应链接对应方法页，而不是把工具名当作方法贡献。
+- 本页不保留旧页面中错误混入的线路模型公式、通用工程价值、泛化未来方向或无来源性能数字。
 
-- 待补充
+## 核心机制
 
+EMTP-ATP 的核心求解方法是 Dommel 提出的伴随电路法（companion circuit），它将微分方程通过梯形数值积分离散化为等效电阻网络。以电感 $L$ 为例：
 
-基于相关研究的技术应用：
+$$
+i_L(t) = rac{\Delta t}{2L} v_L(t) + i_{	ext{hist}}(t - \Delta t), \quad i_{	ext{hist}}(t - \Delta t) = i_L(t - \Delta t) + rac{\Delta t}{2L} v_L(t - \Delta t)
+$$
 
-2.1. 本文介绍的实现架构以数据流为主线。输入端是用户在EMTPWorks中用图形模块搭建的电力网络和控制/元件模型，接口文件是计算引擎可识别的*....
+其中 $\Delta t$ 为仿真步长。所有储能元件的伴随电路合并到节点导纳矩阵 $\mathbf{G}$ 中，每一时步求解线性方程组 $\mathbf{G} \mathbf{v}(t) = \mathbf{i}(t)$，同时处理开关、非线性和控制系统的接口。
 
-2.2. NET网络表。核心引擎读取网络表后执行拓扑分析、元器件模型解析、系统计算矩阵构成，并按用户指定条件进行频域、时域、稳态或统计分析；其输出包括二进制*....
+## 链接用法
 
-## 主要分支与机制
+旧页面若已有 `[[emtp-atp]]` 链接，可保留作为兼容锚点。新写页面中，工具平台应直接链接 [[atp-emtp]] 或 [[emtp]]；跨工具对比可链接 [[comparison-of-the-atp-version-of-the-emtp-and-the-netomac-program-for-simulation]]；EMTP 型算法说明应使用 [[companion-circuit]]、[[trapezoidal-rule]]、[[nodal-analysis]] 或 [[transmission-line-model]]。
 
-- 待补充
-
-
-## 验证与测试
-
-基于相关研究的验证证据：
-
-
-- **数值结果**: 35 kV
-
-## 形式化表达
-
-
-### 核心数学表达
-
-从相关研究提取的关键公式：
-
-$$-\frac{dV(x,s)}{dx}=Z(s)I(x,s),\qquad -\frac{dI(x,s)}{dx}=Y(s)V(x,s)$$
-
-$$Z(s)=Z_C(s)+Z_E(s)+Z_G(s)$$
-
-$$Z_G(s)=sL_0$$
-
-$$Y(s)=sC_0$$
-
-$$-\frac{dV(x,s)}{dx}=\left(R'(s)+L_0s\right)I(x,s)$$
-
-
-
-## 适用边界与失败模式
-
-
-基于证据边界的分析：
-
-
-
-
-## 与相关页面的关系
-
-- [[emt-simulation]] - EMT仿真基础
-- [[power-system]]
-- [[electromagnetic-transient]]
 ## 代表性来源
 
-- [[emtp-modeling-of-electromagnetic-transients-power-delivery-ieee-transactions-on]]
----
+- [[atp-emtp]]：ATP-EMTP 工具实体页，是本入口的 canonical target。
+- [[emtp]]：EMTP / EMTP-RV 工具实体页，用于更广义的 EMTP 生态说明。
+- [[comparison-of-the-atp-version-of-the-emtp-and-the-netomac-program-for-simulation]]：支撑 ATP 版 EMTP 与 NETOMAC 的 HVDC 仿真程序对比；其年份和具体数值应回源核对。
+- [[emtp-modeling-of-electromagnetic-transients-power-delivery-ieee-transactions-on]]：可作为 EMTP 型电磁暂态建模传统的来源入口。
+- [[application-of-emtp-rv-graphic-software-of-electromagnetic-transient-simulation]]：可作为 EMTP-RV 图形软件使用语境的来源入口。
 
-*本页面为自动生成的stub，需要进一步补充完善。*
+## 证据边界
 
-- [[emtp-modeling-of-electromagnetic-transients-power-delivery-ieee-transactions-on]]
-- [[application-of-emtp-rv-graphic-software-of-electromagnetic-transient-simulation]]
-- [[comparison-of-the-atp-version-of-the-emtp-and-the-netomac-program-for-simulation]]
-- [[creating-an-electromagnetic-transients-program-in-matlab-matemtp-power-delivery-]]
-- [[accurate-simulation-model-for-a-three-phase-ferroresonant-circuit-in-emtpatp]]
+本页不判断 ATP、EMTP-RV、NETOMAC 或其他工具的普遍优劣。工具相关结论必须说明软件版本、模型输入、步长、开关处理、控制接口和对比基线；只写“使用 ATP/EMTP 仿真”不能证明模型本身正确或可复现。

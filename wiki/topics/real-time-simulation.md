@@ -13,6 +13,40 @@ created: "2026-04-13"
 ## 合成定位
 在 P0 taxonomy 中，实时仿真是模型精度、计算架构和工程验证的交汇点。它依赖 [[parallel-computing]]、[[multirate-method]]、[[fixed-admittance]]、[[state-space-method]]、[[frequency-dependent-modeling]]，并经常与 [[co-simulation]] 和 HIL 测试共同出现。
 
+```mermaid
+graph TD
+    subgraph 实时仿真器
+        CPU[CPU 核
+网络求解+设备模型]
+        FPGA[FPGA
+流水线并行计算]
+        IO[I/O 接口
+模拟/数字信号]
+    end
+    subgraph 外部装置
+        CTRL[控制器
+保护装置]
+        HIL_P[功率级 HIL
+放大器+被测设备]
+    end
+    subgraph 监控
+        Host[上位机
+模型编译+监控]
+    end
+    Host -->|部署模型| CPU
+    Host -->|配置| FPGA
+    CPU <-->|共享内存/PCIe| FPGA
+    CPU -->|T_solve + T_io ≤ Δt| IO
+    FPGA -->|μs 级步长| IO
+    IO <-->|模拟信号| CTRL
+    IO <-->|功率信号| HIL_P
+    
+    style CPU fill:#e3f2fd
+    style FPGA fill:#e3f2fd
+    style IO fill:#fff3e0
+    style CTRL fill:#c8e6c9
+    style HIL_P fill:#f3e5f5
+
 ## 分类或机制
 - 数字实时 EMT：在 CPU、RTDS、FPGA 或 MPSoC 上实现固定步长的节点分析、状态空间或固定导纳求解。
 - FPGA/异构实时：用流水线、并行矩阵运算、自定义浮点或 CPU-FPGA 分工满足小步长约束。

@@ -1,72 +1,64 @@
 ---
-title: "Inertia Control"
+title: "惯量控制 (Inertia Control)"
 type: method
-tags: [inertia-control]
+tags: [inertia-control, virtual-inertia, vsg, frequency-support, grid-forming]
 created: "2026-05-05"
+updated: "2026-05-06"
 ---
 
-# Inertia Control
+# 惯量控制 (Inertia Control)
 
 ## 定义与边界
 
-本文针对并联VSC-ESS（电压源变换器储能系统）在频率调节过程中的有功功率振荡和超调问题，提出了一种基于暂态电磁功率补偿的自适应惯量控制策略。首先建立并联VSC-ESS的完整数学模型，包括基于虚拟同步机（VSG）理论的有功-频率控制和无功-电压控制。通过推导小信号状态空间方程和传递函数，分析虚拟惯量、虚拟阻尼、补偿系数和时间常数等关键参数对系统稳定性和频率响应特性的影响。基于幅频特性曲线和极点轨迹分析不同VSC-ESS单元间参数的交互作用及其对系统频率响应的影响。进而设计暂态电磁功率补偿控制策略以抑制频率响应过程中的超调和振荡，并提出自适应惯量控制方法，通过设计自适应系数在频率响应过程中动态...
+惯量控制是通过控制器人为引入等效转动惯量、阻尼或暂态功率补偿，使电力电子接口在频率扰动下表现出类似同步机惯性响应的控制方法。它常出现在虚拟同步机、构网型逆变器和储能变流器中。
 
-**边界限定**：待完善。需要进一步研究确定该方法/模型的具体适用条件和失效边界。
+本页讨论的是频率支撑意义上的“虚拟惯量注入”，不把一般下垂控制、频率扫描工具或任意小信号模型都归为惯量控制。
 
-## EMT中的作用
+## EMT 中的作用
 
-#.
+在 EMT 仿真中，惯量控制主要用于：
 
-基于相关研究，该方法在EMT仿真中的主要应用包括：
-- 特定场景的电磁暂态分析
-- 控制系统设计与验证
-- 故障分析与保护协调
+- 研究逆变器主导系统中的频率最低点、RoCoF 和功率振荡；
+- 分析虚拟惯量与阻尼参数对频率响应和稳定性的影响；
+- 评估储能功率约束、测量延迟和限流逻辑对惯量支撑效果的影响；
+- 与 [[droop-control]]、[[adaptive-droop]] 和 [[hierarchical-control]] 配合分析多层频率支撑。
 
-## 主要分支与机制
+## 关键公式
 
-- 待补充（需要进一步研究确定具体分支）
+等效摆动关系常写为：
 
-## 形式化表达
+$$
+J \frac{d\Delta \omega}{dt} = P_m - P_e - D \Delta \omega
+$$
 
-- 待补充
+其中 $J$ 为等效惯量，$D$ 为等效阻尼，$P_m$ 为控制器注入的机械功率等效量，$P_e$ 为电气输出功率。若引入补偿项，也可写成：
 
+$$
+P_m = P^\star + K_\omega (\omega_0 - \omega) + P_{comp}
+$$
 
-### 核心数学表达
+自适应惯量控制进一步使 $J$、$D$ 或 $P_{comp}$ 随状态变化，但那属于本页的扩展分支，不应与固定惯量模型混写。
 
-从相关研究提取的关键公式：
+## 与相关方法的关系
 
-$$J_i\frac{d\Delta\omega_i}{dt}=\frac{P_{mi}}{\omega_0}-\frac{P_{0i}}{\omega_0}-D_i(\omega_i-\omega_0),\qquad P_{mi}=P_{refi}+k_{\omega i}(\omega_0-\omega)$$
-
-$$E_i=\frac{1}{K_{qi}s}\left[Q_{refi}-Q_{0i}+D_{qi}(U_{cni}-U_c)\right]$$
-
-$$P_{0i}=\frac{3U_{ci}U_g\sin\delta_i}{2\omega_0L_i}\approx\frac{3U_{ci}U_g}{2X_i}\delta_i\approx K_i\delta_i,\qquad \delta_i=\int(\omega_i-\omega_{bus})dt$$
-
-$$\frac{\Delta\omega_i(s)}{\Delta\omega_{bus}(s)}=\frac{K_i}{J_i\omega_0s^2+(D_i\omega_0+k_{\omega i})s+K_i}$$
-
-
+- [[droop-control]]：提供静态共享关系，但不直接等同于惯量注入。
+- [[adaptive-droop]]：调整下垂系数，与调整等效惯量是不同手段。
+- [[hierarchical-control]]：惯量控制常属于一次频率支撑层。
+- [[virtual-synchronous-generator]]：更完整的同步机型构网控制背景。
 
 ## 适用边界与失败模式
 
-- 待补充
-
-**潜在失效模式**：
-- 参数设置不当可能导致仿真不稳定
-- 特定工况下可能产生数值误差
-- 需要进一步研究确定具体失效边界
-
-## 与相关页面的关系
-
-- [[emt-simulation]] - EMT仿真基础
-- [[power-system]] - 电力系统基础
-- [[control-system]] - 控制系统基础
+- 适用于需要改善频率暂态响应的逆变器主导系统和储能支撑场景。
+- 虚拟惯量过大可能导致功率超调、控制振荡或能量约束冲突。
+- 储能容量和功率限制会直接约束可实现的惯量支撑。
+- 测量延迟、频率估计误差和限流逻辑会削弱理想惯量模型的解释力。
 
 ## 代表性来源
 
-- [[transient-electromagnetic-power-compensationbased-adaptive-inertia-control-strat]]
-- [[2728multi-rate-real-time-hybrid-simulation-of-controllable-line-commutated-conve]]
-- [[active-damping-control-and-parameter-calculation-for-resonance-suppression-in-dc-distribution]]
+- [[transient-electromagnetic-power-compensationbased-adaptive-inertia-control-strat]]：直接支撑自适应惯量与暂态补偿控制的场景。
+- [[control-and-simulation-of-a-grid-forming-inverter-for-hybrid-pv-battery-plants-i]]：说明构网型逆变器与储能在频率支撑场景中的应用背景。
+- [[adaptive-heterogeneous-transient-analysis-of-wind-farm-integrated-comprehensive-]]：可作为新能源并网和频率响应复杂性的背景来源。
 
+## 证据边界
 
----
-
-*本页面由批量生成脚本创建，需要进一步人工审查和完善。*
+本页只说明惯量控制的结构和边界，不新增无来源的最优惯量、最优阻尼、频率最低点改善百分比或稳定裕度结论。具体效果必须绑定系统规模、储能约束和测试工况。

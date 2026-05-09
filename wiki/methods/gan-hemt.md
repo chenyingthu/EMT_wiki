@@ -1,78 +1,62 @@
 ---
-title: "Gan Hemt"
+title: "GaN HEMT 建模方法"
 type: method
-tags: [gan-hemt]
+tags: [gan-hemt, wide-bandgap, device-modeling, realtime, electrothermal]
 created: "2026-05-05"
+updated: "2026-05-06"
 ---
 
-# Gan Hemt
+# GaN HEMT 建模方法
 
 ## 定义与边界
 
-本文提出了一种分层混合实时仿真架构，用于直流铁路微电网(DRM)的硬件在环(HIL)仿真。在系统级，采用传输线法(TLM)对DRM电力系统进行分区解耦，结合门控循环单元(GRU)和电磁暂态(EMT)建模技术处理系统级子网络。在器件级，针对宽禁带(WBG)器件（氮化镓高电子迁移率晶体管GaN HEMT和碳化硅绝缘栅双极型晶体管SiC IGBT），提出物理特征神经网络(PFNN)模型。PFNN通过提取波形物理特征点（拐点、峰值、谷值）而非固定时间步长采样，实现变步长（低至1ns）的高精度建模。整个系统在Xilinx Ultrascale+ FPGA平台上实现并行加速，通过分段线性化在关键特征点间插...
+GaN HEMT 建模方法指在 EMT 或实时仿真中表示氮化镓高电子迁移率晶体管开关动态、损耗、寄生参数和器件级行为的技术路线。它通常面向高频电力电子接口、宽禁带器件快速开关和硬件在环实时建模场景。
 
-**边界限定**：待完善。需要进一步研究确定该方法/模型的具体适用条件和失效边界。
+本页讨论的是器件级或近器件级的 GaN HEMT 模型，而不是整个直流铁路微电网 HIL 平台或任意机器学习加速框架本身。
 
-## EMT中的作用
+## EMT 中的作用
 
-基于相关研究，gan-hemt在EMT仿真中用于解决特定问题。
+在 EMT 研究中，GaN HEMT 建模主要用于：
 
-基于相关研究，该方法在EMT仿真中的主要应用包括：
-- 特定场景的电磁暂态分析
-- 控制系统设计与验证
-- 故障分析与保护协调
+- 表达宽禁带器件的高频开关行为与损耗；
+- 支撑高频 DC/DC、逆变器和实时 HIL 场景中的器件级仿真；
+- 与系统级网络模型配合，研究器件级行为如何影响整体暂态响应。
 
-## 主要分支与机制
+## 常见模型层级
 
-- 待补充（需要进一步研究确定具体分支）
+- 行为级损耗/开关模型：用于系统级 EMT 或快速 HIL。
+- 近器件级等效模型：显式保留寄生参数、开关过渡和边界条件。
+- 数据驱动或物理约束模型：用于在实时预算内逼近更细器件动态。
 
-## 形式化表达
+## 关键公式
 
+器件模型的具体形式依赖于精度等级，但常见目标仍围绕导通/关断电压、电流和损耗关系组织，例如：
 
-### 核心数学表达
+$$
+P_{loss}(t) = v_{ds}(t)\, i_d(t)
+$$
 
-从相关研究提取的关键公式：
+当进入数据驱动或物理约束神经网络框架时，关键不在单一公式，而在于是否保留器件开关过程中的物理特征点与边界条件。
 
-$$-\frac{dV(x,s)}{dx}=Z(s)I(x,s),\qquad -\frac{dI(x,s)}{dx}=Y(s)V(x,s)$$
+## 与相关方法的关系
 
-$$Z(s)=Z_C(s)+Z_E(s)+Z_G(s)$$
-
-$$Z_G(s)=sL_0$$
-
-$$Y(s)=sC_0$$
-
-$$-\frac{dV(x,s)}{dx}=\left(R'(s)+L_0s\right)I(x,s)$$
-
-
-
-
-
-## 适用边界与失败模式
-
-
-基于证据边界的分析：
-
-
-
-
-**潜在失效模式**：
-- 参数设置不当可能导致仿真不稳定
-- 特定工况下可能产生数值误差
-- 需要进一步研究确定具体失效边界
-
-## 与相关页面的关系
-
-- [[emt-simulation]] - EMT仿真基础
-- [[power-system]] - 电力系统基础
-- [[control-system]] - 控制系统基础
+- [[real-time-simulation]]：GaN HEMT 常出现在硬件加速和 HIL 场景。
+- [[power-electronics-control]]：器件级模型与控制背景相关。
+- [[solid-state-transformer]]：宽禁带器件在高频电力电子装备中的相关背景。
+- [[gan-hemt]] 本页本身聚焦器件，不替代系统级 HIL 场景页。
+- [[grid-connected-inverter]]：宽禁带器件在并网电力电子中的相关背景。
+- [[wideband-modeling]]：宽禁带器件与高频动态背景。
 
 ## 代表性来源
 
-- [[real-time-hil-emulation-of-drm-with-machine-learning-accelerated-wbg-device-mode]]
-- [[analytical-modeling-of-the-half-bridge-leg-using-an-associated-discrete-circuit-]]
-- [[an-accurate-analysis-of-lightning-overvoltages-in-mixed-overhead-cable-lines]]
+- [[real-time-hil-emulation-of-drm-with-machine-learning-accelerated-wbg-device-mode]]：GaN HEMT 和 WBG 器件实时 HIL 建模背景。
+- [[analytical-modeling-of-the-half-bridge-leg-using-an-associated-discrete-circuit-]]：高频开关器件 EMT 建模背景。
 
+## 证据边界
 
----
+本页不写无来源的开关损耗、精度提升倍数或实时步长极限。具体能力必须绑定器件工况、模型层级和验证平台。
 
-*本页面由批量生成脚本创建，需要进一步人工审查和完善。*
+## 开放问题
+
+- 当前页尚未展开 GaN HEMT 与 SiC/IGBT 在 EMT 模型复杂度和实时可实现性上的差异。
+- 器件级模型应保留哪些寄生和热效应，仍需结合目标场景判断。

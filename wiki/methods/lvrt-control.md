@@ -1,84 +1,65 @@
 ---
-title: "Lvrt Control"
+title: "低电压穿越控制 (LVRT Control)"
 type: method
-tags: [lvrt-control]
+tags: [lvrt-control, low-voltage-ride-through, fault-ride-through, grid-code, converter-control]
 created: "2026-05-05"
+updated: "2026-05-06"
 ---
 
-# Lvrt Control
+# 低电压穿越控制 (LVRT Control)
 
 ## 定义与边界
 
-本文提出一种基于Modelica方程建模的光伏场站控制交互风险快速评估框架。首先利用MSEMT库构建包含光伏阵列、DC-AC变流器、集电线路、变压器及含故障穿越逻辑控制器的完整EMT详细模型。Modelica编译器自动将分层物理模型展平为微分代数方程组（DAEs），并在任意稳态或准稳态运行点处进行泰勒级数线性化，直接提取显式状态空间矩阵（A, B, C, D）。随后对系统矩阵A进行特征值扫描，通过复特征值的实部正负与频率分布识别潜在的不稳定振荡模态。该方法无需对输入滤波器、非线性环节或保护逻辑进行简化，克服了传统手动推导状态方程的繁琐与精度损失问题，最后通过时域EMT仿真与阻抗扫描进行交叉验证...
+低电压穿越控制是并网变流器、风电机组和光伏电站在交流故障或电压跌落期间维持并网、限制电流并按规范注入无功/有功支撑的控制方法。它通常包含故障检测、限流、无功优先、电流参考重构和故障后恢复逻辑。
 
-**边界限定**：待完善。需要进一步研究确定该方法/模型的具体适用条件和失效边界。
+本页讨论的是故障期间的控制策略，不把 Modelica 线性化框架、特征值扫描工具或一般小信号分析方法误写成 LVRT 控制本身。
 
-## EMT中的作用
+## EMT 中的作用
 
-基于相关研究，lvrt-control在EMT仿真中用于解决特定问题。
+在 EMT 仿真中，LVRT 控制主要用于：
 
-基于相关研究，该方法在EMT仿真中的主要应用包括：
-- 特定场景的电磁暂态分析
-- 控制系统设计与验证
-- 故障分析与保护协调
+- 研究故障期间电流限幅、无功支撑和直流母线动态；
+- 评估故障清除后的恢复过程与控制模式切换；
+- 检查弱网、PLL 动态和网规约束对并网设备可持续并网能力的影响；
+- 作为风电、光伏和储能站级控制验证的重要工况。
 
-## 主要分支与机制
+## 主要机制
 
-- 待补充（需要进一步研究确定具体分支）
+- 电压跌落检测与故障状态机；
+- 电流限幅和优先级分配；
+- 有功削减、无功注入或电压支撑逻辑；
+- 故障后恢复与再同步。
 
-## 形式化表达
+## 关键公式
 
-
-### 核心数学表达
-
-从相关研究提取的关键公式：
-
-$$J_i\frac{d\Delta\omega_i}{dt}=\frac{P_{mi}}{\omega_0}-\frac{P_{0i}}{\omega_0}-D_i(\omega_i-\omega_0),\qquad P_{mi}=P_{refi}+k_{\omega i}(\omega_0-\omega)$$
-
-$$E_i=\frac{1}{K_{qi}s}\left[Q_{refi}-Q_{0i}+D_{qi}(U_{cni}-U_c)\right]$$
-
-$$P_{0i}=\frac{3U_{ci}U_g\sin\delta_i}{2\omega_0L_i}\approx\frac{3U_{ci}U_g}{2X_i}\delta_i\approx K_i\delta_i,\qquad \delta_i=\int(\omega_i-\omega_{bus})dt$$
-
-$$\frac{\Delta\omega_i(s)}{\Delta\omega_{bus}(s)}=\frac{K_i}{J_i\omega_0s^2+(D_i\omega_0+k_{\omega i})s+K_i}$$
+LVRT 控制没有唯一标准公式，但常用思路是按电压跌落程度重构电流参考，例如：
 
 $$
+\mathbf{i}_{dq}^\* = f(V_{pcc}, V_{dc}, I_{max}, \text{mode})
+$$
 
-*单台VSC-ESS相对于公共母线频率扰动的二阶频率响应传递函数。分母中二阶项由虚拟惯量决定，一阶项由虚拟阻尼和频率调制系数决定，常数项由同步功率系数决定。*
+其中 $V_{pcc}$ 为并网点电压，$V_{dc}$ 为直流侧电压，$I_{max}$ 为电流上限，`mode` 表示故障期间的控制优先级。不同厂商或论文的无功优先和有功降额策略可能明显不同。
 
+## 与相关方法的关系
 
-**公式5**: $$
-
-
-
-
+- [[fault-ride-through]]：更宽泛的故障穿越主题背景。
+- [[pll-model]]：故障期间同步参考是否可靠，直接影响 LVRT 表现。
+- [[vsc-control]] 和 [[dual-loop-pi-controller]]：故障期间电流重构常依赖这些底层控制结构。
+- [[microgrid-control]]：在孤岛或弱网场景中，故障穿越逻辑可能与并网场景不同。
 
 ## 适用边界与失败模式
 
-
-基于证据边界的分析：
-
-
-
-
-
-**潜在失效模式**：
-- 参数设置不当可能导致仿真不稳定
-- 特定工况下可能产生数值误差
-- 需要进一步研究确定具体失效边界
-
-## 与相关页面的关系
-
-- [[emt-simulation]] - EMT仿真基础
-- [[power-system]] - 电力系统基础
-- [[control-system]] - 控制系统基础
+- 适用于需要按并网规范评估故障期间持续并网能力的变流器设备。
+- 电流限流、直流过压和 PLL 失稳常是故障期间的核心限制。
+- 不同网规对无功支撑和持续时间要求不同，不能在页面中泛化为统一标准。
+- 单靠小信号线性化不能替代故障期间的非线性 EMT 验证。
 
 ## 代表性来源
 
-- [[fast-investigation-of-control-interaction-risks-in-pv-parks-using-eigenvalue-ana]]
-- [[2728multi-rate-real-time-hybrid-simulation-of-controllable-line-commutated-conve]]
-- [[active-damping-control-and-parameter-calculation-for-resonance-suppression-in-dc-distribution]]
+- [[fast-investigation-of-control-interaction-risks-in-pv-parks-using-eigenvalue-ana]]：可作为光伏场站控制交互和故障风险背景来源，但不应替代 LVRT 时域验证。
+- [[field-validated-generic-emt-type-model-of-a-full-converter-wind-turbine-based-on]]：可作为全功率变流器风机 EMT 控制与故障响应的代表性背景。
+- [[control-and-simulation-of-a-grid-forming-inverter-for-hybrid-pv-battery-plants-i]]：说明构网型装置在电压跌落和恢复中的相关运行背景。
 
+## 证据边界
 
----
-
-*本页面由批量生成脚本创建，需要进一步人工审查和完善。*
+本页不写无来源的无功支撑比例、恢复时间或网规门槛。具体 LVRT 能力必须绑定设备类型、控制结构和测试规范。

@@ -195,6 +195,22 @@ created: "2026-05-02"
 
 ---
 
+## 形式化表达
+
+### 核心数学表达
+
+$$J_i\frac{d\Delta\omega_i}{dt}=\frac{P_{mi}}{\omega_0}-\frac{P_{0i}}{\omega_0}-D_i(\omega_i-\omega_0),\qquad P_{mi}=P_{refi}+k_{\omega i}(\omega_0-\omega)$$
+
+$$E_i=\frac{1}{K_{qi}s}\left[Q_{refi}-Q_{0i}+D_{qi}(U_{cni}-U_c)\right]$$
+
+$$P_{0i}=\frac{3U_{ci}U_g\sin\delta_i}{2\omega_0L_i}\approx\frac{3U_{ci}U_g}{2X_i}\delta_i\approx K_i\delta_i,\qquad \delta_i=\int(\omega_i-\omega_{bus})dt$$
+
+### 符号说明
+
+- $\mathbf{x}$：状态向量
+- $\mathbf{u}$：输入向量
+- $t$：时间变量
+
 ## 适用边界 (Applicable Boundaries)
 
 ### 适用场景
@@ -238,6 +254,26 @@ created: "2026-05-02"
 - **成本控制**: 影响拓扑选择
 
 ---
+
+## 研究前沿
+
+### 当前研究热点
+- **人工智能与仿真**：利用机器学习加速仿真计算
+- **数字孪生技术**：构建电力系统的数字孪生模型
+- **实时仿真技术**：满足硬件在环仿真的时效性要求
+- **云仿真平台**：基于云计算的大规模并行仿真
+
+### 开放问题
+- 超大规模系统的实时仿真能力
+- 多物理场耦合建模方法
+- 不确定性量化和风险评估
+- 模型验证和标定方法
+
+### 未来发展方向
+- 更高效的数值算法
+- 更精确的模型降阶技术
+- 更智能的参数优化方法
+- 更完善的验证和确认框架
 
 ## 代表性来源 (Representative Sources)
 

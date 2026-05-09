@@ -11,6 +11,56 @@ created: "2026-04-13"
 
 输电线路是电力系统中分布范围最广的元件，其电磁暂态特性对系统仿真精度有重要影响。准确的线路模型需要考虑频率相关参数、分布参数特性和行波传播效应。
 
+```mermaid
+graph TD
+    TL["输电线路模型
+Transmission Line Model"]
+    TL --> CP["恒定参数模型
+Constant Parameter"]
+    TL --> FD["频变参数模型
+Frequency-Dependent"]
+    TL --> EQ["等值电路模型
+Equivalent Circuit"]
+
+    CP --> BERG["Bergeron模型
+• 无损行波
+• Z_c=√(L/C)
+• 恒定传播时延τ
+• EMTP标准模型"]
+
+    FD --> FD_TL["频变线路模型(FD)
+• 集肤效应+大地回路
+• VF有理逼近
+• 递归卷积时域实现"]
+    FD --> ULM["通用线路模型(ULM)
+• 相域直接建模
+• 避免模态变换误差
+• 非对称线路适用"]
+    FD --> FLE["折叠线等效(FLE)
+• 允许Δt > τ
+• 大步长仿真"]
+
+    EQ --> PI["π型等值
+• 集中参数
+• 短线路适用
+• 精确等值π电路"]
+    EQ --> MTL["多导体线路
+• 模态分解
+• 相模解耦
+• 交叉换位效应"]
+
+    style TL fill:#e3f2fd
+    style CP fill:#fff3e0
+    style FD fill:#fff3e0
+    style EQ fill:#fff3e0
+    style BERG fill:#c8e6c9
+    style FD_TL fill:#c8e6c9
+    style ULM fill:#c8e6c9
+    style FLE fill:#c8e6c9
+    style PI fill:#c8e6c9
+    style MTL fill:#c8e6c9
+```
+
 ## 主要模型类型
 
 ### 1. Bergeron模型
@@ -267,7 +317,7 @@ created: "2026-04-13"
 - **An improved passivity enforcement algorithm for transmission line models using p**
   - 💡 首次将并联无源RLC滤波器直接引入传输线节点以物理电路方式强制实现模型无源性，避免了复杂的数学优化与矩阵运算。
   - 提出了一种基于并联无源RLC滤波器的简单有效的无源性强制方法。
-  - 将该算法成功应用于EMT软件中广泛使用的通用线路模型(ULM)。
+  - 将该算法成功应用于EMT软件中用于的通用线路模型(ULM)。
 - **Development of phase domain frequency-dependent transmission line model on FPGA **
   - 💡 首次在FPGA平台上实现全流水线并行化的频变相域输电线路模型，并结合定制48位浮点架构实现高精度、低步长的实时电磁暂态仿真。
   - 提出并实现了适用于实时电磁暂态仿真的FPGA频变相域输电线路模型

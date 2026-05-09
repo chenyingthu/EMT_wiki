@@ -56,7 +56,7 @@ $$
 | 平均值模型 | 调制函数、直流电压、滤波器和控制状态 | 系统级 EMT、控制设计、快速扫描 | 开关频率附近谐波被弱化 |
 | 插值/受控源模型 | 开关事件面积等效或受控电压源 | 大步长保留部分 PWM 影响 | 有效性依赖调制方式、步长和验证算例 |
 
-[[switching-function]] 和 [[average-value-model]] 分别解释开关函数与平均值路线；[[pwm-modulator-model]] 解释调制器边界。
+[[switching-function-method]] 和 [[average-value-model]] 分别解释开关函数与平均值路线；[[pwm-modulator-model]] 解释调制器边界。
 
 ## 控制与调制接口
 
@@ -98,6 +98,6 @@ SVPWM 相比正弦 PWM 的直流电压利用率更高这一结论只在理想两
 
 - [[vsc-model]]：把三相桥放入并网变流器、HVDC 或 FACTS 系统接口。
 - [[statcom-model]]：三相桥作为并联无功补偿器主电路时的专用模型。
-- [[switching-function]]：从开关状态构造桥臂电压。
+- [[switching-function-method]]：从开关状态构造桥臂电压。
 - [[average-value-model]]：忽略逐开关事件后的动态平均表示。
 - [[current-injection]]：在某些 EMT 接口中，逆变器可被表示为受控电流注入，但该接口不是拓扑本体。

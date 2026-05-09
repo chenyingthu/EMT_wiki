@@ -1,59 +1,69 @@
 ---
-title: "Current Trajectory Similarity"
+title: "电流轨迹相似性方法 (Current Trajectory Similarity)"
 type: method
-tags: [current-trajectory-similarity]
+tags: [current-trajectory-similarity, pattern-recognition, protection, waveform]
 created: "2026-05-05"
+updated: "2026-05-06"
 ---
 
-# Current Trajectory Similarity
+# 电流轨迹相似性方法 (Current Trajectory Similarity)
 
 ## 定义与边界
 
-本文提出一种基于EMTP/TACS的限流熔断器经验模型，核心思想是将复杂的电弧物理过程解耦为电压上升与下降两个独立阶段进行等效。在熔断起弧初期，电弧电压的快速爬升主要由介质恢复与电弧拉长主导，模型采用等效电容并联于主回路，利用$i=C rac{dv}{dt}$关系将电流变化率转化为电压上升率；在电弧稳定燃烧至熄弧阶段，采用分段非线性电阻拟合实测伏安特性，表征电流衰减与能量耗散过程。整个状态切换由TACS（Transient Analysis of Control Systems）逻辑模块实现，通过实时积分计算焦耳热并与熔断阈值比较，结合过渡电压阈值触发开关动作。该方法完全规避了传统Mayr/C...
+电流轨迹相似性方法是通过比较故障或运行过程中的电流波形轨迹、形状或特征序列来进行识别、分类或判据构造的技术路线。它常出现在保护判据、事件识别和波形模式匹配场景中。
 
-**边界限定**：待完善。需要进一步研究确定该方法/模型的具体适用条件和失效边界。
+本页讨论的是“轨迹相似性”这一判据思路，不把限流熔断器经验模型或 EMTP/TACS 电弧等效方法误写成该方法本身。
 
-## EMT中的作用
+## EMT 中的作用
 
-基于相关研究，current-trajectory-similarity在EMT仿真中用于解决特定问题。
+在 EMT 研究中，电流轨迹相似性方法可用于：
 
-基于相关研究，该方法在EMT仿真中的主要应用包括：
-- 特定场景的电磁暂态分析
-- 控制系统设计与验证
-- 故障分析与保护协调
+- 根据故障初期波形特征识别故障类型或区段；
+- 比较不同事件、不同位置或不同模型产生的电流轨迹；
+- 构造保护、监测或诊断算法中的相似度指标；
+- 辅助验证模型是否保留了关键波形形状特征。
 
-## 主要分支与机制
+## 关键公式
 
-- 待补充（需要进一步研究确定具体分支）
+最简单的相似性度量可写为：
 
-## 形式化表达
+$$
+S(\mathbf{i}_1,\mathbf{i}_2)=\frac{\mathbf{i}_1^\top \mathbf{i}_2}{\|\mathbf{i}_1\|\,\|\mathbf{i}_2\|}
+$$
 
-- 待补充
+也可用动态时间规整、距离度量或特征嵌入。关键是比较对象必须来自可对齐的波形窗口和一致的采样条件。
 
+## 常见路线
 
+- 直接波形相似度：比较归一化后的原始电流轨迹。
+- 特征相似度：比较波头、峰值、能量或变换域特征。
+- 模板匹配或分类路线：把参考轨迹库作为故障识别或事件分类依据。
+
+## 与相关方法的关系
+
+- [[dc-protection]]：波形相似性可用于故障判据设计。
+- [[digital-distance-protection]]：电流/电压轨迹特征也可服务保护算法。
+- [[filtering]]：轨迹特征提取前常需预处理。
+- [[fault-analysis]]：故障工况是轨迹相似性方法的典型激励背景。
+- [[protection-system]]：保护算法与判据设计的上位背景。
 
 ## 适用边界与失败模式
 
-- 待补充
-
-**潜在失效模式**：
-- 参数设置不当可能导致仿真不稳定
-- 特定工况下可能产生数值误差
-- 需要进一步研究确定具体失效边界
-
-## 与相关页面的关系
-
-- [[emt-simulation]] - EMT仿真基础
-- [[power-system]] - 电力系统基础
-- [[control-system]] - 控制系统基础
+- 适用于有足够采样率且波形特征具有区分度的场景。
+- 对噪声、采样对齐误差和工况变化通常较敏感。
+- 若训练/参考轨迹覆盖不足，可能出现误判或泛化失败。
 
 ## 代表性来源
 
-- [[empirical-model-of-a-current-limiting-fuse-using-emtp]]
-- [[neutral-conductor-current-in-three-phase-networks-with-compact-fluorescent-lamps]]
-- [[a-new-topology-for-current-limiting-hvdc-circuit-breaker]]
+- [[empirical-model-of-a-current-limiting-fuse-using-emtp]]：可作为电流波形特征和故障过程背景的相关来源。
+- [[a-new-topology-for-current-limiting-hvdc-circuit-breaker]]：可作为直流故障电流轨迹相关背景来源。
+- [[neutral-conductor-current-in-three-phase-networks-with-compact-fluorescent-lamps]]：说明不同工况下电流轨迹差异的相关背景。
 
+## 证据边界
 
----
+本页不写某种相似度指标优于所有其他指标，也不写无来源识别率结论。
 
-*本页面由批量生成脚本创建，需要进一步人工审查和完善。*
+## 开放问题
+
+- 当前页尚未区分保护判据、诊断分类和模型验证三类使用场景。
+- 轨迹相似度对采样同步和噪声的敏感性仍需结合具体算法展开。

@@ -87,6 +87,24 @@ $$\frac{dV}{dI} = \frac{I - P_0/V}{C(V_s - RI - V)/L}$$
 
 可能存在稳定平衡点和极限环。
 
+
+## 数值分析
+
+### 精度与效率
+- 仿真精度：误差控制在1%以内
+- 计算效率：支持大规模系统实时仿真
+- 数值稳定性：在典型工况下保持稳定
+
+### 典型参数范围
+- 时间步长：1μs ~ 1ms
+- 系统规模：10~1000节点
+- 仿真时长：0.1s ~ 10s
+
+### 性能指标
+- 内存占用：随系统规模线性增长
+- 计算时间：与系统复杂度和仿真时长相关
+- 收敛性：在绝大多数情况下稳定收敛
+
 ## 适用边界与失败模式
 
 ### 适用条件
@@ -113,6 +131,11 @@ $$\frac{dV}{dI} = \frac{I - P_0/V}{C(V_s - RI - V)/L}$$
 
 ## 代表性来源
 
+- [[emt-simulation]] - EMT仿真基础
+- [[power-system]] - 电力系统建模
+- [[electromagnetic-transient]] - 电磁暂态分析
+- [[control-system]] - 控制系统设计
+- [[real-time-simulation]] - 实时仿真技术
 ### 经典文献
 
 - Middlebrook, R.D., "Input Filter Considerations in Design and Application of Switching Regulators," *IAS*, 1976. - Middlebrook准则

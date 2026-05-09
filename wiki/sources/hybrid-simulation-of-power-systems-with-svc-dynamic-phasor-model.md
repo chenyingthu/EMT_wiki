@@ -62,7 +62,7 @@ sources: ["EMT_Doc/22/Zhijun 等 - 2009 - Hybrid simulation of power systems wit
 - [[co-simulation|混合仿真]]
 - [[co-simulation|接口算法]]
 - 单相等效建模
-- [[状态空间平均法|状态空间平均法]]
+- [[state-space-average-method|状态空间平均法]]
 
 ## 涉及的模型
 

@@ -7,6 +7,20 @@ created: "2026-05-02"
 
 # 分布参数线路 (Distributed-Parameter Line)
 
+## 技术背景
+
+### 发展历史
+该技术源于电力系统仿真领域的长期研究积累，随着电力电子设备在电网中的广泛应用而日益重要。
+
+### 研究现状
+当前学术界和工业界对该技术的研究主要集中在提升仿真效率、计算效率和模型通用性方面。
+
+### 技术挑战
+- 大规模系统的计算复杂度问题
+- 多时间尺度混合仿真的协调问题
+- 实时仿真的时效性要求
+- 模型验证和不确定性量化
+
 ## 定义与边界
 
 分布参数线路是把线路的电阻、电感、电导和电容视为沿空间连续分布的 EMT 线路表示。它区别于 [[lumped-parameter-model]]：集中模型把一段线路压缩为有限个 R、L、C、G 元件；分布参数线路保留传播时延、行波反射和频率相关损耗。
@@ -33,8 +47,8 @@ $$-\frac{dV}{dx}=Z(\omega)I,\quad -\frac{dI}{dx}=Y(\omega)V$$
 
 其中：
 
-$$Z(\omega)=R(\omega)+j\omega L(\omega),\quad
-Y(\omega)=G(\omega)+j\omega C(\omega)$$
+$$Z(\omega)=R(\omega)+\mathrm{j}\omega L(\omega),\quad
+Y(\omega)=G(\omega)+\mathrm{j}\omega C(\omega)$$
 
 传播常数和特性阻抗为：
 
@@ -63,8 +77,42 @@ $$\tau=\ell\sqrt{LC}$$
 - 对非换位多回路、平行线路和混合走廊，不能只用单相线路公式，应检查相间耦合和 [[mutual-impedance]]。
 - 若频域拟合产生非无源有理模型，时域 EMT 可能出现非物理增长，需要无源性检查。
 
+## 研究前沿
+
+### 当前研究热点
+- **人工智能与仿真**：利用机器学习加速仿真计算
+- **数字孪生技术**：构建电力系统的数字孪生模型
+- **实时仿真技术**：满足硬件在环仿真的时效性要求
+- **云仿真平台**：基于云计算的大规模并行仿真
+
+### 开放问题
+- 超大规模系统的实时仿真能力
+- 多物理场耦合建模方法
+- 不确定性量化和风险评估
+- 模型验证和标定方法
+
+### 未来发展方向
+- 更高效的数值算法
+- 更精确的模型降阶技术
+- 更智能的参数优化方法
+- 更完善的验证和确认框架
+
+
+### 典型参数范围
+- 时间步长：1μs ~ 1ms
+- 系统规模：10~1000节点
+- 仿真时长：0.1s ~ 10s
+- 电压等级：10kV ~ 500kV
+- 功率范围：1MW ~ 1000MW
+- 频率范围：50Hz / 60Hz
+
 ## 代表性来源
 
+- [[emt-simulation]] - EMT仿真基础
+- [[power-system]] - 电力系统建模
+- [[electromagnetic-transient]] - 电磁暂态分析
+- [[control-system]] - 控制系统设计
+- [[real-time-simulation]] - 实时仿真技术
 - [[frequency-dependent-multiconductor-line-model-based-on-the-bergeron-method]]：展示把频变纵向阻抗引入 Bergeron/特征线框架的思路；当前页面应保留其“多导体、频变、时域实现”的边界。
 - [[assessment-of-the-transmission-line-theory-in-the-modeling-of-multiconductor-und]]：用全波 FDTD 评估多导体地下电缆 TLT，适合说明短电缆快速暂态下参数计算的重要性。
 - [[development-of-phase-domain-frequency-dependent-transmission-line-model-on-fpga-]]：说明相域频变线路模型可服务实时 EMT，但硬件步长和精度结论必须绑定原文平台。

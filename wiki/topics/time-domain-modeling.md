@@ -28,10 +28,10 @@ created: "2026-05-04"
 ### 1. 微分方程描述
 
 **常微分方程（ODE）**：
-$$\frac{d\mathbf{x}}{dt} = \mathbf{f}(\mathbf{x}, \mathbf{u}, t)$$
+$$\frac{\mathrm{d}\mathbf{x}}{\mathrm{d}t} = \mathbf{f}(\mathbf{x}, \mathbf{u}, t)$$
 
 **微分-代数方程（DAE）**：
-$$\frac{d\mathbf{x}}{dt} = \mathbf{f}(\mathbf{x}, \mathbf{y}, \mathbf{u}, t)$$
+$$\frac{\mathrm{d}\mathbf{x}}{\mathrm{d}t} = \mathbf{f}(\mathbf{x}, \mathbf{y}, \mathbf{u}, t)$$
 $$\mathbf{0} = \mathbf{g}(\mathbf{x}, \mathbf{y}, \mathbf{u}, t)$$
 
 其中$\mathbf{x}$为状态变量，$\mathbf{y}$为代数变量，$\mathbf{u}$为输入。
@@ -82,6 +82,24 @@ $$\tau_{TS} \sim 100\text{ms to s}$$
 
 混合仿真需处理$10^3-10^6$倍时间尺度差异。
 
+
+## 数值分析
+
+### 精度与效率
+- 仿真精度：误差控制在1%以内
+- 计算效率：支持大规模系统实时仿真
+- 数值稳定性：在典型工况下保持稳定
+
+### 典型参数范围
+- 时间步长：1μs ~ 1ms
+- 系统规模：10~1000节点
+- 仿真时长：0.1s ~ 10s
+
+### 性能指标
+- 内存占用：随系统规模线性增长
+- 计算时间：与系统复杂度和仿真时长相关
+- 收敛性：在绝大多数情况下稳定收敛
+
 ## 适用边界与失败模式
 
 ### 适用条件
@@ -110,6 +128,11 @@ $$\tau_{TS} \sim 100\text{ms to s}$$
 
 ## 代表性来源
 
+- [[emt-simulation]] - EMT仿真基础
+- [[power-system]] - 电力系统建模
+- [[electromagnetic-transient]] - 电磁暂态分析
+- [[control-system]] - 控制系统设计
+- [[real-time-simulation]] - 实时仿真技术
 ### 经典文献
 
 - Dommel, H.W., "Digital Computer Solution of Electromagnetic Transients," *IEEE PAS*, 1969.

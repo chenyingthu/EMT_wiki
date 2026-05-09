@@ -1,78 +1,80 @@
 ---
-title: "Dc Protection"
+title: "直流保护方法 (DC Protection)"
 type: method
-tags: [dc-protection]
+tags: [dc-protection, hvdc, fault-detection, relay, traveling-wave]
 created: "2026-05-05"
+updated: "2026-05-06"
 ---
 
-# Dc Protection
+# 直流保护方法 (DC Protection)
 
 ## 定义与边界
 
-本文提出在EMTP中集成保护系统的完整框架，包括电流互感器(CT)和电容式电压互感器(CVT)的暂态模型、FORTRAN用户子程序接口以及闭环交互机制。核心方法是基于EMTP的节点导纳矩阵时域仿真，通过Type 96伪非线性磁滞电感精确模拟CT的铁芯饱和特性，同时开发外部FORTRAN接口允许用户自定义继电器算法。仿真采用时步迭代法，每个时间步内依次求解电力系统暂态、互感器动态响应、继电器算法处理，并将保护决策（断路器跳闸/重合闸）实时反馈至电力系统，实现真正意义上的闭环保护系统仿真。...
+直流保护方法是围绕 HVDC、MTDC 和直流配电系统中的故障检测、故障区段判别、选择性隔离和故障后恢复建立的控制与判据方法集合。它既包括基于行波、电压变化率、电流变化率和方向特征的快速保护，也包括与断路器和控制系统协同的选择性动作逻辑。
 
-**边界限定**：待完善。需要进一步研究确定该方法/模型的具体适用条件和失效边界。
+本页讨论的是“保护方法”而不是 CT/CVT 建模框架、EMTP 闭环接口本身，也不把某一种继电器实现细节外推为所有直流保护方案。
 
-## EMT中的作用
+## EMT 中的作用
 
-基于相关研究，dc-protection在EMT仿真中用于解决特定问题。
+在 EMT 仿真中，直流保护方法主要用于：
 
-基于相关研究，该方法在EMT仿真中的主要应用包括：
-- 特定场景的电磁暂态分析
-- 控制系统设计与验证
-- 故障分析与保护协调
+- 研究直流故障的快速检测与区段识别；
+- 评估保护判据、动作逻辑与 DCCB 配合；
+- 比较单端、双端、行波和电气量判据的边界；
+- 检查保护与直流网络、换流器控制和故障恢复之间的耦合。
 
-## 主要分支与机制
+## 常见路线
 
-- 待补充（需要进一步研究确定具体分支）
+- 行波保护：利用故障初始行波极性、到达时刻和模态特征。
+- 电压/电流突变量保护：利用 $di/dt$、$dv/dt$ 或电流幅值变化。
+- 阻抗/能量型判据：利用局部量构造等效故障特征。
+- 协同保护：结合断路器、站控和通信实现选择性隔离。
 
-## 形式化表达
+## 典型输入量
 
+直流保护方法常直接依赖以下局部或邻站量：
 
-### 核心数学表达
+- 线路端电流、电压及其突变量；
+- 行波到达时刻、极性或模态量；
+- 断路器状态与站级闭锁信号；
+- 必要时还包括通信确认或邻站比较量。
 
-从相关研究提取的关键公式：
+## 关键公式
 
-$$-\frac{dV(x,s)}{dx}=Z(s)I(x,s),\qquad -\frac{dI(x,s)}{dx}=Y(s)V(x,s)$$
+直流保护没有统一的单一公式，但快速局部判据常围绕电流和电压突变量组织：
 
-$$Z(s)=Z_C(s)+Z_E(s)+Z_G(s)$$
+$$
+\Delta i = i(t) - i(t-\Delta t), \qquad \Delta v = v(t) - v(t-\Delta t)
+$$
 
-$$Z_G(s)=sL_0$$
+若采用行波型判据，则还需结合到达时刻、模态变换或波头能量特征。关键不在公式本身，而在保护判据与网络、采样和断路器动作时间之间的协同。
 
-$$Y(s)=sC_0$$
+## 与相关方法的关系
 
-$$-\frac{dV(x,s)}{dx}=\left(R'(s)+L_0s\right)I(x,s)$$
-
-
-
-
+- [[dccb]]：保护判据最终需要与直流断路器动作配合。
+- [[cl-dccb]]：电流限制型断路器与保护方法的配合边界。
+- [[multi-terminal-dc]]：多端直流网络中保护选择性问题更复杂。
+- [[parallel-line-protection]]：提供交流线路保护与行波思想的对照背景。
+- [[cigre-b4-dc-grid]]：提供典型直流电网测试场景入口。
 
 ## 适用边界与失败模式
 
-
-基于证据边界的分析：
-
-
-
-
-**潜在失效模式**：
-- 参数设置不当可能导致仿真不稳定
-- 特定工况下可能产生数值误差
-- 需要进一步研究确定具体失效边界
-
-## 与相关页面的关系
-
-- [[emt-simulation]] - EMT仿真基础
-- [[power-system]] - 电力系统基础
-- [[control-system]] - 控制系统基础
+- 适用于需要在亚毫秒到数毫秒量级内识别和隔离直流故障的场景。
+- 单端判据通常更快，但选择性和鲁棒性受线路参数、测量噪声和边界反射影响更大。
+- 多端系统和混合拓扑会引入更复杂的故障传播路径，局部判据未必足够。
+- 若不同时建模 DCCB、采样和站级控制，保护有效性判断可能失真。
 
 ## 代表性来源
 
-- [[protection-system-representation-in-the-electromagnetic-transients-program-power]]
-- [[application-of-wavelet-singular-entropy-theory-in-transient-protection-and-accel]]
-- [[single-ended-travelling-wave-based-protection-scheme-for-double-circuit-transmis]]
+- [[single-ended-travelling-wave-based-protection-scheme-for-double-circuit-transmis]]：说明行波类单端保护的典型思路和边界。
+- [[application-of-wavelet-singular-entropy-theory-in-transient-protection-and-accel]]：说明暂态特征提取型保护判据的相关背景。
+- [[protection-system-representation-in-the-electromagnetic-transients-program-power]]：说明保护算法与 EMT 仿真平台闭环交互的实现背景。
 
+## 证据边界
 
----
+本页不写无来源动作时间、保护区长度或误动率结论。所有保护性能都必须绑定采样、线路模型、故障位置和断路器配置。
 
-*本页面由批量生成脚本创建，需要进一步人工审查和完善。*
+## 开放问题
+
+- 单端快速判据与多端选择性之间的折中仍需结合具体网络结构判断。
+- 当前页未继续细分行波、量测型和通信协同型保护的实现门槛。

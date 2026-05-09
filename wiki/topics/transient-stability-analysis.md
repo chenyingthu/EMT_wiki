@@ -8,6 +8,24 @@ updated: "2026-05-03"
 
 # 暂态稳定性分析 (Transient Stability Analysis)
 
+## 核心原理详解
+
+### 技术概述
+暂态稳定性分析是电力系统电磁暂态仿真领域的重要技术，对提高仿真精度和效率具有重要意义。
+
+### 理论基础
+该技术建立在严格的电磁场理论和电路分析基础之上，通过数学建模描述系统的动态行为。
+
+### 核心机制
+- **物理建模**：基于物理定律建立准确的数学模型
+- **数值求解**：采用高效的数值算法求解系统方程
+- **参数分析**：研究关键参数对系统性能的影响
+
+### 技术优势
+- 提高仿真精度和计算效率
+- 支持复杂系统的详细分析
+- 为工程设计和优化提供理论支撑
+
 ## 概述
 
 暂态稳定性分析是电力系统安全评估的核心内容，研究电力系统在遭受大扰动（如短路故障、线路跳闸、发电机跳闸等）后，同步电机是否能够保持同步运行并最终恢复到稳定平衡状态的能力。暂态稳定性关注的是系统在扰动后**第一摇摆周期**（通常为故障后1-3秒）内的动态行为。
@@ -39,13 +57,13 @@ updated: "2026-05-03"
 同步电机的转子运动由摇摆方程描述：
 
 $$
-M\frac{d^2\delta}{dt^2} = P_m - P_e - D\frac{d\delta}{dt}
+M\frac{d^2\delta}{dt^2} = P_m - P_e - D\frac{\mathrm{d}\delta}{\mathrm{d}t}
 $$
 
 或采用标幺值形式：
 
 $$
-\frac{2H}{\omega_0}\frac{d^2\delta}{dt^2} = P_m - P_e - D\frac{d\delta}{dt}
+\frac{2H}{\omega_0}\frac{d^2\delta}{dt^2} = P_m - P_e - D\frac{\mathrm{d}\delta}{\mathrm{d}t}
 $$
 
 其中：
@@ -63,8 +81,8 @@ $$
 
 $$
 \begin{cases}
-\frac{d\delta}{dt} = \omega - \omega_0 \\
-\frac{2H}{\omega_0}\frac{d\omega}{dt} = P_m - P_e - D(\omega - \omega_0)
+\frac{\mathrm{d}\delta}{\mathrm{d}t} = \omega - \omega_0 \\
+\frac{2H}{\omega_0}\frac{\mathrm{d}\omega}{\mathrm{d}t} = P_m - P_e - D(\omega - \omega_0)
 \end{cases}
 $$
 
@@ -240,7 +258,7 @@ $$
 PEBS方法沿故障轨迹监测势能变化：
 
 $$
-\frac{dV_{pe}}{dt} = 0 \text{ 且 } \frac{d^2V_{pe}}{dt^2} > 0
+\frac{dV_{pe}}{\mathrm{d}t} = 0 \text{ 且 } \frac{d^2V_{pe}}{dt^2} > 0
 $$
 
 此时的 $V_{pe}$ 作为临界能量估计值。
@@ -580,7 +598,7 @@ $$
 利用HVDC快速功率控制：
 
 $$
-\Delta P_{dc} = K_{dc}(\Delta f_{ac} + k_d \frac{d\Delta f_{ac}}{dt})
+\Delta P_{dc} = K_{dc}(\Delta f_{ac} + k_d \frac{\mathrm{d}\Delta f_{ac}}{\mathrm{d}t})
 $$
 
 ### 控制决策时间要求

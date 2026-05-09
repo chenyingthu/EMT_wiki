@@ -592,6 +592,226 @@ This batch is protected. Future agents should not rewrite these pages in ordinar
 
 ---
 
+## Cross-Directory Convergence Correction — 2026-05-08
+
+**Scope**: Correct the duplicate-convergence workflow after identifying that a
+methods-only residue view can distort the wiki system. The wiki was built from
+`sources/` into separate `methods/`, `models/`, `topics/`, `test-systems/`, and
+`entities/` layers. A leftover page under `wiki/methods/` is not necessarily a
+method page.
+
+### Decision
+
+Future repair batches must use
+`reports/cross_directory_convergence_triage_2026-05-08.md` before editing
+remaining `wiki/methods/` residue.
+
+### Rule Changes
+
+- Check `models/`, `topics/`, `test-systems/`, and `sources/` before deciding
+  that a `methods/` page should be repaired as a method.
+- If the concept is already owned by a model/topic/source/test-system page, the
+  `methods/` page should become a short controlled entry, alias, or merge
+  recommendation.
+- The `sources/` layer is fixed evidence. Future agents must not create new
+  source pages during residue cleanup; they may only point to existing source
+  pages or state that evidence is not currently represented.
+- Do not expand generic support concepts such as floating-point arithmetic,
+  analytic signal construction, generic acceleration, or closed-form
+  approximation into standalone EMT method articles.
+- Registry notes for future batches should record the target system role:
+  method, model, topic, source-evidence, test-system, or
+  alias/disambiguation.
+
+### Evidence
+
+- Current directory scale: `sources=682`, `methods=507`, `models=89`,
+  `topics=90`, `test-systems=22`.
+- Current remaining unprotected `methods/` pages with substantive residue: 68.
+- Cross-directory anchors were sampled for grounding, control,
+  numerical integration, renewable units, time-domain modeling, transient
+  stability, hybrid simulation, electromechanical transient, power electronics,
+  cable modeling, hardware-in-loop, vector fitting, impedance, frequency-domain
+  analysis, and lightning pages.
+
+### Verdict: WORKFLOW CORRECTION REQUIRED
+
+Do not continue methods-only cleanup. Continue only with cross-directory
+convergence and anti-expansion discipline.
+
+---
+
+## Code Review Round 21 — 2026-05-06
+
+**Scope**: Sixth rewrite wave for six benchmark/scenario-entry pages currently living under `wiki/methods/`: `cigre-b4.md`, `cigre-mtdc-three-terminal.md`, `distribution-test-feeders.md`, `ieee-300-bus.md`, `nordic-32.md`, and `nordic-44.md`.
+
+**Verification Status**: PASS. All six pages are strict-clean and structurally consistent.
+
+### Issues
+
+- No critical/high issues found after rewrite.
+- All six pages are compact scenario-entry pages rather than long technical articles, so all remain B grade with the single heuristic note `taxonomy page is short`.
+
+### Execution Notes
+
+- Removed wrong pasted content including:
+  - frequency-dependent line modeling text,
+  - PV ELST modeling text,
+  - transformer and device fragments unrelated to the system names,
+  - generic filler sections that falsely presented these pages as methods.
+- Reframed the shard as a controlled set of benchmark/scenario-entry pages:
+  - CIGRE B4 family,
+  - IEEE 300 benchmark,
+  - Nordic benchmark family,
+  - distribution feeder benchmarks.
+- Kept them in `wiki/methods/` for now to preserve existing graph stability, but the content now makes their “scenario entry” role explicit.
+
+### Evidence
+
+- `python3 tools/audit_wiki_strict.py`: `Strict findings: 0`.
+- Local target validation:
+  - all six pages have exactly one H1.
+  - all six pages have 0 missing wikilinks.
+  - all six pages pass `git diff --check`.
+- Quality audit:
+  - `cigre-b4.md`: 75/B.
+  - `cigre-mtdc-three-terminal.md`, `distribution-test-feeders.md`, `ieee-300-bus.md`, `nordic-32.md`, `nordic-44.md`: 70/B.
+
+### Verdict: APPROVED
+
+This sixth wave confirms that misplaced benchmark/scenario pages can be stabilized first as controlled entry pages before any future directory migration discussion.
+
+---
+
+## Code Review Round 22 — 2026-05-06
+
+**Scope**: Seventh rewrite wave for six measurement/magnetic/filtering-related method pages: `ccvt.md`, `gis.md`, `frequency-response.md`, `filtering.md`, `current-trajectory-similarity.md`, and `cdsm.md`.
+
+**Verification Status**: PASS. All six pages are strict-clean and structurally consistent.
+
+### Issues
+
+- No critical/high issues found after rewrite.
+- All six pages are now B-grade compact method-entry pages. The only remaining heuristic note is `taxonomy page is short`.
+
+### Execution Notes
+
+- Removed unrelated pasted content including:
+  - transmission-line formulas in measurement pages,
+  - vector-fitting or load-model text in frequency-response pages,
+  - fuse-model text in current-trajectory-similarity,
+  - toolchain/electrothermal runtime descriptions being misused as method definitions.
+- Reframed the shard into two shapes:
+  - compact method-entry pages (`ccvt`, `gis`, `frequency-response`, `filtering`),
+  - narrower specialized method pages (`current-trajectory-similarity`, `cdsm`).
+- Preserved only source-bounded background and clear adjacency to existing formal pages.
+
+### Evidence
+
+- `python3 tools/audit_wiki_strict.py`: `Strict findings: 0`.
+- Local target validation:
+  - all six pages have exactly one H1.
+  - all six pages have 0 missing wikilinks.
+  - all six pages pass `git diff --check`.
+- Quality audit:
+  - `frequency-response.md`: 75/B.
+  - `ccvt.md`, `gis.md`, `filtering.md`, `current-trajectory-similarity.md`, `cdsm.md`: 70/B.
+
+### Verdict: APPROVED
+
+This seventh wave confirms that the repo can continue absorbing heterogeneous batch-generated shards as compact, evidence-disciplined method-entry pages without reintroducing strict defects.
+
+---
+
+## Code Review Round 23 — 2026-05-06
+
+**Scope**: Eighth rewrite wave for six residual heterogeneous `batch-generated` method pages: `通用电气网络.md`, `csg.md`, `delarue-enhanced-avm.md`, `dfig-offshore-wind-farm.md`, `dual-active-bridge.md`, and `facts-devices.md`.
+
+**Verification Status**: PASS. All six pages are strict-clean and structurally consistent.
+
+### Issues
+
+- No critical/high issues found after rewrite.
+- This wave intentionally produced mixed maturity levels:
+  - `delarue-enhanced-avm.md`, `dfig-offshore-wind-farm.md`, `dual-active-bridge.md`: usable B-grade method pages.
+  - `通用电气网络.md`, `facts-devices.md`: compact C-grade upper-level entry pages.
+  - `csg.md`: deliberately downgraded to a D-grade “term pending confirmation” page because the acronym could not be responsibly expanded from available evidence.
+
+### Execution Notes
+
+- Removed wrong pasted content including:
+  - generic state-space/nodal descriptions being misused as specific method pages,
+  - corrupted realtime-simulator text,
+  - unrelated LCC/PAVM passages,
+  - copyright/header fragments,
+  - false certainty around unexplained acronyms.
+- Treated each page according to what the evidence could actually support:
+  - genuine method page,
+  - upper-level concept entry,
+  - unresolved acronym placeholder.
+
+### Evidence
+
+- `python3 tools/audit_wiki_strict.py`: `Strict findings: 0`.
+- Local target validation:
+  - all six pages have exactly one H1.
+  - all six pages have 0 missing wikilinks.
+  - all six pages pass `git diff --check`.
+- Quality audit:
+  - `delarue-enhanced-avm.md`, `dfig-offshore-wind-farm.md`, `dual-active-bridge.md`: 70/B.
+  - `通用电气网络.md`, `facts-devices.md`: 60/C.
+  - `csg.md`: 25/D.
+
+### Verdict: APPROVED
+
+This eighth wave establishes a third stable pattern for the repo: when evidence is weak, the correct move is to explicitly downgrade a page into an entry or unresolved-term page rather than fabricating a mature method article.
+
+---
+
+## Code Review Round 24 — 2026-05-06
+
+**Scope**: Ninth rewrite wave for the last six residual heterogeneous `batch-generated` method pages: `gan-hemt.md`, `link-name.md`, `microgrid.md`, `midc.md`, `n-port-network.md`, and `nchg,n.md`.
+
+**Verification Status**: PASS. All six pages are strict-clean and structurally consistent.
+
+### Issues
+
+- No critical/high issues found after rewrite.
+- This wave again intentionally produced mixed maturity levels:
+  - `gan-hemt.md`, `n-port-network.md`: usable B-grade method pages.
+  - `microgrid.md`, `midc.md`, `nchg,n.md`: controlled C-grade entry pages.
+  - `link-name.md`: a D-grade controlled error-entry page retained only to absorb a bad legacy link.
+
+### Execution Notes
+
+- Removed wrong pasted content including:
+  - malformed or irrelevant solver formulas,
+  - copyright/header fragments,
+  - unrelated benchmark or toolchain descriptions,
+  - meaningless placeholder naming that pretended to be real methods.
+- Treated each page according to what the available evidence could actually support:
+  - full method page,
+  - compact scenario/entry page,
+  - unresolved or erroneous-term page.
+
+### Evidence
+
+- `python3 tools/audit_wiki_strict.py`: `Strict findings: 0`.
+- Local target validation:
+  - all six pages have exactly one H1.
+  - all six pages have 0 missing wikilinks.
+  - all six pages pass `git diff --check`.
+- Quality audit:
+  - `gan-hemt.md`, `n-port-network.md`: 70/B.
+  - `microgrid.md`, `midc.md`, `nchg,n.md`: 60/C.
+  - `link-name.md`: 25/D.
+
+### Verdict: APPROVED
+
+This ninth wave confirms the repo can now safely absorb even the weakest leftover batch-generated pages by explicitly classifying them according to evidence strength rather than forcing uniform article maturity.
+
+---
+
 ## Code Review Round 13 — 2026-05-04
 
 **Scope**: Coordinator-owned minimal wikilink repair for 34 already-protected method pages. This round did not rewrite page prose, restructure protected pages, or change registry status; it only converted legacy path-style wikilink targets such as `[[methods/vector-fitting.md]]`, `[[models/fdne-model.md]]`, `[[topics/co-simulation.md]]`, and `[[sources/...md]]` to existing slug-style targets.
@@ -691,6 +911,269 @@ git diff --check
 ### Verdict: APPROVED
 
 Both pages remain protected. Future agents should preserve the formal-expression sections as evidence-bound interfaces rather than treating them as complete engineering models.
+
+---
+
+## Code Review Round 15 — 2026-05-06
+
+**Scope**: Infrastructure-first repair after large batch expansion. This round focused on preventing further template pollution, restoring core knowledge-graph anchors, and removing batch-template structural defects before any page-by-page academic rewrite.
+
+**Verification Status**: PASS. Repository-level strict audit returned to clean.
+
+### Issues
+
+- No critical/high issues remain in strict audit after this repair round.
+- Quality risk still exists in newly created bridge pages and many batch-generated pages, but these are now quality-improvement tasks rather than structural breakages or broken graph edges.
+
+### Execution Notes
+
+- Added five missing high-frequency anchors:
+  - `wiki/topics/power-system.md`
+  - `wiki/methods/control-system.md`
+  - `wiki/methods/pi-model.md`
+  - `wiki/methods/vsc-control.md`
+  - `wiki/methods/power-flow.md`
+- Updated `tools/batch_generate_pages.py` to stop emitting unsafe defaults:
+  - removed hard-coded generic application claims,
+  - removed automatic insertion of `[[power-system]]` and `[[control-system]]`,
+  - removed placeholder “failure mode” prose that sounded factual without evidence,
+  - preserved source-backed equations only when extracted from related source pages.
+- Performed a repository-wide mechanical cleanup of bare `#` placeholder lines in 291 affected pages, which had been inflating H1 counts and dominating strict findings.
+
+### Evidence
+
+- Before this round:
+  - strict audit: 396 findings.
+  - dominant issues: missing wikilinks and duplicate/missing H1 in batch-generated expansion pages.
+- After anchor repair and mechanical cleanup:
+  - `python3 tools/audit_wiki_strict.py`: `Strict findings: 0`.
+  - `git diff --check` passed.
+- Diagnostic observations that motivated the repair:
+  - the missing-wikilink queue had collapsed to 5 repeated targets before repair,
+  - 291 remaining strict findings were caused by bare `#` placeholder lines,
+  - the batch generator template was the direct source of repeated generic claims and invalid default links.
+
+### Changed Strategy
+
+- The repo should continue with an infrastructure-first lane before broader academic refinement:
+  - stop unsafe batch regeneration,
+  - keep core anchor pages stable,
+  - treat `batch-generated` pages as rewrite candidates rather than protected knowledge pages.
+
+### Verdict: APPROVED
+
+The repository is back to a strict-clean baseline. Future waves should prioritize academic rewriting of `batch-generated` pages, not more link triage.
+
+---
+
+## Code Review Round 16 — 2026-05-06
+
+**Scope**: First academic rewrite wave for six `batch-generated` control-method pages: `adaptive-droop.md`, `droop-control.md`, `distributed-control.md`, `inertia-control.md`, `hierarchical-control.md`, and `frequency-control.md`.
+
+**Verification Status**: PASS. All six pages are strict-clean and structurally consistent.
+
+### Issues
+
+- No critical/high issues found after rewrite.
+- All six pages remain B grade by heuristic score only because they are concise method-entry pages. The remaining signal is `taxonomy page is short`, not a correctness or structure defect.
+
+### Execution Notes
+
+- Removed all batch-template artifacts:
+  - wrong pasted definitions from unrelated source domains,
+  - repeated generic application bullet lists,
+  - unsupported “1% accuracy / realtime / optimal” style performance statements,
+  - duplicated formulas and placeholder fragments.
+- Rewrote each page around:
+  - definition and boundary,
+  - EMT role,
+  - key mechanism,
+  - compact formal expression,
+  - relation to adjacent control pages,
+  - source-bounded evidence notes.
+- Promoted the six pages from `batch-generated` to `needs-review` in the registry rather than `protected`, because they are now usable but still intentionally concise.
+
+### Evidence
+
+- `python3 tools/audit_wiki_strict.py`: `Strict findings: 0`.
+- Local target validation:
+  - all six pages have exactly one H1.
+  - all six pages have 0 missing wikilinks.
+  - all six pages pass `git diff --check`.
+- Quality audit:
+  - `adaptive-droop.md`, `droop-control.md`, `distributed-control.md`: 70/B.
+  - `inertia-control.md`, `hierarchical-control.md`, `frequency-control.md`: 75/B.
+
+### Verdict: APPROVED
+
+This wave establishes the rewrite pattern for converting `batch-generated` control-method stubs into evidence-disciplined method pages. Future waves can reuse the same approach on adjacent shards.
+
+---
+
+## Code Review Round 17 — 2026-05-06
+
+**Scope**: Second academic rewrite wave for six `batch-generated` grid-integration/control pages: `hvdc-control.md`, `microgrid-control.md`, `lvrt-control.md`, `mppt-control.md`, `lcl-filter.md`, and `offshore-wind-integration.md`.
+
+**Verification Status**: PASS. All six pages are strict-clean and structurally consistent.
+
+### Issues
+
+- No critical/high issues found after rewrite.
+- All six pages remain B grade only because they are concise method-entry pages. The only remaining heuristic issue is `taxonomy page is short`.
+
+### Execution Notes
+
+- Removed the same class of batch-template defects as in Round 16:
+  - wrong pasted definitions from unrelated domains,
+  - unrelated formulas and solver descriptions,
+  - unsupported numerical-performance claims,
+  - generic filler sections that were not tied to the page title.
+- Rebuilt each page around:
+  - what the method actually is,
+  - what role it serves in EMT studies,
+  - what adjacent pages define its boundary,
+  - what representative sources are relevant,
+  - what should explicitly not be inferred.
+- Promoted all six pages from `batch-generated` to `needs-review`.
+
+### Evidence
+
+- `python3 tools/audit_wiki_strict.py`: `Strict findings: 0`.
+- Local target validation:
+  - all six pages have exactly one H1.
+  - all six pages have 0 missing wikilinks.
+  - all six pages pass `git diff --check`.
+- Quality audit:
+  - `hvdc-control.md`, `lvrt-control.md`, `mppt-control.md`, `offshore-wind-integration.md`: 70/B.
+  - `microgrid-control.md`, `lcl-filter.md`: 75/B.
+
+### Verdict: APPROVED
+
+This second wave confirms that the batch-generated control/integration shard can be converted into usable method-entry pages without reintroducing strict defects. Future waves should continue shard-by-shard, not revert to generic bulk generation.
+
+---
+
+## Code Review Round 18 — 2026-05-06
+
+**Scope**: Third academic rewrite wave for six MMC/submodule/modulation pages: `half-bridge-submodule.md`, `hbsm.md`, `fbsm.md`, `m3c.md`, `mbsm.md`, and `nearest-level-modulation.md`.
+
+**Verification Status**: PASS. All six pages are strict-clean and structurally consistent.
+
+### Issues
+
+- No critical/high issues found after rewrite.
+- All six pages are now B grade with the single remaining heuristic note `taxonomy page is short`. This is acceptable for compact method-entry pages.
+
+### Execution Notes
+
+- Removed template pollution including:
+  - unrelated transmission-line and solver formulas,
+  - wrong pasted abstracts from unrelated source topics,
+  - generic “accuracy/efficiency/stability” claims without source binding,
+  - repeated filler sections that obscured the actual method boundary.
+- Rebuilt the shard around the real conceptual boundaries:
+  - HBSM and FBSM as distinct submodule methods,
+  - M3C and MBSM as compact modeling-entry pages,
+  - NLM as a modulation/sorting method page,
+  - `hbsm.md` retained as a controlled acronym entry rather than a false full article.
+
+### Evidence
+
+- `python3 tools/audit_wiki_strict.py`: `Strict findings: 0`.
+- Local target validation:
+  - all six pages have exactly one H1.
+  - all six pages have 0 missing wikilinks.
+  - all six pages pass `git diff --check`.
+- Quality audit:
+  - all six pages: 70/B.
+
+### Verdict: APPROVED
+
+This third wave shows the same rewrite pattern also works for MMC/submodule shards. Future waves can continue with similarly tight concept clusters.
+
+---
+
+## Code Review Round 19 — 2026-05-06
+
+**Scope**: Fourth academic rewrite wave for six DC-grid/protection pages: `dc-protection.md`, `dccb.md`, `cl-dccb.md`, `cigre-b4-dc-grid.md`, `multi-terminal-dc.md`, and `offshore-hvdc-hub.md`.
+
+**Verification Status**: PASS. All six pages are strict-clean and structurally consistent.
+
+### Issues
+
+- No critical/high issues found after rewrite.
+- All six pages are B grade. `cigre-b4-dc-grid.md` is the lowest in the group at 65/B because it is intentionally a compact scenario-entry page rather than a long technical article.
+
+### Execution Notes
+
+- Removed template pollution including:
+  - wrong pasted EMT platform and hardware-loop descriptions,
+  - unrelated transmission-line formulas,
+  - generic “accuracy/efficiency/stability” claims,
+  - source-text fragments that belonged to single papers, not to the page concepts.
+- Reframed the shard into the correct method boundaries:
+  - `dc-protection` as protection-method family,
+  - `dccb` and `cl-dccb` as breaker-method pages,
+  - `multi-terminal-dc` as system-level method page,
+  - `offshore-hvdc-hub` and `cigre-b4-dc-grid` as compact scenario/system-entry pages.
+
+### Evidence
+
+- `python3 tools/audit_wiki_strict.py`: `Strict findings: 0`.
+- Local target validation:
+  - all six pages have exactly one H1.
+  - all six pages have 0 missing wikilinks.
+  - all six pages pass `git diff --check`.
+- Quality audit:
+  - `dc-protection.md`, `dccb.md`, `cl-dccb.md`, `multi-terminal-dc.md`, `offshore-hvdc-hub.md`: 70/B.
+  - `cigre-b4-dc-grid.md`: 65/B.
+
+### Verdict: APPROVED
+
+This fourth wave confirms the rewrite pattern also works for DC-grid/protection shards and that compact scenario-entry pages can remain useful without being artificially expanded.
+
+---
+
+## Code Review Round 20 — 2026-05-06
+
+**Scope**: Fifth rewrite wave for six control-term alias and entry pages: `h-鲁棒控制.md`, `鲁棒控制.md`, `双闭环pi控制器.md`, `环流抑制控制器.md`, `ibr.md`, and `lvrt.md`.
+
+**Verification Status**: PASS. All six pages are strict-clean and structurally consistent.
+
+### Issues
+
+- No critical/high issues found after rewrite.
+- This wave intentionally mixes two page shapes:
+  - compact alias-entry pages,
+  - one fuller method page (`ibr.md`).
+- `环流抑制控制器.md` remains C grade by heuristic score because it is still a deliberately compact alias page. It is structurally clean and should not be treated as a broken page.
+
+### Execution Notes
+
+- Reframed four Chinese alias pages so they no longer compete with existing formal method pages:
+  - `h-鲁棒控制` -> alias entry for `h-infinity-control`
+  - `鲁棒控制` -> Chinese high-level robust-control entry
+  - `双闭环pi控制器` -> alias entry for `dual-loop-pi-controller`
+  - `lvrt` -> alias entry for `lvrt-control`
+- Reframed `环流抑制控制器` as a controlled alias entry for `circulating-current-suppression`.
+- Rewrote `ibr.md` from a Modelica/toolchain-biased page into a real inverter-based resource modeling method page.
+
+### Evidence
+
+- `python3 tools/audit_wiki_strict.py`: `Strict findings: 0`.
+- Local target validation:
+  - all six pages have exactly one H1.
+  - all six pages have 0 missing wikilinks.
+  - all six pages pass `git diff --check`.
+- Quality audit:
+  - `h-鲁棒控制.md`, `双闭环pi控制器.md`, `lvrt.md`: 75/B.
+  - `鲁棒控制.md`: 70/B.
+  - `ibr.md`: 87/A.
+  - `环流抑制控制器.md`: 60/C.
+
+### Verdict: APPROVED
+
+This wave establishes a second stable pattern in the repo: controlled alias-entry pages are acceptable when they clearly defer to formal method pages instead of competing with them.
 
 ---
 

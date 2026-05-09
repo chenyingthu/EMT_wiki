@@ -1,79 +1,70 @@
 ---
-title: "Nearest Level Modulation"
+title: "最近电平调制 (Nearest Level Modulation)"
 type: method
-tags: [nearest-level-modulation]
+tags: [nearest-level-modulation, nlm, mmc, modulation, sorting]
 created: "2026-05-05"
+updated: "2026-05-06"
 ---
 
-# Nearest Level Modulation
+# 最近电平调制 (Nearest Level Modulation)
 
 ## 定义与边界
 
-本文提出一种基于子模块直流电压闭环控制的最近电平调制（NLM）等效模型，旨在解决传统MMC开关模型仿真速度慢、现有平均值模型难以准确描述复杂NLM动态过程的问题。该方法将NLM生成的子模块等效占空比解耦为稳态分量与波动分量：稳态分量直接由MMC主控制系统的调制波生成，用于构建桥臂基波电压；波动分量则通过为每个子模块独立配置直流电压闭环控制器自动产生，用于实现子模块电容电压的动态均衡。该模型将离散的开关动作与电平排序逻辑等效为连续的可控电压源，避免了传统NLM中复杂的载波比较与实时排序计算。模型可直接利用通用电磁暂态仿真软件中的离散元件搭建，无需额外编程，适用于毫秒级仿真步长，在低频范围内能保持...
+最近电平调制（Nearest Level Modulation, NLM）是 MMC 和其他多电平换流器中常见的调制方法，其基本思想是根据参考电压选择最接近的可用离散电平，并据此确定每个桥臂或子模块的插入数量与顺序。
 
-**边界限定**：待完善。需要进一步研究确定该方法/模型的具体适用条件和失效边界。
+本页讨论的是 NLM 的调制与排序逻辑，不把动态相量、频移方法或一般多速率求解公式误写成 NLM 本身。
 
-## EMT中的作用
+## EMT 中的作用
 
-基于相关研究，nearest-level-modulation在EMT仿真中用于解决特定问题。
+在 EMT 仿真中，NLM 主要用于：
 
-基于相关研究，该方法在EMT仿真中的主要应用包括：
-- 特定场景的电磁暂态分析
-- 控制系统设计与验证
-- 故障分析与保护协调
+- 把连续参考电压映射为子模块离散插入状态；
+- 分析电平合成误差、低开关频率特性和子模块排序策略；
+- 研究电容电压平衡与调制逻辑之间的耦合；
+- 为 MMC 详细模型、平均值模型和等效模型提供调制背景。
 
-## 主要分支与机制
+## 常见关注点
 
-- 待补充（需要进一步研究确定具体分支）
+- 参考电压到离散插入数的映射；
+- 子模块排序与电容电压平衡；
+- 低开关频率特性与电平近似误差；
+- 在详细模型、等效模型和实时仿真中的不同实现粒度。
 
-## 形式化表达
+## 关键公式
 
+若桥臂共有 $N_{sm}$ 个子模块，目标桥臂电压参考为 $v_{ref}$，则 NLM 常通过“目标插入数”确定等效输出电平：
 
-### 核心数学表达
+$$
+n_{ins} \approx \operatorname{round}\!\left(\frac{v_{ref}}{v_c^{eq}}\right)
+$$
 
-从相关研究提取的关键公式：
+其中 $v_c^{eq}$ 为等效子模块电容电压。实际实现中还需要决定“哪些子模块被插入”，因此排序和平衡策略是 NLM 方法的一部分，而非后处理细节。
 
-$$x(t)=A(t)\cos\left(\omega t+\varphi(t)\right)$$
+## 与相关方法的关系
 
-$$\frac{dA(t)}{dt}\approx 0,\qquad \frac{d\varphi(t)}{dt}\approx 0$$
-
-$$\frac{dx}{dt}=f(x,t)$$
-
-$$y=\frac{1}{\omega_0}\frac{dx}{dt}$$
-
-$$\begin{bmatrix}u\\v\end{bmatrix}=T(t)\begin{bmatrix}x\\y\end{bmatrix}$$
-
-
-
-
+- [[half-bridge-submodule]] 和 [[fbsm]]：说明子模块拓扑决定可用电平集合。
+- [[mbsm]]：统一子模块表示中常需要把 NLM 组织成插入指数或等效电平。
+- [[mmc-model]]：给出整机层背景。
+- [[circulating-current-suppression]]：说明桥臂调制与内部控制之间的耦合。
 
 ## 适用边界与失败模式
 
-
-基于证据边界的分析：
-
-
-
-
-
-**潜在失效模式**：
-- 参数设置不当可能导致仿真不稳定
-- 特定工况下可能产生数值误差
-- 需要进一步研究确定具体失效边界
-
-## 与相关页面的关系
-
-- [[emt-simulation]] - EMT仿真基础
-- [[power-system]] - 电力系统基础
-- [[control-system]] - 控制系统基础
+- 适用于子模块数较多、需要低开关频率和清晰电平结构的多电平换流器。
+- 若子模块电压散布显著，仅靠最近电平选择可能不足以保证长期平衡。
+- 在故障、闭锁或极端暂态场景中，NLM 的简化等效可能不足以代表所有开关细节。
+- 不同论文中“等效 NLM 模型”的近似范围可能差别很大，不能泛化。
 
 ## 代表性来源
 
-- [[equivalent-model-of-nearest-level-modulation-for-fast-electromagnetic-transient-]]
-- [[real-time-simulation-of-hybrid-modular-multilevel-converters-using-shifted-phaso]]
-- [[a-review-of-efficient-modeling-methods-for-modular-multilevel-converters]]
+- [[equivalent-model-of-nearest-level-modulation-for-fast-electromagnetic-transient-]]：可作为 NLM 等效建模的直接背景来源。
+- [[real-time-simulation-of-hybrid-modular-multilevel-converters-using-shifted-phaso]]：说明多电平换流器快速仿真与调制背景。
+- [[a-review-of-efficient-modeling-methods-for-modular-multilevel-converters]]：说明 NLM 在 MMC 建模文献中的位置。
 
+## 证据边界
 
----
+本页不写无来源的最优排序策略、电平误差或实时步长结论。具体实现效果必须绑定调制对象、子模块数量和验证工况。
 
-*本页面由批量生成脚本创建，需要进一步人工审查和完善。*
+## 开放问题
+
+- 当前页尚未继续拆分“原始 NLM 排序逻辑”和“基于 NLM 的快速等效模型”之间的边界。
+- 不同子模块电压散布条件下的 NLM 适用性，后续应回到具体 source 页继续细化。

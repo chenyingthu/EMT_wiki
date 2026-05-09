@@ -27,6 +27,35 @@ created: "2026-05-02"
 
 ## 核心机制
 
+```mermaid
+graph TD
+    subgraph 动态元件
+        L[电感 L: v = L·di/dt]
+        C[电容 C: i = C·dv/dt]
+    end
+    subgraph 梯形积分离散
+        L -->|梯形法| LN[诺顿形式]
+        C -->|梯形法| CN[诺顿形式]
+    end
+    subgraph 伴随电路等效
+        LN --> GeL["等效电导 G_L = Δt/2L"]
+        LN --> IhL["历史电流源 I_hist,Lⁿ = i_n + G_L·v_n"]
+        CN --> GeC["等效电导 G_C = 2C/Δt"]
+        CN --> IhC["历史电流源 I_hist,Cⁿ = -(i_n + G_C·v_n)"]
+    end
+    subgraph 节点方程装配
+        GeL --> Yn["节点导纳矩阵 Y_n"]
+        GeC --> Yn
+        IhL --> In["右端电流向量 I_n"]
+        IhC --> In
+    end
+
+    style L fill:#e1f5fe
+    style C fill:#e1f5fe
+    style Yn fill:#c8e6c9
+    style In fill:#c8e6c9
+```
+
 ### 电感支路
 
 对电感 $v=L\,di/dt$，用梯形积分可得：
@@ -61,6 +90,36 @@ $$
 
 以上符号假设支路电流和支路电压方向一致。若程序采用相反注入方向，历史源符号必须同步改变。
 
+### 后向欧拉伴随形式
+
+同一动态元件也可由 [[backward-euler]] 生成一阶伴随形式。电感支路可写为：
+
+$$
+i_{n+1}=G_{BE,L}v_{n+1}+I_{hist,BE,L}^{n},
+\qquad
+G_{BE,L}=\frac{\Delta t}{L}
+$$
+
+其中历史项由上一时刻电感电流决定。电容支路可写为：
+
+$$
+i_{n+1}=G_{BE,C}v_{n+1}+I_{hist,BE,C}^{n},
+\qquad
+G_{BE,C}=\frac{C}{\Delta t}
+$$
+
+后向欧拉数值阻尼更强，常用于事件点、刚性支路或抑制梯形积分突变后的交替误差；代价是同一步长下低阶精度和数值耗散更明显。
+
+### 频变支路伴随形式
+
+频率相关支路通常先由 [[vector-fitting]]、部分分式展开或状态空间模型得到有理函数近似：
+
+$$
+Y(s)\approx D+sE+\sum_{r=1}^{N}\frac{R_r}{s-p_r}
+$$
+
+进入 EMT 时，每个极点-留数项被离散为递推状态或等效历史源。此类伴随形式不能只检查拟合误差，还需要检查稳定性、因果性和 [[passivity-enforcement]]，否则时域求解可能出现非物理能量增长。
+
 ### 装配到节点方程
 
 对连接节点 $p$ 和 $q$ 的等效电导 $G$，导纳矩阵贡献为：
@@ -94,6 +153,53 @@ $$
 | 状态空间集群 | $\mathbf{Y}_{eq}\mathbf{v}$ | 离散状态历史项 | 端口映射必须明确 |
 | 非线性伴随 | 增量电导 | 线性化截距 | 需要迭代收敛 |
 | 多端口伴随 | 导纳矩阵 | 历史源向量 | 互耦项不可随意删除 |
+
+```mermaid
+graph TD
+    subgraph 正常步进
+        Tn["时刻 t_n
+稳态伴随电路"] -->|求解| Yn["Y_n v_n = I_n"]
+    end
+    subgraph 开关事件
+        Event["开关动作
+发生在步长内部"]
+        Check{拓扑改变?}
+        Yes["更新导纳矩阵
+重新LU分解"]
+        No["仅修改历史源
+保持矩阵不变"]
+    end
+    subgraph 历史源修正
+        Hist["旧拓扑历史源
+含非物理能量"]
+        Fix["重初始化
+或CDA切换"]
+    end
+    subgraph 特殊处理
+        CDA["后向欧拉一步
+(阻尼振荡)"]
+        Interp["插值定位
+精确事件时刻"]
+    end
+
+    Event --> Check
+    Check --> Yes
+    Check --> No
+    Yes -.-> Hist
+    No -.-> Hist
+    Hist --> Fix
+    Fix --> CDA
+    Fix --> Interp
+    CDA --> Tn1["继续 t_{n+1}"]
+    Interp --> Tn1
+
+    style Event fill:#fce4ec
+    style Check fill:#fff3e0
+    style Hist fill:#ffccbc
+    style Fix fill:#e8f5e9
+    style CDA fill:#e1f5fe
+    style Interp fill:#e1f5fe
+```
 
 ## 事件处理与失败模式
 

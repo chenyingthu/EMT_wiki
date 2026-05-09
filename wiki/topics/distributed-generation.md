@@ -28,6 +28,28 @@ created: "2026-05-02"
 - **经济性**: 减少输配电投资，降低线路损耗
 - **灵活性**: 模块化部署，适应多样化应用场景
 
+## 核心原理详解
+
+### 技术概述
+分布式发电技术基于电磁感应和电力电子变换原理，通过小型化、模块化的发电设备实现电力的就地生产和消纳。该技术充分利用可再生能源和分布式能源资源，提高能源利用效率和供电可靠性。
+
+### 理论基础
+分布式发电系统的分析建立在以下理论基础之上：
+- **电磁场理论**：分析电能的产生、传输和转换过程
+- **电力电子学**：研究变流器拓扑和控制策略
+- **电力系统分析**：评估DG接入对电网的影响
+
+### 核心机制
+- **能量转换**：将一次能源（光能、风能、热能等）转换为电能
+- **并网控制**：实现与电网的同步和功率控制
+- **功率管理**：优化有功和无功功率输出
+
+### 技术优势
+- 提高能源利用效率和供电可靠性
+- 减少输配电损耗和电网投资
+- 支持可再生能源大规模接入
+- 增强电网灵活性和韧性
+
 ## 主要类型与技术特性
 
 ### 可再生能源发电
@@ -104,7 +126,7 @@ P_r & v_r \leq v \leq v_{co}
 **动态模型**:
 微型燃气轮机的转速动态可用以下方程描述：
 
-$$J\frac{d\omega}{dt} = T_m - T_e - T_{loss}$$
+$$J\frac{\mathrm{d}omega}{\mathrm{d}t} = T_m - T_e - T_{loss}$$
 
 其中：
 - $J$: 转动惯量
@@ -147,7 +169,7 @@ $$J\frac{d\omega}{dt} = T_m - T_e - T_{loss}$$
 
 $$V_{bat} = E_0 - R_i \cdot I - V_{RC}$$
 
-$$\frac{dV_{RC}}{dt} = \frac{I}{C_p} - \frac{V_{RC}}{R_p C_p}$$
+$$\frac{dV_{RC}}{\mathrm{d}t} = \frac{I}{C_p} - \frac{V_{RC}}{R_p C_p}$$
 
 其中：
 - $E_0$: 开路电压
@@ -181,7 +203,7 @@ $$\frac{dV_{RC}}{dt} = \frac{I}{C_p} - \frac{V_{RC}}{R_p C_p}$$
 - 开关频率: 2-20kHz
 
 **多电平逆变器**:
-- **三电平NPC**: 降低谐波含量，提高效率
+- **三电平NPC**: 降低谐波含量，提升仿真效率
 - **级联H桥**: 模块化设计，可扩展性强
 - **MMC拓扑**: 模块化多电平换流器，适用于大功率应用
 
@@ -229,7 +251,7 @@ $$V = V_0 - n_q (Q - Q_0)$$
 #### 锁相环(PLL)
 PLL用于同步逆变器输出与电网电压：
 
-$$\frac{d\theta}{dt} = \omega_0 + K_{p,pll}(V_q - 0) + K_{i,pll}\int(V_q - 0)dt$$
+$$\frac{\mathrm{d}theta}{\mathrm{d}t} = \omega_0 + K_{p,pll}(V_q - 0) + K_{i,pll}\int(V_q - 0)dt$$
 
 **相关页面**: [[inverter-model]] - 逆变器详细模型
 
@@ -469,9 +491,9 @@ $$v_{avg} = d \cdot V_{dc}$$
 #### PLL建模
 同步旋转坐标系锁相环：
 
-$$\frac{d\theta_{pll}}{dt} = \omega_{pll} = \omega_0 + K_{p,pll} \cdot V_q + K_{i,pll} \cdot \phi_{pll}$$
+$$\frac{\mathrm{d}\theta_{pll}}{\mathrm{d}t} = \omega_{pll} = \omega_0 + K_{p,pll} \cdot V_q + K_{i,pll} \cdot \phi_{pll}$$
 
-$$\frac{d\phi_{pll}}{dt} = V_q$$
+$$\frac{\mathrm{d}\phi_{pll}}{\mathrm{d}t} = V_q$$
 
 **EMT实现**: 离散化后每个时步更新相位角
 
@@ -485,11 +507,11 @@ $$u(k) = K_p \cdot e(k) + K_i \cdot T_s \cdot \sum_{i=0}^{k} e(i)$$
 #### 滤波器建模
 **LCL滤波器状态方程**:
 
-$$\frac{di_1}{dt} = \frac{1}{L_1}(v_{inv} - v_c - R_1 i_1)$$
+$$\frac{di_1}{\mathrm{d}t} = \frac{1}{L_1}(v_{inv} - v_c - R_1 i_1)$$
 
-$$\frac{dv_c}{dt} = \frac{1}{C}(i_1 - i_2)$$
+$$\frac{dv_c}{\mathrm{d}t} = \frac{1}{C}(i_1 - i_2)$$
 
-$$\frac{di_2}{dt} = \frac{1}{L_2}(v_c - v_g - R_2 i_2)$$
+$$\frac{di_2}{\mathrm{d}t} = \frac{1}{L_2}(v_c - v_g - R_2 i_2)$$
 
 其中：
 - $i_1$: 逆变器侧电流

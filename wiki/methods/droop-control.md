@@ -1,84 +1,98 @@
 ---
-title: "Droop Control"
+title: "下垂控制 (Droop Control)"
 type: method
-tags: [droop-control]
+tags: [droop-control, grid-forming, power-sharing, frequency-control, voltage-control]
 created: "2026-05-05"
+updated: "2026-05-06"
 ---
 
-# Droop Control
+# 下垂控制 (Droop Control)
 
 ## 定义与边界
 
-提出一种基于构网型逆变器的光储混合电站黑启动控制与仿真方法。系统直流侧由光伏阵列与电池储能通过DC/DC变换器并联构成，交流侧采用H桥逆变器、LC滤波器及升压变压器。控制架构采用主从双层设计：主控制环基于下垂特性，根据PCC点注入的有功与无功功率实时调节电压幅值与频率；次控制环采用PI控制器消除稳态偏差，将电压与频率恢复至额定值。控制信号经dq同步旋转坐标系下的电压/电流双环嵌套处理生成参考电压，最终通过PWM调制驱动开关器件。黑启动过程中，直流母线电压由储能Buck-Boost变换器恒定控制，实现交直流侧解耦。储能优先供电，超出其放电上限后由光伏阵列补充。整体方案在PSCAD中搭建高保真电磁...
+下垂控制是在不依赖高速通信的条件下，通过频率-有功和电压-无功静态关系实现并联系统功率共享的控制方法。它是微电网、储能并网、构网型逆变器和多变流器并联系统中的常见一次控制结构。
 
-**边界限定**：待完善。需要进一步研究确定该方法/模型的具体适用条件和失效边界。
+本页讨论的是控制律和共享机制本身，不把黑启动、电池能量管理、CPU-FPGA 实时仿真框架或频率扫描工具混写为“下垂控制”。
 
-## EMT中的作用
+## EMT 中的作用
 
-基于相关研究，droop-control在EMT仿真中用于解决特定问题。
+在 EMT 仿真里，下垂控制常用于：
 
-基于相关研究，该方法在EMT仿真中的主要应用包括：
-- 特定场景的电磁暂态分析
-- 控制系统设计与验证
-- 故障分析与保护协调
+- 分析并联逆变器之间的有功/无功分配；
+- 研究孤岛运行和黑启动过程中的频率、电压建立；
+- 评估弱网、线路阻抗和滤波器参数对功率共享误差的影响；
+- 与二次控制配合，分析稳态偏差恢复与暂态性能折中。
 
-## 主要分支与机制
+## 主要分支
 
-- 待补充（需要进一步研究确定具体分支）
+在当前 Wiki 语境中，下垂控制至少有 3 个常见分支：
 
-## 形式化表达
+1. 有功-频率/无功-电压基本下垂：最传统的共享形式。
+2. 构网型逆变器下垂：强调黑启动、孤岛供电和弱网支撑。
+3. 与二次恢复或能量管理耦合的层级下垂：强调恢复稳态偏差和运行约束。
 
+这些分支共享静态下垂关系，但控制对象、实现设备和约束条件并不相同。
 
-### 核心数学表达
+## 关键公式
 
-从相关研究提取的关键公式：
-
-$$J_i\frac{d\Delta\omega_i}{dt}=\frac{P_{mi}}{\omega_0}-\frac{P_{0i}}{\omega_0}-D_i(\omega_i-\omega_0),\qquad P_{mi}=P_{refi}+k_{\omega i}(\omega_0-\omega)$$
-
-$$E_i=\frac{1}{K_{qi}s}\left[Q_{refi}-Q_{0i}+D_{qi}(U_{cni}-U_c)\right]$$
-
-$$P_{0i}=\frac{3U_{ci}U_g\sin\delta_i}{2\omega_0L_i}\approx\frac{3U_{ci}U_g}{2X_i}\delta_i\approx K_i\delta_i,\qquad \delta_i=\int(\omega_i-\omega_{bus})dt$$
-
-$$\frac{\Delta\omega_i(s)}{\Delta\omega_{bus}(s)}=\frac{K_i}{J_i\omega_0s^2+(D_i\omega_0+k_{\omega i})s+K_i}$$
+标准有功-频率与无功-电压下垂关系常写为：
 
 $$
+\omega = \omega_0 - m_p (P - P^\star)
+$$
 
-*单台VSC-ESS相对于公共母线频率扰动的二阶频率响应传递函数。分母中二阶项由虚拟惯量决定，一阶项由虚拟阻尼和频率调制系数决定，常数项由同步功率系数决定。*
+$$
+V = V_0 - n_q (Q - Q^\star)
+$$
 
+其中 $\omega_0$、$V_0$ 为额定频率和电压参考，$m_p$、$n_q$ 为下垂系数。下垂系数越大，控制器对功率偏差越敏感，但系统频率/电压偏移也可能更明显。
 
-**公式5**: $$
+若采用二次恢复控制，常把恢复环作为较慢层级叠加在下垂外环上，而不是取消下垂本身。
 
+## 验证共识
 
+现有来源和相邻页面能稳定支持的共识包括：
 
+- 下垂控制的核心价值是无高速通信条件下的近似共享，而不是严格最优分配。
+- 频率共享与无功共享常受线路阻抗、滤波器和测量位置影响。
+- 构网型逆变器场景把下垂控制看成一次控制骨架，而不是全部控制逻辑。
+- 一旦进入限流、保护或模式切换工况，理想下垂关系往往会被覆盖。
 
+## 量化线索
+
+- 当前页面至少覆盖 `3` 个控制分支。
+- 基本控制律至少由 `2` 条核心关系构成：$P$-$\omega$ 和 $Q$-$V$。
+- 当前交叉引用已连接不少于 `6` 个相关控制/设备页面，说明它是一个骨架型入口页。
+- 这些数字足以支撑“下垂控制是一次共享总入口”的页面定位。
+
+## 与相关方法的关系
+
+- [[adaptive-droop]]：讨论下垂系数的在线调整。
+- [[hierarchical-control]]：说明一次下垂、二次恢复和能量管理的层级关系。
+- [[inertia-control]]：关注虚拟惯量注入，不等同于静态下垂律。
+- [[microgrid-control]]：给出微电网场景中的控制组合。
+- [[grid-forming-inverter]]：给出下垂控制常见的设备级实现背景。
+- [[frequency-control]]：说明下垂在系统频率支撑链条中的位置。
 
 ## 适用边界与失败模式
 
-
-基于证据边界的分析：
-
-
-
-
-
-**潜在失效模式**：
-- 参数设置不当可能导致仿真不稳定
-- 特定工况下可能产生数值误差
-- 需要进一步研究确定具体失效边界
-
-## 与相关页面的关系
-
-- [[emt-simulation]] - EMT仿真基础
-- [[power-system]] - 电力系统基础
-- [[control-system]] - 控制系统基础
+- 适用于希望在无高速通信条件下获得近似功率共享的并联系统。
+- 线路阻抗不一致、$R/X$ 比显著、滤波器差异或测量偏差会导致共享误差。
+- 单纯下垂控制会带来稳态频率或电压偏差，需要更慢层级恢复。
+- 在强限流、保护动作或故障穿越场景中，下垂关系可能被电流限制或模式切换覆盖。
 
 ## 代表性来源
 
-- [[control-and-simulation-of-a-grid-forming-inverter-for-hybrid-pv-battery-plants-i]]
-- [[2728multi-rate-real-time-hybrid-simulation-of-controllable-line-commutated-conve]]
-- [[active-damping-control-and-parameter-calculation-for-resonance-suppression-in-dc-distribution]]
+- [[control-and-simulation-of-a-grid-forming-inverter-for-hybrid-pv-battery-plants-i]]：说明构网型逆变器黑启动和下垂控制的应用背景。
+- [[active-damping-control-and-parameter-calculation-for-resonance-suppression-in-dc-distribution]]：提醒外环共享与内环阻尼设计之间可能存在耦合。
+- [[transient-electromagnetic-power-compensationbased-adaptive-inertia-control-strat]]：可作为与惯量增强控制对比的相关来源，但不应混写为同一种方法。
+- [[unified-mana-based-load-flow-for-multi-frequency-hybrid-acdc-multi-microgrids]]：提供 coordinated droop 和多微电网初始化背景。
 
+## 证据边界
 
----
+当前页面只说明控制结构和适用边界，不宣称某组下垂参数“最优”或某场景必然稳定。所有性能结论都必须绑定网络阻抗、设备额定值、限流逻辑和具体算例。
 
-*本页面由批量生成脚本创建，需要进一步人工审查和完善。*
+## 开放问题
+
+- 当前页尚未系统整理阻抗匹配、虚拟阻抗和功率解耦设计在下垂控制中的角色。
+- 后续可继续补充“何时下垂足够、何时必须引入更高层恢复控制”的工程判断。

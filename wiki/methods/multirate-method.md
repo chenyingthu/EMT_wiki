@@ -22,6 +22,32 @@ created: "2026-04-13"
 - 实时仿真中把硬件可承载的小步长区域限制在 FPGA 或局部处理器内。
 - 分区并行 EMT 中减少不同区域之间的同步频率。
 
+```mermaid
+sequenceDiagram
+    participant Slow as 慢子系统 (步长 h_s)
+    participant Int as 接口<br/>插值/采样/平均
+    participant Fast as 快子系统 (步长 h_f)
+
+    Note over Slow,Fast: 一个慢步长 = N个快步长 (h_s = N·h_f)
+
+    Slow->>Int: x_s(t_m)
+    Int->>Fast: 插值 x_s(t_m + r·h_f)
+    Note over Fast: x_f 推进 N步
+    Fast->>Int: x_f(t_m + N·h_f)
+    Int->>Slow: 采样/平均 更新 x_s
+    Slow->>Int: x_s(t_{m+1})
+    Int->>Fast: 新的插值
+    Note over Fast: x_f 继续推进 N步
+    Fast->>Int: x_f(t_{m+1} + N·h_f)
+    Int->>Slow: 更新
+
+    Note over Slow,Fast: 插值误差 & 接口延迟 → 稳定性边界
+
+    style Slow fill:#fff3e0
+    style Int fill:#e1f5fe
+    style Fast fill:#fce4ec
+```
+
 ## 核心机制
 
 设快子系统步长为 $h_f$，慢子系统步长为 $h_s=N h_f$，则一个慢步长内快子系统推进 $N$ 次。抽象形式为

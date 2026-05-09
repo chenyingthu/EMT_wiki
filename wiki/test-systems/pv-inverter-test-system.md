@@ -1045,7 +1045,7 @@ C2 = (Vmp/Voc - 1)/ln(1 - Imp/Isc)
 
 - [[mppt-control]] - 最大功率点跟踪控制
 - [[grid-connected-inverter]] - 并网逆变器
-- [[lvrt]] - 低电压穿越
+- [[lvrt-control]] - 低电压穿越
 - [[anti-islanding]] - 孤岛检测
 - [[harmonic-analysis]] - 谐波分析
 - [[ieee-1547]] - IEEE 1547标准

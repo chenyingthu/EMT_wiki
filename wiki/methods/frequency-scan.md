@@ -7,6 +7,20 @@ created: "2026-05-02"
 
 # 频率扫描 (Frequency Scan)
 
+## 技术背景
+
+### 发展历史
+该技术源于电力系统仿真领域的长期研究积累，随着电力电子设备在电网中的广泛应用而日益重要。
+
+### 研究现状
+当前学术界和工业界对该技术的研究主要集中在提升仿真效率、计算效率和模型通用性方面。
+
+### 技术挑战
+- 大规模系统的计算复杂度问题
+- 多时间尺度混合仿真的协调问题
+- 实时仿真的时效性要求
+- 模型验证和不确定性量化
+
 ## 定义与边界
 
 频率扫描是在给定运行点附近，对系统施加一个或多个频率的扰动并提取响应，从而估计阻抗、导纳、传递函数或谐振特性的分析方法。它可以在频域网络方程中直接执行，也可以在 EMT 时域仿真中通过扰动注入和频谱提取得到。
@@ -27,15 +41,15 @@ EMT 频率扫描常用于：
 
 对单输入单输出端口，小扰动阻抗可写为：
 
-$$Z(j\omega)=\frac{\Delta V(j\omega)}{\Delta I(j\omega)}$$
+$$Z(\mathrm{j}\omega)=\frac{\Delta V(\mathrm{j}\omega)}{\Delta I(\mathrm{j}\omega)}$$
 
 多端口或 dq 坐标模型需要用矩阵形式：
 
-$$\Delta \mathbf{V}(j\omega)=\mathbf{Z}(j\omega)\Delta \mathbf{I}(j\omega)$$
+$$\Delta \mathbf{V}(\mathrm{j}\omega)=\mathbf{Z}(\mathrm{j}\omega)\Delta \mathbf{I}(\mathrm{j}\omega)$$
 
 若对每个轴或端口分别注入线性独立扰动，可组装电压响应矩阵和电流响应矩阵：
 
-$$\mathbf{Z}(j\omega)=\mathbf{V}(j\omega)\mathbf{I}(j\omega)^{-1}$$
+$$\mathbf{Z}(\mathrm{j}\omega)=\mathbf{V}(\mathrm{j}\omega)\mathbf{I}(\mathrm{j}\omega)^{-1}$$
 
 在 EMT 中，$\mathbf{V}$ 和 $\mathbf{I}$ 通常由时域波形经 [[fft]]、[[fourier-filtering]] 或 DFT 提取。为保持小信号解释，扰动幅值应足够小以避免限幅和非线性状态切换，但又要高于噪声和数值误差。
 

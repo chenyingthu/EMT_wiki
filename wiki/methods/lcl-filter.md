@@ -1,78 +1,58 @@
 ---
-title: "Lcl Filter"
+title: "LCL 滤波器方法 (LCL Filter)"
 type: method
-tags: [lcl-filter]
+tags: [lcl-filter, inverter-interface, resonance, current-control, grid-connection]
 created: "2026-05-05"
+updated: "2026-05-06"
 ---
 
-# Lcl Filter
+# LCL 滤波器方法 (LCL Filter)
 
 ## 定义与边界
 
-本文提出了一种基于拉普拉斯域长卷积和并行处理的电磁暂态仿真新方法。该方法首先在拉普拉斯域建立系统的节点导纳矩阵，利用Kron降阶法将网络矩阵缩减至仅包含开关节点和观测节点的低维形式。通过数值拉普拉斯逆变换(INLT)将降阶后的阻抗矩阵转换到时域，采用辅助电流源模拟开关操作（闭合/断开）引起的暂态事件。核心计算负担来自长卷积运算，通过多相正交镜像滤波器组(QMF)结构实现并行计算，从而支持超实时仿真。该方法避免了传统有理函数逼近导致的无源性破坏问题，适用于统计性绝缘协调研究等需要大量重复仿真的场景。...
+LCL 滤波器是并网逆变器和变流器接口中常见的交流侧滤波结构，由换流器侧电感、电网侧电感和并联电容组成。对应的方法问题不是“是否存在 LCL 元件”，而是如何在 EMT 中表示其谐波衰减、谐振特性和与控制器的耦合。
 
-**边界限定**：待完善。需要进一步研究确定该方法/模型的具体适用条件和失效边界。
+本页讨论的是 LCL 滤波器作为控制与并网接口的方法边界，不把长卷积并行 EMT 求解方法、QMF 并行算法或任意传输线公式误写成 LCL 滤波器方法。
 
-## EMT中的作用
+## EMT 中的作用
 
-基于相关研究，lcl-filter在EMT仿真中用于解决特定问题。
+在 EMT 仿真中，LCL 滤波器主要用于：
 
-基于相关研究，该方法在EMT仿真中的主要应用包括：
-- 特定场景的电磁暂态分析
-- 控制系统设计与验证
-- 故障分析与保护协调
+- 衰减换流器开关谐波注入电网；
+- 研究并网电流控制与谐振模态的耦合；
+- 评估阻尼设计、数字延迟和弱网条件对稳定性的影响；
+- 为 [[vsc-control]]、[[lvrt-control]] 和并网逆变器模型提供接口动态。
 
-## 主要分支与机制
+## 关键公式
 
-- 待补充（需要进一步研究确定具体分支）
+LCL 结构的谐振频率常写为：
 
-## 形式化表达
+$$
+\omega_r = \sqrt{\frac{L_1 + L_2}{L_1 L_2 C_f}}
+$$
 
+其中 $L_1$ 为换流器侧电感，$L_2$ 为电网侧电感，$C_f$ 为滤波电容。谐振频率附近的电流环和采样延迟尤为敏感，因此 EMT 模型中常需要同时保留滤波器和控制器动态。
 
-### 核心数学表达
+## 与相关方法的关系
 
-从相关研究提取的关键公式：
-
-$$-\frac{dV(x,s)}{dx}=Z(s)I(x,s),\qquad -\frac{dI(x,s)}{dx}=Y(s)V(x,s)$$
-
-$$Z(s)=Z_C(s)+Z_E(s)+Z_G(s)$$
-
-$$Z_G(s)=sL_0$$
-
-$$Y(s)=sC_0$$
-
-$$-\frac{dV(x,s)}{dx}=\left(R'(s)+L_0s\right)I(x,s)$$
-
-
-
-
+- [[vsc-control]]：LCL 是 VSC 并网控制的典型对象。
+- [[dual-loop-pi-controller]]：电流环设计通常需要考虑 LCL 谐振。
+- [[frequency-control]] 和 [[lvrt-control]]：外环或故障控制会通过 LCL 接口作用到电网。
+- [[grid-connected-inverter]]：给出设备级应用背景。
 
 ## 适用边界与失败模式
 
-
-基于证据边界的分析：
-
-
-
-
-**潜在失效模式**：
-- 参数设置不当可能导致仿真不稳定
-- 特定工况下可能产生数值误差
-- 需要进一步研究确定具体失效边界
-
-## 与相关页面的关系
-
-- [[emt-simulation]] - EMT仿真基础
-- [[power-system]] - 电力系统基础
-- [[control-system]] - 控制系统基础
+- 适用于 PWM 并网变流器的交流侧滤波与控制接口分析。
+- 若忽略数字延迟和阻尼设计，可能低估谐振风险。
+- 在弱网和高阻抗并网场景中，等效电网电感变化会显著改变谐振行为。
+- 单看滤波器参数而不看控制器和采样实现，不能判断系统稳定性。
 
 ## 代表性来源
 
-- [[parallel-computation-of-power-system-emts-through-polyphase-qmf-filter-banks]]
-- [[field-validated-generic-emt-type-model-of-a-full-converter-wind-turbine-based-on]]
-- [[advancing-grid-forming-inverter-technology-comprehensive-pq-capability-and-perfo]]
+- [[advancing-grid-forming-inverter-technology-comprehensive-pq-capability-and-perfo]]：可作为并网/构网逆变器接口和滤波器相关背景来源。
+- [[field-validated-generic-emt-type-model-of-a-full-converter-wind-turbine-based-on]]：说明并网变流器 EMT 模型中滤波器与控制接口的重要性。
+- [[active-damping-control-and-parameter-calculation-for-resonance-suppression-in-dc-distribution]]：虽场景不同，但可作为阻尼与谐振抑制思路的相关来源。
 
+## 证据边界
 
----
-
-*本页面由批量生成脚本创建，需要进一步人工审查和完善。*
+本页不写无来源的最优谐振频率范围、阻尼参数或滤波器设计准则。具体结论必须绑定变流器拓扑、采样周期和并网条件。

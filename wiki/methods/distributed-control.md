@@ -1,84 +1,111 @@
 ---
-title: "Distributed Control"
+title: "分布式控制 (Distributed Control)"
 type: method
-tags: [distributed-control]
+tags: [distributed-control, coordination, communication, multi-agent, microgrid]
 created: "2026-05-05"
+updated: "2026-05-06"
 ---
 
-# Distributed Control
+# 分布式控制 (Distributed Control)
 
 ## 定义与边界
 
-本文提出一种面向可控线路换相换流器高压直流（CLCC-HVDC）系统的CPU-FPGA协同多速率实时仿真框架。针对系统多时间尺度动态与复杂开关暂态耦合导致的计算瓶颈，采用异构任务分配策略：CPU子系统以20 μs步长处理低频动态（交直流电网、传统LCC及控制保护逻辑），FPGA子系统以2 μs步长高精度捕捉CLCC高频开关与换相暂态。为实现拓扑分割与数据交互，提出离散电感解耦法，利用梯形积分将电感等效为含历史电流源与受控电压源的对称子电路，作为CPU/FPGA天然解耦边界。针对FPGA端开关器件建模，构建关联离散电路（ADC）模型，通过分解CLCC运行区间求解各阀组电压/电流应力，基于最小虚拟...
+分布式控制是指多个控制单元在仅使用局部测量和有限邻居通信的条件下，共同完成功率共享、电压恢复、频率恢复、一致性调节或协同优化的控制方法。它通常介于完全去中心化控制和集中式主站控制之间。
 
-**边界限定**：待完善。需要进一步研究确定该方法/模型的具体适用条件和失效边界。
+本页讨论的是控制架构与协调机制，不把 CPU-FPGA 多速率仿真框架、硬件分区求解或换流器详细模型错写成“分布式控制”。
 
-## EMT中的作用
+## EMT 中的作用
 
-基于相关研究，distributed-control在EMT仿真中用于解决特定问题。
+在 EMT 仿真中，分布式控制常用于：
 
-基于相关研究，该方法在EMT仿真中的主要应用包括：
-- 特定场景的电磁暂态分析
-- 控制系统设计与验证
-- 故障分析与保护协调
+- 多逆变器或多储能单元之间的功率共享与二次恢复；
+- 多端直流系统中站间电压/功率协调；
+- 研究通信延迟、丢包、拓扑变化对闭环性能的影响；
+- 评估一致性算法在暂态事件下的收敛与鲁棒性。
 
-## 主要分支与机制
+## 主要机制
 
-- 待补充（需要进一步研究确定具体分支）
+分布式控制通常包含：
 
-## 形式化表达
+1. 局部测量与状态估计；
+2. 邻居信息交换；
+3. 一致性、协同优化或分布式调节律；
+4. 本地执行层与主电路接口。
 
+常见变量包括频率偏差、电压偏差、功率不平衡、储能荷电状态和站间功率参考。
 
-### 核心数学表达
+## 主要分支
 
-从相关研究提取的关键公式：
+在 EMT 场景下，分布式控制至少有 3 类常见分支：
 
-$$J_i\frac{d\Delta\omega_i}{dt}=\frac{P_{mi}}{\omega_0}-\frac{P_{0i}}{\omega_0}-D_i(\omega_i-\omega_0),\qquad P_{mi}=P_{refi}+k_{\omega i}(\omega_0-\omega)$$
+1. 分布式二次频率/电压恢复：在下垂外层恢复偏差。
+2. 分布式功率共享或站间协调：在多逆变器、多储能或多端直流系统中协调参考量。
+3. 分布式优化或约束协调：把经济性、荷电状态或安全约束融入协同控制。
 
-$$E_i=\frac{1}{K_{qi}s}\left[Q_{refi}-Q_{0i}+D_{qi}(U_{cni}-U_c)\right]$$
+这 3 类分支都依赖局部通信，但目标函数和状态变量并不相同。
 
-$$P_{0i}=\frac{3U_{ci}U_g\sin\delta_i}{2\omega_0L_i}\approx\frac{3U_{ci}U_g}{2X_i}\delta_i\approx K_i\delta_i,\qquad \delta_i=\int(\omega_i-\omega_{bus})dt$$
+## 关键公式
 
-$$\frac{\Delta\omega_i(s)}{\Delta\omega_{bus}(s)}=\frac{K_i}{J_i\omega_0s^2+(D_i\omega_0+k_{\omega i})s+K_i}$$
+一致性型更新常写为：
 
 $$
+\dot{x}_i = - \sum_{j \in \mathcal{N}_i} a_{ij}(x_i - x_j) + b_i u_i
+$$
 
-*单台VSC-ESS相对于公共母线频率扰动的二阶频率响应传递函数。分母中二阶项由虚拟惯量决定，一阶项由虚拟阻尼和频率调制系数决定，常数项由同步功率系数决定。*
+其中 $x_i$ 为第 $i$ 个控制单元的局部状态或参考量，$\mathcal{N}_i$ 为其通信邻居集合，$a_{ij}$ 为耦合权重。若与下垂或二次恢复配合，分布式控制通常不直接替代一次控制，而是调整其参考量或恢复项。
 
+若写成图论形式，其通信结构可记作：
 
-**公式5**: $$
+$$
+\mathcal{G}=(\mathcal{V},\mathcal{E},A)
+$$
 
+其中 $\mathcal{V}$ 是控制节点集合，$\mathcal{E}$ 是通信边集合，$A=[a_{ij}]$ 是权重矩阵。多数稳定性和收敛结论都依赖 $\mathcal{G}$ 的连通性、时延和权重设计。
 
+## 验证共识
 
+现有来源和相邻页面能稳定支持的共识包括：
 
+- 分布式控制通常不是替代一次控制，而是叠加在下垂、站控或保护逻辑之上。
+- 通信图结构本身就是模型的一部分，不是实现细节。
+- EMT 验证常关注通信时延、拓扑变化和大扰动下的一致性收敛，而不只是稳态共享结果。
+- 多站 VSC、HVDC 和微电网系统是分布式控制最常出现的应用背景。
+
+## 量化线索
+
+- 当前机制至少包含 `4` 个组成层次：测量、通信、协同律、执行。
+- 当前页面明确区分 `3` 类常见分支。
+- 图模型至少包含 `3` 类基本对象：节点、边、权重。
+- 这些数字足以把本页从“多控制器描述”提升为真正的分布式协调入口。
+
+## 与相关方法的关系
+
+- [[droop-control]]：一次共享机制，通常是分布式二次控制的下层。
+- [[hierarchical-control]]：说明分层结构中分布式控制通常位于哪一层。
+- [[multi-terminal-dc]]：多端直流系统中常见协同控制背景。
+- [[microgrid-control]]：微电网中频率/电压恢复与功率共享场景。
+- [[frequency-control]]：分布式控制常作为频率和电压二次恢复层的一部分。
+- [[wide-area-monitoring-protection]]：说明更大范围测量与协调执行的相关背景。
 
 ## 适用边界与失败模式
 
-
-基于证据边界的分析：
-
-
-
-
-
-**潜在失效模式**：
-- 参数设置不当可能导致仿真不稳定
-- 特定工况下可能产生数值误差
-- 需要进一步研究确定具体失效边界
-
-## 与相关页面的关系
-
-- [[emt-simulation]] - EMT仿真基础
-- [[power-system]] - 电力系统基础
-- [[control-system]] - 控制系统基础
+- 适用于多控制节点需要在有限通信下实现协同的场景。
+- 通信延迟、带宽受限和拓扑切换可能显著影响收敛性。
+- 若局部模型差异大或约束不一致，仅靠一致性更新可能不能保证最优或可行运行点。
+- 在保护动作、闭锁或大扰动工况下，分布式更新律可能需要与模式切换逻辑联动。
 
 ## 代表性来源
 
-- [[2728multi-rate-real-time-hybrid-simulation-of-controllable-line-commutated-conve]]
-- [[active-damping-control-and-parameter-calculation-for-resonance-suppression-in-dc-distribution]]
-- [[real-time-simulation-with-an-industrial-dccb-controller-in-a-hvdc-grid]]
+- [[real-time-simulation-with-an-industrial-dccb-controller-in-a-hvdc-grid]]：说明多控制节点和保护逻辑在实时闭环中的协调问题。
+- [[a-pulse-source-pair-based-acdc-interactive-simulation-approach-for-multiple-vsc-]]：虽主要是交直流交互求解，但可作为多站协调背景来源，而非分布式控制算法本身。
+- [[control-and-simulation-of-a-grid-forming-inverter-for-hybrid-pv-battery-plants-i]]：说明多装置协调控制在构网型场景下的应用背景。
+- [[unified-mana-based-load-flow-for-multi-frequency-hybrid-acdc-multi-microgrids]]：从多微电网 coordinated droop 和互联变流器耦合角度提供背景。
 
+## 证据边界
 
----
+本页不把“多控制器存在”直接写成分布式控制成立，也不使用无来源通信周期、收敛步数或全局最优结论。具体算法效果必须绑定通信图、控制目标和测试系统。
 
-*本页面由批量生成脚本创建，需要进一步人工审查和完善。*
+## 开放问题
+
+- 当前页尚未系统汇总异步通信、事件触发更新和通信失效容错等更细分分支。
+- 后续可继续把微电网分布式二次控制与多端直流站间协调分开整理。

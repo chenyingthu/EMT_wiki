@@ -63,7 +63,7 @@ sources: ["EMT_Doc/10/Sano 等 - 2022 - Comparison and Selection of Grid-Tied In
 - [[average-value-model|平均值建模]]
 - 电压插值法
 - 电流注入法
-- [[状态空间平均法|状态空间平均法]]
+- [[state-space-average-method|状态空间平均法]]
 
 ## 涉及的模型
 

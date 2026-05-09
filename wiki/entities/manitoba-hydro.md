@@ -77,7 +77,7 @@ $$\mathbf{I}_{physical}(t) = f_{controller}(\mathbf{V}_{physical}(t), \text{Logi
 
 ### 1.2 多馈入HVDC系统的模块化解耦
 
-针对Dorsey换流站多回直流（Bipole I, II, III）馈入的复杂性，论文提出了**基于动态等效的子系统解耦策略**：
+针对Dorsey换流站多回直流（Bipole I, II, III）馈入的复杂性，该研究提出了**基于动态等效的子系统解耦策略**：
 
 **换流站详细模型**：
 保留单极内多个12脉动桥的触发逻辑与换相过程，阀组电压-电流关系满足：

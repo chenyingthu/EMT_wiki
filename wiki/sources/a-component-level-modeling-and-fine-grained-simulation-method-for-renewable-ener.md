@@ -61,7 +61,7 @@ sources: ["EMT_Doc/01/Xu 等 - 2024 - A General Equivalent Modeling Method of N-
 - [[state-space-method|状态空间法]]
 - [[nodal-analysis|节点分析法]]
 - [[equivalent-modeling|等效电路建模]]
-- [[modular-multilevel-converter|MMC桥臂等效]]
+- [[mmc-model|MMC桥臂等效]]
 - [[real-time-simulation|实时仿真]]
 
 ## 涉及的模型

@@ -1,74 +1,61 @@
 ---
-title: "N Port Network"
+title: "N 端口网络方法 (N-Port Network)"
 type: method
-tags: [n-port-network]
+tags: [n-port-network, fdne, network-equivalent, multi-port, reduction]
 created: "2026-05-05"
+updated: "2026-05-06"
 ---
 
-# N Port Network
+# N 端口网络方法 (N-Port Network)
 
 ## 定义与边界
 
-本研究提出了一种将大型电力系统降阶为单端口或多端口频变网络等值(FDNE)的系统化方法。核心思想是通过分层矩阵消去技术构建多端口诺顿等效导纳矩阵，并使用并联RLC模块在宽频范围内（工频至500kHz）精确拟合各导纳元素的频率特性。方法分为预处理器阶段和EMTP求解阶段：预处理器独立计算各组件（传输线、变压器、补偿装置）的频变导纳矩阵，采用Karrenbauer模态变换解耦序网，通过分层消去算法避免直接构建和求逆大型稠密矩阵，最终生成由RLC支路构成的π型多端口等效网络；EMTP求解阶段则在每个时间步计算等效网络的暂态响应。该方法特别处理了多端口等效中的负实部导纳峰问题，通过确保每个RLC支路具...
+N 端口网络方法是用多个电气端口来描述外部网络、设备集群或等值子系统的建模路线。它常用于频变网络等值、多端口诺顿/戴维南等值以及大型系统降阶。重点是“保留多个外部接口的端口行为”，而不是某个具体的 MMC 子模块公式。
 
-**边界限定**：待完善。需要进一步研究确定该方法/模型的具体适用条件和失效边界。
+## EMT 中的作用
 
-## EMT中的作用
+在 EMT 研究中，N 端口网络方法主要用于：
 
-基于相关研究，n-port-network在EMT仿真中用于解决特定问题。
+- 表达大型网络的多端口频变等值；
+- 为系统分区、协同仿真和外部网络缩减提供接口模型；
+- 在保持端口行为的同时减少内部状态规模。
 
-基于相关研究，该方法在EMT仿真中的主要应用包括：
-- 特定场景的电磁暂态分析
-- 控制系统设计与验证
-- 故障分析与保护协调
+## 常见关注点
 
-## 主要分支与机制
+- 端口数量增加后外部接口行为的保真度；
+- 频域拟合如何落回时域实现；
+- 多端口等值的无源性和稳定性；
+- 在系统分区或协同仿真中如何使用端口边界。
 
-- 待补充（需要进一步研究确定具体分支）
+## 关键公式
 
-## 形式化表达
+多端口网络最基本的端口关系可写为：
 
+$$
+\mathbf{I}(s)=\mathbf{Y}(s)\mathbf{V}(s)
+$$
 
-### 核心数学表达
+其中 $\mathbf{Y}(s)$ 为多端口导纳矩阵。不同方法的关键差异在于 $\mathbf{Y}(s)$ 如何由原始网络导出、拟合和时域实现。
 
-从相关研究提取的关键公式：
+## 与相关方法的关系
 
-$$C_0\frac{\mathrm{d}u_{cj}(t)}{\mathrm{d}t}=i_{cj}(t),\qquad \mathrm{sign}(T_{mj})u_{cj}=u_{sm\_j}$$
-
-$$2L\frac{\mathrm{d}i_{ab}}{\mathrm{d}t}=u_{sab}-u_{cab},\qquad u_{cab}=\sum_{j=1}^{N}u_{sm\_j}$$
-
-$$u_{cj}(t)=\frac{\Delta T}{2C_0}i_{cj}(t)+\left[\frac{\Delta T}{2C_0}i_{cj}(t-\Delta T)+u_{cj}(t-\Delta T)\right]=R_ci_{cj}(t)+u_{ceqj}(t-\Delta T)$$
-
-$$R_c=\frac{\Delta T}{2C_0},\qquad u_{ceqj}(t-\Delta T)=\frac{\Delta T}{2C_0}i_{cj}(t-\Delta T)+u_{cj}(t-\Delta T)$$
-
-$$u_{sm\_j}(t)=R_{aj}i_{ab}(t)+R_{bj}u_{ceqj}(t-\Delta T)$$
-
-
-
-
-
-## 适用边界与失败模式
-
-- 待补充
-
-**潜在失效模式**：
-- 参数设置不当可能导致仿真不稳定
-- 特定工况下可能产生数值误差
-- 需要进一步研究确定具体失效边界
-
-## 与相关页面的关系
-
-- [[emt-simulation]] - EMT仿真基础
-- [[power-system]] - 电力系统基础
-- [[control-system]] - 控制系统基础
+- [[network-equivalent]]：等值建模总入口。
+- [[fdne-model]]：频变网络等值背景。
+- [[norton-equivalent]]：端口等值的基础形式。
+- [[power-system-network]]：系统级网络背景。
+- [[passivity-enforcement]]：多端口等值无源性背景。
 
 ## 代表性来源
 
-- [[multi-port-frequency-dependent-network-equivalents-for-the-emtp-power-delivery-i]]
-- [[efficient-implementation-of-multi-port-frequency-dependent-network-equivalents-f]]
-- [[a-guaranteed-passive-model-for-multi-port-frequency-dependent-network-equivalent]]
+- [[multi-port-frequency-dependent-network-equivalents-for-the-emtp-power-delivery-i]]：多端口 FDNE 背景。
+- [[efficient-implementation-of-multi-port-frequency-dependent-network-equivalents-f]]：多端口频变网络等值的实现背景。
+- [[a-guaranteed-passive-model-for-multi-port-frequency-dependent-network-equivalent]]：无源性和端口等值背景。
 
+## 证据边界
 
----
+本页不写无来源拟合阶数、速度提升或统一端口数结论，必须绑定具体网络和拟合条件。
 
-*本页面由批量生成脚本创建，需要进一步人工审查和完善。*
+## 开放问题
+
+- 当前页尚未继续拆分“多端口频变等值”和“更一般的 N 端口抽象网络”之间的边界。
+- 端口保真度与模型阶数之间的取舍，后续仍需结合具体拟合方法展开。

@@ -1,78 +1,84 @@
 ---
-title: "Midc"
+title: "模块化隔离型 DC/DC 变换器方法 (MIDC)"
 type: method
-tags: [midc]
+tags: [midc, modular-isolated-dc-dc-converter, dc-dc, sab, ipos]
 created: "2026-05-05"
+updated: "2026-05-06"
 ---
 
-# Midc
+# 模块化隔离型 DC/DC 变换器方法 (MIDC)
 
 ## 定义与边界
 
-模块化隔离型 DC/DC 变换器(modular isolated DC/DC converter，MIDC)作为光伏、风电等直流电源并网的重要方案，受到广泛关注。输入并联输出串联(input parallel output series，IPOS)型单有源桥(single active bridge，SAB)变换器是 MIDC 的常用拓扑之一，由于节点导纳矩阵阶数高、仿真步长小以及不控整流桥的存在，其电磁暂态仿真效率很低。文中提出一种基于电流过零点预计算的 SAB 变换器等效建模方法。首先，针对 SAB 变换器的拓扑结构和工作原理进行分析，求解不同模式下电感电流表达式。其次，计算电感电流过零...
+MIDC（Modular Isolated DC/DC Converter）方法指针对模块化隔离型 DC/DC 变换器的 EMT 建模和等效化路线，常见于高压直流接口、固态变压器和新能源汇集场景。它通常关注单有源桥/双有源桥、输入并联输出串联（IPOS）结构和高频隔离链路。
 
-**边界限定**：待完善。需要进一步研究确定该方法/模型的具体适用条件和失效边界。
+## EMT 中的作用
 
-## EMT中的作用
+在 EMT 研究中，MIDC 方法主要用于：
 
-基于相关研究，midc在EMT仿真中用于解决特定问题。
+- 表达模块化隔离型 DC/DC 链路的高频功率传输行为；
+- 研究等效化和快速 EMT 模型如何替代详细开关模型；
+- 作为储能、风电和高压直流接口的设备级背景。
 
-基于相关研究，该方法在EMT仿真中的主要应用包括：
-- 特定场景的电磁暂态分析
-- 控制系统设计与验证
-- 故障分析与保护协调
+## 关键公式
 
-## 主要分支与机制
+MIDC 的具体功率传输关系依赖拓扑，但其核心仍围绕高频桥臂、电感/漏感和相移或开关模式组织。对 IPOS 型 SAB/DAB 结构，常通过过零点、等效电流和桥臂模式来构造简化 EMT 模型。
 
-- 待补充（需要进一步研究确定具体分支）
+若把 MIDC 抽象为模块化端口级功率传输结构，其最小形式可写为：
 
-## 形式化表达
+$$
+P_{\mathrm{dc}}=\sum_{k=1}^{N_m} f_k\!\left(v_{in,k},\,v_{out,k},\,i_{L,k},\,\phi_k\right)
+$$
 
+其中 $N_m$ 为模块数，$v_{in,k}$、$v_{out,k}$ 分别表示第 $k$ 个模块的输入/输出侧电压，$i_{L,k}$ 表示等效传能电流，$\phi_k$ 表示相移或模式变量。不同 MIDC 拓扑的差异，主要体现在函数 $f_k$ 的具体形式以及是否需要显式处理不控整流桥、谐振支路或多端口耦合。
 
-### 核心数学表达
+## 主要分支
 
-从相关研究提取的关键公式：
+从当前来源出发，MIDC 至少可以按 3 个维度理解：
 
-$$-\frac{dV(x,s)}{dx}=Z(s)I(x,s),\qquad -\frac{dI(x,s)}{dx}=Y(s)V(x,s)$$
+1. 模块级功率单元：SAB、DAB 及其变体。
+2. 系统级组合方式：如 IPOS 级联、多模块串并联和 SST 内部级联。
+3. EMT 建模粒度：详细开关模型、等效模型、平均值或快速 EMT 模型。
 
-$$Z(s)=Z_C(s)+Z_E(s)+Z_G(s)$$
+这 3 个维度共同决定页内结论是否成立。例如，适用于 IPOS-SAB 的过零点预计算，不应被直接外推到双向 DAB 或谐振型 MIDC。
 
-$$Z_G(s)=sL_0$$
+## 验证共识
 
-$$Y(s)=sC_0$$
+当前 Wiki 来源能稳定支持的共识包括：
 
-$$-\frac{dV(x,s)}{dx}=\left(R'(s)+L_0s\right)I(x,s)$$
+- MIDC 的工程动机通常来自光伏、风电和储能等直流侧并网需求。
+- EMT 建模难点经常集中在高频隔离链路、多模块级联和二极管/开关状态切换。
+- 快速 EMT 路线往往不是删除动态，而是把事件定位、等效化或端口耦合前移到解析层。
+- 稳定性、精度和加速收益都必须绑定具体拓扑、模块数和仿真工具。
 
+## 与相关方法的关系
 
-
-
-
-## 适用边界与失败模式
-
-
-基于证据边界的分析：
-
-
-
-
-**潜在失效模式**：
-- 参数设置不当可能导致仿真不稳定
-- 特定工况下可能产生数值误差
-- 需要进一步研究确定具体失效边界
-
-## 与相关页面的关系
-
-- [[emt-simulation]] - EMT仿真基础
-- [[power-system]] - 电力系统基础
-- [[control-system]] - 控制系统基础
+- [[dual-active-bridge]]：DAB 是 MIDC 的常见实现之一。
+- [[solid-state-transformer]]：MIDC 常作为 SST 内部功率级。
+- [[power-electronics-control]]：控制背景。
+- [[offshore-wind-integration]]：新能源汇集接口的相关背景。
+- [[grid-connected-inverter]]：电力电子接口背景。
+- [[dc-dc-converter]]：更一般的 DC/DC 设备背景。
+- [[nearest-level-modulation]]：若与多模块控制耦合，可回到调制背景页。
 
 ## 代表性来源
 
-- [[equivalent-modelling-method-of-single-active-network-for-fast-electromagnetic-tr]]
-- [[average-value-modeling-of-line-commutated-ac-dc-converters-with-unbalanced-ac-ne]]
-- [[high-frequency-oscillation-analysis-and-suppression-strategy-of-mmc-hvdc-system-]]
+- [[equivalent-modelling-method-of-single-active-network-for-fast-electromagnetic-tr]]：MIDC/SAB 快速 EMT 建模背景。
+- [[small-signal-dynamic-phasor-model-of-three-phase-dab-converter-for-solid-state-t]]：DAB 与 SST/直流微网场景背景。
+- [[high-frequency-oscillation-analysis-and-suppression-strategy-of-mmc-hvdc-system-]]：多电平与高频动态背景的相关来源。
 
+## 量化线索
 
----
+- 当前直接支撑本页的核心来源至少覆盖 2 类模块：SAB 与 DAB。
+- 已有来源明确给出 1 种系统级组合方式：IPOS。
+- 已有来源明确提到 3 类应用背景：光伏、风电、固态变压器/直流微网。
+- 这些数字足以说明 MIDC 是“拓扑族入口”，而不是单篇论文方法名。
 
-*本页面由批量生成脚本创建，需要进一步人工审查和完善。*
+## 证据边界
+
+本页不写无来源效率、器件数或最优参数结论，必须绑定具体拓扑和工况。
+
+## 开放问题
+
+- 当前入口页尚未系统比较 SAB、DAB 与谐振型 MIDC 在 EMT 求解中的差异。
+- 后续若来源积累足够，适合把“模块化隔离型 DC/DC 变换器”从方法页提升为专题页。

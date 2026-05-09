@@ -1,78 +1,70 @@
 ---
-title: "Multi Terminal Dc"
+title: "多端直流系统方法 (Multi-Terminal DC)"
 type: method
-tags: [multi-terminal-dc]
+tags: [multi-terminal-dc, mtdc, hvdc, dc-grid, droop-control]
 created: "2026-05-05"
+updated: "2026-05-06"
 ---
 
-# Multi Terminal Dc
+# 多端直流系统方法 (Multi-Terminal DC)
 
 ## 定义与边界
 
-本文提出一种适用于含直流故障的MMC-MTDC系统机电暂态建模方法。首先，基于基尔霍夫定律与能量守恒原理，严格推导MMC直流侧二阶等效电路，将传统仅含等效电容的一阶模型扩展为包含桥臂等效电感(2Larm/3)和电阻(2Rarm/3)的二阶动态模型，以准确捕捉故障期间的直流电流变化率。其次，构建基于关联矩阵T的广义MTDC网络模型，提出“预设故障信息法”。该方法在仿真前根据故障时间、类型和位置预先构建包含所有可能故障节点与支路的固定拓扑网络，仿真过程中仅通过动态修改支路参数（如将接地电阻从10^6Ω切换至故障电阻、按故障点位置分割π型线路参数）来模拟故障，避免了传统方法中因拓扑重构导致的雅可比矩...
+多端直流系统（MTDC）是由三个及以上换流站通过直流网络互联形成的输电系统。对应的方法问题包括网络建模、功率协调、直流电压控制、故障处理和初始化，而不仅仅是“多个换流站并联存在”。
 
-**边界限定**：待完善。需要进一步研究确定该方法/模型的具体适用条件和失效边界。
+本页讨论 MTDC 的系统级方法边界，不把某一篇关于故障时二阶等效、预设故障信息或单一控制策略的论文直接当成全部 MTDC 方法。
 
-## EMT中的作用
+## EMT 中的作用
 
-基于相关研究，multi-terminal-dc在EMT仿真中用于解决特定问题。
+在 EMT 仿真中，MTDC 方法主要用于：
 
-基于相关研究，该方法在EMT仿真中的主要应用包括：
-- 特定场景的电磁暂态分析
-- 控制系统设计与验证
-- 故障分析与保护协调
+- 组织多站换流器、直流线路和站间控制的系统级模型；
+- 研究直流电压协调、功率分配和运行方式切换；
+- 分析直流故障传播、网络解列和保护恢复；
+- 作为海上风电送出、区域互联和混合直流网研究的系统背景。
 
-## 主要分支与机制
+## 常见研究对象
 
-- 待补充（需要进一步研究确定具体分支）
+- 直流电压下垂和功率分配；
+- 多站运行方式切换与主从/分担控制；
+- 故障后区段隔离、重构与恢复；
+- 海上送出、区域互联和混合拓扑中的系统级协调。
 
-## 形式化表达
+## 关键公式
 
-### 核心数学表达
+MTDC 中常见的系统级协调关系之一是直流电压下垂：
 
-多端直流电网功率平衡：
-$$\sum_{i=1}^{n} P_i = P_{loss}$$
+$$
+P_i^\* = P_{i0} + k_{di}(V_{dc,0} - V_{dc,i})
+$$
 
-直流电压下垂控制：
-$$P_{ref} = P_0 + k_d (V_{dc,0} - V_{dc})$$
+它说明站间功率分担与直流电压偏差之间的耦合。不同控制器的关键差异通常不在“是否有这个公式”，而在于下垂系数选择、运行模式切换和站间优先级。
 
-功率分配系数：
-$$lpha_i = rac{P_i}{\sum_{j=1}^{n} P_j}$$
+## 与相关方法的关系
 
-
-
+- [[hvdc-control]]：对应单站或站级控制结构。
+- [[dc-protection]] 和 [[dccb]]：对应故障检测与开断配合。
+- [[offshore-hvdc-hub]]：对应海上直流枢纽应用背景。
+- [[cigre-b4-dc-grid]]：对应典型参考直流网场景入口。
 
 ## 适用边界与失败模式
 
-**适用条件**：
-- 3个及以上换流站的直流网络
-- 需要功率灵活分配的场景
-- 新能源并网汇集
-
-**失效边界**：
-- 主导站故障导致功率失衡
-- 通信故障影响协调控制
-- 直流故障隔离导致网络解列
-
-
-**潜在失效模式**：
-- 参数设置不当可能导致仿真不稳定
-- 特定工况下可能产生数值误差
-- 需要进一步研究确定具体失效边界
-
-## 与相关页面的关系
-
-- [[emt-simulation]] - EMT仿真基础
-- [[power-system]] - 电力系统基础
-- [[control-system]] - 控制系统基础
+- 适用于研究多站协调和直流网级动态的场景。
+- 单站稳定不代表全网协调稳定，站间耦合和运行模式切换可能引入新的动态问题。
+- 若不显式建模保护和断路器，MTDC 故障分析往往不完整。
+- 不同论文中的 MTDC 拓扑和站级控制差异很大，不能直接拼接成统一结论。
 
 ## 代表性来源
 
-- [[electro-mechanical-transient-modeling-of-mmc-based-multi-terminal-hvdc-system-wi-15]]
-- [[enhancements-to-terminal-duality-based-models-for-three-phase-multi-limb-multi-w]]
-- [[impedance-based-stability-analysis-of-the-multi-terminal-cascaded-hybrid-hvdc-sy]]
+- [[electro-mechanical-transient-modeling-of-mmc-based-multi-terminal-hvdc-system-wi-15]]：说明 MTDC 系统中多站 MMC 建模和故障背景。
+- [[impedance-based-stability-analysis-of-the-multi-terminal-cascaded-hybrid-hvdc-sy]]：说明多端直流系统稳定性分析背景。
+- [[enhancements-to-terminal-duality-based-models-for-three-phase-multi-limb-multi-w]]：可作为多端多端口建模相关背景来源。
 
+## 证据边界
 
----
+本页不写无来源的最优站数、故障隔离时间或统一控制架构。具体结论必须绑定拓扑、控制方式和测试工况。
 
-*本页面由批量生成脚本创建，需要进一步人工审查和完善。*
+## 开放问题
+
+- 当前页尚未继续拆分多端直流中的控制、保护和初始化三类方法边界。
+- 不同 MTDC 拓扑之间的结论可迁移性，后续仍需回到具体 benchmark 或 source 页确认。

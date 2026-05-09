@@ -61,7 +61,7 @@ sources: ["EMT_Doc/17/Liu 等 - 2010 - Electromechanical transientelectromagneti
 - [[co-simulation|混合仿真]]
 - 诺顿等值
 - [[average-value-model|补偿法]]
-- [[least-squares|最小二乘法]]
+- [[least-squares-method|最小二乘法]]
 - 序网-三相坐标变换
 - 迭代交互求解
 

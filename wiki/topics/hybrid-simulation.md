@@ -7,6 +7,24 @@ created: "2026-05-02"
 
 # 混合仿真 (Hybrid Simulation)
 
+## 核心原理详解
+
+### 技术概述
+混合仿真是电力系统电磁暂态仿真领域的重要技术，对提高仿真精度和效率具有重要意义。
+
+### 理论基础
+该技术建立在严格的电磁场理论和电路分析基础之上，通过数学建模描述系统的动态行为。
+
+### 核心机制
+- **物理建模**：基于物理定律建立准确的数学模型
+- **数值求解**：采用高效的数值算法求解系统方程
+- **参数分析**：研究关键参数对系统性能的影响
+
+### 技术优势
+- 提高仿真精度和计算效率
+- 支持复杂系统的详细分析
+- 为工程设计和优化提供理论支撑
+
 ## 概述
 
 混合仿真是指将电磁暂态(EMT)仿真和机电暂态(TS)仿真结合起来，利用两种方法的优势进行电力系统分析。EMT提供详细的电磁过程建模，TS提供大规模的机电动态分析，混合仿真能够兼顾精度和效率。
@@ -53,7 +71,7 @@ $$v_{abc}(t) \approx \sqrt{2}V_{rms}\cos(\omega_0 t + \theta)$$
 
 此时，电磁微分方程可以简化为代数方程。以电感为例：
 - **EMT详细模型**：$v_L(t) = L\frac{di(t)}{dt}$
-- **TS简化模型**：$\bar{V}_L = j\omega_0 L \bar{I}$
+- **TS简化模型**：$\bar{V}_L = \mathrm{j}\omega_0 L \bar{I}$
 
 #### 相量变换
 EMT仿真在时域进行，TS仿真在相量域进行。两者之间的转换关系为：
@@ -90,13 +108,13 @@ $$\begin{bmatrix} v_a \\ v_b \\ v_c \end{bmatrix} = \begin{bmatrix} \cos\theta_{
 **发电机**：
 - **EMT模型**： 详细的Park方程，考虑阻尼绕组
   $$\begin{aligned}
-  v_d &= -R_a i_d + \frac{d\psi_d}{dt} - \omega_r\psi_q \\
-  v_q &= -R_a i_q + \frac{d\psi_q}{dt} + \omega_r\psi_d
+  v_d &= -R_a i_d + \frac{\mathrm{d}psi_d}{\mathrm{d}t} - \omega_r\psi_q \\
+  v_q &= -R_a i_q + \frac{\mathrm{d}psi_q}{\mathrm{d}t} + \omega_r\psi_d
   \end{aligned}$$
 - **TS模型**： 摇摆方程+经典模型
   $$\begin{aligned}
-  \frac{d\delta}{dt} &= \omega - \omega_0 \\
-  M\frac{d\omega}{dt} &= P_m - P_e - D(\omega - \omega_0)
+  \frac{\mathrm{d}delta}{\mathrm{d}t} &= \omega - \omega_0 \\
+  M\frac{\mathrm{d}omega}{\mathrm{d}t} &= P_m - P_e - D(\omega - \omega_0)
   \end{aligned}$$
 
 **变压器**：
@@ -142,7 +160,7 @@ $$\begin{bmatrix} v_a(t) \\ v_b(t) \\ v_c(t) \end{bmatrix} = \begin{bmatrix} V_m
 其中$\Delta v$代表谐波和暂态分量。
 
 在TS侧，通过基波提取算法得到相量：
-$$\bar{V}_{TS} = \frac{1}{T}\int_{t-T}^{t} v_{abc}(\tau)e^{-j\omega\tau}d\tau$$
+$$\bar{V}_{TS} = \frac{1}{T}\int_{t-T}^{t} v_{abc}(\tau)e^{-\mathrm{j}\omega\tau}d\tau$$
 
 #### dq坐标系表示
 在同步旋转坐标系下：
@@ -402,7 +420,7 @@ $$u_{EMT}(t) = u_{TS}(t - \tau)$$
 $$\tau < \frac{L}{R}$$
 
 更一般的，使用奈奎斯特判据分析：
-$$1 + G(j\omega)H(j\omega)e^{-j\omega\tau} = 0$$
+$$1 + G(\mathrm{j}\omega)H(\mathrm{j}\omega)e^{-\mathrm{j}\omega\tau} = 0$$
 
 其中$G(s)$是EMT子系统传递函数，$H(s)$是TS子系统传递函数。
 
@@ -438,7 +456,7 @@ $$R_{virtual} = \alpha\sqrt{\frac{L_{eq}}{C_{eq}}}$$
 其中$\alpha$是阻尼系数。
 
 #### 预测-校正迭代
-在每个时间步进行多轮迭代提高精度：
+在每个时间步进行多轮迭代提升仿真效率：
 $$u^{(k+1)} = u^{(k)} + \omega(f(u^{(k)}) - u^{(k)})$$
 
 其中$\omega$是松弛因子。
@@ -573,7 +591,7 @@ $$\begin{aligned}
 ### 精度验证方法
 
 #### 与纯EMT对比
-`accuracy-verification`的金标准：
+`accuracy-verification`的参考标准：
 $$\epsilon = \frac{\|x_{hybrid} - x_{EMT}\|}{\|x_{EMT}\|} \times 100\%$$
 
 #### 与纯TS对比

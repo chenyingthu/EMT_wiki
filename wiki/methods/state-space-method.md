@@ -19,6 +19,68 @@ created: "2026-04-13"
 
 它特别适合描述“输入、输出、内部状态和端口变量之间的关系”。若研究重点是含大量开关事件的全网络拓扑重构，则直接状态矩阵重建可能比伴随电路和节点法更重。
 
+```mermaid
+graph LR
+    subgraph "电路模型"
+        RLC["RLC网络"]
+        SW["开关/变流器"]
+        Ctrl["控制系统"]
+    end
+    subgraph "状态空间方程"
+        SS["ẍ = Ax + Bu
+y = Cx + Du"]
+    end
+    subgraph "伴随电路形式"
+        CC["Y_eq · v = i + i_hist"]
+    end
+    subgraph "离数推进"
+        DISC["x_{n+1} = Φ · x_n + Γ · u_n"]
+    end
+    RLC & SW & Ctrl -->|"KCL/KVL"| SS
+    SS -->|"伴随离散"| CC
+    SS -->|"指数/梯形"| DISC
+    CC -->|"装配到节点"| NODAL["节点导纳方程"]
+
+    style RLC fill:#e1f5fe
+    style SW fill:#fce4ec
+    style Ctrl fill:#fff3e0
+    style SS fill:#c8e6c9
+    style CC fill:#e8f5e9
+    style DISC fill:#e8f5e9
+    style NODAL fill:#f3e5f5
+```
+
+```mermaid
+graph LR
+    subgraph "电路模型"
+        RLC["RLC网络"]
+        SW["开关/变流器"]
+        Ctrl["控制系统"]
+    end
+    subgraph "状态空间方程"
+        SS["ẍ = Ax + Bu
+y = Cx + Du"]
+    end
+    subgraph "伴随电路形式"
+        CC["Y_eq · v = i + i_hist"]
+    end
+    subgraph "离数推进"
+        DISC["x_{n+1} = Φ · x_n + Γ · u_n"]
+    end
+    RLC & SW & Ctrl -->|"KCL/KVL"| SS
+    SS -->|"伴随离散"| CC
+    SS -->|"指数/梯形"| DISC
+    CC -->|"装配到节点"| NODAL["节点导纳方程"]
+
+    style RLC fill:#e1f5fe
+    style SW fill:#fce4ec
+    style Ctrl fill:#fff3e0
+    style SS fill:#c8e6c9
+    style CC fill:#e8f5e9
+    style DISC fill:#e8f5e9
+    style NODAL fill:#f3e5f5
+```
+
 ## 核心机制
 
 连续线性系统可写为 $\dot{\mathbf{x}}(t)=\mathbf{A}\mathbf{x}(t)+\mathbf{B}\mathbf{u}(t)$，$\mathbf{y}(t)=\mathbf{C}\mathbf{x}(t)+\mathbf{D}\mathbf{u}(t)$。其中 $\mathbf{x}$ 是状态，$\mathbf{u}$ 是端口电压、控制指令或注入量，$\mathbf{y}$ 是端口电流或观测量。

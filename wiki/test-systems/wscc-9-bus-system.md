@@ -627,7 +627,7 @@ mpc.branch = [
 - [[ieee-57-bus-system]] - IEEE 57节点系统
 - [[ieee-118-bus-system]] - IEEE 118节点系统
 - [[wscc-9-bus-system]] - WSCC 9节点系统(本页)
-- [[cigre-b4]] - CIGRE B4直流测试系统
+- [[cigre-b4-dc-grid|CIGRE B4]] - CIGRE B4直流测试系统
 
 ## 参考文献
 

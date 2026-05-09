@@ -135,7 +135,7 @@ $$B_{TCR}^{eq}(\alpha) = \frac{2(\pi - \alpha) + \sin 2\alpha}{\pi X_L}$$
 
 ## 相关方法
 - [[average-value-model|平均值模型]] - SVC平均值建模
-- [[switching-function|开关函数法]] - 晶闸管开关建模
+- [[switching-function-method|开关函数法]] - 晶闸管开关建模
 - [[numerical-integration|数值积分]] - 触发角控制仿真
 - [[harmonic-analysis-methods|谐波分析]] - TCR谐波分析
 - [[state-space-method|状态空间法]] - 控制系统状态空间

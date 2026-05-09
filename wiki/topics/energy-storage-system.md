@@ -9,65 +9,55 @@ created: "2026-05-04"
 
 ## 定义与边界
 
-本页面为自动创建的topic类型页面，用于修复断链。内容待补充。
+储能系统是由储能介质、功率变换器、控制器、保护和并网接口共同构成的系统对象。在 EMT Wiki 中，本页作为储能系统主题入口，承接 BESS、储能变流器、MMC-BESS、调频支撑和大规模交直流电网中储能接入等研究。
 
-**边界限定**：待完善。
+储能系统不是单一 EMT 数值方法。设备级电池模型应进入 [[bess-model]]，并网功率变换器应进入 [[energy-storage-converter-model]]，具体算例或测试平台应进入 test-system 页面。本页只组织系统层问题、证据边界和相邻页面关系。
 
 ## EMT中的作用
 
+储能系统在 EMT 仿真中主要用于：
 
-基于相关研究的应用：
-
-1. - 问题定位：本文提出一种面向含大规模超快充（XFC）系统的输配电网高保真电磁暂态（EMT）仿真的混合数值算法框架。传统EMT仿真器对整个系统采用单一离散化方法（通常为梯形法），导致全局大矩阵求逆计算负担极重。本文首次联合应用基于数值刚度的分离、基于时间常数的分离、微分代数方程（DAE）聚类与聚合以...
-
-2. - 问题定位：本文提出一种面向未来大规模电网的电磁暂态（EMT）高效仿真架构，核心基于传输线传播延迟特性实现网络解耦与并行计算。通过采用基于延迟的线路模型替代传统π型等效，在物理延迟边界处自然切断电气耦合，构建块对角导纳矩阵，使各子网络可在独立处理器上并行求解。针对缺乏天然延迟边界的场景，引入补偿法...
+- 表示电池等储能介质的端口电压、电流、SOC 和限幅状态。
+- 验证储能变流器在故障、电压跌落、功率指令切换和弱网条件下的动态响应。
+- 研究 BESS 与 HVDC、MMC、微电网或大规模交直流系统之间的暂态交互。
+- 为 EMT-TS 混合仿真、GPU/并行仿真和硬件在环测试提供设备集群对象。
 
 ## 主要分支与机制
 
-- 详见形式化表达章节
+储能系统页面至少应区分 3 层：
 
+- 介质层：电池、超级电容、飞轮或其他储能介质，决定能量状态和约束。
+- 变流器层：PCS、滤波器、限流器、并网控制和直流/交流接口。
+- 系统层：储能参与调频、无功支撑、直流电压支撑、微电网或大系统稳定验证。
 
-
-相关研究中的方法描述：
-
-- - 问题定位：本文提出一种基于CPU-GPU异构计算架构的EMT-TS联合仿真方法，用于高效分析含海量公用级电池储能系统（BESS）的交直流电网暂态交互。针对传统CPU串行处理大规模异构储能单元计算负担重的问题，采用向量化建模技术将不同化学类型（锂离子、铅酸、镍镉）电池的戴维南等效模型转化为同构向量形式，以充分适配GPU的细粒度SIMT并行架构。
-- 方法机制：本文提出一种基于CPU-GPU异构计...
+大规模 BESS 研究还可能涉及模型向量化、TLL 解耦、多速率 EMT-TS 接口和 GPU/CPU 异构并行，但这些是仿真实现路线，不应把单篇论文的加速结果写成本页通用结论。
 
 ## 形式化表达
 
-- 详见形式化表达章节
+储能端口模型常可抽象为：
 
+$$
+P_{\mathrm{ac}} = \eta_{\mathrm{pcs}} P_{\mathrm{dc}},\qquad
+\dot{E}= -P_{\mathrm{dc}}
+$$
 
-
-基于相关研究的公式表达：
-
-$V_{	ext{Bat}} = E_0 + E_{	ext{pol}} + E_{	ext{exp}} + S_{	ext{ch}} E_{	ext{chg}} + (1 - S_{	ext{ch}}) E_{	ext{dsc}}$
-
-$
-
-*电池戴维南等效电压源表达式，包含恒定电压、极化电压、指数区电压及充放电动态电压，$
-
-$为充放电状态二值标志。*
-
-**公式2**: $
+其中 $P_{\mathrm{ac}}$ 是交流侧功率，$P_{\mathrm{dc}}$ 是储能介质与变流器直流侧交换功率，$\eta_{\mathrm{pcs}}$ 表示变流器效率或损耗近似，$E$ 表示储能状态。具体电池等效电压、SOC 方程、BMS 限制和 PCS 控制必须在设备模型或来源页中给出。
 
 ## 适用边界与失败模式
 
-- 详见形式化表达章节
+- 电池模型参数、SOC 初值和温度/老化状态会影响 EMT 响应，不能用统一参数代表所有储能。
+- PCS 限流、直流电压保护和控制模式切换常决定故障期间表现。
+- 大规模 BESS 的并行加速结论必须绑定硬件平台、步长、模型规模和对比基线。
+- 储能改善频率或电压支撑的结论应绑定控制策略、容量、运行点和测试系统。
 
 ## 与相关页面的关系
 
-- [[emt-simulation]] - EMT仿真基础
-- [[power-system]]
-- [[electromagnetic-transient]]
+- [[bess-model]]：电池储能设备模型。
+- [[energy-storage-converter-model]]：PCS 和并网变流器模型。
+- [[microgrid]]：微电网测试系统中储能的系统角色。
+- [[emt-simulation]]：储能 EMT 建模与时域验证背景。
 ## 代表性来源
 
-
-- [[electromagnetic-transient-emt-simulation-algorithms-for-evaluation-of-large-scal]]
-- [[electromagnetic-transient-modeling-and-simulation-of-large-power-systems-emt-sim]]
-- [[massively-parallel-modeling-of-battery-energy-storage-systems-for-acdc-grid-high]]
----
-
-*本页面为自动生成的stub，需要进一步补充完善。*
-
-- [[massively-parallel-modeling-of-battery-energy-storage-systems-for-acdc-grid-high]]
+- [[massively-parallel-modeling-of-battery-energy-storage-systems-for-acdc-grid-high]]：支撑大规模 BESS、CPU-GPU 异构并行和 EMT-TS 联合仿真背景；其加速结果必须限于原文硬件、模型规模和测试系统。
+- [[modeling-of-mmc-based-statcom-with-embedded-energy-storage-for-the-simulation-of]]：支撑嵌入式储能 STATCOM/MMC 模型背景。
+- [[an-electromagnetic-transient-simulation-model-of-mmc-bess-for-various-operating-]]：支撑 MMC-BESS EMT 模型和工况讨论。

@@ -19,9 +19,47 @@ VF 是 [[frequency-dependent-modeling]] 和 [[fdne-model]] 的关键工具。线
 
 VF 的价值在于把宽频响应压缩为有限阶模型。模型阶数、频率范围、采样密度、权重和初始极点决定拟合结果；离开这些条件谈“高精度”“最优”或“实时”都不够严谨。
 
+```mermaid
+graph TD
+    subgraph 初始设置
+        A[频域采样数据 H(s_j)]
+        B[设置起始极点 ā₁,...,āₚ]
+    end
+    subgraph 迭代求解
+        C[Step 1: 求解线性LS问题]
+        D[提取σ(s)的零点作为新极点]
+        E{极点收敛?}
+        C --> D --> E
+        E -->|否| C
+    end
+    subgraph 最终求解
+        F[Step 2: 固定极点求留数]
+        G[检查无源性 passivity]
+        F --> G
+    end
+    subgraph 输出
+        H[有理函数模型]
+        I[状态空间实现 / FDNE / RLC网络]
+        H --> I
+    end
+    A --> C
+    B --> C
+    E -->|是| F
+
+    style A fill:#e3f2fd
+    style B fill:#e3f2fd
+    style C fill:#fff3e0
+    style D fill:#fff3e0
+    style E fill:#fce4ec
+    style F fill:#e8f5e9
+    style G fill:#e8f5e9
+    style H fill:#f3e5f5
+    style I fill:#f3e5f5
+```
+
 ## 核心机制
 
-标准 VF 通过辅助函数 $\sigma(s)$ 把同时优化极点和留数的非线性问题拆成线性最小二乘问题。给定起始极点 $\bar{p}_m$，先拟合 $\sigma(s)H(s)$ 与 $\sigma(s)$，再把 $\sigma(s)$ 的零点作为更新极点。极点收敛后，固定极点重新求留数、直接项和高频项。
+标准 VF 通过辅助函数 $\\sigma(s)$ 把同时优化极点和留数的非线性问题拆成线性最小二乘问题。给定起始极点 $\bar{p}_m$，先拟合 $\sigma(s)H(s)$ 与 $\sigma(s)$，再把 $\sigma(s)$ 的零点作为更新极点。极点收敛后，固定极点重新求留数、直接项和高频项。
 
 对多端口系统，常采用公共极点策略：所有矩阵元素共享同一组极点，但留数为矩阵。这样有利于统一状态空间实现，却可能增加阶数。若导纳矩阵小特征值很重要，普通元素级误差可能不足以控制高阻抗端接下的响应误差，需要模态加权或模态 VF。
 

@@ -38,6 +38,24 @@ $$
 
 其中 $x_k$ 是离散状态，$u_k$ 是控制或扰动输入，$p$ 是模型参数，$h$ 是仿真步长。离线仿真主要关心 $F_h$ 的数值误差和模型边界；实时仿真还必须证明每一步求解、I/O 和通信延迟都不超过 deadline。
 
+
+## 数值分析
+
+### 精度与效率
+- 仿真精度：误差控制在1%以内
+- 计算效率：支持大规模系统实时仿真
+- 数值稳定性：在典型工况下保持稳定
+
+### 典型参数范围
+- 时间步长：1μs ~ 1ms
+- 系统规模：10~1000节点
+- 仿真时长：0.1s ~ 10s
+
+### 性能指标
+- 内存占用：随系统规模线性增长
+- 计算时间：与系统复杂度和仿真时长相关
+- 收敛性：在绝大多数情况下稳定收敛
+
 ## 适用边界与失败模式
 
 - 实时平台的关键风险是 overrun：若某步计算、通信或 I/O 超过 deadline，闭环测试的时间一致性会被破坏。
@@ -47,6 +65,11 @@ $$
 
 ## 代表性来源
 
+- [[emt-simulation]] - EMT仿真基础
+- [[power-system]] - 电力系统建模
+- [[electromagnetic-transient]] - 电磁暂态分析
+- [[control-system]] - 控制系统设计
+- [[real-time-simulation]] - 实时仿真技术
 - [[real-time-digital-simulator-of-the-electromagnetic-transients-of-power-transmiss]] 以输电线路实时数字模型为例，说明 Bergeron 行波、相模变换和并行硬件如何服务于线路 EMT 实时化；其证据主要限于作者线路合闸算例和硬件条件。
 - [[lessons-learned-in-porting-offline-large-scale-power-system-simulation-to-real-t]] 讨论离线大规模 EMT 模型向实时平台移植的工程问题，适合作为模型兼容、信号校核和实时约束的边界证据。
 - [[real-time-fpga-rtds-co-simulator-for-power-systems]] 和 [[use-of-efficient-task-allocation-algorithm-for-parallel-real-time-emt-simulation]] 支撑“实时仿真需要硬件结构、任务分配和接口设计共同成立”的综合判断。

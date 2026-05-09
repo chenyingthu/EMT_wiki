@@ -1,78 +1,61 @@
 ---
-title: "Delarue Enhanced Avm"
+title: "Delarue 增强平均值模型"
 type: method
-tags: [delarue-enhanced-avm]
+tags: [delarue-enhanced-avm, mmc, average-value-model, blocking, fault]
 created: "2026-05-05"
+updated: "2026-05-06"
 ---
 
-# Delarue Enhanced Avm
+# Delarue 增强平均值模型
 
 ## 定义与边界
 
-本文提出一种增强型MMC平均值模型（EAVM），旨在解决传统基于控制信号的AVM在换流器闭锁工况下因初始条件缺失导致的直流电流不连续问题。该方法在现有带桥臂阻抗闭锁模块（AIBM）的改进型AVM（MAVM-AIBM）基础上，于六个桥臂电感两端并联受控电流源。在检测到直流故障并触发闭锁指令的瞬间，利用闭锁前流经直流侧等效阻抗的故障电流值，按三分之一比例分配至各桥臂，通过受控电流源强制初始化桥臂电感电流。该策略无需修改底层求解器即可在EMT软件中实现，既保留了控制信号型AVM结构简单、计算高效的优势，又精准复现了闭锁后二极管续流阶段的暂态电气特性，有效消除了传统模型在模式切换时的数值振荡与电流阶跃...
+Delarue 增强平均值模型通常指围绕 MMC 闭锁、故障续流或模式切换精度进行改进的平均值建模路线。它的重点不是通用 AVM，而是在闭锁、二极管续流或桥臂电流初始化等特定工况下提升平均值模型的物理一致性。
 
-**边界限定**：待完善。需要进一步研究确定该方法/模型的具体适用条件和失效边界。
+## EMT 中的作用
 
-## EMT中的作用
+在 EMT 仿真中，这类增强 AVM 主要用于：
 
-基于相关研究，delarue-enhanced-avm在EMT仿真中用于解决特定问题。
+- 保留 MMC 在故障和闭锁工况下的关键动态；
+- 在系统级仿真中替代过慢的详细开关模型；
+- 减少模式切换时的电流跳变和数值振荡。
 
-基于相关研究，该方法在EMT仿真中的主要应用包括：
-- 特定场景的电磁暂态分析
-- 控制系统设计与验证
-- 故障分析与保护协调
+## 常见增强点
 
-## 主要分支与机制
+- 闭锁后续流路径的更真实表示；
+- 桥臂电流和内部状态的更合理初始化；
+- 故障/解锁切换时的模式连续性处理；
+- 在系统级 EMT 中保留关键物理约束而不过度回退到详细开关模型。
 
-- 待补充（需要进一步研究确定具体分支）
+## 关键公式
 
-## 形式化表达
+增强 AVM 的核心通常是为桥臂电流或等效支路增加更合理的初始化/续流约束，例如：
 
+$$
+i_{arm}(t_0^+) = i_{fault}(t_0^-)/3
+$$
 
-### 核心数学表达
+具体公式取决于桥臂等效结构，但关键思想是让模式切换前后的桥臂状态更连续。
 
-从相关研究提取的关键公式：
+## 与相关方法的关系
 
-$$-\frac{dV(x,s)}{dx}=Z(s)I(x,s),\qquad -\frac{dI(x,s)}{dx}=Y(s)V(x,s)$$
-
-$$Z(s)=Z_C(s)+Z_E(s)+Z_G(s)$$
-
-$$Z_G(s)=sL_0$$
-
-$$Y(s)=sC_0$$
-
-$$-\frac{dV(x,s)}{dx}=\left(R'(s)+L_0s\right)I(x,s)$$
-
-
-
-
-
-## 适用边界与失败模式
-
-
-基于证据边界的分析：
-
-
-
-
-**潜在失效模式**：
-- 参数设置不当可能导致仿真不稳定
-- 特定工况下可能产生数值误差
-- 需要进一步研究确定具体失效边界
-
-## 与相关页面的关系
-
-- [[emt-simulation]] - EMT仿真基础
-- [[power-system]] - 电力系统基础
-- [[control-system]] - 控制系统基础
+- [[average-value-model]]：一般平均值模型入口。
+- [[mbsm]]：统一子模块/桥臂等效背景。
+- [[mmc-model]]：整机层应用背景。
+- [[dc-protection]]：故障与闭锁工况背景。
+- [[fbsm]]：多电平桥臂/子模块动态背景。
+- [[current-injection]]：等效电流注入接口背景。
 
 ## 代表性来源
 
-- [[an-enhanced-average-value-model-of-modular-multilevel-converter-for-accurate-rep]]
-- [[enhanced-high-speed-electromagnetic-transient-simulation-17]]
-- [[enhanced-high-speed-electromagnetic-transient-simulation]]
+- [[an-enhanced-average-value-model-of-modular-multilevel-converter-for-accurate-rep]]：增强型 AVM 的直接背景来源。
+- [[enhanced-high-speed-electromagnetic-transient-simulation]]：增强高效 EMT 模型背景。
 
+## 证据边界
 
----
+本页不写无来源精度提升倍数或统一适用范围，具体效果必须绑定对比基线和故障工况。
 
-*本页面由批量生成脚本创建，需要进一步人工审查和完善。*
+## 开放问题
+
+- 当前页尚未把 Delarue 路线与其他 MMC 增强 AVM 明确拆分比较。
+- 闭锁、故障续流和正常运行 3 类工况下的统一精度边界仍需落到具体 source 页。

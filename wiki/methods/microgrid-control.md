@@ -1,84 +1,65 @@
 ---
-title: "Microgrid Control"
+title: "微电网控制 (Microgrid Control)"
 type: method
-tags: [microgrid-control]
+tags: [microgrid-control, islanded-operation, grid-forming, secondary-control, coordination]
 created: "2026-05-05"
+updated: "2026-05-06"
 ---
 
-# Microgrid Control
+# 微电网控制 (Microgrid Control)
 
 ## 定义与边界
 
-0378-7796/© 2023 Elsevier B.V. All rights reserved. Unified MANA-based load-flow for multi-frequency hybrid AC/DC Nasim Rashidirad a,*, Jean Mahseredjian b, Ilhan Kocar c, U. Karaagac c b Polytechnique Montr´eal, Montr´eal, H3T 1J4, QC Canada In islanded hybrid AC/DC multi-microgrids (MMGs), interco...
+微电网控制是面向孤岛和并网运行的小型交直流系统控制方法集合，涉及电压频率建立、并联系统功率共享、储能协调、并网切换和二次恢复等问题。它通常由多个层级和多个设备控制器协同完成。
 
-**边界限定**：待完善。需要进一步研究确定该方法/模型的具体适用条件和失效边界。
+本页讨论的是微电网运行控制结构，不把多频潮流算法、版权残片或任意 AC/DC 联合求解器误写成微电网控制方法。
 
-## EMT中的作用
+## EMT 中的作用
 
-基于相关研究，microgrid-control在EMT仿真中用于解决特定问题。
+在 EMT 仿真中，微电网控制常用于：
 
-基于相关研究，该方法在EMT仿真中的主要应用包括：
-- 特定场景的电磁暂态分析
-- 控制系统设计与验证
-- 故障分析与保护协调
+- 研究孤岛建立、黑启动和并网/离网切换；
+- 分析多台逆变器、储能和分布式电源的共享与恢复；
+- 评估故障穿越、限流、通信延迟和负荷扰动对局部系统稳定性的影响；
+- 检查控制层与主电路、保护和能量管理之间的耦合。
 
-## 主要分支与机制
+## 常见控制层
 
-- 待补充（需要进一步研究确定具体分支）
+- 一次控制：[[droop-control]]、[[inertia-control]] 或构网型电压源控制。
+- 二次控制：频率/电压恢复，常与 [[distributed-control]] 结合。
+- 更慢层级：功率分配、能量管理和经济运行。
 
-## 形式化表达
+## 关键公式
 
-
-### 核心数学表达
-
-从相关研究提取的关键公式：
-
-$$J_i\frac{d\Delta\omega_i}{dt}=\frac{P_{mi}}{\omega_0}-\frac{P_{0i}}{\omega_0}-D_i(\omega_i-\omega_0),\qquad P_{mi}=P_{refi}+k_{\omega i}(\omega_0-\omega)$$
-
-$$E_i=\frac{1}{K_{qi}s}\left[Q_{refi}-Q_{0i}+D_{qi}(U_{cni}-U_c)\right]$$
-
-$$P_{0i}=\frac{3U_{ci}U_g\sin\delta_i}{2\omega_0L_i}\approx\frac{3U_{ci}U_g}{2X_i}\delta_i\approx K_i\delta_i,\qquad \delta_i=\int(\omega_i-\omega_{bus})dt$$
-
-$$\frac{\Delta\omega_i(s)}{\Delta\omega_{bus}(s)}=\frac{K_i}{J_i\omega_0s^2+(D_i\omega_0+k_{\omega i})s+K_i}$$
+微电网控制并没有唯一公式，但一次共享常从下垂关系出发：
 
 $$
+\omega = \omega_0 - m_p (P - P^\star), \qquad
+V = V_0 - n_q (Q - Q^\star)
+$$
 
-*单台VSC-ESS相对于公共母线频率扰动的二阶频率响应传递函数。分母中二阶项由虚拟惯量决定，一阶项由虚拟阻尼和频率调制系数决定，常数项由同步功率系数决定。*
+若存在二次恢复，则恢复层通过较慢控制量修正一次层参考，而不是直接替代一次层。
 
+## 与相关方法的关系
 
-**公式5**: $$
-
-
-
-
+- [[droop-control]]：微电网并联系统的一次共享基础。
+- [[hierarchical-control]]：说明一次、二次和能量管理层级。
+- [[distributed-control]]：适用于多节点协同恢复。
+- [[offshore-wind-integration]]：虽不是微电网控制本身，但可作为多装置协调背景对比。
 
 ## 适用边界与失败模式
 
-
-基于证据边界的分析：
-
-
-
-
-
-**潜在失效模式**：
-- 参数设置不当可能导致仿真不稳定
-- 特定工况下可能产生数值误差
-- 需要进一步研究确定具体失效边界
-
-## 与相关页面的关系
-
-- [[emt-simulation]] - EMT仿真基础
-- [[power-system]] - 电力系统基础
-- [[control-system]] - 控制系统基础
+- 适用于需要同时处理设备级动态和系统级运行模式切换的小型系统。
+- 微电网控制高度依赖设备类型、通信结构和储能约束，不能简单照搬输电级控制。
+- 仅有稳态潮流或平均值分析通常不足以解释 EMT 级故障和切换瞬态。
+- 若未显式建模保护、限流和控制模式切换，可能误判系统可恢复性。
 
 ## 代表性来源
 
-- [[unified-mana-based-load-flow-for-multi-frequency-hybrid-acdc-multi-microgrids]]
-- [[2728multi-rate-real-time-hybrid-simulation-of-controllable-line-commutated-conve]]
-- [[active-damping-control-and-parameter-calculation-for-resonance-suppression-in-dc-distribution]]
+- [[control-and-simulation-of-a-grid-forming-inverter-for-hybrid-pv-battery-plants-i]]：可作为构网型逆变器、储能和黑启动微电网控制的直接背景来源。
+- [[unified-mana-based-load-flow-for-multi-frequency-hybrid-acdc-multi-microgrids]]：说明微电网运行点和多频/混合系统建模背景，但不是控制方法本身。
+- [[active-damping-control-and-parameter-calculation-for-resonance-suppression-in-dc-distribution]]：可作为微电网并网装置局部控制与阻尼设计的相关来源。
 
+## 证据边界
 
----
-
-*本页面由批量生成脚本创建，需要进一步人工审查和完善。*
+本页不写无来源的切换时间、共享误差或恢复速度结论。具体控制效果必须绑定系统拓扑、储能规模、通信结构和测试工况。

@@ -1,78 +1,71 @@
 ---
-title: "Gis"
+title: "气体绝缘开关设备建模方法 (GIS)"
 type: method
-tags: [gis]
+tags: [gis, gas-insulated-switchgear, switching-transient, lightning, enclosure]
 created: "2026-05-05"
+updated: "2026-05-06"
 ---
 
-# Gis
+# 气体绝缘开关设备建模方法 (GIS)
 
 ## 定义与边界
 
-本文提出一种基于实测频变阻抗特性的磁芯非线性等效电路建模方法。首先，在不同直流偏置电流下测量磁芯的复阻抗频率特性，覆盖从线性区到深度饱和区的工作点。随后，针对每个偏置电流点，利用有理函数拟合与部分分式展开技术，将频变阻抗综合为由多个RL并联支路构成的线性集总参数等效电路（Foster网络）。接着，对各支路电阻和电感值随电流的变化进行平滑插值，并通过积分运算推导出EMTP软件所需的电压-电流(V-I)和磁链-电流(Φ-I)非线性特性曲线。最后，采用指数离散化策略将特性曲线外推至10 kA高电流范围，确保模型在宽频带（kHz~MHz）与宽电流范围内均能精确表征磁芯的频变损耗与磁饱和非线性，可直接嵌...
+GIS（Gas-Insulated Switchgear）建模方法指在 EMT 中表示气体绝缘开关设备内部导体、外壳、接地回路、断路器间隙和高频暂态传播行为的技术路线。它常用于操作过电压、VFTO、雷击暂态和局部高频响应研究。
 
-**边界限定**：待完善。需要进一步研究确定该方法/模型的具体适用条件和失效边界。
+本页讨论的是 GIS 的 EMT 建模问题，不把磁芯频变等效电路或无关白盒变压器方法错写成 GIS 方法。
 
-## EMT中的作用
+## EMT 中的作用
 
-基于相关研究，gis在EMT仿真中用于解决特定问题。
+在 EMT 仿真中，GIS 建模主要用于：
 
-基于相关研究，该方法在EMT仿真中的主要应用包括：
-- 特定场景的电磁暂态分析
-- 控制系统设计与验证
-- 故障分析与保护协调
+- 研究快速前沿暂态过电压和 VFTO 传播；
+- 分析 GIS 内部波过程、反射和接地回路影响；
+- 为绝缘配合、传感器布置和保护评估提供高频背景；
+- 与外部线路、变压器和接地系统建模耦合。
 
-## 主要分支与机制
+## 常见关注点
 
-- 待补充（需要进一步研究确定具体分支）
+- GIS 内部导体与外壳形成的高频传播路径；
+- 断路器操作引起的 VFTO 与反射过程；
+- 接地回路和外接设备对波过程的影响；
+- 绝缘配合与传感布置对局部响应的敏感性。
 
-## 形式化表达
+## 关键公式
 
+GIS 高频暂态研究通常仍建立在传输线和行波关系上，例如：
 
-### 核心数学表达
+$$
+\frac{\partial v}{\partial x} = -L' \frac{\partial i}{\partial t}, \qquad
+\frac{\partial i}{\partial x} = -C' \frac{\partial v}{\partial t}
+$$
 
-从相关研究提取的关键公式：
+关键不在公式本身，而在 GIS 几何、外壳和接地结构如何决定等效参数和边界条件。
 
-$$-\frac{dV(x,s)}{dx}=Z(s)I(x,s),\qquad -\frac{dI(x,s)}{dx}=Y(s)V(x,s)$$
+## 与相关方法的关系
 
-$$Z(s)=Z_C(s)+Z_E(s)+Z_G(s)$$
-
-$$Z_G(s)=sL_0$$
-
-$$Y(s)=sC_0$$
-
-$$-\frac{dV(x,s)}{dx}=\left(R'(s)+L_0s\right)I(x,s)$$
-
-
-
-
+- [[switching-transient]]：操作过电压和快速暂态背景。
+- [[lightning-overvoltage]]：雷击暂态背景。
+- [[grounding-system]]：GIS 外壳与接地回路耦合背景。
+- [[transmission-line-theory]]：高频传播建模基础。
+- [[electromagnetic-transient]]：GIS 高频暂态的上位现象背景。
 
 ## 适用边界与失败模式
 
-
-基于证据边界的分析：
-
-
-
-
-**潜在失效模式**：
-- 参数设置不当可能导致仿真不稳定
-- 特定工况下可能产生数值误差
-- 需要进一步研究确定具体失效边界
-
-## 与相关页面的关系
-
-- [[emt-simulation]] - EMT仿真基础
-- [[power-system]] - 电力系统基础
-- [[control-system]] - 控制系统基础
+- 适用于高频暂态、VFTO 和绝缘配合研究。
+- 若只用低频集总模型，可能无法解释 GIS 内部快速波过程。
+- GIS 几何、接地和布置差异会显著改变结果，不能跨装置泛化。
 
 ## 代表性来源
 
-- [[an-efficient-and-accurate-calculation-of-electric-field-and-temperature-distribu]]
-- [[application-of-emtp-in-the-research-of-uhv-ac-power-transmission]]
-- [[an-improved-high-frequency-white-box-lossy-transformer-model-for-the-calculation]]
+- [[application-of-emtp-in-the-research-of-uhv-ac-power-transmission]]：GIS 和超高压暂态研究背景。
+- [[an-improved-high-frequency-white-box-lossy-transformer-model-for-the-calculation]]：说明 GIS 高速暂态与外部设备高频模型耦合背景。
+- [[an-efficient-and-accurate-calculation-of-electric-field-and-temperature-distribu]]：GIS 相关场强/设备背景的相关来源。
 
+## 证据边界
 
----
+本页不写无来源 VFTO 峰值或绝缘裕度结论，具体结果必须绑定结构和工况。
 
-*本页面由批量生成脚本创建，需要进一步人工审查和完善。*
+## 开放问题
+
+- 当前页尚未把 GIS 内部行波建模与外部设备高频白盒模型的边界完全拆开。
+- 不同 GIS 几何结构的参数抽象层级，后续应在相邻页面继续细化。

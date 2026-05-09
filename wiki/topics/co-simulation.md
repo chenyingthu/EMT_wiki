@@ -7,6 +7,92 @@ created: "2026-04-13"
 
 # 混合仿真
 
+```mermaid
+graph TD
+    subgraph "EMT侧 (小步长 μs级)"
+        EMT["电磁暂态仿真
+详细设备模型
+MMC/VSC/线路
+步长 1-50 μs"]
+    end
+    subgraph "接口层"
+        INT["接口变换
+Thevenin/Norton等效
+动态相量/移频
+插值/采样/同步"]
+        FDNE["FDNE频变等效"]
+        MURI["多速率接口"]
+    end
+    subgraph "机电侧 (大步长 ms级)"
+        RMS["机电暂态仿真
+相量域网络
+步长 1-10 ms"]
+    end
+    subgraph "HIL硬件在环"
+        HIL["硬件在环测试
+RTDS/FPGA
+物理控制器"]
+    end
+    EMT <--> INT
+    INT <--> RMS
+    EMT --> FDNE
+    FDNE --> INT
+    INT --> MURI
+    MURI --> RMS
+    EMT --> HIL
+    RMS --> HIL
+
+    style EMT fill:#fce4ec
+    style INT fill:#e1f5fe
+    style FDNE fill:#f5f5f5
+    style MURI fill:#f5f5f5
+    style RMS fill:#fff3e0
+    style HIL fill:#e8f5e9
+```
+
+```mermaid
+graph TD
+    subgraph "EMT侧 (小步长 μs级)"
+        EMT["电磁暂态仿真
+详细设备模型
+MMC/VSC/线路
+步长 1-50 μs"]
+    end
+    subgraph "接口层"
+        INT["接口变换
+Thevenin/Norton等效
+动态相量/移频
+插值/采样/同步"]
+        FDNE["FDNE频变等效"]
+        MURI["多速率接口"]
+    end
+    subgraph "机电侧 (大步长 ms级)"
+        RMS["机电暂态仿真
+相量域网络
+步长 1-10 ms"]
+    end
+    subgraph "HIL硬件在环"
+        HIL["硬件在环测试
+RTDS/FPGA
+物理控制器"]
+    end
+    EMT <--> INT
+    INT <--> RMS
+    EMT --> FDNE
+    FDNE --> INT
+    INT --> MURI
+    MURI --> RMS
+    EMT --> HIL
+    RMS --> HIL
+
+    style EMT fill:#fce4ec
+    style INT fill:#e1f5fe
+    style FDNE fill:#f5f5f5
+    style MURI fill:#f5f5f5
+    style RMS fill:#fff3e0
+    style HIL fill:#e8f5e9
+```
+
 ## 定义
 混合仿真是在同一研究问题中耦合不同暂态表示、求解器或时间步长的仿真范式。该页的论文样本主要围绕 EMT、机电暂态、相量域、动态相量和移频相量之间的接口展开，用于在保留局部波形细节的同时降低全系统 EMT 建模成本。
 

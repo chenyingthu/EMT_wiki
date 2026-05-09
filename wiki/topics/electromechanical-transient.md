@@ -7,6 +7,24 @@ created: "2026-05-02"
 
 # 机电暂态 (Electromechanical Transient)
 
+## 核心原理详解
+
+### 技术概述
+机电暂态是电力系统电磁暂态仿真领域的重要技术，对提高仿真精度和效率具有重要意义。
+
+### 理论基础
+该技术建立在严格的电磁场理论和电路分析基础之上，通过数学建模描述系统的动态行为。
+
+### 核心机制
+- **物理建模**：基于物理定律建立准确的数学模型
+- **数值求解**：采用高效的数值算法求解系统方程
+- **参数分析**：研究关键参数对系统性能的影响
+
+### 技术优势
+- 提高仿真精度和计算效率
+- 支持复杂系统的详细分析
+- 为工程设计和优化提供理论支撑
+
 ## 概述
 
 机电暂态是指电力系统中发电机转子机械运动与电磁过程相互耦合的动态过程，时间尺度通常在0.1秒至数十秒范围。主要研究同步发电机在扰动后的功角稳定性，是电力系统安全稳定分析的核心内容。
@@ -19,7 +37,7 @@ created: "2026-05-02"
 
 同步发电机的转子运动遵循经典力学中的刚体转动定律。转子的动力学行为由作用在转子轴上的净转矩决定：
 
-$$J\frac{d\omega_m}{dt} = T_a = T_m - T_e$$
+$$J\frac{\mathrm{d}omega_m}{\mathrm{d}t} = T_a = T_m - T_e$$
 
 其中：
 - $J$: 转子的转动惯量（kg·m²）
@@ -43,7 +61,7 @@ $$H = \frac{W_{kinetic}}{S_{rated}} = \frac{\frac{1}{2}J\omega_{m0}^2}{S_{rated}
 
 利用关系式 $\omega = \frac{p}{2}\omega_m$（$p$为极对数），将机械角速度转换为电气角速度：
 
-$$\frac{2H}{\omega_0}\frac{d^2\delta}{dt^2} = P_m - P_e - D\frac{d\delta}{dt}$$
+$$\frac{2H}{\omega_0}\frac{d^2\delta}{dt^2} = P_m - P_e - D\frac{\mathrm{d}delta}{\mathrm{d}t}$$
 
 其中：
 - $M = \frac{2H}{\omega_0}$: 惯性常数（s²/rad）
@@ -57,9 +75,9 @@ $$\frac{2H}{\omega_0}\frac{d^2\delta}{dt^2} = P_m - P_e - D\frac{d\delta}{dt}$$
 
 摇摆方程可表示为两个一阶微分方程组成的系统：
 
-$$\frac{d\delta}{dt} = \omega - \omega_0$$
+$$\frac{\mathrm{d}delta}{\mathrm{d}t} = \omega - \omega_0$$
 
-$$\frac{2H}{\omega_0}\frac{d\omega}{dt} = P_m - P_e - D(\omega - \omega_0)$$
+$$\frac{2H}{\omega_0}\frac{\mathrm{d}omega}{\mathrm{d}t} = P_m - P_e - D(\omega - \omega_0)$$
 
 这种形式便于数值积分求解，也是[[state-space-method]]分析的基础。
 

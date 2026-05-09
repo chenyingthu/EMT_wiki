@@ -814,7 +814,7 @@ STATCOM响应: 快速跟踪
 ## 相关页面
 
 - [[svc-test-system]] - SVC测试系统
-- [[facts-devices]] - FACTS设备概述
+- [[facts]] - FACTS设备概述
 - [[vsc-hvdc-two-terminal]] - 两端VSC-HVDC系统
 - [[mmc-model]] - MMC模型
 - [[power-quality]] - 电能质量

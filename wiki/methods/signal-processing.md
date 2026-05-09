@@ -1,70 +1,64 @@
 ---
-title: "Signal Processing"
+title: "信号处理方法入口"
 type: method
-tags: [signal-processing]
+tags: [signal-processing, dsp, waveform-analysis, feature-extraction, filtering]
 created: "2026-05-04"
+updated: "2026-05-07"
 ---
 
-# Signal Processing
+# 信号处理方法入口
 
 ## 定义与边界
 
-本页面为自动创建的method类型页面，用于修复断链。内容待补充。
+信号处理方法入口用于承接 EMT 波形中的滤波、特征提取、频谱分析、模态辨识和测量数据处理问题。它是分析类方法的上位入口，而不是某一篇输电线路模型或单个设备算法页。
 
-**边界限定**：待完善。
+本页讨论的是时域/频域波形处理的通用边界，不把无关主电路模型误写成信号处理页。
 
-## EMT中的作用
+## EMT 中的作用
 
-- 待补充
+在 EMT 研究中，信号处理方法主要用于：
 
+- 从电压、电流和功率波形中提取特征；
+- 支撑保护、诊断、稳定性分析和参数辨识；
+- 组织滤波、变换、模态识别和频谱分析之间的关系；
+- 为 DSP、数字继电器和测量后处理提供方法入口。
 
-基于相关研究的技术应用：
+## 常见分支
 
-## 主要分支与机制
-
-- 待补充
+- 数字滤波与预处理；
+- 频谱与谐波分析；
+- 模态辨识与参数提取；
+- 面向保护和事件识别的特征提取。
 
 ## 形式化表达
 
+信号处理的最小抽象可以写为：
 
-### 核心数学表达
+$$
+y(t)=\mathcal{F}\big(x(t)\big)
+$$
 
-从相关研究提取的关键公式：
-
-$$-\frac{dV(x,s)}{dx}=Z(s)I(x,s),\qquad -\frac{dI(x,s)}{dx}=Y(s)V(x,s)$$
-
-$$Z(s)=Z_C(s)+Z_E(s)+Z_G(s)$$
-
-$$Z_G(s)=sL_0$$
-
-$$Y(s)=sC_0$$
-
-$$-\frac{dV(x,s)}{dx}=\left(R'(s)+L_0s\right)I(x,s)$$
-
-
-
-## 适用边界与失败模式
-
-
-基于证据边界的分析：
-
-
-
+其中 $x(t)$ 表示原始电磁暂态波形，$\mathcal{F}$ 表示滤波、变换或特征提取算子，$y(t)$ 表示后续用于保护、辨识或稳定性分析的结果。
 
 ## 与相关页面的关系
 
-- [[emt-simulation]] - EMT仿真基础
-- [[power-system]]
-- [[electromagnetic-transient]]
+- [[filtering]]：滤波方法入口。
+- [[prony-analysis]]：模态提取与时域辨识背景。
+- [[fault-analysis-methods]]：故障波形分析背景。
+- [[current-trajectory-similarity]]：轨迹特征提取背景。
+- [[phase-locked-loop]]：同步与波形处理的相关背景。
+
 ## 代表性来源
 
-- [[determination-of-the-saturation-curve-of-power-transformers-by-processing-transi]]
----
+- [[determination-of-the-saturation-curve-of-power-transformers-by-processing-transi]]：波形处理与参数提取背景。
+- [[z-tool-frequency-domain-characterization-of-emt-models-for-small-signal-stabilit]]：频域特征分析背景。
+- [[using-tacs-functions-within-empt-to-teach-protective-relaying-fundamentals-power]]：数字继电保护与 DSP 背景。
 
-*本页面为自动生成的stub，需要进一步补充完善。*
+## 证据边界
 
-- [[determination-of-the-saturation-curve-of-power-transformers-by-processing-transi]]
-- [[small-signal-dynamic-phasor-model-of-three-phase-dab-converter-for-solid-state-t]]
-- [[z-tool-frequency-domain-characterization-of-emt-models-for-small-signal-stabilit]]
-- [[small-signal-dynamic-phasor-model-of-three-phase-dab-converter-for-solid-state-t-22]]
-- [[an-automatable-approach-for-small-signal-stability-analysis-of-power-electronic-]]
+本页不写无来源的最佳滤波器、统一频窗长度或所有场景通用的处理流程。具体结论必须绑定信号类型、采样条件和目标任务。
+
+## 开放问题
+
+- 当前页尚未继续拆分保护类信号处理、稳定性类信号处理和参数辨识类信号处理的边界。
+- 不同处理链对实时性和鲁棒性的取舍，后续仍需在相邻页面中进一步展开。

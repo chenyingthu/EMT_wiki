@@ -12,6 +12,94 @@ book-chapter: "24"
 
 宽频振荡是电力系统中频率范围覆盖次同步（<50Hz）、超同步（>50Hz）到高频（kHz级）的功率振荡现象。随着电力电子设备大规模接入，新能源场站经串补线路送出、VSC-HVDC并网、新能源机组间相互作用等场景引发的新型振荡问题日益突出。EMT仿真在宽频振荡分析中扮演核心角色，用于识别振荡机理、验证抑制策略、评估稳定性裕度。
 
+```mermaid
+graph LR
+    subgraph "宽频振荡谱"
+        direction LR
+        SSO["次同步振荡 SSO
+< 50 Hz
+SSR/SSO/SSTI
+串补+风电"]
+        SUP["超同步
+50-100 Hz
+次/超同步
+交互作用"]
+        MF["中频振荡
+100 Hz - 1 kHz
+HVDC换流站
+控制振荡"]
+        HF["高频振荡
+1 - 5 kHz
+MMC模块级
+高频谐振"]
+    end
+    subgraph "分析方法"
+        IMP["阻抗分析
+奈姈斯特判据
+特征倠分析"]
+        MOD["模态分析
+参与因子
+接口识别"]
+        EMTt["EMT仿真
+时域波形验证
+宽频建模"]
+    end
+
+    SSO & SUP & MF & HF --> IMP & MOD & EMTt
+
+    style SSO fill:#fce4ec
+    style SUP fill:#fff3e0
+    style MF fill:#e1f5fe
+    style HF fill:#f3e5f5
+    style IMP fill:#c8e6c9
+    style MOD fill:#c8e6c9
+    style EMTt fill:#c8e6c9
+```
+
+```mermaid
+graph LR
+    subgraph "宽频振荡谱"
+        direction LR
+        SSO["次同步振荡 SSO
+< 50 Hz
+SSR/SSO/SSTI
+串补+风电"]
+        SUP["超同步
+50-100 Hz
+次/超同步
+交互作用"]
+        MF["中频振荡
+100 Hz - 1 kHz
+HVDC换流站
+控制振荡"]
+        HF["高频振荡
+1 - 5 kHz
+MMC模块级
+高频谐振"]
+    end
+    subgraph "分析方法"
+        IMP["阻抗分析
+奈姈斯特判据
+特征倠分析"]
+        MOD["模态分析
+参与因子
+接口识别"]
+        EMTt["EMT仿真
+时域波形验证
+宽频建模"]
+    end
+
+    SSO & SUP & MF & HF --> IMP & MOD & EMTt
+
+    style SSO fill:#fce4ec
+    style SUP fill:#fff3e0
+    style MF fill:#e1f5fe
+    style HF fill:#f3e5f5
+    style IMP fill:#c8e6c9
+    style MOD fill:#c8e6c9
+    style EMTt fill:#c8e6c9
+```
+
 宽频振荡的分类：
 - **次同步振荡（SSO）**：<50Hz，如次同步谐振（SSR）
 - **超同步振荡**：50-100Hz

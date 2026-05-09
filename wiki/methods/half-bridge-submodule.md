@@ -1,84 +1,76 @@
 ---
-title: "Half Bridge Submodule"
+title: "半桥子模块方法 (Half-Bridge Submodule)"
 type: method
-tags: [half-bridge-submodule]
+tags: [half-bridge-submodule, hbsm, mmc, submodule, converter]
 created: "2026-05-05"
+updated: "2026-05-06"
 ---
 
-# Half Bridge Submodule
+# 半桥子模块方法 (Half-Bridge Submodule)
 
 ## 定义与边界
 
-本文提出了一种二极管钳位半桥MMC拓扑结构，通过在每个子模块(SM)中集成一个钳位二极管和阻尼电阻，并在三相之间配置四个辅助电压平衡电路，实现了子模块电容电压的自发并联平衡。该拓扑重构了传统半桥MMC，使所有子模块属于6个自发电容并联行为(SCPBs)组。当某个SM被插入而相邻SM被旁路时，通过钳位二极管和辅助电路形成并联路径，使电容电压自然平衡。通过设计适当的RC时间常数，确保相邻SM具有相等的电容电压纹波。虽然电压平衡是自发实现的，但为了均衡开关损耗，系统采用开环最近电平调制(NLM)和载波移相正弦脉宽调制(CPS-SPWM)技术。...
+半桥子模块（Half-Bridge Submodule, HBSM）是 MMC 中最常见的子模块单元，由两个主开关器件和一个子模块电容构成。对应的方法问题不是“这个硬件存在”，而是如何在 EMT 中表示其插入/旁路状态、电容电压动态、桥臂电流路径以及与调制、排序和平衡控制的耦合。
 
-**边界限定**：待完善。需要进一步研究确定该方法/模型的具体适用条件和失效边界。
+本页讨论的是半桥子模块的 EMT 建模与表示边界，不把钳位二极管自平衡拓扑、全桥模型或并行求解框架混写成通用半桥子模块方法。
 
-## EMT中的作用
+## EMT 中的作用
 
-基于相关研究，half-bridge-submodule在EMT仿真中用于解决特定问题。
+在 EMT 仿真中，半桥子模块方法主要用于：
 
-基于相关研究，该方法在EMT仿真中的主要应用包括：
-- 特定场景的电磁暂态分析
-- 控制系统设计与验证
-- 故障分析与保护协调
+- 表达 MMC 桥臂电压由多个子模块离散叠加形成的过程；
+- 跟踪子模块电容电压、插入状态和桥臂电流方向；
+- 评估调制、排序和电压平衡对桥臂动态的影响；
+- 为平均值模型、详细等效模型或混合模型提供子模块层接口。
 
-## 主要分支与机制
+## 常见关注点
 
-- 待补充（需要进一步研究确定具体分支）
+- 插入/旁路状态与桥臂电流方向的关系；
+- 子模块电容电压平衡与排序逻辑；
+- 详细开关、等效和平均值模型之间的切换；
+- 在直流故障下与全桥或混合拓扑的能力差异。
 
-## 形式化表达
+## 关键公式
 
-### 核心数学表达
+若以开关函数 $s \in \{0,1\}$ 表示子模块插入状态，则子模块输出电压常写为：
 
-半桥子模块的电容电压平衡方程：
+$$
+v_{sm} = s \, v_c
+$$
 
-$$C_{SM} rac{dv_c}{dt} = i_{arm} \cdot s$$
+电容电压动态可写为：
 
-其中：
-- $C_{SM}$：子模块电容
-- $v_c$：电容电压
-- $i_{arm}$：桥臂电流
-- $s$：开关状态（插入=1，旁路=0）
+$$
+C_{sm}\frac{dv_c}{dt} = i_c
+$$
 
-最近电平调制(NLM)输出电平数：
-$$N_{level} = N_{SM} + 1$$
+其中 $C_{sm}$ 为子模块电容，$i_c$ 为流经电容的电流。半桥结构通常只能输出正电压或零电压，因此其故障阻断和负电平能力与 [[fbsm]] 明显不同。
 
-$N_{SM}$为每桥臂子模块数。
+## 与相关方法的关系
 
-
-
+- [[hbsm]]：可作为半桥子模块的简称入口和拓扑别名。
+- [[fbsm]]：对比全桥子模块的负电压与故障阻断能力。
+- [[nearest-level-modulation]]：说明子模块插入排序与等效输出电平的关系。
+- [[mbsm]]：说明多桥臂/混合子模块框架下的统一表示思路。
 
 ## 适用边界与失败模式
 
-**适用条件**：
-- 适用于半桥MMC拓扑的电磁暂态仿真
-- 电容电压自发平衡适用于稳态运行
-- NLM调制适用于电平数较高的场合（$N_{SM} \geq 20$）
-
-**失效边界**：
-- 电容参数失配严重时平衡效果下降
-- 故障期间自发平衡可能失效
-- RC时间常数设计不当导致电压纹波过大
-
-
-**潜在失效模式**：
-- 参数设置不当可能导致仿真不稳定
-- 特定工况下可能产生数值误差
-- 需要进一步研究确定具体失效边界
-
-## 与相关页面的关系
-
-- [[emt-simulation]] - EMT仿真基础
-- [[power-system]] - 电力系统基础
-- [[control-system]] - 控制系统基础
+- 适用于标准半桥 MMC 子模块的 EMT 建模。
+- 不适用于直接表达全桥、钳位双桥或混合桥子模块的完整能力。
+- 仅用平均值表示时，难以保留单个子模块电压散布和开关事件细节。
+- 若不显式建模排序和平衡逻辑，可能低估子模块电压不均衡风险。
 
 ## 代表性来源
 
-- [[the-diode-clamped-half-bridge-mmc-structure-with-internal-spontaneous-capacitor-]]
-- [[fast-electromagnetic-transient-modeling-method-for-half-bridge-type-voltage-sour]]
-- [[an-efficient-half-bridge-mmc-model-for-emtp-type-simulation-based-on-hybrid-nume]]
+- [[fast-electromagnetic-transient-modeling-method-for-half-bridge-type-voltage-sour]]：说明半桥型 VSC/MMC 相关的快速 EMT 表示背景。
+- [[an-efficient-half-bridge-mmc-model-for-emtp-type-simulation-based-on-hybrid-nume]]：说明半桥 MMC 模型在 EMT 加速场景中的典型处理思路。
+- [[the-diode-clamped-half-bridge-mmc-structure-with-internal-spontaneous-capacitor-]]：说明半桥子模块拓扑扩展与电容平衡问题的特定场景。
 
+## 证据边界
 
----
+本页只说明半桥子模块的建模边界和接口关系，不写无来源电容纹波范围、最优平衡算法或统一故障性能结论。
 
-*本页面由批量生成脚本创建，需要进一步人工审查和完善。*
+## 开放问题
+
+- 当前页尚未继续拆分“标准 HBSM”与带附加钳位/平衡结构的半桥扩展拓扑。
+- 排序和平衡控制的建模深度，仍需结合系统级还是器件级目标判断。

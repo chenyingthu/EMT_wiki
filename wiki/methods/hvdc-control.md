@@ -1,83 +1,72 @@
 ---
-title: "Hvdc Control"
+title: "HVDC 控制 (HVDC Control)"
 type: method
-tags: [hvdc-control]
+tags: [hvdc-control, lcc-hvdc, vsc-hvdc, converter-control, dc-grid]
 created: "2026-05-05"
+updated: "2026-05-06"
 ---
 
-# Hvdc Control
+# HVDC 控制 (HVDC Control)
 
 ## 定义与边界
 
-本文提出了一种基于诺顿等效和分段线性化的混合式高压直流断路器(HHB)实时仿真建模方法。针对实时计算约束，将详细的非线性半导体模型（IGBT/二极管）简化为双值电阻模型，将金属氧化物避雷器(MOV)简化为多段分段线性电阻。通过预计算各主支路单元的等效电阻和诺顿等效电流源，将原本复杂的非线性电路求解转化为线性代数方程求解，满足实时仿真的计算时序要求。同时构建了包含物理MMC控制器和12个DCCB控制器的三端直流电网硬件在环(HIL)测试平台，实现了控制器硬件与实时仿真器的闭环交互。...
+HVDC 控制是直流输电系统中围绕直流电压、直流电流、有功功率、无功支撑、换相裕度和运行方式切换建立的控制方法集合。它覆盖 LCC-HVDC、VSC-HVDC 和多端直流系统中的站级控制、极控和协调逻辑。
 
-**边界限定**：待完善。需要进一步研究确定该方法/模型的具体适用条件和失效边界。
+本页讨论的是 HVDC 运行控制结构本身，不把混合式直流断路器实时仿真建模、HIL 平台或特定硬件实现误写成 HVDC 控制方法。
 
-## EMT中的作用
+## EMT 中的作用
 
-基于相关研究，hvdc-control在EMT仿真中用于解决特定问题。
+在 EMT 仿真中，HVDC 控制主要用于：
 
-基于相关研究，该方法在EMT仿真中的主要应用包括：
-- 特定场景的电磁暂态分析
-- 控制系统设计与验证
-- 故障分析与保护协调
+- 表达整流侧/逆变侧的功率、电压和电流控制模式；
+- 研究故障、功率指令变化和弱网条件下的动态切换；
+- 评估 LCC 换相失败、VSC 限流、直流电压恢复和多站协调行为；
+- 把主电路、保护和站间协调逻辑组织成可验证的控制结构。
 
-## 主要分支与机制
+## 主要分支
 
-- 待补充（需要进一步研究确定具体分支）
+- LCC-HVDC 控制：触发角、关断角、定电流、定熄弧角、定功率等控制模式。
+- VSC-HVDC 控制：直流电压外环、功率外环、电流内环、PLL 或构网控制。
+- 多端直流协调：主从控制、下垂控制、电压-功率协同与站间运行方式管理。
 
-## 形式化表达
+## 关键公式
 
-
-### 核心数学表达
-
-从相关研究提取的关键公式：
-
-$$J_i\frac{d\Delta\omega_i}{dt}=\frac{P_{mi}}{\omega_0}-\frac{P_{0i}}{\omega_0}-D_i(\omega_i-\omega_0),\qquad P_{mi}=P_{refi}+k_{\omega i}(\omega_0-\omega)$$
-
-$$E_i=\frac{1}{K_{qi}s}\left[Q_{refi}-Q_{0i}+D_{qi}(U_{cni}-U_c)\right]$$
-
-$$P_{0i}=\frac{3U_{ci}U_g\sin\delta_i}{2\omega_0L_i}\approx\frac{3U_{ci}U_g}{2X_i}\delta_i\approx K_i\delta_i,\qquad \delta_i=\int(\omega_i-\omega_{bus})dt$$
-
-$$\frac{\Delta\omega_i(s)}{\Delta\omega_{bus}(s)}=\frac{K_i}{J_i\omega_0s^2+(D_i\omega_0+k_{\omega i})s+K_i}$$
+LCC 场景中常见的直流侧关系可写为：
 
 $$
+V_d = V_{d0}\cos\alpha - \frac{3\omega L_c}{\pi} I_d
+$$
 
-*单台VSC-ESS相对于公共母线频率扰动的二阶频率响应传递函数。分母中二阶项由虚拟惯量决定，一阶项由虚拟阻尼和频率调制系数决定，常数项由同步功率系数决定。*
+其中 $\alpha$ 为触发角，$I_d$ 为直流电流。对逆变侧，也常围绕关断角 $\gamma$ 组织控制和约束。
 
+VSC 场景中，HVDC 控制通常表现为外环参考到内环电流指令的映射：
 
-**公式5**: $$
+$$
+\mathbf{i}_{dq}^* = f\,(V_{dc}^\*, P^\*, Q^\*, \mathbf{y}_m)
+$$
 
+该表达只说明接口关系，不意味着所有 HVDC 工程都共享同一控制器或参数。
 
+## 与相关方法的关系
 
-
+- [[thyristor-control]] 和 [[extinction-angle-calculation]]：对应 LCC 侧核心控制变量。
+- [[vsc-control]] 和 [[dual-loop-pi-controller]]：对应 VSC-HVDC 常见控制骨架。
+- [[multi-terminal-dc]]：对应多端直流网络中的协调背景。
+- [[converter-station-inverter]]：对应站级逆变运行边界。
 
 ## 适用边界与失败模式
 
-
-基于证据边界的分析：
-
-
-
-
-**潜在失效模式**：
-- 参数设置不当可能导致仿真不稳定
-- 特定工况下可能产生数值误差
-- 需要进一步研究确定具体失效边界
-
-## 与相关页面的关系
-
-- [[emt-simulation]] - EMT仿真基础
-- [[power-system]] - 电力系统基础
-- [[control-system]] - 控制系统基础
+- LCC-HVDC 控制受交流系统强度、无功支撑和换相裕度显著影响。
+- VSC-HVDC 控制受限流、直流故障、PLL 或构网模式切换影响。
+- 多端系统中，局部控制稳定不等于全系统协调稳定。
+- 若不显式建模保护、限幅和模式切换，EMT 结果可能高估控制能力。
 
 ## 代表性来源
 
-- [[real-time-simulation-with-an-industrial-dccb-controller-in-a-hvdc-grid]]
-- [[analytical-calculation-method-of-outer-loop-controller-parameters-of-hvdc-conver]]
-- [[analysis-on-dynamic-characteristic-of-control-mode-for-800-kv-yun-guang-uhvdc]]
+- [[analysis-on-dynamic-characteristic-of-control-mode-for-800-kv-yun-guang-uhvdc]]：可用于支撑 LCC-HVDC 控制模式切换与运行特性的场景化讨论。
+- [[analytical-calculation-method-of-outer-loop-controller-parameters-of-hvdc-conver]]：可作为 VSC-HVDC 外环参数设计背景来源。
+- [[dynamic-performance-of-embedded-hvdc-with-13&14]]：说明嵌入式 VSC-HVDC 中外环、内环与频率相关补偿的组合方式。
 
+## 证据边界
 
----
-
-*本页面由批量生成脚本创建，需要进一步人工审查和完善。*
+本页只提供 HVDC 控制的上位方法框架，不新增无来源整定参数、切换阈值、控制带宽或“最优控制模式”结论。具体策略必须绑定拓扑、算例和来源。

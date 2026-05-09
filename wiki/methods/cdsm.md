@@ -1,78 +1,69 @@
 ---
-title: "Cdsm"
+title: "双钳位子模块方法 (CDSM)"
 type: method
-tags: [cdsm]
+tags: [cdsm, clamp-double-submodule, mmc, fault-tolerant, electrothermal]
 created: "2026-05-05"
+updated: "2026-05-06"
 ---
 
-# Cdsm
+# 双钳位子模块方法 (CDSM)
 
 ## 定义与边界
 
-本文提出了一种分层混合建模方法（Hierarchical Hybrid Modeling），将系统级等效电路模型（Equivalent Circuit Model, ECM）与CDSM（Clamp Double Submodule）的器件级电热模型（Device-Level Electrothermal Model, DLEM）相结合。在MPSoC的PL（Programmable Logic）侧实现并行电磁暂态求解，在PS（Processing System）侧实现热网络计算与参数管理。该方法通过动态切换机制，在保证系统级实时性的同时，对关键CDSM子模块进行器件级精细建模，实现IGBT开关瞬...
+CDSM（Clamp Double Submodule）通常指 MMC 或相关多电平换流器中的双钳位子模块结构及其建模方法。它常与故障容错、器件级热应力和桥臂控制相关。对应的方法问题是如何在 EMT 中表示该类子模块的电气状态、热状态和与系统级模型的耦合。
 
-**边界限定**：待完善。需要进一步研究确定该方法/模型的具体适用条件和失效边界。
+本页讨论的是 CDSM 子模块及其建模边界，不把 MPSoC 电热实时仿真框架本身当成“CDSM 方法”的全部内容。
 
-## EMT中的作用
+## EMT 中的作用
 
-cdsm在EMT仿真中用于电磁暂态仿真分析。
+在 EMT 仿真中，CDSM 方法主要用于：
 
-该方法在EMT仿真中的主要应用包括：
-- 特定场景的电磁暂态分析
-- 控制系统设计与验证
-- 故障分析与保护协调
+- 表达故障容错型子模块的多状态行为；
+- 研究电气动态和器件热应力的耦合；
+- 支撑从系统级平均值到器件级电热模型的分层分析；
+- 比较不同子模块拓扑在桥臂控制和故障场景中的表现。
 
-## 主要分支与机制
+## 常见关注点
 
-- 详见形式化表达章节（需要进一步研究确定具体分支）
+- 子模块可输出状态和故障后电流路径；
+- 器件损耗到结温的电热映射；
+- 与桥臂排序、均压和容错控制的耦合；
+- 从详细开关到等效模型的层级切换。
 
-## 形式化表达
+## 关键公式
 
+CDSM 的具体方程依赖拓扑，但其电热耦合通常可抽象为：
 
-### 核心数学表达
+$$
+C_{th}\frac{dT_j}{dt} = P_{loss} - \frac{T_j - T_{amb}}{R_{th}}
+$$
 
-从相关研究提取的关键公式：
+其中 $T_j$ 为结温，$P_{loss}$ 为器件损耗。这个表达说明 CDSM 研究往往不仅关注桥臂电压电流，还关注器件热状态。
 
-$$-\frac{dV(x,s)}{dx}=Z(s)I(x,s),\qquad -\frac{dI(x,s)}{dx}=Y(s)V(x,s)$$
+## 与相关方法的关系
 
-$$Z(s)=Z_C(s)+Z_E(s)+Z_G(s)$$
-
-$$Z_G(s)=sL_0$$
-
-$$Y(s)=sC_0$$
-
-$$-\frac{dV(x,s)}{dx}=\left(R'(s)+L_0s\right)I(x,s)$$
-
-
-
-
+- [[half-bridge-submodule]]、[[fbsm]]：作为其他子模块拓扑的对照背景。
+- [[mbsm]]：统一子模块表示框架的相关背景。
+- [[mmc-model]]：整机层应用背景。
+- [[real-time-simulation]]：器件级电热耦合在实时验证中的相关背景。
 
 ## 适用边界与失败模式
 
-
-基于证据边界的分析：
-
-
-
-
-**潜在失效模式**：
-- 参数设置不当可能导致仿真不稳定
-- 特定工况下可能产生数值误差
-- 需要进一步研究确定具体失效边界
-
-## 与相关页面的关系
-
-- [[emt-simulation]] - EMT仿真基础
-- [[power-system]] - 电力系统基础
-- [[control-system]] - 控制系统基础
+- 适用于需要研究子模块拓扑细节和热应力问题的场景。
+- 若只保留系统级等效，可能无法解释器件热失衡和容错行为。
+- 具体 CDSM 拓扑差异较大，不能泛化为单一标准结构。
 
 ## 代表性来源
 
-- [[real-time-mpsoc-based-electrothermal-transient-simulation-of-fault-tolerant-mmc-]]
-- [[计及电容过渡过程的双钳位型mmc电磁暂态高效仿真方法]]
-- [[combining-detailed-equivalent-model-with-switching-function-based-average-value-]]
+- [[real-time-mpsoc-based-electrothermal-transient-simulation-of-fault-tolerant-mmc-]]：说明 CDSM 电热耦合与实时背景。
+- [[计及电容过渡过程的双钳位型mmc电磁暂态高效仿真方法]]：说明双钳位子模块 EMT 建模背景。
+- [[combining-detailed-equivalent-model-with-switching-function-based-average-value-]]：说明详细与平均值耦合背景。
 
+## 证据边界
 
----
+本页不写无来源热阻参数、损耗极限或实时性能结论。具体结果必须绑定子模块结构和测试工况。
 
-*本页面由批量生成脚本创建，需要进一步人工审查和完善。*
+## 开放问题
+
+- 当前页尚未细分不同 CDSM 拓扑之间的输出状态和控制自由度差异。
+- 电热耦合模型应做到多细，仍需结合目标场景和计算预算判断。

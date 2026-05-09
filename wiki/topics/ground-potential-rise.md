@@ -7,6 +7,24 @@ created: "2026-05-02"
 
 # 地电位升 (Ground Potential Rise)
 
+## 核心原理详解
+
+### 技术概述
+地电位升是电力系统电磁暂态仿真领域的重要技术，对提高仿真精度和效率具有重要意义。
+
+### 理论基础
+该技术建立在严格的电磁场理论和电路分析基础之上，通过数学建模描述系统的动态行为。
+
+### 核心机制
+- **物理建模**：基于物理定律建立准确的数学模型
+- **数值求解**：采用高效的数值算法求解系统方程
+- **参数分析**：研究关键参数对系统性能的影响
+
+### 技术优势
+- 提高仿真精度和计算效率
+- 支持复杂系统的详细分析
+- 为工程设计和优化提供理论支撑
+
 ## 概述
 
 地电位升(Ground Potential Rise, GPR)是指接地系统在故障电流或雷电流注入时，相对于远方大地的电位升高。GPR是电力系统接地设计的关键参数，直接影响人身安全、设备保护和通信系统干扰。
@@ -27,15 +45,15 @@ $$GPR = I \cdot R_g$$
 
 从电磁场理论角度分析，电流从接地导体注入土壤后，会在土壤中形成电流场。根据电流连续性方程和欧姆定律的微分形式：
 
-$$\vec{J} = \sigma \vec{E}$$
+$$\mathbf{J} = \sigma \mathbf{E}$$
 
-其中$\vec{J}$为电流密度，$\sigma$为土壤电导率，$\vec{E}$为电场强度。电流场在土壤中的分布遵循拉普拉斯方程：
+其中$\mathbf{J}$为电流密度，$\sigma$为土壤电导率，$\mathbf{E}$为电场强度。电流场在土壤中的分布遵循拉普拉斯方程：
 
 $$\nabla^2 \varphi = 0$$
 
 接地电位升可以表示为从接地导体表面到无穷远处的线积分：
 
-$$GPR = -\int_{\infty}^{S} \vec{E} \cdot d\vec{l} = \int_{\infty}^{S} \frac{\vec{J}}{\sigma} \cdot d\vec{l}$$
+$$GPR = -\int_{\infty}^{S} \mathbf{E} \cdot d\mathbf{l} = \int_{\infty}^{S} \frac{\mathbf{J}}{\sigma} \cdot d\mathbf{l}$$
 
 ### 电流路径与分布
 
@@ -149,7 +167,7 @@ $$\mathbf{\varphi} = \mathbf{Z} \cdot \mathbf{I} = \mathbf{Y}^{-1} \cdot \mathbf
 
 两段导体之间的互阻可采用以下公式计算：
 
-$$R_{ij} = \frac{\rho}{4\pi l_i l_j} \int_{l_i} \int_{l_j} \frac{1}{|\vec{r}_i - \vec{r}_j|} dl_i dl_j$$
+$$R_{ij} = \frac{\rho}{4\pi l_i l_j} \int_{l_i} \int_{l_j} \frac{1}{|\mathbf{r}_i - \mathbf{r}_j|} dl_i dl_j$$
 
 对于平行导体，互阻有解析解；对于任意布置的导体，需要采用数值积分。
 
@@ -540,9 +558,9 @@ $$GPR_{remote} = GPR_{local} \cdot \frac{Z_{transfer}}{Z_{transfer} + Z_{remote}
 
 将接地网划分为多个单元，每个单元用集总参数表示：
 
-- **自阻抗**：$Z_{ii} = R_{ii} + j\omega L_{ii}$
-- **互阻抗**：$Z_{ij} = R_{ij} + j\omega L_{ij}$
-- **对地导纳**：$Y_{i0} = G_{i0} + j\omega C_{i0}$
+- **自阻抗**：$Z_{ii} = R_{ii} + \mathrm{j}\omega L_{ii}$
+- **互阻抗**：$Z_{ij} = R_{ij} + \mathrm{j}\omega L_{ij}$
+- **对地导纳**：$Y_{i0} = G_{i0} + \mathrm{j}\omega C_{i0}$
 
 导体分段原则：
 
@@ -662,7 +680,7 @@ $$GPR_{eff} = GPR_0 \cdot \frac{R_g}{R_g + Z_{gw}}$$
 
 故障电流产生的磁场在通信线路上感应电压：
 
-$$V_{ind} = j\omega M \cdot I_f \cdot l$$
+$$V_{ind} = \mathrm{j}\omega M \cdot I_f \cdot l$$
 
 其中：
 - $M$：互感系数

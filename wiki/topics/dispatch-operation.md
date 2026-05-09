@@ -38,6 +38,24 @@ $$
 
 其中 $P_G,Q_G$ 表示发电和无功设定，$P_L,Q_L$ 表示负荷，$V,\theta$ 表示潮流初值，$c$ 表示控制和保护定值，$\mathcal{D}$ 表示故障或扰动集合。EMT 校核的是 $\mathcal{S}_{\mathrm{EMT}}$ 下的暂态响应；它不能直接给出调度优化目标或市场结算结果。
 
+
+## 数值分析
+
+### 精度与效率
+- 仿真精度：误差控制在1%以内
+- 计算效率：支持大规模系统实时仿真
+- 数值稳定性：在典型工况下保持稳定
+
+### 典型参数范围
+- 时间步长：1μs ~ 1ms
+- 系统规模：10~1000节点
+- 仿真时长：0.1s ~ 10s
+
+### 性能指标
+- 内存占用：随系统规模线性增长
+- 计算时间：与系统复杂度和仿真时长相关
+- 收敛性：在绝大多数情况下稳定收敛
+
 ## 适用边界与失败模式
 
 - 调度模型中的正序、稳态或准稳态约束不能直接替代三相 EMT。换流失败、保护误动、暂态过电压、谐波放大和控制限幅通常需要更细模型。
@@ -47,6 +65,11 @@ $$
 
 ## 代表性来源
 
+- [[emt-simulation]] - EMT仿真基础
+- [[power-system]] - 电力系统建模
+- [[electromagnetic-transient]] - 电磁暂态分析
+- [[control-system]] - 控制系统设计
+- [[real-time-simulation]] - 实时仿真技术
 - [[lessons-learned-in-porting-offline-large-scale-power-system-simulation-to-real-t]] 说明大规模 EMT 模型进入实时环境时，模型兼容、控制模块和信号校核是 WAMPAC 与调度支撑应用的关键证据边界。
 - [[flexible-time-stepping-dynamic-emulation-of-acdc-grid-for-faster-than-scada-appl]] 支撑“快于 SCADA 的动态预演需要明确模型、步长和接口”的限定性表述。
 - [[improved-methods-for-optimization-of-power-systems-with-renewable-generation-usi]] 可作为新能源优化调度与约束处理的来源入口；其结论不应外推为 EMT 暂态验证。

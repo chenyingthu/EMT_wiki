@@ -280,7 +280,7 @@ $$
   - 首次将复数向量拟合（CVF）应用于FDNE的导纳/阻抗矩阵综合，突破了传统VF必须满足共轭复数对的限制。
   - 开发了基于C语言与底层线性代数库的并行化VF/CVF算法实现，摆脱了对MATLAB等商业软件的依赖。
 - **Key Technologies and Prospects for Electromagnetic Transient Parallel Simulation**
-  - 💡 系统构建了新型电力系统电磁暂态并行仿真的技术框架，并前瞻性地提出算法与硬件深度融合是突破仿真效率瓶颈的核心路径。
+  - 💡 系统构建了新型电力系统电磁暂态并行仿真的技术框架，并前瞻性地提出算法与硬件深度融合是贡献仿真效率瓶颈的核心路径。
   - 梳理了新型电力系统对电磁暂态仿真的新需求与挑战
   - 系统总结了电磁暂态分网并行算法与多速率仿真方法
 - **Machine-Learning-Reinforced Massively Parallel Transient Simulation for Large-Sc**

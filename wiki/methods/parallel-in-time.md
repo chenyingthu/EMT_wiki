@@ -30,11 +30,39 @@ EMT 仿真的并行化长期受限于空间并行度瓶颈：
 - **粗层**（Coarse Grid）：使用平均值模型（AVM），在较大粗时间步（如几十至几百微秒）上串行推进，提供全仿真窗口内的初始时间轨线。
 - **细层**（Fine Grid）：使用详细开关模型，在每个粗时间区间内以微秒级步长解析开关细节，多个区间可分配到不同计算核心并行执行。
 
-```
-时间轴: |--- ΔT ---|--- ΔT ---|--- ΔT ---|  (粗层, AVM 串行)
-         |         |         |         |
-         |-δt-δt-| |-δt-δt-| |-δt-δt-|  (细层, 详细模型并行)
-         Core 1    Core 2    Core 3
+```mermaid
+graph TD
+    subgraph "粗层 AVM串行"
+        T0[t_0]
+        DT1[t_0+ΔT]
+        DT2[t_0+2ΔT]
+        DT3[t_0+3ΔT]
+    end
+    subgraph "细层 详细模型并行"
+        P1["Core 1: δt步长推进"]
+        P2["Core 2: δt步长推进"]
+        P3["Core 3: δt步长推进"]
+    end
+    subgraph "状态映射"
+        Map[C2D: 粗→细]
+        Map2[D2C: 细→粗]
+    end
+    DT1 --> P1
+    DT2 --> P2
+    DT3 --> P3
+    P1 & P2 & P3 --> Map2
+    Map --> P1 & P2 & P3
+    Map2 -->|"修正粗层"| T0
+
+    style T0 fill:#fff3e0
+    style DT1 fill:#fff3e0
+    style DT2 fill:#fff3e0
+    style DT3 fill:#fff3e0
+    style P1 fill:#e1f5fe
+    style P2 fill:#e1f5fe
+    style P3 fill:#e1f5fe
+    style Map fill:#e8f5e9
+    style Map2 fill:#e8f5e9
 ```
 
 ### 状态映射（Translation Method）

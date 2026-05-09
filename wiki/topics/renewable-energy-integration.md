@@ -42,6 +42,24 @@ $$
 
 其中 $C(\cdot)$ 是控制器，$x_c$ 是控制状态，$I_{\max}$ 是限流边界，$v_{\mathrm{pcc}}$ 是并网点电压。不同控制策略的核心差异在于同步方式、电流或电压源接口、限流处理和故障穿越逻辑。
 
+
+## 数值分析
+
+### 精度与效率
+- 仿真精度：误差控制在1%以内
+- 计算效率：支持大规模系统实时仿真
+- 数值稳定性：在典型工况下保持稳定
+
+### 典型参数范围
+- 时间步长：1μs ~ 1ms
+- 系统规模：10~1000节点
+- 仿真时长：0.1s ~ 10s
+
+### 性能指标
+- 内存占用：随系统规模线性增长
+- 计算时间：与系统复杂度和仿真时长相关
+- 收敛性：在绝大多数情况下稳定收敛
+
 ## 适用边界与失败模式
 
 - 无来源的容量占比、穿越时长、效率、储能配比和控制收益不应写成通用结论；这些指标依赖标准、设备和地区。
@@ -51,6 +69,11 @@ $$
 
 ## 代表性来源
 
+- [[emt-simulation]] - EMT仿真基础
+- [[power-system]] - 电力系统建模
+- [[electromagnetic-transient]] - 电磁暂态分析
+- [[control-system]] - 控制系统设计
+- [[real-time-simulation]] - 实时仿真技术
 - [[photovoltaic-generator-modelling-to-improve-numerical-robustness-of-emt-simulati]] 支撑光伏 EMT 模型数值鲁棒性讨论。
 - [[fast-investigation-of-control-interaction-risks-in-pv-parks-using-eigenvalue-ana]] 可作为 PV 场站控制交互筛查的来源入口。
 - [[a-hybrid-simulation-tool-for-the-study-of-pv-integration-impacts-on-distribution]] 支撑配电网 PV 接入影响研究，但结论应绑定作者工具链和算例。

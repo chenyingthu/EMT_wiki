@@ -1,78 +1,71 @@
 ---
-title: "M3C"
+title: "M3C 方法入口 (M3C)"
 type: method
-tags: [m3c]
+tags: [m3c, modular-multilevel-matrix-converter, lfac, converter-modeling]
 created: "2026-05-05"
+updated: "2026-05-06"
 ---
 
-# M3C
+# M3C 方法入口 (M3C)
 
 ## 定义与边界
 
-本文针对含模块化多电平矩阵换流器（M3C）的低频交流（LFAC）系统，提出了一套完整的机电暂态建模与仿真方法。首先，基于基尔霍夫电压定律建立M3C桥臂数学模型，并通过双重αβ0变换解耦得到输入/输出侧等效电路。其次，针对工频与低频混合电网特性，推导了考虑频率缩放的线路阻抗/导纳参数，并设计了适用于M3C-LFAC系统的迭代潮流计算算法，支持跟网型、构网型（含U-f与VSG控制）等多种运行模式。最后，基于正序基波相量法构建M3C机电动态模型，利用PSS/E的用户自定义模型（UDM）功能实现，并引入虚拟同步机（VSG）控制策略以支持去中心化构网运行。该方法在保证精度的前提下，大幅提升了大规模混合交...
+M3C 是 Modular Multilevel Matrix Converter 的常用缩写，常见于低频交流系统、背靠背频率变换和特殊多端交流接口场景。在 EMT Wiki 中，本页作为 M3C 建模方法入口，承接缩写型链接并说明其与普通 MMC、VSC 或机电相量模型的边界。
 
-**边界限定**：待完善。需要进一步研究确定该方法/模型的具体适用条件和失效边界。
+## EMT 中的作用
 
-## EMT中的作用
+M3C 建模通常用于分析：
 
-基于相关研究，m3c在EMT仿真中用于解决特定问题。
+- 模块化多电平矩阵换流器的桥臂和端口动态；
+- 不同频率系统之间的交流-交流能量交换；
+- 低频交流系统中的控制和稳定性问题；
+- M3C 与常规 MMC/VSC 在拓扑和控制上的差异。
 
-基于相关研究，该方法在EMT仿真中的主要应用包括：
-- 特定场景的电磁暂态分析
-- 控制系统设计与验证
-- 故障分析与保护协调
+## 常见关注点
 
-## 主要分支与机制
+- 输入/输出侧不同频率之间的能量交换；
+- 桥臂储能和端口功率平衡；
+- 多坐标系控制与端口约束耦合；
+- 与 LFAC 或背靠背 AC/AC 接口场景的模型层级匹配。
 
-- 待补充（需要进一步研究确定具体分支）
+## 关键公式
 
-## 形式化表达
+M3C 没有单一“通用公式”，但其核心仍是桥臂能量、电压和电流在输入/输出侧之间的耦合关系。实际建模通常需要结合坐标变换、桥臂约束和控制参考组织状态方程。
 
+为了强调其多端口本质，可把端口功率平衡抽象写为：
 
-### 核心数学表达
+$$
+P_{in} - P_{out} = \frac{dW_{arm}}{dt} + P_{loss}
+$$
 
-从相关研究提取的关键公式：
+其中 $W_{arm}$ 表示桥臂储能。这个表达不替代具体状态空间模型，但有助于说明 M3C 与普通两端口 VSC 的差异。
 
-$$-\frac{dV(x,s)}{dx}=Z(s)I(x,s),\qquad -\frac{dI(x,s)}{dx}=Y(s)V(x,s)$$
+## 与相关方法的关系
 
-$$Z(s)=Z_C(s)+Z_E(s)+Z_G(s)$$
-
-$$Z_G(s)=sL_0$$
-
-$$Y(s)=sC_0$$
-
-$$-\frac{dV(x,s)}{dx}=\left(R'(s)+L_0s\right)I(x,s)$$
-
-
-
-
-
-## 适用边界与失败模式
-
-
-基于证据边界的分析：
-
-
-
-
-**潜在失效模式**：
-- 参数设置不当可能导致仿真不稳定
-- 特定工况下可能产生数值误差
-- 需要进一步研究确定具体失效边界
-
-## 与相关页面的关系
-
-- [[emt-simulation]] - EMT仿真基础
-- [[power-system]] - 电力系统基础
-- [[control-system]] - 控制系统基础
+- [[mmc-model]]：M3C 与普通 MMC 共享多电平桥臂思想，但端口和控制目标不同。
+- [[vector-control]]：M3C 场景中常需要多坐标系或多频率控制组织。
+- [[multi-terminal-dc]]：虽然应用对象不同，但可作为多端能量交换的对比背景。
+- [[mbsm]]：若页面使用多桥臂统一表示思路，可与该框架关联。
+- [[electromechanical-transient]]：M3C 也可能出现在比纯 EMT 更慢的混合系统研究中。
+- [[power-system-network]]：M3C 与低频交流系统或换流端口网络接口紧密相关。
 
 ## 代表性来源
 
-- [[electromechanical-transient-modeling-of-the-low-frequency-ac-system-with-modular]]
-- [[average-value-modeling-of-line-commutated-ac-dc-converters-with-unbalanced-ac-ne]]
-- [[high-frequency-oscillation-analysis-and-suppression-strategy-of-mmc-hvdc-system-]]
+- [[electromechanical-transient-modeling-of-the-low-frequency-ac-system-with-modular]]：说明 M3C 在 LFAC 系统中的建模与仿真背景。
+- [[average-value-modeling-of-line-commutated-ac-dc-converters-with-unbalanced-ac-ne]]：可作为多频/多端接口建模的相关背景来源。
+- [[high-frequency-oscillation-analysis-and-suppression-strategy-of-mmc-hvdc-system-]]：提醒多电平换流器稳定性分析不能脱离控制与主电路动态。
 
+## 适用边界与失败模式
 
----
+- 适用于研究多电平矩阵换流器及其低频交流接口问题。
+- 若把 M3C 简化成普通 MMC 或 VSC，可能丢失输入/输出侧频率耦合特性。
+- 机电暂态和 EMT 场景中的模型层级不同，不能把一个层级的结论直接外推到另一个层级。
 
-*本页面由批量生成脚本创建，需要进一步人工审查和完善。*
+## 证据边界
+
+本页作为缩写入口，不把机电暂态、潮流算法或控制策略的细节写成通用 M3C 结论。具体模型形式应绑定系统频率、端口配置和来源。
+
+## 开放问题
+
+- 当前页尚未继续拆分 M3C 在 LFAC、背靠背频率变换和特殊 AC/AC 接口中的不同建模重点。
+- EMT 与机电暂态层级下的 M3C 模型边界，后续仍需在相邻页面中继续细化。

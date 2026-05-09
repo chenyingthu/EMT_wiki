@@ -3,75 +3,44 @@ title: "Chb Dab"
 type: method
 tags: [chb-dab]
 created: "2026-05-04"
+updated: "2026-05-07"
 ---
 
-# Chb Dab
+# CHB-DAB
 
 ## 定义与边界
 
-本页面为自动创建的method类型页面，用于修复断链。内容待补充。
+CHB-DAB 通常指级联 H 桥（CHB）与双有源桥（DAB）相关的隔离型 DC/DC 或电力电子变换单元组合。当前 Wiki 的主说明应收敛到 [[dual-active-bridge]]；本页作为 `chb-dab` 的短别名入口。
 
-**边界限定**：待完善。
+本页不把 CHB-DAB 扩展成多导体输电线路、频变大地回路或一般 EMT 求解方法页面。
 
-## EMT中的作用
+## 核心机制
 
-- 详见形式化表达章节
+DAB 变换器通过原副边 H 桥之间移相角控制传输功率的大小和方向。在忽略变压器损耗和寄生电阻的条件下，传输功率方程为：
 
+$$
+P = \frac{n V_1 V_2 \phi (\pi - |\phi|)}{2\pi^2 f_s L_k}
+$$
 
-基于相关研究的技术应用：
+其中 $V_1$ 为原边 H 桥直流侧电压，$n V_2$ 为折算到原边的副边电压，$\phi$ 为原副边之间的移相角，$f_s$ 为开关频率，$L_k$ 为高频变压器的等效漏感。功率传输方向由 $\phi$ 的符号决定。
 
-## 主要分支与机制
+## 概念边界
 
-- 详见形式化表达章节
+- DAB 的相移控制、高频变压器漏感和双向 DC/DC 接口见 [[dual-active-bridge]]。
+- 固态变压器或多桥电力电子变压器背景见 [[solid-state-transformer]] 和 [[pet]]。
+- 设备控制与调制边界见 [[power-electronics-control]]、[[pwm-modulation]] 和 [[dc-dc-converter]]。
+- 若页面需要讨论级联 H 桥本身，应绑定具体拓扑或来源，不在本别名页展开。
 
+## 链接用法
 
-## 验证与测试
+已有文献或断链使用 `[[chb-dab]]` 时可保留链接到本页；新技术说明应优先链接 [[dual-active-bridge]]，并在需要时补充具体 source 页。
 
-基于相关研究的验证证据：
-
-
-
-## 形式化表达
-
-
-### 核心数学表达
-
-从相关研究提取的关键公式：
-
-$$-\frac{dV(x,s)}{dx}=Z(s)I(x,s),\qquad -\frac{dI(x,s)}{dx}=Y(s)V(x,s)$$
-
-$$Z(s)=Z_C(s)+Z_E(s)+Z_G(s)$$
-
-$$Z_G(s)=sL_0$$
-
-$$Y(s)=sC_0$$
-
-$$-\frac{dV(x,s)}{dx}=\left(R'(s)+L_0s\right)I(x,s)$$
-
-
-
-## 适用边界与失败模式
-
-
-基于证据边界的分析：
-
-
-
-
-## 与相关页面的关系
-
-- [[emt-simulation]] - EMT仿真基础
-- [[power-system]]
-- [[electromagnetic-transient]]
 ## 代表性来源
 
-- [[small-signal-dynamic-phasor-model-of-three-phase-dab-converter-for-solid-state-t]]
----
+- [[dual-active-bridge]]：DAB 的主 canonical 页面。
+- [[high-efficiency-modeling-of-multi-layer-cascaded-dual-active-bridge-dab-units-on]]：多层级 DAB 建模背景。
+- [[simplified-emt-model-of-multiple-active-bridge-based-power-electronic-transforme]]：多有源桥/电力电子变压器简化 EMT 模型背景。
 
-*本页面为自动生成的stub，需要进一步补充完善。*
+## 证据边界
 
-- [[small-signal-dynamic-phasor-model-of-three-phase-dab-converter-for-solid-state-t]]
-- [[high-efficiency-modeling-of-multi-layer-cascaded-dual-active-bridge-dab-units-on]]
-- [[small-signal-dynamic-phasor-model-of-three-phase-dab-converter-for-solid-state-t-22]]
-- [[equivalent-modeling-method-of-parallel-elements-for-fast-electromagnetic-transie]]
-- [[级联h桥型电力电子变压器的闭锁状态等效建模方法-33]]
+本页不保留无来源公式、效率、功率密度、开关频率或实时性声明。CHB-DAB 的任何数值结论必须回到具体拓扑、调制方式、器件参数和来源页。

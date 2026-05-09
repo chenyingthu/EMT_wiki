@@ -1,5 +1,24 @@
 # 机电-电磁暂态混合仿真 (Electromechanical-Electromagnetic Hybrid Simulation)
 
+```mermaid
+sequenceDiagram
+    participant TSA as 机电暂态侧 (TSA)
+    participant IF as 接口 (Interface)
+    participant EMT as 电磁暂态侧 (EMT)
+    
+    Note over TSA,EMT: 混合仿真交换时序
+    
+    loop 每个TSA步长 ΔT
+        TSA->>IF: v_abc(t), θ(t) 相量
+        IF->>EMT: 内插为瞬时源
+        Note over EMT: EMT运行多个微步 Δt
+        EMT->>IF: P(t), Q(t) 平均值
+        IF->>TSA: 外推为注入功率
+        TSA->>TSA: 更新网络方程
+    end
+
+```
+
 ## 定义与边界
 
 机电-电磁暂态混合仿真把电力系统划分为机电暂态相量域和电磁暂态瞬时值域，并通过接口在同一仿真任务中交换边界信息。机电侧通常描述发电机转子、励磁、调速、负荷和大规模网络的基频动态；EMT 侧描述三相瞬时电压电流、开关、电力电子控制、非线性元件和快速故障暂态。

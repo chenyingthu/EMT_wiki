@@ -86,7 +86,7 @@ sources: ["EMT_Doc/18/Mu 等 - 2019 - Fast Electromagnetic Transient Simulation 
 - [[快速电磁暂态仿真|快速电磁暂态仿真]]
 - [[风电机组建模|风电机组建模]]
 - 变换器简化建模
-- [[lvrt|低电压穿越]]
+- [[lvrt-control|低电压穿越]]
 - 仿真步长适应性
 
 

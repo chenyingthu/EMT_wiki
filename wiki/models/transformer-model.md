@@ -284,7 +284,7 @@ created: "2026-04-13"
   - 提出了一种在PSCAD/EMTDC中结合经典模型与磁滞励磁支路的三相变压器新模型。
   - 借鉴ATP-EMTP的Type96与BCTRAN建模思想，实现了仅需最大磁滞回线实测数据即可准确反映铁心磁滞特性的实用化建模方法。
 - **Accelerated Electromagnetic Transient (EMT) Equivalent Model of Solid-State Tran**
-  - 💡 提出基于节点导纳预处理与短路导纳参数转换的DAB高频链路等效方法，突破传统详细模型计算瓶颈，实现固态变压器系统级电磁暂态仿真的高效加速。
+  - 💡 提出基于节点导纳预处理与短路导纳参数转换的DAB高频链路等效方法，贡献传统详细模型计算瓶颈，实现固态变压器系统级电磁暂态仿真的高效加速。
   - 提出了一种针对MMC型固态变压器高频链路的加速电磁暂态等效模型。
   - 通过节点导纳方程预处理与短路导纳参数转换显著降低了系统矩阵阶数与计算复杂度。
 - **Electromagnetic Modeling of Transformers in EMT-Type Software by a Circuit-Based**
@@ -327,7 +327,7 @@ created: "2026-04-13"
   - 首次在三柱变压器TDM模型中引入零序路径电感，完善了不平衡工况下的磁路等效。
   - 推导了零序路径电感的闭合计算公式，确保模型开路零序阻抗与用户给定值精确匹配。
 - **Multirate EMT Simulation of Power Electronic Transformers With High-Precision Fi**
-  - 💡 提出结合高精度触发信号的多速率EMT仿真框架，通过频率驱动的子系统划分与交错等效交互算法，突破高频开关器件对仿真步长的限制，实现PET仿真效率与精度的双重提升。
+  - 💡 提出结合高精度触发信号的多速率EMT仿真框架，通过频率驱动的子系统划分与交错等效交互算法，贡献高频开关器件对仿真步长的限制，实现PET仿真效率与精度的双重提升。
   - 提出基于频率差异的PET多速率EMT仿真方法，为不同子系统分配优化的仿真时间步长。
   - 开发子系统间的数据传输方法与交错等效多速率交互算法，确保多速率协同与仿真稳定性。
 - **Simplified EMT Model of Multiple-Active-Bridge Based Power Electronic Transforme**
