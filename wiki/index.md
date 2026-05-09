@@ -16,7 +16,7 @@ updated: 2026-05-03
 - 来源页填充率：100% (核心贡献/使用的方法/涉及的模型/相关主题/主要发现 全部填充)
 - 深度增强：682/682 (100%)
 - 主题页：37
-- 方法页：168
+- 方法页：253
 - 模型页：39
 - 实体页：22
 - 测试系统：22
@@ -67,7 +67,7 @@ updated: 2026-05-03
 | [[lightning-induced-voltage|雷击感应电压]] | 电磁感应、容性耦合、感性耦合、配电网防雷 |
 | [[time-domain-modeling|时域建模]] | 微分方程、DAE求解、数值积分、暂态分析 |
 | [[hardware-in-loop|硬件在环仿真]] | HIL测试、实时仿真、控制器验证、功率级HIL |
-| [[large-time-step-simulation|大步长仿真]] | LTS加速、隐式积分、多速率、模型简化 |
+| [[large-timestep-simulation|大步长仿真]] | LTS加速、隐式积分、多速率、模型简化 |
 | [[power-quality|电能质量]] | 谐波畸变、电压暂降、闪变、不平衡、EMT分析 |
 | [[dc-fault-blocking|直流故障闭锁]] | MTDC保护、故障阻断、全桥MMC、故障隔离 |
 
@@ -86,7 +86,7 @@ updated: 2026-05-03
 | [[interpolation-method|插值方法]] | 多速率仿真数据同步、变步长中间值计算 |
 | [[prony-analysis|Prony分析]] | 指数信号分解、模态参数提取、系统辨识 |
 | [[thevenin-norton-equivalent|戴维南-诺顿等效]] | 网络简化核心技术，端口等效建模，MANA框架集成 |
-| [[switching-function|开关函数法]] | 电力电子开关建模，PWM占空比计算，状态空间平均 |
+| [[switching-function-method|开关函数法]] | 电力电子开关建模，PWM占空比计算，状态空间平均 |
 | [[dynamic-phasor|动态相量法]] | 频谱搬移建模，复包络仿真，多时间尺度分析 |
 | [[fpga-real-time-simulation|FPGA实时仿真]] | 硬件并行加速，TLM求解，纳秒级步长，确定性实时性 |
 | [[gpu-accelerated-simulation|GPU加速仿真]] | CUDA并行计算，SIMT架构，自适应CPU-GPU协同，10-20倍加速 |
@@ -105,18 +105,24 @@ updated: 2026-05-03
 | [[parameter-identification|参数辨识]] | 变压器饱和辨识、线路参数反演、FDNE拟合、故障测距 |
 | [[norton-equivalent|诺顿等效]] | 电流源等效、网络简化、伴随电路、多端口等效 |
 | [[bilinear-transform|双线性变换]] | Tustin变换、离散化、预畸变、控制器实现 |
-| [[companion-circuit-model|伴随电路模型]] | 梯形积分、离散等效、历史电流源、节点分析 |
+| [[companion-circuit|伴随电路模型]] | 梯形积分、离散等效、历史电流源、节点分析 |
 | [[nearest-level-control|最近电平控制]] | MMC调制、电平数选择、电容排序、低开关频率 |
 | [[circulating-current-suppression|环流抑制控制]] | MMC环流抑制、二倍频负序、PR控制、电压注入 |
-| [[state-space-averaging|状态空间平均法]] | SSA、小信号分析、开关变换器、线性化模型 |
+| [[state-space-average-method|状态空间平均法]] | SSA、小信号分析、开关变换器、线性化模型 |
 | [[heidler-function|Heidler雷电流函数]] | 雷击电流、回击模型、波形参数、标准波形 |
 | [[curve-fitting|曲线拟合]] | 参数估计、最小二乘、非线性拟合、饱和特性 |
 | [[declarative-modeling|声明式建模]] | 方程建模、无因果、Modelica、组件复用 |
 | [[quasi-tem-approximation|准TEM近似]] | 有损线路、地回路、频变参数、Carson公式 |
 | [[variable-time-step-solver|变步长求解器]] | 自适应积分、误差控制、Runge-Kutta、Gear法 |
-| [[multithread-parallel-computing|多线程并行]] | OpenMP/pthreads、MATE分网、任务并行、负载均衡 |
+| [[multithreaded-parallel-computing|多线程并行]] | OpenMP/pthreads、MATE分网、任务并行、负载均衡 |
 | [[discrete-fourier-transform|离散傅里叶变换]] | DFT/FFT、窗函数、频谱分析、谐波诊断 |
 | [[grid-forming-control|构网型控制]] | GFM、下垂控制、虚拟同步机、孤岛运行 |
+| [[exponential-integrator|指数积分器]] | 矩阵指数积分，L稳定，消除数值振荡，适配GPU并行 |
+| [[corona-effect-modeling|电晕效应建模]] | 电压相关线路模型(VDLM)，集中电晕支路，雷击过电压衰减 |
+| [[jiles-atherton-model|Jiles-Atherton磁滞模型]] | ψ-i磁滞接口，动态铁损耦合，EMTP-ATP实现 |
+| [[parallel-in-time|时间并行方法]] | MGRIT/Parareal，AVM粗层+详细细层，状态映射 |
+| [[low-rank-solver|低秩求解器与分裂状态空间]] | 开关相关子电路分离，SVD压缩，Woodbury加速 |
+| [[runge-kutta-in-emt|RK方法在EMT中的适用性]] | DIRK的L稳定优势，梯形法与显式RK局限对比 |
 
 ## 模型 (Models)
 

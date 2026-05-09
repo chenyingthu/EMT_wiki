@@ -34,11 +34,50 @@
 | C级 | 0 | 0% |
 | D级 | 0 | 0% |
 
-**技术改进**:
-- 修复enrich_c_pages_batch.py正则表达式转义错误
-- 优化内容提取逻辑，避免动态字符串作为正则模式
+## [2026-05-10] methods | 补充6个书稿规划缺失的方法页面
+
+- 背景：基于book-plan.md评估覆盖度时发现6个缺口，检查sources目录确认均有论文支撑后创建
+- 原则：从相关Source页的deep-review内容提取核心机制、公式和边界信息
+
+**新增页面**:
+
+| 方法页 | 对应书稿章节 | 核心内容 | 支撑来源数 |
+|--------|-------------|----------|-----------|
+| [[exponential-integrator|指数积分器]] | Ch2.5 指数积分器 | 矩阵指数/L稳定性/φ函数/Parallel-Rate并行 | 2篇直接论文 |
+| [[corona-effect|电晕效应建模]] | Ch4.9 电晕效应 | VDLM模型/集中电晕支路/非迭代求解 | 10篇 |
+| [[jiles-atherton-model|Jiles-Atherton磁滞]] | Ch5.2 磁饱和与JA模型 | ψ-i接口/动态损耗耦合/EMTP-ATP实现 | 25篇 |
+| [[parallel-in-time|时间并行方法]] | Ch11.3 ParaEMT | MGRIT双网格/AVM粗细层/状态映射 | 12篇 |
+| [[low-rank-solver|低秩/分裂状态空间]] | Ch13 低秩与高效求解器 | 开关子电路分离/SVD压缩/Woodbury | 10篇 |
+| [[runge-kutta-in-emt|RK方法EMT适用性]] | Ch2.4 RK方法局限 | DIRK L稳定/显式RK局限/2S-DIRK无振荡 | 15篇(间接) |
+
+**覆盖度更新**: 书稿26章全覆盖，主要缺口清零。
+
+**下一步**: 运行质量审计确认新页面评分，更新task-registry
 
 **状态**: 🎉 所有C/D级页面已消除！
+
+## [2026-05-09] rigorousize | 实体页学术严谨性全面修正
+
+- 背景: 全方位提高wiki页面的文字质量、知识准确性、学术表达严谨性
+- 原则: 降级营销语言和强断言，替换为中性学术表述
+
+**修正范围**:
+- 21个实体页强断言全面修正
+- 5个B级方法页补充核心机制+方程
+
+**主要修改**:
+| 页面 | 修改内容 |
+|------|----------|
+| atp-emtp | "开源"→"教育用途免费" |
+| cloudpss/siemens/abb/psmodel/tsinghua | 降级营销语言 |
+| adpss/china-epri | "广泛应用/主要工具"→精简 |
+| gole/matlab-simulink/adam-semlyen | 降级强断言("国际知名"→"学者","泰斗"→"学者") |
+| ansys/comsol | "全球领先/最权威/标杆"→中性描述 |
+| emtp/ieee/cigre | "最经典/最具影响力/最重要"→"主要/重要" |
+| polytechnique-montreal/university-manitoba | "国际领先/最广泛/奠基性"→"有研究成果" |
+| mahseredjian/rtds | "突出贡献/广泛使用"→"研究贡献/用于" |
+
+**状态**: 所有实体页已完成学术严谨性审查
 
 ## [2026-05-05] batch-generate | 批量生成50个方法页
 

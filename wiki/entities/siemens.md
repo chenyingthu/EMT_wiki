@@ -10,7 +10,7 @@ created: "2026-04-29"
 
 ## 概述
 
-Siemens（西门子）是全球领先的工业制造与技术服务公司，在电力系统领域拥有超过170年的历史。作为高压直流输电（HVDC）和柔性交流输电（FACTS）技术的领导者之一，Siemens开发了Siemens HVDC技术和SIPLINK®等创新产品。在EMT仿真领域，Siemens提供详细的设备模型和工程验证数据，与PSCAD/EMTDC、EMTP-RV等仿真工具有深度合作。
+Siemens（西门子）是工业制造与技术服务公司，在电力系统领域拥有超过170年的历史。在高压直流输电（HVDC）和柔性交流输电（FACTS）技术领域有长期积累，开发了Siemens HVDC技术和SIPLINK®等产品。在EMT仿真领域，Siemens提供详细的设备模型和工程验证数据，与PSCAD/EMTDC、EMTP-RV等仿真工具有合作。
 
 ## 核心贡献
 

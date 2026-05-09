@@ -10,7 +10,7 @@ created: "2026-04-13"
 
 ## 概述
 
-EMTP（Electromagnetic Transients Program）是最经典的电力系统电磁暂态仿真程序。EMTP-RV是其最新版本，由加拿大蒙特利尔理工学院（Polytechnique Montreal）开发。
+EMTP（Electromagnetic Transients Program）是经典的电力系统电磁暂态仿真程序。EMTP-RV是其最新版本，由加拿大蒙特利尔理工学院（Polytechnique Montreal）开发。
 
 ## 历史
 

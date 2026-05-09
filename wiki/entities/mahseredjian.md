@@ -9,7 +9,7 @@ created: "2026-04-14"
 
 ## 概述
 
-Jean Mahseredjian 是蒙特利尔理工学院（Polytechnique Montreal）教授，EMTP-RV仿真软件的核心开发者之一。他在电力系统电磁暂态仿真、数值积分方法、电力电子建模等领域有突出贡献。
+Jean Mahseredjian 是蒙特利尔理工学院（Polytechnique Montreal）教授，EMTP-RV仿真软件的核心开发者之一。他在电力系统电磁暂态仿真、数值积分方法、电力电子建模等领域有研究贡献。
 
 ## 主要贡献
 

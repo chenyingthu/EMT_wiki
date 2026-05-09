@@ -10,7 +10,7 @@ created: "2026-04-29"
 
 ## 概述
 
-IEEE（Institute of Electrical and Electronics Engineers）是全球最大的技术专业组织，在电力系统电磁暂态仿真领域通过标准制定、期刊发表和会议交流发挥着核心引领作用。在699篇EMT相关论文中，IEEE被提及351次，是领域最具影响力的标准组织。
+IEEE（Institute of Electrical and Electronics Engineers）是全球最大的技术专业组织之一，在电力系统电磁暂态仿真领域通过标准制定、期刊发表和会议交流发挥作用。在699篇EMT相关论文中，IEEE被提及351次，是领域主要标准组织之一。
 
 ## 核心贡献
 
@@ -33,7 +33,7 @@ IEEE Transactions系列期刊是EMT领域最高水平的学术发表平台：
 
 - **IEEE Transactions on Power Delivery (TPWRD)**
   - 专注于电力输送技术，包括暂态分析、绝缘配合、保护系统
-  - 在699篇论文中被引用63次，是最核心的EMT期刊
+  - 在699篇论文中被引用63次，是EMT领域引用量较高的期刊
 
 - **IEEE Transactions on Power Systems (TPWRS)**
   - 关注电力系统规划、运行和控制
@@ -73,7 +73,7 @@ IEEE定义了一系列标准测试系统，成为EMT仿真验证的基准：
 ### 4. 会议与学术交流
 
 - **IEEE Power & Energy Society General Meeting**
-  - 电力能源领域最大规模的国际会议
+  - 电力能源领域规模较大的国际会议之一
   - 在699篇论文中被提及24次
 
 - **IEEE PowerTech Conference**
@@ -127,7 +127,7 @@ IEEE定义了一系列标准测试系统，成为EMT仿真验证的基准：
 
 ### 标准影响力
 - **[351次提及]** 在所有699篇EMT论文中，IEEE被提及351次，覆盖率达50.2%
-- **[63篇TPWRD引用]** IEEE Transactions on Power Delivery是最权威的EMT期刊
+- **[63篇TPWRD引用]** IEEE Transactions on Power Delivery是EMT领域的重要期刊
 - **[24次PES GM引用]** IEEE PES General Meeting是EMT研究成果发布的重要平台
 
 ### 测试系统应用

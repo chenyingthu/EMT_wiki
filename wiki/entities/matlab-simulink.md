@@ -10,7 +10,7 @@ created: "2026-04-29"
 
 ## 概述
 
-MATLAB/Simulink是MathWorks公司开发的数值计算与系统仿真平台，在电力系统电磁暂态仿真领域扮演着控制策略开发、模型验证与代码生成的核心角色。在699篇EMT论文中，MATLAB被提及247次，Simulink被提及103次，是仅次于PSCAD/EMTP的第二大仿真工具生态系统。
+MATLAB/Simulink是MathWorks公司开发的数值计算与系统仿真平台，在电力系统电磁暂态仿真领域常用于控制策略开发、模型验证与代码生成。在699篇EMT论文中，MATLAB被提及247次，Simulink被提及103次，是仅次于PSCAD/EMTP的第二大仿真工具生态系统。
 
 MATLAB擅长矩阵运算与算法开发，Simulink提供图形化建模环境，二者结合形成了从控制设计到硬件实现的完整工具链。
 
@@ -94,7 +94,7 @@ MATLAB/Simulink可与主流EMT软件进行联合仿真：
 
 ### 1995-2005年 (电力系统模块库发展)
 - **Power System Blockset (1998)**
-  - 首个专门面向电力系统的Simulink库
+  - 早期的专门面向电力系统仿真的Simulink库
   - 包含同步电机、变压器、输电线路等基础模型
 
 - **SimPowerSystems (2004)**

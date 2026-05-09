@@ -2,7 +2,7 @@
 title: "ATP-EMTP"
 type: entity
 entity_type: tool
-tags: [atp, emtp, open-source, simulation-tool]
+tags: [atp, emtp, freeware, simulation-tool]
 created: "2026-04-13"
 ---
 
@@ -10,7 +10,7 @@ created: "2026-04-13"
 
 ## 概述
 
-ATP（Alternative Transients Program）是EMTP的开源免费版本，基于经典EMTP代码开发，广泛用于学术研究和工程应用。
+ATP（Alternative Transients Program）是EMTP的免费教育版本，基于经典EMTP代码开发，广泛用于学术研究和工程应用。其源代码不公开，因此不属于开源软件。
 
 ## 核心原理详解
 
@@ -24,7 +24,7 @@ $$
 
 ## 特点
 
-- 免费开源
+- 教育用途免费
 - 与EMTP兼容
 - ATPDraw图形界面
 - 全球用户社区
@@ -38,7 +38,7 @@ $$
 
 ## 与EMTP-RV的区别
 
-- ATP为开源免费，EMTP-RV为商业软件
+- ATP为教育用途免费，EMTP-RV为商业软件
 - EMTP-RV功能更新更活跃
 - 两者核心求解方法相同
 

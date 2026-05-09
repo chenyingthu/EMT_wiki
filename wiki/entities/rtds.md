@@ -10,7 +10,7 @@ created: "2026-04-13"
 
 ## 概述
 
-RTDS（Real-Time Digital Simulator）是广泛使用的实时数字仿真器，专门用于电力系统的硬件在环（HIL）测试。
+RTDS（Real-Time Digital Simulator）是用于电力系统硬件在环（HIL）测试的实时数字仿真器。
 
 ## 特点
 
