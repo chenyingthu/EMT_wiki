@@ -7,6 +7,18 @@ created: "2026-05-02"
 
 # 阻抗测量 (Impedance Measurement)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[阻抗测量 (Impedance Measurement)]
+        N0[单频注入: 正弦电流或电压扰动]
+        N1[多频注入: 多正弦、PRBS、Chirp]
+        N2[自然扰动法: 背景波动或运行事件]
+        N3[两端口重构: 多组源-负载或端口激励]
+    end
+```
+
+
 ## 定义与边界
 
 阻抗测量是通过端口电压和电流响应估计系统、设备或等效网络频率相关外部特性的过程。它可以是现场测试、实验室测试、HIL/RTDS 测试，也可以是 EMT 仿真中的虚拟扰动测量。

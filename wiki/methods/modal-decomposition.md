@@ -7,6 +7,19 @@ created: "2026-05-02"
 
 # 模态分解 (Modal Decomposition)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[模态分解 (Modal Decomposition)]
+        N0[特征向量模态分解: 状态矩阵、初始扰动]
+        N1[输出模态分解: 状态矩阵、输出矩阵、扰动]
+        N2[留数分解: 输入输出传递函数]
+        N3[时域辨识分解: 波形数据]
+        N4[Floquet 模态分解: 周期状态转移矩阵]
+    end
+```
+
+
 ## 定义与边界
 
 模态分解是把线性系统的状态或输出响应表示为多个模态响应叠加的过程。它回答“某段响应可由哪些指数衰减、增长或振荡分量组成”。它依赖[[eigenvalue-analysis]]和[[modal-analysis]]，但重点是响应展开，而不是稳定性概念或参与因子排序本身。

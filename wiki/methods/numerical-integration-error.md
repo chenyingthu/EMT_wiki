@@ -7,6 +7,19 @@ created: "2026-05-02"
 
 # 数值积分误差 (Numerical Integration Error)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[数值积分误差 (Numerical Integratio…]
+        N0[[[backward-euler]]: 1]
+        N1[[[trapezoidal-rule]]: 2]
+        N2[[[gear-method]]: 1 至多阶]
+        N3[DIRK/TR-BDF2 类: 2 或更高]
+        N4[显式方法: 依方法而定]
+    end
+```
+
+
 ## 概述
 
 数值积分误差是 EMT 仿真中由时间离散、非线性迭代、事件处理、浮点计算和模型近似共同产生的误差。它不等同于“步长太大”一个因素；同一步长下，不同积分器的稳定函数、数值阻尼、事件定位和历史项更新方式都会改变结果。

@@ -7,6 +7,18 @@ created: "2026-05-02"
 
 # 快速傅里叶变换 (Fast Fourier Transform, FFT)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[快速傅里叶变换 (Fast Fourier Transf…]
+        N0[基 2 FFT: 常规快速频谱计算]
+        N1[实数 FFT: 实值电压、电流序列]
+        N2[短时 FFT: 移动窗口频谱]
+        N3[批量 FFT: 多节点、多相波形分析]
+    end
+```
+
+
 ## 定义与边界
 
 快速傅里叶变换（FFT）是一类快速计算离散傅里叶变换（DFT）的算法。对 $N$ 点序列 $x[n]$，DFT 定义为：

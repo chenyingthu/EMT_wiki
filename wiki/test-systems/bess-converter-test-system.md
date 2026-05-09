@@ -7,6 +7,17 @@ created: "2026-05-03"
 
 # 储能变流器(PCS)测试系统
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[储能变流器(PCS)测试系统]
+        N0[系统层: 能量管理、模式调度、通信]
+        N1[控制层: 功率控制、电压调节、保护]
+        N2[调制层: PWM生成、脉冲分配]
+    end
+```
+
+
 ## 概述
 
 储能变流器(Power Conversion System, PCS)是电池储能系统(Battery Energy Storage System, BESS)的核心能量转换设备，负责实现电池直流电能与电网交流电能之间的双向转换。PCS作为连接电池储能单元与电力系统的关键接口，不仅承担着功率变换的基本功能，还集成了系统控制、保护协调、能量管理等多种功能。

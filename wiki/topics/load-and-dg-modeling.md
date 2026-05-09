@@ -8,6 +8,17 @@ book-chapter: "9"
 
 # 负荷与分布式电源建模 (Load and Distributed Generation Modeling)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[负荷与分布式电源建模 (Load and Distrib…]
+        N0[居民: 0.5]
+        N1[商业: 0.4]
+        N2[工业: 0.2]
+    end
+```
+
+
 ## 概述
 
 电力系统负荷是消耗电能的设备总和，分布式电源（DG）是接入配电网的小型发电单元。准确的负荷与DG模型对电压稳定分析、电能质量评估、保护配合和系统规划至关重要。在EMT仿真中，负荷与DG模型需要同时考虑基频响应和宽频暂态特性。

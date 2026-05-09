@@ -8,6 +8,18 @@ updated: "2026-05-03"
 
 # 时域仿真 (Time-Domain Simulation)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[时域仿真 (Time-Domain Simulation)]
+        N0[电磁暂态仿真 (EMT): 微秒至秒级]
+        N1[机电暂态仿真: 毫秒至分钟级]
+        N2[中长期动态仿真: 秒至小时级]
+        N3[实时仿真: 与实际时间同步]
+    end
+```
+
+
 ## 核心原理详解
 
 ### 技术概述

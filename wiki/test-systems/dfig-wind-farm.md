@@ -7,6 +7,18 @@ created: "2026-05-03"
 
 # DFIG风电场测试系统 (DFIG Wind Farm Test System)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[DFIG风电场测试系统 (DFIG Wind Farm …]
+        N0[额定功率: 1.5-5 MW]
+        N1[定子额定功率: 0.7-0.8 pu]
+        N2[转子额定功率: 0.2-0.3 pu]
+        N3[最大持续功率: 1.1 pu]
+    end
+```
+
+
 ## 概述
 
 双馈感应发电机(Doubly-Fed Induction Generator, DFIG)风电场是电力系统电磁暂态(EMT)仿真研究中最重要、应用最广泛的测试平台之一。DFIG技术因其独特的变流器配置和灵活的控制能力，自2000年代中期以来成为陆上风电的主流技术路线，在全球风电装机容量中占据主导地位。

@@ -7,6 +7,18 @@ created: "2026-05-02"
 
 # 晶闸管可控串联电容模型 (TCSC Model)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[晶闸管可控串联电容模型 (TCSC Model)]
+        N0[详细开关模型: 晶闸管导通、TCR 电流、电容电压、MO…]
+        N1[动态相量/离散时间模型: 周期稳态附近的谐波相量或状态映射]
+        N2[频率扫描等值: 端口扰动响应、vector fittin…]
+        N3[可变阻抗模型: $X_{TCSC}$、限幅、延迟和控制器]
+    end
+```
+
+
 ## 技术背景
 
 ### 发展历史

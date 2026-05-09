@@ -8,6 +8,17 @@ book-chapter: "21"
 
 # EMT 软件平台发展史 (EMT Software History)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[EMT 软件平台发展史 (EMT Software Hi…]
+        N0[1980s初: PSCAD/EMTDC开发启动]
+        N1[1980s末: ATP项目启动]
+        N2[1990s: ATPDraw图形界面]
+    end
+```
+
+
 ## 概述
 
 EMT软件平台的发展史是电力系统仿真技术演进的缩影。从1960年代H.W. Dommel在BPA开创性地提出梯形积分法和节点分析法，到今天的商业软件、开源工具、实时仿真器和云计算平台，EMT软件经历了近60年的持续演进。这段历史不仅是算法和计算技术的进步，更反映了电力系统从传统同步发电机主导向电力电子并网、新能源高渗透、交直流混联的转型需求。

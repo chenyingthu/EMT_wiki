@@ -7,6 +7,19 @@ created: "2026-05-02"
 
 # 多线程并行计算 (Multithreaded Parallel Computing)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[多线程并行计算 (Multithreaded Paral…]
+        N0[元件级: 每个线程处理一组元件更新]
+        N1[子网级: 分区后子网并行求解，接口迭代或补偿]
+        N2[场景级: 多个 EMT 工况并行运行]
+        N3[线性代数级: 并行 SpMV、三角求解、因子分解]
+        N4[控制器级: 多设备控制计算并行]
+    end
+```
+
+
 ## 定义与边界
 
 多线程并行计算是在共享内存 CPU 上把 EMT 仿真任务划分给多个线程执行的方法。它关注线程级任务划分、同步、缓存局部性和负载均衡，属于[[computational-acceleration]]的一类实现路线。

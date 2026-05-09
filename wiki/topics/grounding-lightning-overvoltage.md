@@ -8,6 +8,16 @@ book-chapter: "10"
 
 # 接地、防雷与过电压 (Grounding, Lightning Protection and Overvoltage)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[接地、防雷与过电压 (Grounding, Lightn…]
+        N0[首次雷击: 100]
+        N1[后续雷击: 50]
+    end
+```
+
+
 ## 概述
 
 接地系统是电力系统安全运行的重要基础，提供故障电流通路、限制过电压、保障人身和设备安全。防雷与过电压保护则是通过避雷针、避雷线和避雷器等装置，将雷电和操作过电压限制在设备绝缘耐受水平之内。EMT仿真在这些领域用于分析接地网暂态响应、雷电侵入波传播、过电压防护效果等关键问题。

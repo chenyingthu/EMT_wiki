@@ -8,6 +8,17 @@ created: "2026-04-29"
 
 # ABB
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[ABB]
+        N0[LCC (晶闸管): 12脉波]
+        N1[HVDC Light (VSC): 两电平/三电平]
+        N2[HVDC Light Evo (MMC): MMC]
+    end
+```
+
+
 ## 概述
 
 ABB（Asea Brown Boveri）是电力与自动化技术公司，在高压直流输电（HVDC）、电力电子设备制造领域拥有百年历史。作为HVDC技术早期参与者之一，ABB参与了全球超过一半的HVDC工程建设。在EMT仿真领域，ABB的换流器模型常被用作验证基准。在699篇EMT论文中，ABB作为HVDC设备制造商和技术标准制定参与者被多次提及。

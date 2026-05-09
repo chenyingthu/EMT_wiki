@@ -7,6 +7,25 @@ created: "2026-05-04"
 
 # Emtp Atpdraw
 
+
+```mermaid
+graph TD
+    N0[Emtp Atpdraw]
+    N1[定义与边界]
+    N0 --> N1
+    N2[概念边界]
+    N0 --> N2
+    N3[核心机制]
+    N0 --> N3
+    N4[链接用法]
+    N0 --> N4
+    N5[代表性来源]
+    N0 --> N5
+    N6[证据边界]
+    N0 --> N6
+```
+
+
 ## 定义与边界
 
 `emtp-atpdraw` 是 ATP/ATPDraw 相关链接的受控入口，不再作为独立方法页扩写。ATP/ATPDraw 在本 Wiki 中应主要归入 [[atp-emtp]] 工具页；若讨论商业 EMTP/EMTP-RV 生态，应转向 [[emtp]]。

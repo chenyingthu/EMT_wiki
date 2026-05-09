@@ -7,6 +7,17 @@ created: "2026-05-03"
 
 # MMC-HVDC 201电平测试系统
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[MMC-HVDC 201电平测试系统]
+        N0[半桥(HBSM): 2开关+电容]
+        N1[全桥(FBSM): 4开关+电容]
+        N2[并联全桥(P-FBSM): 双全桥并联]
+    end
+```
+
+
 ## 概述
 
 MMC-HVDC 201电平测试系统是超大规模模块化多电平换流器(Modular Multilevel Converter, MMC)高压直流输电仿真测试平台。该系统代表实际高压直流输电工程的规模级别，每桥臂配置200个子模块，实现201电平输出，是目前学术界和工业界用于验证大规模MMC建模方法和计算算法的重要基准系统。

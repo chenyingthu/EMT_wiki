@@ -7,6 +7,20 @@ created: "2026-05-03"
 
 # 光伏逆变器测试系统 (PV Inverter Test System)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[光伏逆变器测试系统 (PV Inverter Test …]
+        N0[开路电压: Voc]
+        N1[短路电流: Isc]
+        N2[最大功率点电压: Vmp]
+        N3[最大功率点电流: Imp]
+        N4[温度系数(电压): β]
+        N5[温度系数(电流): α]
+    end
+```
+
+
 ## 概述
 
 光伏逆变器(PV Inverter)是光伏发电系统的核心设备，负责将光伏阵列产生的直流电能转换为符合电网要求的交流电能。作为连接可再生能源与电网的关键接口，光伏逆变器不仅需要实现高效的电能转换，还必须满足严格的并网标准和故障穿越要求。在EMT(Electromagnetic Transient)仿真研究中，光伏逆变器系统是重要的研究对象，涉及MPPT控制、并网控制、低电压穿越(LVRT)、孤岛检测等关键技术。

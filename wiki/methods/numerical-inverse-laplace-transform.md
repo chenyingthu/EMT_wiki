@@ -7,6 +7,17 @@ created: "2026-05-04"
 
 # 数值拉普拉斯逆变换 (Numerical Inverse Laplace Transform)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[数值拉普拉斯逆变换 (Numerical Inverse…]
+        N0[收敛性: $F(s)$ 解析且满足增长条件]
+        N1[连续性: $f(t)$ 分段连续]
+        N2[可计算: $F(s)$ 在采样点可求值]
+    end
+```
+
+
 ## 定义与边界
 
 数值拉普拉斯逆变换（NILT）是指通过数值算法从复频域（s域）表示 $F(s)$ 计算对应时域函数 $f(t)$ 的近似方法。当解析逆变换难以获得或 $F(s)$ 为隐式/数值形式时，NILT提供了一条从频域到时域的数值计算途径。

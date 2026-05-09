@@ -7,6 +7,25 @@ created: "2026-05-04"
 
 # Distribution Network
 
+
+```mermaid
+graph TD
+    subgraph S0[Distribution Network]
+        N0[定义与边界]
+        N1[概念边界]
+        N2[核心机制]
+        N3[链接用法]
+        N4[代表性来源]
+        N5[证据边界]
+    end
+    N0 --> N1
+    N1 --> N2
+    N2 --> N3
+    N3 --> N4
+    N4 --> N5
+```
+
+
 ## 定义与边界
 
 本页是配电网相关链接的受控入口。配电网作为系统对象时，应优先归入 [[microgrid-distribution-network]] 或 [[power-system-network]]；涉及配电网中雷电感应、电能质量、分布式电源接入或保护配合的 EMT 算例时，再从本页转到对应专题。

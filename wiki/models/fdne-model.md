@@ -7,6 +7,22 @@ created: "2026-04-13"
 
 # 频变网络等值 (FDNE)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[频变网络等值 (FDNE)]
+        N0[[[multi-port-frequency-depen…]
+        N1[[[real-time-transient-simula…]
+        N2[[[a-type-4-wind-power-plant-…]
+        N3[[[time-domain-transformation…]
+        N4[[[基于频率相关网络等值的电磁-机电暂态解耦混合仿真: …]
+        N5[[[电磁机电暂态混合仿真中机电侧故障的仿真方法: 电磁–…]
+        N6[[[电磁机电暂态混合仿真中的频率相关网络等值: 电磁–机…]
+        N7[[[frequency-domain-simulatio…]
+    end
+```
+
+
 ## 概述
 
 频变网络等值（Frequency-Dependent Network Equivalent, FDNE）是将大规模电力系统的外部网络等效为多端口频率相关阻抗模型的技术。它保留了外部网络的宽频特性，同时大幅减少了仿真规模。

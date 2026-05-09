@@ -7,6 +7,18 @@ created: "2026-05-02"
 
 # 分布参数线路 (Distributed-Parameter Line)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[分布参数线路 (Distributed-Paramete…]
+        N0[常参数分布线路: $R,L,G,C$ 不随频率变化或只作…]
+        N1[Bergeron 模型: 通常保留传播时延和端口历史源]
+        N2[频变模域模型: 通过模态分解处理多相耦合]
+        N3[频变相域模型: 直接在相域处理矩阵函数]
+    end
+```
+
+
 ## 技术背景
 
 ### 发展历史

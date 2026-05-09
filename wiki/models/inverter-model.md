@@ -7,6 +7,18 @@ created: "2026-05-02"
 
 # 逆变器模型 (Inverter Model)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[逆变器模型 (Inverter Model)]
+        N0[开关频率: 2-10 kHz]
+        N1[导通压降: 1.5-3 V]
+        N2[开关时间: 0.5-2 μs]
+        N3[适用功率: 1 kW - MW级]
+    end
+```
+
+
 ## 核心原理详解
 
 ### 技术概述

@@ -8,6 +8,19 @@ updated: "2026-05-03"
 
 # 广义特征根法 (Generalized Eigenvalue Method)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[广义特征根法 (Generalized Eigenval…]
+        N0[标准特征值分析: 已消去代数变量的状态空间模型]
+        N1[广义特征值分析: 保留质量矩阵、代数约束或端口导纳矩阵的模型]
+        N2[闭环增益矩阵特征值: 阻抗/导纳扫描和 MIMO 稳定判据]
+        N3[离散特征值映射: 数值积分或采样系统]
+        N4[模态参与分析: 线性化状态空间模型]
+    end
+```
+
+
 ## 定义与边界
 
 广义特征根法求解矩阵束

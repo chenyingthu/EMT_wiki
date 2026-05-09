@@ -7,6 +7,18 @@ created: "2026-05-02"
 
 # 频率扫描 (Frequency Scan)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[频率扫描 (Frequency Scan)]
+        N0[单频逐点扫描: 每次注入一个频率，等待响应后提取幅相]
+        N1[多频注入: 同时注入多个正弦分量]
+        N2[扫频/Chirp: 频率随时间变化]
+        N3[自然扰动识别: 利用运行波动估计频响]
+    end
+```
+
+
 ## 技术背景
 
 ### 发展历史

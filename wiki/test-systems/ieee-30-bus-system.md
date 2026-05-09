@@ -7,6 +7,20 @@ created: "2026-05-03"
 
 # IEEE 30节点系统 (IEEE 30-Bus System)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[IEEE 30节点系统 (IEEE 30-Bus Sys…]
+        N0[G1: 1]
+        N1[G2: 2]
+        N2[G3: 5]
+        N3[G4: 8]
+        N4[G5: 11]
+        N5[G6: 13]
+    end
+```
+
+
 ## 概述
 
 IEEE 30节点系统是电力系统优化研究中最经典、最广泛使用的标准测试系统之一。该系统最初由IEEE于1970年代提出，专门用于最优潮流(Optimal Power Flow, OPF)问题的研究验证。作为一个小型到中型的测试系统，IEEE 30节点系统在保持足够复杂度的同时计算效率极高，成为验证各类优化算法、测试控制策略和进行教学培训的首选平台。

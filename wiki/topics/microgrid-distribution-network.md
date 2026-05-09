@@ -8,6 +8,20 @@ book-chapter: "23"
 
 # 微电网与配电网 (Microgrid and Distribution Network)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[微电网与配电网 (Microgrid and Distr…]
+        N0[微电网模型: 综合]
+        N1[配电网模型: 综合]
+        N2[[[droop-control-model]]: 综合]
+        N3[孤岛检测: 综合]
+        N4[[[protection-relay-modeling]…]
+        N5[[[load-and-dg-modeling]]: 综合]
+    end
+```
+
+
 ## 概述
 
 微电网是由分布式电源（DG）、储能、负荷和控制系统组成的低压配电系统，可并网运行或孤岛运行。配电网是连接输电网与终端用户的电力网络，正经历从传统单向供电向双向潮流、高比例分布式能源接入的转型。EMT仿真在微电网和配电网领域用于分析电能质量、保护配合、稳定性、并离网切换等关键问题。

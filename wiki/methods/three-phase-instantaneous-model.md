@@ -7,6 +7,19 @@ created: "2026-05-02"
 
 # 三相瞬时值模型 (Three-Phase Instantaneous Model)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[三相瞬时值模型 (Three-Phase Instant…]
+        N0[纯 $abc$ 相域模型: 三相瞬时电压电流]
+        N1[相域耦合矩阵模型: 相间互感、互容和接地耦合]
+        N2[开关函数驱动模型: $s_a,s_b,s_c$ 对瞬时电…]
+        N3[瞬时空间矢量: $\alpha\beta$ 或复空间矢量]
+        N4[多速率相域模型: 子系统不同步长]
+    end
+```
+
+
 ## 技术背景
 
 ### 发展历史

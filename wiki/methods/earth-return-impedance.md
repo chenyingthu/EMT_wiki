@@ -7,6 +7,18 @@ created: "2026-05-02"
 
 # 地回路阻抗 (Earth Return Impedance)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[地回路阻抗 (Earth Return Impedance)]
+        N0[Carson 类公式: 架空导体、均匀半无限大地]
+        N1[Pollaczek/Wedepohl 类公式: 地下导体…]
+        N2[多层土壤解析/递归公式: 水平分层介质]
+        N3[MoM-SO/场积分方法: 导体表面电流和多介质格林函数]
+    end
+```
+
+
 ## 定义与边界
 
 地回路阻抗描述电流经大地或土壤介质返回时，对线路单位长度串联阻抗矩阵产生的频率相关贡献。它常用于架空线路零序参数、地下电缆回流路径、接地系统耦合、混合架空-电缆走廊和宽频 EMT 暂态建模。

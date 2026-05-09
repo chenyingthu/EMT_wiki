@@ -7,6 +7,22 @@ created: "2026-04-13"
 
 # 双馈感应发电机 (DFIG)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[双馈感应发电机 (DFIG)]
+        N0[概率初始中心选择: 1]
+        N1[KD树加速搜索: 1]
+        N2[Davies-Bouldin指数(DBI)自动定簇: 1]
+        N3[动态等值建模: 1]
+        N4[状态空间法: 1]
+        N5[参与因子分析: 1]
+        N6[灵敏度分析: 1]
+        N7[模态分析: 1]
+    end
+```
+
+
 ## 概述
 
 双馈感应发电机（Doubly-Fed Induction Generator, DFIG）是风力发电系统中广泛应用的发电机类型。其定子直接并网，转子通过背靠背换流器励磁，可实现变速恒频运行。

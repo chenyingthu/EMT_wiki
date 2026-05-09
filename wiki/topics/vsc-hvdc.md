@@ -7,6 +7,21 @@ created: "2026-04-14"
 
 # VSC-HVDC（柔性直流输电）
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[VSC-HVDC]
+        N0[[[a-vsc-hvdc-model-with-redu…]
+        N1[[[average-value-models-for-m…]
+        N2[[[advanced-hybrid-transient-…]
+        N3[[[comparison-of-detailed-mod…]
+        N4[[[含vsc-hvdc交直流系统多尺度暂态建模与仿真研究…]
+        N5[[[modeling-and-electromagnet…]
+        N6[[[modeling-and-simulation-of…]
+    end
+```
+
+
 ## 定义与概述
 
 VSC-HVDC（Voltage Source Converter High Voltage Direct Current）是基于电压源换流器的高压直流输电技术。它通过自关断电力电子器件和快速控制系统实现有功、无功和直流电压控制，常用于新能源并网、海上风电送出、孤岛供电、城市电网接入和多端直流系统。

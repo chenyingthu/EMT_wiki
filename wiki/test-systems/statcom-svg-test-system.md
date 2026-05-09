@@ -7,6 +7,19 @@ created: "2026-05-03"
 
 # STATCOM/SVG测试系统 (STATCOM/SVG Test System)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[STATCOM/SVG测试系统 (STATCOM/SVG…]
+        N0[开关器件数: 6个/三相]
+        N1[输出电平数: 2电平]
+        N2[直流电压: 1-3kV]
+        N3[开关频率: 2-5kHz]
+        N4[适用容量: <10Mvar]
+    end
+```
+
+
 ## 概述
 
 ### 基本概念

@@ -7,6 +7,19 @@ created: "2026-05-02"
 
 # 大步长仿真 (Large Timestep Simulation)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[大步长仿真 (Large Timestep Simula…]
+        N0[L 稳定隐式积分: 刚性但目标频带较低的系统]
+        N1[移频 EMT / 动态相量: 基频附近包络和低频扰动]
+        N2[平均值模型: 高频开关细节非目标的变换器]
+        N3[多速率分区: 快慢区域相对清晰的大系统]
+        N4[FDNE / 降阶: 外部网络和宽频端口等效]
+    end
+```
+
+
 ## 概述
 
 大步长仿真（Large Timestep Simulation）是指在满足目标精度和稳定性边界的前提下，使用比详细 EMT 更大的时间步长进行暂态计算。它不是单一积分算法，而是一组建模、积分、分区和验证策略的组合。常见路径包括隐式积分、[[dynamic-phasor]] 或移频建模、[[average-value-model]]、[[model-order-reduction]]、[[multirate-method]] 和频率相关网络等效。

@@ -8,6 +8,18 @@ book-chapter: "16"
 
 # 模型降阶与动态等值 (Model Order Reduction and Dynamic Equivalents)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[模型降阶与动态等值 (Model Order Reduc…]
+        N0[轻度降阶: $\eta < 50\%$]
+        N1[中度降阶: $50\% \leq \eta < 90\%$]
+        N2[深度降阶: $90\% \leq \eta < 99\%$]
+        N3[极限降阶: $\eta \geq 99\%$]
+    end
+```
+
+
 ## 概述
 
 模型降阶（Model Order Reduction, MOR）是将高维复杂系统转化为低维等效表示的数学技术，在保持关键动态特性的同时显著提升计算效率。动态等值（Dynamic Equivalent）则是面向外部网络或子系统的简化表示，通过端口特性匹配实现大系统解耦。

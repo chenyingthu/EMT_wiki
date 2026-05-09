@@ -8,6 +8,18 @@ updated: "2026-05-03"
 
 # 复数微分方程求解 (Complex Differential Equation Solving)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[复数微分方程求解 (Complex Differenti…]
+        N0[复阻抗/复故障回路方程: 用复电压、电流和阻抗参数写等效回路]
+        N1[实部-虚部增广 ODE/DAE: 把复方程转成两倍维度的…]
+        N2[解析信号与频移包络: 通过 Hilbert 变换或积分因…]
+        N3[复数梯形/伴随模型: 将复状态方程离散为导纳和历史源]
+    end
+```
+
+
 ## 定义与边界
 
 复数微分方程求解是把电压、电流、磁链、阻抗或包络等电气量表示为复变量，并在复数域或等价的实部-虚部增广系统中求解其动态关系的方法集合。它不是一种单一积分器；实际实现通常仍需调用[[trapezoidal-rule]]、[[backward-euler]]、[[newton-raphson-method]]或直接代数解算。

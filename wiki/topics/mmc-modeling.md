@@ -8,6 +8,17 @@ book-chapter: "8"
 
 # 模块化多电平换流器(MMC)建模 (Modular Multilevel Converter Modeling)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[模块化多电平换流器(MMC)建模 (Modular Mu…]
+        N0[半桥(HBSM): 2开关+电容]
+        N1[全桥(FBSM): 4开关+电容]
+        N2[箝位双子模块(CDSM): 4开关+2电容]
+    end
+```
+
+
 ## 概述
 
 模块化多电平换流器（Modular Multilevel Converter, MMC）是当前高压直流输电（HVDC）和柔性交流输电系统（FACTS）的主流拓扑。由多个子模块（Sub-Module, SM）级联构成桥臂，具有模块化、可扩展、输出波形谐波含量低、开关损耗小等优势，已成为远距离大容量输电、海上风电并网、城市电网供电等场景的首选技术。

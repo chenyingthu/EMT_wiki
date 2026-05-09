@@ -8,6 +8,18 @@ book-chapter: "12"
 
 # 多速率与分网方法 (Multirate and Network Partitioning Methods)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[多速率与分网方法 (Multirate and Netw…]
+        N0[IGBT开关: 1-10 μs]
+        N1[MMC子模块: 0.1-1 ms]
+        N2[输电线路: 1-10 ms]
+        N3[同步发电机: 0.1-1 s]
+    end
+```
+
+
 ## 概述
 
 多速率仿真（Multirate Simulation）和分网方法（Network Partitioning）是解决大规模电力系统EMT仿真中"规模-速度-精度"三角矛盾的核心技术。多速率方法允许不同子系统采用不同时间步长，分网方法则将大系统分解为可并行或独立求解的子系统。两者协同工作，实现高效的大规模EMT仿真。

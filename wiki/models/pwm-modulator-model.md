@@ -7,6 +7,19 @@ created: "2026-04-30"
 
 # PWM调制器 (PWM Modulator)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[PWM调制器 (PWM Modulator)]
+        N0[SPWM: 正弦波调制]
+        N1[SVPWM: 空间矢量]
+        N2[THIPWM: 三次谐波注入]
+        N3[SHEPWM: 特定谐波消除]
+        N4[DPWM: 不连续PWM]
+    end
+```
+
+
 ## 定义与概述
 
 PWM（脉冲宽度调制）调制器是电力电子变换器EMT仿真的核心控制环节，通过调制载波与参考波的比较产生开关信号，控制功率器件的通断。本模型涵盖正弦PWM（SPWM）、空间矢量PWM（SVPWM）、特定谐波消除PWM（SHEPWM）等调制策略，适用于两电平/多电平变换器的EMT仿真。

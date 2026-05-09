@@ -7,6 +7,18 @@ created: "2026-05-02"
 
 # 谐波传递系数 (Harmonic Transfer Coefficient)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[谐波传递系数 (Harmonic Transfer Co…]
+        N0[传递阻抗 $Z_{ji}(h)$: 节点注入电流]
+        N1[电压传递比 $H_{ji}(h)$: 源节点电压]
+        N2[灵敏度 $\partial V_j/\partial I…]
+        N3[控制耦合传递: 控制量或换相量扰动]
+    end
+```
+
+
 ## 技术背景
 
 ### 发展历史

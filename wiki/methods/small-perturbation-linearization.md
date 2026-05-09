@@ -7,6 +7,19 @@ created: "2026-05-02"
 
 # 小扰动线性化 (Small-Perturbation Linearization)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[小扰动线性化 (Small-Perturbation L…]
+        N0[解析线性化: 对模型方程显式求导]
+        N1[数值差分线性化: 对状态或输入施加小扰动并差分]
+        N2[DAE 线性化: 同时线性化微分和代数约束]
+        N3[离散线性化: 线性化一步或多步映射]
+        N4[Floquet 线性化: 围绕周期轨迹构造单周期转移矩阵]
+    end
+```
+
+
 ## 定义与边界
 
 小扰动线性化是在给定运行点附近对非线性微分方程、代数方程或离散步进映射做一阶近似的方法。它把“运行点附近的增量响应”写成线性模型，便于使用[[eigenvalue-analysis]]、[[modal-analysis]]、[[frequency-scan]]和控制设计工具。

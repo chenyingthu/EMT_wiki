@@ -8,6 +8,18 @@ updated: "2026-05-03"
 
 # 全桥子模块 (Full-Bridge Submodule, FBSM)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[全桥子模块 (Full-Bridge Submodule…]
+        N0[T1: $s_1 = 1$]
+        N1[T2: $s_2 = 1$]
+        N2[T3: $s_3 = 1$]
+        N3[T4: $s_4 = 1$]
+    end
+```
+
+
 ## 核心原理详解
 
 ### 技术概述

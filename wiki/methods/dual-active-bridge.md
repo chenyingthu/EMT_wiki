@@ -8,6 +8,25 @@ updated: "2026-05-06"
 
 # 双有源桥方法 (Dual Active Bridge)
 
+
+```mermaid
+graph TD
+    subgraph S0[双有源桥方法 (Dual Active Bridge)]
+        N0[定义与边界]
+        N1[EMT 中的作用]
+        N2[常见分支]
+        N3[关键公式]
+        N4[与相关方法的关系]
+        N5[代表性来源]
+    end
+    N0 --> N1
+    N1 --> N2
+    N2 --> N3
+    N3 --> N4
+    N4 --> N5
+```
+
+
 ## 定义与边界
 
 双有源桥（Dual Active Bridge, DAB）是带隔离高频变压器的双向 DC/DC 变换器拓扑，对应的方法问题包括其开关建模、相移控制、平均值等效和实时仿真简化。它不是乱码的实时仿真文本，也不是一般多端换流器的统称。

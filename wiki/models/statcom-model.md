@@ -7,6 +7,18 @@ created: "2026-05-02"
 
 # 静止同步补偿器模型 (STATCOM Model)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[静止同步补偿器模型 (STATCOM Model)]
+        N0[详细开关模型: IGBT/GTO、二极管、PWM/触发、…]
+        N1[动态平均值模型: 调制函数、dq 控制、直流电压、受控源端口]
+        N2[基频/规划模型: 可控基波电压、电流或等效发电机]
+        N3[Thevenin/Norton 等效: 端口电压源/电流…]
+    end
+```
+
+
 ## 技术背景
 
 ### 发展历史

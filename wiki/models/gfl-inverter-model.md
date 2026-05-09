@@ -7,6 +7,18 @@ created: "2026-04-30"
 
 # 跟网型变流器 (Grid-Following Inverter, GFL)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[跟网型变流器 (Grid-Following Inver…]
+        N0[标准GFL: PI电流环+PLL]
+        N1[弱电网增强: 改进PLL]
+        N2[自适应GFL: 自适应控制]
+        N3[虚拟阻抗: 串联虚拟阻抗]
+    end
+```
+
+
 ## 定义与概述
 
 跟网型变流器（Grid-Following Inverter, GFL）是当前新能源并网的主流技术路线，通过锁相环（PLL）跟踪电网相位，以电流源模式向电网注入有功/无功功率。随着新能源渗透率不断提高，GFL的稳定性问题（如次同步振荡、弱电网不稳定）成为研究热点。本模型涵盖GFL控制结构、电流环设计、弱电网稳定性分析，适用于光伏、风电、储能等新能源并网EMT仿真。

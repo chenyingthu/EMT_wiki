@@ -8,6 +8,25 @@ updated: "2026-05-06"
 
 # 最近电平调制 (Nearest Level Modulation)
 
+
+```mermaid
+graph TD
+    subgraph S0[最近电平调制 (Nearest Level Modula…]
+        N0[定义与边界]
+        N1[EMT 中的作用]
+        N2[常见关注点]
+        N3[关键公式]
+        N4[与相关方法的关系]
+        N5[适用边界与失败模式]
+    end
+    N0 --> N1
+    N1 --> N2
+    N2 --> N3
+    N3 --> N4
+    N4 --> N5
+```
+
+
 ## 定义与边界
 
 最近电平调制（Nearest Level Modulation, NLM）是 MMC 和其他多电平换流器中常见的调制方法，其基本思想是根据参考电压选择最接近的可用离散电平，并据此确定每个桥臂或子模块的插入数量与顺序。

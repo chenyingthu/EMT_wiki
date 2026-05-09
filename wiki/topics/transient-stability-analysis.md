@@ -8,6 +8,19 @@ updated: "2026-05-03"
 
 # 暂态稳定性分析 (Transient Stability Analysis)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[暂态稳定性分析 (Transient Stability…]
+        N0[系统规划设计: 评估网络结构、机组配置的稳定性]
+        N1[运行方式安排: 确定安全运行边界和传输极限]
+        N2[保护整定配合: 验证保护动作时间满足稳定要求]
+        N3[紧急控制策略: 制定切机、切负荷等控制措施]
+        N4[安全稳定计算: 在线安全评估和预防控制]
+    end
+```
+
+
 ## 核心原理详解
 
 ### 技术概述

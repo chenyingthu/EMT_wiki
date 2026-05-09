@@ -7,6 +7,19 @@ created: "2026-05-02"
 
 # 状态估计 (State Estimation)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[状态估计 (State Estimation)]
+        N0[稳态 WLS: SCADA 与网络模型]
+        N1[PMU 线性估计: 同步电压/电流相量]
+        N2[混合估计: SCADA、PMU、伪测量]
+        N3[动态估计: 状态方程和连续测量]
+        N4[参数/拓扑估计: 测量残差和候选参数]
+    end
+```
+
+
 ## 技术背景
 
 ### 发展历史

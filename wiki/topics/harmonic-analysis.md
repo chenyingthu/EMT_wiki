@@ -7,6 +7,19 @@ created: "2026-04-14"
 
 # 谐波分析 (Harmonic Analysis)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[谐波分析 (Harmonic Analysis)]
+        N0[[[a-harmonic-phasor-domain-c…]
+        N1[[[the-fdload-model-for-accur…]
+        N2[[[mmc-hvdc系统高频稳定性分析与抑制策略(一)稳…]
+        N3[[[基于c型滤波器的mmc高频振荡抑制及参数设计方法: …]
+        N4[[[a-numerically-efficient-an…]
+    end
+```
+
+
 ## 概述
 
 谐波分析是电力系统EMT仿真中的重要应用方向。随着电力电子设备的广泛应用，电力系统中的谐波问题日益突出。谐波分析包括谐波潮流计算、谐振频率分析、谐波阻抗扫描等。

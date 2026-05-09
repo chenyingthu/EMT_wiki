@@ -8,6 +8,18 @@ created: "2026-04-13"
 
 # Polytechnique Montreal
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[Polytechnique Montreal]
+        N0[EMTP-RV 工程化: 如何把 Dommel 型时域求…]
+        N1[频变网络等值: 如何把多端口频响转成可时域卷积或状态空间…]
+        N2[矢量拟合与无源性: 如何避免有理函数模型在 EMT 联接…]
+        N3[外部网络/设备接口: 如何把详细子系统与等值外部系统耦合]
+    end
+```
+
+
 ## 概述
 
 蒙特利尔理工学院（Polytechnique Montreal）是加拿大顶尖的工程院校，也是EMTP-RV软件的主要开发机构。

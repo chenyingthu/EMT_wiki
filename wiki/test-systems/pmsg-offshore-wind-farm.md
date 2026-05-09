@@ -6,6 +6,22 @@ tags: [pmsg, offshore, wind-farm, test-system, full-converter]
 
 # PMSG海上风电场测试系统 (PMSG Offshore Wind Farm Test System)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[PMSG海上风电场测试系统]
+        N0[额定功率: 5-10]
+        N1[定子额定电压: 690]
+        N2[额定频率: 50/60]
+        N3[额定转速: 6-12]
+        N4[风轮直径: 120-180]
+        N5[切入风速: 3-4]
+        N6[额定风速: 11-13]
+        N7[切出风速: 25]
+    end
+```
+
+
 ## 概述
 
 永磁同步直驱(PMSG, Permanent Magnet Synchronous Generator)海上风电场是大规模风电研究的重要测试平台。该测试系统基于全功率变流器结构，采用永磁同步发电机与风轮直接耦合的传动方式，省去了齿轮箱环节，具有高可靠性、高效率和电网友好性等显著优势。

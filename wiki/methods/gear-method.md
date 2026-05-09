@@ -8,6 +8,21 @@ updated: "2026-05-03"
 
 # 吉尔方法 (Gear Method)
 
+
+```mermaid
+graph TD
+    N0[吉尔方法 (Gear Method)]
+    N1[固定阶 BDF：例如 BDF2，…]
+    N0 --> N1
+    N2[变阶变步长 Gear：根据局部误…]
+    N0 --> N2
+    N3[TR-BDF2：先用梯形/中间阶…]
+    N0 --> N3
+    N4[ImEx Gear：把线性刚性部…]
+    N0 --> N4
+```
+
+
 ## 概述
 
 吉尔方法（Gear Method）在 EMT 语境中通常指向后微分公式（Backward Differentiation Formula, BDF）一类隐式线性多步积分法。它用多个历史步的状态近似当前导数，并在当前步隐式求解微分-代数方程。与 [[trapezoidal-rule]] 相比，BDF/Gear 方法通常引入更强的数值阻尼；与 [[backward-euler]] 相比，高阶 BDF 可提高平滑区间内的精度，但会带来启动、事件后重启和稳定域缩小问题。

@@ -8,6 +8,19 @@ book-chapter: "1"
 
 # EMT 数学基础 (EMT Mathematical Foundation)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[EMT 数学基础 (EMT Mathematical F…]
+        N0[方程规模: 节点数]
+        N1[稀疏性: 高度稀疏]
+        N2[开关处理: 需重分解]
+        N3[频域分析: 需额外转换]
+        N4[实时仿真: 更适合]
+    end
+```
+
+
 ## 概述
 
 电磁暂态（Electromagnetic Transient, EMT）仿真的数学基础是理解和实现高精度仿真的根基。EMT仿真本质上是求解由电路拓扑约束形成的微分-代数方程组（DAEs），涉及常微分方程（ODEs）理论、数值分析方法、频域变换和矩阵计算等多个数学领域。

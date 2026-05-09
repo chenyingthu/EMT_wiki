@@ -7,6 +7,19 @@ created: "2026-05-02"
 
 # dq坐标变换 (dq Transformation)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[dq坐标变换 (dq Transformation)]
+        N0[转子 dq: 机械转子角折算为电角度]
+        N1[电网同步 dq: PLL 或基波正序相角]
+        N2[电压定向 dq: d 轴对齐电压矢量]
+        N3[磁链定向 dq: d 轴对齐定子或转子磁链]
+        N4[多 dq / 双同步: 多个正负序或谐波旋转坐标]
+    end
+```
+
+
 ## 定义与边界
 
 dq 坐标变换是把三相量或 alpha-beta 量映射到随角度 $\theta$ 旋转的直轴 d、交轴 q 和零序 0 坐标中的方法。它通常也称 Park 变换。EMT 中的 dq 变换既可用于电机方程和变流器控制，也可用于测量后处理和小信号模型整理。

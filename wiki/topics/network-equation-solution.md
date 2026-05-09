@@ -8,6 +8,17 @@ book-chapter: "3"
 
 # 网络方程的建立与求解 (Network Equation Formulation and Solution)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[网络方程的建立与求解 (Network Equation…]
+        N0[导通区: 线性]
+        N1[关断区: 线性]
+        N2[过渡区: 线性插值]
+    end
+```
+
+
 ## 概述
 
 网络方程的建立与求解是EMT仿真的核心计算环节。在每个仿真时步，EMT软件需要将电力系统中的各种元件（发电机、变压器、线路、负荷、电力电子设备等）转化为等效电路模型，组装成节点导纳矩阵，并求解大型稀疏线性方程组得到节点电压。这一过程决定了仿真的精度、效率和可扩展性。

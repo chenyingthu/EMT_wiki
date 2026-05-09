@@ -8,6 +8,20 @@ updated: "2026-05-03"
 
 # 牛顿-拉夫逊法 (Newton-Raphson Method)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[牛顿-拉夫逊法 (Newton-Raphson Meth…]
+        N0[完整牛顿法: 每次迭代更新雅可比]
+        N1[修正牛顿法: 多次迭代复用雅可比]
+        N2[阻尼牛顿法: 用 $\alpha\Delta\mathb…]
+        N3[线搜索/信赖域牛顿法: 控制步长或搜索区域]
+        N4[拟牛顿法: 用近似雅可比或低秩更新]
+        N5[解耦/快速解耦变体: 利用问题结构简化雅可比]
+    end
+```
+
+
 ## 定义与边界
 
 牛顿迭代法（Newton-Raphson Method）是求解非线性方程组 $\mathbf{f}(\mathbf{x})=\mathbf{0}$ 的局部迭代方法。它在当前点用一阶泰勒展开构造线性修正方程：

@@ -7,6 +7,18 @@ created: "2026-05-02"
 
 # 故障阻抗模型 (Fault Impedance Model)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[故障阻抗模型 (Fault Impedance Model)]
+        N0[金属性故障: $R_f$ 接近零的理想短路]
+        N1[恒定故障电阻: 固定 $R_f$ 扫描]
+        N2[时变/非线性模型: $R_f(t)$ 或 $g(v,i,…]
+        N3[物理或实验校准模型: 热、电弧、接地和介质恢复耦合]
+    end
+```
+
+
 ## 技术背景
 
 ### 发展历史

@@ -8,6 +8,18 @@ created: "2026-04-13"
 
 # PSCAD/EMTDC
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[PSCAD/EMTDC]
+        N0[详细电力电子建模: 保留开关、控制、保护和高频暂态，是平…]
+        N1[自定义组件: 支持用户实现新控制器、新接口模型和实验算法]
+        N2[线路/电缆模型: 支持行波、频率相关参数和宽频暂态分析]
+        N3[混合仿真接口: 常与 PSS/E、E-TRAN、RTDS…]
+    end
+```
+
+
 ## 概述
 
 PSCAD/EMTDC 是由加拿大曼尼托巴大学（University of Manitoba）和曼尼托巴水电国际公司（Manitoba Hydro International）开发的电力系统电磁暂态仿真软件。

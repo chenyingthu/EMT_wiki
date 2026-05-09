@@ -8,6 +8,20 @@ created: "2026-04-29"
 
 # MATLAB/Simulink
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[MATLAB/Simulink]
+        N0[**Simscape Electrical**: 电路与…]
+        N1[**SimPowerSystems** (旧版): 电力…]
+        N2[**Control System Toolbox**: …]
+        N3[**Signal Processing Toolbox*…]
+        N4[**Optimization Toolbox**: 优化算法]
+        N5[**Stateflow**: 状态机建模]
+    end
+```
+
+
 ## 概述
 
 MATLAB/Simulink是MathWorks公司开发的数值计算与系统仿真平台，在电力系统电磁暂态仿真领域常用于控制策略开发、模型验证与代码生成。在699篇EMT论文中，MATLAB被提及247次，Simulink被提及103次，是仅次于PSCAD/EMTP的第二大仿真工具生态系统。

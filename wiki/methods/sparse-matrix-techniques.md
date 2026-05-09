@@ -7,6 +7,18 @@ created: "2026-05-02"
 
 # 稀疏矩阵技术 (Sparse Matrix Techniques)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[稀疏矩阵技术 (Sparse Matrix Techni…]
+        N0[CSR: 按行访问、SpMV、迭代法]
+        N1[CSC: 稀疏直接法、列消去]
+        N2[COO: 矩阵组装、并行累加中间态]
+        N3[Block CSR: 三相或多端口块结构]
+    end
+```
+
+
 ## 定义与边界
 
 稀疏矩阵技术是利用电力网络矩阵中大量零元素的结构特征来降低存储、组装、分解和求解成本的一组数值方法。它包括稀疏存储格式、重排序、符号分解、数值分解、迭代求解、预处理和稀疏数据结构维护。

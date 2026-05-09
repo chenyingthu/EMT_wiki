@@ -7,6 +7,19 @@ created: "2026-05-02"
 
 # 传输线理论 (Transmission Line Theory)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[传输线理论 (Transmission Line The…]
+        N0[集总 $\pi$ 型模型: 短线、低频或粗略网络连接]
+        N1[无损 Bergeron 模型: 低损耗线的行波时延]
+        N2[频率相关模域模型: 架空线和电缆宽频暂态]
+        N3[相域频变模型: 非换位、不平衡或强耦合线路]
+        N4[多导体传输线模型: 电缆、双回线、接地回路耦合]
+    end
+```
+
+
 ## 技术背景
 
 ### 发展历史

@@ -8,6 +8,18 @@ created: "2026-04-13"
 
 # ATP-EMTP
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[ATP-EMTP]
+        N0[线路、接地网、雷电暂态: 频变线路和行波模型成熟，适合构…]
+        N1[变压器/电抗器宽频模型验证: 可把白盒或黑盒等效模型接入…]
+        N2[保护和控制逻辑原型: TACS/MODELS 支持控制方…]
+        N3[教学和开源复现: 低成本、输入文件可公开]
+    end
+```
+
+
 ## 概述
 
 ATP（Alternative Transients Program）是EMTP的免费教育版本，基于经典EMTP代码开发，广泛用于学术研究和工程应用。其源代码不公开，因此不属于开源软件。

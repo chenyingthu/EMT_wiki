@@ -7,6 +7,19 @@ created: "2026-05-02"
 
 # 频变土壤模型 (Frequency-Dependent Soil Model)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[频变土壤模型 (Frequency-Dependent …]
+        N0[常数土壤模型: 单一 $\rho$ 或 $\sigma$]
+        N1[幂律/一阶经验模型: $\sigma(\omega)$ …]
+        N2[弛豫模型: $\varepsilon^*(\omega)…]
+        N3[分层土壤模型: 各层厚度和复参数]
+        N4[有理函数模型: 频域响应的时域实现]
+    end
+```
+
+
 ## 定义与边界
 
 频变土壤模型是把土壤电导率、电阻率或介电常数写成频率相关函数，并将其作为线路大地返回、接地电极或电缆外部介质参数输入 EMT 的模型族。它更偏向“具体参数表达和实现形式”；频变土壤在 EMT 中的总边界已由保护页 [[frequency-dependent-soil]] 说明。

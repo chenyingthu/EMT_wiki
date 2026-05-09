@@ -7,6 +7,19 @@ created: "2026-05-02"
 
 # 梯形法则 (Trapezoidal Rule)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[梯形法则 (Trapezoidal Rule)]
+        N0[阶数: 二阶]
+        N1[稳定性: A 稳定]
+        N2[高频数值阻尼: 刚性极限不衰减]
+        N3[平滑区间精度: 通常较好]
+        N4[事件后风险: 历史项污染和交替误差]
+    end
+```
+
+
 ## 概述
 
 梯形法则（Trapezoidal Rule）是 EMT 中最常见的隐式二阶积分方法之一。它用当前步两端的导数平均值近似积分，并把电感、电容等储能元件转换为 [[companion-circuit]]，再与 [[nodal-analysis]] 组合形成逐步网络方程。

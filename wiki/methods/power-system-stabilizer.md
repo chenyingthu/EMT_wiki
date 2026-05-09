@@ -7,6 +7,27 @@ created: "2026-05-02"
 
 # 电力系统稳定器 (Power System Stabilizer, PSS)
 
+
+```mermaid
+graph LR
+    N0[定义与边界]
+    N1[输入与输出]
+    N0 --> N1
+    N2[基本结构]
+    N1 --> N2
+    N3[阻尼机理]
+    N2 --> N3
+    N4[设计与验证路线]
+    N3 --> N4
+    N5[与 EMT 仿真的关系]
+    N4 --> N5
+    N6[适用边界与失败模式]
+    N5 --> N6
+    N7[代表性来源]
+    N6 --> N7
+```
+
+
 ## 定义与边界
 
 电力系统稳定器（Power System Stabilizer, PSS）是同步发电机 [[excitation-system]] 的附加控制环节。它通过转速、频率、有功功率或加速功率等信号生成附加电压调节输入，目标是在关注的机电振荡模态上增加阻尼。

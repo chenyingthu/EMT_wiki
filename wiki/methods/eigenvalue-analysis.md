@@ -7,6 +7,19 @@ created: "2026-05-02"
 
 # 特征值分析 (Eigenvalue Analysis)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[特征值分析 (Eigenvalue Analysis)]
+        N0[QR/Schur: 中小规模稠密标准特征值问题]
+        N1[QZ/广义 Schur: 矩阵束 $(\mathbf{A…]
+        N2[Arnoldi/Krylov: 大规模稀疏非对称矩阵]
+        N3[Shift-invert: 靠近指定频率或虚轴的特征值]
+        N4[幂法/反幂法: 简单主导特征值或教学场景]
+    end
+```
+
+
 ## 定义与边界
 
 特征值分析是求解线性算子或矩阵谱结构的数学操作。对标准问题，

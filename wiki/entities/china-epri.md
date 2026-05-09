@@ -8,6 +8,22 @@ created: "2026-04-29"
 
 # 中国电力科学研究院 (中国电科院)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[中国电力科学研究院]
+        N0[晋东南-南阳-荆门: 1000kV AC]
+        N1[向家坝-上海: ±800kV DC]
+        N2[锦屏-苏南: ±800kV DC]
+        N3[哈密南-郑州: ±800kV DC]
+        N4[酒泉-湖南: ±800kV DC]
+        N5[昌吉-古泉: ±1100kV DC]
+        N6[张北柔直: ±500kV VSC]
+        N7[白鹤滩-江苏: ±800kV DC]
+    end
+```
+
+
 ## 概述
 
 中国电力科学研究院（China Electric Power Research Institute, CEPRI）是国家电网有限公司直属科研机构，参与中国电力系统电磁暂态仿真技术研发。在特高压直流输电（UHVDC）、大规模新能源并网、电力电子化电网等领域，中国电科院建立了EMT仿真技术体系。

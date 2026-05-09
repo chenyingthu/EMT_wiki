@@ -7,6 +7,25 @@ created: "2026-05-04"
 
 # 环流抑制控制 (Circulating Current Suppression Control)
 
+
+```mermaid
+graph TD
+    subgraph S0[环流抑制控制 (Circulating Current …]
+        N0[定义与边界]
+        N1[EMT中的作用]
+        N2[主要分支与机制]
+        N3[形式化表达]
+        N4[适用边界与失败模式]
+        N5[与相关页面的关系]
+    end
+    N0 --> N1
+    N1 --> N2
+    N2 --> N3
+    N3 --> N4
+    N4 --> N5
+```
+
+
 ## 定义与边界
 
 环流抑制控制（Circulating Current Suppression Control, CCS）是模块化多电平换流器（MMC）中用于抑制相间环流的控制策略。MMC的三相阀臂通过公共直流母线连接，二倍频负序环流会在相间流动，增加开关损耗和电流应力，CCS通过附加控制回路有效抑制该环流。

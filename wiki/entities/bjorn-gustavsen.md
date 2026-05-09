@@ -8,6 +8,18 @@ created: "2026-04-29"
 
 # Bjørn Gustavsen
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[Bjørn Gustavsen]
+        N0[1999: 矢量拟合引入电力系统]
+        N1[2009: 无源性强制算法]
+        N2[2010: 宽频线路模型]
+        N3[2021: 保证无源的FDNE]
+    end
+```
+
+
 ## 概述
 
 Bjørn Gustavsen是挪威SINTEF能源研究所首席科学家，电力系统宽频建模领域的国际权威学者。他与Adam Semlyen于1999年共同提出的**矢量拟合（Vector Fitting）算法**，彻底改变了电力系统频变网络建模的技术范式。该算法被引用超过5000次，已成为宽频建模的国际标准方法，被集成到PSCAD/EMTDC、EMTP-RV、ATP-EMTP等所有主流EMT仿真工具中。

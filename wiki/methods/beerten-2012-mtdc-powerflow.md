@@ -7,6 +7,23 @@ created: "2026-05-04"
 
 # Beerten 2012 Mtdc Powerflow
 
+
+```mermaid
+graph LR
+    N0[定义与边界]
+    N1[核心机制]
+    N0 --> N1
+    N2[概念边界]
+    N1 --> N2
+    N3[链接用法]
+    N2 --> N3
+    N4[代表性来源]
+    N3 --> N4
+    N5[证据边界]
+    N4 --> N5
+```
+
+
 ## 定义与边界
 
 `Beerten 2012 Mtdc Powerflow` 是围绕多端直流系统稳态潮流建模的来源型入口，而不是独立于 [[power-flow-calculation]] 或 [[multi-terminal-dc]] 的完整方法页。当前页面此前混入了动态相量、时域变换和通用 EMT 加速模板内容；这些内容与该标题不匹配，已收敛为受控入口。

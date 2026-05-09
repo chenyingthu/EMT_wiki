@@ -7,6 +7,29 @@ created: "2026-05-04"
 
 # Power Electronics Modeling
 
+
+```mermaid
+graph TD
+    N0[Power Electronic…]
+    N1[技术背景]
+    N0 --> N1
+    N2[定义与边界]
+    N0 --> N2
+    N3[EMT中的作用]
+    N0 --> N3
+    N4[主要分支与机制]
+    N0 --> N4
+    N5[深度分析]
+    N0 --> N5
+    N6[形式化表达]
+    N0 --> N6
+    N7[数值分析]
+    N0 --> N7
+    N8[适用边界与失败模式]
+    N0 --> N8
+```
+
+
 ## 技术背景
 
 ### 发展历史

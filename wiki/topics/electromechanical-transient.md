@@ -7,6 +7,17 @@ created: "2026-05-02"
 
 # 机电暂态 (Electromechanical Transient)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[机电暂态 (Electromechanical Tran…]
+        N0[[[electromagnetic-transient]…]
+        N1[**机电暂态**: 0.1s - 10s]
+        N2[`long-term-dynamics`: 10s - 分钟]
+    end
+```
+
+
 ## 核心原理详解
 
 ### 技术概述

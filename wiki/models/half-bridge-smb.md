@@ -7,6 +7,18 @@ created: "2026-05-02"
 
 # 半桥子模块 (Half-Bridge Submodule, HBSM)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[半桥子模块 (Half-Bridge Submodule…]
+        N0[1.7 kV: 600 A]
+        N1[3.3 kV: 450 A]
+        N2[4.5 kV: 400 A]
+        N3[6.5 kV: 300 A]
+    end
+```
+
+
 ## 核心原理详解
 
 ### 技术概述

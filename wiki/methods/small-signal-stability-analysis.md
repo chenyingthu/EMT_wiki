@@ -7,6 +7,18 @@ created: "2026-05-02"
 
 # 小信号稳定性分析 (Small-signal Stability Analysis)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[小信号稳定性分析 (Small-signal Stabi…]
+        N0[输入运行点: 潮流、周期稳态、扰动前后准稳态或 EMT 快照]
+        N1[输入模型: DAE、离散采样模型、状态转移矩阵、阻抗/导…]
+        N2[输出指标: 特征值、阻尼趋势、频率、参与因子、模态形状、…]
+        N3[验证方式: EMT 小扰动响应、频扫、阻抗扫描、残差检查]
+    end
+```
+
+
 ## 定义与边界
 
 小信号稳定性分析是围绕某个运行点构造线性小扰动模型，并用[[eigenvalue-analysis]]、[[modal-analysis]]、频域矩阵判据或 EMT 扰动响应验证局部稳定性的流程。它服务于[[small-signal-stability]]这一稳定性概念，但不是概念本身。

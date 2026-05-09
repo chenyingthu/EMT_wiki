@@ -7,6 +7,20 @@ created: "2026-05-04"
 
 # 模型降阶方法 (Model Order Reduction)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[模型降阶方法 (Model Order Reduction)]
+        N0[平衡截断: 保留强可控且强可观状态]
+        N1[Krylov/矩匹配: 匹配传递函数局部矩]
+        N2[模态截断: 保留主导极点或弱阻尼模态]
+        N3[Kron 节点消去: 消去内部节点，保留端口导纳]
+        N4[平均值/聚合模型: 聚合开关或子模块细节]
+        N5[无源网络综合: 由频响综合 RLCM 网络]
+    end
+```
+
+
 ## 定义与边界
 
 模型降阶（Model Order Reduction, MOR）是在保留指定输入输出行为或关键状态特征的前提下，把高阶模型替换为低阶模型的技术集合。在 EMT 中，它可作用于 [[state-space-method]] 模型、[[fdne-model]]、MMC 桥臂、线路/电缆宽频模型、变压器端口模型或外部网络等值。

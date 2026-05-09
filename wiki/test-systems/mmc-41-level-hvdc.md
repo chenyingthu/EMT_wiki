@@ -6,6 +6,18 @@ tags: [mmc, hvdc, 41-level, test-system, half-bridge, enhanced-avm]
 
 # MMC-HVDC 41电平测试系统
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[MMC-HVDC 41电平测试系统]
+        N0[额定容量: 640]
+        N1[直流电压: ±320 / ±640]
+        N2[直流额定电流: 1000 / 500]
+        N3[交流电压: 220]
+    end
+```
+
+
 ## 概述
 
 MMC-HVDC 41电平测试系统是[[mmc-model|模块化多电平换流器]]建模研究中的标准中等规模测试系统，广泛应用于[[electromechanical-electromagnetic-hybrid-simulation|混合仿真]]、[[real-time-simulation|实时仿真]]及[[model-order-reduction|模型降阶]]等研究领域的验证和基准测试。该系统配置40个子模块每桥臂（共41电平），代表实际工程中压/高压MMC换流器的典型规模，是连接小功率实验室样机与大功率工程系统的理想桥梁。

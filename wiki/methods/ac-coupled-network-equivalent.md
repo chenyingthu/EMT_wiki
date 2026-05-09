@@ -7,6 +7,19 @@ created: "2026-05-02"
 
 # 交流耦合网络等效 (AC Coupled Network Equivalent)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[交流耦合网络等效 (AC Coupled Network…]
+        N0[工频戴维南/诺顿等值: 基频电压源、阻抗或导纳]
+        N1[功率接口: $P/Q$ 或电流注入]
+        N2[多端口网络等值: 端口导纳/阻抗矩阵]
+        N3[频率相关网络等值: 宽频 $Y(s)$ 或 $Z(s)$]
+        N4[多工具通信接口: API、共享内存、通信链路]
+    end
+```
+
+
 ## 定义与边界
 
 交流耦合网络等效（AC Coupled Network Equivalent）是在机电暂态、电磁暂态或多工具协同仿真之间传递交流网络端口行为的接口方法。它把接口外侧网络压缩为戴维南、诺顿、功率注入或频率相关动态等值，使详细 EMT 区域不必展开整个外部系统。

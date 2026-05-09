@@ -7,6 +7,19 @@ created: "2026-05-02"
 
 # 补偿方法 (Compensation Method)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[补偿方法 (Compensation Method)]
+        N0[非线性元件补偿: 线性网络给出端口等值，非线性支路单独迭代]
+        N1[MATE/多区域补偿: 各区域形成端口 Thevenin…]
+        N2[节点撕裂: 在撕裂节点引入接口电流或电压补偿量]
+        N3[Solution-level partitioning:…]
+        N4[端口等效加回代: 主网络只见低维端口，内部量后处理恢复]
+    end
+```
+
+
 ## 定义与边界
 
 补偿方法（Compensation Method）在 EMT 数值求解语境中，指把一个难以直接并入主网络的元件、子网络或接口从主系统中分离出来，用端口等效和补偿变量保持两侧伏安关系一致。它常用于网络分区、并行 EMT、非线性元件求解、机器接口和多区域 Thevenin/Norton 等值。

@@ -7,6 +7,29 @@ created: "2026-05-02"
 
 # 最优潮流 (Optimal Power Flow, OPF)
 
+
+```mermaid
+graph TD
+    N0[最优潮流 (Optimal Po…]
+    N1[定义与边界]
+    N0 --> N1
+    N2[输入与输出]
+    N0 --> N2
+    N3[数学形式]
+    N0 --> N3
+    N4[主要变体]
+    N0 --> N4
+    N5[求解机制]
+    N0 --> N5
+    N6[与 EMT 仿真的关系]
+    N0 --> N6
+    N7[适用边界与失败模式]
+    N0 --> N7
+    N8[代表性来源]
+    N0 --> N8
+```
+
+
 ## 定义与边界
 
 最优潮流（Optimal Power Flow, OPF）是在潮流方程和运行约束下优化电力系统运行点的方法。它把 [[power-flow-calculation]] 的等式约束与发电、负荷、电压、线路容量、无功设备和安全约束放入统一优化框架。

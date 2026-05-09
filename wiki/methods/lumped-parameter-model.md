@@ -7,6 +7,19 @@ created: "2026-05-02"
 
 # 集总参数模型 (Lumped Parameter Model)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[集总参数模型 (Lumped Parameter Mod…]
+        N0[串联 RL: 忽略并联电容和电导]
+        N1[π 型等效: 串联 $Z$，两端 $Y/2$]
+        N2[修正 π 型: 用双曲函数修正 $Z$ 和 $Y$]
+        N3[多段 π 型: 多个 π 段级联]
+        N4[集总设备模型: 变压器漏抗、滤波器、负荷支路]
+    end
+```
+
+
 ## 定义与边界
 
 集总参数模型（Lumped Parameter Model）把空间分布的电阻、电感、电导和电容替换为有限个集中元件。在线路、电缆、变压器漏抗、滤波器和等效支路中，它把连续场问题或传输线问题转化为可由 [[nodal-analysis]]、[[state-space-method]] 或 [[companion-circuit]] 求解的电路模型。

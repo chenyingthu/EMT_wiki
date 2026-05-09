@@ -7,6 +7,23 @@ created: "2026-05-02"
 
 # 扩展等面积准则 (EEAC)
 
+
+```mermaid
+graph TD
+    N0[EEAC (Extended E…]
+    N1[静态分群 EEAC：基于故障后早…]
+    N0 --> N1
+    N2[动态分群 EEAC：沿时域轨迹更…]
+    N0 --> N2
+    N3[时域-EEAC 混合：先短时域仿…]
+    N0 --> N3
+    N4[多群扩展：当不止一个机群相互分离…]
+    N0 --> N4
+    N5[与 SIME 的关系：二者都使用…]
+    N0 --> N5
+```
+
+
 ## 定义与边界
 
 扩展等面积准则（Extended Equal Area Criterion, EEAC）是把多机暂态功角稳定问题映射为等效单机无穷大系统（OMIB）后应用 [[equal-area-criterion]] 的直接法路线。它的核心不是重建完整 EMT 模型，而是识别临界机群与其余系统的相对运动，并把该相对运动转化为一条等效功率角曲线。

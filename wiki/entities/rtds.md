@@ -8,6 +8,21 @@ created: "2026-04-13"
 
 # RTDS
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[RTDS]
+        N0[**典型步长**: 50–100 $\mu\text{s…]
+        N1[**最大节点规模**: 单机架~100节点（纯EMT）<…]
+        N2[**HIL接口**: GTNET（以太网）<br>GTF…]
+        N3[**多速率支持**: RTDS+FPGA联合仿真]
+        N4[**混合仿真**: RTDS-TSA（机电-电磁）<br…]
+        N5[**计算资源**: GPC卡（多核并行）<br>单机架最…]
+        N6[**成本与扩展**: 硬件成本高，线性扩展需增加Rack]
+    end
+```
+
+
 ## 概述
 
 RTDS（Real-Time Digital Simulator）是用于电力系统硬件在环（HIL）测试的实时数字仿真器。

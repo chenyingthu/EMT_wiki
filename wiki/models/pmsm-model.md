@@ -7,6 +7,17 @@ created: "2026-04-14"
 
 # 永磁同步电机 (PMSM)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[永磁同步电机 (PMSM)]
+        N0[磁链定义法: 1]
+        N1[三线性插值算法: 1]
+        N2[免数据表求逆的电流导数直接计算法: 1]
+    end
+```
+
+
 ## 概述
 
 永磁同步电机（Permanent Magnet Synchronous Machine, PMSM）是采用永磁体励磁的同步电机。相比电励磁同步电机，PMSM具有效率高、功率密度大、响应快等优点，广泛应用于风力发电、电动汽车和工业驱动领域。

@@ -7,6 +7,25 @@ created: "2026-05-04"
 
 # Haileselassie 2012 Mtdc Control
 
+
+```mermaid
+graph TD
+    subgraph S0[Haileselassie 2012 Mtdc Cont…]
+        N0[定义与边界]
+        N1[核心机制]
+        N2[链接用法]
+        N3[适用边界与失败模式]
+        N4[证据边界]
+        N5[代表性来源]
+    end
+    N0 --> N1
+    N1 --> N2
+    N2 --> N3
+    N3 --> N4
+    N4 --> N5
+```
+
+
 ## 定义与边界
 
 本页是 `Haileselassie 2012 Mtdc Control` 这个来源型链接的受控入口。当前本地 Wiki 没有可核验的同名 source 页、原文摘要或算例表，因此不在这里重建具体控制律、参数或性能结论。

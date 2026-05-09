@@ -7,6 +7,18 @@ created: "2026-05-02"
 
 # 混合交直流电网 (Hybrid AC/DC Network)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[混合交直流电网 (Hybrid AC/DC Network)]
+        N0[LCC-HVDC: 晶闸管换相]
+        N1[VSC-HVDC: IGBT自换相]
+        N2[MTDC: 多端直流]
+        N3[DC Grid: 直流电网]
+    end
+```
+
+
 ## 核心原理详解
 
 ### 技术概述

@@ -7,6 +7,22 @@ created: "2026-04-14"
 
 # 电缆建模 (Cable Modeling)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[电缆建模 (Cable Modeling)]
+        N0[[[proximity-effect-in-fast-t…]
+        N1[[[a-new-tool-for-calculation…]
+        N2[[[multi-conductor-cable-mode…]
+        N3[[[impact-of-solenoid-effects…]
+        N4[[[time-domain-modeling-of-a-…]
+        N5[[[time-delay-estimation-thro…]
+        N6[[[wideband-model-based-on-co…]
+        N7[[[validation-of-frequency-de…]
+    end
+```
+
+
 ## 定义与概述
 
 电缆建模研究地下电缆、海底电缆和混合架空-电缆线路在 EMT 仿真中的参数计算、频率相关效应和时域实现。与架空线路相比，电缆具有导体、绝缘、屏蔽、护套、铠装和土壤/海水回路等多层结构，集肤效应、邻近效应、护套回流和介质损耗会显著影响暂态传播。

@@ -7,6 +7,19 @@ created: "2026-05-02"
 
 # 谐波交互机制 (Harmonic Interaction Mechanism)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[谐波交互机制 (Harmonic Interaction…]
+        N0[同频谐波叠加: 多个源在同一频率注入]
+        N1[网络谐振放大: 谐波源与 RLC/线路阻抗耦合]
+        N2[控制-网络耦合: PLL、电流环、滤波器与弱网]
+        N3[换相相关交互: LCC 换流、交流故障、谐波电压]
+        N4[多频率调制: 开关频率、基波和边带耦合]
+    end
+```
+
+
 ## 技术背景
 
 ### 发展历史

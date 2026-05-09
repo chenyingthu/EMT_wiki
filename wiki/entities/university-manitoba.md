@@ -8,6 +8,18 @@ created: "2026-04-13"
 
 # University of Manitoba
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[University of Manitoba]
+        N0[PSCAD/EMTDC 详细模型: 用作平均模型、状态空…]
+        N1[HVDC/FACTS 控制: 关注换流器控制、交流系统强…]
+        N2[实时/混合仿真: 将详细 EMT 子系统接到 TS、RT…]
+        N3[工程系统验证: 与 Manitoba Hydro 项目背…]
+    end
+```
+
+
 ## 概述
 
 曼尼托巴大学（University of Manitoba）是PSCAD/EMTDC软件的发源地，在电力系统EMT仿真领域有重要影响力。

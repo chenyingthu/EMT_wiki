@@ -7,6 +7,18 @@ created: "2026-05-02"
 
 # 通用线路模型 (Universal Line Model, ULM)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[通用线路模型 (Universal Line Model…]
+        N0[相域 ULM: 直接拟合 $\mathbf{Y}_c$ …]
+        N1[JMarti 类模型: 使用近似常数模态变换和频变传播函数]
+        N2[Noda 相域模型: 相域处理频变线路响应]
+        N3[FLE 频变实现: 分解节点导纳为开路/短路块]
+    end
+```
+
+
 ## 定义与边界
 
 通用线路模型（Universal Line Model, ULM）是 EMT 中用于相域频率相关线路建模的一类方法名称。这里的“通用”是模型名，不表示它对所有线路、所有频带或所有软件实现都无条件适用。

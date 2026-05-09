@@ -7,6 +7,18 @@ created: "2026-05-02"
 
 # 网侧变流器 (Grid-side Converter)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[网侧变流器 (Grid-side Converter)]
+        N0[IGBT: 功率开关]
+        N1[反并联二极管: 续流]
+        N2[直流电容: 稳压]
+        N3[滤波电感: 电流滤波]
+    end
+```
+
+
 ## 定义与边界
 
 网侧变流器（Grid-Side Converter, GSC）是连接直流环节与交流电网的电压源换流器，负责控制与电网交换的有功和无功功率，维持直流母线电压稳定。GSC广泛应用于双馈感应发电机（DFIG）风电系统、全功率变换风电机组、储能系统和光伏逆变器等场景。

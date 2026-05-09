@@ -7,6 +7,19 @@ created: "2026-05-02"
 
 # 后向欧拉法 (Backward Euler Method)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[后向欧拉法 (Backward Euler Method)]
+        N0[阶数: 一阶]
+        N1[稳定性: A 稳定且 L 稳定]
+        N2[高频数值阻尼: 强]
+        N3[事件后表现: 适合重初始化和阻尼]
+        N4[主要风险: 衰减真实高频、相位滞后]
+    end
+```
+
+
 ## 概述
 
 后向欧拉法（Backward Euler Method）是一阶隐式数值积分方法，也是 [[gear-method]] 中 BDF1 的形式。它用下一时刻的导数近似当前步积分，因此具有强数值阻尼和 L 稳定性。在 EMT 中，后向欧拉法常用于刚性模态阻尼、开关事件后的历史项重初始化、临界阻尼调整，以及某些需要稳定优先于波形高阶精度的子步骤。

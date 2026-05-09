@@ -7,6 +7,18 @@ created: "2026-05-02"
 
 # 频率相关土壤特性 (Frequency-Dependent Soil Properties)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[频率相关土壤特性 (Frequency-Dependen…]
+        N0[常数土壤参数: 单一电阻率或电导率]
+        N1[频变均匀土壤: $\sigma(\omega)$、$\v…]
+        N2[分层土壤模型: 各层厚度和复参数]
+        N3[非线性电离模型: 电场、临界条件、动态电导]
+    end
+```
+
+
 ## 技术背景
 
 ### 发展历史

@@ -7,6 +7,19 @@ created: "2026-05-02"
 
 # 序网模型 (Sequence Network Model)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[序网模型 (Sequence Network Model)]
+        N0[三相短路: $I_0=I_2=0$]
+        N1[单相接地: $I_0=I_1=I_2$]
+        N2[两相短路: $I_0=0,\ I_1=-I_2$]
+        N3[两相接地: 三序电压或电流由接地边界耦合]
+        N4[断线/非全相: 由开路相电流和非故障相电压连续条件决定]
+    end
+```
+
+
 ## 定义与边界
 
 序网模型是把正序、负序和零序阻抗按网络拓扑组织成等值电路，并根据故障边界条件连接这些网络的分析方法。它建立在 [[symmetrical-components]] 和 [[sequence-component-method]] 之上，主要服务于基频不平衡故障、保护解释和短路计算。

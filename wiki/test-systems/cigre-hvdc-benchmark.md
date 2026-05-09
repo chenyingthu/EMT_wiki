@@ -7,6 +7,19 @@ created: "2026-05-03"
 
 # CIGRE HVDC Benchmark系统 (CIGRE HVDC Benchmark)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[CIGRE HVDC Benchmark系统 (CIGR…]
+        N0[额定功率: 1000 MW]
+        N1[直流电压: +500 kV]
+        N2[直流电流: 2000 A]
+        N3[交流母线电压: 345 kV]
+        N4[交流系统频率: 60 Hz]
+    end
+```
+
+
 ## 概述
 
 CIGRE HVDC基准系统是高压直流输电(HVDC)研究领域中最为权威和广泛应用的国际标准测试系统。该系统由国际大电网委员会(CIGRE, International Council on Large Electric Systems)专门工作组于1990年代提出，旨在为LCC-HVDC(电网换相换流器型高压直流)系统的建模、仿真和控制研究提供一个统一、标准化的验证平台。

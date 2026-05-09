@@ -8,6 +8,25 @@ updated: "2026-05-06"
 
 # HVDC 控制 (HVDC Control)
 
+
+```mermaid
+graph TD
+    subgraph S0[HVDC 控制 (HVDC Control)]
+        N0[定义与边界]
+        N1[EMT 中的作用]
+        N2[主要分支]
+        N3[关键公式]
+        N4[与相关方法的关系]
+        N5[适用边界与失败模式]
+    end
+    N0 --> N1
+    N1 --> N2
+    N2 --> N3
+    N3 --> N4
+    N4 --> N5
+```
+
+
 ## 定义与边界
 
 HVDC 控制是直流输电系统中围绕直流电压、直流电流、有功功率、无功支撑、换相裕度和运行方式切换建立的控制方法集合。它覆盖 LCC-HVDC、VSC-HVDC 和多端直流系统中的站级控制、极控和协调逻辑。

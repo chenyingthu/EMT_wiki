@@ -7,6 +7,20 @@ created: "2026-05-02"
 
 # 静止同步补偿器 (STATCOM)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[静止同步补偿器 (STATCOM)]
+        N0[额定容量: $S_N$]
+        N1[直流电压: $V_{dc}$]
+        N2[开关频率: $f_{sw}$]
+        N3[响应时间: $t_r$]
+        N4[滤波电感: $L_f$]
+        N5[损耗: $P_{loss}$]
+    end
+```
+
+
 ## 定义与边界
 
 静止同步补偿器（Static Synchronous Compensator, STATCOM）是基于电压源换流器（VSC）的并联型柔性交流输电系统（FACTS）装置。通过向电网注入可控的无功电流，STATCOM能够快速、连续地调节节点电压，提供动态无功支撑。与传统SVC相比，STATCOM在电压跌落时仍能输出额定电流，具有更好的低电压特性。

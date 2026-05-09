@@ -7,6 +7,27 @@ created: "2026-05-04"
 
 # DEM
 
+
+```mermaid
+graph TD
+    N0[Dem]
+    N1[定义与边界]
+    N0 --> N1
+    N2[适用边界与失败模式]
+    N0 --> N2
+    N3[概念边界]
+    N0 --> N3
+    N4[核心机制]
+    N0 --> N4
+    N5[链接用法]
+    N0 --> N5
+    N6[代表性来源]
+    N0 --> N6
+    N7[证据边界]
+    N0 --> N7
+```
+
+
 ## 定义与边界
 
 DEM 在当前 Wiki 中主要作为 Detailed Equivalent Model 的英文缩写入口。canonical 技术页是 [[detailed-equivalent-model]]。本页只负责缩写收敛，不另起一篇完整的详细等效模型文章。

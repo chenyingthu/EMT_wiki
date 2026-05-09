@@ -7,6 +7,19 @@ created: "2026-05-02"
 
 # 戴维南等效 (Thevenin Equivalent)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[戴维南等效 (Thevenin Equivalent)]
+        N0[工频静态戴维南: 开路相量电压]
+        N1[EMT 时域戴维南: 历史电压源]
+        N2[多端口戴维南: 电压源向量]
+        N3[频变戴维南: 状态或卷积历史源]
+        N4[线性化戴维南: 运行点附近增量源]
+    end
+```
+
+
 ## 技术背景
 
 ### 发展历史

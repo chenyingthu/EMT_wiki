@@ -8,6 +8,20 @@ created: "2026-04-29"
 
 # IEEE (电气与电子工程师协会)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[IEEE]
+        N0[IEEE Std 399: IEEE Recommend…]
+        N1[IEEE Std 551: IEEE Recommend…]
+        N2[IEEE Std 1159: IEEE Recommen…]
+        N3[IEEE Std 1547: IEEE Standard…]
+        N4[IEEE Std C37.04: IEEE Standa…]
+        N5[IEEE Std C37.010: IEEE Appli…]
+    end
+```
+
+
 ## 概述
 
 IEEE（Institute of Electrical and Electronics Engineers）是全球最大的技术专业组织之一，在电力系统电磁暂态仿真领域通过标准制定、期刊发表和会议交流发挥作用。在699篇EMT相关论文中，IEEE被提及351次，是领域主要标准组织之一。

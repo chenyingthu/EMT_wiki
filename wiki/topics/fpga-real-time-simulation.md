@@ -8,6 +8,22 @@ updated: "2026-05-03"
 
 # FPGA 实时仿真 (FPGA Real-Time Simulation)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[FPGA 实时仿真 (FPGA Real-Time Si…]
+        N0[执行模式: 并行]
+        N1[时间确定性: 严格（纳秒级抖动）]
+        N2[最小步长: 50ns - 1μs]
+        N3[开发难度: 高]
+        N4[灵活性: 低（硬件固定）]
+        N5[精度控制: 定点/自定义浮点]
+        N6[调试能力: 受限]
+        N7[成本（小规模）: 较高]
+    end
+```
+
+
 ## 核心原理详解
 
 ### 技术概述

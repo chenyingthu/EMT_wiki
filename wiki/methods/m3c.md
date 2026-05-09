@@ -8,6 +8,25 @@ updated: "2026-05-06"
 
 # M3C 方法入口 (M3C)
 
+
+```mermaid
+graph TD
+    subgraph S0[M3C 方法入口 (M3C)]
+        N0[定义与边界]
+        N1[EMT 中的作用]
+        N2[常见关注点]
+        N3[关键公式]
+        N4[与相关方法的关系]
+        N5[代表性来源]
+    end
+    N0 --> N1
+    N1 --> N2
+    N2 --> N3
+    N3 --> N4
+    N4 --> N5
+```
+
+
 ## 定义与边界
 
 M3C 是 Modular Multilevel Matrix Converter 的常用缩写，常见于低频交流系统、背靠背频率变换和特殊多端交流接口场景。在 EMT Wiki 中，本页作为 M3C 建模方法入口，承接缩写型链接并说明其与普通 MMC、VSC 或机电相量模型的边界。

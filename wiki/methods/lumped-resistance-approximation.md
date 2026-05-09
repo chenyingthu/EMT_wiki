@@ -7,6 +7,18 @@ created: "2026-05-02"
 
 # 集中电阻近似 (Lumped Resistance Approximation)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[集中电阻近似 (Lumped Resistance Ap…]
+        N0[端部集中: 总电阻分配到线路两端]
+        N1[端部加中点: 两端和中点共同放置电阻]
+        N2[多段集中: 多个无损线段之间串入电阻]
+        N3[模域集中: 对解耦后的模态线路分别加损耗]
+    end
+```
+
+
 ## 技术背景
 
 ### 发展历史

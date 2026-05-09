@@ -7,6 +7,25 @@ created: "2026-05-02"
 
 # 能量函数法 (Energy Function Method)
 
+
+```mermaid
+graph TD
+    N0[能量函数法 (Energy Fu…]
+    N1[经典能量函数：基于经典同步机、无…]
+    N0 --> N1
+    N2[结构保留能量函数：保留负荷母线和…]
+    N0 --> N2
+    N3[最近 UEP / 控制 UEP …]
+    N0 --> N3
+    N4[PEBS 和 BCU 路线：通过…]
+    N0 --> N4
+    N5[与 equal-area-cri…]
+    N0 --> N5
+    N6[与 eeac 的关系：EEAC …]
+    N0 --> N6
+```
+
+
 ## 定义与边界
 
 能量函数法（Energy Function Method）是电力系统暂态稳定直接法的一类。它构造类似李雅普诺夫函数的标量能量 $V(\mathbf{x})$，比较故障切除时的系统能量与稳定边界附近的临界能量，以判断给定模型和扰动下是否可能保持同步。

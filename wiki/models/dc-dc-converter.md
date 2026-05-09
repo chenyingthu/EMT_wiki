@@ -7,6 +7,33 @@ created: "2026-05-02"
 
 # DC-DC 变换器 (DC-DC Converter)
 
+
+```mermaid
+graph TD
+    N0[DC-DC 变换器 (DC-DC…]
+    N1[Buck变换器: 降压型，输出电…]
+    N0 --> N1
+    N2[Boost变换器: 升压型，输出…]
+    N0 --> N2
+    N3[Buck-Boost变换器: 升…]
+    N0 --> N3
+    N4[Cuk变换器: 电容储能型升降压…]
+    N0 --> N4
+    N5[Sepic变换器: 单端初级电感…]
+    N0 --> N5
+    N6[Zeta变换器: 双端初级电感变换器]
+    N0 --> N6
+    N7[反激式 (Flyback): 变…]
+    N0 --> N7
+    N8[正激式 (Forward): 变…]
+    N0 --> N8
+    N9[推挽式 (Push-Pull):…]
+    N0 --> N9
+    N10[半桥式 (Half-Bridge…]
+    N0 --> N10
+```
+
+
 ## 核心原理详解
 
 ### 技术概述

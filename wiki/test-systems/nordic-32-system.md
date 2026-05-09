@@ -6,6 +6,20 @@ tags: [nordic, test-system, 32-bus, nordic-countries, long-term, voltage-stabili
 
 # Nordic 32测试系统 (Nordic 32 Test System)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[Nordic 32测试系统 (Nordic 32 Tes…]
+        N0[大型水电: G1-G4]
+        N1[中型水电: G5-G8]
+        N2[中型火电: G9-G14]
+        N3[核电: G16-G17]
+        N4[小型机组: G15,G18]
+        N5[外部等值: G19-G20]
+    end
+```
+
+
 ## 概述
 
 Nordic 32系统是北欧电力系统（挪威、瑞典、芬兰）的简化模型，专门用于长期电压稳定性和功角稳定性研究。该系统由瑞典皇家理工学院（KTH Royal Institute of Technology）的G. Andersson等研究者于20世纪90年代开发，是北欧电力系统研究委员会（Nordel）推荐的标准测试系统之一。

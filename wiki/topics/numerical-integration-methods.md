@@ -8,6 +8,16 @@ book-chapter: "2"
 
 # 数值积分方法 (Numerical Integration Methods)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[数值积分方法 (Numerical Integratio…]
+        N0[$\omega \Delta t \ll 1$: 畸变小…]
+        N1[$\omega \Delta t \to \pi$: 畸…]
+    end
+```
+
+
 ## 概述
 
 数值积分方法是电磁暂态(EMT)仿真的核心算法，负责将连续时间的微分-代数方程组(DAEs)离散化为逐时步的代数方程组求解。在EMT仿真中，电感、电容、输电线路、电力电子开关等动态元件的行为都需要通过数值积分方法转换为等效伴随电路，进而形成节点导纳矩阵进行求解。

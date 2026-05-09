@@ -7,6 +7,18 @@ created: "2026-05-02"
 
 # Bergeron 线路模型 (Bergeron Line Model)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[Bergeron 线路模型 (Bergeron Line…]
+        N0[常参数 Bergeron: 固定 $Z_c$ 与 $\t…]
+        N1[集中损耗扩展: 在线路端部或分段中加入集中电阻/电导]
+        N2[级联 Bergeron: 多个短段串联，每段保留历史源]
+        N3[频变 Bergeron 扩展: 将频变纵向参数拟合为状态…]
+    end
+```
+
+
 ## 定义与边界
 
 本页把 Bergeron 模型作为一种“线路端口等效结构”来说明：它把一段均匀传输线写成端口特性导纳、传播延时和历史电流源的组合，供 EMT 网络方程在每个时间步调用。更完整的常参数行波线路页已经由 [[bergeron-line-model]] 保护；本页只补充其模型接口、符号约定和扩展边界，避免重复讲完整线路模型史。

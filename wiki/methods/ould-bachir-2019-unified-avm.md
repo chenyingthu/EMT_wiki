@@ -7,6 +7,25 @@ created: "2026-05-04"
 
 # Ould Bachir 2019 Unified Avm
 
+
+```mermaid
+graph TD
+    subgraph S0[Ould Bachir 2019 Unified Avm]
+        N0[定义与边界]
+        N1[核心机制]
+        N2[链接用法]
+        N3[适用边界与失败模式]
+        N4[证据边界]
+        N5[代表性来源]
+    end
+    N0 --> N1
+    N1 --> N2
+    N2 --> N3
+    N3 --> N4
+    N4 --> N5
+```
+
+
 ## 定义与边界
 
 本页是 `Ould Bachir 2019 Unified Avm` 这个来源型链接的受控入口。当前页面原先混入了通用 EMT 模板、无来源性能指标和不完整状态空间公式；本地证据尚不足以确认同名论文的作者、题名、拓扑和验证算例。

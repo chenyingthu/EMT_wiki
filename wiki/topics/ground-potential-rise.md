@@ -7,6 +7,19 @@ created: "2026-05-02"
 
 # 地电位升 (Ground Potential Rise)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[地电位升 (Ground Potential Rise)]
+        N0[0.1s: 1160V]
+        N1[0.3s: 670V]
+        N2[0.5s: 519V]
+        N3[1.0s: 367V]
+        N4[3.0s: 212V]
+    end
+```
+
+
 ## 核心原理详解
 
 ### 技术概述

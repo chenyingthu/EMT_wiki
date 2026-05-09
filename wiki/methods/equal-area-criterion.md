@@ -7,6 +7,21 @@ created: "2026-05-02"
 
 # 等面积法则 (Equal Area Criterion)
 
+
+```mermaid
+graph TD
+    N0[等面积法则 (Equal Are…]
+    N1[经典单机无穷大 EAC：适合教材…]
+    N0 --> N1
+    N2[两机等效 EAC：把两台机或两个…]
+    N0 --> N2
+    N3[多机扩展路线：eeac 和 SI…]
+    N0 --> N3
+    N4[能量函数联系：energy-fu…]
+    N0 --> N4
+```
+
+
 ## 定义与边界
 
 等面积法则（Equal Area Criterion, EAC）是用于单机无穷大系统或可严格化为等效两机系统的暂态功角稳定直接判据。它把 [[swing-equation]] 中的功率不平衡积分解释为转子动能变化，通过比较故障期间的加速面积和故障切除后的可用减速面积判断首摆稳定边界。

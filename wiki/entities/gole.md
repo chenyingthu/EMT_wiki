@@ -7,6 +7,18 @@ created: "2026-04-14"
 
 # A.M. (Aniruddha M.) Gole
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[A.M. Gole]
+        N0[[[rational-approximation-of-…]
+        N1[[[passivity-enforcement-for-…]
+        N2[[[passivity-enforcement-of-w…]
+        N3[[[reduced-order-and-simultan…]
+    end
+```
+
+
 ## 概述
 
 A.M. Gole 是曼尼托巴大学（University of Manitoba）电气与计算机工程系教授，电力系统电磁暂态仿真领域学者。他是PSCAD/EMTDC仿真软件的核心开发者之一。

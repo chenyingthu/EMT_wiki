@@ -7,6 +7,22 @@ created: "2026-05-04"
 
 # 无源性保证 (Passivity Enforcement)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[无源性保证 (Passivity Enforcement)]
+        N0[[[zfunction-convolution-in-e…]
+        N1[[[real-time-transient-simula…]
+        N2[[[passivity-enforcement-for-…]
+        N3[[[passivity-enforcement-for-…]
+        N4[[[robust-passivity-enforceme…]
+        N5[[[robust-passivity-enforceme…]
+        N6[[[frequency-dependent-networ…]
+        N7[[[frequency-dependent-networ…]
+    end
+```
+
+
 ## 定义与边界
 
 无源性保证是指在频变参数建模过程中，确保所得模型满足无源性条件的技术。无源系统不产生能量，仅消耗或传输能量，其传递函数满足正实性条件。在EMT仿真中，无源性保证是确保频变模型（如输电线路、电缆模型）数值稳定性的关键。

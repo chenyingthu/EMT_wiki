@@ -7,6 +7,27 @@ created: "2026-05-04"
 
 # Commutation Failure
 
+
+```mermaid
+graph TD
+    N0[Commutation Fail…]
+    N1[定义与边界]
+    N0 --> N1
+    N2[核心机制]
+    N0 --> N2
+    N3[适用边界与失败模式]
+    N0 --> N3
+    N4[概念边界]
+    N0 --> N4
+    N5[链接用法]
+    N0 --> N5
+    N6[代表性来源]
+    N0 --> N6
+    N7[证据边界]
+    N0 --> N7
+```
+
+
 ## 定义与边界
 
 Commutation failure 指 LCC 或晶闸管逆变器在换相窗口内未能把电流从退出阀转移到进入阀，导致退出阀不能按预期恢复阻断能力的事件。本页作为英文受控入口，收拢 `commutation failure` 链接；详细模型边界应优先转向 [[lcc-model]]、[[extinction-angle-calculation]] 和多馈入场景页 [[concurrent-commutation-failure]]。

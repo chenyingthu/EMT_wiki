@@ -7,6 +7,18 @@ created: "2026-05-04"
 
 # 双线性变换 (Bilinear Transform)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[双线性变换 (Bilinear Transform)]
+        N0[采样率: $f_s > 10f_{max}$]
+        N1[线性系统: 传递函数存在]
+        N2[稳定性: 原系统稳定]
+        N3[精度: 可接受频率畸变]
+    end
+```
+
+
 ## 定义与边界
 
 双线性变换（Bilinear Transform），又称Tustin变换或梯形积分法，是将连续时间传递函数$H(s)$转换为离散时间传递函数$H(z)$的数学方法。通过$s = \frac{2}{T}\frac{z-1}{z+1}$的映射，保持系统稳定性，且频率响应在低频段与连续系统近似。双线性变换是EMT仿真中连续控制器离散化和频变模型时域实现的基础工具。

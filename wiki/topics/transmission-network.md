@@ -7,6 +7,19 @@ created: "2026-05-02"
 
 # 输电网络 (Transmission Network)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[输电网络 (Transmission Network)]
+        N0[高压(HV): 110-220 kV]
+        N1[超高压(EHV): 330-765 kV]
+        N2[特高压(UHV AC): 1000-1150 kV]
+        N3[高压直流(HVDC): ±500-±1100 kV]
+        N4[特高压直流(UHVDC): ±800-±1100 kV]
+    end
+```
+
+
 ## 核心原理详解
 
 ### 技术概述

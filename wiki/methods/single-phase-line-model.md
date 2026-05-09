@@ -7,6 +7,18 @@ created: "2026-05-02"
 
 # 单相线路模型 (Single-Phase Line Model)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[单相线路模型 (Single-Phase Line Mo…]
+        N0[集中 R-L 或 R-L-C 模型: 线路等效参数]
+        N1[π 型等值: 串联阻抗、并联导纳]
+        N2[单相 Bergeron: $Z_c,\tau$ 和历史量]
+        N3[频变单相模型: $Z'(\omega),Y'(\omeg…]
+    end
+```
+
+
 ## 技术背景
 
 ### 发展历史

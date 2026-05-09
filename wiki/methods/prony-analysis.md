@@ -7,6 +7,19 @@ created: "2026-04-14"
 
 # Prony 分析 (Prony Analysis)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[Prony 分析 (Prony Analysis)]
+        N0[经典 Prony: 短时无噪或低噪响应的指数拟合]
+        N1[SVD/改进 Prony: 用奇异值截断确定有效阶数]
+        N2[矩阵束方法: 暂态模态和故障参数估计]
+        N3[递推/在线 Prony: 在线振荡监测]
+        N4[Prony 等值: 外部网络时域脉冲响应等值]
+    end
+```
+
+
 ## 定义与边界
 
 Prony 分析（Prony Analysis）从等间隔时域序列中拟合一组衰减复指数模态，典型形式为 $h[n]\approx\sum_{m=1}^{M}R_m z_m^n$。其中 $z_m$ 是离散极点，$R_m$ 是留数；映射到连续域后可得到频率和阻尼。

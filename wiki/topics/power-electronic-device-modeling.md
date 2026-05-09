@@ -8,6 +8,21 @@ book-chapter: "7"
 
 # 电力电子设备建模 (Power Electronic Device Modeling)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[电力电子设备建模 (Power Electronic D…]
+        N0[[[switch-modeling]]: 综合]
+        N1[[[igbt-model]]: 综合]
+        N2[[[average-value-model]]: 综合]
+        N3[[[fixed-admittance]]: 综合]
+        N4[[[mmc-model]]: 综合]
+        N5[[[vsc-model]]: 综合]
+        N6[[[transformer-model]]: 2020+]
+    end
+```
+
+
 ## 概述
 
 电力电子设备建模是指在EMT仿真中表示功率半导体器件（IGBT、MOSFET、GTO、二极管等）及其组成的变换器拓扑的数学方法。随着新能源和HVDC技术的广泛应用，电力电子设备已成为电网中的关键元件，其准确的暂态模型对系统稳定性分析、保护设计和控制策略验证至关重要。

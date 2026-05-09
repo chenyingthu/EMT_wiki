@@ -7,6 +7,18 @@ created: "2026-05-02"
 
 # 双闭环PI控制器 (Dual-Loop PI Controller)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[双闭环PI控制器 (Dual-Loop PI Contr…]
+        N0[外环: 直流电压、有功/无功功率、交流电压或频率附加信号]
+        N1[内环: 电流参考与测量电流]
+        N2[同步: PLL 相位或内部振荡器相位]
+        N3[执行: PWM/平均值模型/受控源接口]
+    end
+```
+
+
 ## 概述
 
 双闭环 PI 控制器（Dual-Loop PI Controller）是电力电子变流器中常见的级联控制结构：外环根据功率、电压、直流母线或交流电压目标生成电流参考，内环跟踪电流并输出调制电压或等效控制量。它常用于 [[vsc-model]]、[[mmc-model]]、并网逆变器、储能变流器和部分电机驱动模型。

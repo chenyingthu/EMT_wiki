@@ -7,6 +7,19 @@ created: "2026-05-02"
 
 # 数值阻尼优化 (Numerical Damping Optimization)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[数值阻尼优化 (Numerical Damping Op…]
+        N0[CDA: 事件点临时切换后向欧拉并重置历史项]
+        N1[全程后向欧拉: 积分格式内生 L 稳定]
+        N2[Gear/BDF: 多步隐式格式的数值耗散]
+        N3[2S-DIRK 等 L 稳定二阶法: 稳定函数高频衰减]
+        N4[滤波/平滑: 后处理或状态平滑]
+    end
+```
+
+
 ## 定义与边界
 
 数值阻尼优化（Numerical Damping Optimization）是在 EMT 离散求解中有意控制积分格式、事件处理或历史项更新的耗散特性，以抑制非物理高频误差，同时尽量保留目标频带内的真实暂态。它处理的是数值误差和算法稳定性，不等同于物理阻尼设计，也不应把真实宽频振荡简单滤除。

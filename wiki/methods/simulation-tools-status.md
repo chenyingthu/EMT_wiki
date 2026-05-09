@@ -7,6 +7,21 @@ created: "2026-05-02"
 
 # 仿真工具现状 (Simulation Tools Status)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[仿真工具现状 (Simulation Tools Sta…]
+        N0[工具名称: PSCAD/EMTDC、EMTP-RV、AT…]
+        N1[版本或模块: 若论文或官方资料给出，应保留；没有则写未说明]
+        N2[仿真类型: 离线 EMT、实时仿真、HIL、机电-电磁混…]
+        N3[模型入口: 图形元件库、脚本/API、MODELS/TA…]
+        N4[数值设置: 步长、积分法、开关处理、初始化、求解器选项]
+        N5[验证基准: 实测、解析解、其他工具、详细模型、硬件输出]
+        N6[证据边界: 该工具证据只覆盖哪些算例和工况]
+    end
+```
+
+
 ## 定义与边界
 
 仿真工具现状（Simulation Tools Status）页面用于说明如何在 EMT Wiki 中记录和比较仿真工具的能力、版本、适用场景和证据边界。它不是实时更新的产品目录，也不是工具排名。

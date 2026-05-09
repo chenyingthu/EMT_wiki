@@ -7,6 +7,17 @@ created: "2026-05-02"
 
 # 机电-电磁暂态混合仿真 (Electromechanical-Electromagnetic Hybrid Simulation)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[机电-电磁暂态混合仿真 (Electromechanic…]
+        N0[电磁暂态: μs - ms]
+        N1[机电暂态: ms - s]
+        N2[中长期动态: s - min]
+    end
+```
+
+
 ## 核心原理详解
 
 ### 技术概述

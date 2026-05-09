@@ -8,6 +8,25 @@ updated: "2026-05-07"
 
 # CHB-DAB
 
+
+```mermaid
+graph TD
+    subgraph S0[Chb Dab]
+        N0[定义与边界]
+        N1[核心机制]
+        N2[概念边界]
+        N3[链接用法]
+        N4[代表性来源]
+        N5[证据边界]
+    end
+    N0 --> N1
+    N1 --> N2
+    N2 --> N3
+    N3 --> N4
+    N4 --> N5
+```
+
+
 ## 定义与边界
 
 CHB-DAB 通常指级联 H 桥（CHB）与双有源桥（DAB）相关的隔离型 DC/DC 或电力电子变换单元组合。当前 Wiki 的主说明应收敛到 [[dual-active-bridge]]；本页作为 `chb-dab` 的短别名入口。

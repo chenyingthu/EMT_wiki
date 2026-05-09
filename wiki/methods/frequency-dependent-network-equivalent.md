@@ -7,6 +7,18 @@ created: "2026-05-04"
 
 # 频变网络等值 (Frequency-Dependent Network Equivalent)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[频变网络等值 (Frequency-Dependent …]
+        N0[线性假设: 外部系统近似线性]
+        N1[时不变性: 外部拓扑恒定]
+        N2[频率范围: 明确上下限]
+        N3[端口选择: 边界清晰]
+    end
+```
+
+
 ## 定义与边界
 
 频变网络等值（FDNE, Frequency-Dependent Network Equivalent）是一种在宽频范围内保留外部系统频率特性、用于电磁暂态仿真的网络简化方法。通过有理函数逼近外部网络的频率响应，将复杂外部系统等值为少量频变元件，在保证计算效率的同时维持暂态精度。

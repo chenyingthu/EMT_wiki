@@ -8,6 +8,20 @@ created: "2026-04-13"
 
 # Manitoba Hydro International
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[Manitoba Hydro International]
+        N0[**计算架构**: 专有并行处理器（IBM PowerPC）]
+        N1[**典型步长**: 10-50 μs]
+        N2[**最大节点数**: 720+三相节点（NovaCor）]
+        N3[**HIL接口延迟**: <1 μs（专用I/O）]
+        N4[**HVDC建模**: 成熟库（LCC/VSC）]
+        N5[**与PSCAD兼容性**: 需手动代码转换]
+    end
+```
+
+
 ## 概述
 
 曼尼托巴水电国际公司（Manitoba Hydro International）是曼尼托巴水电公司的国际业务部门，负责PSCAD/EMTDC的商业化和技术支持。

@@ -7,6 +7,19 @@ created: "2026-05-02"
 
 # 坐标变换 (Coordinate Transformation)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[坐标变换 (Coordinate Transformat…]
+        N0[Clarke / alpha-beta-zero: 三相…]
+        N1[Park / dq0: 三相基波相量或瞬时量]
+        N2[Fortescue 序分量: 基频复相量]
+        N3[瞬时序分量: 采样波形或解析信号]
+        N4[线路模态变换: 多导体线路变量]
+    end
+```
+
+
 ## 定义与边界
 
 坐标变换是把同一组三相或多导体电气量从一个坐标基底映射到另一个坐标基底的方法。EMT 语境中常见对象包括三相瞬时量 $\mathbf{x}_{abc}$、静止正交坐标 $\mathbf{x}_{\alpha\beta0}$、同步旋转坐标 $\mathbf{x}_{dq0}$、复数序分量 $\mathbf{x}_{012}$，以及线路模态坐标。

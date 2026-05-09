@@ -7,6 +7,29 @@ created: "2026-05-02"
 
 # GPU Parallel Acceleration
 
+
+```mermaid
+graph TD
+    N0[GPU Parallel Acc…]
+    N1[定义与边界]
+    N0 --> N1
+    N2[Role in EMT Simu…]
+    N0 --> N2
+    N3[Computational Pa…]
+    N0 --> N3
+    N4[Core Workflow]
+    N0 --> N4
+    N5[GPU Kernel Famil…]
+    N0 --> N5
+    N6[CUDA, OpenCL, an…]
+    N0 --> N6
+    N7[适用边界与失败模式]
+    N0 --> N7
+    N8[代表性来源]
+    N0 --> N8
+```
+
+
 ## 定义与边界
 
 GPU parallel acceleration maps EMT simulation kernels to graphics processors with many lightweight threads and high memory bandwidth. It is a hardware-specific implementation method, not a guarantee of real-time simulation. It works best when the EMT workload has enough data parallelism, predictable memory access, and limited host-device transfer per time step.

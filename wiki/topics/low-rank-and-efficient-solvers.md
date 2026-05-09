@@ -8,6 +8,18 @@ book-chapter: "13"
 
 # 低秩近似与高效求解器 (Low-Rank Approximation and Efficient Solvers)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[低秩近似与高效求解器 (Low-Rank Approxi…]
+        N0[COO: (行,列,值)三元组]
+        N1[CSR: 行指针+列索引+值]
+        N2[CSC: 列指针+行索引+值]
+        N3[对角存储: 主对角+副对角]
+    end
+```
+
+
 ## 概述
 
 低秩近似（Low-Rank Approximation）与高效求解器是EMT仿真中解决大规模网络方程计算瓶颈的高级技术。通过利用矩阵的低秩结构、稀疏性和特殊模式，这些方法将求解复杂度从$O(N^3)$降至接近$O(N)$或$O(N^{1.5})$，使10,000+节点系统的高效仿真成为可能。核心技术包括稀疏LU分解优化、低秩更新、矩阵部分重构、分裂状态空间方法等。

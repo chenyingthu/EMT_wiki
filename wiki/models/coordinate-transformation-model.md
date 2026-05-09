@@ -7,6 +7,18 @@ created: "2026-04-30"
 
 # 坐标变换 (Coordinate Transformation)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[坐标变换 (Coordinate Transformat…]
+        N0[Clarke: 静止变换]
+        N1[Park: 旋转变换]
+        N2[综合: Clarke+Park]
+        N3[反变换: Inverse]
+    end
+```
+
+
 ## 定义与概述
 
 坐标变换是电力系统EMT仿真和控制系统设计中的数学工具，通过将三相交流量转换为旋转坐标系下的直流量，实现交流系统的解耦控制。Park变换和Clarke变换是最核心的变换方法，本模型涵盖abc/αβ/dq0之间的正变换与反变换、零序分量处理、以及不同参考坐标系的选择，适用于电机控制、换流器控制和电力系统分析的EMT仿真。

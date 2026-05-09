@@ -7,6 +7,18 @@ created: "2026-05-04"
 
 # 最近电平控制 (Nearest Level Control)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[最近电平控制 (Nearest Level Control)]
+        N0[电平数: N > 20]
+        N1[开关频率: 低要求]
+        N2[动态响应: 一般]
+        N3[计算资源: 有限]
+    end
+```
+
+
 ## 定义与边界
 
 最近电平控制（Nearest Level Control, NLC）是模块化多电平换流器（MMC）的一种调制策略，通过选择最接近参考电压的整数电平数来确定投入的子模块数量。NLC算法简单、开关频率低、易于实现，是MMC大电平数应用的主流调制方法之一。

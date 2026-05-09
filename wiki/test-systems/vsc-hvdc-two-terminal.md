@@ -7,6 +7,19 @@ created: "2026-05-03"
 
 # VSC-HVDC两端测试系统
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[VSC-HVDC两端测试系统]
+        N0[直流电压: ±200 kV]
+        N1[额定功率: 400 MW]
+        N2[直流电流: 1000 A]
+        N3[输送距离: 100 km]
+        N4[功率损耗: <3%]
+    end
+```
+
+
 ## 概述
 
 电压源换流器型高压直流输电(Voltage Source Converter based High Voltage Direct Current, VSC-HVDC)两端测试系统是柔性直流输电技术中最基础也是最重要的拓扑结构。该系统由两个换流站通过直流线路连接构成点对点结构，代表了VSC-HVDC技术的基本形态。

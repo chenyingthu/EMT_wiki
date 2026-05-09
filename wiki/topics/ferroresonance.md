@@ -7,6 +7,19 @@ created: "2026-04-14"
 
 # 铁磁谐振 (Ferroresonance)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[铁磁谐振 (Ferroresonance)]
+        N0[[[digital-time-domain-invest…]
+        N1[[[dual-reversible-transforme…]
+        N2[[[duality-based-transformer-…]
+        N3[[[accurate-simulation-model-…]
+        N4[[[saturable-reactor-hysteres…]
+    end
+```
+
+
 ## 概述
 
 铁磁谐振是电力系统中由于变压器铁芯非线性磁化特性与系统电容相互作用产生的非线性谐振现象。铁磁谐振会导致过电压、过电流，威胁设备安全，是EMT仿真研究的重要课题。

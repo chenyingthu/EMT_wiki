@@ -7,6 +7,25 @@ created: "2026-05-01"
 
 # 雷电过电压 (Lightning Overvoltage)
 
+
+```mermaid
+graph TD
+    subgraph S0[雷电过电压 (Lightning Overvoltage)]
+        N0[定义与边界]
+        N1[EMT 中的作用]
+        N2[主要分支与机制]
+        N3[适用边界与失败模式]
+        N4[代表性来源]
+        N5[与相关页面的关系]
+    end
+    N0 --> N1
+    N1 --> N2
+    N2 --> N3
+    N3 --> N4
+    N4 --> N5
+```
+
+
 ## 定义与边界
 
 雷电过电压（Lightning Overvoltage）是雷电流、雷电电磁场、线路行波、杆塔和接地系统共同作用下产生的快速过电压。它包括直击导线、击中杆塔或避雷线后的反击、附近雷击造成的感应电压，以及从线路或电缆入口传播到设备端子的侵入波。

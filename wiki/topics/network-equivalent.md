@@ -7,6 +7,17 @@ created: "2026-04-13"
 
 # 网络等值 (Network Equivalent)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[网络等值 (Network Equivalent)]
+        N0[单端口戴维南: 远离非线性负荷]
+        N1[多端口戴维南: 多馈入系统]
+        N2[FDNE: 含电力电子设备]
+    end
+```
+
+
 ## 概述
 
 网络等值技术将大规模电力系统简化为等效模型，在保持端口特性不变的前提下大幅减少仿真规模。这是混合仿真、并行计算和大电网仿真的基础技术。

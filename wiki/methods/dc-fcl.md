@@ -7,6 +7,25 @@ created: "2026-05-04"
 
 # DC-FCL
 
+
+```mermaid
+graph TD
+    N0[Dc Fcl]
+    N1[定义与边界]
+    N0 --> N1
+    N2[概念边界]
+    N0 --> N2
+    N3[核心机制]
+    N0 --> N3
+    N4[链接用法]
+    N0 --> N4
+    N5[代表性来源]
+    N0 --> N5
+    N6[证据边界]
+    N0 --> N6
+```
+
+
 ## 定义与边界
 
 DC-FCL 在当前 Wiki 中指直流故障限流器或直流故障限流配置方法。它服务于直流电网、MMC-HVDC 或多端直流系统故障早期的电流上升率和峰值约束，通常与 [[dc-protection]]、[[dccb]]、[[cl-dccb]] 和 [[mtdc-model]] 一起使用。

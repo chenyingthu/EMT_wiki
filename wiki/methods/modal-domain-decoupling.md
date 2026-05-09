@@ -7,6 +7,19 @@ created: "2026-05-02"
 
 # 模态域解耦 (Modal Domain Decoupling)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[模态域解耦 (Modal Domain Decoupli…]
+        N0[对称分量/Clarke 类变换: 用固定实/复矩阵分离零…]
+        N1[Karrenbauer 类实值变换: 用实值线模/地模坐…]
+        N2[频率相关模态变换: 在频率点上由特征向量构造变换]
+        N3[相域 ULM 路线: 避免常数模态变换，直接拟合相域端口关系]
+        N4[解耦加互耦补偿: 自线路用独立 FD 模型，跨线路互耦另…]
+    end
+```
+
+
 ## 技术背景
 
 ### 发展历史

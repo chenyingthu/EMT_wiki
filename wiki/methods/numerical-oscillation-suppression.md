@@ -7,6 +7,19 @@ created: "2026-05-02"
 
 # 数值振荡抑制 (Numerical Oscillation Suppression)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[数值振荡抑制 (Numerical Oscillatio…]
+        N0[事件插值/回退: 开关时刻不在网格点]
+        N1[CDA/后向欧拉切换: 梯形历史项引起的高频伪振荡]
+        N2[L 稳定积分方法: 积分格式高频不衰减]
+        N3[无源性检查: 接口或插值导致能量增长]
+        N4[步长/模型修正: 步长不足或模型频带不匹配]
+    end
+```
+
+
 ## 定义与边界
 
 数值振荡抑制（Numerical Oscillation Suppression）是识别并处理 EMT 离散求解中非物理振荡的流程。它包括事件定位、历史项重置、积分方法切换、无源性检查、步长调整和必要的输出诊断。它不是把所有振荡压平；真实的线路行波、谐振、控制振荡和宽频不稳定应保留并解释。

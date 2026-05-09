@@ -7,6 +7,19 @@ created: "2026-05-02"
 
 # 接地系统 (Grounding System)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[接地系统 (Grounding System)]
+        N0[沼泽、泥炭: 5-30]
+        N1[粘土、壤土: 20-100]
+        N2[砂土、砾石: 100-1000]
+        N3[岩石、花岗岩: 1000-10000]
+        N4[混凝土: 50-500]
+    end
+```
+
+
 ## 核心原理详解
 
 ### 技术概述

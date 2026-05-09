@@ -7,6 +7,18 @@ created: "2026-04-30"
 
 # PI/PID控制器 (PI/PID Controller)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[PI/PID控制器 (PI/PID Controller)]
+        N0[P: $K_p$]
+        N1[PI: $K_p + \frac{K_i}{s}$]
+        N2[PD: $K_p + K_d s$]
+        N3[PID: $K_p + \frac{K_i}{s} + …]
+    end
+```
+
+
 ## 定义与概述
 
 PI（比例-积分）和PID（比例-积分-微分）控制器是EMT仿真中最用于的线性反馈控制器，用于电压调节、电流控制、功率控制等闭环控制回路。在电力系统EMT仿真中，PI控制器因其结构简单、参数整定成熟、对常值干扰具有无静差特性而被普遍采用。本模型涵盖模拟PI/PID、离散化实现、抗饱和设计，适用于各种电力电子和电力系统控制应用。

@@ -7,6 +7,17 @@ created: "2026-05-03"
 
 # WSCC 9节点系统 (WSCC 9-Bus System)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[WSCC 9节点系统 (WSCC 9-Bus System)]
+        N0[G1: 1]
+        N1[G2: 2]
+        N2[G3: 3]
+    end
+```
+
+
 ## 概述
 
 WSCC 9节点系统，全称为Western Systems Coordinating Council 9-Bus System，是电力系统暂态稳定研究中最经典、最广泛使用的小型测试系统。该系统最早由北美西部系统协调委员会(WSCC)于20世纪70年代提出，后被收录于Anderson和Fouad的经典教材《Power System Control and Stability》中，成为全球电力系统教学和科研的标准算例。

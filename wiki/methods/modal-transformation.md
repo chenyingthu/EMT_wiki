@@ -7,6 +7,19 @@ created: "2026-05-02"
 
 # 模态变换 (Modal Transformation)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[模态变换 (Modal Transformation)]
+        N0[对称分量变换: 平衡三相系统的正、负、零序分析]
+        N1[Clarke 变换: 实数时域实现和控制接口]
+        N2[Karrenbauer 变换: 早期 EMTP 类线路模…]
+        N3[Wedepohl/特征向量变换: 频域中按实际参数解耦]
+        N4[准模态或固定频率变换: 时域实现简化]
+    end
+```
+
+
 ## 技术背景
 
 ### 发展历史

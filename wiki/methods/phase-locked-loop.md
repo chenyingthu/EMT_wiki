@@ -8,6 +8,25 @@ updated: "2026-05-07"
 
 # 锁相环方法 (Phase-Locked Loop)
 
+
+```mermaid
+graph TD
+    subgraph S0[锁相环方法 (Phase-Locked Loop)]
+        N0[定义与边界]
+        N1[EMT 中的作用]
+        N2[常见分支]
+        N3[关键公式]
+        N4[与相关方法的关系]
+        N5[适用边界与失败模式]
+    end
+    N0 --> N1
+    N1 --> N2
+    N2 --> N3
+    N3 --> N4
+    N4 --> N5
+```
+
+
 ## 定义与边界
 
 锁相环（Phase-Locked Loop, PLL）是在电力电子并网控制中用于估计电网相位、频率和同步坐标的基础方法。它常出现在跟网型逆变器、同步检测、电压定向控制和小信号稳定性分析场景。

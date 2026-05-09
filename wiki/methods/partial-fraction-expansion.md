@@ -7,6 +7,19 @@ created: "2026-05-02"
 
 # 部分分式展开 (Partial Fraction Expansion)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[部分分式展开 (Partial Fraction Exp…]
+        N0[标量部分分式: 单输入单输出有理函数]
+        N1[多端口公共极点: 多个矩阵元素共享极点，留数为矩阵]
+        N2[状态空间实现: 把极点-留数转换为一阶状态]
+        N3[递归卷积实现: 把指数核转为历史递推]
+        N4[模态展开: 按特征模式或极点解释响应]
+    end
+```
+
+
 ## 定义与边界
 
 部分分式展开把有理函数表示为极点、留数和直接项的和。对 EMT 而言，它是频域有理模型进入时域递推、状态空间实现和模态解释的桥梁，常与[[vector-fitting]]、[[wideband-modeling]]、[[frequency-dependent-modeling]]和[[passivity-enforcement]]配合使用。

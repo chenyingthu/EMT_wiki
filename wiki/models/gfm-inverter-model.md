@@ -7,6 +7,19 @@ created: "2026-04-30"
 
 # 构网型变流器 (Grid-Forming Inverter, GFM)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[构网型变流器 (Grid-Forming Inverte…]
+        N0[下垂控制: P-f/Q-V下垂]
+        N1[VSM: 虚拟同步机]
+        N2[匹配控制: 非线性匹配]
+        N3[虚拟振荡器: VOC]
+        N4[自同步: 无PLL]
+    end
+```
+
+
 ## 定义与概述
 
 构网型变流器（Grid-Forming Inverter, GFM）是新型电力系统的关键技术，通过模拟同步发电机的惯性响应和下垂特性，能够独立建立并维持电网电压和频率，为弱电网和孤岛系统提供惯量支撑和阻尼。随着新能源渗透率提高和同步发电机退役，GFM技术对电网稳定性至关重要。本模型涵盖下垂控制GFM、虚拟同步机（VSM）、匹配控制等策略，适用于100%电力电子化电网的EMT仿真。

@@ -8,6 +8,22 @@ created: "2026-04-29"
 
 # CIGRE (国际大电网委员会)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[CIGRE]
+        N0[**TB 604**: Guide for electr…]
+        N1[**TB 566**: Modelling and si…]
+        N2[**TB 553**: Guide for the de…]
+        N3[**TB 502**: Modelling of gas…]
+        N4[**TB 456**: Power system tra…]
+        N5[**TB 404**: Transformer ener…]
+        N6[**TB 368**: Modelling of tra…]
+        N7[**TB 348**: Guidelines for d…]
+    end
+```
+
+
 ## 概述
 
 CIGRE（Conseil International des Grands Réseaux Électriques / International Council on Large Electric Systems）成立于1921年，是全球电力系统领域最具权威性的国际技术组织。在699篇EMT论文中，CIGRE被提及28次，其发布的技术报告（Technical Brochures）是EMT仿真建模与验证的权威参考文献。CIGRE通过工作组（Working Groups）机制，汇集全球顶尖专家共同解决电力系统技术难题，其成果往往成为IEEE/IEC标准制定的技术基础。

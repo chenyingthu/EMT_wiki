@@ -7,6 +7,17 @@ created: "2026-05-02"
 
 # 对称分量法 (Symmetrical Components)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[对称分量法 (Symmetrical Components)]
+        N0[零序 $X_0$: 三相同相]
+        N1[正序 $X_1$: a-b-c 正相序]
+        N2[负序 $X_2$: a-c-b 反相序]
+    end
+```
+
+
 ## 定义与边界
 
 对称分量法是 Fortescue 变换在三相交流系统中的应用：任意一组三相复相量可唯一分解为零序、正序和负序三组对称相量。它是一种线性代数分解，不是完整故障模型，也不自动给出设备参数、保护动作或 EMT 暂态波形。

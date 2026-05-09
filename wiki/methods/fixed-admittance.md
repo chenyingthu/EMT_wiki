@@ -7,6 +7,19 @@ created: "2026-04-13"
 
 # 恒导纳模型 (Fixed Admittance / ADC Model)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[恒导纳模型 (Fixed Admittance / AD…]
+        N0[单开关 ADC: 为开关状态构造固定等效导纳和历史源]
+        N1[桥臂或模块级 ADC: 把上下开关、桥臂电感、电容等合成模块]
+        N2[状态变量消元等效: 消去内部状态形成外部恒导纳接口]
+        N3[MMC 聚合恒导纳: 对子模块或桥臂做 Thevenin…]
+        N4[FPGA 实时恒导纳: 固定矩阵适合流水线和确定性调度]
+    end
+```
+
+
 ## 定义与边界
 
 恒导纳模型是把开关器件、桥臂模块或局部子网络表示为导纳矩阵在开关状态变化时保持不变的 EMT 等效方法。它常与关联离散电路（Associated Discrete Circuit, ADC）和伴随电路历史源结合使用：开关状态变化主要进入右端注入项、历史源或内部状态，而不是每次都改变主网络导纳矩阵。

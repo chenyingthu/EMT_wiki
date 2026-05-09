@@ -7,6 +7,19 @@ created: "2026-04-30"
 
 # FPGA实时仿真 (FPGA Real-Time Simulation)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[FPGA实时仿真 (FPGA Real-Time Sim…]
+        N0[并行方式: 指令级并行]
+        N1[时钟频率: 3-5 GHz]
+        N2[确定性: 非确定（缓存/分支）]
+        N3[功耗效率: 中等]
+        N4[开发难度: 低]
+    end
+```
+
+
 ## 定义与概述
 
 FPGA实时仿真是利用现场可编程门阵列（Field-Programmable Gate Array）的硬件并行性实现电磁暂态模型确定性实时求解的技术。与CPU串行计算不同，FPGA通过深度数据流水线、细粒度并行和定制化硬件逻辑，将传统微秒级步长的EMT仿真压缩至纳秒级，满足硬件在环（HIL）测试对严格实时性的要求。

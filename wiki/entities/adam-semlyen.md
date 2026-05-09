@@ -8,6 +8,18 @@ created: "2026-04-29"
 
 # Adam Semlyen
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[Adam Semlyen]
+        N0[**理论框架**: 频域分析方法]
+        N1[**数学基础**: 复变函数理论]
+        N2[**应用指导**: 工程需求定义]
+        N3[**论文撰写**: 理论部分]
+    end
+```
+
+
 ## 概述
 
 Adam Semlyen是多伦多大学电气与计算机工程系荣休教授，电力系统电磁暂态仿真领域学者。他与Bjørn Gustavsen于1999年合作提出的**矢量拟合（Vector Fitting）算法**，是现代宽频网络建模的重要方法之一。Semlyen教授在电磁暂态理论、频率相关建模和数值方法领域有多篇学术论文发表。

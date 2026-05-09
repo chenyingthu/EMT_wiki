@@ -7,6 +7,19 @@ created: "2026-05-02"
 
 # 关断角计算 (Extinction Angle Calculation)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[关断角计算 (Extinction Angle Calc…]
+        N0[$\alpha$ 或 $\beta$: 触发角或超前触发角]
+        N1[$I_d$: 直流电流]
+        N2[$X_c$ 或 $L_c$: 换相电抗/电感]
+        N3[$E$ 或 $U_{LL}$: 换相电压幅值]
+        N4[$\mu$: 换相重叠角]
+    end
+```
+
+
 ## 概述
 
 关断角计算（Extinction Angle Calculation）用于估计 LCC 逆变器中晶闸管电流降为零后，到该阀重新承受正向电压前的电角度裕度。它是 [[lcc-model]]、[[thyristor-control]] 和换相失败分析中的关键方法。

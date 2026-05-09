@@ -7,6 +7,19 @@ created: "2026-05-02"
 
 # 序分量法 (Sequence Component Method)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[序分量法 (Sequence Component Met…]
+        N0[单相接地故障解释: 三序分量共同出现，零序通路决定电流]
+        N1[两相短路解释: 正序和负序为主，理想情况下零序为零]
+        N2[两相接地故障解释: 三序网络按边界条件耦合]
+        N3[保护量: 负序、零序用于不平衡检测]
+        N4[EMT 后处理: 从波形提取基波正/负/零序]
+    end
+```
+
+
 ## 定义与边界
 
 序分量法是把三相交流量分解为零序、正序和负序分量，并利用这些分量分析不平衡运行或不对称故障的方法流程。它以 [[symmetrical-components]] 的 Fortescue 变换为数学基础，以 [[sequence-network-model]] 的序网为常见计算载体。

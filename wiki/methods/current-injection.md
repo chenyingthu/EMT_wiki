@@ -7,6 +7,18 @@ created: "2026-05-02"
 
 # 电流注入法 (Current Injection Method)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[电流注入法 (Current Injection Met…]
+        N0[输入: 当前或上一时间步的节点电压、器件状态、控制器输出…]
+        N1[输出: 注入到节点方程右端的电流向量，必要时还包括等效导…]
+        N2[网络接口: $\mathbf{Y}\mathbf{v}_…]
+        N3[主要约束: 注入电流必须与端口功率、参考方向、离散化格式…]
+    end
+```
+
+
 ## 概述
 
 电流注入法（Current Injection Method）是在 EMT 网络方程中把外部设备、受控源或离散化元件表示为节点注入电流的方法。它通常与 [[nodal-analysis]]、[[nodal-admittance-matrix]] 和 [[companion-circuit]] 一起使用：线性或等效线性部分进入导纳矩阵，随时间变化的源项、历史项和控制输出进入右端电流向量。

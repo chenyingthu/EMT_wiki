@@ -7,6 +7,19 @@ created: "2026-05-02"
 
 # 网表导入导出 (Netlist Import/Export)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[网表导入导出 (Netlist Import/Export)]
+        N0[SPICE 类网表: RLC、源、半导体、子电路]
+        N1[EMTP/ATP 卡片: 节点、支路、电源、开关、TAC…]
+        N2[工具中间格式: XML、JSON、项目文件]
+        N3[自动生成网表: 脚本模板、参数扫描输出]
+        N4[混合导入流程: 网表 + 手工库元件 + 脚本]
+    end
+```
+
+
 ## 技术背景
 
 ### 发展历史

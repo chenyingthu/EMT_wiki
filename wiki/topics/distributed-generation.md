@@ -7,6 +7,18 @@ created: "2026-05-02"
 
 # 分布式发电 (Distributed Generation)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[Distributed Generation]
+        N0[PEMFC: 质子交换膜]
+        N1[SOFC: 固体氧化物]
+        N2[MCFC: 熔融碳酸盐]
+        N3[PAFC: 磷酸]
+    end
+```
+
+
 ## 概述
 
 分布式发电(Distributed Generation, DG)是指在配电网层面接入的小型发电设施，通常容量在几千瓦到几十兆瓦之间，接入电压等级在配电网范围(通常<35kV)，具有靠近负荷、就地消纳、灵活部署等特点。

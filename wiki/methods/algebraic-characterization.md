@@ -7,6 +7,19 @@ created: "2026-05-02"
 
 # 代数表征法 (Algebraic Characterization)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[代数表征法 (Algebraic Characteriz…]
+        N0[线性代数网络: 固定 $\mathbf{Y}$ 与历史源]
+        N1[非线性残差: 残差加雅可比迭代]
+        N2[端口 Norton/Thevenin: 把子网络暴露为端…]
+        N3[Schur 补/节点消去: 消去内部节点形成低维端口矩阵]
+        N4[方程导向 DAE: 保持隐式方程，由工具链排序求解]
+    end
+```
+
+
 ## 定义与边界
 
 代数表征法（Algebraic Characterization）是把 EMT 模型在某一时间步或某一接口处整理成可求解的代数关系。它不是把动态过程“静态化”，而是通过隐式积分、端口等效、变量消去或约束组装，把连续方程和网络约束转成残差形式：

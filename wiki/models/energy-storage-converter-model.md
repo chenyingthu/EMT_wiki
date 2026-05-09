@@ -7,6 +7,18 @@ created: "2026-04-30"
 
 # 储能变流器 (Energy Storage Converter)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[储能变流器 (Energy Storage Conver…]
+        N0[户用储能: 3-20kW]
+        N1[工商业储能: 100kW-2MW]
+        N2[电网级储能: 10-100MW]
+        N3[高压直挂: 10-100MW]
+    end
+```
+
+
 ## 定义与概述
 
 储能变流器（Energy Storage Converter/PCS）是连接储能电池与电网的电力电子接口，实现电池直流电与交流电网之间的双向能量转换。随着可再生能源渗透率提高和电网灵活性需求增加，储能系统在调频、调峰、备用和黑启动等方面发挥着越来越重要的作用。本模型涵盖储能变流器拓扑、双向充放电控制、SOC管理、并网模式切换，适用于电网级储能系统的EMT仿真。

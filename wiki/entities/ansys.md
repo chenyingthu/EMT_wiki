@@ -8,6 +8,18 @@ created: "2026-04-29"
 
 # ANSYS/Maxwell
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[ANSYS/Maxwell]
+        N0[**变压器白盒建模**: 50%]
+        N1[**电机参数提取**: 25%]
+        N2[**电抗器设计**: 15%]
+        N3[**传感器建模**: 10%]
+    end
+```
+
+
 ## 概述
 
 ANSYS Maxwell是ANSYS公司开发的电磁场有限元分析软件，用于电力设备电磁暂态分析。在699篇EMT论文中，ANSYS被提及6次，Maxwell被用于变压器、电机、电抗器等设备的电磁场建模，其结果常被用作EMT仿真模型的验证基准和白盒模型参数提取的参考。

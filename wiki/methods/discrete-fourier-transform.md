@@ -7,6 +7,18 @@ created: "2026-05-04"
 
 # 离散傅里叶变换 (Discrete Fourier Transform)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[离散傅里叶变换 (Discrete Fourier Tr…]
+        N0[采样率: $f_s > 2f_{max}$]
+        N1[窗长: $N$足够大]
+        N2[稳态性: 信号在窗内近似稳态]
+        N3[同步性: 采样与信号同步]
+    end
+```
+
+
 ## 定义与边界
 
 离散傅里叶变换（DFT）是将有限长离散时域序列转换为离散频域表示的数学工具，是连续傅里叶变换在离散时间、离散频率下的实现形式。DFT是EMT仿真中数字信号处理、谐波分析和频谱诊断的基础算法，快速傅里叶变换（FFT）是其高效实现。

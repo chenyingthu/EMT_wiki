@@ -7,6 +7,18 @@ created: "2026-04-30"
 
 # 矢量控制 (Vector Control)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[矢量控制 (Vector Control)]
+        N0[FOC: 磁场定向控制]
+        N1[DTC: 直接转矩控制]
+        N2[DFOC: 直接磁场定向]
+        N3[IFOC: 间接磁场定向]
+    end
+```
+
+
 ## 定义与概述
 
 矢量控制（Vector Control/Field Oriented Control, FOC）是交流电机高性能控制的核心方法，通过坐标变换将交流电机的定子电流分解为产生磁场的励磁分量和产生转矩的转矩分量，实现类似于直流电机的解耦控制。本模型涵盖感应电机和同步电机的矢量控制原理、电流环/速度环设计、直接转矩控制（DTC），适用于电机驱动系统EMT仿真。
