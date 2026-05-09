@@ -1,0 +1,125 @@
+---
+title: "理想开关模型 (Ideal Switch Model)"
+type: model
+tags: [ideal-switch, switch, power-electronics, modeling, companion-circuit, emt]
+created: "2026-05-02"
+---
+
+# 理想开关模型 (Ideal Switch Model)
+
+
+```mermaid
+graph TD
+    subgraph Ncmp[理想开关模型 (Ideal Switch Model)]
+        N0[端口变量: 开关端电压 $v_{sw}$、支路电流 $i…]
+        N1[离散状态: 导通、关断、闭锁、触发允许]
+        N2[触发变量: 门极信号、二极管自然换流条件、晶闸管触发角]
+        N3[代数变量: 节点约束、等效导纳、受控源]
+        N4[历史/事件变量: 插值时刻、上一状态、事件后重初始化标记]
+    end
+```
+
+
+## 定义与边界
+
+理想开关模型（Ideal Switch Model）把开关器件抽象为两个互补约束：导通时端电压为零，关断时支路电流为零。它的物理对象可以是 IGBT、二极管、晶闸管、机械开关或等效受控开关；EMT 等效对象则是状态相关的拓扑约束、节点合并、二值导纳或事件驱动代数方程。
+
+理想开关不是器件物理模型。它不描述导通压降、开关损耗、反向恢复、结电容、门极动态、热状态或 EMI 高频源。它适合表达拓扑逻辑、控制触发和系统级开关事件；若研究器件应力、损耗或传导干扰，应改用 [[detailed-switch-model|详细开关模型]] 或经校准的器件模型。
+
+## EMT 建模对象
+
+理想开关的互补约束可写为：
+
+$$\text{ON}: v_{sw}=0,\qquad \text{OFF}: i_{sw}=0.$$
+
+在实际 EMT 程序中，这种约束通常被转换为以下实现之一：
+
+- 导通时合并节点、关断时移除支路。
+- 用有限 $R_{on}$ 和 $R_{off}$ 近似零阻抗和开路。
+- 用受控源或固定导纳等效避免频繁重构导纳矩阵。
+- 在状态空间模型中按开关状态选择不同的 $\mathbf{A}_{\sigma}$、$\mathbf{B}_{\sigma}$。
+
+若采用二值电阻近似：
+
+$$R_{sw}(\sigma)=
+\begin{cases}
+R_{on}, & \sigma=1\\
+R_{off}, & \sigma=0
+\end{cases},\qquad
+G_{sw}=1/R_{sw}.$$
+
+$R_{on}$ 和 $R_{off}$ 不是通用常数。取值需要同时满足电路物理近似、矩阵条件数、漏流误差和实时平台数值范围。
+
+## 模型结构与接口变量
+
+| 变量类别 | 典型内容 | EMT 作用 |
+|----------|----------|----------|
+| 端口变量 | 开关端电压 $v_{sw}$、支路电流 $i_{sw}$ | 判断约束和接入网络 |
+| 离散状态 | 导通、关断、闭锁、触发允许 | 决定拓扑或导纳 |
+| 触发变量 | 门极信号、二极管自然换流条件、晶闸管触发角 | 产生事件时间 |
+| 代数变量 | 节点约束、等效导纳、受控源 | 进入节点方程 |
+| 历史/事件变量 | 插值时刻、上一状态、事件后重初始化标记 | 防止历史源污染 |
+
+理想开关模型与控制器的边界应明确。PWM、保护闭锁和死区逻辑产生开关命令；理想开关模型只把这些命令或自然换流条件转化为网络事件。
+
+## 建模层级
+
+| 层级 | 保留内容 | 适合用途 | 边界 |
+|------|----------|----------|------|
+| 互补约束开关 | ON/OFF 拓扑 | 理论分析、拓扑逻辑 | 可能造成奇异拓扑和事件不连续 |
+| 二值电阻开关 | 有限导纳比 | 常规 EMT 系统级仿真 | 条件数和非物理漏流需验证 |
+| 固定导纳开关 | 固定矩阵结构和补偿源 | 实时仿真、FPGA 或大规模开关网络 | 需证明等效误差和能量一致性 |
+| 分段线性开关 | 近似伏安曲线 | 损耗粗估和常规器件暂态 | 参数需要器件资料支撑 |
+| 详细器件模型 | 电容、恢复、门极、热 | 器件应力、EMI、损耗 | 计算刚性强，验证成本高 |
+
+## 适用边界与失败模式
+
+- 理想开关不能用于开关损耗、热设计、反向恢复和器件过电压定量结论。
+- 同一节点间理想电压源、电容短路或电感开路可能造成代数奇异或非物理冲击。
+- 开关事件落在步长内部时，若不做 [[voltage-interpolation|插值]] 或子步处理，事件时刻误差会进入波形和能量。
+- 拓扑切换后，电感电流和电容电压历史项需要一致性处理；否则可能产生 [[numerical-oscillation-suppression|数值振荡]]。
+- 二值电阻的导纳比过大可能使 [[nodal-admittance-matrix|节点导纳矩阵]] 病态；过小则会引入明显导通压降或关断漏流。
+- 把理想开关结果与详细器件结果比较时，应分开报告拓扑误差、器件动态误差和数值积分误差。
+
+## 验证需求
+
+理想开关模型的验证应围绕用途：
+
+1. 拓扑逻辑：开关状态、互锁、死区和闭锁条件是否与控制命令一致。
+2. 网络数值：导纳矩阵是否非奇异，事件后历史项是否重初始化，能量变量是否连续到可接受范围。
+3. 对照模型：系统级波形是否与详细开关或平均模型在目标频段一致。
+4. 不适用声明：损耗、EMI、器件应力等是否明确排除或由其他模型验证。
+
+若用于实时仿真，还需报告固定步长、矩阵更新策略、事件处理和计算裕度；不能只说理想开关“更快”。
+
+## 代表性来源
+
+| 来源 | 可支撑内容 | 证据边界 |
+|------|------------|----------|
+| [[accurate-time-domain-simulation-of-power-electronic-circuits]] | 电力电子开关电路时域仿真的事件和数值处理入口 | 具体算法效果限于原文电路 |
+| [[a-bridge-arm-module-based-fixed-admittance-adc-model-for-converters-in-emt-simul]] | 固定导纳开关/桥臂等效路线 | 不代表所有拓扑都可免重构 |
+| [[基于fpga的电力电子恒导纳开关模型修正算法及实时仿真架构]] | FPGA 实时场景中的恒导纳修正 | 平台和步长结论需绑定原文 |
+| [[电力系统电磁暂态仿真igbt详细建模及应用]] | 详细 IGBT 模型和理想化模型边界 | 器件结论依赖参数和测试工况 |
+| [[an-improved-high-accuracy-interpolation-method-for-switching-devices-in-emt-simu]] | 开关器件事件插值方法入口 | 插值收益需限于原文算例 |
+
+## 与相关页面的关系
+
+- [[switch-modeling]] 是开关建模方法总览。
+- [[switching-function-method]] 把开关状态写成函数或调制变量。
+- [[state-space-average-method]] 和 [[average-value-model]] 平均掉开关周期细节。
+- [[detailed-switch-model]]、[[igbt-model]] 和 [[diode-model]] 描述更接近器件物理的模型。
+- [[fixed-admittance]]、[[companion-model]] 和 [[trapezoidal-rule]] 说明理想开关接入 EMT 求解器时的数值接口。
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[creating-an-electromagnetic-transients-program-in-matlab-matemtp-power-delivery-|Creating An Electromagnetic Transients Program In Matlab: Ma]] | 2004 |
+| [[on-a-new-approach-for-the-simulation-of-transients|On a new approach for the simulation of transients]] | 2007 |
+| [[development-of-data-translators-for-interfacing-13&14|Development of Data Translators for Interfacing Power-Flow P]] | 2013 |
+| [[enhanced-high-speed-electromagnetic-transient-simulation-17|Enhanced high-speed electromagnetic transient simulation]] | 2016 |
+| [[enhanced-high-speed-electromagnetic-transient-simulation|Enhanced high-speed electromagnetic transient simulation]] | 2016 |
+| [[线性开关电路电磁暂态分析的状态方程法|线性开关电路电磁暂态分析的状态方程法]] | 2016 |
+| [[accurate-time-domain-simulation-of-power-electronic-circuits|Accurate time-domain simulation of power electronic circuits]] | 2021 |
+| [[parallel-computation-of-power-system-emts-through-polyphase-qmf-filter-banks|Parallel computation of power system EMTs through Polyphase-]] | 2021 |
+| [[equivalent-modeling-of-electromagnetic-transient-for-mmc-hvdc-based-on-semi-impl|Equivalent modeling of electromagnetic transient for MMC-HVD]] | 2026 |

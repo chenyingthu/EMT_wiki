@@ -1,0 +1,150 @@
+# 开关建模方法 (Switch Modeling)
+
+
+```mermaid
+graph TD
+    subgraph Ncmp[switch-modeling]
+        N0[理想开关: 导通/关断拓扑]
+        N1[二值电阻: 状态相关导纳]
+        N2[分段线性: 近似伏安曲线]
+        N3[详细器件: 电容、恢复、门极和损耗]
+        N4[热电耦合: 温度相关参数]
+    end
+```
+
+
+## 技术背景
+
+### 发展历史
+该技术源于电力系统仿真领域的长期研究积累，随着电力电子设备在电网中的广泛应用而日益重要。
+
+### 研究现状
+当前学术界和工业界对该技术的研究主要集中在提升仿真效率、计算效率和模型通用性方面。
+
+### 技术挑战
+- 大规模系统的计算复杂度问题
+- 多时间尺度混合仿真的协调问题
+- 实时仿真的时效性要求
+- 模型验证和不确定性量化
+
+## 定义与边界
+
+开关建模方法说明 EMT 仿真中如何表示功率半导体器件和机械开关的导通、关断、触发、换流和非理想暂态。它的对象是开关事件和网络方程的变化，而不是控制器本身，也不同于 [[average-value-model]] 对开关周期的平均化。
+
+在详细 EMT 中，开关状态会改变支路导纳、历史电流源、受控源或节点连接关系。模型越接近器件物理，越需要更小步长、更多参数和更严格验证；模型越接近理想开关，越适合系统级事件和拓扑逻辑分析。
+
+## EMT 中的作用
+
+开关建模是电力电子 EMT 的关键边界层：
+
+- 将门极信号、自然换流条件或保护逻辑转换成网络事件。
+- 在节点方程中更新开关支路的等效导纳或约束。
+- 处理开关事件后的历史项重置、插值和数值阻尼。
+- 决定是否能观察到器件应力、反向恢复、死区畸变、开关损耗和高频振荡。
+
+若研究目标只关注低频功率交换，可使用 [[average-value-model]] 或 [[state-space-average-method]]；若关注开关沿和器件应力，应使用详细开关模型并用器件资料或实验波形校准。
+
+## 核心方程
+
+### 理想开关
+
+理想开关可写为互补约束：
+
+$$
+\text{ON}: v_{\mathrm{sw}}=0,\qquad
+\text{OFF}: i_{\mathrm{sw}}=0.
+$$
+
+这种表示清楚但会带来拓扑切换和约束切换，实际程序常改写为等效导纳或节点合并。
+
+### 二值电阻模型
+
+常见系统级实现把开关写为状态相关电阻：
+
+$$
+R_{\mathrm{sw}}(t)=
+\begin{cases}
+R_{\mathrm{on}}, & \text{ON}\\
+R_{\mathrm{off}}, & \text{OFF}
+\end{cases}
+$$
+
+节点导纳贡献为：
+
+$$
+Y_{ii}\leftarrow Y_{ii}+G_{\mathrm{sw}},\quad
+Y_{ij}\leftarrow Y_{ij}-G_{\mathrm{sw}},\quad
+G_{\mathrm{sw}}=\frac{1}{R_{\mathrm{sw}}}.
+$$
+
+$R_{\mathrm{on}}$ 与 $R_{\mathrm{off}}$ 的取值必须与器件、标幺基准和矩阵条件数一起验证；没有来源时不应写固定数值范围。
+
+### 分段线性和详细模型
+
+分段线性模型用若干线性区段近似器件伏安特性：
+
+$$
+i_{\mathrm{sw}}=g_k v_{\mathrm{sw}}+b_k,\qquad v_{\mathrm{sw}}\in\Omega_k.
+$$
+
+详细模型可进一步加入门极电路、结电容、反向恢复、热网络和损耗表。此类模型的可信度依赖器件数据手册、双脉冲试验或厂商模型，而不能只由 EMT 网络方程保证。
+
+## 变体
+
+| 建模层级 | 保留内容 | 主要用途 | 主要风险 |
+|----------|----------|----------|----------|
+| 理想开关 | 导通/关断拓扑 | 拓扑逻辑、概念验证 | 无损耗和开关暂态 |
+| 二值电阻 | 状态相关导纳 | 系统级 EMT、保护事件 | 条件数和非物理漏流 |
+| 分段线性 | 近似伏安曲线 | 常规电力电子暂态 | 参数区段需要校准 |
+| 详细器件 | 电容、恢复、门极和损耗 | 器件应力、EMI、损耗 | 参数多、计算刚性强 |
+| 热电耦合 | 温度相关参数 | 可靠性和热限制 | 需要热边界和实验验证 |
+
+## 数值实现要点
+
+- **事件检测**：晶闸管、二极管和受控开关的触发条件不同，应分别建模。
+- **事件插值**：若开关时刻落在步长内部，需要插值或子步长处理，否则波形和能量会偏移。
+- **历史项处理**：梯形积分等伴随模型在拓扑改变时需要重置或阻尼，否则可能出现数值振荡。
+- **导纳矩阵更新**：开关状态改变会触发矩阵重组或重分解；实时仿真常用预计算、固定导纳或分区策略降低成本。
+- **多开关同步**：同一时刻多个开关动作可能造成奇异拓扑或冲击电流，需要拓扑约束检查。
+
+## 适用边界与失败模式
+
+- 二值电阻模型不能给出开关损耗和反向恢复波形。
+- 理想开关可能掩盖寄生电容引起的过电压和高频振荡。
+- 过大的 $R_{\mathrm{off}}/R_{\mathrm{on}}$ 比值可能恶化导纳矩阵条件数。
+- 详细器件模型若缺少可靠参数，可能比简化模型更不可信。
+- 平均模型适合低频行为，但不能替代保护动作、器件应力和电磁干扰分析。
+
+## 代表性证据边界
+
+- [[a-numerically-efficient-and-accurate-model-for-real-time-simulation-of-solid-sta]] 代表实时仿真中高效开关建模的研究路线，具体速度和误差只对该模型和平台成立。
+- [[a-bridge-arm-module-based-fixed-admittance-adc-model-for-converters-in-emt-simul]] 代表固定导纳开关等效的实现思想，不能外推为所有拓扑都无需重分解。
+- [[电力系统电磁暂态仿真igbt详细建模及应用]] 代表 IGBT 详细建模需要器件参数和应用边界。
+- [[基于fpga的电力电子恒导纳开关模型修正算法及实时仿真架构]] 代表 FPGA 实时场景中的固定导纳修正路线。
+
+## 与相关页面的关系
+
+- [[switching-function-method]]：提供开关状态的函数表达。
+- [[average-value-model]]：平均掉开关周期细节，适合低频系统级研究。
+- [[fixed-admittance]]：通过固定等效导纳降低矩阵重构成本。
+- [[stiff-system-handling]]：处理开关和寄生参数造成的刚性。
+- [[igbt-model]]、[[diode-model]]、[[ideal-switch-model]]：具体器件或模型页面。
+
+## 开放问题
+
+开关模型的主要开放风险是参数可信度和数值事件处理。页面中若给出器件参数、步长或加速比，必须绑定到具体来源、器件等级、平台和工况；否则应写成模型选择原则，而不是通用数值结论。
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[potential-risk-of-failures-in-switching-ehv-shunt-reactors|Potential risk of failures in switching EHV shunt reactors]] | 2006 |
+| [[application-of-emtp-rv-graphic-software-of-electromagnetic-transient-simulation|Application of EMTP-RV graphic software of electromagnetic t]] | 2007 |
+| [[a-link-between-emtp-rv-and-flux3d-for-transformer-energization-studies|A link between EMTP-RV and FLUX3D for transformer energizati]] | 2009 |
+| [[modulation-index-dependent-thevenin-equivalent-circuit-model-of-vsc-and-apdr|Modulation Index Dependent Thévenin Equivalent Circuit Model]] | 2015 |
+| [[accurate-simulation-model-for-a-three-phase-ferroresonant-circuit-in-emtpatp|Accurate simulation model for a three-phase ferroresonant ci]] | 2018 |
+| [[an-inverter-model-simulating-accurate-harmonics-with-low-computational-burden-fo|An Inverter Model Simulating Accurate Harmonics with Low Com]] | 2020 |
+| [[comparison-and-selection-of-grid-tied-inverter-models-for-accurate-and-efficient|Comparison and Selection of Grid-Tied Inverter Models for Ac]] | 2021 |
+| [[equivalent-model-of-nearest-level-modulation-for-fast-electromagnetic-transient-|Equivalent model of nearest level modulation for fast electr]] | 2023 |
+| [[modelling-of-electromagnetic-transients-in-multi-unit-high-voltage-circuit-break|Modelling of electromagnetic transients in multi-unit high-v]] | 2024 |
+| [[a-new-model-of-trapped-charge-sources-in-switching-transient-studies-in-the-pres|A New Model of Trapped Charge Sources in Switching Transient]] | 2025 |

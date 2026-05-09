@@ -99,15 +99,9 @@ def check_network_issues(content, all_pages):
     for link in wikilinks:
         link_clean = link.split('|')[0].strip()
         # 构建可能的文件路径
-        possible_paths = [
-            f'wiki/{link_clean}.md',
-            f'wiki/methods/{link_clean}.md',
-            f'wiki/models/{link_clean}.md',
-            f'wiki/topics/{link_clean}.md',
-            f'wiki/entities/{link_clean}.md',
-            f'wiki/sources/{link_clean}.md',
-        ]
-        if not any(os.path.exists(p) for p in possible_paths):
+        # 在 wiki/ 下递归搜索文件（支持子目录）
+        matches = list(Path('wiki').rglob(f'{link_clean}.md'))
+        if not matches:
             issues.append(f'断链: [[{link_clean}]]')
             if len(issues) > 5:  # 限制报告数量
                 break

@@ -92,34 +92,14 @@ def update_page(filepath, papers, page_slug):
 def main():
     wikilinks = collect_wikilinks()
 
-    # Map taxonomy page slugs to their wikilink keys
-    page_dirs = {
-        'wiki/topics': ['co-simulation', 'dynamic-phasor', 'frequency-dependent-modeling',
-                        'network-equivalent', 'parallel-computing', 'real-time-simulation',
-                        'vsc-hvdc', 'ferroresonance', 'cable-modeling', 'harmonic-analysis',
-                        'wind-farm-modeling'],
-        'wiki/methods': ['average-value-model', 'fixed-admittance', 'multirate-method',
-                         'nodal-analysis', 'numerical-integration', 'passivity-enforcement',
-                         'state-space-method', 'vector-fitting',
-                         'interpolation-method', 'prony-analysis'],
-        'wiki/models': ['mmc-model', 'cable-model', 'dfig-model', 'fdne-model',
-                        'synchronous-machine-model', 'transformer-model',
-                        'transmission-line-model', 'vsc-model',
-                        'lcc-model', 'pmsm-model'],
-        'wiki/entities': ['atp-emtp', 'emtp', 'manitoba-hydro', 'polytechnique-montreal',
-                          'pscad-emtdc', 'rtds', 'university-manitoba',
-                          'gole', 'mahseredjian'],
-    }
+    categories = ['wiki/topics', 'wiki/methods', 'wiki/models', 'wiki/entities']
 
     total_updated = 0
-    for dir_path, slugs in page_dirs.items():
-        for slug in slugs:
-            filepath = os.path.join(dir_path, f'{slug}.md')
-            if not os.path.exists(filepath):
-                continue
-
+    for cat_dir in categories:
+        for md_file in sorted(glob.glob(os.path.join(cat_dir, '**', '*.md'), recursive=True)):
+            slug = get_page_slug(md_file)
             papers = wikilinks.get(slug, [])
-            count = update_page(filepath, papers, slug)
+            count = update_page(md_file, papers, slug)
             if count:
                 print(f'  {slug}.md: {count} papers')
                 total_updated += 1

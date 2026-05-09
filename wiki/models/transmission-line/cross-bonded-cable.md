@@ -1,0 +1,182 @@
+---
+title: "交叉互联电缆 (Cross-Bonded Cable)"
+type: model
+tags: [cross-bonded-cable, cable-modeling, underground-cable, sheath-bonding, emt]
+created: "2026-05-04"
+---
+
+# 交叉互联电缆 (Cross-Bonded Cable)
+
+
+```mermaid
+graph TD
+    subgraph Ncmp[交叉互联电缆 (Cross-Bonded Cable)]
+        N0[对称布置: 三相间距相等]
+        N1[长度: 通常为3的整数倍]
+        N2[换位: 护套交叉互联]
+        N3[接地: 至少两端接地]
+    end
+```
+
+
+## 定义与边界
+
+交叉互联电缆是指三相高压电缆的金属护套（金属屏蔽层）通过交叉换位连接方式实现电气互联的电缆系统。该设计通过将护套分段并交叉连接，抵消三段感应电压的矢量和，从而在护套回路中抑制感应电流、降低损耗。
+
+在电力系统分析中，交叉互联电缆模型主要应用于：
+- 高压交流电缆系统的电磁暂态仿真
+- 护套感应电压与环流计算
+- 电缆故障分析与定位
+- 接地系统设计与安全评估
+
+**边界限定**：本模型适用于三相对称布置的交流电缆系统，直流电缆或非对称布置需特殊处理。
+
+## EMT中的作用
+
+交叉互联电缆模型是准确分析高压电缆系统的关键：
+
+- **护套损耗计算**：准确评估感应电流引起的附加损耗
+- **接地设计优化**：确定护套接地方式与接地电阻要求
+- **故障电流分布**：分析单相接地故障时护套电流路径
+- **过电压评估**：评估护套感应过电压与绝缘配合
+
+## 主要分支与机制
+
+### 1. 交叉互联原理
+
+三相电缆护套在三个连续段中交叉换位：
+- 第1段：A相护套→A，B相护套→B，C相护套→C
+- 第2段：A相护套→C，B相护套→A，C相护套→B
+- 第3段：A相护套→B，B相护套→C，C相护套→A
+
+理想情况下，三相对称电流产生的护套感应电压矢量和为零：
+$$\dot{E}_A + \dot{E}_B + \dot{E}_C = 0$$
+
+### 2. 护套接地方式
+
+- **单端接地**：仅一端护套接地，另一端经保护器接地
+- **交叉互联接地**：三段交叉互联后两端接地
+- **连续互联接地**：护套多点直接接地（用于短电缆）
+
+### 3. 护套过电压保护
+
+护套电压限制器(SVL)限制护套过电压：
+- 额定电压：根据护套绝缘水平选择
+- 残压：雷电流下的保护水平
+- 通流容量：热稳定要求
+
+## 形式化表达
+
+### 护套感应电压
+
+对于单芯电缆，护套感应电压与线芯电流关系：
+
+$$\mathbf{V}_s = j\omega \mathbf{M} \mathbf{I}_c$$
+
+其中互感矩阵：
+$$M_{ij} = \frac{\mu_0}{2\pi} \ln\frac{d_{ij}'}{d_{ij}}$$
+
+$d_{ij}$ 为线芯 $i$ 到护套 $j$ 的几何均距，$d_{ij}'$ 为镜像距离。
+
+### 交叉互联段模型
+
+对于第 $k$ 个交叉互联段，护套回路电压方程：
+
+$$\mathbf{V}_s^{(k)} = \mathbf{Z}_s \mathbf{I}_s^{(k)} + \mathbf{Z}_m \mathbf{I}_c$$
+
+考虑交叉互联连接矩阵 $\mathbf{C}_k$，三段总电压：
+
+$$\sum_{k=1}^{3} \mathbf{C}_k^T \mathbf{V}_s^{(k)} = \mathbf{Z}_s \sum_{k=1}^{3} \mathbf{C}_k^T \mathbf{I}_s^{(k)} + \sum_{k=1}^{3} \mathbf{C}_k^T \mathbf{Z}_m \mathbf{I}_c$$
+
+理想交叉互联下，感应电压矢量和为零。
+
+### 护套环流计算
+
+护套回路阻抗：
+$$Z_{loop} = 3(R_s + j\omega L_s) + 2R_g + j\omega L_g$$
+
+其中 $R_s, L_s$ 为护套电阻电感，$R_g, L_g$ 为接地回路阻抗。
+
+护套环流：
+$$I_s = \frac{E_{unbalance}}{Z_{loop}}$$
+
+$E_{unbalance}$ 为三相不对称引起的不平衡电压。
+
+## 适用边界与失败模式
+
+### 适用条件
+
+| 条件 | 要求 | 说明 |
+|------|------|------|
+| 对称布置 | 三相间距相等 | 保证感应电压平衡 |
+| 长度 | 通常为3的整数倍 | 完整交叉互联节距 |
+| 换位 | 护套交叉互联 | 按标准方式连接 |
+| 接地 | 至少两端接地 | 形成回路 |
+
+### 失效边界
+
+- **大段长**：护套段过长导致感应电压过高，超过SVL额定值
+- **严重不对称**：三相电流不平衡度>10%，感应电压无法抵消
+- **接地不良**：接地电阻过大限制护套故障电流
+- **护套开路**：交叉互联箱进水或连接断开导致过电压
+
+### 关键假设
+
+1. 三相对称布置，几何参数一致
+2. 土壤电阻率均匀或分段均匀
+3. 护套连续互联段电气对称
+4. 线芯-护套间绝缘完整
+
+## 代表性来源
+
+### 经典文献
+
+- Wedepohl, L.M. and Wilcox, D.J., "Transient Analysis of Underground Power-Transmission Systems," *Proc. IEE*, 1973. - 电缆暂态分析经典
+- Dommel, H.W., "Electromagnetic Transients Program Reference Manual," *BPA*, 1986. - EMTP电缆模型
+
+### 电缆建模
+
+- [[cable-model]] - 电缆模型基础
+- [[transmission-line-model]] - 传输线模型
+- [[frequency-dependent-line-model]] - 频变线路模型
+
+### 接地系统
+
+- [[grounding-system-model]] - 接地系统模型
+- [[ground-potential-rise]] - 地电位升分析
+
+## 与相关页面的关系
+
+- [[cable-model]] - 电缆建模基础
+- [[transmission-line-model]] - 输电线路模型
+- [[grounding-system-model]] - 接地系统设计
+- [[frequency-dependent-modeling]] - 频变参数建模
+- 护套环流分析
+- [[emt-simulation]] - 电磁暂态仿真
+
+## 开放问题
+
+- 含多回并行电缆的交叉互联优化设计
+- 护套故障对交叉互联系统的影响分析
+- 高频暂态（VFTO）下交叉互联电缆的建模
+- 基于分布式光纤测温的护套状态监测
+
+## 参考标准
+
+- IEC 60287 - 电缆额定电流计算
+- IEC 60949 - 短路电流计算（含电缆）
+- IEEE Std. 575 - 高压电缆护套接地应用导则
+
+---
+
+*本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。如有更新或修正，请参考最新研究进展。*
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[fast-electromagnetic-transient-model-for-mmc-hvdc-considering-dc-fault|Fast Electromagnetic Transient Model for MMC-HVDC Considerin]] | 2018 |
+| [[effect-of-frequency-dependent-soil-parameters-on-wave-propagation-and-transient-|Effect of frequency-dependent soil parameters on wave propag]] | 2020 |
+| [[earth-return-admittance-impact-on-crossbonded-underground-cables|Earth return admittance impact on crossbonded underground ca]] | 2021 |
+| [[algorithm-for-fast-calculating-the-energization-overvoltages-along-a-power-cable|Algorithm for fast calculating the energization overvoltages]] | 2022 |
+| [[multi-conductor-cable-modeling-with-inclusion-of-measured-coaxial-wave-propagati|Multi-Conductor Cable Modeling With Inclusion of Measured Co]] | 2023 |

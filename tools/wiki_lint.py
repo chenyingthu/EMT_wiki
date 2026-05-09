@@ -46,6 +46,7 @@ def resolve_link(link_name, pages):
     尝试多种匹配策略:
     1. 直接匹配 (如: topics/co-simulation)
     2. 在categories中查找 (如: co-simulation -> topics/co-simulation)
+    3. 在categories的子目录中递归查找
     """
     categories = ['topics', 'methods', 'models', 'entities', 'sources']
 
@@ -53,14 +54,17 @@ def resolve_link(link_name, pages):
     if link_name in pages:
         return link_name
 
-    # 2. 在各分类目录中查找
+    # 2. 在各分类目录中查找（含子目录递归）
     for cat in categories:
         full_path = f"{cat}/{link_name}"
         if full_path in pages:
             return full_path
+        # 递归搜索子目录：cat/任意子目录/link_name
+        prefix = f"{cat}/"
+        for key in pages:
+            if key.startswith(prefix) and key.endswith(f"/{link_name}"):
+                return key
 
-    # 3. 尝试子目录链接 (如 methods/vector-fitting 中的 vector-fitting 链接)
-    # 返回原始名称作为失败标记
     return None
 
 def check_links():
@@ -125,8 +129,8 @@ def check_topics_methods_models_entities():
     for category in ['topics', 'methods', 'models', 'entities']:
         category_dir = WIKI_DIR / category
         if category_dir.exists():
-            for md_file in category_dir.glob("*.md"):
-                link_name = f"{category}/{md_file.stem}"
+            for md_file in category_dir.rglob("*.md"):
+                link_name = str(md_file.relative_to(WIKI_DIR).with_suffix(''))
                 results[category].append(link_name)
 
     return results

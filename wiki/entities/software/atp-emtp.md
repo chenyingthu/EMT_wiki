@@ -1,0 +1,309 @@
+---
+title: "ATP-EMTP"
+type: entity
+entity_type: tool
+tags: [atp, emtp, freeware, simulation-tool]
+created: "2026-04-13"
+---
+
+# ATP-EMTP
+
+
+```mermaid
+graph TD
+    subgraph Ncmp[ATP-EMTP]
+        N0[线路、接地网、雷电暂态: 频变线路和行波模型成熟，适合构…]
+        N1[变压器/电抗器宽频模型验证: 可把白盒或黑盒等效模型接入…]
+        N2[保护和控制逻辑原型: TACS/MODELS 支持控制方…]
+        N3[教学和开源复现: 低成本、输入文件可公开]
+    end
+```
+
+
+## 概述
+
+ATP（Alternative Transients Program）是EMTP的免费教育版本，基于经典EMTP代码开发，广泛用于学术研究和工程应用。其源代码不公开，因此不属于开源软件。
+
+## 核心原理详解
+
+ATP-EMTP 属于 EMTP 家族，基本计算框架仍是 Dommel 伴随电路法：电感、电容和传输线在每个时步被离散为等效导纳与历史电流源，然后求解节点电压方程。
+
+$$
+Y_{\mathrm{bus}} v(t)=i_{\mathrm{inj}}(t)+i_{\mathrm{hist}}(t)
+$$
+
+其中 $Y_{\mathrm{bus}}$ 是由网络拓扑和离散等效导纳形成的节点导纳矩阵，$i_{\mathrm{hist}}$ 保存上一时步储能元件和传输线行波历史。ATP 的工程价值在于：它提供了低成本、可脚本化、可复现实验的 EMT 基线环境，适合论文算法验证、教学和中小规模暂态研究。
+
+## 特点
+
+- 教育用途免费
+- 与EMTP兼容
+- ATPDraw图形界面
+- 全球用户社区
+
+## 关键技术详解
+
+- **伴随电路与梯形积分**：适合 RLC 网络、线路暂态和开关操作；若发生数值振荡，需要使用阻尼、插值开关或改进积分策略。
+- **TACS/MODELS 扩展**：可构造控制系统、继电保护逻辑和用户自定义元件，是论文复现实验常用入口。
+- **线路与电缆模型**：支持 Bergeron、JMarti/频变线路等模型，适合雷电、操作过电压和行波保护研究。
+- **ATPDraw 前端**：降低模型搭建门槛，但复杂批处理和参数扫描仍常依赖文本输入文件。
+
+## 与EMTP-RV的区别
+
+- ATP为教育用途免费，EMTP-RV为商业软件
+- EMTP-RV功能更新更活跃
+- 两者核心求解方法相同
+
+## 代表性用途
+
+| 用途 | 为什么选 ATP | 需要额外说明 |
+|------|-------------|--------------|
+| 线路、接地网、雷电暂态 | 频变线路和行波模型成熟，适合构造可复现实验 | 需要给出线路参数、土壤模型和频率范围 |
+| 变压器/电抗器宽频模型验证 | 可把白盒或黑盒等效模型接入 EMTP 网络比较端口响应 | 只给“ATP 波形吻合”不足以证明宽频无源性 |
+| 保护和控制逻辑原型 | TACS/MODELS 支持控制方程和继电逻辑 | 控制采样、延时和插值设置会改变暂态波形 |
+| 教学和开源复现 | 低成本、输入文件可公开 | 复杂商业库元件需要自行等效或简化 |
+
+## 代表性页面
+
+- [[implementation-of-modal-domain-transmission-line-models-in-the-atp-software]]：展示线路模型如何在 ATP 软件环境中实现，适合作为“工具实现”而非新物理模型的证据。
+- [[optimized-high-frequency-white-box-transformer-model-for-implementation-in-atp-e]]：说明 ATP 常被用来承载高频变压器白盒模型，并与测量或其他仿真结果对比。
+- [[grounding-grids-in-electro-magnetic-transient-simulations-with-frequency-depende]]：把 ATP 用作接地网频变暂态研究平台，重点在外部等效模型而不是 ATP 求解器本身。
+
+## 证据使用规则
+
+- 若论文只是“在 ATP 中搭建模型”，应把 ATP 视为验证平台；真正贡献通常在元件模型、参数辨识、接口算法或案例设置。
+- 若论文比较 ATP 与自研程序，需核查两者是否使用相同积分步长、线路模型、开关时刻和初值，否则波形差异可能来自仿真配置。
+- 若页面声称“开源复现”，应至少保留输入文件、版本或关键参数；只有软件名称不能构成可复现实验。
+
+## 页面质量检查清单
+
+| 检查项 | 合格写法 | 常见误区 |
+|--------|----------|----------|
+| 版本与入口 | 写明 ATP/EMTP、ATPDraw、TACS 或 MODELS 中实际用到的 1 个入口 | 只写“用 ATP 仿真” |
+| 数值设置 | 至少列出时间步长、仿真时长、开关时刻、线路模型这 4 类设置 | 把默认设置当作可复现实验 |
+| 模型责任 | 明确贡献在外部元件模型、参数辨识、控制逻辑还是工具实现 | 把 ATP 求解器本身当成论文贡献 |
+| 基准对比 | 说明比较对象是测量、解析解、PSCAD/EMTDC、EMTP-RV 还是自研程序 | 只用“波形一致”描述验证 |
+
+对源论文页面做质量提升时，ATP 相关证据至少应回答 3 个问题：输入文件是否可复现，关键参数是否足够重建算例，ATP 与对照工具的数值设置是否一致。若这 3 点缺失，页面应把结论降级为“作者在 ATP 平台上演示”，而不是“模型已被充分验证”。这对于雷电暂态、铁磁谐振和保护动作尤其重要，因为 1 个开关插值选项或 1 个线路频变模型选择就可能改变高频波形。
+
+## 适用边界与注意事项
+
+- ATP 适合可公开复现的 EMT 研究和教学，但大型商业工程模型、现代电力电子库和图形化工作流通常不如 [[emtp|EMTP-RV]] 或 [[pscad-emtdc|PSCAD/EMTDC]] 完整。
+- 使用 ATP 复现论文时，应明确版本、时间步长、线路模型和开关插值设置；这些设置会显著影响高频暂态和数值振荡。
+- 对含大量电力电子开关的实时或超实时仿真，ATP 通常不是目标平台，更适合作为离线参考或算法原型。
+
+## 开放问题
+
+- 如何在保持 ATP 可复现和低成本优势的同时，更好支持现代电力电子平均模型、宽频模型和自动化参数扫描。
+- 如何把 ATP 生成的基准结果与 Python/Julia/Modelica 等新工具链中的 EMT 求解器做可比较验证。
+
+## 技术演进脉络
+
+### 1980年代 (EMTP起源与ATP诞生)
+- **EMTP诞生 (1960s-1970s)**
+  - 💡 美国邦纳维尔电力局(BPA)的H.W. Dommel开发电磁暂态程序原型
+  - 采用梯形积分法和节点分析法，奠定EMT仿真基础
+- **ATP项目启动 (1980s)**
+  - 💡 加拿大曼尼托巴大学主导开发Alternative Transients Program
+  - 基于公开EMTP代码，创建免费开源版本供学术界使用
+  - 继承Dommel算法核心，保持与商业EMTP兼容性
+
+### 1990年代 (ATPDraw与TACS扩展)
+- **ATPDraw图形界面 (1990s)**
+  - 💡 引入图形化建模前端，降低命令行输入门槛
+  - 支持拖拽式元件放置和连线，提升建模效率
+- **TACS控制系统扩展**
+  - 💡 新增Transient Analysis of Control Systems模块
+  - 支持继电器逻辑、控制系统和自定义元件建模
+- **MODELS语言引入**
+  - 💡 提供高级建模语言，支持复杂非线性元件和控制策略
+  - 增强用户自定义模型的灵活性
+
+### 2000年代 (线路模型与并行化)
+- **频变线路模型强化 (2000-2010)**
+  - 💡 完善J. Marti频变线路模型，支持宽频暂态分析
+  - 增强Bergeron模型和Noda模型的适用性
+  - 广泛用于雷电过电压和行波保护研究
+- **铁磁谐振与非线性建模**
+  - 💡 引入Jiles-Atherton磁滞模型支持变压器饱和建模
+  - 支持铁磁谐振、涌流和次同步振荡分析
+
+### 2010年代 (开源生态与验证基准)
+- **开源社区壮大 (2010-2020)**
+  - 💡 全球用户社区贡献模型库和验证案例
+  - 成为学术研究中可复现仿真的首选平台
+  - 广泛用于教学、研究和算法验证
+- **变压器宽频建模应用**
+  - 💡 支持白盒/黑盒变压器宽频模型实现与验证
+  - 成为变压器谐波、涌流和过电压研究的主流工具
+
+### 2020年代 (现代化与多物理场)
+- **与Python/Julia集成 (2020+)**
+  - 💡 支持与现代编程语言的数据交换
+  - 便于自动化参数扫描和机器学习集成
+- **多物理场扩展**
+  - 💡 电热联合仿真能力增强
+  - 支持接地网暂态和电磁环境分析
+
+## 关键发现汇总
+
+### 开源验证优势
+- **[2010-2020]** ATP-EMTP成为学术研究中最用于的开源EMT仿真平台，支持可复现性要求
+- **[2018]** 基于Jiles-Atherton磁滞模型的变压器铁磁谐振仿真，波形相似度>0.9，峰值误差<5%
+- **[2020+]** 在接地网、行波保护和变压器宽频建模研究中，ATP被用作基准验证平台
+
+### 数值精度与稳定性
+- **[2003]** 线性插值算法将开关时刻定位误差从1个步长(50μs对应0.9°)降至步长内分数级
+- **[2003]** 半步长插值机制完全消除梯形积分数值振荡，虚假电压尖峰从-4000kV降至0V
+- **[2018]** JA磁滞模型相比传统多项式/分段线性模型，在暂态过程中失真显著降低
+
+### 模型灵活性
+- **[1990s+]** TACS/MODELS扩展使ATP可构造复杂控制逻辑和继电保护原型
+- **[2010+]** 支持真空断路器(VCB)截流、重燃和熄弧精细建模
+- **[2020+]** 频变线路模型支持0.1Hz-MHz级宽频暂态分析
+
+## 深度增强内容
+
+### 1. ATP-EMTP数学基础
+
+#### 1.1 节点导纳方程
+
+ATP核心求解器基于Dommel梯形积分法：
+
+$$
+Y_{bus} \cdot v(t) = i_{inj}(t) + i_{hist}(t)
+$$
+
+其中：
+- $Y_{bus}$: 节点导纳矩阵（包含离散等效导纳）
+- $i_{hist}$: 历史电流源（储能元件和传输线行波）
+- $v(t)$: 节点电压向量
+
+#### 1.2 梯形积分离散化
+
+**电感离散：**
+$$
+i_L(t) = \frac{\Delta t}{2L}v_L(t) + i_{hist,L}(t-\Delta t)
+$$
+
+**电容离散：**
+$$
+i_C(t) = \frac{2C}{\Delta t}v_C(t) + i_{hist,C}(t-\Delta t)
+$$
+
+**历史项更新：**
+$$
+i_{hist}(t) = -i(t-\Delta t) - \frac{2}{\Delta t}v(t-\Delta t)
+$$
+
+#### 1.3 开关插值算法
+
+线性插值精确定位开关时刻：
+
+$$
+v(t_0 + X\Delta t) = v(t_0) + X[v(t_0+\Delta t) - v(t_0)]
+$$
+
+其中 $X \in (0,1)$ 为开关动作时刻占步长比例。
+
+半步长插值消除数值振荡：
+$$
+v(t+\Delta t/2) = \frac{v(t) + v(t+\Delta t)}{2} + \frac{\Delta t}{4}[\dot{v}(t) - \dot{v}(t+\Delta t)]
+$$
+
+### 2. 仿真参数参考表
+
+| 参数类别 | 参数名称 | 典型值/范围 | 单位 | 备注 |
+|---------|---------|------------|------|------|
+| **时间设置** | 仿真步长 | 1-100 | μs | 开关暂态通常1-10μs |
+| | 总仿真时长 | 0.1-10 | s | 视暂态类型而定 |
+| | 输出间隔 | 10-1000 | μs | 可独立于计算步长 |
+| **线路模型** | Bergeron模型 | 适用于 | - | 基频和低频暂态 |
+| | Marti模型 | 0.1Hz-1MHz | - | 频变参数，雷电研究 |
+| | Noda模型 | 适用于 | - | 多导体耦合线路 |
+| **变压器** | 饱和曲线 | 多项式/反正切 | - | 铁磁谐振分析 |
+| | JA磁滞模型 | 5参数 | - | 高精度磁滞建模 |
+| | 变比 | 任意 | - | 支持多绕组 |
+| **开关器件** | 理想开关 | 0/∞ | Ω | 快速仿真 |
+| | 时控开关 | μs级精度 | - | 支持截流和重燃 |
+| **控制(TACS)** | 采样步长 | 与主步长同步 | - | 离散控制 |
+| | 逻辑延时 | 整数步长 | - | 继电器建模 |
+
+### 3. 工具选择与应用指南
+
+| 应用场景 | ATP-EMTP适用性 | 替代/补充工具 | 关键考量 |
+|---------|---------------|---------------|---------|
+| **教学与学术研究** | 非常适合 | PSCAD/EMTDC | 开源免费，输入文件可公开 |
+| **变压器铁磁谐振** | 非常适合 | PSCAD、MATLAB | JA模型+TACS控制，波形相似度>0.9 |
+| **线路雷电过电压** | 非常适合 | PSCAD、EMTP-RV | Marti频变线路模型成熟 |
+| **接地网暂态** | 适合 | CDEGS、CST | 频变土壤模型，与实测对比验证 |
+| **HVDC/FACTS控制** | 适合 | PSCAD、MATLAB | TACS/MODELS可构造复杂控制 |
+| **大规模系统仿真** | 计算效率受限 | PSD、PSASP | 节点数>1000时考虑机电暂态 |
+| **实时HIL测试** | 不适合 | RTDS、Typhoon | ATP为离线工具 |
+| **商业工程咨询** | 开源许可受限 | EMTP-RV、PSCAD | 需确认许可条款 |
+
+### 4. 前沿发展方向
+
+#### 4.1 开源生态与可复现性
+- **模型库共享**：建立社区驱动的标准模型库和验证案例集
+- **自动化测试**：与CI/CD集成，支持回归测试和版本验证
+- **跨平台兼容**：增强与Linux/macOS系统的原生支持
+
+#### 4.2 现代编程接口
+- **Python API**：原生支持Python脚本驱动和数据分析
+- **Julia集成**：利用Julia的高性能数值计算能力
+- **Modelica协同**：与Modelica模型双向转换和联合仿真
+
+#### 4.3 多物理场扩展
+- **电热联合**：变压器、电缆的暂态热场分析
+- **电磁环境**：变电站电磁场和接地网腐蚀建模
+- **机械-电气耦合**：发电机轴系扭振和变压器绕组变形
+
+#### 4.4 新型电力系统适配
+- **电力电子化电网**：MMC-HVDC、构网型变换器建模
+- **分布式能源**：光伏、储能、电动汽车充电站仿真
+- **直流配电网**：中低压直流系统保护和稳定性分析
+
+## 相关实体
+- [[emtp]]
+- [[pscad-emtdc]]
+- [[rtds]]
+- [[vector-fitting]]
+- [[transmission-line-model]]
+- [[university-manitoba]]
+- [[manitoba-hydro]]
+
+## 相关方法
+- [[vector-fitting|矢量拟合]] - 用于ATP中宽频线路和变压器模型的有理函数逼近
+- [[nodal-analysis|节点分析]] - ATP核心求解方法，基于Dommel节点导纳矩阵
+- [[numerical-integration|数值积分]] - 梯形积分法，ATP电磁暂态求解的基础算法
+- [[interpolation-method|插值方法]] - 开关时刻插值算法，消除数值振荡的关键技术
+
+## 相关模型
+- [[transmission-line-model|输电线路模型]] - ATP核心模型，支持Bergeron和Marti频变线路模型
+- [[transformer-model|变压器模型]] - 变压器宽频白盒/黑盒模型，用于铁磁谐振研究
+- [[lcc-model|LCC模型]] - 线路换相换流器模型，用于经典HVDC仿真
+- [[synchronous-machine-model|同步电机模型]] - 同步发电机暂态模型，用于稳定性分析
+
+## 相关主题
+- [[co-simulation|混合仿真]] - ATP与控制系统(TACS/MODELS)的协同仿真能力
+- [[real-time-simulation|实时仿真]] - ATP用于算法验证和教学，与实时仿真平台对比
+- [[harmonic-analysis|谐波分析]] - ATP支持的电力系统谐波和电能质量研究
+- [[frequency-dependent-modeling|频变建模]] - 频变线路和变压器模型在ATP中的实现
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[a-systematical-method-for-suppressing-ferroresonance-at-neutral-grounded-substat|A systematical method for suppressing ferroresonance at neut]] | 2001 |
+| [[a-probabilistic-approach-for-secondary-arc-risk-assessment|A Probabilistic Approach for Secondary Arc Risk Assessment]] | 2004 |
+| [[decision-tree-based-methodology-for-high-impedance-fault-detection|Decision tree-based methodology for high impedance fault det]] | 2004 |
+| [[modeling-a-mixed-residential-commercial-load-for-simulations-involving-large-dis|Modeling A Mixed Residential-commercial Load  For Simulation]] | 2004 |
+| [[power-converter-simulation-module-connected-to-the-emtp-power-systems-ieee-trans|Power converter simulation module connected to the EMTP - Po]] | 2004 |
+| [[dual-reversible-transformer-model-for-the-13&14|Dual Reversible Transformer Model for the]] | 2013 |
+| [[an-extended-habedanks-equation-based-emtp-model-of-pantograph-arcing-considering-fix|An Extended Habedank]] | 2015 |
+| [[analysing-a-power-transformers-internal-response-to-system-transients-using-a-hy|Analysing a power transformer⠒s internal response to system ]] | 2015 |
+| [[surge-and-energization-tests-and-modeling-on-a-225kv-hvac-cable|Surge and energization tests and modeling on a 225kV HVAC ca]] | 2018 |
+| [[effects-of-cable-insulations-physical-and-geometrical-parameters-on-sheath-trans|Effects of cable insulations’ physical and geometrical param]] | 2019 |
+| [[generalized-formulation-of-overhead-line-parameters-for-multi-layer-earth-19、20、21|Generalized Formulation of Overhead Line Parameters for Mult]] | 2021 |
+| [[modelling-of-electromagnetic-transients-in-multi-unit-high-voltage-circuit-break|Modelling of electromagnetic transients in multi-unit high-v]] | 2024 |

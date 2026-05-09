@@ -1,0 +1,126 @@
+---
+title: "稳态初始化 (Steady-state Initialization)"
+type: method
+tags: [initialization, steady-state, power-flow, time-domain, simulation-startup]
+created: "2026-05-02"
+---
+
+# 稳态初始化 (Steady-state Initialization)
+
+
+```mermaid
+graph TD
+    subgraph Ncmp[稳态初始化 (Steady-state Initiali…]
+        N0[潮流映射: 从稳态潮流反推 EMT 初值]
+        N1[三相 AC 稳态映射: 在 $j\omega$ 域求相域稳态]
+        N2[控制器反推: 由稳态输出反算积分器历史项]
+        N3[周期稳态/射击法: 求解 $\mathbf{x}(T)=…]
+        N4[斜坡或动态预仿真: 让系统从简化状态自然收敛]
+    end
+```
+
+
+## 定义与边界
+
+稳态初始化是在 EMT 时域仿真开始前，为网络、电气元件、控制器和离散历史项构造与目标运行点一致的初值。目标是减少非物理启动暂态，使后续扰动响应更接近研究对象本身。
+
+本页讨论初始化方法和证据边界。它不保证任意模型“一步到稳态”，也不替代故障前稳态验证、保护逻辑检查或厂商模型说明。
+
+## EMT 中的作用
+
+EMT 仿真比相量仿真包含更多状态：电感电流、电容电压、线路历史项、变压器磁通、PLL 角度、控制器积分器、滤波器状态、直流电容和换流器内部状态。若这些状态与潮流或周期稳态不一致，仿真起点会产生启动伪暂态。
+
+稳态初始化常用于：
+
+- 从[[power-flow-calculation]]结果生成 EMT 网络和元件初值。
+- 为 VSC、MMC、风电场和 HVDC 控制器设置积分器历史项。
+- 生成[[small-perturbation-linearization]]所需的可信运行点。
+- 缩短批量 EMT 工况、参数扫描和实时仿真前的预仿真时间。
+
+## 核心约束
+
+稳态初始化可抽象为求解
+
+$$
+\mathbf{F}(\mathbf{x}_0,\mathbf{z}_0,\mathbf{u}_0)=\mathbf{0},
+$$
+
+其中 $\mathbf{x}_0$ 是动态状态，$\mathbf{z}_0$ 是代数变量，$\mathbf{u}_0$ 是给定运行条件。对周期稳态或含开关系统，更严格的条件是
+
+$$
+\mathbf{x}(T;\mathbf{x}_0)=\mathbf{x}_0,
+$$
+
+即一个周期后状态回到同一点。对固定步长 companion 模型，还要初始化离散历史项，使下一步的等效源和导纳关系与稳态相量一致。
+
+## 工作流
+
+1. 定义目标运行点：潮流、三相不平衡稳态、谐波稳态或周期稳态。
+2. 映射网络量：把节点电压、功率和支路电流转换为 EMT 相域电压电流。
+3. 初始化无源元件：设置电容电压、电感电流、线路历史项和变压器磁通。
+4. 初始化控制器：反推 PLL、滤波器、PI/PID 积分器、限幅器前后状态和参考值。
+5. 处理换流器内部状态：设置直流侧、调制、子模块能量或平均值模型状态。
+6. 短时无扰动验证：确认功率、电压、电流和控制量没有非物理漂移。
+7. 记录边界：说明未初始化的黑盒状态、启发式处理和残余启动暂态。
+
+## 主要方法族
+
+| 方法 | 机制 | 适用场景 | 风险 |
+|---|---|---|---|
+| 潮流映射 | 从稳态潮流反推 EMT 初值 | 常规电网、负荷、同步机外部量 | 控制器和高频状态不足 |
+| 三相 AC 稳态映射 | 在 $j\omega$ 域求相域稳态 | 不平衡网络、VSC 外部电路 | 谐波和开关状态仍需处理 |
+| 控制器反推 | 由稳态输出反算积分器历史项 | VSC、风电场、PLL、外内环控制 | 依赖控制框图和限幅状态 |
+| 周期稳态/射击法 | 求解 $\mathbf{x}(T)=\mathbf{x}_0$ | 周期开关、非线性稳态 | 计算量较高，初值敏感 |
+| 斜坡或动态预仿真 | 让系统从简化状态自然收敛 | 黑盒模型、缺少内部方程 | 耗时且可能收敛到错误工况 |
+
+## 元件和控制器要点
+
+- 线路和电缆：应初始化传播历史项、频变卷积状态或等效源，不能只设置端口电压。
+- 变压器：磁通和剩磁假设会影响合闸和涌流研究；稳态初始化应说明是否考虑剩磁。
+- 同步机：功角、转速、内部电势、励磁和阻尼绕组状态需与潮流和机器模型一致。
+- VSC/MMC：直流电压、交流电流、调制参考、PLL、内外环积分器和子模块能量需要一致。
+- 保护和限幅：若初始点位于限幅或保护边界附近，控制器反推可能不唯一。
+
+## 验证指标
+
+可报告的初始化验证包括：
+
+- 无扰动启动后电压、电流、功率和控制状态的漂移。
+- 初始 KCL/KVL 残差或 DAE 残差。
+- 与潮流、三相稳态或参考 EMT 快照的差异。
+- 启动暂态是否来自未初始化状态、开关谐波建立或真实控制动态。
+
+数值结果必须绑定模型、步长、软件、工况和判据；没有来源时应避免“完全消除”“瞬时收敛”等绝对表述。
+
+## 适用边界与失败模式
+
+- 只有正序潮流不足以初始化强不平衡、谐波或开关周期稳态。
+- 黑盒厂商模型可能隐藏内部状态，导致外部变量匹配但控制器仍有启动暂态。
+- 初始化到错误控制模式会让仿真看似平稳但物理工况错误。
+- 剩磁、陷波滤波器、保护锁存、死区、PWM 载波相位和子模块均压状态常被简化，需要报告。
+- 故障后或非周期初值不能直接套用故障前稳态初始化。
+
+## 代表性证据
+
+- [[a-steady-state-initialization-procedure-for-generic-voltage-source-converters-in]] 支撑通用 VSC 可通过潮流、三相稳态和控制历史项映射减少启动暂态；证据限于原文 VSC 拓扑、控制模式和算例。
+- [[comprehensive-full-scale-converter-wind-park-initialization-for-electromagnetic-]] 支撑全功率变流器风电场需要同时初始化机械、电气和控制状态；其中加速或收敛数值应回到原文表图核查。
+- [[shooting-method-based-modular-multilevel-converter-initialization-for-electromag]] 支撑 MMC 或周期系统可使用射击法类周期稳态初始化；计算代价和收敛性需单独报告。
+
+## 与相关页面的关系
+
+- [[power-flow-calculation]]：提供多数稳态初始化的外部运行点。
+- [[dq-transformation]]：解释控制器反推中的坐标关系。
+- [[pll-model]]：PLL 相位和频率状态是换流器初始化关键状态。
+- [[vsc-model]]：VSC 主电路和控制器状态的目标模型。
+- [[mmc-model]]：MMC 子模块能量和桥臂电流初始化边界。
+- [[small-perturbation-linearization]]：需要一致运行点才能构造可信小扰动模型。
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[creating-an-electromagnetic-transients-program-in-matlab-matemtp-power-delivery-|Creating An Electromagnetic Transients Program In Matlab: Ma]] | 2004 |
+| [[multiphase-power-flow-solutions-using-emtp-and-newtons-method-power-systems-ieee|Multiphase power flow solutions using EMTP and Newtons metho]] | 2004 |
+| [[on-a-new-approach-for-the-simulation-of-transients|On a new approach for the simulation of transients]] | 2007 |
+| [[a-steady-state-initialization-procedure-for-generic-voltage-source-converters-in|A steady-state initialization procedure for generic voltage-]] | 2023 |
+| [[comprehensive-full-scale-converter-wind-park-initialization-for-electromagnetic-|Comprehensive Full-Scale Converter Wind Park Initialization ]] | 2025 |

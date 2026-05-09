@@ -1,0 +1,100 @@
+---
+title: "多桥子模块统一表示方法 (MBSM)"
+type: method
+tags: [mbsm, multi-bridge-submodule, mmc, unified-modeling, average-value-model]
+created: "2026-05-05"
+updated: "2026-05-06"
+---
+
+# 多桥子模块统一表示方法 (MBSM)
+
+
+```mermaid
+graph TD
+    subgraph S0[多桥子模块统一表示方法 (MBSM)]
+        N0[定义与边界]
+        N1[EMT 中的作用]
+        N2[常见关注点]
+        N3[关键公式]
+        N4[与相关方法的关系]
+        N5[适用边界与失败模式]
+    end
+    N0 --> N1
+    N1 --> N2
+    N2 --> N3
+    N3 --> N4
+    N4 --> N5
+```
+
+
+## 定义与边界
+
+MBSM 在这里用于指代面向多种子模块拓扑的统一表示或统一平均值建模思路，即用一套桥臂/子模块状态变量、插入指数和等效接口表示半桥、全桥或混合桥等不同子模块结构。它通常用于减少为每种子模块拓扑分别建模的重复工作。
+
+本页讨论的是“统一表示框架”，不把普通 MMC 模型、通用线路公式或任意多桥臂拓扑直接写成 MBSM 方法。
+
+## EMT 中的作用
+
+在 EMT 仿真中，MBSM 方法主要用于：
+
+- 用统一方程组织多种子模块拓扑；
+- 支撑详细模型、平均值模型和等效模型之间的切换或比较；
+- 分析不同子模块拓扑对桥臂能量和端口特性的影响；
+- 降低多拓扑 MMC 模型维护成本。
+
+## 常见关注点
+
+- 不同子模块拓扑能否映射到统一状态和接口变量；
+- 详细、平均值和等效模型之间的表示一致性；
+- 闭锁、故障和模式切换时统一方程是否仍然有效；
+- 统一表示带来的便利与拓扑细节损失之间的折中。
+
+## 关键公式
+
+统一表示常围绕子模块等效输出和插入指数组织，例如：
+
+$$
+v_{arm} = \sum_{k=1}^{N} s_k \, v_{c,k}
+$$
+
+在平均值或统一等效框架下，也常写成：
+
+$$
+v_{arm} \approx m \, v_c^{eq}
+$$
+
+其中 $s_k$ 为离散插入状态，$m$ 为等效插入指数，$v_c^{eq}$ 为等效电容电压。关键不是某一条公式，而是不同拓扑能否在同一状态和接口框架下被解释。
+
+## 与相关方法的关系
+
+- [[half-bridge-submodule]] 和 [[fbsm]]：说明统一表示需要覆盖的典型拓扑。
+- [[mmc-model]]：提供整机层背景。
+- [[nearest-level-modulation]]：调制方式会影响统一表示中的插入指数或排序逻辑。
+- [[m3c]]：说明多桥臂统一建模思想与特殊多电平换流器入口的关系。
+
+## 适用边界与失败模式
+
+- 适用于需要在同一研究或平台中比较多种子模块拓扑的场景。
+- 统一表示会牺牲部分拓扑专有细节，不能自动替代每种子模块的详细器件模型。
+- 若桥臂控制、闭锁模式或故障路径差异很大，统一方程可能失去解释力。
+
+## 代表性来源
+
+- [[combining-detailed-equivalent-model-with-switching-function-based-average-value-]]：说明统一框架中详细等效与平均值思路的结合背景。
+- [[an-accelerated-detailed-equivalent-model-for-modular-multilevel-converters]]：说明详细等效建模与桥臂统一表示的相关背景。
+- [[high-frequency-oscillation-analysis-and-suppression-strategy-of-mmc-hvdc-system-]]：提醒统一表示不能脱离动态稳定性和控制结构单独评价。
+
+## 证据边界
+
+本页不写无来源的统一模型精度、切换误差或速度提升倍数。所有量化结论都必须绑定对比基线和测试工况。
+
+## 开放问题
+
+- 当前页尚未继续拆分“统一表示框架”和“统一平均值模型”之间的边界。
+- 不同拓扑差异大到何种程度时不再适合统一表示，后续仍需结合具体 source 页判断。
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[combining-detailed-equivalent-model-with-switching-function-based-average-value-|Combining Detailed Equivalent Model With Switching-Function-]] | 2020 |

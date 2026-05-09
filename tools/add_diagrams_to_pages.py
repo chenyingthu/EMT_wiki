@@ -415,10 +415,10 @@ def main():
 
     total_modified = 0
     for cat in categories:
-        pattern = WIKI_DIR / cat / "*.md"
-        files = sorted(glob.glob(str(pattern)))
-        # 过滤 index.md（如果有）
-        files = [f for f in files if not f.endswith("index.md")]
+        cat_dir = WIKI_DIR / cat
+        files = sorted(cat_dir.rglob("*.md")) if cat_dir.exists() else []
+        # 过滤 index.md / _index.md
+        files = [f for f in files if not f.name.endswith("index.md")]
         count_limit = args.pages if args.pages > 0 else len(files)
         print(f"\n{'='*60}")
         print(f"类别: {cat}  |  待处理: {min(count_limit, len(files))}/{len(files)} 页")

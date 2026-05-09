@@ -1,0 +1,155 @@
+---
+title: "潮流计算 (Power Flow Calculation)"
+type: method
+tags: [power-flow, load-flow, steady-state, newton-raphson, gauss-seidel, fast-decoupled]
+created: "2026-05-02"
+---
+
+# 潮流计算 (Power Flow Calculation)
+
+
+```mermaid
+graph TD
+    N0[潮流计算 (Power Flow…]
+    N1[定义与边界]
+    N0 --> N1
+    N2[输入与输出]
+    N0 --> N2
+    N3[潮流方程]
+    N0 --> N3
+    N4[节点类型]
+    N0 --> N4
+    N5[求解路线]
+    N0 --> N5
+    N6[与 EMT 仿真的关系]
+    N0 --> N6
+    N7[适用边界与失败模式]
+    N0 --> N7
+    N8[开放问题]
+    N0 --> N8
+```
+
+
+## 定义与边界
+
+潮流计算（Power Flow / Load Flow）是在给定网络拓扑、负荷、发电和控制设定后，求解电力系统稳态相量运行点的方法。它输出节点电压、支路功率和网损，是规划、运行校核、优化和动态仿真初始化的基础工具。
+
+潮流计算不是 EMT 核心求解方法。潮流模型假定系统处于基频稳态或准稳态，而 EMT 仿真处理三相瞬时电压、电流、开关动作和快速控制动态。潮流结果可以作为 EMT 初始条件，但不能描述暂态过电压、谐波、非周期分量或电力电子开关波形。
+
+`Power Flow` 和 `Load Flow` 在本 Wiki 中统一收敛到本页；不再维护独立的通用入口页，避免与正式方法页分叉。
+
+## 输入与输出
+
+典型输入包括：
+
+- 节点、支路、变压器和并联元件参数；
+- 节点类型及已知量，例如 PQ、PV 和平衡节点；
+- 发电、负荷、分接头、无功补偿和运行设定；
+- 收敛容差、初值和节点类型切换规则。
+
+典型输出包括：
+
+- 节点电压幅值和相角；
+- 发电机无功、平衡节点有功/无功；
+- 支路有功、无功和网损；
+- 是否存在越限或不收敛状态。
+
+## 潮流方程
+
+节点注入复功率为：
+
+$$
+S_i=P_i+jQ_i=V_i I_i^*
+$$
+
+其中节点电流由导纳矩阵给出：
+
+$$
+I_i=\sum_j Y_{ij}V_j
+$$
+
+在极坐标下，节点有功和无功平衡可写为：
+
+$$
+P_i=V_i\sum_j V_j(G_{ij}\cos\theta_{ij}+B_{ij}\sin\theta_{ij})
+$$
+
+$$
+Q_i=V_i\sum_j V_j(G_{ij}\sin\theta_{ij}-B_{ij}\cos\theta_{ij})
+$$
+
+其中 $Y_{ij}=G_{ij}+jB_{ij}$，$\theta_{ij}=\theta_i-\theta_j$。这些方程描述基频相量平衡，不包含 EMT 中的电感、电容历史项或开关事件离散变化。
+
+## 节点类型
+
+- PQ 节点：给定有功和无功，求电压幅值和相角。
+- PV 节点：给定有功和电压幅值，求无功和相角。
+- 平衡节点：给定电压幅值和相角，用于吸收系统功率不平衡和损耗。
+
+PV 节点无功越限时，常需要切换为 PQ 节点并固定无功限值。该处理会影响收敛路径和最终运行点，应在算例说明中明确。
+
+## 求解路线
+
+常见算法包括：
+
+- 高斯-赛德尔迭代：实现简单，但对大规模或病态系统可能收敛较慢。
+- [[newton-raphson-method]]：通过雅可比矩阵求解功率不匹配修正量，是交流潮流常见的通用路线。
+- 快速解耦潮流：利用输电网有功-相角、无功-电压近似解耦，适合满足相应假设的系统。
+- 直流潮流：忽略无功和电压幅值变化，用线性有功潮流近似快速估计功率分布。
+
+这些方法的适用性取决于网络 $R/X$ 比、负荷水平、初值、控制限值和拓扑状态。本页不使用无来源的固定迭代次数或收敛精度表述。
+
+## 与 EMT 仿真的关系
+
+潮流计算在 EMT 工作流中通常用于：
+
+- 提供 [[steady-state-initialization]] 所需的节点电压和支路功率；
+- 计算同步机内部电势、功角、励磁初值和机械功率的稳态参考；
+- 为换流器控制器提供初始有功、无功、电压或电流设定；
+- 在 [[electromechanical-electromagnetic-hybrid-simulation]] 中作为机电侧或外部系统运行点的一部分。
+
+从潮流到 EMT 的转换不是自动无误的。电容电压、电感电流、控制器状态、PLL 相位、限幅器状态和保护逻辑都可能需要额外初始化或时域松弛。
+
+## 适用边界与失败模式
+
+- 靠近电压稳定边界、重载或弱网工况可能导致潮流不收敛或多解。
+- 直流潮流不适合评估无功、电压和不平衡问题。
+- 单相等值或正序潮流无法描述三相不平衡故障的瞬时细节。
+- 潮流收敛不代表 EMT 初始状态一定无暂态冲击。
+
+## 开放问题
+
+- 不平衡、多相和谐波潮流结果如何与三相瞬时 EMT 初值一致映射，仍需要按具体工具和算例说明。
+- 电力电子占比较高的弱网中，稳态控制模式、限幅器和 PLL 初值可能比传统 PQ/PV 节点分类更关键。
+- 多频、混合 AC/DC 和站级控制初始化不应被简化成单一基频潮流问题。
+
+## 代表性来源
+
+- [[multiphase-power-flow-solutions-using-emtp-and-newtons-method-power-systems-ieee]]：说明多相潮流可与 EMTP 网络矩阵和牛顿法接口，但该 source 中的规模、收敛和实现结论需绑定原文算例。
+- [[comprehensive-full-scale-converter-wind-park-initialization-for-electromagnetic-]]：适合支撑“潮流解是全变流器风电场 EMT 初始化的一环”的表述。
+- [[a-time-domain-harmonic-power-flow-algorithm]]：展示非正弦周期稳态和潮流约束结合的研究方向；不应把它写成所有 EMT 初始化的默认流程。
+
+## 与相关页面的关系
+
+- [[optimal-power-flow]] 在潮流方程上加入目标函数和约束优化。
+- [[economic-dispatch]] 可提供有功出力设定，潮流负责把设定映射到网络运行点。
+- [[steady-state-initialization]] 说明潮流结果如何转换为时域仿真初值。
+- [[phasor-model]] 说明相量近似与瞬时值建模的边界。
+- [[emt-simulation]] 是与潮流不同层级的瞬时值仿真框架。
+
+## 证据边界
+
+本页描述潮流计算的通用模型和 EMT 前处理角色。具体电压限值、收敛容差、分接头步长和软件行为应由工程规范、软件手册或论文算例提供，不能作为无来源通用结论写入。
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[modeling-synchronous-voltage-source-converters-in-transmission-system-planning-s|Modeling Synchronous Voltage Source Converters in Transmissi]] | 2004 |
+| [[on-a-new-approach-for-the-simulation-of-transients|On a new approach for the simulation of transients]] | 2007 |
+| [[a-time-domain-harmonic-power-flow-algorithm|A Time-Domain Harmonic Power-Flow Algorithm]] | 2010 |
+| [[39pes20116039582|39/pes.2011.6039582]] | 2011 |
+| [[electromechanical-transient-modeling-of-modular-multilevel-converter-based-multi|Electromechanical Transient Modeling of Modular Multilevel C]] | 2013 |
+| [[a-steady-state-initialization-procedure-for-generic-voltage-source-converters-in|A steady-state initialization procedure for generic voltage-]] | 2023 |
+| [[a-steady-state-initialization-procedure-for-generic-voltage-source-converters-in|A steady-state initialization procedure for generic voltage-]] | 2023 |
+| [[initializing-emt-models-of-grid-forming-vscs-in-mtdc-systems|Initializing EMT models of grid forming VSCs in MTDC systems]] | 2024 |

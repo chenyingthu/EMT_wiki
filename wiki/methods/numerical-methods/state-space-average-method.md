@@ -1,0 +1,127 @@
+---
+title: "状态空间平均法 (State-Space Average Method)"
+type: method
+tags: [state-space, average, converter, modeling, small-signal, power-electronics]
+created: "2026-05-02"
+---
+
+# 状态空间平均法 (State-Space Average Method)
+
+
+```mermaid
+graph TD
+    subgraph Ncmp[状态空间平均法 (State-Space Average…]
+        N0[基本状态空间平均: 连续导通、固定拓扑的 PWM 变换器]
+        N1[小信号平均模型: 工作点附近的控制设计]
+        N2[分段状态空间平均: 不同运行区间分别平均]
+        N3[广义状态空间平均: 保留若干傅里叶系数或谐波状态]
+        N4[离散或采样数据模型: 数字控制和采样延迟]
+    end
+```
+
+
+## 定义与边界
+
+状态空间平均法把一个开关周期内的多个电路状态方程按持续时间加权，形成连续时间平均模型。它适合描述变换器输入、输出、储能元件和控制量的低频动态，不直接描述每一次器件开通和关断的瞬时波形。
+
+该方法是 [[average-value-model]] 的常见推导路径之一，也可看作从 [[switching-function-method]] 到连续模型的状态空间形式。它不同于 [[switch-modeling]]：开关建模处理器件通断事件和拓扑变化，状态空间平均法则有意把开关周期内的细节压缩掉。
+
+## EMT 中的作用
+
+在 EMT 仿真中，状态空间平均法常用于：
+
+- 为 DC-DC 变换器、VSC、MMC 子系统建立低频等值。
+- 支撑控制器设计、小扰动线性化和阻抗分析。
+- 在系统级 EMT 或混合仿真中减少开关事件数量。
+- 为详细开关模型和平均值模型之间的切换提供状态变量映射。
+
+它不能单独回答器件应力、死区波形、开关损耗、反向恢复或 EMI 问题；这些问题需要 [[switch-modeling]]、[[detailed-equivalent-model]] 或器件级模型补充。
+
+## 核心方程
+
+以两状态变换器为例，开关导通和关断子区间分别满足：
+
+$$
+\dot{x}=A_1x+B_1u,\qquad y=C_1x+D_1u,
+$$
+
+$$
+\dot{x}=A_2x+B_2u,\qquad y=C_2x+D_2u.
+$$
+
+若占空比为 $d$，开关周期为 $T_s$，平均状态方程写为：
+
+$$
+\dot{\bar{x}}=\left[dA_1+(1-d)A_2\right]\bar{x}
+              +\left[dB_1+(1-d)B_2\right]\bar{u}.
+$$
+
+输出也可按同样方式平均：
+
+$$
+\bar{y}=\left[dC_1+(1-d)C_2\right]\bar{x}
+       +\left[dD_1+(1-d)D_2\right]\bar{u}.
+$$
+
+对稳态工作点 $X,U,D$ 附近做扰动分解：
+
+$$
+x=X+\hat{x},\qquad u=U+\hat{u},\qquad d=D+\hat{d},
+$$
+
+得到一阶小信号模型：
+
+$$
+\dot{\hat{x}}=A_{\mathrm{avg}}\hat{x}
+              +B_{\mathrm{avg}}\hat{u}
+              +\left[(A_1-A_2)X+(B_1-B_2)U\right]\hat{d}.
+$$
+
+该式只保留工作点附近的一阶动态；大信号切换、模式跳变和非连续导通需要重新建模。
+
+## 变体
+
+| 变体 | 处理对象 | 主要边界 |
+|------|----------|----------|
+| 基本状态空间平均 | 连续导通、固定拓扑的 PWM 变换器 | 忽略开关纹波和采样效应 |
+| 小信号平均模型 | 工作点附近的控制设计 | 不适合大扰动和限幅动作 |
+| 分段状态空间平均 | 不同运行区间分别平均 | 需要明确区间切换规则 |
+| 广义状态空间平均 | 保留若干傅里叶系数或谐波状态 | 截断频带决定可见动态 |
+| 离散或采样数据模型 | 数字控制和采样延迟 | 依赖采样、保持和计算延迟建模 |
+
+## 适用边界与失败模式
+
+- **开关周期内状态变化较大**：平均化误差会扩大，尤其在低开关频率、强谐振或故障瞬间。
+- **模式改变**：DCM、过调制、闭锁、限流和保护动作会改变方程族，不能沿用单一平均矩阵。
+- **纹波敏感任务**：电容电压纹波、器件应力和开关谐波需要详细或谐波保留模型。
+- **非线性控制**：饱和、限幅、PLL 失锁和离散控制延迟需要显式加入状态或事件。
+- **初始化不一致**：平均状态与详细开关状态之间切换时，电感电流、电容电压和历史项必须匹配。
+
+## 代表性证据边界
+
+本页把状态空间平均法作为方法族说明，不把某个拓扑的传递函数写成通用结论。可参考的页面和来源包括：
+
+- [[适用于电磁暂态高效仿真的变流器分段广义状态空间平均模型]]：代表把状态空间平均扩展到 EMT 高效变流器模型的研究路线。
+- [[a-piecewise-generalized-state-space-model-of-power-converters-for-electromagneti]]：代表分段广义状态空间模型，不应外推为所有变换器均满足同一误差界。
+- [[考虑死区特性的全桥型mmc状态空间平均化建模方法]]：说明死区等非理想因素需要进入模型结构，而不是由基本平均式自动覆盖。
+- [[线性开关电路电磁暂态分析的状态方程法]]：说明状态方程法与 EMT 开关电路分析有关，但具体算法和边界需按对象确认。
+
+## 与相关页面的关系
+
+- [[average-value-model]]：状态空间平均法常用于构造 AVM 的内部动态。
+- [[switching-function-method]]：开关函数给出二值或连续占空比，状态空间平均法给出对应状态方程。
+- [[small-perturbation-linearization]]：在平均模型工作点附近导出控制和阻抗小信号模型。
+- [[state-space-method]]：更一般的状态变量建模框架。
+- [[dynamic-phasor]]：另一类保留选定频率系数的平均化表示。
+
+## 开放问题
+
+状态空间平均法的关键验证不是“是否写出了平均矩阵”，而是平均模型保留了哪些状态、丢弃了哪些频率分量，以及在故障、闭锁、限流和模型切换时是否保持能量和历史项一致。
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[hybrid-simulation-of-power-systems-with-svc-dynamic-phasor-model|Hybrid simulation of power systems with SVC dynamic phasor m]] | 2009 |
+| [[comparison-and-selection-of-grid-tied-inverter-models-for-accurate-and-efficient|Comparison and Selection of Grid-Tied Inverter Models for Ac]] | 2021 |
+| [[考虑死区特性的全桥型mmc状态空间平均化建模方法|考虑死区特性的全桥型MMC状态空间平均化建模方法]] | 2024 |
