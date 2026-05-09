@@ -1,5 +1,18 @@
 # 迭代求解方法 (Iterative Solvers)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[iterative-solvers]
+        N0[固定点迭代: Picard、Jacobi 型接口迭代]
+        N1[牛顿法族: 标准、简化、阻尼牛顿]
+        N2[Krylov 方法: CG、GMRES、BiCGSTAB]
+        N3[预处理方法: ILU、块对角、Schur 补]
+        N4[区域分解迭代: Schwarz、边界松弛]
+    end
+```
+
+
 ## 技术背景
 
 ### 发展历史

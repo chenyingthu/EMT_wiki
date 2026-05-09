@@ -1,5 +1,19 @@
 # GPU加速仿真 (GPU-Accelerated Simulation)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[gpu-accelerated-simulation]
+        N0[核心数: 8-64核]
+        N1[时钟频率: 3-5 GHz]
+        N2[内存带宽: 50-100 GB/s]
+        N3[并行方式: 任务并行]
+        N4[分支处理: 高效]
+        N5[适用场景: 复杂控制流]
+    end
+```
+
+
 ## 定义与概述
 
 GPU加速仿真是利用图形处理器（Graphics Processing Unit）的大规模并行计算能力加速电磁暂态（EMT）仿真的技术。与传统CPU串行计算相比，GPU通过单指令多线程（SIMT）架构可同时执行成千上万个计算任务，特别适合处理大规模电力系统中大量同质化组件（如风电场中的DFIG、MMC中的子模块）的并行计算，可实现10-20倍的仿真加速。

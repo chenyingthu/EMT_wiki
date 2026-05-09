@@ -1,5 +1,18 @@
 # 开关建模方法 (Switch Modeling)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[switch-modeling]
+        N0[理想开关: 导通/关断拓扑]
+        N1[二值电阻: 状态相关导纳]
+        N2[分段线性: 近似伏安曲线]
+        N3[详细器件: 电容、恢复、门极和损耗]
+        N4[热电耦合: 温度相关参数]
+    end
+```
+
+
 ## 技术背景
 
 ### 发展历史

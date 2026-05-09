@@ -1,5 +1,16 @@
 # 硬件在环仿真 (Hardware-in-the-Loop Simulation)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[hil-simulation]
+        N0[信号级HIL: CHIL]
+        N1[功率级HIL: PHIL]
+        N2[机械级HIL: MHIL]
+    end
+```
+
+
 ## 定义与概述
 
 硬件在环仿真（Hardware-in-the-Loop, HIL）是将实际物理控制器或保护装置接入实时数字仿真回路中的测试技术。通过实时数字仿真器（RTDS、FPGA等）模拟被控对象（电力系统、电机、电力电子设备等）的动态行为，真实的控制器在实时环境下与仿真模型交互，形成"控制器硬件+被控对象仿真"的闭环测试系统。HIL仿真能够在实验室环境下安全、可重复地验证控制器在各种正常和故障工况下的性能，大幅缩短研发周期，降低现场测试风险。

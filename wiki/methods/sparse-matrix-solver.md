@@ -1,5 +1,16 @@
 # 稀疏矩阵求解方法 (Sparse Matrix Solver)
 
+
+```mermaid
+graph TD
+    subgraph Ncmp[sparse-matrix-solver]
+        N0[COO: 组装阶段保存三元组]
+        N1[CSR: 行访问和矩阵向量乘法]
+        N2[CSC: 稀疏直接法和列操作]
+    end
+```
+
+
 ## 定义与边界
 
 稀疏矩阵求解方法利用矩阵中大量零元素的结构来求解线性方程组。EMT 中的典型问题是：
