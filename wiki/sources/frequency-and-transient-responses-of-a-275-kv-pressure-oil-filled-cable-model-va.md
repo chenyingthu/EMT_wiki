@@ -68,7 +68,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/Liu 等 - 2026 - Frequency and trans
 ## 涉及的模型
 
 - 275 kV充油电缆
-- [[管型电缆|管型电缆]]
+- [[cable-model|管型电缆]]
 - 详细电缆模型
 - 降阶电缆模型
 
@@ -76,7 +76,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/Liu 等 - 2026 - Frequency and trans
 
 - 频率响应分析
 - [[emt-simulation|电磁暂态仿真]]
-- [[模型验证|模型验证]]
+- [[model-verification-benchmark|模型验证]]
 - 邻近效应
 - 偏心效应
 - 内部传播模态

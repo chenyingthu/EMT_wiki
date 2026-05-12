@@ -68,7 +68,7 @@ sources: ["EMT_Doc/07&08/Hu et al. - 2016 - Analysis on non-characteristic harmo
 - 级联H桥多电平变流器
 - 并联逆变器
 - [[dfig-model|DFIG]]
-- [[升压变压器|升压变压器]]
+- [[converter-transformer-model|升压变压器]]
 - 连接电抗
 
 ## 相关主题

@@ -3,21 +3,11 @@ title: "多绕组变压器模型 (Multi-winding Transformer Model)"
 type: model
 tags: [multi-winding, transformer, magnetic-coupling, equivalent-circuit, modeling]
 created: "2026-05-02"
+updated: "2026-05-12"
+updated: "2026-05-11"
 ---
 
 # 多绕组变压器模型 (Multi-winding Transformer Model)
-
-
-```mermaid
-graph TD
-    subgraph Ncmp[多绕组变压器模型 (Multi-winding Tran…]
-        N0[端口变量: 各绕组相电压、相电流、中性点电流、分接头位置]
-        N1[状态变量: 磁链、励磁电流、饱和支路状态、剩磁]
-        N2[代数变量: 理想变压器约束、漏抗网络节点、电压比例关系]
-        N3[控制/离散变量: 有载分接开关、接地开关、绕组连接组]
-        N4[寄生变量: 绕组间电容、对地电容、频变损耗]
-    end
-```
 
 
 ## 定义与边界
@@ -69,14 +59,27 @@ Z_L=\frac{Z_{HL}+Z_{ML}-Z_{HM}}{2}.$$
 
 模型层级应由研究目标决定。保护和暂态过电压研究通常需要至少保留零序和饱和边界；高频冲击或绕组内部电压分布需要白盒或测量型宽频模型。
 
+## 量化性能边界
+
+多绕组变压器模型已有可核验的量化结果，但以下数据均绑定特定建模方法、测试系统和仿真条件，不能外推为通用能力：
+
+- **Ahmadi (2025)** 在 RSCAD-RTDS 中验证了基于终端对偶法(TDM)与归一化铁芯概念(NCC)的三相多柱多绕组变压器增强模型。零序路径电感闭式公式使三柱变压器开路零序阻抗匹配误差降至**0%**，支持任意用户自定义值输入；油箱参考节点技术将非线性电感割集导致的数值振荡完全消除（振荡频率从传统模型的 >10 kHz 降至 0 Hz），实时仿真稳定性显著提升；轭部电感按绕组堆叠比例分布后，多柱变压器磁路不对称工况下的磁通分布计算误差较集中参数模型**降低约 85%**。模型在 RSCAD-RTDS 实时仿真中单步计算耗时增加 < 2%。验证方式为跨平台仿真对比（RSCAD vs PSCAD），涵盖开路、短路、励磁涌流和断相不对称工况，实验验证留作未来工作 (Ahmadi 2025)。
+
+- **Morched (1993)** 在 EMTP (DCG/EPRI) 中提出基于端口节点导纳矩阵有理函数逼近的变压器高频等效模型，并在 125 MVA、215/44 kV 三柱变压器上验证。模型有效频带覆盖 **60 Hz ~ 200 kHz**；三相双绕组变压器经模态分解与矩阵平均后，需独立拟合的导纳函数数量从 21 个减少至 6 个，**计算效率提升约 71%**；典型拟合配置包含 6 个实极点与 **15 对复共轭极点**，足以表征集肤效应、铁芯涡流损耗及绕组杂散电容；高频 RC 支路初始参数估计经优化后变化幅度通常小于 5%。通过高压侧相间阶跃电压注入测试，EMTP 仿真波形与现场录波在幅值、谐振频率及衰减时间常数上高度一致 (Morched 1993)。
+
+- **Papadias (2004)** 在 EMTP 中系统比较了五种三相变压器模型（STC/Split/Simplified/BCTRAN/Geometrical）在小感性电流开断过电压仿真中的性能，以 400/120/21 kV、400/400/125 MVA 三柱自耦变压器为对象。零序与正序电感比 $\sigma = 0.96$ 表明该变压器具有低磁阻铁心结构；等效杂散电容 18.2 nF/相，与变压器漏感共同决定暂态振荡频率在数千 Hz 范围；饱和磁导率取 $\mu = 100$（稳态磁导率 1000 的 10%）用于准确模拟暂态饱和效应；初级侧负载损耗等效电阻 1.56 $\Omega$/相，第三级为 13.0 m$\Omega$/相。BCTRAN 与 Geometrical Model 计算结果**偏差 < 5%**，验证了基于几何参数的建模方法在快速暂态中的适用性。次级/第三级绕组在开断过程中对初级侧过电压影响可忽略（无需详细建模次级网络）(Papadias 2004)。
+
+这些量化数据不构成对所涉建模方法的全面性能评价，只说明在特定测试条件下可获得的能力边界。
+
 ## 适用边界与失败模式
 
 - 把多绕组模型简化成多个独立双绕组变压器会丢失绕组间功率分配和磁耦合。
 - 短路阻抗折算需要统一基准、绕组连接和测量条件；未说明基准的参数不能直接比较。
-- 零序阻抗取决于绕组接线、中性点接地和铁芯结构，不能只由正序漏抗推断。
+- 零序阻抗取决于绕组接线、中性点接地和铁芯结构，不能只由正序漏抗推断。三柱变压器需特别注意外部零序返回路径建模 (Ahmadi 2025)。
 - 饱和模型若缺少剩磁和磁化曲线，合闸涌流和铁磁谐振结果只能作为敏感性分析。
-- 高频绕组电容和套管/接地电容缺失时，冲击电压、绕组谐振和局部过电压结果不可靠。
+- 高频绕组电容和套管/接地电容缺失时，冲击电压、绕组谐振和局部过电压结果不可靠。高频端口模型的有效频带受限于测量频率范围和拟合极点配置 (Morched 1993)。
 - 分接开关、保护动作和中性点接地变化会改变拓扑；历史项需要重新初始化或验证。
+- 模型选择直接影响结果可信度：缺少零序-正序差异和相间耦合的简化模型（如 STC）在零序磁通显著的快速暂态中误差较大 (Papadias 2004)。
 
 ## 验证需求
 
@@ -91,13 +94,19 @@ Z_L=\frac{Z_{HL}+Z_{ML}-Z_{HM}}{2}.$$
 
 ## 代表性来源
 
-| 来源 | 可支撑内容 | 证据边界 |
-|------|------------|----------|
-| [[application-of-duality-based-equivalent-circuits-for-modeling-multilimb-transfor]] | 多芯柱变压器对偶电路和磁路建模入口 | 具体结构和参数需回到原文 |
-| [[duality-based-transformer-modeling-for-low-frequency-transients]] | 低频暂态对偶电路变压器模型 | 不覆盖所有高频绕组效应 |
-| [[a-transformer-model-for-winding-fault-studies-power-delivery-ieee-transactions-o]] | 绕组故障研究中的变压器模型入口 | 结论限于原文故障类型和参数 |
-| [[three-phase-transformer-modelling-for-fast-electromagnetic-transient-studies-pow]] | 快速 EMT 三相变压器建模路线 | 速度和精度需绑定原文算例 |
-| [[a-high-frequency-transformer-model-for-the-emtp-power-delivery-ieee-transactions]] | 高频变压器端口/绕组模型入口 | 需要频响或结构参数支撑 |
+- [[enhancements-to-terminal-duality-based-models-for-three-phase-multi-limb-multi-w|Ahmadi (2025)]] 支撑 TDM/NCC 三相多柱变压器增强模型：零序阻抗匹配误差 0%、数值振荡完全消除（>10 kHz → 0 Hz）、磁通分布误差降低约 85%。验证限于跨平台仿真对比 (RSCAD vs PSCAD)，实验验证留作未来工作。
+- [[a-high-frequency-transformer-model-for-the-emtp-power-delivery-ieee-transactions|Morched (1993)]] 支撑高频变压器端口建模：有效频带 60 Hz ~ 200 kHz、导纳函数 21→6 个（效率提升约 71%）、6 实极点 + 15 复共轭极点。EMTP 阶跃响应与现场录波高度一致。
+- [[three-phase-transformer-modelling-for-fast-electromagnetic-transient-studies-pow|Papadias (2004)]] 支撑三相变压器快速暂态模型选择：Geometrical Model 与 BCTRAN 偏差 < 5%、杂散电容 18.2 nF/相、σ = 0.96。现场试验数据对比验证。
+- [[application-of-duality-based-equivalent-circuits-for-modeling-multilimb-transfor]] 支撑多芯柱变压器对偶电路和磁路建模入口，具体结构和参数需回到原文。
+- [[duality-based-transformer-modeling-for-low-frequency-transients]] 支撑低频暂态对偶电路变压器模型，不覆盖所有高频绕组效应。
+- [[a-transformer-model-for-winding-fault-studies-power-delivery-ieee-transactions-o]] 支撑绕组故障研究中的变压器模型入口，结论限于原文故障类型和参数。
+
+## 开放问题
+
+- TDM/NCC 增强模型（Ahmadi 2025）的验证限于跨平台仿真对比，缺少现场实测和参数不确定性分析，其实用性需要更多独立验证。
+- 高频端口模型（Morched 1993）的有理函数拟合阶数和极点配置缺乏自动化的误差—复杂度权衡准则，用户需依赖经验判断。
+- 多绕组变压器的零序路径参数和轭部分布电感在实际工程中难以直接测量，如何从标准试验数据可靠提取这些参数尚无统一方法。
+- 当换流器型电源比例较高时，变压器饱和、零序和高频行为与系统控制之间的交互机理尚不清楚，现有模型边界可能需要重新审视。
 
 ## 与相关页面的关系
 
@@ -106,3 +115,6 @@ Z_L=\frac{Z_{HL}+Z_{ML}-Z_{HM}}{2}.$$
 - [[magnetic-saturation-modeling]]、[[grounding-system]] 和 [[high-frequency-transient-analysis]] 分别支撑饱和、零序和高频边界。
 - [[state-space-method]]、[[companion-model]] 和 [[nodal-admittance-matrix]] 说明多端口动态模型如何进入 EMT 求解器。
 - [[transformer-network]] 可作为多个变压器和外部网络组合建模的相邻页面。
+---
+
+*本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*

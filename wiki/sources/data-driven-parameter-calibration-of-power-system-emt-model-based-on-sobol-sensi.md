@@ -67,7 +67,7 @@ sources: ["EMT_Doc/12/Data-Driven_Parameter_Calibration_of_Power_System_EMT_Mode
 ## 涉及的模型
 
 - 电力系统EMT仿真模型
-- [[黑盒模型|黑盒模型]]
+- [[fdne-model|黑盒模型]]
 - 多机测试系统
 
 ## 相关主题

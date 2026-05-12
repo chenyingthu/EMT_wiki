@@ -68,13 +68,13 @@ sources: ["EMT_Doc/37/TPWRD.2014.2332557.pdf-1.pdf"]
 
 - [[mmc-model|MMC]]
 - [[vsc-model|VSC]]
-- [[子模块-sm|子模块(SM)]]
+- [[submodule-model|子模块(SM)]]
 - 受控源等效电路
 
 ## 相关主题
 
 - [[emt-simulation|电磁暂态仿真]]
-- [[直流故障分析|直流故障分析]]
+- [[dc-fault-blocking|直流故障分析]]
 - 模型降阶与等效
 - [[parallel-computing|仿真加速]]
 - [[vsc-model|VSC]]

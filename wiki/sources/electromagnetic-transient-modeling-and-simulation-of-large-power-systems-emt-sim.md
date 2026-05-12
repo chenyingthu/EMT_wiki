@@ -87,7 +87,7 @@ sources: ["EMT_Doc/16/Filizadeh 等 - 2025 - Electromagnetic Transient Modeling 
 - 混合协同仿真
 - [[multirate-method|多速率仿真]]
 - [[dynamic-phasor|动态相量建模]]
-- [[逆变器型资源|逆变器型资源]]
+- [[gfl-inverter-model|逆变器型资源]]
 - [[parallel-computing|网络解耦]]
 - 自动初始化
 

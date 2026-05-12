@@ -68,7 +68,7 @@ sources: ["EMT_Doc/05/Nzale 等 - 2021 - Accurate time-domain simulation of powe
 ## 涉及的模型
 
 - [[ideal-switch-model|理想开关模型]]
-- [[电力电子电路|电力电子电路]]
+- [[power-electronic-device-modeling|电力电子电路]]
 - RL支路
 - 电感电容伴随模型
 
@@ -76,7 +76,7 @@ sources: ["EMT_Doc/05/Nzale 等 - 2021 - Accurate time-domain simulation of powe
 
 - [[emt-simulation|电磁暂态仿真]]
 - [[numerical-integration|数值振荡抑制]]
-- [[不连续点处理|不连续点处理]]
+- [[numerical-integration|不连续点处理]]
 - 事件定位
 - 状态重初始化
 - 瞬时换相

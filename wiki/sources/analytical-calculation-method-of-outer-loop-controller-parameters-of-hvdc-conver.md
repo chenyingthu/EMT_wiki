@@ -69,7 +69,7 @@ sources: ["EMT_Doc/09/Li 等 - 2023 - Analytical Calculation Method of Outer Loo
 
 - [[mmc-model|MMC]]
 - 柔性直流换流站
-- [[弱交流电网|弱交流电网]]
+- [[gfl-inverter-model|弱交流电网]]
 - [[dynamic-phasor|锁相环(PLL)]]
 - 双闭环控制系统
 - PCC等效电容
@@ -77,9 +77,9 @@ sources: ["EMT_Doc/09/Li 等 - 2023 - Analytical Calculation Method of Outer Loo
 
 ## 相关主题
 
-- [[弱交流电网|弱交流电网]]
+- [[gfl-inverter-model|弱交流电网]]
 - [[vsc-hvdc|柔性直流输电]]
-- [[控制器参数整定|控制器参数整定]]
+- [[pi-controller-model|控制器参数整定]]
 - 小干扰稳定性分析
 - [[impedance-modeling|阻抗建模]]
 - 锁相环交互

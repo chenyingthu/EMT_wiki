@@ -59,7 +59,7 @@ sources: ["EMT_Doc/32/pesgm41954.2020.9281694.pdf.pdf"]
 ## 使用的方法
 
 - [[nodal-analysis|等效电路法]]
-- [[器件级建模|器件级建模]]
+- [[switch-modeling|器件级建模]]
 - 电热耦合仿真
 - [[real-time-simulation|实时仿真]]
 - MPSoC硬件加速
@@ -75,10 +75,10 @@ sources: ["EMT_Doc/32/pesgm41954.2020.9281694.pdf.pdf"]
 
 - [[real-time-simulation|实时仿真]]
 - 电热暂态
-- [[直流故障穿越|直流故障穿越]]
+- [[dc-fault-blocking|直流故障穿越]]
 - [[mmc-model|MMC]]
 - [[hybrid-acdc-network|多端直流系统]]
-- [[硬件加速|硬件加速]]
+- [[gpu-accelerated-simulation|硬件加速]]
 
 ## 主要发现
 

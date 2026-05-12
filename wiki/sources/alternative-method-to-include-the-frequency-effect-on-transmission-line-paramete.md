@@ -60,7 +60,7 @@ sources: ["EMT_Doc/06/Pascoalato 等 - 2024 - Alternative method to include the 
 
 - [[state-space-method|状态空间法]]
 - [[transmission-line-model|集中参数模型]]
-- [[π型电路级联|π型电路级联]]
+- [[companion-circuit|π型电路级联]]
 - 频变参数拟合
 - 直接时域仿真
 
@@ -68,7 +68,7 @@ sources: ["EMT_Doc/06/Pascoalato 等 - 2024 - Alternative method to include the 
 
 - [[transmission-line-model|输电线路]]
 - 频变集中参数模型(FDLPM)
-- [[π型等效电路|π型等效电路]]
+- [[companion-circuit|π型等效电路]]
 - RL并联支路
 
 ## 相关主题

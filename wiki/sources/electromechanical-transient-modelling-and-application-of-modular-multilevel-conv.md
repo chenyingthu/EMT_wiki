@@ -68,7 +68,7 @@ sources: ["EMT_Doc/17/Yu 等 - 2022 - Electromechanical transient modelling and 
 
 - [[mmc-model|MMC]]
 - 储能子系统(ESS)
-- [[双向dc-dc变换器|双向DC-DC变换器]]
+- [[energy-storage-converter-model|双向DC-DC变换器]]
 - 两端直流输电系统
 
 ## 相关主题
@@ -76,7 +76,7 @@ sources: ["EMT_Doc/17/Yu 等 - 2022 - Electromechanical transient modelling and 
 - [[electromechanical-transient|机电暂态仿真]]
 - [[mmc-model|MMC]]
 - [[transient-stability-analysis|暂态稳定性分析]]
-- [[故障穿越|故障穿越]]
+- [[fault-ride-through|故障穿越]]
 - 交直流系统解耦
 
 ## 主要发现

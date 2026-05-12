@@ -1,4 +1,5 @@
 ---
+updated: "2026-05-11"
 title: "静止同步补偿器 (STATCOM)"
 type: model
 tags: [statcom, svg, reactive-power, voltage-control, vsc, facts]
@@ -7,18 +8,6 @@ created: "2026-05-02"
 
 # 静止同步补偿器 (STATCOM)
 
-
-```mermaid
-graph TD
-    subgraph Ncmp[静止同步补偿器 (STATCOM)]
-        N0[额定容量: $S_N$]
-        N1[直流电压: $V_{dc}$]
-        N2[开关频率: $f_{sw}$]
-        N3[响应时间: $t_r$]
-        N4[滤波电感: $L_f$]
-        N5[损耗: $P_{loss}$]
-    end
-```
 
 
 ## 定义与边界
@@ -383,18 +372,19 @@ $$\tilde{V}_{out} = \frac{m}{2}V_{dc}e^{j\theta}$$
 - [[pll-model]] - 锁相环模型
 - [[power-quality]] - 电能质量
 
+## 量化性能边界
+
+STATCOM 的 EMT 建模精度高度依赖于换流器模型精度（详细开关模型 vs 平均值模型）和控制环节的准确参数化。目前公开文献中缺乏针对 STATCOM 独立 EMT 建模精度的大规模可比量化评估。
+
+**数据缺口声明**：截至当前知识范围，未找到针对 STATCOM EMT 建模精度的独立量化性能数据。Stepanov (2023) 提出了 MMC-STATCOM 的四级 EMT 模型框架（DM/DEM/AEM/AVM），但原文未报告可核验的误差百分比或计算时间倍数。Hajizadeh (2025) 实现了基于 FPGA 的 STATCOM 详细模型与 FDNE 接口仿真，达到亚微秒级步长和超实时性能，但原文未在给定证据中报告资源占用百分比或波形偏差数值。建议用户根据研究目的（开关暂态分析、控制设计或系统级研究）选择合适的建模精度层级，并通过与详细模型或实测对比验证精度。
+
+这些量化数据不构成对 STATCOM 建模方法的全面性能评价，只说明在特定测试条件下可获得的能力边界。
+
 ## 代表性来源
 
 - Schauder, C. and Mehta, H., "Vector Analysis and Control of Advanced Static VAR Compensators," *IEE Proceedings C*, 1993.
 - Gyugyi, L., "Dynamic Compensation of AC Transmission Lines by Solid-State Synchronous Voltage Sources," *IEEE TPWRD*, 1994.
 
-## 来源论文
+---
 
-参见 [[index]] 获取更多STATCOM相关文献。
-
-## 来源论文
-
-| 论文 | 年份 |
-|------|------|
-| [[modeling-of-mmc-based-statcom-with-embedded-energy-storage-for-the-simulation-of|Modeling of MMC-based STATCOM with embedded energy storage f]] | 2023 |
-| [[fpga-based-simulation-of-grid-tied-converters-using-frequency-dependent-network-|FPGA-based simulation of grid-tied converters using frequenc]] | 2025 |
+*本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*

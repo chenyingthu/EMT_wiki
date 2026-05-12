@@ -61,7 +61,7 @@ sources: ["EMT_Doc/07&08/Zhang et al. - 2024 - An ultra-fast MMC-HVDC fault loca
 - 集中参数RLC建模
 - 回归神经网络(RNN)
 - 暂态特征提取
-- [[传递函数分析|传递函数分析]]
+- [[small-signal-analysis|传递函数分析]]
 
 ## 涉及的模型
 

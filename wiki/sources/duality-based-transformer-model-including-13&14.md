@@ -58,7 +58,7 @@ sources: ["EMT_Doc/13&14/files/TPWRD.2015.2424223.pdf.pdf"]
 
 ## 使用的方法
 
-- [[对偶原理|对偶原理]]
+- [[transformer-model|对偶原理]]
 - Cauer等效电路
 - 解析参数计算
 - 有限元验证
@@ -68,7 +68,7 @@ sources: ["EMT_Doc/13&14/files/TPWRD.2015.2424223.pdf.pdf"]
 
 - [[transformer-model|电力变压器]]
 - 单相变压器
-- [[三相变压器|三相变压器]]
+- [[transformer-model|三相变压器]]
 - 多层绕组
 - 频变漏感模型
 

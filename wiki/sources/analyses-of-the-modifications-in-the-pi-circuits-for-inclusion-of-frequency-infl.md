@@ -61,7 +61,7 @@ sources: ["EMT_Doc/07&08/Analyses of the modifications in the 蟺 circuits for i
 - [[state-space-method|状态变量法]]
 - [[numerical-integration|梯形积分法]]
 - [[characteristic-method|特征线法]]
-- [[π型电路级联|π型电路级联]]
+- [[companion-circuit|π型电路级联]]
 - 并联RL支路拟合
 
 ## 涉及的模型

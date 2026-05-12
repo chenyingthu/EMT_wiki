@@ -3,10 +3,11 @@ title: "A Thévenin-Type Version of the Extended Modal-Domain Model for Lightnin
 type: source
 authors: ['Osis E. S. Leal', 'Alberto De Conti']
 year: 2023
+tags: [venin, type, version, extended, modal]
+
 journal: "IEEE Transactions on Power Delivery;2023;38;1;10.1109/TPWRD.2022.3181445"
 created: "2026-04-13"
-sources: ["EMT_Doc/04/Leal和Conti - 2023 - A Thévenin-Type Version of the Extended Modal-Domain Model for Lightning-Induced Voltage Calculation.pdf"]
----
+sources: ["EMT_Doc/04/Leal和Conti - 2023 - A Thévenin-Type Version of the Extended Modal-Domain Model for Lightning-Induced Voltage Calculation.pdf"]---
 
 # A Thévenin-Type Version of the Extended Modal-Domain Model for Lightning-Induced Voltage Calculation
 
@@ -68,12 +69,12 @@ sources: ["EMT_Doc/04/Leal和Conti - 2023 - A Thévenin-Type Version of the Exte
 - Marti输电线路模型
 - 扩展模态域模型
 - 多导体架空线路
-- [[配电变压器|配电变压器]]
+- [[distribution-transformer|配电变压器]]
 - [[surge-arrester-model|避雷器]]
 
 ## 相关主题
 
-- [[雷击感应电压|雷击感应电压]]
+- [[lightning-induced-voltage|雷击感应电压]]
 - [[emt-simulation|电磁暂态仿真]]
 - 频率相关线路建模
 - 外部电磁场耦合

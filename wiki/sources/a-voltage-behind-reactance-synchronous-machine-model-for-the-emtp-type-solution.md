@@ -2,10 +2,11 @@
 title: "A Voltage-Behind-Reactance Synchronous Machine Model for the EMTP-Type Solution"
 type: source
 year: 2006
+tags: [voltage, behind, reactance, synchronous, machine]
+
 journal: "IEEE Transactions on Power Systems"
 created: "2026-04-13"
-sources: ["EMT_Doc/04/TPWRS.2006.883670.pdf.pdf"]
----
+sources: ["EMT_Doc/04/TPWRS.2006.883670.pdf.pdf"]---
 
 # A Voltage-Behind-Reactance Synchronous Machine Model for the EMTP-Type Solution
 
@@ -66,16 +67,16 @@ EMT仿真需要把全阶同步机电磁暂态与外部网络的节点分析在�
 - [[synchronous-machine-model|同步电机]]
 - 全阶模型
 - [[nodal-analysis|相域模型]]
-- [[电抗后电压模型|电抗后电压模型]]
+- [[vbr-model|电抗后电压模型]]
 - 单机无穷大系统
 
 ## 相关主题
 
 - [[emt-simulation|电磁暂态仿真]]
 - [[real-time-simulation|实时仿真]]
-- [[电机网络接口|电机网络接口]]
+- [[electromechanical-electromagnetic-hybrid-simulation|电机网络接口]]
 - [[numerical-integration|数值稳定性]]
-- [[仿真效率优化|仿真效率优化]]
+- [[gpu-accelerated-simulation|仿真效率优化]]
 
 ## 主要发现
 

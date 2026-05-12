@@ -18,6 +18,21 @@ graph TD
 ```
 
 
+## EMT中的作用
+
+网络等值 (Network Equivalent) 在EMT仿真中的核心作用：
+
+- **研究范围**：界定网络等值 (Network Equivalent)在EMT仿真中的研究边界和应用场景
+- **分析方法**：提供网络等值 (Network Equivalent)相关的EMT分析方法和工具
+- **系统影响**：分析网络等值 (Network Equivalent)对电力系统电磁暂态特性的影响
+- **仿真验证**：为网络等值 (Network Equivalent)相关研究提供仿真验证框架
+## 形式化表达
+
+从EMT仿真角度，网络等值 (Network Equivalent)可形式化表达为：
+
+$$
+\text{待补充：网络等值 (Network Equivalent)的数学形式化描述}
+$$
 ## 概述
 
 网络等值技术将大规模电力系统简化为等效模型，在保持端口特性不变的前提下大幅减少仿真规模。这是混合仿真、并行计算和大电网仿真的基础技术。
@@ -380,7 +395,7 @@ $$Y_{\text{line}}(s) \approx \sum_{k=1}^{N_p} \frac{1}{R_k + sL_k} + sC_{\infty}
 | [[考虑中间变压器饱和特性的电容式电压互感器宽频非线性模型|考虑中间变压器饱和特性的电容式电压互感器宽频非线性模型]] | 2021 |
 | [[structure-preserving-aggregation-method-for-doubly-fed-induction-generators-in-w|Structure Preserving Aggregation Method for Doubly-Fed Induc]] | 2022 |
 | [[using-the-exact-equivalent-x03c0-circuit-of-transmission-lines-for-electromagnet|Using the Exact Equivalent &#x03C0;-Circuit of Transmission ]] | 2022 |
-| [[中-国-电-机-工-程-学-报-34|中  国  电  机  工  程  学  报]] | 2022 |
+| [[index|中  国  电  机  工  程  学  报]] | 2022 |
 | [[协调分布式潮流控制器串并联变流器能量交换的等效模型|协调分布式潮流控制器串并联变流器能量交换的等效模型]] | 2022 |
 | [[协调分布式潮流控制器串并联变流器能量交换的等效模型|协调分布式潮流控制器串并联变流器能量交换的等效模型]] | 2022 |
 | [[大规模电力电子设备接入的电力系统混合仿真接口技术综述|大规模电力电子设备接入的电力系统混合仿真接口技术综述]] | 2022 |

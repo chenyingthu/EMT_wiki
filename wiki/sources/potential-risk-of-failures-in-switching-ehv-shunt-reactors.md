@@ -65,7 +65,7 @@ sources: ["EMT_Doc/31/j.epsr.2005.12.018.pdf.pdf"]
 
 ## 涉及的模型
 
-- [[并联电抗器|并联电抗器]]
+- [[compensation|并联电抗器]]
 - SF6断路器
 - 电流互感器
 - [[transmission-line-model|输电线路]]

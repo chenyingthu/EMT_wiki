@@ -71,14 +71,14 @@ sources: ["EMT_Doc/12/Damping_of_Subsynchronous_Control_Interactions_in_Large-Sc
 - [[pv-power-plant|光伏电站]]
 - [[vsc-model|电压源换流器]]
 - [[large-scale-grid-simulation|交流电网]]
-- [[串联补偿输电线路|串联补偿输电线路]]
+- [[transmission-line-model|串联补偿输电线路]]
 - [[pv-statcom|PV-STATCOM]]
 
 ## 相关主题
 
 - 次同步控制交互
 - [[real-time-simulation|超实时仿真]]
-- [[硬件仿真|硬件仿真]]
+- [[hil-simulation|硬件仿真]]
 - [[co-simulation|混合仿真]]
 - 弱电网稳定性
 - [[pv-power-plant|光伏并网]]

@@ -2,10 +2,11 @@
 title: "A Parallel Multi-Modal Optimization Algorithm for Simulation-Based Design of Power Systems"
 type: source
 year: 2015
+tags: [parallel, multi, modal, optimization, simulation]
+
 journal: "IEEE Transactions on Magnetics"
 created: "2026-04-13"
-sources: ["EMT_Doc/03/TPWRD.2015.2410172.pdf.pdf"]
----
+sources: ["EMT_Doc/03/TPWRD.2015.2410172.pdf.pdf"]---
 
 # A Parallel Multi-Modal Optimization Algorithm for Simulation-Based Design of Power Systems
 
@@ -59,7 +60,7 @@ sources: ["EMT_Doc/03/TPWRD.2015.2410172.pdf.pdf"]
 - 代理模型(三次样条插值)
 - 黑盒优化
 - [[parallel-computing|并行计算]]
-- [[基于仿真的优化设计|基于仿真的优化设计]]
+- [[parameter-identification|基于仿真的优化设计]]
 
 ## 涉及的模型
 
@@ -68,7 +69,7 @@ sources: ["EMT_Doc/03/TPWRD.2015.2410172.pdf.pdf"]
 
 ## 相关主题
 
-- [[基于仿真的优化设计|基于仿真的优化设计]]
+- [[parameter-identification|基于仿真的优化设计]]
 - 多模态优化
 - [[parallel-computing|并行计算]]
 - [[sensitivity-analysis|灵敏度分析]]

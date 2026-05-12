@@ -62,14 +62,14 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/Liu 等 - 2026 - Fine-Grained Optima
 - 电容电感支路解耦法
 - 整数非线性规划
 - 自底向上量化方法
-- [[cpu-gpu异构并行计算|CPU-GPU异构并行计算]]
+- [[gpu-accelerated-simulation|CPU-GPU异构并行计算]]
 
 ## 涉及的模型
 
 - [[dfig-model|DFIG]]
 - [[wind-farm-modeling|风电场]]
 - 解耦模型
-- [[控制系统|控制系统]]
+- [[gfl-inverter-model|控制系统]]
 - 电气系统
 
 ## 相关主题

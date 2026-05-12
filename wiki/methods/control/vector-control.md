@@ -1,213 +1,220 @@
 ---
 title: "矢量控制 (Vector Control)"
 type: method
-tags: [vector-control, field-oriented-control, motor-drive, inverter, ac-machine]
+tags: [vector-control, field-oriented-control, motor-drive, inverter, ac-machine, dq-control]
 created: "2026-05-04"
+updated: "2026-05-10"
 ---
 
 # 矢量控制 (Vector Control)
 
+## 1. 物理背景与工程需求
 
-```mermaid
-graph TD
-    subgraph Ncmp[矢量控制 (Vector Control)]
-        N0[参数准确: 电机参数已知]
-        N1[速度范围: 基速以下恒转矩]
-        N2[采样频率: >10倍开关频率]
-        N3[线性区: 未饱和]
-    end
-```
+矢量控制（磁场定向控制, FOC）通过坐标变换将交流电机的电磁转矩与励磁解耦，将三相交流量转换为旋转坐标系下的直流量独立控制。在 EMT 仿真中，矢量控制不仅用于电机驱动，也广泛用于并网换流器的电流/功率控制。
 
+矢量控制在 EMT 中的工程需求包括：
 
-## 定义与边界
+1. **电机高性能调速**：同步机、感应机的转矩和磁链独立控制，获得类似直流电机的动态响应
+2. **并网换流器控制**：VSC、MMC 的 dq 电流内环实现有功/无功解耦（Mengjia & Xiao 2015）
+3. **GFM 逆变器内环**：下垂/功率外环的输出需经 dq 电压/电流双环执行（Nguyen 2021）
+4. **新能源设备并网**：光伏、风电的功率调节依赖 dq 框架的矢量控制
 
-矢量控制（又称磁场定向控制，Field-Oriented Control, FOC）是一种通过坐标变换将交流电机电磁转矩与励磁解耦，实现类似直流电机控制性能的高性能交流调速方法。该方法通过Park变换将三相交流量转换为旋转坐标系下的直流量，独立控制磁链和转矩分量。
+## 2. 数学描述
 
-在电力系统分析中，矢量控制主要应用于：
-- 并网逆变器的电流/功率控制
-- 电机驱动系统的调速控制
-- 柔性交流输电装置（STATCOM、UPFC等）
-- 新能源发电设备的功率调节
+### 2.1 Park 变换（幅值不变约定）
 
-**边界限定**：本方法基于线性化假设，大信号扰动下需考虑控制饱和与非线性效应。
-
-## EMT中的作用
-
-矢量控制是电力电子装置精确控制的核心技术：
-
-- **解耦控制**：实现有功/无功、转矩/磁链的独立调节
-- **动态响应**：获得比标量控制更快的动态响应
-- **宽速域运行**：从低速到高速的宽范围稳定运行
-- **并网控制**：实现新能源设备的友好并网
-
-## 主要分支与机制
-
-### 1. 直接磁场定向控制 (DFOC)
-
-直接测量或计算转子磁链位置，实现精确磁场定向：
-$$\theta_e = \int(\omega_r + \omega_s)dt$$
-
-其中 $\omega_r$ 为转子转速，$\omega_s$ 为转差频率。
-
-### 2. 间接磁场定向控制 (IFOC)
-
-通过转差频率计算磁链位置，无需磁链传感器：
-$$\omega_s = \frac{L_m i_{qs}^*}{\tau_r \psi_{dr}^*}$$
-
-### 3. 直接转矩控制 (DTC)
-
-直接控制定子磁链和电磁转矩，无需坐标变换：
-$$T_e = \frac{3}{2}p\frac{\psi_s \times \psi_r}{L_m}$$
-
-## 形式化表达
-
-### Park变换
-
-三相静止坐标到两相同步旋转坐标的变换：
+三相静止坐标到两相同步旋转坐标：
 
 $$
 \begin{bmatrix} i_d \\ i_q \end{bmatrix}
 =
 \frac{2}{3}
-\begin{bmatrix} \cos\theta & \cos(\theta-120°) & \cos(\theta+120°) \\ -\sin\theta & -\sin(\theta-120°) & -\sin(\theta+120°) \end{bmatrix}
+\begin{bmatrix} \cos\theta & \cos(\theta-120^\circ) & \cos(\theta+120^\circ) \\ -\sin\theta & -\sin(\theta-120^\circ) & -\sin(\theta+120^\circ) \end{bmatrix}
 \begin{bmatrix} i_a \\ i_b \\ i_c \end{bmatrix}
 $$
 
-逆变换：
+### 2.2 同步电机转矩方程
+
+在转子 dq 坐标系下，电磁转矩：
 
 $$
-\begin{bmatrix} i_a \\ i_b \\ i_c \end{bmatrix}
-=
-\begin{bmatrix} \cos\theta & -\sin\theta \\ \cos(\theta-120°) & -\sin(\theta-120°) \\ \cos(\theta+120°) & -\sin(\theta+120°) \end{bmatrix}
-\begin{bmatrix} i_d \\ i_q \end{bmatrix}
+T_e = \frac{3}{2}p[\psi_f i_q + (L_d-L_q)i_d i_q]
 $$
 
-### 同步电机转矩方程
+对隐极机（$L_d=L_q$）：$T_e = \frac{3}{2}p\psi_f i_q$。转矩与 $i_q$ 成正比，$i_d$ 控制励磁——此即为解耦的本质。
 
-旋转坐标系下电磁转矩：
+### 2.3 电流解耦与交叉耦合补偿
 
-$$T_e = \frac{3}{2}p[\psi_f i_q + (L_d-L_q)i_d i_q]$$
+定子电压方程含速度电动势交叉耦合项：
 
-对于隐极机（$L_d=L_q$）：
-$$T_e = \frac{3}{2}p\psi_f i_q$$
+$$
+v_d = R_s i_d + L_d\frac{di_d}{dt} - \omega_e L_q i_q
+$$
+$$
+v_q = R_s i_q + L_q\frac{di_q}{dt} + \omega_e L_d i_d + \omega_e \psi_f
+$$
 
-### 电流解耦控制
+前馈解耦补偿将交叉项作为前馈量抵消：
 
-定子电压方程（考虑交叉耦合项）：
+$$
+v_d^* = v_d' - \omega_e L_q i_q, \quad v_q^* = v_q' + \omega_e L_d i_d + \omega_e \psi_f
+$$
 
-$$v_d = R_s i_d + L_d\frac{di_d}{dt} - \omega_e L_q i_q$$
-$$v_q = R_s i_q + L_q\frac{di_q}{dt} + \omega_e L_d i_d + \omega_e \psi_f$$
+此解耦为基于模型的前馈补偿——弱电网、参数失配或 LCL 谐振时不等同于完全解耦。
 
-前馈解耦补偿：
-$$v_d^* = v_d' - \omega_e L_q i_q$$
-$$v_q^* = v_q' + \omega_e L_d i_d + \omega_e \psi_f$$
+## 3. 计算模型与离散化
 
-### PI控制器设计
+### 3.1 双环控制架构
 
-电流环PI参数（基于极点配置）：
+矢量控制在 EMT 中通常组织为内外环级联结构：
 
-$$K_p = \frac{L}{\tau_c}, \quad K_i = \frac{R}{\tau_c}$$
+```text
+外环 (慢): 功率/转速/电压 PI → dq 电流参考 i_d*, i_q*
+内环 (快): 电流 PI → 调制电压 v_d*, v_q* → dq→abc → PWM
+```
 
-其中 $\tau_c$ 为期望的电流环时间常数。
+时间尺度分离原则：电流内环带宽 > 电压/转速外环带宽 > 功率下垂环带宽，各环差距 5--10 倍以上避免交互。
 
+### 3.2 离散化考虑
 
-## 数值分析
+EMT 每时间步的矢量控制计算：
 
-### 精度与效率
-- 仿真精度：误差控制在1%以内
-- 计算效率：支持大规模系统实时仿真
-- 数值稳定性：在典型工况下保持稳定
+1. 测量 abc 电流/电压
+2. Park 变换（使用 PLL 角度或转子位置 $\theta$）
+3. 外环 PI：从功率/转速误差计算 $i_d^*, i_q^*$
+4. 内环 PI：从电流误差计算 $v_d^*, v_q^*$（含前馈解耦）
+5. 反 Park 变换得到三相调制波
+6. PWM 生成开关信号
 
-### 典型参数范围
-- 时间步长：1μs ~ 1ms
-- 系统规模：10~1000节点
-- 仿真时长：0.1s ~ 10s
+关键约束：测量滤波、采样保持、PWM 更新和计算延迟的总和影响控制等效带宽，在高频 EMT 仿真中不可忽略。
 
-### 性能指标
-- 内存占用：随系统规模线性增长
-- 计算时间：与系统复杂度和仿真时长相关
-- 收敛性：在绝大多数情况下稳定收敛
+### 3.3 PI 控制器参数整定
 
-## 适用边界与失败模式
+电流环 PI 参数按极点配置：
+
+$$
+K_p = \frac{L}{\tau_c}, \quad K_i = \frac{R}{\tau_c}
+$$
+
+$\tau_c$ 为期望电流环时间常数，通常取开关周期 5--10 倍。参数基于 $L, R$ 名义值——实际参数随温度、饱和变化时解耦效果下降。
+
+## 4. 实现方法与算法细节
+
+### 4.1 DFOC 与 IFOC
+
+| 变体 | 磁场定向方式 | 优点 | 代价 |
+|------|-------------|------|------|
+| 直接 FOC (DFOC) | 磁链传感器/观测器直接测量磁链位置 | 精度高 | 需要传感器或观测器 |
+| 间接 FOC (IFOC) | 转差频率计算磁链位置：$\omega_s = \frac{L_m i_{qs}^*}{\tau_r \psi_{dr}^*}$ | 无需磁链传感器 | 依赖转子时间常数 $\tau_r$ |
+
+### 4.2 并网换流器中的 dq 矢量控制
+
+Mengjia & Xiao (2015) 的嵌入式 HVDC 展示了典型架构：外环根据有功/无功/电压目标生成 $i_d^*, i_q^*$，内环跟踪电流并输出调制电压。控制叠加（频率补偿层位于有功功率参考层）不影响底层 dq 电流内环结构。
+
+Nguyen (2021) 的 GFM 黑启动控制中，下垂环输出经 dq 电压/电流双环执行，生成调制参考。dq 内环的限幅和抗饱和机制（Nurunnabi 2025）确保调制参考不超出 PWM 饱和边界。
+
+### 4.3 限幅与抗饱和
+
+内环限幅触发后，外环积分器继续积分导致积分饱和（windup），需抗饱和（anti-windup）处理：
+- 条件积分：限幅时暂停积分更新
+- 反算法：限幅差值反馈到积分输入端
+
+## 5. 适用边界与失效模式
 
 ### 适用条件
 
-| 条件 | 要求 | 说明 |
-|------|------|------|
-| 参数准确 | 电机参数已知 | 影响解耦效果 |
-| 速度范围 | 基速以下恒转矩 | 弱磁区需特殊处理 |
-| 采样频率 | >10倍开关频率 | 保证控制精度 |
-| 线性区 | 未饱和 | 考虑电压/电流限制 |
+- 电机参数已知或可在线辨识
+- 三相绕组对称、磁路线性或已补偿
+- 采样频率足够高（通常 > 10 倍开关频率）
+- 未触发电压/电流限幅器（线性调制区）
 
-### 失效边界
+### 失效模式
 
-- **参数失配**：电机实际参数与控制器参数偏差导致解耦失效
-- **速度估计误差**：无传感器控制中低速估算不准
-- **积分饱和**：PI控制器积分项饱和导致超调
-- **采样延迟**：大延迟导致相位裕度不足、振荡
+| 失效场景 | 原因 | 后果 |
+|----------|------|------|
+| 参数失配 | $L, R$ 实际值与控制器参数偏差 | 解耦不完全，转矩/电流振荡 |
+| 积分饱和 | 限幅后积分持续累加 | 恢复时超调 |
+| 弱网下 PLL-电流环交互 | PLL 带宽与电流环重叠（Guo 2022） | 高频失稳 |
+| LCL 谐振 | 滤波器谐振频率与电流环带宽接近 | 电流纹波放大 |
+| 弱磁区过渡 | 电压饱和后 $i_d$ 需负向注入 | 转矩能力下降 |
 
-### 关键假设
+### 关键约束
 
-1. 电机参数恒定时不变
-2. 三相绕组对称
-3. 磁路线性（无饱和）或已补偿
-4. 逆变器增益恒定
+- dq 解耦是模型基前馈补偿，不保证参数失配或拓扑变化（LCL 滤波器、强饱和）下完全解耦
+- Wang, Jatskevich & Dommel (2007) 证明 dq0 与相域模型连续等价——离散差异来自接口结构而非坐标本身
+- 不宣称某组 PI 参数 "最优" 或某矢量控制必然稳定——需绑定电机参数、滤波器、开关频率和验证工况
 
-## 代表性来源
+## 6. 应用案例
 
-- [[emt-simulation]] - EMT仿真基础
-- [[power-system]] - 电力系统建模
-- [[electromagnetic-transient]] - 电磁暂态分析
-- [[control-system]] - 控制系统设计
-- [[real-time-simulation]] - 实时仿真技术
-### 经典文献
+### 案例 1：VBR 同步电机模型的 dq 转子状态（2006）
 
-- Blaschke, F., "The Principle of Field Orientation as Applied to the New Transvector Closed-Loop Control System for Rotating-Field Machines," *Siemens Review*, 1971. - 矢量控制奠基论文
-- Leonhard, W., "Control of Electrical Drives," *Springer*, 2001. - 电机控制经典教材
+场景：835 MVA 同步机 EMTP 仿真。dq 转子磁链状态通过 Park 变换映射到 abc 定子端口，实现转矩与励磁解耦。在 0.25% 误差容限下，VBR 可用 500 $\mu$s 步长。
 
-### 应用方法
+### 案例 2：嵌入式 HVDC 的 dq 双环控制（Mengjia & Xiao 2015）
 
-- [[coordinate-transformation]] - 坐标变换
-- [[dq-transformation]] - dq变换
-- PI 控制器设计
-- PWM 调制
+场景：IEEE 4 机 6 节点系统嵌入式 VSC-HVDC。外环 PQ 控制 → $i_d^*, i_q^*$ → 内环电流跟踪 → PWM。dq 解耦项为基于滤波器方程的前馈补偿。
 
-### 相关控制
+### 案例 3：GFM 逆变器的 dq 电压/电流双环（Nguyen 2021）
 
-- 直接转矩控制
-- 电压定向控制
-- 构网型控制
+场景：光储混合电站黑启动。下垂环输出 $f, V$ 参考经 dq 电压/电流双环执行，内环受 PWM 饱和和额定电流约束。
 
-## 与相关页面的关系
+## 量化性能边界
 
-- [[coordinate-transformation-model]] - 坐标变换模型
-- [[pi-controller-model]] - PI控制器模型
-- [[pwm-modulator-model]] - PWM调制模型
-- [[gfl-inverter-model]] - 跟网型逆变器模型
-- [[synchronous-machine-model]] - 同步电机模型
-- [[induction-machine-model]] - 感应电机模型
+**DAVM 2012 VSC-HVDC动态平均值模型+矢量控制（PSCAD/EMTDC，100MW/100kV）**:
+- 提出动态平均值模型（DAVM）替代详细IGBT开关模型，配SPWM调制和矢量控制PQ解耦
+- 三相受控电压源（交流侧）+受控电流源（直流侧）结构
+- 50-70% CPU降低：5μs步长时降低50-54%，≥40μs步长时降低60-70%
+- 开关频率1980Hz，交流故障恢复时间0.05-0.15s
+- 验证：PSCAD/EMTDC，双端VSC-HVDC，ESCR=2.0
+- 数据缺口：仅验证双端拓扑；DAVM在MMC多端系统上的通用性未覆盖
 
-## 开放问题
+**Mengjia & Xiao 2015 嵌入式VSC-HVDC dq矢量控制+频率补偿（IEEE 4机6节点）**:
+- 在传统dq双环矢量控制（外环PQ→内环dq电流）基础上叠加频率振荡补偿
+- 频率补偿作用于有功功率参考层，不影响底层dq电流内环结构
+- 平均CCT改进22.93%，振荡衰减时间约6s
+- 前3s受直流容量限制功率限幅
+- 验证：PSCAD/EMTDC，IEEE 4机6节点系统，230kV/60Hz
+- 数据缺口：频率补偿参数整定方法未系统报告；仅验证嵌入式HVDC场景
 
-- 参数在线辨识与自适应矢量控制
-- 弱磁区深度弱磁与六步调制过渡
-- 无传感器控制零速/低速运行
-- 多电机并联运行的解耦控制
+**Ye 2017 移频多尺度VSC-HVDC模型（CIGRE B4 MTDC）**:
+- 基于Hilbert变换解析信号+频移e^(-jω₀t)的移频分析法（SFA）
+- VSC移频相量模型+SFA-dq域变换，实现EMT-EMS统一建模
+- 慢动态时步长可达ms级（1-10ms），准稳态理论上步长无限
+- 验证：CIGRE B4多端直流测试系统
+- 数据缺口：移频模型在快动态（故障穿越、开关暂态）下的精度边界未系统量化
 
-## 参考标准
+**Guo 2022 MMC-HVDC高频振荡dq阻抗分析（渝鄂背靠背工程参数）**:
+- 建立含MMC内部动态、PLL、CCSC、时延的全环节dq阻抗模型
+- 临界控制延迟165μs；350μs时引发1850Hz谐振；550μs时谐振降至720Hz
+- 三阶阻尼将1.8kHz处相位差从185°降至177°，消除高频失稳
+- 数据缺口：阻抗模型基于线性化假设，大扰动下的适用性未验证
 
-- IEC 61800-9 - 可调速电气传动系统
-- IEEE Std. 1566 - 高压直流输电变流器
+**Lefebvre & Mahseredjian 1994 EMTP-TACS接口补偿方法**:
+- 提出补偿法消除EMTP网络与TACS控制系统之间的一个时步延迟
+- 接口延迟从1步降至0步，附加开销<5%
+- 稳定性约束步长从10μs放宽至50μs
+- 数据缺口：方法基于线性网络假设，非线性系统下的收敛性未分析
+
+**设计参数约束（据方法推断）**:
+- 电流环PI按极点配置Kp=L/τc, Ki=R/τc，τc取开关周期5-10倍
+- dq解耦为模型基前馈补偿，不保证参数失配或LCL谐振时完全解耦
+- 电流内环带宽需>电压/转速外环带宽5-10倍，确保时间尺度分离
+- 矢量控制+PLL在弱网（SCR<2）下存在带宽重叠失稳风险
+- 测量滤波+采样保持+PWM更新+计算延迟的总和影响等效控制带宽
+
+**数据缺口声明**：矢量控制的量化性能数据来自五个独立方向（DAVM平均值模型、频率补偿、移频建模、高频阻抗、接口补偿），各自使用不同测试系统和评估指标。dq控制环参数在不同电机参数、滤波器拓扑和开关频率下的通用设计准则缺乏系统研究。电流内环的离散实现误差（ZOH、计算延迟、PWM更新）在μs级EMT步长下的累积效应未系统量化。
+
+## 7. 延伸阅读
+
+- [[dq-transformation]]：矢量控制的坐标变换基础
+- [[phase-locked-loop]]：跟网型矢量控制的同步角度来源
+- [[dual-loop-pi-controller]]：dq 电流内环和外环的 PI 控制结构
+- [[synchronous-machine-model]]：同步机模型中的 dq 状态与 abc 网络接口
+- [[grid-forming-inverter]]：GFM 逆变器中下垂 + dq 双环的执行关系
+- [[pwm-modulation]]：调制参考的物理约束（PWM 饱和、直流电压限制）
+- [[impedance-modeling]]：dq 坐标下换流器阻抗与矢量控制环的耦合
+- [[vector-control]]：磁场定向控制，矢量控制的工程实现细节
 
 ---
 
 *本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*
-
-## 来源论文
-
-| 论文 | 年份 |
-|------|------|
-| [[a-vsc-hvdc-model-with-reduced-computational-intensity|A VSC-HVDC Model with Reduced Computational Intensity]] | 2012 |
-| [[electromechanical-transient-modelling-and-application-of-modular-multilevel-conv|Electromechanical transient modelling and application of mod]] | 2021 |
-| [[an-enhanced-k-means-two-step-clustering-method-for-dynamic-equivalent-modeling-o|An enhanced K-means two-step clustering method for dynamic e]] | 2025 |
-| [[comprehensive-full-scale-converter-wind-park-initialization-for-electromagnetic-|Comprehensive Full-Scale Converter Wind Park Initialization ]] | 2025 |

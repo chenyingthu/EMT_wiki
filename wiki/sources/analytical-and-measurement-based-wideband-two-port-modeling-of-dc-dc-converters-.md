@@ -69,14 +69,14 @@ sources: ["EMT_Doc/09/Alameri和Gomez - 2023 - Analytical and measurement-based 
 - Buck变换器
 - Boost变换器
 - 双端口导纳模型
-- [[黑盒模型|黑盒模型]]
+- [[fdne-model|黑盒模型]]
 
 ## 相关主题
 
 - [[emt-simulation|电磁暂态仿真]]
 - [[wideband-modeling|宽频建模]]
 - [[frequency-domain-analysis|频域分析]]
-- [[电力电子变换器建模|电力电子变换器建模]]
+- [[power-electronic-device-modeling|电力电子变换器建模]]
 - 导纳建模
 - 分布式能源并网
 

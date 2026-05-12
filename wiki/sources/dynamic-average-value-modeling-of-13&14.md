@@ -68,10 +68,10 @@ sources: ["EMT_Doc/13&14/files/TPWRD.2014.2340870.pdf.pdf"]
 - [[lcc-model|LCC]]
 - 十二脉冲换流器
 - [[transformer-model|换流变压器]]
-- [[交流滤波器|交流滤波器]]
+- [[emi-filter-model|交流滤波器]]
 - [[transmission-line-model|直流输电线路]]
 - [[dc-rlc-filter|平波电抗器]]
-- [[弱交流电网|弱交流电网]]
+- [[gfl-inverter-model|弱交流电网]]
 
 ## 相关主题
 

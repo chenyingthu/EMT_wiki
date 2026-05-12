@@ -66,7 +66,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/Liu 等 - 2023 - High-frequency Osci
 
 ## 涉及的模型
 
-- [[模块化多电平换流器-mmc|模块化多电平换流器(MMC)]]
+- [[mmc-model|模块化多电平换流器(MMC)]]
 - C型滤波器
 - MMC高频简化阻抗模型
 - 柔性直流输电系统与交流电网

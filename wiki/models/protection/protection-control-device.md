@@ -3,20 +3,12 @@ title: "保护控制设备 (Protection and Control Device)"
 type: model
 tags: [protection, relay, control, automation, ied]
 created: "2026-05-02"
+updated: "2026-05-12"
+updated: "2026-05-11"
 ---
 
 # 保护控制设备 (Protection and Control Device)
 
-
-```mermaid
-graph TD
-    subgraph Ncmp[保护控制设备 (Protection and Contr…]
-        N0[逻辑块模型: 理想测量量加判据、定时器和出口逻辑]
-        N1[采样算法模型: 加入采样、滤波、相量或暂态量估计]
-        N2[闭环装置模型: 互感器、继电器、断路器反馈逐时步耦合]
-        N3[HIL/实物接口模型: EMT 仿真器与实际 IED 或…]
-    end
-```
 
 
 ## 定义与边界
@@ -63,6 +55,18 @@ $$
 | 闭环装置模型 | 互感器、继电器、断路器反馈逐时步耦合 | EMT 中保护动作改变网络状态的研究 | 需校核互感器、断路器和接口时序 |
 | HIL/实物接口模型 | EMT 仿真器与实际 IED 或控制器闭环 | 装置级测试和工程验收辅助 | 结论绑定实时步长、I/O 延迟、放大器和具体硬件 |
 
+## 量化性能边界
+
+保护控制设备在 EMT 仿真中已有可核验的量化结果，但以下数据均绑定具体算法、测试系统和仿真条件，不能外推为通用能力：
+
+- **EMTP-TACS 教学框架 (2004)** 在 EMTP 中实现了 9 功能模块的数字继电器闭环仿真，以时间过流继电器(TOC)为案例验证。典型采样率为每周波 12-24 点（$f_s = 720-1440$ Hz，采样间隔 $T_s \approx 0.7-1.4$ ms）；全周期 DFT 引入的固有延迟为 **16.67 ms**（1 个 60 Hz 周期），半周期 DFT 延迟为 8.33 ms 但牺牲部分精度；二阶抗混叠低通滤波器（截止频率 $f_c = 240$ Hz @ 960 Hz 采样）可将 DFT 输出幅值误差从 **>15% 降至 <2%**；TOC 继电器在 1.5 倍启动电流下的动作时间 $t_{op} \approx 0.35$ s。故障暂态持续时间通常为 3-10 ms，数字继电器必须在此期间完成滤波和决策。断路器使用 Type 11 晶闸管开关模型等待电流过零开断，分闸时间约 3-5 ms。该框架为教学概念验证，未与商用继电器或现场录波进行定量误差对比 (TACS Teaching 2004)。
+
+- **Chaudhary (2004)** 在 EPRI/DCG EMTP Version 2.0 中集成了 CT/CVT 暂态模型和 FORTRAN 用户子程序接口，实现了 EMTP 闭环保护仿真。CT 饱和可用 Type 96 伪非线性磁滞电感模拟；断路器跳闸信号通过 FORTRAN 子程序反馈到网络状态，实现逐时步闭环。原文未报告可核验的动作时间或误差指标 (Chaudhary 2004)。
+
+- **Cai (2018)** 在 EMTP 中实现了基于 FMI 2.0 的 master-slave 协同仿真架构，将控制系统封装为 FMU 从系统与电力网络主系统在内存上解耦。提供异步并行（多个 slave 在同一全局步长上并行运行）和同步多步（slave 在顺序环境中执行多个内部子步）两种模式。原文称在保护系统大规模网络研究中观察到可观的计算时间收益并保持精度，但未报告可核验的加速比或误差上限 (Cai 2018)。
+
+这些量化数据不构成对所涉建模方法的全面性能评价，只说明在特定测试条件下可获得的能力边界。
+
 ## 适用边界与失败模式
 
 - 若只用理想相量输入，模型不能说明 CT 饱和、CVT 暂态、抗混叠滤波或噪声对动作结果的影响。
@@ -80,11 +84,18 @@ $$
 - 闭环验证：跳闸或重合闸反馈后，网络拓扑、断路器状态和后续暂态应与预期序列一致。
 - 实时/HIL 验证：若连接实际装置，需要报告仿真步长、I/O 延迟、接口量缩放和硬件配置。
 
+## 开放问题
+
+- EMTP-TACS 教学框架基于离线 EMTP，缺少实时仿真和 HIL 环境下的验证，其实时适应性需要更多独立测试。
+- FMI 2.0 控制解耦方法报告了计算时间收益但未给出可核验的加速比，不同耦合强度下的接口误差和稳定性边界尚不明确。
+- 保护控制设备模型中通信延迟、同步误差和丢包逻辑的建模尚无统一标准，不同平台之间的互操作性依赖于非公开的接口实现。
+- 当换流器型电源比例较高时，保护控制设备的采样、滤波和判据在弱电网和次同步频段下的行为偏差尚未被现行建模框架充分覆盖。
+
 ## 代表性来源
 
-- [[protection-system-representation-in-the-electromagnetic-transients-program-power]] 支持把互感器、继电器算法和断路器反馈并入 EMTP 闭环；该来源页面也指出当前抽取信息不足以支撑通用动作时间或误差百分比。
-- [[using-tacs-functions-within-empt-to-teach-protective-relaying-fundamentals-power]] 说明 TACS 可用于教学型保护采样、滤波和跳闸逻辑；其证据不应外推为商用 IED 认证。
-- [[functional-mock-up-interface-based-approach-for-parallel-and-multistep-simulatio]] 代表把控制系统通过 FMI 与 EMT 主网解耦的路线；页面证据强调计算收益和精度需绑定具体网络与接口模式。
+- [[using-tacs-functions-within-empt-to-teach-protective-relaying-fundamentals-power]] 支撑 EMTP-TACS 数字继电器教学框架：采样率 720-1440 Hz、DFT 延迟 16.67 ms（全周期）/ 8.33 ms（半周期）、抗混叠滤波误差从 >15% 降至 <2%。验证限于教学概念演示，未与商用继电器或现场录波定量对比。
+- [[protection-system-representation-in-the-electromagnetic-transients-program-power]] 支撑 EMTP 闭环保护仿真框架：CT/CVT 暂态模型、FORTRAN 用户子程序接口、Type 96 磁滞电感。原文未报告可核验的数值结果。
+- [[functional-mock-up-interface-based-approach-for-parallel-and-multistep-simulatio]] 支撑 FMI 2.0 保护控制系统 EMT 解耦：异步并行 + 同步多步两种模式。原文未报告可核验的加速比或误差上限。
 
 ## 与相关页面的关系
 
@@ -96,3 +107,6 @@ $$
 ## 来源论文
 
 参见 [[index]] 获取更多保护控制设备相关文献。
+---
+
+*本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*

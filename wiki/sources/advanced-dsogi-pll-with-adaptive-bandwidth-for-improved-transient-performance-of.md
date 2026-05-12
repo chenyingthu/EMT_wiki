@@ -80,7 +80,7 @@ sources: ["EMT_Doc/06/Ranasinghe 等 - 2024 - Advanced DSOGI PLL with Adaptive B
 - 锁相环控制
 - 弱网同步
 - 暂态稳定性
-- [[故障穿越|故障穿越]]
+- [[fault-ride-through|故障穿越]]
 - 逆变器控制
 - [[renewable-energy-integration|新能源并网]]
 

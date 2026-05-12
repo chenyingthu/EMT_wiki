@@ -59,14 +59,14 @@ sources: ["EMT_Doc/16/Choi 等 - 2025 - Electromagnetic Transient Simulation of 
 ## 使用的方法
 
 - Modelica方程建模
-- [[变步长求解器|变步长求解器]]
+- [[variable-time-step-solver|变步长求解器]]
 - Park坐标变换
 - 磁链状态空间法
 - 微分代数方程求解
 
 ## 涉及的模型
 
-- [[异步电机|异步电机]]
+- [[induction-machine-model|异步电机]]
 - 单鼠笼感应电机
 - 双鼠笼感应电机
 - 绕线式感应电机
@@ -74,7 +74,7 @@ sources: ["EMT_Doc/16/Choi 等 - 2025 - Electromagnetic Transient Simulation of 
 ## 相关主题
 
 - [[emt-simulation|电磁暂态仿真]]
-- [[声明式建模|声明式建模]]
+- [[declarative-modeling|声明式建模]]
 - 电机顺序启动
 - 故障与孤岛仿真
 - 数值收敛性分析

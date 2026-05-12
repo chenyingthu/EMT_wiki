@@ -63,7 +63,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/59.535695.pdf.pdf"]
 - 模态跟踪技术
 - [[vector-fitting|有理函数拟合]]
 - [[numerical-integration|梯形积分法]]
-- [[卡森公式|卡森公式]]
+- [[frequency-dependent-modeling|卡森公式]]
 
 ## 涉及的模型
 

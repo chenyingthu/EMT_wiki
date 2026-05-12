@@ -59,7 +59,7 @@ sources: ["EMT_Doc/27&28/Multirate EMT Simulation of Power Electronic Transforme
 ## 使用的方法
 
 - [[multirate-method|多速率仿真]]
-- [[改进节点分析法|改进节点分析法]]
+- [[nodal-analysis|改进节点分析法]]
 - 多端口诺顿等效
 - 电流源等效
 - 交错等效交互算法

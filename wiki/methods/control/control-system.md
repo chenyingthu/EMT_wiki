@@ -3,85 +3,147 @@ title: "控制系统 (Control System)"
 type: method
 tags: [control-system, feedback, regulation, protection, synchronization]
 created: "2026-05-06"
-updated: "2026-05-06"
+updated: "2026-05-11"
 ---
 
 # 控制系统 (Control System)
 
-
-```mermaid
-graph TD
-    subgraph S0[控制系统 (Control System)]
-        N0[定义与边界]
-        N1[EMT 中的作用]
-        N2[形式化表达]
-        N3[常见结构]
-        N4[适用边界]
-        N5[与相关页面的关系]
-    end
-    N0 --> N1
-    N1 --> N2
-    N2 --> N3
-    N3 --> N4
-    N4 --> N5
-```
-
-
 ## 定义与边界
 
-控制系统是 EMT 模型中负责测量、比较、调节、限幅、切换和保护动作的算法与逻辑集合。它不是单一 PI 控制器，也不是任何特定拓扑的专属实现，而是对并网控制、直流控制、励磁调节、保护闭锁和模式管理等机制的总称。
+控制系统是 EMT 模型中负责测量、比较、调节、限幅、切换和保护动作的算法与逻辑集合。它不是单一 PI 控制器，也不是任何特定拓扑的专属实现，而是对并网控制、直流控制、励磁调节、保护闭锁和模式管理等机制在 EMT 仿真框架中的统一抽象。
 
-## EMT 中的作用
+**本页范围**: 控制系统的 EMT 接口方法——包括与网络求解器的同步策略（补偿法、SSN）、控制结构组织形式（双环矢量控制、直接功率控制），以及控制延迟、PLL、限幅等对 EMT 级动态的影响。不重复具体控制器的整定公式，也不展开特定被控对象（VSC/MMC/LCC）的专属控制逻辑细节。
 
-在 EMT 仿真中，控制系统决定参考量如何生成、执行量如何受约束、故障下如何切换以及测量延迟和采样如何影响动态响应。它通常与电气主电路、网络模型和保护逻辑强耦合。
+## 方法核心
 
-## 形式化表达
+控制系统在 EMT 仿真中面临的核心矛盾是：网络求解器通常采用固定步长节点分析（EMTP型），而控制系统以差分方程、传递函数或状态空间形式描述；二者必须在每个时间步实现**接口同步**，同时保持求解效率和数值稳定性。以下从接口方法、控制结构和关键影响因素三个维度展开。
 
-控制系统通常可抽象为测量、控制律和执行接口三部分：
+### 维度1：网络-控制接口同步方法
 
-$$
-\mathbf{y}_m = h(\mathbf{x}, \mathbf{v}, t), \qquad
-\dot{\mathbf{x}}_c = f_c(\mathbf{x}_c, \mathbf{y}_m, \mathbf{r}, t), \qquad
-\mathbf{u} = g_c(\mathbf{x}_c, \mathbf{y}_m, \mathbf{r}, t)
-$$
+**1a. 传统分离求解（TACS/EMTP接口）**
+最早的结构是EMTP电气网络与TACS控制系统分离求解：EMTP推进到时刻t时使用TACS在t-Δt的输出，TACS再根据t时刻的网络电压计算新输出。此方式保持模块化但引入本质性的**单步接口延迟**。Lefebvre & Mahseredjian (1994) 指出在断路器电弧模拟、电力电子触发等强耦合场景中，该一步误差会导致数值振荡或错误结果。
 
-其中 $\mathbf{y}_m$ 为测量量，$\mathbf{x}_c$ 为控制器状态，$\mathbf{r}$ 为参考量，$\mathbf{u}$ 为注入主电路或保护逻辑的执行量。这个框架强调控制系统是“接口和状态组织”，而不是单一 PI 公式。
+**1b. 补偿法接口**
+Lefebvre & Mahseredjian (1994) 将TACS接口变量等效为并联电阻矩阵与伴随电流源，视为"真非线性"元件处理。每个时间步的流程为：(1) 独立求解线性网络；(2) 基于当前网络状态计算TACS接口响应；(3) 将该响应作为补偿电流注入叠加至网络解。该方法消除接口延迟但保持EMTP对称稀疏矩阵的三角化结构，不需全联立求解。
 
-## 常见结构
+**1c. 状态空间-节点联合法（SSN）**
+de León等 (2011) 提出SSN方法：将任意规模的状态空间电气集群通过梯形积分离散化为诺顿/戴维南等效支路，再并入全局节点导纳矩阵。各集群保持独立状态矩阵，通过公共节点电压同步耦合。该方法融合了状态空间法在控制器建模上的灵活性和节点法在大规模网络中的稀疏求解优势。
 
-- [[pi-controller-model]]：单个 PI/PID 环节的模型基础。
-- [[dual-loop-pi-controller]]：电流内环与功率/电压外环的级联结构。
-- [[pll-model]]：并网同步与坐标变换参考。
-- [[vector-control]]：dq 坐标下的控制组织方式。
-- [[thyristor-control]]：LCC 场景下的触发角与阀状态控制。
-- [[distributed-control]]：多控制器协同与分布式执行。
-- [[power-system-stabilizer]]：同步机侧附加阻尼控制。
+### 维度2：控制结构组织形式
 
-## 适用边界
+**2a. 双环d-q矢量控制**
+VSC/MMC并网控制的典型结构（Mengjia & Xiao 2015）：外环根据控制目标（有功功率P、无功功率Q、直流电压Vdc、交流电压Vac）产生d、q轴电流参考值；内环跟踪电流参考并生成调制信号。该结构允许功率控制和电流限幅独立设计。
 
-- 对 VSC、MMC、储能、并网逆变器和机组控制，具体结构必须绑定被控对象。
-- 对 LCC-HVDC，不应把 dq 双环控制误写为通用入口。
-- 对保护控制或模式切换，必须显式说明测量、延迟、限幅、闭锁和故障逻辑。
+**2b. 嵌入式HVDC频率控制**
+Mengjia & Xiao (2015) 展示了控制系统的扩展方式：在常规d-q双环基础上叠加频率相关补偿。通过实时监测嵌入式VSC-HVDC两端频率差与相角差，对交流联络线有功功率方程进行线性化，提取振荡分量并叠加至直流有功功率参考。该方法使直流链路主动分担交流功率振荡，将IEEE 4机系统CCT提高22.93%。
 
-## 与相关页面的关系
+**2c. 阻尼控制与稳定性增强**
+Guo等 (2022) 在MMC-HVDC控制系统中设计附加阻尼控制：采用简化MMC模型分析控制器参数对阻抗高频特性的影响，通过重塑高频阻抗相位关系抑制振荡。
 
-- [[power-system]] 是上位系统主题。
-- [[power-system-network]] 提供被控电气网络。
-- [[vsc-model]]、[[mmc-model]]、[[inverter-model]] 提供典型被控对象。
-- [[wide-area-monitoring-protection]] 关注更大范围的监测和执行闭环。
+### 维度3：控制关键因素对EMT仿真的影响
 
-## 开放问题
+**PLL与同步**: PLL的带宽和动态直接影响并网电压定向的准确性和阻抗特性。
 
-- 数字控制延迟、采样与饱和如何在 EMT 中保持可解释性。
-- 控制器、保护与主电路的分层边界如何避免重复建模。
-- 同一控制逻辑在离线 EMT、平均值模型和实时平台中的一致性如何保证。
+**控制链路延时**: Guo等(2022)定量分析了链路延时对MMC-HVDC高频阻抗的影响：延时>165μs使阻抗呈现负电阻电感特性，触发高频振荡（165μs→约1850Hz，550μs→约720Hz）。
 
-## 代表性来源
+**限幅与饱和**: 控制器输出限幅在故障等大扰动条件下被激活，超出容量部分的振荡仍由交流系统承担。
 
-- [[improved-control-systems-simulation-in-the-emtp-through-compensation]]：说明控制方程与 EMT 网络同步求解的经典路线。
-- [[dynamic-performance-of-embedded-hvdc-with-13&14]]：说明 VSC-HVDC 场景下控制系统如何与主电路和运行方式耦合。
-- [[characteristic-analysis-of-high-frequency-resonance-of-flexible-high-voltage-dir]]：说明控制器、PLL、延时和主电路必须联合分析，不能把控制系统抽空处理。
+## 关键公式
 
-## 证据边界
+### 1. 控制系统通用形式化表达
+$$$\mathbf{y}_m = h(\mathbf{x}, \mathbf{v}, t)$$
+$$$\dot{\mathbf{x}}_c = f_c(\mathbf{x}_c, \mathbf{y}_m, \mathbf{r}, t)$$$
+$$$\mathbf{u} = g_c(\mathbf{x}_c, \mathbf{y}_m, \mathbf{r}, t)$$
 
-本页是控制机制入口页，不给出无来源的带宽、采样周期、增益参数或“稳定有效”结论。具体控制性能必须回到对应 source、method 或 model 页面。
+其中 $\mathbf{y}_m$ 为测量量，$\mathbf{x}_c$ 为控制器状态，$\mathbf{r}$ 为参考量，$\mathbf{u}$ 为注入主电路或保护逻辑的执行量。
+
+### 2. EMTP-TACS补偿法接口（Lefebvre & Mahseredjian 1994）
+$$$\mathbf{Y}_n \mathbf{V}_n = \mathbf{I}_n - \mathbf{J}_n$$
+
+EMTP线性网络方程，其中Yn为对称节点导纳矩阵，Vn为节点对地电压，In为注入电流，Jn为梯形积分历史项。补偿法将TACS接口等效为并联补偿电流ΔI叠加至右侧。
+
+### 3. 嵌入式HVDC功率振荡补偿（Mengjia & Xiao 2015）
+$$$P_{Bus2} = P_{dc2} + P_{ac12}$$
+$$$P_{ac12} = \frac{E_1 E_2}{x_{12}} \sin(\delta_1 - \delta_2)$$$
+$$$P_{dc2}^{NEW*} = P_{dc2}^* + P_{oscillation}$$
+
+受端总功率由直流功率和交流并联线路功率构成。频率控制将交流振荡分量P_oscillation转移至直流功率参考。
+
+### 4. MMC高频阻抗与阻尼控制（Guo 2022）
+$$$G_{de} = e^{-T_{de}s}$$$
+
+链路延时传递函数。延时>165μs时MMC输出阻抗呈现负电阻-电感特性，与交流线路电容耦合引发高频振荡。
+
+## 算法步骤
+
+**基于补偿法的EMTP-TACS联合仿真**（参考Lefebvre & Mahseredjian 1994）：
+
+1. **网络方程装配**: 形成EMTP节点导纳矩阵Yn并完成三角分解（一次三角化，每步前代/回代）。
+2. **TACS输入计算**: 从上一时间步网络解获取TACS输入量（节点电压、支路电流等）。
+3. **TACS求解**: 按控制框图顺序/联立求解TACS方程，获得接口输出量（触发信号、可调电阻值等）。
+4. **补偿等效**: 将TACS接口变量构造为并联电阻矩阵与补偿电流源。
+5. **线性网络求解**: 先按当前状态独立求解EMTP网络方程，获得初步节点电压。
+6. **补偿注入**: 基于当前网络解计算TACS接口补偿电流，作为补偿叠加至网络解。
+7. **历史更新**: 更新梯形积分历史项，检查是否触发保护动作或拓扑切换。
+8. **时间推进**: 进入下一时步。
+
+**SSN联合求解**（参考de León 2011）：
+
+1. **集群离散化**: 每个状态空间集群用梯形积分离散，转化为诺顿/戴维南等效形式。
+2. **历史源计算**: 各集群基于上一时刻状态和输入计算历史电流源/电压源项。
+3. **全局方程装配**: 将各集群的端口等效导纳贡献装配至全局节点导纳矩阵。
+4. **全局求解**: 一次求解得到所有连接节点电压。
+5. **状态更新**: 节点电压回代到各集群，更新集群内部状态变量。
+6. **非线性迭代（可选）**: 含非线性元件时进行同步迭代。
+
+## 仿真验证
+
+| 场景 | 来源 | 验证方式 | 关键结果 |
+|------|------|---------|---------|
+| EMTP-TACS接口延迟消除 | Lefebvre & Mahseredjian 1994 | 断路器电弧、电力电子触发对比仿真 | 接口延迟从1步降至0，强耦合场景数值稳定 |
+| 嵌入式HVDC频率控制 | Mengjia & Xiao 2015 | IEEE 4机6节点PSCAD仿真 | 平均CCT提高22.93%，功率振荡~6秒衰减 |
+| MMC-HVDC高频振荡阻尼 | Guo 2022 | 电磁暂态仿真与阻抗模型对比 | 165μs延时阈值；阻尼控制使相位差从185°降至177° |
+| SSN状态空间-节点联合 | de León 2011 | 多算例对比验证 | 支持V型/I型集群，开关组合预计算内存需求降低 |
+
+## 与相关方法的关系
+
+- **[[pi-controller-model]]**: 控制系统的底层环节，EMT仿真中最常见的传递函数离散化实现。
+- **[[dual-loop-pi-controller]]**: VSC/MMC电流内环+功率/电压外环的级联结构，在EMT中需要与PLL和调制器配合建模。
+- **[[pll-model]]**: 并网控制的同步基础，其带宽和动态直接影响控制系统的EMT响应。
+- **[[vector-control]]**: dq坐标下的控制组织方式，是VSC控制系统的标准框架。
+- **[[grid-forming-control]]**: 与grid-following控制并列的新一代并网控制范式，在EMT中需特别关注初始化与切换逻辑。
+- **[[compensation-method]]**: 补偿法的通用数学框架，Lefebvre & Mahseredjian (1994) 是其电力系统EMT应用之一。
+- **[[state-space-method]]**: SSN方法中状态空间集群建模的理论基础。
+- **[[hvdc-control]]**: HVDC系统专用控制方法集合，包含LCC触发控制和VSC/MMC双环控制的集成。
+
+## 适用边界与失败模式
+
+- **适用条件**: 需要与电气网络耦合的控制系统EMT建模；需模拟测量、调节、限幅和保护动作链路的场合。
+- **部分适用**: 当控制方程可用差分方程或传递函数线性表示时，补偿法和SSN均适用；非线性控制需增加迭代。
+- **失效边界**:
+  - 补偿法不适用于控制方程与电气网络存在内部代数循环且无法解耦的场景
+  - d-q矢量控制在极弱电网(SCR<1.5)下可能失效，需切换至grid-forming控制
+  - 控制链路延时>165μs的MMC-HVDC存在高频振荡风险（Guo 2022）
+  - 控制器限幅触发后，未被补偿的功率振荡仍由交流系统承担
+- **关键假设**: 控制仿真步长与EMT步长一致或可通过插值/采样匹配；测量环节无噪声或噪声可滤波；PLL动态足够快以跟踪电网频率变化。
+
+## 证据汇总
+
+| 证据 | 来源 | 类型 |
+|------|------|------|
+| EMTP-TACS分离求解存在单步接口延迟 | Lefebvre & Mahseredjian 1994 | 共识 |
+| 补偿法消除接口延迟，保留对称矩阵结构 | Lefebvre & Mahseredjian 1994 | 方法 |
+| SSN将状态空间集群以离散伴随形式并入节点法 | de León 2011 | 方法 |
+| 嵌入式HVDC频率控制使CCT平均提高22.93% | Mengjia & Xiao 2015 | 量化 |
+| 受端功率振荡~6秒内衰减 | Mengjia & Xiao 2015 | 量化 |
+| MMC-HVDC控制链路延时>165μs触发高频振荡 | Guo 2022 | 量化（阈值） |
+| 550μs延时对应~720Hz谐振，165μs对应~1850Hz | Guo 2022 | 量化 |
+| 三阶阻尼使1.8kHz处相位差从185°降至177° | Guo 2022 | 量化 |
+
+### 代表性来源
+
+- [[improved-control-systems-simulation-in-the-emtp-through-compensation|Lefebvre & Mahseredjian 1994 — EMTP-TACS补偿法接口]]
+- [[dynamic-performance-of-embedded-hvdc-with-13&14|Mengjia & Xiao 2015 — 嵌入式VSC-HVDC频率控制]]
+- [[characteristic-analysis-of-high-frequency-resonance-of-flexible-high-voltage-dir|Guo 2022 — MMC-HVDC高频振荡与阻尼控制]]
+- [[a-combined-state-space-nodal-method-for-the-simulation-of-power-system-transient|de León 2011 — 状态空间-节点联合SSN方法]]
+- [[comprehensive-full-scale-converter-wind-park-initialization-for-electromagnetic-|含全功率风机控制初始化EMT模型]]

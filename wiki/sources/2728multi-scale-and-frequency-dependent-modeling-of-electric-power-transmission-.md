@@ -59,8 +59,8 @@ sources: ["EMT_Doc/27&28/Multi-Scale and Frequency-Dependent Modeling of Electri
 ## 使用的方法
 
 - [[dynamic-phasor|动态相量法]]
-- [[解析信号|解析信号]]
-- [[频移技术|频移技术]]
+- [[dynamic-phasor|解析信号]]
+- [[dynamic-phasor|频移技术]]
 - [[modal-analysis|模态分解]]
 - [[partial-fraction-expansion|部分分式展开]]
 - 数值递归卷积
@@ -70,7 +70,7 @@ sources: ["EMT_Doc/27&28/Multi-Scale and Frequency-Dependent Modeling of Electri
 
 - [[transmission-line-model|输电线路]]
 - [[transmission-line-model|频变线路模型]]
-- [[π型等值电路|π型等值电路]]
+- [[companion-circuit|π型等值电路]]
 - 多相线路
 
 ## 相关主题

@@ -80,7 +80,7 @@ sources: ["EMT_Doc/26/Masoom 等 - 2021 - Modelica-based simulation of electroma
 - Modelica建模
 - 混合仿真架构
 - [[large-scale-system-simulation|大规模系统仿真]]
-- [[数值求解器集成|数值求解器集成]]
+- [[iterative-solvers|数值求解器集成]]
 - 仿真性能优化
 - 非因果建模
 

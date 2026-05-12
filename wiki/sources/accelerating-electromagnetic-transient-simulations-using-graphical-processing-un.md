@@ -72,7 +72,7 @@ sources: ["EMT_Doc/05/Aluthge 等 - 2026 - Accelerating electromagnetic transien
 - [[synchronous-machine-model|同步发电机]]
 - π型输电线路
 - 逆变器接口电源
-- [[电力电子换流器|电力电子换流器]]
+- [[power-electronic-device-modeling|电力电子换流器]]
 
 ## 相关主题
 

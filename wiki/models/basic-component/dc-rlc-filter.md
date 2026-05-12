@@ -3,22 +3,11 @@ title: "直流侧RLC滤波器 (DC-Side RLC Filter)"
 type: model
 tags: [dc-filter, rlc, converter, ripple, power-electronics, emi-filter, passive-filter]
 created: "2026-05-02"
-updated: "2026-05-03"
+updated: "2026-05-12"
+updated: "2026-05-11"
 ---
 
 # 直流侧RLC滤波器 (DC-Side RLC Filter)
-
-
-```mermaid
-graph TD
-    subgraph Ncmp[直流侧RLC滤波器 (DC-Side RLC Filter)]
-        N0[端口变量: 直流母线电压、滤波器电流、负载/源端电流]
-        N1[状态变量: 电感电流 $i_L$、电容电压 $v_C$、…]
-        N2[代数变量: 当前等效导纳、节点注入电流、约束电压]
-        N3[控制接口: 直流电压控制、电流限幅、调制或保护状态]
-        N4[寄生变量: ESR、ESL、绕组电阻、寄生电容、母排电感]
-    end
-```
 
 
 ## 定义与边界
@@ -70,6 +59,14 @@ $$\omega_0=\frac{1}{\sqrt{LC}},\qquad
 | 与控制耦合模型 | 变流器控制、采样、限幅和保护 | 直流母线稳定、故障恢复 | 控制模型边界必须明示 |
 | 多端口直流网络模型 | 多换流器、电缆、储能和接地耦合 | VSC-HVDC、MTDC、直流配电 | 不能用单个二阶滤波器外推 |
 
+## 量化性能边界
+
+RLC 滤波器模型在 EMT 仿真中已有可核验的量化结果，但以下数据均绑定特定积分方法和电路条件，不能外推为通用能力：
+
+- **Carbonea/Dommel (2002)** 针对 EMTP 中梯形积分法在谐振电路仿真中的截断误差进行了系统分析。在谐振点附近，梯形积分导致的等效阻抗误差可达约 **100%**，远超单一电感或电容元件独立误差。典型仿真步长（50 μs）下，频率超过 **5000 Hz** 时数值截断误差显著增大且不可忽略。串联谐振电路的最大误差始终紧邻谐振频率，而并联谐振电路的最大误差出现在谐振频率前约 **10%** 处。误差幅值随品质因数 Q 呈近似线性增长，随谐振频率呈近似平方律增长。该结论基于简单串/并联 RLC 及含变压器换流器的工业配电系统的解析与数值分析，限于梯形积分法和 EMTP 类程序 (Carbonea/Dommel 2002)。
+
+这些量化数据不构成对 RLC 滤波器建模方法的全面性能评价，只说明在特定测试条件下可获得的能力边界。
+
 ## 适用边界与失败模式
 
 - 低通传递函数只在端口定义和负载假设明确时成立；源/负载阻抗变化会移动阻尼和谐振。
@@ -90,6 +87,14 @@ RLC 滤波器模型至少应验证：
 
 若研究目标是电磁兼容，应明确共模/差模路径、接地电容、安全限制和测量端口；普通直流低通模型不足以替代 [[emi-filter-model|EMI 滤波器]]。
 
+## 开放问题
+
+- 梯形积分法在 RLC 谐振电路中截断误差的解析结论（Carbonea/Dommel 2002）基于特定电路拓扑，在多谐振、高 Q 值和混合阻尼条件下的误差叠加机理缺乏系统推广。
+- 直流 RLC 滤波器与换流器控制耦合后的等效阻抗建模中，梯形积分截断误差与控制延迟的交互效应尚未被现行 RLC 滤波器模型框架覆盖。
+- RLC 滤波器在直流故障暂态过程中的非线性行为（饱和电感、压敏电阻、熔断器）在 EMT 模型中的等效处理缺乏标准化验证流程。
+- 当换流器开关频率持续升高（SiC/GaN 数百 kHz），RLC 滤波器的寄生参数（ESR/ESL/寄生电容）建模误差对 EMI 和共模干扰仿真的影响缺乏系统评估。
+- 多换流器直流网络中，各端口 RLC 滤波器之间的谐振耦合和阻尼互作用缺乏统一的降阶建模准则。
+
 ## 代表性来源
 
 | 来源 | 可支撑内容 | 证据边界 |
@@ -107,14 +112,6 @@ RLC 滤波器模型至少应验证：
 - [[dc-dc-converter]]、[[vsc-model]]、[[energy-storage-converter-model]] 和 [[vsc-hvdc]] 是常见应用对象。
 - [[harmonic-analysis]]、[[harmonic-analysis-methods]] 和 [[frequency-domain-analysis]] 支撑频域响应与谐振分析。
 - [[emi-filter-model]] 处理更完整的传导干扰、共模/差模和标准测量边界。
+---
 
-## 来源论文
-
-| 论文 | 年份 |
-|------|------|
-| [[comparison-between-electromechanical-transient-model-and-electromagnetic-transie|Comparison between electromechanical transient model and ele]] | 2013 |
-| [[dynamic-average-value-modeling-of-13&14|Dynamic Average-Value Modeling of]] | 2014 |
-| [[average-value-modeling-of-line-commutated-inverter-systems-with-commutation-fail|Average-Value Modeling of Line-Commutated Inverter Systems W]] | 2022 |
-| [[electromechanical-electromagnetic-transient-hybrid-simulation-of-an-acdc-hybrid-|Electromechanical-electromagnetic transient hybrid simulatio]] | 2022 |
-| [[analysis-on-dynamic-characteristic-of-control-mode-for-800-kv-yun-guang-uhvdc|Analysis on dynamic characteristic of control mode for +/-80]] | 2025 |
-| [[impedance-based-stability-analysis-of-the-multi-terminal-cascaded-hybrid-hvdc-sy|Impedance Based Stability Analysis of the Multi-terminal Cas]] | 2025 |
+*本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*

@@ -67,7 +67,7 @@ sources: ["EMT_Doc/02/Colqui 等 - 2022 - A modified implementation of the Folde
 
 ## 涉及的模型
 
-- [[三相输电线路|三相输电线路]]
+- [[ac-transmission-line|三相输电线路]]
 - 改进折叠线等效模型(MFLE)
 - [[transmission-line-model|通用线路模型(ULM)]]
 - [[frequency-dependent-line-model|JMarti模型]]
@@ -79,7 +79,7 @@ sources: ["EMT_Doc/02/Colqui 等 - 2022 - A modified implementation of the Folde
 - [[frequency-dependent-modeling|频率相关建模]]
 - 大型电网仿真
 - 仿真步长优化
-- [[模态解耦|模态解耦]]
+- [[discrete-fourier-transform|模态解耦]]
 
 ## 主要发现
 

@@ -3,32 +3,10 @@ title: "HBSM 入口页 (HBSM)"
 type: method
 tags: [hbsm, half-bridge-submodule, mmc]
 created: "2026-05-05"
-updated: "2026-05-06"
+updated: "2026-05-12"
 ---
 
 # HBSM 入口页 (HBSM)
-
-
-```mermaid
-graph TD
-    N0[HBSM 入口页 (HBSM)]
-    N1[定义与边界]
-    N0 --> N1
-    N2[EMT 中的作用]
-    N0 --> N2
-    N3[常见使用方式]
-    N0 --> N3
-    N4[形式化表达]
-    N0 --> N4
-    N5[相关页面]
-    N0 --> N5
-    N6[代表性来源]
-    N0 --> N6
-    N7[证据边界]
-    N0 --> N7
-    N8[开放问题]
-    N0 --> N8
-```
 
 
 ## 定义与边界
@@ -70,17 +48,41 @@ $$
 - [[the-diode-clamped-half-bridge-mmc-structure-with-internal-spontaneous-capacitor-]]：半桥子模块拓扑扩展背景。
 - [[fast-electromagnetic-transient-modeling-method-for-half-bridge-type-voltage-sour]]：半桥型快速 EMT 表示背景。
 
-## 证据边界
+## 量化性能边界
 
-本页不重复拓扑、公式或性能结论，避免与正式方法页分叉。
+**Gao et al. (2023) 混合数值积分半桥MMC模型**：
+- 梯形法与中点法组合，桥臂等效导纳在正常运行时保持恒定，避免频繁LU分解
+- 交错格式（Leapfrog）解耦电容电压更新与桥臂电感方程
+- 稳态误差<0.5%，暂态峰值误差<1%
+- 仿真速度提升5-15倍（对比戴维南等效模型）
+- CDA开销<5%
+- 适用性：半桥MMC离线EMTP型仿真
+- 数据缺口：仅验证半桥MMC，未覆盖全桥或混合MMC
 
-## 开放问题
+**Zhang et al. (2023) 同步开关预测快速EMT建模**：
+- 以半桥子电路为单位进行同步开关状态预测，消除迭代收敛
+- 内部节点凝聚减少全局矩阵规模
+- 80模块SST仿真20倍加速，波形误差<0.5%
+- 验证：PSCAD/EMTDC，半桥VSC全工况
+- 数据缺口：需要二极管续流路径逻辑，不能直接推广到全桥拓扑
 
-- 若后续图谱里 `HBSM` 链接稳定收敛到正式方法页，可考虑把本页继续保持为简短别名入口而不再扩写。
+**Xu et al. (2015) MMC高效建模方法综述**：
+- 三类模型族：受控源解耦、戴维南等效（后向欧拉/梯形法）、平均值模型
+- 排序复杂度从O(N²)降至O(N)
+- 戴维南模型在N=200时实现15-20倍加速
+- 梯形法比后向欧拉慢2倍但精度高0.2-0.4%
+- 验证：48 SM/arm半桥MMC-HVDC基准，20 μs步长
+- 数据缺口：综述性质，数值来自文献汇集而非统一对比测试
 
-## 来源论文
+**Xu (2018) 二极管钳位半桥MMC自发电压均衡**：
+- 增加钳位二极管+阻尼电阻每SM + 三相4套辅助电路实现自动均压
+- 电压传感器减少>50%，DSP延迟降低30-50%
+- 电压不均衡度1-2%，额外器件：(6N+14)二极管+4 IGBT+4电容每N SM/相
+- 验证：PSCAD/EMTDC + 缩比样机
+- 数据缺口：硬件方案增加额外器件成本，与软件排序方案的全面经济性对比缺失
 
-| 论文 | 年份 |
-|------|------|
-| [[combining-detailed-equivalent-model-with-switching-function-based-average-value-|Combining Detailed Equivalent Model With Switching-Function-]] | 2020 |
-| [[a-state-space-approach-for-accelerated-simulation-of-modular-multilevel-converte|A state-space approach for accelerated simulation of modular]] | 2025 |
+**数据缺口声明**：HBSM的量化性能数据来自四个独立研究，各自使用不同MMC参数（SM数、步长、拓扑）和评估基准。Gao 2023、Zhang 2023、Xu 2015、Xu 2018四者的加速比和误差指标基于各自的对照模型，不能直接横向对比。不同SM数（48→80→200）下加速比的可扩展性趋势未经统一测试验证。
+
+---
+
+*本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*

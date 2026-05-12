@@ -61,14 +61,14 @@ Modelica这类非因果、方程式建模语言能降低电力系统EMT模型开
 - 空间数据局部性优化
 - 向量化C代码调用
 - 宽频线路模型
-- [[恒定参数线路模型|恒定参数线路模型]]
+- [[transmission-line-model|恒定参数线路模型]]
 - [[modal-analysis|模态变换]]
 
 ## 涉及的模型
 
 - [[transmission-line-model|输电线路]]
 - 宽频线路模型
-- [[恒定参数线路模型|恒定参数线路模型]]
+- [[transmission-line-model|恒定参数线路模型]]
 - IEEE 39节点测试系统
 
 ## 相关主题

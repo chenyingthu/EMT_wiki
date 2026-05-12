@@ -68,7 +68,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/Xu 等 - 2020 - FPGA-Based Sub-Micro
 
 - [[power-electronics|电力电子变流器]]
 - 配电线路/电缆
-- [[π型等效电路|π型等效电路]]
+- [[companion-circuit|π型等效电路]]
 - 分布式电源(DG)
 - [[microgrid|微电网]]
 

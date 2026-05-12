@@ -1,86 +1,174 @@
 ---
 title: "双有源桥方法 (Dual Active Bridge)"
 type: method
-tags: [dual-active-bridge, dab, dc-dc-converter, isolated-converter]
+tags: [dual-active-bridge, dab, dc-dc-converter, isolated-converter, high-frequency-transform]
 created: "2026-05-05"
-updated: "2026-05-06"
+updated: "2026-05-11"
 ---
 
 # 双有源桥方法 (Dual Active Bridge)
 
-
-```mermaid
-graph TD
-    subgraph S0[双有源桥方法 (Dual Active Bridge)]
-        N0[定义与边界]
-        N1[EMT 中的作用]
-        N2[常见分支]
-        N3[关键公式]
-        N4[与相关方法的关系]
-        N5[代表性来源]
-    end
-    N0 --> N1
-    N1 --> N2
-    N2 --> N3
-    N3 --> N4
-    N4 --> N5
-```
-
-
 ## 定义与边界
 
-双有源桥（Dual Active Bridge, DAB）是带隔离高频变压器的双向 DC/DC 变换器拓扑，对应的方法问题包括其开关建模、相移控制、平均值等效和实时仿真简化。它不是乱码的实时仿真文本，也不是一般多端换流器的统称。
+双有源桥（Dual Active Bridge, DAB）是一种带高频隔离变压器的双向 DC/DC 变换器拓扑：原副边各有一个 H 桥或全桥换流器，中间通过高频变压器和漏感（或外加电感）传递功率，两侧桥臂之间通过相移角控制功率的大小和方向。DAB 方法指在 EMT 仿真中为这一拓扑建立的开关模型、平均模型、状态空间聚合模型、动态相量小信号模型以及实时仿真简化模型的总和。
+
+DAB 方法区别于其他 DC/DC 方法的关键特征在于：
+- **高频隔离**：变压器工作频率通常在 10-100 kHz 量级，远高于工频
+- **相移控制**：功率传输由原副边 H 桥驱动电压之间的相位差决定
+- **双向性**：结构对称，功率可自然双向流动
+- **多端口扩展**：可通过级联或三相结构形成多端口固态变压器
+
+DAB 不是一般非隔离 Buck/Boost 变换器，也不是多端 VSC-HVDC 换流器的通用等效，其 EMT 建模要同时处理几十 kHz 的开关事件和微秒级步长的离散化挑战。
 
 ## EMT 中的作用
 
-在 EMT 仿真中，DAB 方法主要用于：
+在 EMT 仿真中，DAB 建模方法服务于以下场景：
 
-- 研究高频隔离 DC/DC 接口的开关和控制动态；
-- 为储能、固态变压器和多端直流接口提供设备级模型；
-- 比较详细模型、聚合模型和实时等效模型的边界。
+1. **设备级开关动态研究**：在 1-10 μs 步长下逐开关仿真 DAB 的启动、负载突变和故障暂态，捕获 H 桥开关过程和变压器漏感电流变化。
+2. **系统级稳定性和效率分析**：用平均值或动态相量模型将 DAB 外特性嵌入微电网、直流配网或固态变压器系统，加速仿真同时保留交流链路对端口阻抗和控制传递函数的影响。
+3. **实时硬件在环（HIL）测试**：在 RTDS、OPAL-RT 等实时平台上运行 DAB 等效模型，验证控制器在百 kHz 级开关频率下的行为。
+4. **大规模级联拓扑仿真加速**：对 ISOP 级联 DAB、CHB-DAB、DBM²C-SST 等含数百 DAB 子模块的系统，通过端口等效或状态空间聚合消去模块内部节点。
 
-## 常见分支
+## 方法分支与分类
 
-- 单相移 DAB：以基础功率传输和控制分析为主；
-- 多桥或三相 DAB：面向更高功率密度或多端口场景；
-- 简化 EMT/平均值/小信号模型：用于系统级提速或稳定性分析。
+### 按模型详细程度分类
 
-## 关键公式
+| 分支 | 描述 | 适用场景 | 示例来源 |
+|------|------|----------|----------|
+| 详细开关模型 | 每个开关管用变导纳或双值电阻表示，步长需足够小以捕获开关事件 | 设备级精确暂态，验证基准 | — |
+| 状态空间聚合模型 | 将 H 桥、变压器、电容合并为单模块，隐藏交流内部节点 | 实时仿真，百 kHz 级高频 | Qi 2024 |
+| 平均值模型（SSA） | 一个开关周期内平均，只保留直流分量 | 系统级稳态和慢动态 | — |
+| 动态相量模型（GSSA） | 保留交流链路基波和指定谐波的时变傅里叶系数 | 小信号稳定性分析 | Berger 2018 |
+| 端口等效模型 | N 端口离散状态空间→Norton/Thevenin，消去内部节点 | 大规模级联拓扑离线 EMT | Xu 2024 |
 
-DAB 的基础功率传输关系常围绕相移角 $\phi$ 组织，例如：
+### 按拓扑分类
+
+| 拓扑 | 结构特点 | EMT 建模要点 |
+|------|----------|--------------|
+| 单相单 DAB | 原副边各一个 H 桥 | 基础功率传输公式，相移角 0-π |
+| 三相 DAB（3p-DAB） | Y-Δ 或 Y-Y 变压器连接 | 三相绕组磁耦合，6 步调制，GSSA 建模 |
+| ISOP 级联 DAB | 输入串联输出并联 | 各模块均压/均流约束，二次等效 |
+| CHB-DAB | 级联 H 桥型 DAB | 多端口网络，端口分析法适用 |
+| 多端口 DAB（DBM²C） | 四端口网络 | N 端口通用等效，A/B/C/D 矩阵 |
+
+## 关键公式与物理机制
+
+### 功率传输基础关系
+
+单相 DAB 的稳态功率传输由相移角 $\phi$ 和变压器漏感 $L$ 决定：
 
 $$
-P \propto \frac{V_1 V_2}{\omega L} \, \phi \left(1-\frac{|\phi|}{\pi}\right)
+P = \frac{V_1 V_2}{2\pi f_s L} \, \phi \left(1-\frac{|\phi|}{\pi}\right)
 $$
 
-具体表达取决于调制方式和近似假设，但关键是相移控制和高频变压器漏感共同决定功率传输。
+其中 $f_s$ 为开关频率。这一关系是 DAB 控制和建模的起点，但 EMT 仿真中更关注开关瞬态和触发精度。
+
+对于 3 相 DAB 的 6 步调制，功率传输变为（Berger 2018）：
+
+$$
+P = \frac{3 V_i V_o}{2\omega_s L} \cdot d \cdot \left(1 - \frac{|d|}{\pi/3}\right)
+$$
+
+其中 $d$ 为相移角（弧度），$\omega_s=2\pi f_s$。
+
+### 状态空间单模块方程（Qi 2024）
+
+DAB 单单元的电磁暂态行为由 H 桥回路方程描述：
+
+$$
+L_t \frac{di}{dt} + R_t i = V_{md}(V_{P1}, V_{N1}, S_I) - V_f - V_{cap}
+$$
+
+$$
+C_{cap} \frac{dV_{cap}}{dt} = i
+$$
+
+其中 $L_t$ 为变压器漏感，$V_{cap}$ 为隔直电容电压，$S_I$ 为开关状态组合。这两个方程在实时仿真中通过状态空间电路法离散化，用于预测步长内电感电流和电容电压的演化。
+
+### 改进触发脉冲法（IFP）的机制
+
+当开关频率达百 kHz 时，1.0 μs 步长内可能存在多次触发事件。IFP 不在步长起点固定开关状态，而是在步长内按触发脉冲的实际占空比计算平均开关状态。这使得 Qi 2024 的聚合模型在 100 kHz/1 μs 条件下将直流偏置误差控制在 0.1% 以内（传统离散触发在相同条件下偏置可达 5%）。
+
+### N 端口通用等效（Xu 2024）
+
+对于含 DAB 子模块的多端口网络，其 EMT 离散化后的端口特性可统一为：
+
+$$
+\begin{cases}
+I_h(t) = A I_h(t-\Delta t) + B U_{\text{port}}(t-\Delta t) \\
+I_{\text{port}}(t) = C I_h(t) + D U_{\text{port}}(t)
+\end{cases}
+$$
+
+其中 $A,B,C,D$ 由内部网表和动态元件参数自动计算。$D = Z_{pp}^{-1}$ 对应端口自导纳和转移导纳，$C = -Z_{pp}^{-1}Z_{ph}$ 对应历史源贡献。该等效不平均化端口动态，只消去内部节点。
+
+### 动态相量模型（Berger 2018）
+
+对于 3p-DAB 的小信号稳定性分析，变压器交流侧电流用动态相量表示：
+
+$$
+\langle x \rangle_k(t) = \frac{1}{T_s} \int_{t-T_s}^{t} x(\tau) e^{-jk\omega_s\tau} d\tau
+$$
+
+$$
+\frac{d}{dt}\langle x \rangle_k(t) = \langle \frac{dx}{dt} \rangle_k(t) - jk\omega_s \langle x \rangle_k(t)
+$$
+
+混合 SSA/GSSA 模型将直流侧状态用 SSA 处理（2 阶），交流侧用 GSSA 保留 $k=\pm1, \pm3$ 谐波（6 阶），总状态数 8 阶，相比开关级模型简化 60% 以上。
 
 ## 与相关方法的关系
 
-- [[chb-dab]]：级联或多桥 DAB 相关背景。
-- [[solid-state-transformer]]：DAB 常作为 SST 内部功率级。
-- [[power-electronics-control]]：控制背景。
-- [[mppt-control]]：在储能或新能源接口场景中的相关背景。
-- [[dfig-offshore-wind-farm]]：新能源接口和 DC/DC 变换链路的相关背景。
-- [[grid-connected-inverter]]：电力电子接口背景。
+- [[chb-dab]]：DAB 的级联 H 桥变体，共享相移控制和功率传输公式基础。
+- [[solid-state-transformer]]：DAB 作为 SST 内部核心功率级，SST 的 EMT 建模很大程度上依赖 DAB 等效。
+- [[n-port-network]]：Xu 2024 将 DAB 子模块视为 N 端口网络的实例，通用等效方法可覆盖多种 DAB 级联拓扑。
+- [[dynamic-phasor]]：Berger 2018 的动态相量法是 3p-DAB 小信号分析的核心工具。
+- [[electromechanical-electromagnetic-hybrid-simulation]]：Gao 2023 以 DAB 作为验证对象，端口分析法在 DAB 级联系统中可实现 10-100x 加速。
+- [[power-electronics-control]]：DAB 的相移控制属于电力电子控制范畴。
+- [[average-value-model]]：与平均值模型共享端口平均化思想，但 DAB 的 GSSA 模型保留交流动态，比纯平均值更适用于稳定性分析。
+- [[multirate-method]]：DAB 高频开关与外部电网低频动态之间的时间尺度差异，是多速率方法的典型应用场景。
 
 ## 代表性来源
 
-- [[high-efficiency-modeling-of-multi-layer-cascaded-dual-active-bridge-dab-units-on]]：多层级 DAB 建模背景。
-- [[simplified-emt-model-of-multiple-active-bridge-based-power-electronic-transforme]]：简化 EMT 模型背景。
-- [[equivalent-modelling-method-of-single-active-network-for-fast-electromagnetic-tr]]：快速 EMT 等效背景。
+| 论文 | 年份 | 方法贡献 | 关键量化结果 |
+|------|------|----------|-------------|
+| [[high-efficiency-modeling-of-multi-layer-cascaded-dual-active-bridge-dab-units-on|Qi 2024]] | 2024 | 状态空间聚合模型 + UCM/IFP，面向实时仿真 | 步长 1 μs，100 kHz 开关频率，节点降 10→4，直流偏置 <0.1% |
+| [[small-signal-dynamic-phasor-model-of-three-phase-dab-converter-for-solid-state-t|Berger 2018]] | 2018 | 混合 SSA/GSSA 模型，面向稳定性分析 | GSSA 保留 k=±1,±3，0-5 kHz 误差 <3%，加速比 1000:1 |
+| [[portal-analysis-approach-used-for-the-efficient-electromagnetic-transient-emt-si|Gao 2023]] | 2023 | 端口分析法，DAB 作为验证对象 | 最大相对误差 <2%，加速 10-100x |
+| [[a-component-level-modeling-and-fine-grained-simulation-method-for-renewable-ener|Xu 2024]] | 2024 | N 端口通用等效，DBM²C-SST 含 DAB | 500 模块加速 7.25x，节点求解加速 23.00x |
 
-## 证据边界
+## 量化证据汇总
 
-本页不写无来源效率、开关频率上限或最优相移结论，必须绑定具体拓扑和工况。
+| 指标 | 数值 | 来源 | 场景 |
+|------|------|------|------|
+| 最小仿真步长 | 1.0 μs | Qi 2024 | RTDS 实时仿真 |
+| 支持最高开关频率 | 100 kHz | Qi 2024 | ISOP 级联 DAB |
+| 单单元对外暴露节点 | 10→4 个 | Qi 2024 | 状态空间聚合 |
+| 网络矩阵规模降低 | >60% | Qi 2024 | 多模块级联 |
+| 计算资源节省 | ~70% | Qi 2024 | RSCAD 平台 |
+| 直流偏置误差（UCM+IFP）| <0.1% | Qi 2024 | 100 kHz/1 μs |
+| 非 UCM 直流偏置 | >5% | Qi 2024 | 同条件对比 |
+| GSSA 建模误差（0-fs/2）| <3% | Berger 2018 | 3p-DAB 小信号 |
+| SSA 高频误差（>1 kHz）| 幅值 15-25%，相位 30-45° | Berger 2018 | fs=10 kHz |
+| 稳定性分析加速比 | 1000:1 | Berger 2018 | 单个工作点 |
+| 混合模型状态阶数 | 8 阶 | Berger 2018 | SSA 2+GSSA 6 |
+| PA 方法相对误差 | <2% | Gao 2023 | 含 DAB 原型验证 |
+| PA 方法加速比 | 10-100x | Gao 2023 | 对比节点分析法 |
+| N 端口等效加速比 | 7.25x（总体），23.00x（求解） | Xu 2024 | N_FPN=500 |
 
-## 开放问题
+## 证据边界与开放问题
 
-- 当前页尚未把 DAB、MAB 和 SAB 在系统级 EMT 中的模型边界完全拆开。
-- 详细模型与平均值模型的切换准则仍需回到具体 source 页确认。
+### 已知局限
+- 不同建模方法之间的精度-效率权衡缺乏统一比较基准：Qi 2024 的聚合模型、Xu 2024 的 N 端口等效和 Gao 2023 的端口分析分别在不同平台和场景下验证，无法直接对比其加速比和误差指标。
+- Berger 2018 的 GSSA 模型约束于小信号线性化，不能直接用于大扰动故障暂态。
+- Qi 2024 和 Xu 2024 的验证以离线/实时仿真为主，缺少与硬件实测的系统一致性比对。
+- 现有文献关于 DAB 软开关（ZVS/ZCS）在 EMT 模型中的等效方法、器件损耗热模型与电磁暂态的耦合、以及故障闭锁后的恢复过程，在收集到的来源中未系统覆盖。
 
-## 来源论文
+### 开放问题
+- 如何在同一个 DAB EMT 模型中实现多模型自适应切换（详细开关→聚合平均→小信号），以覆盖从启动到稳态到故障的全过程？
+- DAB 的 GSSA 模型能否扩展为适用于大扰动暂态的非线性动态相量？
+- 对于新型多端口 DAB 拓扑（如四端口 DBM²C），现有通用等效方法在开关状态组合数量极大时，A/B/C/D 矩阵的预计算和在线重构成本如何量化？
+- IGBT/SiC/MOSFET 等不同器件类型的开关特性差异对 DAB EMT 模型的精度边界有何影响？
 
-| 论文 | 年份 |
-|------|------|
-| [[a-component-level-modeling-and-fine-grained-simulation-method-for-renewable-ener|适用于级联型电力电子拓扑电磁暂态仿真的N端口网络通用等效建模方法]] | 2024 |
+### 引用规范
+- 本页中的量化证据均标注了来源论文的第一作者和年份。引用时应回到对应 source 页核验原文表图。
+- 未标注来源的概括性结论（如"显著提高"）不作定量参考。

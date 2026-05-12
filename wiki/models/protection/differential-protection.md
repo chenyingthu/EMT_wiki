@@ -3,20 +3,11 @@ title: "差动保护 (Differential Protection)"
 type: model
 tags: [differential-protection, current, relay, transformer, bus, generator]
 created: "2026-05-02"
+updated: "2026-05-12"
+updated: "2026-05-11"
 ---
 
 # 差动保护 (Differential Protection)
-
-
-```mermaid
-graph TD
-    subgraph Ncmp[差动保护 (Differential Protection)]
-        N0[理想差流判据: 用已补偿相量直接计算 $I_d$]
-        N1[比率制动模型: 加入 $I_d$-$I_r$ 分段特性]
-        N2[暂态测量模型: 加入采样、滤波、谐波制动和饱和检测]
-        N3[闭环保护模型: 与断路器和一次网络逐时步耦合]
-    end
-```
 
 
 ## 定义与边界
@@ -69,13 +60,26 @@ $$
 | 暂态测量模型 | 加入采样、滤波、谐波制动和饱和检测 | 励磁涌流、外部故障和 CT 饱和研究 | 需要互感器和磁化模型证据 |
 | 闭环保护模型 | 与断路器和一次网络逐时步耦合 | EMT 中保护动作和系统暂态互相影响 | 需要明确出口延时、断路器模型和时序 |
 
+## 量化性能边界
+
+差动保护在 EMT 仿真中已有可核验的量化结果，但以下数据均绑定具体算法、测试系统和仿真条件，不能外推为通用能力：
+
+- **Zeng (2010)** 在 PSCAD/EMTDC 中基于 UMEC 三绕组自耦变压器模型，对 1 000 MVA/1 050 kV 特高压自耦变压器进行空载合闸励磁涌流和内部故障 EMT 仿真，考察二次谐波闭锁差动保护的动作可靠性。当合闸角和剩磁满足特定条件时，三相励磁涌流的二次谐波含量均低于 **10%**；若二次谐波制动门槛维持在 15%-20%，即使采用一相制动三相的闭锁策略，也不能避免差动保护误动。轻微内部故障时，故障初期电流的二次谐波含量较高，保护动作会短暂延迟。验证基于 EMTDC/UMEC 模型，非现场录波或实时仿真 (Zeng 2010)。
+
+- **变压器绕组故障模型 (2004)** 在 EMTP 中验证了基于 BCTRAN 矩阵扩展的变压器内部故障建模方法，通过切分故障线圈为子线圈（匝地故障分为 2 个、匝间故障分为 3 个），将标准 6 阶 R/L 矩阵扩展为 7/8 阶。在 100 kVA、5 500/410 V、Dyn 联结、短路电压 3.96% 的定制变压器上，通过接触器注入 16 次匝地故障和数十次匝间故障，EMTP 仿真电流与实测电流的幅值误差始终 **< 10%**，相位误差 **< 10°**。正常工况下扩展矩阵严格退化为原始 BCTRAN。该模型面向工频/暂态保护研究，不覆盖饱和、频变参数或高频绕组效应 (Transformer Winding Fault 2004)。
+
+- **Chaudhary (2004)** 在 EPRI/DCG EMTP Version 2.0 中集成了 CT/CVT 暂态模型和 FORTRAN 用户子程序接口，实现了差动保护等继电器算法的闭环 EMT 仿真。CT 饱和可用 Type 96 伪非线性磁滞电感模拟；跳闸信号通过 FORTRAN 子程序反馈到网络状态。原文未报告可核验的动作时间或误差指标 (Chaudhary 2004)。
+
+这些量化数据不构成对所涉差动保护方法的全面性能评价，只说明在特定测试条件下可获得的能力边界。
+
 ## 适用边界与失败模式
 
-- CT 饱和会在区外故障时产生暂态差流，可能导致误动；模型需要互感器磁化、剩磁、负荷和二次回路参数。
-- 变压器励磁涌流、过励磁和接线相移会改变差动量；没有相位/幅值补偿和谐波或波形识别时，不应声明适用于变压器差动验证。
+- CT 饱和会在区外故障时产生暂态差流，可能导致误动；模型需要互感器磁化、剩磁、负荷和二次回路参数。Chaudhary (2004) 框架提供了 CT 饱和建模手段，但需独立校核磁滞模型参数。
+- 变压器励磁涌流、过励磁和接线相移会改变差动量；没有相位/幅值补偿和谐波或波形识别时，不应声明适用于变压器差动验证。二次谐波闭锁在特高压自耦变压器中可能因涌流二次谐波含量 < 10% 而失效 (Zeng 2010)。
 - 线路差动依赖两端同步和通信通道；延迟、采样不同步或丢包会改变动作边界。
 - 母线差动受开关状态、间隔拓扑和 CT 极性配置影响；拓扑错误可能比算法误差更危险。
-- “动作快速”“选择性好”等表述必须绑定测试系统和装置条件；本页只保留结构性描述。
+- 基于 BCTRAN 矩阵扩展的内部故障模型在饱和、频变参数和复杂绕组结构下的适用性尚未验证 (Transformer Winding Fault 2004)。
+- "动作快速""选择性好"等表述必须绑定测试系统和装置条件；本页只保留结构性描述。
 
 ## 验证需求
 
@@ -83,15 +87,25 @@ $$
 
 - 区内故障与区外故障的动作边界，并覆盖不同故障电阻和故障位置。
 - 外部故障穿越电流下的 CT 饱和场景，验证闭锁或制动逻辑。
-- 变压器合闸、过励磁和接线补偿场景，验证差流来源是否被正确区分。
+- 变压器合闸、过励磁和接线补偿场景，验证差流来源是否被正确区分。对于特高压自耦变压器，需特别关注二次谐波含量低于常规门槛的风险 (Zeng 2010)。
 - 闭环跳闸后网络拓扑更新与 [[circuit-breaker-model]] 的状态一致性。
 - 若使用通信差动，应报告同步、延迟和通信异常处理假设。
 
 ## 代表性来源
 
-- [[protection-system-representation-in-the-electromagnetic-transients-program-power]] 明确把 CT/CVT、继电器算法和断路器反馈作为 EMTP 保护系统关键元素；其当前证据适合支撑闭环建模框架，而不是通用精度数字。
-- [[using-tacs-functions-within-empt-to-teach-protective-relaying-fundamentals-power]] 可作为教学型保护逻辑实现的来源入口；工程级差动整定需另行依据标准和装置资料。
-- [[protection-relay-modeling]] 汇总保护建模主题，但其中未绑定来源的动作时间和准确率数字不应直接转写为本页结论。
+- [[modeling-and-electromagnetic-transient-simulation-of-vsc-hvdc-system|Zeng (2010)]] 支撑特高压自耦变压器差动保护 EMT 仿真：二次谐波含量 < 10% 时 15-20% 门槛误动风险、轻微故障谐波导致延时。验证限于 UMEC 模型仿真，需现场录波进一步确认。
+- [[a-transformer-model-for-winding-fault-studies-power-delivery-ieee-transactions-o|Transformer Winding Fault (2004)]] 支撑变压器内部故障 EMTP 兼容建模：电流幅值误差 < 10%、相位误差 < 10°、16 次匝地 + 数十次匝间故障物理实验验证。
+- [[protection-system-representation-in-the-electromagnetic-transients-program-power|Chaudhary (2004)]] 支撑 EMTP 中 CT/CVT + FORTRAN 继电器闭环保护仿真框架，适合差动保护与一次系统耦合的建模入口。原文未提供可核验的动作时间或误差指标。
+- [[using-tacs-functions-within-empt-to-teach-protective-relaying-fundamentals-power|TACS Teaching (2004)]] 可作为教学型差动保护逻辑实现的来源入口：采样率 720-1440 Hz、DFT 延迟 16.67 ms、抗混叠滤波误差从 >15% 降至 <2%。工程级差动整定需另行依据标准和装置资料。
+- [[protection-relay-modeling]] 汇总保护建模主题，提供保护继电器在 EMT 中的整体框架，差动保护的具体建模边界需回到本页和具体来源。
+
+## 开放问题
+
+- 特高压自耦变压器励磁涌流二次谐波含量低于 10% 的结论基于 UMEC 模型仿真（Zeng 2010），缺少现场录波和不同铁心材料/结构下的独立验证，其实用性需要更多测试。
+- BCTRAN 扩展内部故障模型（Transformer Winding Fault 2004）的漏磁因子估算依赖几何参数，在不同绕组结构和电压等级下的误差边界尚不明确。
+- CT 饱和对差动保护的影响在 EMT 中已有建模框架（Chaudhary 2004），但 CT 磁滞模型参数获取和验证缺乏统一标准。
+- 当换流器型电源比例较高时，差动保护的采样、滤波和制动判据在弱电网和次同步频段下的行为偏差尚未被现行建模框架充分覆盖。
+- 基于行波原理的线路差动保护在 EMT 中的验证需要高频采样和线路模型支撑，其与工频量差动的边界缺乏统一比较框架。
 
 ## 与相关页面的关系
 
@@ -99,13 +113,11 @@ $$
 - [[protection-control-device]] 给出保护设备的通用测量、算法和出口接口框架。
 - [[fault-impedance-model]] 影响差流大小和保护灵敏度，但不是差动保护本身。
 - [[fault-analysis-methods]] 提供故障类型和故障量构造的上游方法。
+- [[transformer-model]] 和 [[magnetic-saturation-modeling]] 支撑变压器差动保护的励磁涌流和 CT 饱和边界。
 
 ## 来源论文
 
 参见 [[index]] 获取更多差动保护相关文献。
+---
 
-## 来源论文
-
-| 论文 | 年份 |
-|------|------|
-| [[modeling-and-electromagnetic-transient-simulation-of-vsc-hvdc-system|Modeling and electromagnetic transient simulation of VSC-HVD]] | 2022 |
+*本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*

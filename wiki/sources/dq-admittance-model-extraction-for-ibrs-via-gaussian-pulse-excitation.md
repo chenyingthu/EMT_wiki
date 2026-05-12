@@ -59,7 +59,7 @@ sources: ["EMT_Doc/13&14/files/DQ_Admittance_Model_Extraction_for_IBRs_via_Gauss
 ## 使用的方法
 
 - 高斯脉冲激励
-- [[系统辨识|系统辨识]]
+- [[parameter-identification|系统辨识]]
 - 工具变量法
 - [[frequency-scanning|频率扫描法]]
 - 线性调频信号注入
@@ -77,8 +77,8 @@ sources: ["EMT_Doc/13&14/files/DQ_Admittance_Model_Extraction_for_IBRs_via_Gauss
 - 导纳模型提取
 - [[small-signal-analysis|稳定性分析]]
 - [[emt-simulation|电磁暂态仿真]]
-- [[系统辨识|系统辨识]]
-- [[风电机组建模|风电机组建模]]
+- [[parameter-identification|系统辨识]]
+- [[dfig-model|风电机组建模]]
 
 ## 主要发现
 

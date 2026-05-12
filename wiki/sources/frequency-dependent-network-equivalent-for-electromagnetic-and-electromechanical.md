@@ -63,7 +63,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/Zhang 等 - 2012 - Frequency depende
 
 
 - [[vector-fitting|矢量拟合]]
-- [[频变网络等值|频变网络等值]]
+- [[fdne-model|频变网络等值]]
 - [[passivity-enforcement|无源性强制]]
 - 高斯消元法
 - [[vector-fitting|有理函数拟合]]
@@ -74,7 +74,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/Zhang 等 - 2012 - Frequency depende
 
 - [[ieee-39-bus-system|IEEE 39节点系统]]
 - [[nodal-analysis|节点导纳矩阵]]
-- [[频变网络等值模型|频变网络等值模型]]
+- [[fdne-model|频变网络等值模型]]
 
 
 ## 相关主题

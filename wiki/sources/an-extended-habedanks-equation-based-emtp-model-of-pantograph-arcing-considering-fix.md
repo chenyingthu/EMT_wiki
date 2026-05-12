@@ -58,7 +58,7 @@ sources: ["EMT_Doc/07&08/An Extended Habedank's Equation-Based EMTP Model of Pan
 
 ## 使用的方法
 
-- [[有限元法|有限元法]]
+- [[fem-simulation|有限元法]]
 - Habedank方程模型
 - Mayr-Cassie组合模型
 - [[atp-emtp|EMTP电磁暂态仿真]]

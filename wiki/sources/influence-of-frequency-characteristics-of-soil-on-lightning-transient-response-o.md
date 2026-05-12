@@ -74,7 +74,7 @@ sources: ["EMT_Doc/24/Li 等 - 2016 - Influence of frequency characteristics of 
 - [[emt-simulation|电磁暂态分析]]
 - [[frequency-dependent-modeling|频率相关建模]]
 - 地回路参数
-- [[土壤频变特性|土壤频变特性]]
+- [[frequency-dependent-modeling|土壤频变特性]]
 - [[transmission-line-model|输电线路建模]]
 
 ## 主要发现

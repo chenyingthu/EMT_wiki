@@ -61,7 +61,7 @@ sources: ["EMT_Doc/05/Allabadi 等 - 2026 - Acceleration strategies for EMT Simu
 - 传输线并行化(TLP)
 - 控制系统并行化(CtrlP)
 - 优化顺序求解器(OSeqCtrl)
-- [[功能模型接口-fmi|功能模型接口(FMI)]]
+- [[electromechanical-electromagnetic-hybrid-simulation|功能模型接口(FMI)]]
 - 非迭代雅可比法(NIJ)
 - 主从协同仿真
 

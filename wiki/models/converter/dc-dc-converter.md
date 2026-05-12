@@ -3,36 +3,10 @@ title: "DC-DC 变换器 (DC-DC Converter)"
 type: model
 tags: [dc-dc, converter, buck, boost, chopper, power-electronics]
 created: "2026-05-02"
+updated: "2026-05-12"
 ---
 
 # DC-DC 变换器 (DC-DC Converter)
-
-
-```mermaid
-graph TD
-    N0[DC-DC 变换器 (DC-DC…]
-    N1[Buck变换器: 降压型，输出电…]
-    N0 --> N1
-    N2[Boost变换器: 升压型，输出…]
-    N0 --> N2
-    N3[Buck-Boost变换器: 升…]
-    N0 --> N3
-    N4[Cuk变换器: 电容储能型升降压…]
-    N0 --> N4
-    N5[Sepic变换器: 单端初级电感…]
-    N0 --> N5
-    N6[Zeta变换器: 双端初级电感变换器]
-    N0 --> N6
-    N7[反激式 (Flyback): 变…]
-    N0 --> N7
-    N8[正激式 (Forward): 变…]
-    N0 --> N8
-    N9[推挽式 (Push-Pull):…]
-    N0 --> N9
-    N10[半桥式 (Half-Bridge…]
-    N0 --> N10
-```
-
 
 ## 核心原理详解
 
@@ -633,38 +607,48 @@ DC-DC变换器与斩波器本质上相同，都是直流电压变换装置：
 - **斩波器**: 传统术语，强调开关动作
 - **DC-DC变换器**: 现代术语，强调变换功能
 
+## 适用边界与限制
+
+### 适用条件
+- **拓扑类型**：Buck、Boost、Buck-Boost、Cuk、Sepic、Zeta 等非隔离型；Flyback、Forward、Push-Pull、Half-Bridge、Full-Bridge 等隔离型
+- **开关方式**：硬开关（PWM 控制）和软开关（ZVS/ZCS 谐振、LLC 等）
+- **功率范围**：数瓦（Flyback）至数十千瓦（全桥移相）
+- **频率范围**：数十 kHz 至数 MHz（取决于开关器件）
+
+### 模型限制
+- **理想开关模型**：忽略开关瞬态，无法用于 EMI/损耗分析
+- **状态空间平均模型**：限于低频（< f_s/5）动态，丢失开关纹波信息
+- **单相建模**：多相交错需独立建模各相电流
+- **磁性元件简化**：变压器漏感、磁芯饱和、趋肤效应等非线性效应通常被简化
+
+### 量化性能边界
+
+DC-DC 变换器 EMT 建模的精度取决于所采用的简化策略，以下汇总可引用的量化数据：
+
+**平均值模型精度**：Li (2025) 在固态变压器（SST）场景下验证了开关函数平均值模型，与详细开关模型相比误差小于 0.5%。Xu (2025) 对级联 H 桥 DAB 采用广义状态空间平均（GSSA）模型，在保留低频动态特性的同时显著降低计算复杂度。
+
+**多速率仿真加速**：Wang (2025) 采用多速率方法对 CHB-DAB 进行 EMT 仿真，整体加速比达 10-20 倍，精度损失在可接受范围内。Gao (2022) 基于 Kron 消去法对电力电子变压器进行模型降阶，加速 10-100 倍。Li (2026) 采用 ImEx-Gear 混合积分方法实现 PET 仿真加速达 171 倍。
+
+**实时仿真实现**：Qi (2024) 在实时仿真器中实现了双有源桥（DAB）的聚合模型，结合插值前推（IFP）方法，实现 FPGA 上的亚微秒级步长实时仿真。Berger (2018) 采用 GSSA 对 DAB 进行建模验证，证明平均值方法在保留关键动态特性的前提下可实现显著加速。
+
+**数据缺口声明**：DC-DC 变换器 EMT 建模的精度评估高度依赖于具体拓扑、控制策略和运行点。不同建模方法（理想开关、平均值模型、降阶模型）的对比在现有文献中通常以具体案例形式呈现，缺乏统一的标准化测试基准。建议用户根据具体应用场景选择合适的模型保真度，通过与详细开关模型对比验证。
+
 ## 相关模型
-- `boost-converter` - Boost变换器
-- `buck-converter` - Buck变换器
-- `chopper` - 斩波器
-- [[power-electronics]] - 电力电子
-- [[mmc-model]] - MMC模型
-- [[vsc-model]] - VSC模型
+- [[dc-dc-converter]] - DC-DC 变换器
+- [[power-electronics-modeling]] - 电力电子建模
+- [[average-value-model]] - 平均值模型
 
 ## 相关方法
 - [[average-value-model]] - 平均值模型
 - [[state-space-method]] - 状态空间法
-- `pwm-control` - PWM控制
 - [[numerical-integration]] - 数值积分
 - [[switching-function-method]] - 开关函数
 
 ## 相关主题
 - [[co-simulation]] - 混合仿真
 - [[real-time-simulation]] - 实时仿真
-- `power-quality` - 电能质量
-- [[renewable-energy-integration]] - 可再生能源
+- [[power-quality]] - 电能质量
 
-## 来源论文
+---
 
-参见 [[index]] 获取更多DC-DC变换器相关文献。
-
-## 来源论文
-
-| 论文 | 年份 |
-|------|------|
-| [[comparative-study-on-electromechanical-and-electromagnetic-transient-model-for-g|Comparative study on electromechanical and electromagnetic t]] | 2014 |
-| [[control-and-simulation-of-a-grid-forming-inverter-for-hybrid-pv-battery-plants-i|Control and Simulation of a Grid-Forming Inverter for Hybrid]] | 2021 |
-| [[modeling-of-mmc-based-statcom-with-embedded-energy-storage-for-the-simulation-of|Modeling of MMC-based STATCOM with embedded energy storage f]] | 2023 |
-| [[a-transient-conducted-em-disturbances-source-modeling-method-for-electromagnetic|A Transient Conducted EM Disturbances Source Modeling Method]] | 2024 |
-| [[a-state-variable-preserving-method-for-the-efficient-modelling-of-inverter-based|A state-variable-preserving method for the efficient modelli]] | 2025 |
-| [[decoupled-detailed-equivalent-model-for-parallel-and-multi-rate-emt-type-simulat|Decoupled Detailed Equivalent Model for Parallel and Multi-R]] | 2026 |
+*本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*

@@ -59,24 +59,24 @@ sources: ["EMT_Doc/09/Ebrahimi 等 - 2021 - Average-Value Modeling of Line-Commu
 ## 使用的方法
 
 - [[average-value-model|平均值模型]]
-- [[正负序分解法|正负序分解法]]
-- [[傅里叶级数展开|傅里叶级数展开]]
-- [[代数表征法|代数表征法]]
+- [[vsc-model|正负序分解法]]
+- [[discrete-fourier-transform|傅里叶级数展开]]
+- [[state-space-method|代数表征法]]
 
 ## 涉及的模型
 
 - [[lcc-model|LCC]]
 - [[large-scale-grid-simulation|交流电网]]
-- [[直流侧rlc滤波器|直流侧RLC滤波器]]
-- [[戴维南等效电源|戴维南等效电源]]
+- [[emi-filter-model|直流侧RLC滤波器]]
+- [[thevenin-equivalent-model|戴维南等效电源]]
 
 ## 相关主题
 
 - [[emt-simulation|电磁暂态仿真]]
-- [[不平衡工况分析|不平衡工况分析]]
+- [[vsc-model|不平衡工况分析]]
 - [[harmonic-analysis-methods|谐波分析]]
-- [[系统级快速仿真|系统级快速仿真]]
-- [[频域阻抗预测|频域阻抗预测]]
+- [[gpu-accelerated-simulation|系统级快速仿真]]
+- [[frequency-scan|频域阻抗预测]]
 
 ## 主要发现
 

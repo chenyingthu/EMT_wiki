@@ -3,25 +3,11 @@ title: "配电变压器 (Distribution Transformer)"
 type: model
 tags: [distribution-transformer, distribution-network, step-down, power-quality, emt]
 created: "2026-05-04"
+updated: "2026-05-12"
 ---
 
 # 配电变压器 (Distribution Transformer)
 
-
-```mermaid
-graph LR
-    N0[定义与边界]
-    N1[EMT中的作用]
-    N0 -->|Nf1| N1
-    N2[主要分支与机制]
-    N1 -->|Nf2| N2
-    N3[形式化表达]
-    N2 -->|Nf3| N3
-    N4[数值分析]
-    N3 -->|Nf4| N4
-    N5[适用边界与失败模式]
-    N4 -->|Nf5| N5
-```
 
 
 ## 定义与边界
@@ -95,62 +81,57 @@ $$I_k = \frac{I_N}{Z_k\%} \times 100$$
 $$T_h = \frac{V_{2h}}{V_{1h}} = \frac{1}{|1 + hZ_k/Z_{load}|}$$
 
 
-## 数值分析
+## 量化性能边界
 
-### 精度与效率
-- 仿真精度：误差控制在1%以内
-- 计算效率：支持大规模系统实时仿真
-- 数值稳定性：在典型工况下保持稳定
+**Shukla 2021 配电网EMT FPGA硬件加速**（SoC-FPGA Zynq-7000, 古瓦哈提市Jail变电站）:
+- FPGA实现相比MATLAB基线速度提升约 **12.5倍**（1秒仿真，Zedboard开发板）
+- 配电网导纳矩阵稀疏度由0.94（50节点）增至 **0.997**（1000节点），呈高度病态特性
+- 导纳矩阵条件数维持在 **2.907×10^5 ~ 2.974×10^5**，PCG预处理共轭梯度法是有效求解策略
+- 32位单精度浮点，5级流水线乘加器实现每时钟周期1次吞吐
+- 数据缺口：仅与MATLAB对比，未与商业EMT软件（PSCAD/EMTP）、GPU或其他硬件平台系统比较
 
-### 典型参数范围
-- 时间步长：1μs ~ 1ms
-- 系统规模：10~1000节点
-- 仿真时长：0.1s ~ 10s
+**Chandrasena 2004 配电变压器GIC低频模型**（3 kVA, 115 V/2300 V单相，M4硅钢片）:
+- 基于Jiles-Atherton磁滞理论的改进变压器模型，在EMTDC中实现
+- 额定工况（1.0 p.u., 60Hz）励磁电流RMS仿真误差 **1.98%**，功率因数误差仅 **3%**（实测0.672 vs 仿真0.692）
+- 1.1 p.u.电压下，新模型励磁电流最大误差 **5.38%**，优于传统电阻模型的11.25%
+- 1.1 p.u.时相位角偏差 **2.57°**，导致功率因数误差在高电压时扩大
+- 数据缺口：验证仅基于单相小容量样机，未在大型三相多柱变压器和实际GIC注入场景下验证；低频GIC模型忽略绕组电容，不适用于雷电/VFTO等宽频暂态
 
-### 性能指标
-- 内存占用：随系统规模线性增长
-- 计算时间：与系统复杂度和仿真时长相关
-- 收敛性：在绝大多数情况下稳定收敛
+**Jazebi 2015 对偶原理变压器宽频模型**（含涡流效应，1 kVA单相变压器）:
+- 基于几何尺寸和材料参数的解析Cauer等效电路，适用 **1 Hz至1 MHz** 宽频范围
+- 等效电阻与电感计算误差 **<5%**（对比有限元FEM）
+- 忽略涡流效应时高频阻抗幅值误差 **>30%**，证明涡流建模对MHz级暂态至关重要
+- 7阶模型有效预测范围延伸至 **15 MHz以上**；实验室实测谐振频率最大偏差约20%（归因于介电常数不确定性与制造公差）
+- 数据缺口：主要验证两绕组单相变压器，三相多柱/非圆柱绕组结构的验证尚未充分展开
 
-## 适用边界与失败模式
+**数据缺口声明**：配电变压器的EMT建模性能数据主要来自小容量单相样机（3 kVA、1 kVA），实际配电网中数百kVA至数MVA三相配电变压器的宽频建模精度和仿真加速比缺乏系统报告。GIC铁芯模型和FPGA加速分别在低频和硬件维度提供了有益参考，但配电变压器在分布式电源大量接入场景下的谐波/暂态仿真精度尚待系统验证。
 
-### 适用条件
+## 来源论文
 
-- 额定容量范围内运行
-- 电压在允许偏差内
-- 负载不平衡度可接受
-- 环境温度正常
+| 论文 | 年份 |
+|------|------|
+| [[an-fpga-based-electromagnetic-transient-analysis-of-power-distribution-network|An FPGA based electromagnetic transient analysis of power distribution network]] | 2021 |
+| [[an-improved-low-frequency-transformer-model-for-use-in-gic-studies|An improved low-frequency transformer model for use in GIC studies]] | 2004 |
+| [[duality-based-transformer-model-including|Duality-Based Transformer Model Including Eddy Current Effects in the Windings]] | 2015 |
 
-### 失效边界
-
-- **过载**：绕组过热
-- **短路**：机械应力损坏
-- **雷击**：绝缘击穿
-- **谐波**：附加损耗增加
-
-## 代表性来源
-
-- [[emt-simulation]] - EMT仿真基础
-- [[power-system]] - 电力系统建模
-- [[electromagnetic-transient]] - 电磁暂态分析
-- [[control-system]] - 控制系统设计
-- [[real-time-simulation]] - 实时仿真技术
-- IEEE Std. C57 - 变压器标准
-- IEC 60076 - 电力变压器
-
-## 与相关页面的关系
+## 相关模型
 
 - [[transformer-model]] - 变压器通用模型
-- [[microgrid-distribution-network]] - 微电网与配电网
-- [[power-quality]] - 电能质量
-- [[harmonic-analysis-methods]] - 谐波分析方法
+- [[converter-transformer-model]] - 换流变压器
 - [[load-model]] - 负荷模型
-- [[ieee-14-bus-system]] - IEEE 14节点测试系统
-- [[emt-simulation]] - EMT仿真基础
+
+## 相关方法
+
+- [[frequency-dependent-modeling]] - 频率相关建模
+- [[nodal-analysis]] - 节点分析
+- [[vector-fitting]] - 矢量拟合
+
+## 相关主题
+
+- [[real-time-simulation]] - 实时仿真
+- [[frequency-dependent-modeling]] - 宽频建模
+- [[ferroresonance]] - 铁磁谐振
 
 ---
 
 *本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*
-- [[mmc-model]]
-- [[transmission-line-model]]
-- [[synchronous-machine-model]]

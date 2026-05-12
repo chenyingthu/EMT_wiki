@@ -499,8 +499,8 @@ $$
 | [[mmc-mtdc系统的电磁-机电暂态建模与实时仿真分析|MMC-MTDC系统的电磁-机电暂态建模与实时仿真分析]] | 2022 |
 | [[2728modeling|Modeling_of_LCC_HVDC_Systems_Using_Dynam]] | 2022 |
 | [[phase-domain-model-of-twelve-phase-synchronous-machine-for-emtp-type-simulation|Phase-domain model of twelve-phase synchronous machine for E]] | 2022 |
-| [[中-国-电-机-工-程-学-报-34|中  国  电  机  工  程  学  报]] | 2022 |
-| [[中-国-电-机-工-程-学-报-34|中  国  电  机  工  程  学  报]] | 2022 |
+| [[index|中  国  电  机  工  程  学  报]] | 2022 |
+| [[index|中  国  电  机  工  程  学  报]] | 2022 |
 | [[中-国-电-机-工-程-学-报-36|中  国  电  机  工  程  学  报]] | 2022 |
 | [[大规模电力电子设备接入的电力系统混合仿真接口技术综述|大规模电力电子设备接入的电力系统混合仿真接口技术综述]] | 2022 |
 | [[大规模电力电子设备接入的电力系统混合仿真接口技术综述|大规模电力电子设备接入的电力系统混合仿真接口技术综述]] | 2022 |

@@ -2,10 +2,11 @@
 title: "A Systematic Approach to the Evaluation"
 type: source
 year: 2005
+tags: [systematic, evaluation]
+
 journal: "IEEE Transactions on Power Delivery"
 created: "2026-04-13"
-sources: ["EMT_Doc/04/tpwrd.2005.855448.pdf.pdf"]
----
+sources: ["EMT_Doc/04/tpwrd.2005.855448.pdf.pdf"]---
 
 # A Systematic Approach to the Evaluation
 
@@ -64,7 +65,7 @@ sources: ["EMT_Doc/04/tpwrd.2005.855448.pdf.pdf"]
 ## 涉及的模型
 
 - [[transmission-line-model|架空输电线路]]
-- [[多层大地模型|多层大地模型]]
+- [[frequency-dependent-modeling|多层大地模型]]
 - 单回/双回线路
 - ACSR导线
 
@@ -73,7 +74,7 @@ sources: ["EMT_Doc/04/tpwrd.2005.855448.pdf.pdf"]
 - [[emt-simulation|电磁暂态分析]]
 - [[frequency-dependent-modeling|频率相关建模]]
 - 非均匀大地建模
-- [[输电线路参数计算|输电线路参数计算]]
+- [[frequency-dependent-modeling|输电线路参数计算]]
 - 不对称故障暂态响应
 
 ## 主要发现

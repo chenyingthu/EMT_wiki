@@ -77,7 +77,7 @@ sources: ["EMT_Doc/24/Meyberg 等 - 2026 - Integrating dynamic soil ionization m
 - 接地电阻计算
 - 土壤电离效应
 - 雷击冲击特性
-- [[时域建模|时域建模]]
+- [[time-domain-modeling|时域建模]]
 
 ## 主要发现
 

@@ -2,10 +2,11 @@
 title: "A Semi-Analytical Approach for State-Space Electromagnetic Transient Simulation"
 type: source
 year: 2024
+tags: [semi, analytical, state, space, electromagnetic]
+
 journal: "IEEE Open Access Journal of Power and Energy"
 created: "2026-04-13"
-sources: ["EMT_Doc/03/Xiong 等 - 2024 - A Semi-Analytical Approach for State-Space Electromagnetic Transient Simulation.pdf"]
----
+sources: ["EMT_Doc/03/Xiong 等 - 2024 - A Semi-Analytical Approach for State-Space Electromagnetic Transient Simulation.pdf"]---
 
 # A Semi-Analytical Approach for State-Space Electromagnetic Transient Simulation
 

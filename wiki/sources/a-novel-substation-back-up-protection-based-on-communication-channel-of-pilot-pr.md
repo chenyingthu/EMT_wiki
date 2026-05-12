@@ -2,10 +2,11 @@
 title: "A Novel Substation Back-up Protection Based on Communication Channel of Pilot Protection"
 type: source
 year: 2013
+tags: [substation, back, protection, communication, channel]
+
 journal: "IEEE Power & Energy Society General Meeting"
 created: "2026-04-13"
-sources: ["EMT_Doc/03/PESMG.2013.6672207.pdf.pdf"]
----
+sources: ["EMT_Doc/03/PESMG.2013.6672207.pdf.pdf"]---
 
 # A Novel Substation Back-up Protection Based on Communication Channel of Pilot Protection
 

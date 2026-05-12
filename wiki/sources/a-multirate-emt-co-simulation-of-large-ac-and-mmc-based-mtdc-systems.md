@@ -2,10 +2,11 @@
 title: "A Multirate EMT Co-Simulation of Large AC and MMC-Based MTDC Systems"
 type: source
 year: 2017
+tags: [multirate, simulation, large, mtdc, systems]
+
 journal: "IEEE Transactions on Power Systems"
 created: "2026-04-13"
-sources: ["EMT_Doc/02/Shu 等 - 2018 - A Multirate EMT Co-Simulation of Large AC and MMC-Based MTDC Systems.pdf"]
----
+sources: ["EMT_Doc/02/Shu 等 - 2018 - A Multirate EMT Co-Simulation of Large AC and MMC-Based MTDC Systems.pdf"]---
 
 # A Multirate EMT Co-Simulation of Large AC and MMC-Based MTDC Systems
 
@@ -68,7 +69,7 @@ sources: ["EMT_Doc/02/Shu 等 - 2018 - A Multirate EMT Co-Simulation of Large AC
 - [[mmc-model|MMC]]
 - [[hybrid-acdc-network|MTDC]]
 - 大型交流系统
-- [[戴维南等效模型|戴维南等效模型]]
+- [[thevenin-equivalent-model|戴维南等效模型]]
 - 诺顿等效模型
 
 ## 相关主题

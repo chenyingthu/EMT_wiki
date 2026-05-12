@@ -75,7 +75,7 @@ sources: ["EMT_Doc/13&14/files/Bai 等 - 2018 - Dynamic Synchrophasor Estimator 
 - 同步相量测量
 - 频率偏移
 - 动态工况
-- [[离散傅里叶变换|离散傅里叶变换]]
+- [[discrete-fourier-transform|离散傅里叶变换]]
 - 广域测量系统
 - [[pscad-emtdc|PSCAD/EMTDC仿真]]
 

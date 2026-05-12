@@ -58,7 +58,7 @@ sources: ["EMT_Doc/13&14/files/TPWRD.2013.2268857.pdf.pdf"]
 
 ## 使用的方法
 
-- [[对偶原理|对偶原理]]
+- [[transformer-model|对偶原理]]
 - 三维有限元仿真
 - [[atp-emtp|EMTP电磁暂态仿真]]
 - 非线性电感建模
@@ -73,8 +73,8 @@ sources: ["EMT_Doc/13&14/files/TPWRD.2013.2268857.pdf.pdf"]
 ## 相关主题
 
 - 低频暂态计算
-- [[变压器建模|变压器建模]]
-- [[励磁涌流|励磁涌流]]
+- [[transformer-modeling|变压器建模]]
+- [[transformer-model|励磁涌流]]
 - [[ferroresonance|铁磁谐振]]
 - 地磁感应电流
 - 深度饱和特性

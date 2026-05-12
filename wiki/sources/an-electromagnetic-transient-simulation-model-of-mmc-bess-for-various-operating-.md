@@ -58,7 +58,7 @@ sources: ["EMT_Doc/07&08/An Electromagnetic Transient Simulation Model of MMC-BE
 
 ## 使用的方法
 
-- [[详细等效模型-dem|详细等效模型(DEM)]]
+- [[dem|详细等效模型(DEM)]]
 - PSCAD辅助开关与插值算法
 - 补充决策公式
 - 加速计算方法
@@ -67,7 +67,7 @@ sources: ["EMT_Doc/07&08/An Electromagnetic Transient Simulation Model of MMC-BE
 ## 涉及的模型
 
 - [[mmc-model|MMC]]
-- [[子模块-sm|子模块(SM)]]
+- [[submodule-model|子模块(SM)]]
 - Buck-Boost变换器
 - 详细开关模型(DSM)
 - [[average-value-model|平均值模型]]

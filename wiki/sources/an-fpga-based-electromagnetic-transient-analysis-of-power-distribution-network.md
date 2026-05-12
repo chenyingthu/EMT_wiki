@@ -68,7 +68,7 @@ sources: ["EMT_Doc/07&08/An FPGA based electromagnetic transient analysis of pow
 ## 涉及的模型
 
 - [[distribution-network|配电网]]
-- [[配电变压器|配电变压器]]
+- [[distribution-transformer|配电变压器]]
 - 配电馈线
 - RLC无源网络
 - 变电站等值模型
@@ -76,7 +76,7 @@ sources: ["EMT_Doc/07&08/An FPGA based electromagnetic transient analysis of pow
 ## 相关主题
 
 - [[real-time-simulation|实时仿真]]
-- [[硬件加速|硬件加速]]
+- [[gpu-accelerated-simulation|硬件加速]]
 - [[parallel-computing|并行计算]]
 - 网络矩阵求解
 - 配电网动态仿真

@@ -75,7 +75,7 @@ sources: ["EMT_Doc/24/Rojas Varela 等 - 2025 - Influence of Approximate Interna
 
 - [[frequency-dependent-modeling|频率相关建模]]
 - 波阻抗负载计算
-- [[暂态过电压分析|暂态过电压分析]]
+- [[lightning-transient-analysis|暂态过电压分析]]
 - 长距离输电
 - 线路参数精确建模
 

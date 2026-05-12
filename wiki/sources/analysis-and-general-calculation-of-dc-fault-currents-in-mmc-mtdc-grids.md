@@ -68,14 +68,14 @@ MMC-MTDC直流电网发生直流侧短路后，闭锁前故障电流上升快、
 
 - [[mmc-model|MMC]]
 - [[half-bridge-smb|半桥子模块(HBSM)]]
-- [[多端直流电网-mtdc|多端直流电网(MTDC)]]
+- [[mtdc-model|多端直流电网(MTDC)]]
 - 直流断路器
 - [[arm-reactor|桥臂电抗器]]
 - [[transmission-line-model|直流输电线路]]
 
 ## 相关主题
 
-- [[直流故障分析|直流故障分析]]
+- [[dc-fault-blocking|直流故障分析]]
 - 短路电流计算
 - [[mmc-model|MMC]]
 - [[hybrid-acdc-network|多端直流电网]]

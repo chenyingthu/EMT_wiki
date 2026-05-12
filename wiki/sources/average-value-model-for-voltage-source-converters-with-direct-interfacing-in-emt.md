@@ -59,7 +59,7 @@ sources: ["EMT_Doc/09/Ebrahimi和Jatskevich - 2023 - Average-Value Model for Vol
 ## 使用的方法
 
 - [[average-value-model|平均值建模]]
-- [[直接接口技术|直接接口技术]]
+- [[electromechanical-electromagnetic-hybrid-simulation|直接接口技术]]
 - [[nodal-analysis|节点分析法]]
 - [[coordinate-transformation-model|dq坐标变换]]
 

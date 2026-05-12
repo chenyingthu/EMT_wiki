@@ -61,7 +61,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/Alipio 等 - 2024 - High-frequency t
 - [[transmission-line-theory|传输线理论]]
 - 频域节点导纳矩阵法
 - [[numerical-inverse-laplace-transform|数值拉普拉斯逆变换]]
-- [[准tem近似|准TEM近似]]
+- [[quasi-tem-approximation|准TEM近似]]
 - 冲击电压测试
 
 ## 涉及的模型

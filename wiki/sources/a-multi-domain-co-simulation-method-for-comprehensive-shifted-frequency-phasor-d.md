@@ -2,10 +2,11 @@
 title: "A Multi-Domain Co-Simulation Method for Comprehensive Shifted-Frequency Phasor DC-Grid Models and EM"
 type: source
 year: 2019
+tags: [multi, domain, simulation, comprehensive, shifted]
+
 journal: "IEEE Transactions on Power Electronics"
 created: "2026-04-13"
-sources: ["EMT_Doc/02/Shu 等 - 2019 - A Multi-Domain Co-Simulation Method for Comprehensive Shifted-Frequency Phasor DC-Grid Models and EM.pdf"]
----
+sources: ["EMT_Doc/02/Shu 等 - 2019 - A Multi-Domain Co-Simulation Method for Comprehensive Shifted-Frequency Phasor DC-Grid Models and EM.pdf"]---
 
 # A Multi-Domain Co-Simulation Method for Comprehensive Shifted-Frequency Phasor DC-Grid Models and EM
 
@@ -55,8 +56,8 @@ sources: ["EMT_Doc/02/Shu 等 - 2019 - A Multi-Domain Co-Simulation Method for C
 
 ## 使用的方法
 
-- [[移频相量法|移频相量法]]
-- [[多域协同仿真|多域协同仿真]]
+- [[dynamic-phasor|移频相量法]]
+- [[electromechanical-electromagnetic-hybrid-simulation|多域协同仿真]]
 - 混合多域传输线模型接口
 - [[emt-simulation|电磁暂态仿真]]
 - 系统分区解耦
@@ -73,7 +74,7 @@ sources: ["EMT_Doc/02/Shu 等 - 2019 - A Multi-Domain Co-Simulation Method for C
 ## 相关主题
 
 - 交直流混合系统仿真
-- [[多域协同仿真|多域协同仿真]]
+- [[electromechanical-electromagnetic-hybrid-simulation|多域协同仿真]]
 - 高效仿真
 - 接口建模
 - 大规模电网动态分析

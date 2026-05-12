@@ -76,7 +76,7 @@ sources: ["EMT_Doc/23/Zanon 等 - 2021 - Implementation of the universal line mo
 - [[emt-simulation|电磁暂态仿真]]
 - [[frequency-dependent-modeling|频率相关建模]]
 - [[transmission-line-model|输电线路建模]]
-- [[地回路阻抗计算|地回路阻抗计算]]
+- [[frequency-dependent-modeling|地回路阻抗计算]]
 - 仿真软件集成
 
 ## 主要发现

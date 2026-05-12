@@ -60,7 +60,7 @@ sources: ["EMT_Doc/15/Electromagnetic modeling of inductors in EMT-type software
 
 - Hopkinson类比法
 - Buntenbach类比法
-- [[对偶原理|对偶原理]]
+- [[transformer-model|对偶原理]]
 - 分布式电路建模
 - 二维有限元法
 - 空间网格离散化

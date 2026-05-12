@@ -14,10 +14,10 @@ graph TD
     subgraph Ncmp[微电网与配电网 (Microgrid and Distr…]
         N0[微电网模型: 综合]
         N1[配电网模型: 综合]
-        N2[[[droop-control-model]]: 综合]
+        N2[[droop-control-model]]: 综合]
         N3[孤岛检测: 综合]
         N4[[[protection-relay-modeling]…]
-        N5[[[load-and-dg-modeling]]: 综合]
+        N5[[load-and-dg-modeling]]: 综合]
     end
 ```
 

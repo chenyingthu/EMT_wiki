@@ -75,8 +75,8 @@ sources: ["EMT_Doc/18/Duarte 等 - 2021 - Extension of Vance's closed-form appro
 - [[cable-model|地下电缆建模]]
 - 地导纳计算
 - [[emt-simulation|电磁暂态仿真]]
-- [[频变土壤特性|频变土壤特性]]
-- [[暂态过电压分析|暂态过电压分析]]
+- [[frequency-dependent-modeling|频变土壤特性]]
+- [[lightning-transient-analysis|暂态过电压分析]]
 
 ## 主要发现
 

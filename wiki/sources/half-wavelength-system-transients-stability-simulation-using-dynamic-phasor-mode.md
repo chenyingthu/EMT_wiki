@@ -66,7 +66,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/Zhang 等 - 2017 - Half-wavelength S
 
 ## 涉及的模型
 
-- [[交流输电线路|交流输电线路]]
+- [[ac-transmission-line|交流输电线路]]
 - 半波长交流线路
 - [[2728一种用于lcc-hvdc系统小干扰稳定性分析的改进动态相量模型|动态相量模型]]
 - 贝瑞隆分布参数模型

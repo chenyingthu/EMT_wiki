@@ -3,10 +3,11 @@ title: "基于传输线分网的并行多速率电磁暂态仿真算法"
 type: source
 authors: ['穆清', '李亚楼', '周孝信', '赵鹏', '张星']
 year: 2014
+tags: [emt]
+
 journal: "电力系统自动化, 38(7). doi:10.7500/AEPS20130221001"
 created: "2026-04-13"
-sources: ["EMT_Doc/03/Mu 等 - 2014 - A parallel multi-rate electromagnetic transient simulation algorithm based on network division throu.pdf"]
----
+sources: ["EMT_Doc/03/Mu 等 - 2014 - A parallel multi-rate electromagnetic transient simulation algorithm based on network division throu.pdf"]---
 
 # 基于传输线分网的并行多速率电磁暂态仿真算法
 

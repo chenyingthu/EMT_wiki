@@ -74,9 +74,9 @@ sources: ["EMT_Doc/10/Leal和De Conti - 2021 - Compact Matrix Formulation for Ca
 
 ## 相关主题
 
-- [[雷击感应电压|雷击感应电压]]
+- [[lightning-induced-voltage|雷击感应电压]]
 - [[emt-simulation|电磁暂态仿真]]
-- [[频变线路建模|频变线路建模]]
+- [[frequency-dependent-modeling|频变线路建模]]
 - 数值分析
 
 ## 主要发现

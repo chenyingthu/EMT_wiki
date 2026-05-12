@@ -67,7 +67,7 @@ sources: ["EMT_Doc/05/Luo 等 - 2022 - Active Damping Control and Parameter Calc
 ## 涉及的模型
 
 - [[vsc-model|VSC]]
-- [[双向dc-dc变换器|双向DC-DC变换器]]
+- [[energy-storage-converter-model|双向DC-DC变换器]]
 - [[bess-model|电池储能系统]]
 - 直流配电网
 - 直流限流电抗器
@@ -75,7 +75,7 @@ sources: ["EMT_Doc/05/Luo 等 - 2022 - Active Damping Control and Parameter Calc
 ## 相关主题
 
 - 谐振稳定性
-- [[阻抗特性分析|阻抗特性分析]]
+- [[impedance-stability|阻抗特性分析]]
 - 直流配电网
 - 有源阻尼控制
 - 参数整定

@@ -72,7 +72,7 @@ sources: ["EMT_Doc/18/Zhang 等 - 2018 - Fast Detection Method of Commutation Fa
 
 ## 相关主题
 
-- [[换相失败|换相失败]]
+- [[commutation-failure|换相失败]]
 - [[fault-analysis-methods|不对称故障]]
 - [[electromechanical-electromagnetic-hybrid-simulation|机电-电磁混合仿真]]
 - [[hybrid-acdc-network|多馈入直流系统]]

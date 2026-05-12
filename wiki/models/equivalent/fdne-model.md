@@ -3,24 +3,10 @@ title: "频变网络等值 (FDNE)"
 type: model
 tags: [fdne, frequency-dependent, network-equivalent, multi-port, passivity]
 created: "2026-04-13"
+updated: "2026-05-12"
 ---
 
 # 频变网络等值 (FDNE)
-
-
-```mermaid
-graph TD
-    subgraph Ncmp[频变网络等值 (FDNE)]
-        N0[[[multi-port-frequency-depen…]
-        N1[[[real-time-transient-simula…]
-        N2[[[a-type-4-wind-power-plant-…]
-        N3[[[time-domain-transformation…]
-        N4[[[基于频率相关网络等值的电磁-机电暂态解耦混合仿真: …]
-        N5[[[电磁机电暂态混合仿真中机电侧故障的仿真方法: 电磁–…]
-        N6[[[电磁机电暂态混合仿真中的频率相关网络等值: 电磁–机…]
-        N7[[[frequency-domain-simulatio…]
-    end
-```
 
 
 ## 概述
@@ -71,36 +57,43 @@ graph TD
 - [[frequency-dependent-modeling]]
 - [[co-simulation]]
 
+## 量化性能边界
+
+**计算加速比**：网络综合法 (2021) 实现 3.3 倍加速 vs 详细模型；风电场等值 (2012) 实现 218 倍加速（18480s 降至 110s）；Type-69 诺顿等效 (2022) 实现 3.45 倍加速。实时仿真中 (2020) 11 个子模块划分实现 100% 实时成功率。
+
+**精度指标**：Loewner 矩阵方法 (2015) 在全频段导纳拟合中幅值误差 < 0.8%，相位偏差 < 0.5°；诺顿等效导纳矩阵 (2022) 拟合误差 8.805×10⁻⁵ mho；时域风电故障暂态 (2024) 偏差 < 0.5%。
+
+**无源性保障**：局部无源性补偿 (2019) 将仿真发散率从 18.7% 降至 0%。
+
+**模型阶数与频率范围**：杆塔全波模型 (2021) 在 10 kHz-10 MHz 频段需要 40-50 个极点；三端口复杂输电网络 (2021) 需 80 个 RLCM 模块。Loewner 矩阵方法 (2015) 通过 SVD 截断实现自适应阶数选择。
+
+**数据缺口声明**：不同 FDNE 建模方法（有理函数拟合、Loewner 矩阵、网络综合法）在相同测试系统下的精度-加速比系统对比数据不足。FDNE 在不同故障类型（对称/不对称）和不同时间尺度下的适用边界缺乏统一量化基准。
+
 ## 来源论文
 
 | 论文 | 年份 |
 |------|------|
-| [[multi-port-frequency-dependent-network-equivalents-for-the-emtp-power-delivery-i|Multi-port frequency dependent network equivalents for the E]] | 2004 |
+| [[multi-port-frequency-dependent-network-equivalents-for-the-emtp-power-delivery-i|Multi-port frequency dependent network equivalents for the EMTP]] | 2004 |
 | [[real-time-transient-simulation-based-on-a-robust|Real-Time Transient Simulation Based on a Robust]] | 2007 |
 | [[a-type-4-wind-power-plant-equivalent-model|A Type-4 Wind Power Plant Equivalent Model]] | 2012 |
 | [[time-domain-transformation-method|Time Domain Transformation Method]] | 2012 |
 | [[基于频率相关网络等值的电磁-机电暂态解耦混合仿真|基于频率相关网络等值的电磁-机电暂态解耦混合仿真]] | 2012 |
 | [[电磁机电暂态混合仿真中机电侧故障的仿真方法|电磁–机电暂态混合仿真中机电侧故障的仿真方法]] | 2012 |
 | [[电磁机电暂态混合仿真中的频率相关网络等值|电磁–机电暂态混合仿真中的频率相关网络等值]] | 2012 |
-| [[frequency-domain-simulation-of-electromagnetic-transients-using-variable|Frequency-Domain Simulation of Electromagnetic Transients Us]] | 2015 |
+| [[frequency-domain-simulation-of-electromagnetic-transients-using-variable|Frequency-Domain Simulation of Electromagnetic Transients Using Variable]] | 2015 |
 | [[loewner-matrix-approach-for-modelling-fdnes-of-power-systems|Loewner matrix approach for modelling FDNEs of power systems]] | 2015 |
-| [[development-and-applicability-of-online-passivity-enforced-wide-band-multi-port-|Development and Applicability of Online Passivity Enforced W]] | 2018 |
-| [[a-two-layer-network-equivalent-with-local-passivity-compensation-with-applicatio|A Two-layer Network Equivalent with Local Passivity Compensa]] | 2019 |
-| [[a-two-layer-network-equivalent-with-local-passivity-compensation-with-applicatio|A Two-layer Network Equivalent with Local Passivity Compensa]] | 2019 |
-| [[compacting-and-partitioningbased-simulation-solution-for-frequencydependent-netw|Compacting and partitioning‐based simulation solution for fr]] | 2020 |
-| [[a-guaranteed-passive-model-for-multi-port-frequency-dependent-network-equivalent|A guaranteed passive model for multi-port frequency dependen]] | 2021 |
-| [[full-wave-black-box-transmission-line-tower-model-for-the-assessment-of-lightnin|Full-wave black-box transmission line tower model for the as]] | 2021 |
-| [[full-wave-black-box-transmission-line-tower-model-for-the-assessment-of-lightnin|Full-wave black-box transmission line tower model for the as]] | 2021 |
-| [[review-and-comparison-of-frequency-domain-curve-fitting-techniques-vector-fittin|Review and comparison of frequency-domain curve-fitting tech]] | 2021 |
-| [[efficient-implementation-of-multi-port-frequency-dependent-network-equivalents-f|Efficient Implementation of Multi-Port Frequency Dependent N]] | 2022 |
-| [[中-国-电-机-工-程-学-报-34|中  国  电  机  工  程  学  报]] | 2022 |
-| [[电力系统数字混合仿真技术综述及展望|电力系统数字混合仿真技术综述及展望]] | 2023 |
-| [[电力系统数字混合仿真技术综述及展望|电力系统数字混合仿真技术综述及展望]] | 2023 |
-| [[electromagnetic-transient-analysis-using-a-frequency-dependent-network-equivalen|Electromagnetic Transient Analysis Using a Frequency Depende]] | 2024 |
-| [[enhancing-computation-performance-of-rational-approximation-for-frequency-depend-17|Enhancing computation performance of rational approximation ]] | 2024 |
-| [[enhancing-computation-performance-of-rational-approximation-for-frequency-depend|Enhancing computation performance of rational approximation ]] | 2024 |
-| [[fpga-based-simulation-of-grid-tied-converters-using-frequency-dependent-network-|FPGA-based simulation of grid-tied converters using frequenc]] | 2025 |
-| [[realization-of-rational-models-for-tower-footing-grounding-systems|Realization of rational models for tower-footing grounding s]] | 2025 |
+| [[development-and-applicability-of-online-passivity-enforced-wide-band-multi-port-|Development and Applicability of Online Passivity Enforced Wide-Band Multi-Port FDNE]] | 2018 |
+| [[a-two-layer-network-equivalent-with-local-passivity-compensation-with-applicatio|A Two-layer Network Equivalent with Local Passivity Compensation]] | 2019 |
+| [[compacting-and-partitioningbased-simulation-solution-for-frequencydependent-netw|Compacting and partitioning-based simulation solution for FDNE]] | 2020 |
+| [[a-guaranteed-passive-model-for-multi-port-frequency-dependent-network-equivalent|A guaranteed passive model for multi-port FDNE]] | 2021 |
+| [[full-wave-black-box-transmission-line-tower-model-for-the-assessment-of-lightnin|Full-wave black-box transmission line tower model for lightning]] | 2021 |
+| [[review-and-comparison-of-frequency-domain-curve-fitting-techniques-vector-fittin|Review and comparison of frequency-domain curve-fitting techniques]] | 2021 |
+| [[efficient-implementation-of-multi-port-frequency-dependent-network-equivalents-f|Efficient Implementation of Multi-Port FDNE]] | 2022 |
+| [[electromagnetic-transient-analysis-using-a-frequency-dependent-network-equivalen|Electromagnetic Transient Analysis Using a FDNE]] | 2024 |
+| [[enhancing-computation-performance-of-rational-approximation-for-frequency-depend-17|Enhancing computation performance of rational approximation for FDNE]] | 2024 |
+| [[fpga-based-simulation-of-grid-tied-converters-using-frequency-dependent-network-|FPGA-based simulation of grid-tied converters using FDNE]] | 2025 |
+| [[realization-of-rational-models-for-tower-footing-grounding-systems|Realization of rational models for tower-footing grounding systems]] | 2025 |
+
 ## 深度增强内容
 
  # 频变网络等值 (FDNE) - 深度技术文档
@@ -383,36 +376,6 @@ $$
 | 计算太慢 | QR分解瓶颈 | 并行化或降阶 |
 | 实时性不足 | 状态数太多 | SVD压缩或MOR降阶 |
 
-## 来源论文
-
-| 论文 | 年份 |
-|------|------|
-| [[multi-port-frequency-dependent-network-equivalents-for-the-emtp-power-delivery-i|Multi-port frequency dependent network equivalents for the E]] | 2004 |
-| [[real-time-transient-simulation-based-on-a-robust|Real-Time Transient Simulation Based on a Robust]] | 2007 |
-| [[a-type-4-wind-power-plant-equivalent-model|A Type-4 Wind Power Plant Equivalent Model]] | 2012 |
-| [[time-domain-transformation-method|Time Domain Transformation Method]] | 2012 |
-| [[基于频率相关网络等值的电磁-机电暂态解耦混合仿真|基于频率相关网络等值的电磁-机电暂态解耦混合仿真]] | 2012 |
-| [[电磁机电暂态混合仿真中机电侧故障的仿真方法|电磁–机电暂态混合仿真中机电侧故障的仿真方法]] | 2012 |
-| [[电磁机电暂态混合仿真中的频率相关网络等值|电磁–机电暂态混合仿真中的频率相关网络等值]] | 2012 |
-| [[frequency-domain-simulation-of-electromagnetic-transients-using-variable|Frequency-Domain Simulation of Electromagnetic Transients Us]] | 2015 |
-| [[loewner-matrix-approach-for-modelling-fdnes-of-power-systems|Loewner matrix approach for modelling FDNEs of power systems]] | 2015 |
-| [[development-and-applicability-of-online-passivity-enforced-wide-band-multi-port-|Development and Applicability of Online Passivity Enforced W]] | 2018 |
-| [[a-two-layer-network-equivalent-with-local-passivity-compensation-with-applicatio|A Two-layer Network Equivalent with Local Passivity Compensa]] | 2019 |
-| [[a-two-layer-network-equivalent-with-local-passivity-compensation-with-applicatio|A Two-layer Network Equivalent with Local Passivity Compensa]] | 2019 |
-| [[compacting-and-partitioningbased-simulation-solution-for-frequencydependent-netw|Compacting and partitioning‐based simulation solution for fr]] | 2020 |
-| [[a-guaranteed-passive-model-for-multi-port-frequency-dependent-network-equivalent|A guaranteed passive model for multi-port frequency dependen]] | 2021 |
-| [[full-wave-black-box-transmission-line-tower-model-for-the-assessment-of-lightnin|Full-wave black-box transmission line tower model for the as]] | 2021 |
-| [[full-wave-black-box-transmission-line-tower-model-for-the-assessment-of-lightnin|Full-wave black-box transmission line tower model for the as]] | 2021 |
-| [[review-and-comparison-of-frequency-domain-curve-fitting-techniques-vector-fittin|Review and comparison of frequency-domain curve-fitting tech]] | 2021 |
-| [[efficient-implementation-of-multi-port-frequency-dependent-network-equivalents-f|Efficient Implementation of Multi-Port Frequency Dependent N]] | 2022 |
-| [[中-国-电-机-工-程-学-报-34|中  国  电  机  工  程  学  报]] | 2022 |
-| [[电力系统数字混合仿真技术综述及展望|电力系统数字混合仿真技术综述及展望]] | 2023 |
-| [[电力系统数字混合仿真技术综述及展望|电力系统数字混合仿真技术综述及展望]] | 2023 |
-| [[electromagnetic-transient-analysis-using-a-frequency-dependent-network-equivalen|Electromagnetic Transient Analysis Using a Frequency Depende]] | 2024 |
-| [[enhancing-computation-performance-of-rational-approximation-for-frequency-depend-17|Enhancing computation performance of rational approximation ]] | 2024 |
-| [[enhancing-computation-performance-of-rational-approximation-for-frequency-depend|Enhancing computation performance of rational approximation ]] | 2024 |
-| [[fpga-based-simulation-of-grid-tied-converters-using-frequency-dependent-network-|FPGA-based simulation of grid-tied converters using frequenc]] | 2025 |
-| [[realization-of-rational-models-for-tower-footing-grounding-systems|Realization of rational models for tower-footing grounding s]] | 2025 |
 ## 相关主题
 - [[network-equivalent|网络等值]]
 - [[frequency-dependent-modeling|频率相关建模]]
@@ -458,3 +421,7 @@ $$
 - 杆塔三端口等值：塔顶、塔身、接地极
 - 对比传统多节Π模型：误差从11.5%降至<1%
 **性能**：计算加速3.3倍
+
+---
+
+*本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*

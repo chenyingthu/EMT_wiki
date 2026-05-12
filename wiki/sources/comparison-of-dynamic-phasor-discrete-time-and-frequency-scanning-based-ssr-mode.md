@@ -74,11 +74,11 @@ sources: ["EMT_Doc/10/Dey 等 - 2021 - Comparison of dynamic phasor, discrete-ti
 
 ## 相关主题
 
-- [[次同步谐振|次同步谐振]]
+- [[wideband-oscillation-stability|次同步谐振]]
 - 次同步扭振交互
 - [[frequency-dependent-modeling|频率相关建模]]
 - 线性时不变建模
-- [[电力电子系统建模|电力电子系统建模]]
+- [[power-electronic-device-modeling|电力电子系统建模]]
 
 ## 主要发现
 

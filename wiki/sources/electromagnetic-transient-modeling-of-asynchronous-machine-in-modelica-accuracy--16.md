@@ -58,8 +58,8 @@ sources: ["EMT_Doc/16/Masoom和Mahseredjian - 2024 - Electromagnetic Transient M
 
 ## 使用的方法
 
-- [[声明式建模|声明式建模]]
-- [[变步长求解器|变步长求解器]]
+- [[declarative-modeling|声明式建模]]
+- [[variable-time-step-solver|变步长求解器]]
 - 坐标变换
 - 磁链状态空间法
 - [[numerical-integration|梯形积分法]]
@@ -67,7 +67,7 @@ sources: ["EMT_Doc/16/Masoom和Mahseredjian - 2024 - Electromagnetic Transient M
 
 ## 涉及的模型
 
-- [[异步电机|异步电机]]
+- [[induction-machine-model|异步电机]]
 - 单鼠笼感应电机
 - 双鼠笼感应电机
 - 绕线转子感应电机

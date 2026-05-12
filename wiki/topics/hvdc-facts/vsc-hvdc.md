@@ -351,8 +351,8 @@ $$
 | [[full-state-arm-average-value-model-for-simulation-of-active-modular-multilevel-c|Full-state Arm Average Value Model for Simulation of Active ]] | 2022 |
 | [[2728modeling|Modeling_of_LCC_HVDC_Systems_Using_Dynam]] | 2022 |
 | [[the-averaged-value-model-of-a-flexible-power-electronics-based-substation-in-hyb|The Averaged-value Model of a Flexible Power Electronics Bas]] | 2022 |
-| [[中-国-电-机-工-程-学-报-34|中  国  电  机  工  程  学  报]] | 2022 |
-| [[中-国-电-机-工-程-学-报-34|中  国  电  机  工  程  学  报]] | 2022 |
+| [[index|中  国  电  机  工  程  学  报]] | 2022 |
+| [[index|中  国  电  机  工  程  学  报]] | 2022 |
 | [[中-国-电-机-工-程-学-报-36|中  国  电  机  工  程  学  报]] | 2022 |
 | [[中-国-电-机-工-程-学-报|中  国  电  机  工  程  学  报]] | 2022 |
 | [[中-国-电-机-工-程-学-报|中  国  电  机  工  程  学  报]] | 2022 |

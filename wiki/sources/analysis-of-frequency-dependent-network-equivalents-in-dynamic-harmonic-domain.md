@@ -67,7 +67,7 @@ sources: ["EMT_Doc/07&08/Analysis of Frequency-Dependent Network Equivalents in 
 
 ## 涉及的模型
 
-- [[频变网络等值模型|频变网络等值模型]]
+- [[fdne-model|频变网络等值模型]]
 - Y矩阵极点留数模型
 - [[state-space-method|状态空间模型]]
 

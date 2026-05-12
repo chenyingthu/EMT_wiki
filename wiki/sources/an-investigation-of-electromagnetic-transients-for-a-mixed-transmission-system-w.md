@@ -60,7 +60,7 @@ sources: ["EMT_Doc/07&08/Xue et al. - 2022 - An Investigation of Electromagnetic
 
 - 扩展传输线理论
 - 矩量法表面算子法(MoM-SO)
-- [[等效均匀大地法-ehem|等效均匀大地法(EHEM)]]
+- [[frequency-dependent-modeling|等效均匀大地法(EHEM)]]
 - 宽带线路电缆模型
 - 频域阻抗扫描
 - 时域暂态仿真
@@ -71,7 +71,7 @@ sources: ["EMT_Doc/07&08/Xue et al. - 2022 - An Investigation of Electromagnetic
 - 海底电缆
 - [[cable-model|地下电缆]]
 - 线状与等效管状铠装
-- [[并联电抗器|并联电抗器]]
+- [[compensation|并联电抗器]]
 - [[surge-arrester-model|避雷器]]
 - 混合输电系统
 

@@ -59,7 +59,7 @@ sources: ["EMT_Doc/27&28/Modeling of MMC-based STATCOM with embedded energy stor
 ## 使用的方法
 
 - 详细模型(DM)
-- [[详细等效模型-dem|详细等效模型(DEM)]]
+- [[dem|详细等效模型(DEM)]]
 - 桥臂等效模型(AEM)
 - [[average-value-model|平均值模型]]
 - 级联控制策略
@@ -73,7 +73,7 @@ sources: ["EMT_Doc/27&28/Modeling of MMC-based STATCOM with embedded energy stor
 - 超级电容
 - 蓄电池
 - [[dc-dc-converter|DC/DC变换器]]
-- [[耦合变压器|耦合变压器]]
+- [[transformer-model|耦合变压器]]
 
 ## 相关主题
 

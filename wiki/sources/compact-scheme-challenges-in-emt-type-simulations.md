@@ -64,7 +64,7 @@ sources: ["EMT_Doc/10/Matehkolaei 等 - 2026 - Compact scheme challenges in EMT-
 - 改进型增广节点分析法
 - 稀疏表法
 - [[nodal-analysis|牛顿迭代法]]
-- [[不连续点处理|不连续点处理]]
+- [[numerical-integration|不连续点处理]]
 
 ## 涉及的模型
 
@@ -76,7 +76,7 @@ sources: ["EMT_Doc/10/Matehkolaei 等 - 2026 - Compact scheme challenges in EMT-
 
 - [[emt-simulation|电磁暂态仿真]]
 - 数值积分方法
-- [[不连续点处理|不连续点处理]]
+- [[numerical-integration|不连续点处理]]
 - 非线性特性分析
 - 网络方程构建
 

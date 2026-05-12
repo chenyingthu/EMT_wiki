@@ -2,10 +2,11 @@
 title: "A simple and efficient method for including frequency-dependent effects in transmission line transient analysis"
 type: source
 year: 2003
+tags: [simple, efficient, including, frequency, dependent]
+
 journal: "International Journal of Electrical Power & Energy Systems"
 created: "2026-04-13"
-sources: ["EMT_Doc/03/s0142-0615%2896%2900033-6.pdf.pdf"]
----
+sources: ["EMT_Doc/03/s0142-0615%2896%2900033-6.pdf.pdf"]---
 
 # A simple and efficient method for including frequency-dependent effects in transmission line transient analysis
 

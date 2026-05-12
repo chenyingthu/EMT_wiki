@@ -74,8 +74,8 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/Shi和Liu - 2024 - Fixed-admittance 
 
 ## 相关主题
 
-- [[实时电磁暂态仿真|实时电磁暂态仿真]]
-- [[风电机组建模|风电机组建模]]
+- [[fpga-real-time-simulation|实时电磁暂态仿真]]
+- [[dfig-model|风电机组建模]]
 - FPGA硬件仿真
 - 大规模新能源系统
 - 恒导纳网络求解

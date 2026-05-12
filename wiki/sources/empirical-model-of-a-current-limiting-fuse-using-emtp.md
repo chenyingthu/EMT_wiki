@@ -67,7 +67,7 @@ sources: ["EMT_Doc/17/Petit 等 - 1989 - Empirical Model of a Current-Limiting F
 ## 涉及的模型
 
 - 限流熔断器
-- [[配电变压器|配电变压器]]
+- [[distribution-transformer|配电变压器]]
 - 理想熔断器
 - 等效电路模型
 

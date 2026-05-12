@@ -69,7 +69,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/Hajizadeh 等 - 2026 - FPGA-based si
 
 - [[statcom|STATCOM]]
 - [[vsc-model|VSC]]
-- [[并网变流器|并网变流器]]
+- [[gfl-inverter-model|并网变流器]]
 - [[transmission-line-model|输电线路]]
 - [[load-modeling|负荷]]
 - [[fdne-model|FDNE]]

@@ -2,10 +2,11 @@
 title: "A Probabilistic Approach for Secondary Arc Risk Assessment"
 type: source
 year: 2004
+tags: [probabilistic, secondary, risk, assessment]
+
 journal: "IEEE Transactions on Power Delivery"
 created: "2026-04-13"
-sources: ["EMT_Doc/03/tpwrd.2003.820426.pdf.pdf"]
----
+sources: ["EMT_Doc/03/tpwrd.2003.820426.pdf.pdf"]---
 
 # A Probabilistic Approach for Secondary Arc Risk Assessment
 

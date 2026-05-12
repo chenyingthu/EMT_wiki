@@ -59,7 +59,7 @@ sources: ["EMT_Doc/10/Chagas和Tomim - 2022 - Co-simulation applied to power sys
 ## 使用的方法
 
 - [[co-simulation|联合仿真]]
-- [[功能模型接口-fmi|功能模型接口(FMI)]]
+- [[electromechanical-electromagnetic-hybrid-simulation|功能模型接口(FMI)]]
 - 虚构传输线法
 - [[transmission-line-model|Bergeron线路模型]]
 - 行波理论

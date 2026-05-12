@@ -61,7 +61,7 @@ sources: ["EMT_Doc/06/Chindu和Kulkarni - 2023 - An Automatable Approach for Sma
 - [[companion-circuit|伴随电路法]]
 - [[nodal-analysis|节点分析法]]
 - [[numerical-integration|梯形积分法]]
-- [[lu分解|LU分解]]
+- [[sparse-matrix-solver|LU分解]]
 - 采样数据建模
 - [[eigenvalue-analysis|特征值分析]]
 - 颤振消除校正
@@ -71,7 +71,7 @@ sources: ["EMT_Doc/06/Chindu和Kulkarni - 2023 - An Automatable Approach for Sma
 - RLC电路
 - Buck变换器
 - 并网STATCOM
-- [[电力电子开关|电力电子开关]]
+- [[switch-modeling|电力电子开关]]
 - 闭环控制系统
 
 ## 相关主题

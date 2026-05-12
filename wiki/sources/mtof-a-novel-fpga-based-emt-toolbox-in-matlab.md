@@ -66,9 +66,9 @@ MTOF的核心实现思路是把EMT数学模型先转成适合硬件流水/并行
 
 ## 涉及的模型
 
-- [[rlc支路|RLC支路]]
-- [[三相变压器|三相变压器]]
-- [[分布参数输电线路|分布参数输电线路]]
+- [[companion-circuit|RLC支路]]
+- [[transformer-model|三相变压器]]
+- [[transmission-line-model|分布参数输电线路]]
 - [[synchronous-machine-model|同步电机]]
 - [[nodal-analysis|节点导纳矩阵]]
 

@@ -58,7 +58,7 @@ sources: ["EMT_Doc/25/Lin 等 - 2023 - Massively Parallel Modeling of Battery En
 ## 使用的方法
 
 - EMT-TS联合仿真
-- [[cpu-gpu异构并行计算|CPU-GPU异构并行计算]]
+- [[gpu-accelerated-simulation|CPU-GPU异构并行计算]]
 - [[multirate-method|多速率仿真]]
 - 多流异步处理
 - 向量化建模

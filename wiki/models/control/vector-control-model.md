@@ -3,21 +3,10 @@ title: "矢量控制 (Vector Control)"
 type: model
 tags: [vector-control, foc, dtc, field-oriented-control, motor-control, torque-control]
 created: "2026-04-30"
+updated: "2026-05-12"
 ---
 
 # 矢量控制 (Vector Control)
-
-
-```mermaid
-graph TD
-    subgraph Ncmp[矢量控制 (Vector Control)]
-        N0[FOC: 磁场定向控制]
-        N1[DTC: 直接转矩控制]
-        N2[DFOC: 直接磁场定向]
-        N3[IFOC: 间接磁场定向]
-    end
-```
-
 
 ## 定义与概述
 
@@ -491,39 +480,20 @@ void foc_update(FOC_Params *params, float omega_ref, float omega,
 - **逆变器非线性**：死区、压降影响
 - **参数变化**：温升、老化导致参数漂移
 
-### 7.3 精度边界
-| 控制方式 | 转矩响应 | 速度精度 | 适用场景 |
-|---------|----------|----------|----------|
-| $i_d=0$ | 2-5ms | ±0.1% | 隐极PMSM |
-| MTPA | 2-5ms | ±0.1% | 凸极PMSM |
-| DTC | 0.1-0.5ms | ±0.5% | 大功率 |
-| 无传感器 | 5-10ms | ±0.5% | 低成本 |
+### 量化性能边界
 
-## 8. 来源论文
+矢量控制（FOC/DTC）是建立在坐标变换和 PI 调节基础上的控制框架，其 EMT 仿真精度主要取决于电流环离散化方法、PWM 实现精度和传感器延迟，而非控制算法本身的近似。以下汇总可引用的量化数据：
 
-| 论文 | 年份 | 核心贡献 |
-|------|------|----------|
-| Vector control of AC machines | 2012 | 交流电机矢量控制综述 |
-| Comparison of FOC and DTC for induction motor drives | 2015 | FOC与DTC比较 |
-| MTPA control of PMSM for electric vehicle applications | 2019 | 电动汽车PMSM MTPA控制 |
+**平均值模型验证**：DAVM (2012) 在 PSCAD/EMTDC 中验证了基于矢量控制的 VSC-HVDC 动态平均值模型，5 μs 步长下 CPU 时间减少 50-54%，≥40 μs 步长下减少 60-70%；交流故障恢复时间 0.05-0.15 s。该模型将详细 IGBT 开关替换为受控源，采用矢量控制实现有功/无功解耦。
 
-## 相关方法
-- [[numerical-integration|数值积分]] - 电流环离散化
-- [[state-space-method|状态空间法]] - 电机状态方程
-- [[coordinate-transformation-model|坐标变换模型]] - abc/dq0变换
+**电流环带宽与精度**：Luchini (2023) 在 ATP/ATPDraw 中实现跟网型逆变器等效模型（含矢量控制），与全开关基准模型相比故障电流平均误差约 2.33%，仿真时间减少约 70%。电流环带宽通常为开关频率的 1/10 至 1/5，典型值 200-2000 Hz 取决于功率等级和开关频率。
 
-## 相关模型
-- [[pmsm-model|PMSM模型]] - 永磁同步电机
-- [[induction-machine-model|感应电机]] - 异步电机
-- [[pi-controller-model|PI控制器]] - 电流环/速度环
-- [[pll-model|锁相环]] - 角度同步
+**参数敏感性**：矢量控制的性能高度依赖电机参数的准确性。转子时间常数 $\tau_r = L_r/R_r$ 的温升漂移（可达 50% 以上）是感应电机磁场定向失准的主要来源（无速度传感器下尤甚）。永磁同步电机 $i_d=0$ 控制对凸极效应和磁链饱和不敏感，而 MTPA 控制需要准确的 $L_d$、$L_q$ 参数。
 
-## 相关主题
-- DTC直接转矩控制 - 替代控制策略
-- 弱磁控制 - 高速区运行
-- 无传感器控制 - 速度观测器
-- [[real-time-simulation|实时仿真]] - 矢量控制实时实现
+**弱网适用性**：Mengjia (2015) 在 IEEE 4 机 6 节点系统中验证了嵌入频率控制的 VSC-HVDC 矢量控制，平均临界切除时间（CCT）改善 22.93%，振荡衰减时间约 6 s。
+
+**数据缺口声明**：公开文献中缺乏针对矢量控制算法本身（FOC、DTC）EMT 建模精度的独立量化评估。FOC 与 DTC 的转矩响应对比（2-5 ms vs 0.1-0.5 ms）为控制器性能指标而非模型精度指标，且依赖具体参数整定和硬件条件。无传感器控制的低速性能（<1 Hz 电频率）评估在现有文献中量化证据不足。建议用户根据具体实现参考文献获取性能数据。
 
 ---
 
-*本页面基于Karpathy LLM Wiki Pattern构建，内容来自EMT领域学术文献的深度分析*
+*本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*

@@ -60,9 +60,9 @@ sources: ["EMT_Doc/17/Xu 等 - 2016 - Enhanced high-speed electromagnetic transi
 
 - [[numerical-integration|后向欧拉法]]
 - [[nodal-analysis|戴维南等效]]
-- [[伴随电路模型|伴随电路模型]]
+- [[companion-circuit|伴随电路模型]]
 - [[ideal-switch-model|理想开关模型]]
-- [[最近电平控制|最近电平控制]]
+- [[nearest-level-control|最近电平控制]]
 - 高效排序算法
 
 ## 涉及的模型

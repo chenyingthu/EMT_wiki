@@ -67,7 +67,7 @@ sources: ["EMT_Doc/25/Ye 等 - 2020 - Large step size electromagnetic transient 
 
 - [[synchronous-machine-model|同步发电机]]
 - [[transmission-line-model|输电线路]]
-- [[大规模交流电网|大规模交流电网]]
+- [[power-system-network|大规模交流电网]]
 - 传统EMT模型
 - 暂态稳定模型
 

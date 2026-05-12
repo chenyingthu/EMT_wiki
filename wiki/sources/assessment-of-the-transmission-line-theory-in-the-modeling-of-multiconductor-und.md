@@ -61,12 +61,12 @@ sources: ["EMT_Doc/09/Duarte 等 - 2023 - Assessment of the transmission line th
 - 全波FDTD法
 - [[transmission-line-theory|传输线理论]]
 - 拟TEM近似
-- [[闭式近似公式|闭式近似公式]]
+- [[transmission-line-model|闭式近似公式]]
 - 接地返回参数计算
 
 ## 涉及的模型
 
-- [[多导体地下电缆|多导体地下电缆]]
+- [[cable-model|多导体地下电缆]]
 - 水平排列电缆
 - 三角形排列电缆
 - 接地返回阻抗模型

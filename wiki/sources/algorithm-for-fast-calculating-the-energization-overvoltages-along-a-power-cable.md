@@ -62,14 +62,14 @@ sources: ["EMT_Doc/06/Li 等 - 2022 - Algorithm for fast calculating the energiz
 - [[numerical-inverse-laplace-transform|数值拉普拉斯逆变换]]
 - 拉普拉斯变换
 - [[modal-analysis|相模变换]]
-- [[电报方程求解|电报方程求解]]
+- [[transmission-line-model|电报方程求解]]
 
 ## 涉及的模型
 
-- [[电力电缆|电力电缆]]
+- [[cable-model|电力电缆]]
 - [[cross-bonded-cable|交叉互联电缆]]
 - 频变相位模型
-- [[分布参数模型|分布参数模型]]
+- [[transmission-line-model|分布参数模型]]
 
 ## 相关主题
 

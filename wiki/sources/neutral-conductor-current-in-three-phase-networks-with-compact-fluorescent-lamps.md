@@ -58,7 +58,7 @@ sources: ["EMT_Doc/27&28/Neutral conductor current in three-phase networks with 
 
 ## 使用的方法
 
-- [[黑盒建模|黑盒建模]]
+- [[fdne-model|黑盒建模]]
 - 复数傅里叶级数
 - 最小二乘算法
 - [[pscad-emtdc|PSCAD/EMTDC仿真]]

@@ -66,7 +66,7 @@ sources: ["EMT_Doc/09/Herath和Filizadeh - 2021 - Average-Value Model for a Modu
 ## 涉及的模型
 
 - [[mmc-model|MMC]]
-- [[双向dc-dc变换器|双向DC-DC变换器]]
+- [[energy-storage-converter-model|双向DC-DC变换器]]
 - 电池储能
 - 子模块电容
 - 桥臂电感

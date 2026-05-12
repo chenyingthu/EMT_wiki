@@ -63,7 +63,7 @@ sources: ["EMT_Doc/18/Sun和Xu - 2023 - Equivalent Modeling Method of Parallel E
 - [[norton-equivalent|诺顿等效]]
 - 叠加定理
 - 端口解耦
-- [[多线程并行计算|多线程并行计算]]
+- [[multithreaded-parallel-computing|多线程并行计算]]
 
 ## 涉及的模型
 

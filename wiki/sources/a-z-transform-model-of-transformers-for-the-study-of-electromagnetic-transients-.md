@@ -59,7 +59,7 @@ sources: ["EMT_Doc/05/A Z-transform model of transformers for the study of elect
 ## 使用的方法
 
 - Z变换法
-- [[双线性变换|双线性变换]]
+- [[bilinear-transform|双线性变换]]
 - 双三次变换
 - 有理分式拟合
 - 频域加权误差最小化
@@ -71,13 +71,13 @@ sources: ["EMT_Doc/05/A Z-transform model of transformers for the study of elect
 - 自耦变压器
 - 绕组对
 - 短路阻抗模型
-- [[分布参数模型|分布参数模型]]
+- [[transmission-line-model|分布参数模型]]
 
 ## 相关主题
 
 - [[emt-simulation|电磁暂态]]
 - [[frequency-dependent-modeling|频率相关建模]]
-- [[变压器建模|变压器建模]]
+- [[transformer-modeling|变压器建模]]
 - [[lightning-overvoltage|雷电过电压]]
 - 母线切换暂态
 - 断路器恢复电压

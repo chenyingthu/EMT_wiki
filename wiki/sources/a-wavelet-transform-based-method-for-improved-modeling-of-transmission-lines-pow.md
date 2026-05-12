@@ -62,21 +62,21 @@ sources: ["EMT_Doc/05/tpwrs.2003.814846.pdf.pdf"]
 - 多分辨率分析
 - [[modal-analysis|模态变换]]
 - [[transmission-line-model|Bergeron线路模型]]
-- [[频变线路建模|频变线路建模]]
+- [[frequency-dependent-modeling|频变线路建模]]
 - [[emt-simulation|时域仿真]]
 
 ## 涉及的模型
 
-- [[多相输电线路|多相输电线路]]
+- [[ac-transmission-line|多相输电线路]]
 - [[transmission-line-model|频变线路模型]]
-- [[恒定参数线路模型|恒定参数线路模型]]
+- [[transmission-line-model|恒定参数线路模型]]
 
 ## 相关主题
 
 - [[emt-simulation|电磁暂态仿真]]
 - [[frequency-dependent-modeling|频率相关建模]]
 - [[transmission-line-model|输电线路建模]]
-- [[模态解耦|模态解耦]]
+- [[discrete-fourier-transform|模态解耦]]
 
 ## 主要发现
 

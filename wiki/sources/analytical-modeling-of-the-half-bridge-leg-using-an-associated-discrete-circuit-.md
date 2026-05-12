@@ -61,7 +61,7 @@ sources: ["EMT_Doc/09/Lai 等 - 2026 - Analytical Modeling of the Half-Bridge Le
 - 关联离散电路模型
 - 固定等效导纳法
 - [[numerical-integration|梯形积分法]]
-- [[诺顿等效电路|诺顿等效电路]]
+- [[thevenin-norton-equivalent|诺顿等效电路]]
 - 解析建模
 
 ## 涉及的模型

@@ -71,9 +71,9 @@ sources: ["EMT_Doc/05/Abusalah 等 - 2020 - Accelerated Sparse Matrix-Based Comp
 - 非线性模型
 - 时变开关模型
 - 变压器分接头模型
-- [[电力电子换流器|电力电子换流器]]
+- [[power-electronic-device-modeling|电力电子换流器]]
 - 风电机组模型
-- [[分布参数输电线路|分布参数输电线路]]
+- [[transmission-line-model|分布参数输电线路]]
 
 ## 相关主题
 
@@ -81,7 +81,7 @@ sources: ["EMT_Doc/05/Abusalah 等 - 2020 - Accelerated Sparse Matrix-Based Comp
 - [[parallel-computing|并行计算]]
 - [[sparse-matrix-solver|稀疏矩阵求解]]
 - 自动网络分解
-- [[离线仿真加速|离线仿真加速]]
+- [[gpu-accelerated-simulation|离线仿真加速]]
 - 非线性迭代求解
 - [[large-scale-grid-simulation|大规模电网仿真]]
 

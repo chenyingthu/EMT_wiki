@@ -70,7 +70,7 @@ sources: ["EMT_Doc/02/Li 等 - 2020 - A multi-area Thevenin equivalent based mul
 - [[vsc-hvdc|VSC-HVDC]]
 - [[hybrid-acdc-network|交直流电网]]
 - [[transmission-line-model|输电线路]]
-- [[戴维南等效模型|戴维南等效模型]]
+- [[thevenin-equivalent-model|戴维南等效模型]]
 
 ## 相关主题
 

@@ -1,160 +1,223 @@
 ---
 title: "模型降阶方法 (Model Order Reduction)"
 type: method
-tags: [model-reduction, state-space, balancing, krylov, network-equivalent]
+tags: [model-reduction, state-space, balancing, krylov, network-equivalent, fdne, thevenin-equivalent]
 created: "2026-05-04"
+updated: "2026-05-10"
 ---
 
 # 模型降阶方法 (Model Order Reduction)
 
+## 1. 物理背景与工程需求
 
-```mermaid
-graph TD
-    subgraph Ncmp[模型降阶方法 (Model Order Reduction)]
-        N0[平衡截断: 保留强可控且强可观状态]
-        N1[Krylov/矩匹配: 匹配传递函数局部矩]
-        N2[模态截断: 保留主导极点或弱阻尼模态]
-        N3[Kron 节点消去: 消去内部节点，保留端口导纳]
-        N4[平均值/聚合模型: 聚合开关或子模块细节]
-        N5[无源网络综合: 由频响综合 RLCM 网络]
-    end
-```
+模型降阶（MOR）在保留指定输入输出行为的前提下，把高阶模型替换为低阶模型。它不是无损压缩——必须说明保留的端口、频段、工况和误差指标。若研究目标涉及未保留的开关细节、局部能量、保护峰值或高频过电压，低阶模型可能给出误导性结果。
 
+MOR 在 EMT 中的工程需求包括：
 
-## 定义与边界
+1. **MMC 子模块聚合**：高压 MMC 含大量子模块、开关器件和电容状态，逐器件建模导致导纳矩阵维数爆炸，需通过桥臂级戴维南等效或开关函数平均值将计算复杂度从 $O(N^2)$ 降至 $O(N)$（Xu 2015）
+2. **频率相关网络等值（FDNE）**：外部电网需在边界母线处用宽频导纳模型替代，通过有理逼近将频域响应压缩为低阶状态空间模型（Gurrala 2015）
+3. **固态变压器（SST）解耦等效**：SST 多级级联（AC-DC、DAB DC-DC、DC-AC）需通过直流链路解耦策略将节点数缩减为独立子系统（Li 2025）
+4. **实时仿真 deadline**：FPGA 和 CPU 硬实时约束要求每步计算在固定时间内完成，超出硬件能力的模型必须降阶
 
-模型降阶（Model Order Reduction, MOR）是在保留指定输入输出行为或关键状态特征的前提下，把高阶模型替换为低阶模型的技术集合。在 EMT 中，它可作用于 [[state-space-method]] 模型、[[fdne-model]]、MMC 桥臂、线路/电缆宽频模型、变压器端口模型或外部网络等值。
+## 2. 数学描述
 
-降阶不是无损压缩。它必须说明保留的端口、频段、工况、状态量和误差指标。若研究目标涉及未保留的开关细节、局部能量、保护峰值或高频过电压，低阶模型可能给出误导性结果。
+### 2.1 状态空间降阶框架
 
-## EMT 中的作用
+原高阶系统：
 
-EMT 仿真中，降阶主要用于降低单步求解维度、减少递推状态数、满足 [[real-time-simulation]] deadline，以及把非研究区域替换为端口等值。典型场景包括频率相关网络等值、[[mmc-model]] 子模块聚合、[[pet-sst-model]] 高频链路端口化、变压器宽频模型和大规模外部网络的 [[network-equivalent]]。
+$$
+\dot{\mathbf{x}} = \mathbf{A}\mathbf{x} + \mathbf{B}\mathbf{u}, \quad \mathbf{y} = \mathbf{C}\mathbf{x} + \mathbf{D}\mathbf{u}
+$$
 
-降阶模型进入 EMT 前仍需离散化、初始化、接口变量定义和时域验证。频域误差小不等于故障暂态、开关事件或控制器饱和时都可靠。
+低阶近似：
 
-## 核心机制
+$$
+\dot{\hat{\mathbf{x}}} = \hat{\mathbf{A}}\hat{\mathbf{x}} + \hat{\mathbf{B}}\mathbf{u}, \quad \hat{\mathbf{y}} = \hat{\mathbf{C}}\hat{\mathbf{x}} + \hat{\mathbf{D}}\mathbf{u}
+$$
 
-状态空间降阶可写为：原模型 $\dot{\mathbf{x}}=\mathbf{A}\mathbf{x}+\mathbf{B}\mathbf{u}$、$\mathbf{y}=\mathbf{C}\mathbf{x}+\mathbf{D}\mathbf{u}$，低阶模型 $\dot{\hat{\mathbf{x}}}=\hat{\mathbf{A}}\hat{\mathbf{x}}+\hat{\mathbf{B}}\mathbf{u}$、$\hat{\mathbf{y}}=\hat{\mathbf{C}}\hat{\mathbf{x}}+\hat{\mathbf{D}}\mathbf{u}$。降阶目标是让 $\mathbf{y}$ 与 $\hat{\mathbf{y}}$ 在关注频段和工况下接近，而不是让每个内部状态一一对应。
+降阶目标是让 $\mathbf{y} \approx \hat{\mathbf{y}}$ 在关注频段和工况下成立，而非每个内部状态一一对应。
 
-频域模型常先由 [[vector-fitting]] 或 [[prony-analysis]] 得到极点-留数模型，再通过截断弱模态、平衡截断、Krylov 矩匹配或物理网络综合降低阶数。电路拓扑类降阶则通过 Kron 消去、戴维南/Norton 等值或子模块聚合减少外部网络可见维度。
+### 2.2 平衡截断
 
-## 分类与变体
+通过 Lyapunov 方程求解可控性格拉姆矩阵 $\mathbf{W}_c$ 和可观性格拉姆矩阵 $\mathbf{W}_o$：
 
-| 类型 | 核心思想 | 适用对象 | 主要风险 |
-|------|----------|----------|----------|
-| 平衡截断 | 保留强可控且强可观状态 | 线性状态空间模型 | 物理状态解释可能丢失 |
-| Krylov/矩匹配 | 匹配传递函数局部矩 | 端口网络、宽频阻抗 | 频段外误差可能增大 |
-| 模态截断 | 保留主导极点或弱阻尼模态 | 振荡和等值模型 | 弱但关键的高频模态可能被删 |
-| Kron 节点消去 | 消去内部节点，保留端口导纳 | 模块化网络、SST、子网络 | 内部变量不可直接观察 |
-| 平均值/聚合模型 | 聚合开关或子模块细节 | MMC、VSC、风电场 | 开关级暂态和局部不平衡被弱化 |
-| 无源网络综合 | 由频响综合 RLCM 网络 | 多端口 FDNE | 实现复杂，适用对象受正实性约束 |
+$$
+\mathbf{A}\mathbf{W}_c + \mathbf{W}_c\mathbf{A}^T + \mathbf{B}\mathbf{B}^T = 0
+$$
 
-## 适用边界与失败模式
+$$
+\mathbf{A}^T\mathbf{W}_o + \mathbf{W}_o\mathbf{A} + \mathbf{C}^T\mathbf{C} = 0
+$$
 
-- 端口边界：降阶只保证选定端口的行为；内部节点电压、电容应力和支路电流可能不可恢复。
-- 频段边界：模型应报告关注频段和权重；超出频段的雷电、VFTO 或 EMI 不能外推。
-- 工况边界：平均值和线性降阶模型通常只在指定工作点、控制模式或拓扑下成立。
-- 无源性边界：FDNE 和宽频端口模型降阶后可能破坏正实性，需要 [[passivity-enforcement]]。
-- 初始化边界：低阶状态的初值必须与潮流、稳态或历史源一致，否则会产生伪暂态。
-- 证据边界：原页面中”15-20 倍””10-100 倍””误差 <1%”等数字来自特定论文或自动汇总，本页不作为通用参数保留。
+平衡变换 $\mathbf{T}$ 使 $\mathbf{T}\mathbf{W}_c\mathbf{T}^T = \mathbf{T}^{-T}\mathbf{W}_o\mathbf{T}^{-1} = \Sigma = \text{diag}(\sigma_1, \ldots, \sigma_n)$，Hankel 奇异值 $\sigma_1 \geq \ldots \geq \sigma_n > 0$。保留前 $r$ 个状态得降阶模型，$H_\infty$ 误差界：
 
-### 阶数选择准则
+$$
+\|\mathbf{G} - \hat{\mathbf{G}}\|_\infty \leq 2\sum_{i=r+1}^{n}\sigma_i
+$$
+
+### 2.3 Loewner 矩阵方法（Gurrala 2015）
+
+直接从多端口频域导纳响应数据出发，通过切向插值构造 Loewner 矩阵铅笔：
+
+- 左右切向方向向量将矩阵响应投影为方向响应
+- Loewner 矩阵与移位 Loewner 矩阵组成矩阵铅笔
+- SVD 分析数值秩 → 自动确定最优阶数
+- 得到描述符状态空间：$E\dot{x} = Ax + Bu$, $y = Cx + Du$
+
+**优势**：无需初始极点猜测，无迭代收敛问题；SVD 可自动指示系统阶数。
+
+### 2.4 MMC 桥臂级戴维南等效（Xu 2015）
+
+子模块电容用数值积分离散为等效电阻与历史电压源串联：
+
+- 后退欧拉：$\Delta u_c(t) = i_{arm}(t) \cdot T_s / C$（投入时），当前步电压与历史状态无关
+- 梯形法：利用前后步信息，精度更高但计算斜率约为后退欧拉 2 倍
+
+同一桥臂内 $N$ 个子模块串联叠加为单一桥臂等效电路：
+
+$$
+C_{eq} = \frac{C_{SM}}{N}, \quad R_{arm} = \sum R_{SM}, \quad V_{arm} = \sum V_{SM}^{eq}
+$$
+
+### 2.5 SST 直流链路解耦（Li 2025）
+
+在 MVDC 和 LVDC 电容处切断 Stage I（AC-DC）、Stage II（DAB DC-DC）和 Stage III（DC-AC）之间的直接电路耦合：
+
+- 开关函数 $s \in \{-1,0,1\}$ 统一描述全桥、DAB 和三电平变换器
+- 开关状态进入受控源项而非导纳矩阵 → G 矩阵恒定
+- SFB-DEM：保留子模块级动态
+- SFB-AVM：假设电容电压均衡，使用等效电容
+
+## 3. 计算模型与离散化
+
+### 3.1 MOR 方法在各建模层级中的角色
+
+| 方法 | 核心思想 | 适用对象 | 误差特征 | 来源 |
+|------|----------|----------|---------|------|
+| 平衡截断 | 保留强可控且强可观状态 | 线性状态空间模型 | $H_\infty$ 误差界 $2\sum\sigma_i$ | — |
+| Loewner 矩阵 | 切向插值 + SVD 阶数判定 | 多端口 FDNE | 非迭代，无初始极点问题 | Gurrala 2015 |
+| MMC 戴维南聚合 | 子模块等效 R + 历史源串联叠加 | MMC 桥臂 | 后退欧拉偏差 $\sim 0.3\%$ | Xu 2015 |
+| Prony 时域等值 | 脉冲响应 → Prony 模态 → 一阶并联 | 输电网络等值 | 假设 LTI 系统 | Hong 2004 |
+| SST 解耦等效 | DC-link 断开 + 开关函数受控源 | SST 多级变换器 | 恒定 G 矩阵，步内开关插值 | Li 2025 |
+| VF 有理逼近 | 极点重定位 → 留数计算 | 宽频导纳/阻抗 | 迭代收敛依赖初始极点 | — |
+
+### 3.2 MMC 戴维南的分组排序算法（Xu 2015）
+
+1. 将子模块按投切状态分为 4 组（保持投入、保持切除、由切转投、由投转切）
+2. 组内升序排列，两两合并为全局有序序列
+3. 后退欧拉法更新电容电压：仅依赖当前电流，无需历史
+
+计算复杂度从 $O(N^2)$ 降至 $O(N)$（后退欧拉）或 $2N-3$（梯形法）。
+
+### 3.3 Loewner 矩阵的稳定模型提取（Gurrala 2015）
+
+1. 频域导纳数据 $\rightarrow$ 左右采样拆分
+2. 构造 Loewner 矩阵 $\mathbb{L}$ 和移位 Loewner 矩阵 $\mathbb{L}_\sigma$
+3. SVD $\rightarrow$ 截断次要奇异值 $\rightarrow$ 投影子空间
+4. 提取 D 项和 $Y_\infty$ 处理高频不规则部分
+5. 广义描述符状态空间 $(E, A, B, C)$ 嵌入 EMT
+
+### 3.4 降阶模型的 EMT 集成约束
+
+- 降阶模型进入 EMT 前仍需离散化、初始化、接口变量定义和时域验证
+- 频域误差小 $\neq$ 故障暂态、开关事件或控制器饱和时都可靠
+- 无源性破坏后需 [[passivity-enforcement]]
+- 低阶状态初值必须与潮流或稳态一致，否则产生伪暂态
+
+## 4. 实现方法与算法细节
+
+### 4.1 降阶方法对比
+
+| 类型 | 机制 | 优势 | 限制 |
+|------|------|------|------|
+| 平衡截断 | Hankel 奇异值截断 | 有严格误差界，算法成熟 | 需 Lyapunov 求解；物理状态不可解释 |
+| Krylov/矩匹配 | Arnoldi/Lanczos 投影 | 大规模系统可扩展 | 频段外误差不受控 |
+| 模态截断 | 保留主导极点 | 物理意义明确 | 弱模态可能含重要高频响应 |
+| Kron 节点消去 | 消去内部节点 | 电路拓扑保持 | 内部变量不可观察 |
+| MMC 戴维南聚合 | 桥臂级 R + V 串联 | 线性复杂度，可嵌入 EMT | 需分组排序，闭锁模式修正 |
+| SST 解耦 | DC-link 断开 | 恒定 G 矩阵，节点缩减 | 需开关函数统一描述 |
+| Loewner FDNE | 切向插值 | 非迭代，无初始极点问题 | 数据拆分影响结果 |
+| Prony 时域等值 | 脉冲响应模态分解 | 从时域直接得到等值 | 假设 LTI |
+
+### 4.2 阶数选择准则
 
 | 准则 | 方法 | 适用场景 |
 |------|------|----------|
 | 奇异值阈值 | 保留 $\sigma_i > \epsilon\sigma_{max}$ | 平衡截断 |
 | 误差界 | $2\sum_{i=r+1}^{n}\sigma_i < \epsilon_{tol}$ | 有明确误差要求 |
-| 频率响应 | 在关注频段内 $|G(j\omega) - \hat{G}(j\omega)|$ 足够小 | 宽频等值 |
-| 物理意义 | 保留有明确物理对应的状态 | 可解释性优先 |
+| 频率响应 | $|G(j\omega) - \hat{G}(j\omega)|$ 在关注频段内足够小 | 宽频等值 |
+| SVD 衰减 | Loewner 矩阵奇异值衰减曲线 | Loewner FDNE（Gurrala 2015） |
 
-## 代表性来源
+### 4.3 无源性约束
 
-| 来源或论文线索 | 支撑内容 | 证据边界 |
-|----------------|----------|----------|
-| A review of efficient modeling methods for modular multilevel converters | MMC 高效建模可通过戴维南、受控源和平均值等策略降阶 | 具体提速和误差需绑定原文电平数、步长和模型 |
-| Accelerated EMT equivalent model of solid-state transformer | SST 高频链路可通过节点消去形成端口等值 | 结论限于原文 DAB/拓扑和连接方式 |
-| A guaranteed passive model for multi-port FDNE using network synthesis | 网络综合可生成无源多端口 FDNE | 适用于满足正实性和频响表格要求的对象 |
-| [[rational-approximation-of-frequency-domain-responses-by-vector-fitting-power-del]] | VF 把频域响应压缩为有限阶极点-留数模型 | VF 本身不保证无源或最小阶 |
-| [[a-time-domain-approach-to-transmission-network-equivalents-via-prony-analysts-fo]] | Prony 可从时域响应生成外部网络等值 | 假设外部系统线性时不变 |
+降阶可能破坏原始系统的无源性，表现为仿真中出现数值振荡或发散。FDNE 和宽频端口模型降阶后尤其需要检查正实性。VF 和 Loewner 方法得到的模型都需要 [[passivity-enforcement]] 修正。
 
-## 形式化表达
+### 4.4 MMC 改进平均值模型的闭锁处理（Xu 2015）
 
-### 状态空间降阶框架
+传统平均值模型在闭锁和直流故障时失效（直流电压偏差可达 12% 以上）。Xu (2015) 的改进：
 
-原高阶系统：
-$$\dot{\mathbf{x}} = \mathbf{A}\mathbf{x} + \mathbf{B}\mathbf{u}, \quad \mathbf{y} = \mathbf{C}\mathbf{x} + \mathbf{D}\mathbf{u}$$
+- 引入并联二极管和级联开关结构
+- 闭锁模式下开关函数由电流方向自动决定
+- 直流故障稳态误差降至 $< 0.5\%$
 
-其中 $\mathbf{x} \in \mathbb{R}^n$，$n$ 为原始阶数。
+## 5. 适用边界与失效模式
 
-低阶近似系统：
-$$\dot{\hat{\mathbf{x}}} = \hat{\mathbf{A}}\hat{\mathbf{x}} + \hat{\mathbf{B}}\mathbf{u}, \quad \hat{\mathbf{y}} = \hat{\mathbf{C}}\hat{\mathbf{x}} + \hat{\mathbf{D}}\mathbf{u}$$
+### 适用条件
 
-其中 $\hat{\mathbf{x}} \in \mathbb{R}^r$，$r \ll n$ 为降阶后阶数。
+- 端口边界明确，外部系统线性时不变或可线性化
+- 关注频段可确定，信号能量集中在保留模态附近
+- MMC 子模块电容电压近似均衡（平均值模型）或需要精确桥臂动态（戴维南模型）（Xu 2015）
+- FDNE 频域响应数据完整，覆盖关注频段（Gurrala 2015）
+- SST 多级变换器可通过 DC-link 电容解耦（Li 2025）
 
-### 平衡截断方法
+### 失效模式
 
-通过求解Lyapunov方程获得可控性格拉姆矩阵 $\mathbf{W}_c$ 和可观测性格拉姆矩阵 $\mathbf{W}_o$：
+| 失效场景 | 原因 | 后果 |
+|----------|------|------|
+| 端口外变量不可恢复 | 降阶只保证选定端口行为 | 内部节点电压、支路电流不可恢复 |
+| 频段外推 | 模型只在拟合/验证频段内有效 | 雷电、VFTO、EMI 超出频段时误差无界 |
+| 工况变化 | 平均值/线性降阶仅在指定工作点成立 | 大扰动或拓扑切换后模型失效 |
+| 无源性破坏 | 降阶后传递函数不再正实 | 仿真中出现数值振荡或发散 |
+| 初值不匹配 | 低阶状态初值与潮流/稳态不一致 | 伪暂态，收敛困难 |
+| MMC 闭锁时使用平均模型 | 闭锁后导通路径由二极管决定 | 直流电压偏差 $> 12\%$（Xu 2015） |
+| SST 解耦后忽略开关插值 | 大步长下步内开关事件被整体延迟 | 相位和能量误差累积（Li 2025） |
 
-$$\mathbf{A}\mathbf{W}_c + \mathbf{W}_c\mathbf{A}^T + \mathbf{B}\mathbf{B}^T = 0$$
-$$\mathbf{A}^T\mathbf{W}_o + \mathbf{W}_o\mathbf{A} + \mathbf{C}^T\mathbf{C} = 0$$
+### 关键约束
 
-计算平衡变换 $\mathbf{T}$ 使得：
-$$\mathbf{T}\mathbf{W}_c\mathbf{T}^T = \mathbf{T}^{-T}\mathbf{W}_o\mathbf{T}^{-1} = \Sigma = \text{diag}(\sigma_1, \sigma_2, ..., \sigma_n)$$
+- MMC 戴维南模型 15--20 倍加速和 $O(N)$ 复杂度在 Xu (2015) 的 49 电平半桥 MMC-HVDC 系统中验证（20 μs 步长，PSCAD/EMTDC）
+- Loewner FDNE 方法在 Gurrala (2015) 的 4 个电力系统算例中与 VF 可比，不保证所有数据天然无源
+- SST 解耦等效的恒定 G 矩阵优势依赖 Li (2025) 的开关函数实现，不自动覆盖其他拓扑或调制策略
+- 降阶模型进入 EMT 前必须经时域验证，频域误差小不等于时域暂态可靠
 
-其中Hankel奇异值 $\sigma_1 \geq \sigma_2 \geq ... \geq \sigma_n > 0$。保留前 $r$ 个状态即得降阶模型。
+## 6. 应用案例
 
-### Krylov子空间矩匹配
+### 案例 1：MMC 戴维南等效与平均值模型（Xu 2015）
 
-构建 $r$ 维Krylov子空间：
-$$\mathcal{K}_r(\mathbf{A}, \mathbf{b}) = \text{span}\{\mathbf{b}, \mathbf{A}\mathbf{b}, \mathbf{A}^2\mathbf{b}, ..., \mathbf{A}^{r-1}\mathbf{b}\}$$
+场景：双端 49 电平半桥 MMC-HVDC 系统（640 kV 直流，230 kV 交流）。子模块数 $N=48$，步长 20 μs。三种戴维南等效模型在稳态和暂态下与详细模型高度一致。后退欧拉法模型（模型 2）稳态直流电压偏差约 0.3%，梯形法模型（模型 3）偏差 $< 0.1%$。在 $N=200$ 时戴维南模型比详细模型快 15--20 倍。改进平均值模型在直流双极故障闭锁工况下稳态误差 $< 0.5%$，而传统模型偏差达 12% 以上。
 
-通过Arnoldi或Lanczos过程生成正交基，使得降阶系统传递函数在原点附近展开匹配原系统前 $2r$ 个矩。
+### 案例 2：Loewner 矩阵 FDNE 建模（Gurrala 2015）
 
-### 误差界
+场景：多端口电力系统频域导纳数据。Loewner 矩阵铅笔 + 切向插值直接构造描述符状态空间模型，与 VF 比较 4 个算例。SVD 奇异值衰减自动指示最优阶数。数据拆分策略影响拟合质量。无需初始极点，无迭代收敛问题。
 
-平衡截断的 $H_\infty$ 误差界：
-$$\|\mathbf{G} - \hat{\mathbf{G}}\|_\infty \leq 2\sum_{i=r+1}^{n}\sigma_i$$
+### 案例 3：SST 通用解耦等效模型（Li 2025）
 
-## 与相关页面的关系
+场景：多电平多模块 SST（链式 AC-DC + DAB DC-DC + 三相三电平 DC-AC）。DC-link 解耦将三级分解为独立子系统，开关函数统一描述全桥/DAB/三电平变换器的投入/旁路/闭锁模式。SFB-DEM 保留子模块级动态，SFB-AVM 进一步聚合。恒定 G 矩阵避免了频繁 refactorization，开关插值处理大步长下的步内开关事件。
 
-- [[state-space-method]]：许多 MOR 算法以状态空间模型为输入和输出。
-- [[vector-fitting]]：VF 是频域模型压缩的入口，降阶和无源性检查通常在其后进行。
-- [[prony-analysis]]：Prony 通过主导模态提取形成时域等值，可视为数据驱动降阶。
-- [[fdne-model]]：FDNE 是 MOR 在外部网络和混合仿真接口中的典型应用。
-- [[average-value-model]]：平均值模型是一种物理近似降阶，适合系统级动态，不适合开关纹波研究。
-- [[sparse-matrix-solver]]：降阶减少矩阵维度，稀疏求解器减少剩余系统的求解成本；两者不是同一类方法。
+### 案例 4：Prony 时域输电网络等值（Hong 2004）
 
-## 来源论文
+场景：输电网络脉冲响应 → Prony 模态分解 → SVD 阶数判定 → 驱动点阻抗留数转换。外部大规模系统分解为若干个一阶并联系统，生成可嵌入 EMTP 的离散时间戴维南滤波器模型，避免频域迭代拟合。
 
-| 论文 | 年份 |
-|------|------|
-| [[noda-a-binary-frequency-region-partitioning-algorithm-for-the-identification-of-|Noda | A Binary Frequency-Region Partitioning Algorithm for ]] | 2007 |
-| [[39pes20116039582|39/pes.2011.6039582]] | 2011 |
-| [[39pes20116039582|39/pes.2011.6039582]] | 2011 |
-| [[a-type-4-wind-power-plant-equivalent-model|A Type-4 Wind Power Plant Equivalent Model]] | 2012 |
-| [[electromechanical-transient-modeling-of-modular-multilevel-converter-based-multi|Electromechanical Transient Modeling of Modular Multilevel C]] | 2013 |
-| [[comparative-study-on-electromechanical-and-electromagnetic-transient-model-for-g|Comparative study on electromechanical and electromagnetic t]] | 2014 |
-| [[a-wideband-equivalent-model-of-type-3-wind-power-plants-for-emt-studies|A Wideband Equivalent Model of Type-3 Wind Power Plants for ]] | 2016 |
-| [[flexible-extended-harmonic-domain-approach-for-transient-state-analysis-of-switc|Flexible extended harmonic domain approach for transient sta]] | 2017 |
-| [[development-and-applicability-of-online-passivity-enforced-wide-band-multi-port-|Development and Applicability of Online Passivity Enforced W]] | 2018 |
-| [[dual-band-reduced-order-model-of-an-hvdc-link-embedded-into-a-power-network-for-|Dual-Band Reduced-Order Model of an HVDC Link Embedded into ]] | 2019 |
-| [[dynamic-model-reduction-of-power-electronic-interfaced-generators-based-on-singu|Dynamic model reduction of power electronic interfaced gener]] | 2019 |
-| [[dynamic-model-reduction-of-power-electronic-interfaced-generators-based-on-singu|Dynamic model reduction of power electronic interfaced gener]] | 2019 |
-| [[analysis-of-frequency-dependent-network-equivalents-in-dynamic-harmonic-domain|Analysis of Frequency-Dependent Network Equivalents in Dynam]] | 2021 |
-| [[hierarchical-modeling-scheme-for-high-speed-electromagnetic-transient-emt-simula|Hierarchical Modeling Scheme for High-Speed Electromagnetic ]] | 2021 |
-| [[exhaustive-modal-analysis-of-large-scale-power-systems-using-model-order-reducti|Exhaustive modal analysis of large-scale power systems using]] | 2022 |
-| [[new-compact-white-box-transformer-model-for-the-calculation-of-electromagnetic-t|New Compact White-Box Transformer Model for the Calculation ]] | 2022 |
-| [[fast-electromagnetic-transient-simulation-of-modular-multilevel-converter-based-|Fast electromagnetic transient simulation of modular multile]] | 2023 |
-| [[modeling-and-simulation-of-vsc-hvdc-with-dynamic-phasors|Modeling and simulation of VSC-HVDC with dynamic phasors]] | 2023 |
-| [[optimized-high-frequency-white-box-transformer-model-for-implementation-in-atp-e|Optimized high-frequency white-box transformer model for imp]] | 2023 |
-| [[adaptive-variable-step-size-calculation-method-for-transient-temperature-rise-and-fall|Adaptive Variable Step Size Calculation Method for Transient]] | 2024 |
-| [[enhancing-computation-performance-of-rational-approximation-for-frequency-depend|Enhancing computation performance of rational approximation ]] | 2024 |
-| [[a-state-variables-elimination-based-emtp-type-constant-admittance-equivalent-mod|A State Variables Elimination-Based EMTP-Type Constant Admit]] | 2025 |
-| [[a-state-space-approach-for-accelerated-simulation-of-modular-multilevel-converte|A state-space approach for accelerated simulation of modular]] | 2025 |
-| [[a-state-variable-preserving-method-for-the-efficient-modelling-of-inverter-based|A state-variable-preserving method for the efficient modelli]] | 2025 |
-| [[improving-numerical-efficiency-of-frequency-dependent-transmission-line-models-f-23|Improving numerical efficiency of frequency dependent transm]] | 2025 |
-| [[improving-numerical-efficiency-of-frequency-dependent-transmission-line-models-f-23|Improving numerical efficiency of frequency dependent transm]] | 2025 |
-| [[improving-numerical-efficiency-of-frequency-dependent-transmission-line-models-f|Improving numerical efficiency of frequency dependent transm]] | 2025 |
-| [[improving-numerical-efficiency-of-frequency-dependent-transmission-line-models-f|Improving numerical efficiency of frequency dependent transm]] | 2025 |
-| [[emt-model-boundary-determination-using-floquet-theory-based-participation-factor|EMT Model Boundary Determination Using Floquet Theory-based ]] | 2026 |
+## 7. 延伸阅读
+
+- [[state-space-method]]：MOR 以状态空间为输入和输出
+- [[vector-fitting]]：频域有理逼近的入口，降阶和无源性检查在其后进行
+- [[prony-analysis]]：时域主导模态提取，数据驱动降阶
+- [[fdne-model]]：MOR 在外部网络等值和混合仿真接口中的典型应用 |
+- [[average-value-model]]：物理近似降阶，适合系统级动态，不适合开关纹波研究 |
+- [[sparse-matrix-solver]]：降阶减少矩阵维度；稀疏求解器减少剩余系统求解成本 |
+- [[companion-circuit]]：MMC 戴维南等效的离散化基础 |
+- [[passivity-enforcement]]：降阶后无源性修复 |
+- [[network-equivalent]]：外部网络等值与 MOR 的关系 |
+- [[model-order-reduction]]：本页 |
+
+*页面基于 Xu (2015)、Gurrala (2015)、Li (2025) 和 Hong (2004) 的证据写作。*

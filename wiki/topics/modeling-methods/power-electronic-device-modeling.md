@@ -12,13 +12,13 @@ book-chapter: "7"
 ```mermaid
 graph TD
     subgraph Ncmp[电力电子设备建模 (Power Electronic D…]
-        N0[[[switch-modeling]]: 综合]
-        N1[[[igbt-model]]: 综合]
-        N2[[[average-value-model]]: 综合]
-        N3[[[fixed-admittance]]: 综合]
-        N4[[[mmc-model]]: 综合]
-        N5[[[vsc-model]]: 综合]
-        N6[[[transformer-model]]: 2020+]
+        N0[[switch-modeling]]: 综合]
+        N1[[igbt-model]]: 综合]
+        N2[[average-value-model]]: 综合]
+        N3[[fixed-admittance]]: 综合]
+        N4[[mmc-model]]: 综合]
+        N5[[vsc-model]]: 综合]
+        N6[[transformer-model]]: 2020+]
     end
 ```
 

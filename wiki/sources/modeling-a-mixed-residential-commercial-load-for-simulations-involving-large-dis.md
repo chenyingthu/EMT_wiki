@@ -70,7 +70,7 @@ sources: ["EMT_Doc/26/Khodabakhchian - 1997 - Modeling a mixed residential-comme
 - 恒阻抗负荷
 - 非线性负荷
 - 电压频率相关负荷
-- [[单相感应电机|单相感应电机]]
+- [[single-phase-induction-machine|单相感应电机]]
 - 三相感应电机
 - 配电变压器饱和模型
 

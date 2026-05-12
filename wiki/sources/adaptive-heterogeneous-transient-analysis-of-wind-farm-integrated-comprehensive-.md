@@ -59,7 +59,7 @@ sources: ["EMT_Doc/05/Lin 等 - 2021 - Adaptive Heterogeneous Transient Analysis
 ## 使用的方法
 
 - EMT-DS协同仿真
-- [[cpu-gpu异构并行计算|CPU-GPU异构并行计算]]
+- [[gpu-accelerated-simulation|CPU-GPU异构并行计算]]
 - 拓扑重构与内部解耦
 - 梯形积分法离散化
 - [[state-space-method|状态空间建模]]

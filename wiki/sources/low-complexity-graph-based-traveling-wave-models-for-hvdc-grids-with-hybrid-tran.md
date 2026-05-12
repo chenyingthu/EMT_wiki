@@ -75,7 +75,7 @@ sources: ["EMT_Doc/25/Verrax 等 - 2022 - Low-complexity graph-based traveling w
 
 ## 相关主题
 
-- [[故障区段识别|故障区段识别]]
+- [[protection-relay-modeling|故障区段识别]]
 - 行波分析
 - 混合线路建模
 - 直流电网保护

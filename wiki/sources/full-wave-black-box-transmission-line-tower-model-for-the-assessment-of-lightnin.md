@@ -70,7 +70,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/j.epsr.2021.107399.pdf.pdf"]
 - 400kV双回输电杆塔
 - 接地系统(水平接地极)
 - 避雷线与相导线
-- [[绝缘子串|绝缘子串]]
+- [[insulator-string-model|绝缘子串]]
 - [[fdne-model|FDNE]]
 
 ## 相关主题
@@ -80,7 +80,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/j.epsr.2021.107399.pdf.pdf"]
 - 频率相关土壤建模
 - [[network-equivalent|网络等值]]
 - [[grounding-lightning-overvoltage|防雷保护]]
-- [[暂态过电压分析|暂态过电压分析]]
+- [[lightning-transient-analysis|暂态过电压分析]]
 
 ## 主要发现
 

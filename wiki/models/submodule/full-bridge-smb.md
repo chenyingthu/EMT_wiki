@@ -3,40 +3,11 @@ title: "全桥子模块 (Full-Bridge Submodule, FBSM)"
 type: model
 tags: [full-bridge, fbsm, mmc, submodule, dc-fault, hvdc, statcom, fault-blocking]
 created: "2026-05-02"
-updated: "2026-05-03"
+updated: "2026-05-12"
 ---
 
 # 全桥子模块 (Full-Bridge Submodule, FBSM)
 
-
-```mermaid
-graph TD
-    subgraph Ncmp[全桥子模块 (Full-Bridge Submodule…]
-        N0[T1: $s_1 = 1$]
-        N1[T2: $s_2 = 1$]
-        N2[T3: $s_3 = 1$]
-        N3[T4: $s_4 = 1$]
-    end
-```
-
-
-## 核心原理详解
-
-### 技术概述
-全桥子模块是电力系统电磁暂态仿真领域的重要技术，对提高仿真精度和效率具有重要意义。
-
-### 理论基础
-该技术建立在严格的电磁场理论和电路分析基础之上，通过数学建模描述系统的动态行为。
-
-### 核心机制
-- **物理建模**：基于物理定律建立准确的数学模型
-- **数值求解**：采用高效的数值算法求解系统方程
-- **参数分析**：研究关键参数对系统性能的影响
-
-### 技术优势
-- 提高仿真精度和计算效率
-- 支持复杂系统的详细分析
-- 为工程设计和优化提供理论支撑
 
 ## 概述
 
@@ -805,17 +776,38 @@ $$
 - GB/T 35727: 柔性直流输电系统技术标准
 - IEEE 1547: 分布式资源互连标准
 
-## 来源论文
+## 量化性能边界
 
-1. Marquardt R., Lesnicar A. "A new modular voltage source inverter topology" IEEE EPE, 2003.
-2. Merlin M.M.C., et al. "The Alternate Arm Converter: A New Hybrid Multilevel Converter" IEEE TPEL, 2014.
-3. Nami A., et al. "Multilevel converters for HVDC applications" IEEE TPEL, 2011.
-4. 徐政, 等. "模块化多电平换流器直流输电技术" 机械工业出版社, 2020.
-5. 汤广福, 等. "柔性直流输电系统" 科学出版社, 2017.
+**FBSM等效模型加速比**（Parvari 2023 加速DEM）:
+- 4站200子模块FBSM系统：31.0 s vs 84.7 s（详细DEM），加速比**2.73x**
+- 16站400子模块FBSM系统：371 s vs 753 s（详细DEM），加速比**2.03x**
+- HBSM对比加速比：1.38x（31.9 s vs 44.0 s），FBSM因两倍IGBT数量使加速更显著
+- 波形误差**<0.1%**，验证平台CIGRE B4-57，PSCAD/EMTDC，步长50 μs
+- 欧拉积分离散消除时变电阻，正常运行不触发导纳矩阵重三角分解
 
----
+**FBSM闭锁仿真迭代效率**（Stepanov 2020 自适应MMC）:
+- 401电平MMC-HVDC系统验证，HB/FB任意混合配置
+- 模型切换过程外部电气特性误差**<0.5%**，切换瞬间暂态偏差**<0.1%**
+- 阻塞模式求解器迭代上限30次，实际收敛**<6次**
+- 稳态时切换至AVM/AEM可降低单步计算耗时**65%~75%**，整体加速比**>3.5x**
 
-*本页面基于全桥子模块相关文献整理，详细内容请参阅[[index]]中的FBSM相关论文。*
+**FBSM详细模型 vs AVM精度差距**（Yu 2013）:
+- 直流极间故障：详细模型故障电流~17 p.u.，AVM~73 p.u.（**>300%误差**）
+- Type 4（戴维南等效）比简化电阻模型快约**12倍**
+- AVM比Type 4快**10-16倍**，但无法反映子模块电容均压细节
+
+**FBSM通用UBM-AVM精度**（Meng 2019）:
+- 41电平双端MMC-HVDC，HB/FB/MB三种子模块100%兼容
+- 直流极间故障电流峰值捕捉误差**<1.5%**（桥臂电感初始电流注入）
+- 解析型损耗模型综合误差**<2%**（传统AVM>8%）
+- 步长从1~5 μs放大至50 μs，计算速度较DEM提升**15~20倍**
+
+**FBSM状态空间平均模型降维**（潘可盈 2024）:
+- 含死区时间18种实际开关方式 → 8种导通模式 → **3种建模工况**
+- 正投入转负投入过程中，死区时间t_d内可产生高达**+2u_C**的死区电压尖峰
+- 验证工具PSCAD/EMTDC，仅定性结论（未报告定量误差百分比）
+
+**数据缺口声明**：FBSM在不同桥臂子模块数（200~400）、不同控制策略（MMC/STATCOM）及不同故障类型下的系统级加速比和精度对比尚缺统一基准。多端直流网、高阻接地故障及实时仿真硬件平台（FPGA/RTDS）下的FBSM模型性能未在上述文献中充分验证。潘可盈（2024）仅给出定性结论，未报告具体误差百分比和仿真耗时。
 
 ## 来源论文
 
@@ -825,3 +817,7 @@ $$
 | [[a-universal-blocking-module-based-average-value-model-of-modular-multilevel-conv|A Universal Blocking-Module-Based Average Value Model of Mod]] | 2019 |
 | [[adaptive-modular-multilevel-converter-model-for-electromagnetic-transient-simula|Adaptive Modular Multilevel Converter Model for Electromagne]] | 2020 |
 | [[modeling-of-mmc-based-statcom-with-embedded-energy-storage-for-the-simulation-of|Modeling of MMC-based STATCOM with embedded energy storage f]] | 2023 |
+
+---
+
+*本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*

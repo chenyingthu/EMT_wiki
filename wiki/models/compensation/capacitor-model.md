@@ -3,21 +3,11 @@ title: "电容 (Capacitor)"
 type: model
 tags: [capacitor, capacitance, passive-component, esr, esl, frequency-dependent]
 created: "2026-04-30"
+updated: "2026-05-11"
 ---
 
 # 电容 (Capacitor)
 
-
-```mermaid
-graph TD
-    subgraph Ncmp[电容 (Capacitor)]
-        N0[陶瓷电容: 陶瓷]
-        N1[电解电容: 氧化铝]
-        N2[薄膜电容: 聚酯/聚丙烯]
-        N3[超级电容: 活性炭]
-        N4[电力电容: 浸渍纸/膜]
-    end
-```
 
 
 ## 定义与概述
@@ -377,45 +367,63 @@ $$\Delta t < 2\sqrt{ESL \cdot C}$$
 - **自愈效应**：薄膜电容击穿后自愈
 - **频率限制**：分布参数模型仅在有限频段准确
 
-### 7.3 精度边界
-| 模型类型 | 频率范围 | 精度 | 适用场景 |
-|---------|----------|------|----------|
-| 理想电容 | DC-1kHz | ±10% | 低频储能分析 |
-| 含ESR | 1kHz-100kHz | ±5% | 滤波器设计 |
-| 含ESR+ESL | 100kHz-10MHz | ±10% | EMI/EMC分析 |
-| 分布参数 | >10MHz | ±15% | 高频电路 |
+### 7.3 量化性能边界
 
-## 8. 来源论文
+电容模型的 EMT 仿真精度已有可核验的量化结果，但以下数据均绑定具体电容器类型、建模方法和验证条件，不能外推为通用能力：
 
-| 论文 | 年份 | 核心贡献 |
-|------|------|----------|
-| High-frequency modeling of DC-link capacitors for power electronic converters | 2016 | DC-Link电容高频建模 |
-| Frequency-dependent equivalent circuit modeling of electrolytic capacitors | 2018 | 电解电容等效电路模型 |
-| Electrochemical modeling of supercapacitors for EMT simulation | 2020 | 超级电容电化学建模 |
+- **Iravani & Wang (2004)** 在 EMTP 平台上构建了 TEHMP161A 型耦合电容器电压互感器（CCVT）的全元件级时域数字模型。分压器-排流线圈回路自然振荡频率精确测定为 **13.956 kHz**，该模态主导近端故障下的高频暂态响应。串联电抗器杂散电容 Cc 从 0 pF 增至 1500 pF 时，频响曲线第一谷点频率偏移至约 **640 Hz**，证实 Cc 对低频段谐振特性具有决定性影响。负载功率因数低于 **0.6** 滞后时，>300 Hz 频段幅频响应衰减显著增加。验证基于 Haefely-Trench TEHMP161A 型 CCVT 实物，不自动适用于其他型号或电压等级（Iravani & Wang 2004）。
 
-## 相关方法
-- [[numerical-integration|数值积分]] - 电容离散化方法
-- [[vector-fitting|矢量拟合]] - 频率相关阻抗拟合
-- [[state-space-method|状态空间法]] - ESR-ESL模型状态方程
+- **司马文霞 (2021)** 提出了 CVT 宽频非线性耦合模型，模型在 **5 Hz~1 MHz** 频段的电压传递特性归一化均方误差（NMSE）为 **0.91%**，验证了电容分压器宽频建模的精度。该数据来自典型 35 kV CVT 的扫频测试，电容分压器作为 CVT 的核心组件，其频率响应特性在此得到量化验证（司马文霞 2021，详见 [[voltage-current-sensor-model]]）。
 
-## 相关模型
+这些量化数据不构成对电容建模方法的全面性能评价，只说明在特定测试条件下可获得的能力边界。
+
+## 适用边界与失败模式
+
+### 适用条件
+- **容量范围**：pF 至 kF级
+- **电压范围**：mV 至数百kV
+- **频率范围**：DC 至GHz（取决于类型）
+- **温度范围**：-55°C 至 +150°C（取决于介质）
+- **纹波电流**：不超过额定值
+
+### 失效边界
+- **介质非线性**：高介电常数陶瓷的电压依赖性
+- **老化效应**：电解电容容量衰减
+- **温度效应**：ESR随温度变化显著
+- **自愈效应**：薄膜电容击穿后自愈
+- **频率限制**：分布参数模型仅在有限频段准确
+
+### 关键假设
+1. 介质均匀且各向同性（实际介质存在局部缺陷）
+2. 寄生参数 ESR/ESL 为常数（实际随频率和温度变化）
+3. 漏电流可忽略（实际随温度和电压升高）
+4. 电容值不随直流偏置变化（高介电常数陶瓷显著偏离此假设）
+
+## 代表性来源
+
+- [[digital-time-domain-investigation-of-transient-behavior-of-coupling-capacitor-vo|Iravani & Wang (2004) - Digital Time-Domain Investigation of Transient Behavior of Coupling Capacitor Voltage Transformer]]
+- [[考虑中间变压器饱和特性的电容式电压互感器宽频非线性模型|司马文霞 (2021) - 考虑中间变压器饱和特性的电容式电压互感器宽频非线性模型]]
+
+## 与相关页面的关系
+
 - [[resistor-model|电阻模型]] - ESR等效电阻
 - [[inductor-model|电感模型]] - ESL等效电感
 - [[bess-model|电池储能系统]] - 超级电容储能应用
 - [[emi-filter-model|EMI滤波器]] - 滤波电容设计
 
-## 相关主题
-- [[harmonic-analysis|谐波分析]] - 电容滤波与谐波
-- 功率因数校正 - 无功补偿
-- 电磁兼容 - 去耦电容设计
-- 热建模 - 电容发热与寿命
+## 开放问题
+
+- 宽禁带器件高频开关下电容寄生参数的精确提取
+- 薄膜电容自愈过程的 EMT 建模
+- 超级电容多时间常数模型的实时仿真实现
+- 电容器老化退化对 EMT 仿真精度的影响
+
+## 参考标准
+
+- IEC 60063 - 电容器优选值系列
+- IEC 61071 - 电力电子电容器
+- IEEE Std. 18 - 并联电力电容器标准
 
 ---
 
-*本页面基于Karpathy LLM Wiki Pattern构建，内容来自EMT领域学术文献的深度分析*
-
-## 来源论文
-
-| 论文 | 年份 |
-|------|------|
-| [[loop-closing-analytical-calculation-system-based-on-electromagnetic-electromecha|Loop closing analytical calculation system based on electrom]] | 2023 |
+*本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*

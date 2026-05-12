@@ -75,10 +75,10 @@ sources: ["EMT_Doc/09/Wang和Jatskevich - 2010 - Approximate voltage-behind-reac
 ## 相关主题
 
 - [[emt-simulation|电磁暂态仿真]]
-- [[电机网络接口|电机网络接口]]
+- [[electromechanical-electromagnetic-hybrid-simulation|电机网络接口]]
 - 恒定电导矩阵
-- [[非迭代求解|非迭代求解]]
-- [[数值效率优化|数值效率优化]]
+- [[sparse-matrix-solver|非迭代求解]]
+- [[gpu-accelerated-simulation|数值效率优化]]
 
 ## 主要发现
 

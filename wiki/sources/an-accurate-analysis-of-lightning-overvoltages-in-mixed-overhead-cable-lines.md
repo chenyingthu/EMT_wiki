@@ -70,7 +70,7 @@ sources: ["EMT_Doc/06/j.epsr.2021.107052.pdf.pdf"]
 - 架空-电缆混合线路
 - 地下电力电缆
 - [[transmission-line-model|架空线路]]
-- [[杆塔接地系统|杆塔接地系统]]
+- [[grounding-system-model|杆塔接地系统]]
 - 变电站接地网
 
 ## 相关主题

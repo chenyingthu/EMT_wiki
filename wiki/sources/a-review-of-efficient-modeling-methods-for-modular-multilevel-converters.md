@@ -2,10 +2,11 @@
 title: "A review of efficient modeling methods for modular multilevel converters"
 type: source
 year: 2015
+tags: [efficient, modeling, modular, multilevel, converters]
+
 journal: "OCR-PDF"
 created: "2026-04-13"
-sources: ["EMT_Doc/03/Xu 等 - 2015 - A review of efficient modeling methods for modular multilevel converters.pdf"]
----
+sources: ["EMT_Doc/03/Xu 等 - 2015 - A review of efficient modeling methods for modular multilevel converters.pdf"]---
 
 # A review of efficient modeling methods for modular multilevel converters
 
@@ -57,7 +58,7 @@ sources: ["EMT_Doc/03/Xu 等 - 2015 - A review of efficient modeling methods for
 
 - 受控源等效法
 - 戴维南等效法
-- [[后退欧拉法|后退欧拉法]]
+- [[backward-euler|后退欧拉法]]
 - [[numerical-integration|梯形积分法]]
 - [[average-value-model|平均值模型]]
 - 矩阵降阶技术
@@ -70,7 +71,7 @@ sources: ["EMT_Doc/03/Xu 等 - 2015 - A review of efficient modeling methods for
 - [[full-bridge-smb|全桥子模块]]
 - [[transformer-model|换流变压器]]
 - 直流电缆
-- [[戴维南等效模型|戴维南等效模型]]
+- [[thevenin-equivalent-model|戴维南等效模型]]
 - 受控源模型
 - [[average-value-model|平均值模型]]
 

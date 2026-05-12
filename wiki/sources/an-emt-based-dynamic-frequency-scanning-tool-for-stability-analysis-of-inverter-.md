@@ -59,7 +59,7 @@ sources: ["EMT_Doc/07&08/An EMT based dynamic frequency scanning tool for stabil
 ## 使用的方法
 
 - 动态频率扫描
-- [[离散傅里叶变换|离散傅里叶变换]]
+- [[discrete-fourier-transform|离散傅里叶变换]]
 - 根轨迹分析
 - 伯德图分析
 - [[small-signal-analysis|小信号稳定性分析]]

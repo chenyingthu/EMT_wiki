@@ -3,20 +3,11 @@ title: "储能变流器 (Energy Storage Converter)"
 type: model
 tags: [energy-storage, converter, bess, battery, grid-scale, frequency-regulation]
 created: "2026-04-30"
+updated: "2026-05-12"
 ---
 
 # 储能变流器 (Energy Storage Converter)
 
-
-```mermaid
-graph TD
-    subgraph Ncmp[储能变流器 (Energy Storage Conver…]
-        N0[户用储能: 3-20kW]
-        N1[工商业储能: 100kW-2MW]
-        N2[电网级储能: 10-100MW]
-        N3[高压直挂: 10-100MW]
-    end
-```
 
 
 ## 定义与概述
@@ -377,19 +368,28 @@ end
 - **多机协调**：SOC均衡未建模
 - **保护逻辑**：简化故障保护
 
-### 7.3 精度边界
-| 模型类型 | SOC精度 | 功率精度 | 适用场景 |
-|---------|---------|----------|----------|
-| 简化 | ±5% | ±2% | 系统级 |
-| 详细 | ±2% | ±1% | 控制设计 |
+## 量化性能边界
 
-## 8. 来源论文
+**PCS 拓扑与效率**（Wang 2025、Lin 2023）：
+- MMC-BESS 中 IDEM 模型在稳态、暂态和故障工况下仿真误差 < 1%（Wang 2025）
+- 加速算法将多阀臂等效为三节点戴维南电路，单步长运算减少 50%-70%，仿真速度较 DSM 提升 10 倍以上（Wang 2025）
+- CPU-GPU 异构架构在多 BESS 系统中实现加速比 > 200 倍（Lin 2023）
+- 仿真步长 10-50 μs（EMT），多速率耦合降低计算冗余（Lin 2023）
 
-| 论文 | 年份 | 核心贡献 |
-|------|------|----------|
-| Grid-scale battery energy storage system modeling | 2018 | 电网级储能建模 |
-| Frequency regulation using battery energy storage | 2019 | 储能调频控制 |
-| EMT modeling of large-scale battery storage | 2020 | 大规模储能EMT模型 |
+**DC-DC 变换器谐振抑制**（Luo 2022）：
+- Buck 模式下系统自然串联谐振频率理论值 118 Hz，阻抗模型误差 < 2.5%
+- 支撑电容 > 0.5 mF 时在 100 Hz 以上呈无源电容特性
+- 有源阻尼控制器增益须满足上限约束，否则在 50-100 Hz 产生负电阻区域
+
+**构网型 PCS 黑启动**（Nguyen 2021）：
+- 光储混合黑启动全过程 18 s（7 步），稳态电压误差 < 1%
+- 母线电压恢复时间 < 0.2 s
+- 最大负荷阶跃 120.2 MW + 42.3 Mvar，构网逆变器成功支撑
+
+**FPGA 超实时 BESS 仿真**（Cao 2023）：
+- FPGA 实现 51 倍超实时加速，步长达到亚微秒级
+
+**数据缺口声明**：储能变流器在不同功率等级（kW 至 MW 级）和不同拓扑（单级式/两级式/MMC 嵌入式）下的效率-损耗建模数据缺乏系统公开对比。PCS 在不同电池类型（LFP/NCM/LTO）下的阻抗特性和控制参数整定缺乏统一基准。多 PCS 并联运行时 SOC 均衡控制策略的动态响应和稳态误差的定量数据不足。构网型 PCS 在弱电网（SCR < 2）下的暂态稳定边界缺乏系统验证。
 
 ## 相关方法
 - [[numerical-integration|数值积分]] - SOC计算与离散控制
@@ -406,11 +406,20 @@ end
 
 ## 相关主题
 - 频率调节 - 一次/二次调频
-- AGC调频 - 自动发电控制
-- 削峰填谷 - 能量套利
 - 黑启动 - 应急支撑能力
 - 微电网 - 并离网切换
+- 削峰填谷 - 能量套利
 
 ---
 
-*本页面基于Karpathy LLM Wiki Pattern构建，内容来自EMT领域学术文献的深度分析*
+*本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[an-electromagnetic-transient-simulation-model-of-mmc-bess-for-various-operating-|An Electromagnetic Transient Simulation Model of MMC-BESS]] | 2025 |
+| [[massively-parallel-modeling-of-battery-energy-storage-systems-for-acdc-grid-high|Massively Parallel Modeling of Battery Energy Storage Systems]] | 2023 |
+| [[faster-than-real-time-hardware-emulation-of-transients-and-dynamics-of-a-grid-of|Faster-Than-Real-Time Hardware Emulation of Transients]] | 2023 |
+| [[control-and-simulation-of-a-grid-forming-inverter-for-hybrid-pv-battery-plants-i|Control and Simulation of a Grid-Forming Inverter for Hybrid PV-Battery Plants]] | 2021 |
+| [[active-damping-control-and-parameter-calculation-for-resonance-suppression-in-dc-distribution|Active Damping Control for Resonance Suppression in DC Distribution]] | 2022 |

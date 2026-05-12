@@ -73,8 +73,8 @@ Supplementary techniques for 2S-DIRK-based EMT simulations T. Noda a,∗ , T. Ki
 
 ## 相关主题
 
-- [[电磁暂态-emt-仿真|电磁暂态(EMT)仿真]]
-- [[数值积分算法|数值积分算法]]
+- [[electromechanical-electromagnetic-hybrid-simulation|电磁暂态(EMT)仿真]]
+- [[numerical-integration|数值积分算法]]
 - [[numerical-integration|数值振荡抑制]]
 - 开关暂态建模
 - 电力系统数字仿真

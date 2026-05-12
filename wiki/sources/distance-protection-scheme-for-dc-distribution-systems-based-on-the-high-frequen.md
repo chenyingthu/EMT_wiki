@@ -77,7 +77,7 @@ sources: ["EMT_Doc/13&14/files/TPWRD.2019.2909130.pdf.pdf"]
 - 高频故障特征分析
 - [[distance-relay|距离保护]]
 - [[emt-simulation|电磁暂态仿真]]
-- [[故障区段识别|故障区段识别]]
+- [[protection-relay-modeling|故障区段识别]]
 
 ## 主要发现
 

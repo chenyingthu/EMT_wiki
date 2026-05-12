@@ -61,7 +61,7 @@ sources: ["EMT_Doc/25/Xu 等 - 2025 - Low-Dimensional Equivalent Models and Mult
 - 半隐式混合积分
 - 节点消元法
 - 等效电路综合
-- [[多线程并行计算|多线程并行计算]]
+- [[multithreaded-parallel-computing|多线程并行计算]]
 - OpenMP框架
 
 ## 涉及的模型

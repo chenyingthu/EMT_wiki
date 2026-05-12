@@ -58,11 +58,11 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/Zhang 等 - 2022 - High-frequency os
 
 ## 使用的方法
 
-- [[广义特征根法|广义特征根法]]
+- [[eigenvalue-analysis|广义特征根法]]
 - [[state-space-method|状态空间建模]]
-- [[小扰动线性化|小扰动线性化]]
-- [[h-鲁棒控制|H∞鲁棒控制]]
-- [[混合灵敏度优化|混合灵敏度优化]]
+- [[small-signal-analysis|小扰动线性化]]
+- [[h-infinity-control|H∞鲁棒控制]]
+- [[h-infinity-control|混合灵敏度优化]]
 - [[emt-simulation|电磁暂态仿真]]
 
 ## 涉及的模型
@@ -71,16 +71,16 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/Zhang 等 - 2022 - High-frequency os
 - [[mmc-model|MMC]]
 - [[large-scale-grid-simulation|交流电网]]
 - [[dynamic-phasor|锁相环(PLL)]]
-- [[双闭环pi控制器|双闭环PI控制器]]
-- [[环流抑制控制器|环流抑制控制器]]
+- [[pi-controller-model|双闭环PI控制器]]
+- [[circulating-current-suppression|环流抑制控制器]]
 
 ## 相关主题
 
-- [[高频振荡分析|高频振荡分析]]
-- [[时滞系统稳定性|时滞系统稳定性]]
-- [[振荡抑制策略|振荡抑制策略]]
+- [[wideband-oscillation-stability|高频振荡分析]]
+- [[time-delay-systems|时滞系统稳定性]]
+- [[oscillation-suppression|振荡抑制策略]]
 - [[mmc-model|MMC]]
-- [[鲁棒控制|鲁棒控制]]
+- [[robust-control|鲁棒控制]]
 
 ## 主要发现
 

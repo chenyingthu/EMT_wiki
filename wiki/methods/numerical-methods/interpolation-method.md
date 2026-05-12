@@ -1,111 +1,223 @@
 ---
 title: "插值方法 (Interpolation Method)"
 type: method
-tags: [interpolation, numerical-method, time-step, multi-rate, accuracy]
+tags: [interpolation, numerical-method, time-step, multi-rate, accuracy, event-location]
 created: "2026-04-14"
+updated: "2026-05-10"
 ---
 
 # 插值方法 (Interpolation Method)
 
+## 1. 物理背景与工程需求
 
-```mermaid
-graph TD
-    subgraph Ncmp[插值方法 (Interpolation Method)]
-        N0[零阶保持: 实时或采样保持接口]
-        N1[线性插值: 过零定位、慢到快同步]
-        N2[多项式或 Hermite 插值: 需要导数或步内点的高阶重构]
-        N3[密集输出插值: 利用积分器内部阶段或矩阵指数中间点]
-        N4[外推预测: 通信延迟补偿或预测校正]
-    end
+固定步长EMT求解器只在离散网格点 $t_n$ 处求解网络方程，但物理事件（开关触发、二极管关断、电流过零）和接口交互（多速率同步、控制采样）通常发生在网格点之间。插值方法用于在这些离散数据之间构造中间时刻的变量值，解决三类核心问题：
+
+1. **开关事件定位**：开关动作时刻 $t_s$ 落在 $[t_n, t_{n+1}]$ 内部时，需要估计 $t_s$ 及该时刻的状态，避免把事件强行提前或推迟到网格点导致的虚假损耗和误差。
+2. **多速率接口同步**：快慢子系统以不同步长推进时，接口变量需要在不同时间网格间传递，插值/外推用于构造对方子系统所需时刻的边界条件。
+3. **控制-电力联合求解**：控制系统与电力系统分离求解时存在一个时间步的接口延迟，同步插值可消除此延迟。
+
+插值不可修复错误的物理模型或过大的仿真步长——它只在已有离散数据可信时构造中间值。外推（用历史点预测未来点）的稳定边界通常比插值更窄，应单独分析。
+
+## 2. 数学描述
+
+### 2.1 线性插值（最常用形式）
+
+给定 $t_n$ 和 $t_{n+1}$ 时刻的状态 $x(t_n)$, $x(t_{n+1})$，中间时刻 $t_s$ 的估计值为：
+
+$$
+x(t_s) = x(t_n) + \alpha \left( x(t_{n+1}) - x(t_n) \right),
+\qquad
+\alpha = \frac{t_s - t_n}{h}, \quad 0 \leq \alpha \leq 1
+$$
+
+其中 $h = t_{n+1} - t_n$。线性插值仅利用端点值，导数在 $t_n$ 和 $t_{n+1}$ 处不连续。
+
+### 2.2 三次样条插值
+
+Shu 等 (2017) 在多速率接口中使用滑动窗口三次样条预测戴维南等效电压 $u_f$：
+
+$$
+F_i(t) = \frac{[t_k+(i-1)h-t]^3 M_{i-2} + [t-t_{k-1}-(i-2)h]^3 M_{i-1}}{6h} + \frac{[t_k+(i-1)h-t]u_f[t_k+(i-2)h] + [t-t_{k-1}-(i-2)h]u_f[t_k+(i-1)h]}{h} - \frac{h\{[t_k+(i-1)h-t]M_{i-2} + [t-t_{k-1}-(i-2)h]M_{i-1}\}}{6}
+$$
+
+其中 $M_i$ 为二阶导数系数。该插值的理论误差界为 $\tilde{e} \leq \frac{h^4}{24} \max ||u_f^{(4)}||$，实际仿真中预测偏差 < 0.2%。
+
+### 2.3 密集输出（Dense Output）
+
+Li (2020) 利用矩阵指数缩放平方过程的中间结果零成本生成步内点：
+
+$$
+x\left(t_0 + \frac{h}{2^{s-i}}\right) = [I_n \; 0] \cdot e^{\frac{h}{2^{s-i}}\mathbf{A}} \cdot x_0, \quad i = 0,1,\dots,s-1
+$$
+
+其中 $s$ 为缩放参数，$\mathbf{A}$ 为增广系统矩阵。密集输出为一阶段积分方法提供步内状态，使高阶插值无需额外积分计算即可用于开关事件定位。
+
+### 2.4 紧致格式的导数耦合插值
+
+Tanaka (2023) 的紧致格式将函数值及其一阶导数同时纳入离散关系，实现类插值的高阶精度：
+
+$$
+y_n = y_{n-1} + \frac{h}{2}[f(t_n, y_n) + f(t_{n-1}, y_{n-1})] - \frac{h^2}{12}[f'(t_n, y_n) - f'(t_{n-1}, y_{n-1})]
+$$
+
+当参数 $\alpha = 0.5$ 时达到四阶精度 $O(h^4)$，且无需额外插值步骤即可获得步内导数信息。
+
+### 2.5 外推预测
+
+多速率接口中，快子系统需在 $t_k + ih$（$i=0,\dots,n-1$）时刻得到慢子系统提供的接口等效参数。当前慢步长尚未完成时，用历史数据外推预测：
+
+$$
+\tilde{u}_f(t_k + ih) = F_i(t) \quad \text{（基于滑动窗口历史数据的三次样条外推）}
+$$
+
+大步长结束时通过接口阻抗矩阵 $Z_{Int}$ 校正预测值：
+
+$$
+u_f^l(t_{k+1}) = \tilde{u}_f^l(t_{k+1}) + \sum_{m \neq l} Z_{lm} i_f^m(t_{k+1})
+$$
+
+## 3. 计算模型与离散化
+
+### 3.1 插值与伴随电路模型的交互
+
+开关事件定位后，插值获得的 $t_s$ 时刻状态不能直接用于后续推进——必须根据新拓扑重新计算伴随电路的历史项。以电感为例，梯形法离散化后的历史项为 $J_L = i_{n-1} + \frac{h}{2L}v_{n-1}$，该历史项依赖开关前的拓扑。事件定位后的完整流程为：
+
+1. 从 $(x_n, x_{n+1})$ 线性插值得 $x(t_s)$ 和开关时刻 $\alpha$
+2. 更新开关状态（拓扑改变）
+3. 以 $x(t_s)$ 为初值，根据新拓扑重算历史源 $J_{hist}^{new}$
+4. 执行阻尼步骤（如CDA的两个半步BE）消除可能由插值引入的数值振荡
+5. 从 $t_s$ 推进到 $t_{n+1}$
+
+若不重算历史源，可能出现电流截断、虚拟功率损耗或非特征谐波（Na 2023 报告虚假开关损耗可从 212.6 $\mu$J 降至约 2 $\mu$J，消除率 > 99%）。
+
+### 3.2 多速率接口的离散化
+
+Shu 等 (2017) 在多速率协同仿真中，快子系统（MTDC，步长 $h$）与慢子系统（交流电网，步长 $h_{ac} = nh$）通过时变诺顿/戴维南等效接口交互。接口微分方程：
+
+$$
+\frac{d}{dt} i_f = L_f^{-1} (v_f - R_f i_f - u_f)
+$$
+
+采用根匹配算法离散替代梯形法以抑制数值振荡：
+
+$$
+v_f(t_k + ih) = \alpha^{-1} \{ i_f(t_k + ih) + \beta i_f[t_k + (i-1)h] \} + u_f(t_k + ih)
+$$
+
+其中 $\alpha = 1 - e^{-R_f h / L_f}$, $\beta = e^{-R_f h / L_f}$。
+
+### 3.3 控制-电力同步插值
+
+Wang (2025) 将控制系统状态 $x_c$ 与电力系统状态 $x_e$ 合为统一上三角分块状态矩阵：
+
+$$
+\begin{bmatrix} \dot{x}_c \\ \dot{x}_e \end{bmatrix} = \begin{bmatrix} A_{11} & A_{12} \\ 0 & A_{22} \end{bmatrix} \begin{bmatrix} x_c \\ x_e \end{bmatrix}
+$$
+
+通过 Sylvester 方程 $A_{11}X - XA_{22} = A_{12}$ 求解变换矩阵 $X$，实现同步解析解：
+
+$$
+x_c(t) = e^{tA_{11}}x_c(t_0) + (e^{tA_{11}}X - Xe^{tA_{22}})x_e(t_0)
+$$
+
+该方法使开关事件处控制和电力状态可同步插值，消除分离求解的一步延迟。在 $A_{11}$ 与 $A_{22}$ 有共同特征值时，采用特征值平移 $A_{22}^* = A_{22} + \lambda I$（$\lambda \in [10^{-6}, 10^{-3}]$）保证 Sylvester 方程可解。
+
+## 4. 实现方法与算法细节
+
+### 4.1 开关事件定位算法
+
+```text
+每个时间步 [t_n, t_{n+1}]:
+  1. 用当前拓扑从 t_n 推进到 t_{n+1}
+  2. 检查开关条件（电流过零、电压阈值等）
+  3. 若事件发生在步内:
+     a. 从 (x_n, x_{n+1}) 线性插值确定 alpha = (t_s - t_n)/h
+     b. 计算 t_s 时刻状态 x(t_s)
+     c. 更新开关状态，重算新拓扑下的历史源
+     d. 执行 CDA（两个半步 BE）消除数值振荡
+     e. 从 t_s 用梯形法推进到 t_{n+1}
+  4. 若无事件: 正常推进到下一网格点
 ```
 
+### 4.2 多速率接口同步算法
 
-## 定义与边界
+```text
+每个协调周期 [t_k, t_{k+1}=t_k+h_ac]:
+  
+  交流慢子系统（步长 h_ac）:
+  1. 接收上一周期 MTDC 接口电流的算术平均值作为诺顿电流源
+  2. 从 t_k 推进到 t_{k+1}
+  
+  MTDC 快子系统（步长 h = h_ac/n）:
+  for i = 0 to n-1:
+    1. 三次样条外推预测戴维南电压 u_f(t_k + ih)
+    2. 求解增广网络方程得内部状态和接口电流
+    
+  同步校正:
+  1. 用接口阻抗矩阵校正预测的戴维南电压
+  2. 更新交流侧诺顿等效电流
+```
 
-插值方法是在已知离散时刻数据之间构造中间时刻变量的数值技术。EMT 中的插值主要服务于两类问题：开关或过零事件落在固定步长内部时的事件定位，以及多速率、联合仿真或实时接口中的时间同步。
+### 4.3 插值阶数选择准则
 
-本页讨论插值作为 EMT 求解过程的一部分，而不是一般数据平滑。外推是用历史点预测未来点，稳定边界通常更窄，应与插值分开处理。事件后的数值阻尼见 [[stiff-system-handling]]；多速率接口见 [[multirate-method]]。
+Zhao 等 (2020) 基于公共二次李雅普诺夫函数（CQLF）证明：严格无源条件下，线性插值和 CDA 不破坏仿真稳定性。二阶插值的误差系数约为标准方法的 0.25--0.3 倍。但 Li (2020) 指出，高阶插值要求积分器能提供匹配的步内信息——一阶段方法若无密集输出，只能线性插值。
 
-## EMT 中的作用
+| 插值类型 | 精度阶数 | 所需积分器支持 | 适用场景 |
+|----------|----------|---------------|----------|
+| 线性插值 | $O(h^2)$ | 任意积分器 | 通用开关事件定位 |
+| 三次样条 | $O(h^4)$ | 历史数据窗口 | 多速率接口预测 |
+| 密集输出辅助高阶插值 | $O(h^3)$ | 矩阵指数+缩放平方 | 高频开关电力电子 |
+| 紧致格式导数耦合 | $O(h^4)$ | 导数信息可用 | 含非线性元件电路 |
 
-固定步长 EMT 求解器只在网格点求解网络方程，但开关触发、二极管关断、电流过零和接口采样通常发生在网格点之间。插值用于：
+## 5. 适用边界与失效模式
 
-- 估计开关时刻 $t_s$，避免把事件强行提前或推迟到网格点。
-- 为 [[multirate-method]] 中快慢子系统提供同步边界条件。
-- 为线路延时、控制采样和实时硬件通信补偿构造中间值。
-- 在事件定位后重算历史源，使 [[numerical-integration]] 与新拓扑一致。
+### 适用条件
 
-## 核心机制
+- 固定步长或准固定步长 EMT 仿真中，开关事件落在网格点之间
+- 多速率/协同仿真中快慢子系统以不同步长推进
+- 控制-电力系统分离求解需同步插值消除接口延迟
+- 积分器可提供匹配插值阶数的步内信息
 
-线性插值的基本形式为
+### 失效模式
 
-$$
-x(t_s)=x(t_n)+\alpha\left(x(t_{n+1})-x(t_n)\right),
-$$
+| 失效场景 | 原因 | 后果 |
+|----------|------|------|
+| 跨越不连续点的高阶插值 | 事件前后状态不可微 | 伪振荡（Gibbs 现象） |
+| 事件定位后不重算历史源 | 历史项仍基于旧拓扑 | 电流截断、虚拟损耗 |
+| 外推用于强耦合接口 | 外推无反馈校正 | 能量误差、数值发散 |
+| 插值阶数与积分器不匹配 | 积分器不提供步内信息 | 高阶插值精度退化至 $O(h)$ |
+| 多次事件密集步内 | 多个开关在一步内动作 | 事件次序误判 |
 
-其中
+### 关键约束
 
-$$
-\alpha=\frac{t_s-t_n}{h},\quad 0\leq \alpha\leq 1.
-$$
+- Zhao (2020) CQLF 稳定性条件是充分而非必要条件——不满足无源性不必然导致不稳定
+- 多速率接口中 A-稳定的梯形法不保证多速率仿真整体稳定（Sinkar 2025），接口插值/外推规则影响整体离散稳定性
+- 紧致格式（Tanaka 2023）的导数耦合需要电流/电压一阶导数信息，增加存储和计算需求
 
-在开关事件中，$t_s$ 常由电压、电流或控制信号的阈值交叉给出。若插值结果被用作新的事件状态，后续还需要根据开关后的拓扑重建历史源或执行阻尼步骤。否则，即使事件时刻定位较好，电感电流、电容电压或伴随电路历史项也可能与新拓扑不一致。
+## 6. 应用案例
 
-在多速率接口中，慢变量 $x_s(t_m)$ 和 $x_s(t_{m+1})$ 可被插值到快步长时刻；快变量反馈到慢系统时常需要平均、滤波或采样，而不是简单取某个瞬时值。
+### 案例 1：开关事件定位与数值振荡抑制（Na 2023）
 
-## 分类与变体
+场景：TCR 电路触发角动态变化。传统线性插值定位后直接梯形法推进，虚假开关损耗 212.6 $\mu$J。改用插值定位 + 半步长 BE 组合方法后，损耗降至约 2 $\mu$J（消除率 > 99%）。核心改进在于利用 BE 的 L-稳定性历史项只依赖前一瞬间电感电流的特性，避免了梯形法 $R(z) \to -1$ 导致的持续振荡。
 
-| 方法 | 用途 | 边界 |
-|------|------|------|
-| 零阶保持 | 实时或采样保持接口 | 引入延迟，可能放大接口误差 |
-| 线性插值 | 过零定位、慢到快同步 | 仅利用端点；不保证导数连续 |
-| 多项式或 Hermite 插值 | 需要导数或步内点的高阶重构 | 对噪声、非连续点和外推更敏感 |
-| 密集输出插值 | 利用积分器内部阶段或矩阵指数中间点 | 需要积分方法本身提供可信步内状态 |
-| 外推预测 | 通信延迟补偿或预测校正 | 在开关、故障和强耦合接口处需严格稳定性检查 |
+### 案例 2：多速率接口三次样条预测（Shu 2017）
 
-## 适用边界与失败模式
+场景：大型交流电网（步长 $h_{ac}$）与 MMC-MTDC（步长 $h = h_{ac}/n$）的协同仿真。速率比 $n = 10$--$20$。接口电压采用滑动窗口三次样条预测 + 逐步校正，接口偏差 < 0.2%；诺顿电流算术平均更新，混叠误差 < 0.5%。整体计算效率提升约 3 倍。
 
-- 插值不能修复错误的物理模型或过大的仿真步长；它只在已有离散数据可信时构造中间值。
-- 对不连续事件，跨越事件前后直接做高阶插值可能产生伪振荡。
-- 外推不应被当作插值的无风险替代；在强耦合接口中可能引入能量或相位误差。
-- 开关事件定位后若不重算历史源，可能出现电流截断、虚拟损耗或非特征谐波。
-- 插值阶数越高不必然越好；导数信息、步内阶段值和事件光滑性必须与算法假设匹配。
+### 案例 3：矩阵指数密集输出插值（Li 2020）
 
-## 代表性来源
+场景：VSC-HVDC 系统高频 PWM 开关仿真。传统 EMTP/PSCAD 在开关事件处全局误差从 $O(h^2)$ 退化至 $O(h)$；矩阵指数求解器结合密集输出，使高阶插值无需额外计算，全局精度稳定保持 $O(h^2)$。三阶求解器局部截断误差 $O(h^3)$，两种求解器均 L 稳定（阻尼比 > 0.95）。
 
-| 来源 | 支撑内容 | 证据边界 |
-|------|----------|----------|
-| [[interpolation-for-power-electronic-circuit-simulation-revisited-with-matrix-expo]] | 矩阵指数和密集输出可为开关事件插值提供步内状态，强调积分器与插值公式匹配 | 当前证据不支持固定误差百分比、速度提升或实时能力断言 |
-| [[stability-evaluation-of-interpolation-extrapolation-and-numerical-oscillation-da]] | 线性插值和 CDA 可等效为扩展切换状态，并在严格无源条件下得到稳定性充分条件 | 充分条件不等同于任意开关系统都稳定，也不评价效率 |
-| [[stability-assessment-of-multi-rate-electromagnetic-transient-simulations]] | 多速率接口的上采样、下采样、插值和外推会影响整体离散稳定性 | 理论边界主要是 LTI、整数步长比和特定接口规则 |
-| [[a-multirate-emt-co-simulation-of-large-ac-and-mmc-based-mtdc-systems]] | 多速率 MMC 与大电网仿真需要接口同步和边界变量处理 | 结论应限定在原文分区和测试系统 |
-| [[a-parallel-multi-rate-electromagnetic-transient-simulation-algorithm-based-on-ne]] | 并行多速率 EMT 把插值作为子网络接口协调的一部分 | 不等同于所有并行分区都稳定 |
+### 案例 4：控制-电力同步插值（Wang 2025）
 
-## 与相关页面的关系
+场景：VSC 换流器中 PI 控制器与 RLC 滤波器的联合仿真。传统分离求解存在一步接口延迟，可能引起数值不稳定。Sylvester 变换降阶同步插值消除延迟，特征值平移（$\lambda \sim 10^{-4}$）处理重复特征值问题。
 
-- [[multirate-method]] 使用插值处理快慢步长之间的接口。
-- [[numerical-integration]] 决定是否有可靠步内状态可供插值。
-- [[stiff-system-handling]] 处理插值定位后可能仍存在的突变和数值振荡。
-- [[fixed-admittance]] 常与插值配合，以减少开关矩阵重构同时控制状态误差。
-- [[switch-modeling]] 说明开关模型本身如何定义触发、导通和关断状态。
-- [[voltage-interpolation]] 是电压变量插值的更窄页面。
+## 7. 延伸阅读
 
-## 来源论文
-
-| 论文 | 年份 |
-|------|------|
-| [[耦合长线电磁暂态分析的扩展bergeron模型|耦合长线电磁暂态分析的扩展Bergeron模型]] | 1996 |
-| [[transmission-line-model-for-variable-step-size-simulation-algorithms|Transmission line model for variable step size simulation al]] | 1999 |
-| [[suppression-of-numerical-oscillations-in-the-emtp-power-systems-power-systems-ie|Suppression of numerical oscillations in the EMTP power syst]] | 2004 |
-| [[电力系统机电暂态和电磁暂态混合仿真程序设计和实现|电力系统机电暂态和电磁暂态混合仿真程序设计和实现]] | 2006 |
-| [[第29-卷-第34-期-中-国-电-机-工-程-学-报-vol29-no34-dec-5-2009|考虑任意重事件发生的多步变步长电磁暂态仿真算法]] | 2009 |
-| [[模块化多电平换流器戴维南等效整体建模方法|模块化多电平换流器戴维南等效整体建模方法]] | 2015 |
-| [[stability-evaluation-of-interpolation-extrapolation-and-numerical-oscillation-da|Stability Evaluation of Interpolation, Extrapolation, and Nu]] | 2020 |
-| [[大规模电力电子设备接入的电力系统混合仿真接口技术综述|大规模电力电子设备接入的电力系统混合仿真接口技术综述]] | 2022 |
-| [[study-of-a-numerical-integration-method-using-the-compact-scheme-for-electromagn|Study of a numerical integration method using the compact sc]] | 2023 |
-| [[switch-averaged-frequency-domain-simulation-of-photovoltaic-systems|Switch-Averaged Frequency Domain Simulation of Photovoltaic ]] | 2023 |
-| [[电力系统数字混合仿真技术综述及展望|电力系统数字混合仿真技术综述及展望]] | 2023 |
-| [[新能源电力系统细粒度并行与多速率电磁暂态仿真|新能源电力系统细粒度并行与多速率电磁暂态仿真]] | 2024 |
-| [[reduced-order-and-simultaneous-solution-of-power-and-control-system-equations-in|Reduced-order and simultaneous solution of power and control]] | 2025 |
-| [[stability-assessment-of-multi-rate-electromagnetic-transient-simulations|Stability Assessment of Multi-Rate Electromagnetic Transient]] | 2025 |
-| [[universal-decoupled-equivalent-circuit-models-of-solid-state-transformer-for-acc|Universal Decoupled Equivalent Circuit Models of Solid-State]] | 2025 |
+- [[multirate-method]]：多速率仿真中插值作为接口同步的核心工具
+- [[numerical-oscillation-suppression]]：事件定位后的数值振荡抑制策略，含 CDA 和半步 BE
+- [[companion-circuit]]：伴随电路模型，插值后历史项重算的数学基础
+- [[stiff-system-handling]]：刚性系统中积分器选择对插值效果的影响
+- [[numerical-integration]]：积分方法决定是否有可靠步内状态可供插值
+- [[fixed-admittance]]：常与插值配合减少开关矩阵重构
+- [[switch-modeling]]：开关模型定义触发、导通和关断条件

@@ -59,7 +59,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/Li 等 - 2021 - High Frequency Stabi
 ## 使用的方法
 
 - [[state-space-method|状态空间法]]
-- [[参与因子分析|参与因子分析]]
+- [[eigenvalue-analysis|参与因子分析]]
 - 根轨迹法
 - Pade近似
 - 多π模型
@@ -69,9 +69,9 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/Li 等 - 2021 - High Frequency Stabi
 ## 涉及的模型
 
 - [[mmc-model|MMC]]
-- [[交流输电线路|交流输电线路]]
+- [[ac-transmission-line|交流输电线路]]
 - [[phase-locked-loop|锁相环]]
-- [[环流抑制控制器|环流抑制控制器]]
+- [[circulating-current-suppression|环流抑制控制器]]
 - 交流系统
 
 ## 相关主题

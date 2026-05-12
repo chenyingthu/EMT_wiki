@@ -65,7 +65,7 @@ sources: ["EMT_Doc/10/Marthi 等 - 2024 - Benchmark High-Fidelity EMT Models for
 - 多阶离散化
 - 混合离散化
 - [[multirate-method|多速率仿真]]
-- [[lu分解|LU分解]]
+- [[sparse-matrix-solver|LU分解]]
 
 ## 涉及的模型
 

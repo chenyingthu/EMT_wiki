@@ -60,9 +60,9 @@ sources: ["EMT_Doc/27&28/New Compact White-Box Transformer Model for the Calcula
 
 - [[vector-fitting|矢量拟合]]
 - [[partial-fraction-expansion|部分分式展开]]
-- [[奇异值分解|奇异值分解]]
+- [[low-rank-solver|奇异值分解]]
 - 低秩矩阵分解
-- [[有限元法|有限元法]]
+- [[fem-simulation|有限元法]]
 - 白盒等效电路建模
 
 ## 涉及的模型

@@ -59,7 +59,7 @@ sources: ["EMT_Doc/22/Berger 等 - 2018 - Hybrid Average Modeling of Three-Phase
 ## 使用的方法
 
 - 状态空间平均法(SSA)
-- [[广义状态空间平均法-gssa|广义状态空间平均法(GSSA)]]
+- [[state-space-average-method|广义状态空间平均法(GSSA)]]
 - [[dynamic-phasor|动态相量法]]
 - 混合平均建模
 - 开关级时域仿真

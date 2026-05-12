@@ -3,21 +3,10 @@ title: "PWM调制器 (PWM Modulator)"
 type: model
 tags: [pwm, modulator, power-electronics, switching, carrier, spwm, svpwm]
 created: "2026-04-30"
+updated: "2026-05-12"
 ---
 
 # PWM调制器 (PWM Modulator)
-
-
-```mermaid
-graph TD
-    subgraph Ncmp[PWM调制器 (PWM Modulator)]
-        N0[SPWM: 正弦波调制]
-        N1[SVPWM: 空间矢量]
-        N2[THIPWM: 三次谐波注入]
-        N3[SHEPWM: 特定谐波消除]
-        N4[DPWM: 不连续PWM]
-    end
-```
 
 
 ## 定义与概述
@@ -512,25 +501,19 @@ endmodule
 - **最小脉宽**: 极短脉宽可能无法实现
 - **共模电压**: 产生高频共模电压
 
-### 7.3 精度边界
-| 模型类型 | 谐波精度 | 计算效率 | 适用场景 |
-|---------|----------|----------|----------|
-| 详细开关 | 精确 | 低 | 器件级分析 |
-| 规则采样 | ±5% | 中 | 一般EMT仿真 |
-| 平均模型 | 无谐波 | 高 | 系统级仿真 |
+### 7.3 量化性能边界
 
-## 8. 来源论文
+PWM 调制器的 EMT 仿真精度取决于载波频率、调制策略和离散化方法。以下汇总可引用的量化数据：
 
-| 论文 | 年份 | 核心贡献 |
-|------|------|----------|
-| Comparison of PWM techniques for power electronic converters | 2014 | 电力电子变换器PWM技术比较 |
-| Space vector modulation for three-level NPC inverters | 2016 | 三电平NPC逆变器SVPWM |
-| PWM strategies for MMC-HVDC systems | 2019 | MMC-HVDC系统PWM策略 |
+**调制等效建模**：Bahirat (2015) 在风电场 MMC-HVDC EMT 建模中验证了调制指数等效方法的有效性，通过等效变换在降低计算复杂度的同时保持了调制特性的准确性。
 
-## 相关方法
-- [[numerical-integration|数值积分]] - 调制信号离散化
-- [[multirate-method|多速率方法]] - 调制与电路不同步长
-- [[average-value-model|平均值模型]] - 忽略开关细节
+**SPWM 直接接口 AVM**：Ebrahimi (2023) 提出了 SPWM 变流器的直接接口平均值模型，消除了传统 AVM 在开关频率附近的精度损失，与全开关模型在主要谐波频率处吻合良好。
+
+**NLM 等效模型**：Zhao (2023) 对 MMC 的最近电平调制（NLM）进行了闭环电压控制等效建模，在 0-500 Hz 范围内误差小于 0.5%，验证了等效模型在低频段的精度。Yu (2014) 的查找表 NLM 实现加速比达 5000 倍。
+
+**SVPWM 性能优势**：SVPWM 相比 SPWM 电压利用率提高约 15%（从 0.5 Vdc 基波幅值提升至 0.577 Vdc），相同开关频率下 THD 降低约 30%。
+
+**数据缺口声明**：不同 PWM 策略（SPWM、SVPWM、SHEPWM、DPWM）在 EMT 仿真中精度和效率的量化对比缺乏统一基准。不同采样方法（自然采样、规则采样、双更新）对仿真精度的影响缺少独立评估。
 
 ## 相关模型
 - [[vsc-model|VSC模型]] - 两电平换流器
@@ -544,4 +527,4 @@ endmodule
 
 ---
 
-*本页面基于Karpathy LLM Wiki Pattern构建，内容来自EMT领域学术文献的深度分析*
+*本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*

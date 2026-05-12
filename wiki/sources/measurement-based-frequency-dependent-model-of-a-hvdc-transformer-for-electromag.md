@@ -62,7 +62,7 @@ sources: ["EMT_Doc/26/Gustavsen和Vernay - 2020 - Measurement-based frequency-de
 - 特征值缩放
 - 模态揭示变换
 - [[vector-fitting|矢量拟合]]
-- [[黑盒建模|黑盒建模]]
+- [[fdne-model|黑盒建模]]
 
 ## 涉及的模型
 

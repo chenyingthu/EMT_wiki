@@ -68,7 +68,7 @@ sources: ["EMT_Doc/26/Ramirez 等 - 2003 - Modeling nonuniform transmission line
 ## 涉及的模型
 
 - 非均匀输电线路
-- [[多相输电线路|多相输电线路]]
+- [[ac-transmission-line|多相输电线路]]
 - 杆塔模型
 - 对称三相线路
 
@@ -78,7 +78,7 @@ sources: ["EMT_Doc/26/Ramirez 等 - 2003 - Modeling nonuniform transmission line
 - [[frequency-dependent-modeling|频率相关建模]]
 - 非均匀线路建模
 - [[emt-simulation|时域仿真]]
-- [[输电线路参数计算|输电线路参数计算]]
+- [[frequency-dependent-modeling|输电线路参数计算]]
 
 ## 主要发现
 

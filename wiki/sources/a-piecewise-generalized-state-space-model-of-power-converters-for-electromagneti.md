@@ -2,10 +2,11 @@
 title: "A Piecewise Generalized State Space Model of Power Converters for Electromagnetic Transient Efficien"
 type: source
 year: 2022
+tags: [piecewise, generalized, state, space, power]
+
 journal: "中国电机工程学报"
 created: "2026-04-13"
-sources: ["EMT_Doc/03/Wang 等 - 2019 - A Piecewise Generalized State Space Model of Power Converters for Electromagnetic Transient Efficien.pdf"]
----
+sources: ["EMT_Doc/03/Wang 等 - 2019 - A Piecewise Generalized State Space Model of Power Converters for Electromagnetic Transient Efficien.pdf"]---
 
 # A Piecewise Generalized State Space Model of Power Converters for Electromagnetic Transient Efficien
 
@@ -57,13 +58,13 @@ sources: ["EMT_Doc/03/Wang 等 - 2019 - A Piecewise Generalized State Space Mode
 
 - 广义状态空间平均法
 - 分段状态空间平均法
-- [[傅里叶级数展开|傅里叶级数展开]]
+- [[discrete-fourier-transform|傅里叶级数展开]]
 - 变步长建模
 - 多时间尺度建模
 
 ## 涉及的模型
 
-- [[并网变流器|并网变流器]]
+- [[gfl-inverter-model|并网变流器]]
 - 三相PWM逆变器
 - [[pv-power-plant|光伏系统]]
 - 变流器开关详细模型
@@ -72,7 +73,7 @@ sources: ["EMT_Doc/03/Wang 等 - 2019 - A Piecewise Generalized State Space Mode
 
 - [[emt-simulation|电磁暂态仿真]]
 - [[renewable-energy-integration|新能源并网]]
-- [[变流器建模|变流器建模]]
+- [[power-electronic-device-modeling|变流器建模]]
 - 高效仿真
 - [[harmonic-analysis-methods|谐波分析]]
 

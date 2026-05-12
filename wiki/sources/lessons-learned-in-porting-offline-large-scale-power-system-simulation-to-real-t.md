@@ -66,7 +66,7 @@ sources: ["EMT_Doc/25/Le-Huy 等 - 2023 - Lessons learned in porting offline lar
 
 ## 涉及的模型
 
-- [[大规模电力系统|大规模电力系统]]
+- [[power-system-network|大规模电力系统]]
 - [[vsc-hvdc|VSC-HVDC]]
 - 无功补偿装置
 - 继电保护与控制设备

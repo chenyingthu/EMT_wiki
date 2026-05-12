@@ -68,14 +68,14 @@ sources: ["EMT_Doc/23/de Lima和Portela - 2007 - Inclusion of Frequency-Dependen
 
 - [[transmission-line-model|架空输电线路]]
 - [[cable-model|地下电缆]]
-- [[大地返回阻抗模型|大地返回阻抗模型]]
+- [[frequency-dependent-modeling|大地返回阻抗模型]]
 - [[grounding-system-model|频变土壤模型]]
 
 ## 相关主题
 
 - [[frequency-dependent-modeling|频率相关建模]]
 - [[transmission-line-model|输电线路建模]]
-- [[大地返回阻抗|大地返回阻抗]]
+- [[frequency-dependent-modeling|大地返回阻抗]]
 - [[emt-simulation|电磁暂态分析]]
 - 频域与时域分析
 

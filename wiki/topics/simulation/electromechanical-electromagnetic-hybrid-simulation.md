@@ -18,6 +18,21 @@ graph TD
 ```
 
 
+## EMT中的作用
+
+机电-电磁暂态混合仿真 (Electromechanical-Electromagnetic Hybrid Simulation) 在EMT仿真中的核心作用：
+
+- **研究范围**：界定机电-电磁暂态混合仿真 (Electromechanical-Electromagnetic Hybrid Simulation)在EMT仿真中的研究边界和应用场景
+- **分析方法**：提供机电-电磁暂态混合仿真 (Electromechanical-Electromagnetic Hybrid Simulation)相关的EMT分析方法和工具
+- **系统影响**：分析机电-电磁暂态混合仿真 (Electromechanical-Electromagnetic Hybrid Simulation)对电力系统电磁暂态特性的影响
+- **仿真验证**：为机电-电磁暂态混合仿真 (Electromechanical-Electromagnetic Hybrid Simulation)相关研究提供仿真验证框架
+## 形式化表达
+
+从EMT仿真角度，机电-电磁暂态混合仿真 (Electromechanical-Electromagnetic Hybrid Simulation)可形式化表达为：
+
+$$
+\text{待补充：机电-电磁暂态混合仿真 (Electromechanical-Electromagnetic Hybrid Simulation)的数学形式化描述}
+$$
 ## 核心原理详解
 
 ### 技术概述

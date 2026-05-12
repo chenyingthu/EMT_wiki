@@ -68,7 +68,7 @@ sources: ["EMT_Doc/31/Bruned 等 - 2025 - Partial Refactorization Techniques for
 
 ## 涉及的模型
 
-- [[伴随电路模型|伴随电路模型]]
+- [[companion-circuit|伴随电路模型]]
 - 非线性元件线性化诺顿等效模型
 - 电力电子开关模型
 

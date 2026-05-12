@@ -60,7 +60,7 @@ Analysis of low frequency interactions of DFIG wind turbine systems in Aramis S.
 
 - [[state-space-method|状态空间建模]]
 - [[modal-analysis|模态分析]]
-- [[参与因子分析|参与因子分析]]
+- [[eigenvalue-analysis|参与因子分析]]
 - [[sensitivity-analysis|灵敏度分析]]
 - 组合扫描技术
 - [[emt-simulation|电磁暂态仿真]]
@@ -77,7 +77,7 @@ Analysis of low frequency interactions of DFIG wind turbine systems in Aramis S.
 
 ## 相关主题
 
-- [[次同步谐振|次同步谐振]]
+- [[wideband-oscillation-stability|次同步谐振]]
 - 次同步控制相互作用
 - [[wind-farm-modeling|风电场建模]]
 - 串补电网

@@ -76,7 +76,7 @@ sources: ["EMT_Doc/30/Zhou和Dinavahi - 2014 - Parallel Massive-Thread Electroma
 
 - [[emt-simulation|电磁暂态仿真]]
 - [[gpu-accelerated-simulation|GPU并行计算]]
-- [[大规模电网建模|大规模电网建模]]
+- [[electromechanical-electromagnetic-hybrid-simulation|大规模电网建模]]
 - [[emt-simulation|离线仿真]]
 - 稀疏网络求解
 

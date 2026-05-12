@@ -61,7 +61,7 @@ sources: ["EMT_Doc/32/j.epsr.2021.107326.pdf.pdf"]
 - RMS-EMT联合仿真
 - [[multirate-method|多速率仿真]]
 - [[transmission-line-model|Bergeron线路模型]]
-- [[曲线拟合|曲线拟合]]
+- [[curve-fitting|曲线拟合]]
 - 相量波形转换
 - [[norton-equivalent|诺顿等效]]
 - [[hil-simulation|硬件在环]]

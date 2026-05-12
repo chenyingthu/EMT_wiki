@@ -700,6 +700,21 @@ dλ_q/dt = V_q - R_s × I_q - ω_e × λ_d
 
 *本页面最后更新：2026-05-03*
 
+## EMT中的作用
+
+FPGA 实时仿真 (FPGA Real-Time Simulation) 在EMT仿真中的核心作用：
+
+- **研究范围**：界定FPGA 实时仿真 (FPGA Real-Time Simulation)在EMT仿真中的研究边界和应用场景
+- **分析方法**：提供FPGA 实时仿真 (FPGA Real-Time Simulation)相关的EMT分析方法和工具
+- **系统影响**：分析FPGA 实时仿真 (FPGA Real-Time Simulation)对电力系统电磁暂态特性的影响
+- **仿真验证**：为FPGA 实时仿真 (FPGA Real-Time Simulation)相关研究提供仿真验证框架
+## 形式化表达
+
+从EMT仿真角度，FPGA 实时仿真 (FPGA Real-Time Simulation)可形式化表达为：
+
+$$
+\text{待补充：FPGA 实时仿真 (FPGA Real-Time Simulation)的数学形式化描述}
+$$
 ## 来源论文
 
 | 论文 | 年份 |

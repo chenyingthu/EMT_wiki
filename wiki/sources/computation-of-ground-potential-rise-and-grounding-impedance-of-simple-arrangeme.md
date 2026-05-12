@@ -60,8 +60,8 @@ sources: ["EMT_Doc/11/De Araújo 等 - 2021 - Computation of ground potential ri
 
 - [[vector-fitting|矩量法(MoM)]]
 - 分层介质格林函数
-- [[矢量拟合-vf|矢量拟合(VF)]]
-- [[递归卷积法|递归卷积法]]
+- [[vector-fitting|矢量拟合(VF)]]
+- [[numerical-integration|递归卷积法]]
 - 全波电磁求解
 - 等效电路综合
 
@@ -80,7 +80,7 @@ sources: ["EMT_Doc/11/De Araújo 等 - 2021 - Computation of ground potential ri
 - [[ground-potential-rise|地电位升]]
 - [[frequency-dependent-modeling|频率相关建模]]
 - 分层土壤
-- [[雷击暂态分析|雷击暂态分析]]
+- [[lightning-transient-analysis|雷击暂态分析]]
 
 ## 主要发现
 

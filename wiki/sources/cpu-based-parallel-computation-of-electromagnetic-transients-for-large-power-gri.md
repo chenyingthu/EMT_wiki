@@ -67,11 +67,11 @@ CPU based parallel computation of electromagnetic transients for large A. Abusal
 
 ## 涉及的模型
 
-- [[分布参数输电线路|分布参数输电线路]]
+- [[transmission-line-model|分布参数输电线路]]
 - [[cable-model|电缆模型]]
 - 非线性开关模型
 - 风电机组
-- [[大规模交流电网|大规模交流电网]]
+- [[power-system-network|大规模交流电网]]
 
 ## 相关主题
 

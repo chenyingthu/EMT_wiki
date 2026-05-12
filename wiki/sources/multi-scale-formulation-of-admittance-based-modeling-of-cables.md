@@ -63,7 +63,7 @@ sources: ["EMT_Doc/27&28/Multi-scale formulation of admittance-based modeling of
 - 频率自适应暂态仿真(FAST)
 - 折叠线等效变换
 - 变步长算法
-- [[解析信号|解析信号]]
+- [[dynamic-phasor|解析信号]]
 
 ## 涉及的模型
 

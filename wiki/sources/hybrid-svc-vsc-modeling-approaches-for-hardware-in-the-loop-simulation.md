@@ -70,7 +70,7 @@ sources: ["EMT_Doc/22/Le-Huy和Tremblay - 2023 - Hybrid SVC-VSC modeling approac
 - [[vsc-model|VSC]]
 - [[mmc-model|MMC]]
 - [[tsc|TSC]]
-- [[耦合变压器|耦合变压器]]
+- [[transformer-model|耦合变压器]]
 - 控制保护系统
 
 ## 相关主题

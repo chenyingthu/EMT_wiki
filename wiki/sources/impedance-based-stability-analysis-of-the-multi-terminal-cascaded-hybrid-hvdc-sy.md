@@ -75,7 +75,7 @@ sources: ["EMT_Doc/22/Xu 等 - 2025 - Impedance Based Stability Analysis of the 
 
 ## 相关主题
 
-- [[阻抗稳定性分析|阻抗稳定性分析]]
+- [[impedance-stability|阻抗稳定性分析]]
 - 多端混合直流输电
 - 振荡传播机理
 - 阻抗重塑

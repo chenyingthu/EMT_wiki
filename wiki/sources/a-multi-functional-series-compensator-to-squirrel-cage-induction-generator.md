@@ -2,10 +2,11 @@
 title: "A multi-functional series compensator to squirrel cage induction generator"
 type: source
 year: 2015
+tags: [multi, functional, series, compensator, squirrel]
+
 journal: "OCR-PDF"
 created: "2026-04-13"
-sources: ["EMT_Doc/02/Jiang 等 - 2015 - A multi-functional series compensator to squirrel cage induction generator.pdf"]
----
+sources: ["EMT_Doc/02/Jiang 等 - 2015 - A multi-functional series compensator to squirrel cage induction generator.pdf"]---
 
 # A multi-functional series compensator to squirrel cage induction generator
 
@@ -66,7 +67,7 @@ sources: ["EMT_Doc/02/Jiang 等 - 2015 - A multi-functional series compensator t
 - 鼠笼异步发电机
 - 多功能串联补偿器
 - 串联变压器
-- [[lc滤波器|LC滤波器]]
+- [[emi-filter-model|LC滤波器]]
 - 晶闸管支路
 - 动态电压恢复器
 

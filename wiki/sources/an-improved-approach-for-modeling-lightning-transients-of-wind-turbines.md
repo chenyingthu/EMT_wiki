@@ -74,7 +74,7 @@ sources: ["EMT_Doc/07&08/An improved approach for modeling lightning transients 
 
 ## 相关主题
 
-- [[雷击暂态分析|雷击暂态分析]]
+- [[lightning-transient-analysis|雷击暂态分析]]
 - 风机暂态建模
 - 接地系统高频建模
 - 多导体系统电磁暂态

@@ -68,7 +68,7 @@ sources: ["EMT_Doc/17/Chen 等 - 2020 - Electromechanical-electromagnetic Hybrid
 
 - [[vsc-hvdc|VSC-HVDC]]
 - [[transformer-model|换流变压器]]
-- [[交流滤波器|交流滤波器]]
+- [[emi-filter-model|交流滤波器]]
 - 六脉冲换流器
 - [[transmission-line-model|直流输电线路]]
 - 频率相关线路模型
@@ -78,7 +78,7 @@ sources: ["EMT_Doc/17/Chen 等 - 2020 - Electromechanical-electromagnetic Hybrid
 
 - [[electromechanical-electromagnetic-hybrid-simulation|机电-电磁混合仿真]]
 - 大规模交直流电网
-- [[特高压直流输电|特高压直流输电]]
+- [[vsc-hvdc|特高压直流输电]]
 - 批量仿真计算
 - 运行工况初始化
 - 换相失败分析

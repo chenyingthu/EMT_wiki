@@ -58,7 +58,7 @@ sources: ["EMT_Doc/38/Hu 等 - 2025 - Transient Electromagnetic Power Compensati
 ## 使用的方法
 
 - 状态空间方程分析
-- [[传递函数分析|传递函数分析]]
+- [[small-signal-analysis|传递函数分析]]
 - 暂态电磁功率补偿控制
 - 自适应惯量控制
 

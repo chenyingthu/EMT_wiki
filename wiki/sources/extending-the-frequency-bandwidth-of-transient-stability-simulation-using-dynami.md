@@ -73,7 +73,7 @@ sources: ["EMT_Doc/18/Kulasza 等 - 2022 - Extending the Frequency Bandwidth of 
 
 ## 相关主题
 
-- [[暂态稳定仿真|暂态稳定仿真]]
+- [[electromechanical-model|暂态稳定仿真]]
 - 频带扩展
 - 次同步振荡分析
 - [[large-scale-grid-simulation|大规模电网仿真]]

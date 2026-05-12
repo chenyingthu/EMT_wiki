@@ -70,8 +70,8 @@ sources: ["EMT_Doc/25/Zhou 等 - 2021 - Large-scale hybrid real time simulation 
 - [[lcc-model|LCC]]
 - [[transformer-model|换流变压器]]
 - [[synchronous-machine-model|同步调相机]]
-- [[频率相关输电线路|频率相关输电线路]]
-- [[交流滤波器|交流滤波器]]
+- [[frequency-dependent-modeling|频率相关输电线路]]
+- [[emi-filter-model|交流滤波器]]
 - [[synchronous-machine-model|同步发电机]]
 - [[vsc-hvdc|VSC-HVDC]]
 

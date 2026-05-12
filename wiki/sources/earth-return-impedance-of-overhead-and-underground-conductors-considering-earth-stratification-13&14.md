@@ -68,14 +68,14 @@ sources: ["EMT_Doc/13&14/files/TPWRS.2008.923816.pdf.pdf"]
 
 - [[transmission-line-model|架空输电线路]]
 - [[cable-model|地下电缆]]
-- [[多层大地模型|多层大地模型]]
+- [[frequency-dependent-modeling|多层大地模型]]
 - 单芯电缆
 
 ## 相关主题
 
 - [[emt-simulation|电磁暂态分析]]
 - [[transmission-line-model|输电线路建模]]
-- [[大地返回阻抗|大地返回阻抗]]
+- [[frequency-dependent-modeling|大地返回阻抗]]
 - 非均匀土壤建模
 - 频率相关参数
 

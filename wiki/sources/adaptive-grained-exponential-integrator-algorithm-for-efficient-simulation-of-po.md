@@ -72,7 +72,7 @@ sources: ["EMT_Doc/05/Paull 等 - 2025 - Adaptive-Grained Exponential Integrator
 
 - [[emt-simulation|电磁暂态仿真]]
 - 电力电子系统仿真
-- [[数值积分算法|数值积分算法]]
+- [[numerical-integration|数值积分算法]]
 - 开关事件处理
 - 刚性系统求解
 

@@ -75,7 +75,7 @@ sources: ["EMT_Doc/09/Hong 等 - 2022 - Average-Value Modeling of Line-Commutate
 ## 相关主题
 
 - [[emt-simulation|电磁暂态仿真]]
-- [[换相失败|换相失败]]
+- [[commutation-failure|换相失败]]
 - 传统高压直流输电
 - [[large-scale-system-simulation|系统级仿真]]
 - 交流电压跌落

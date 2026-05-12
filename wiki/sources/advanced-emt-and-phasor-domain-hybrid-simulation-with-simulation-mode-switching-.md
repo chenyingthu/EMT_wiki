@@ -69,7 +69,7 @@ sources: ["EMT_Doc/06/Huang和Vittal - 2018 - Advanced EMT and Phasor-Domain Hyb
 - 输配电网络
 - [[distributed-generation|分布式电源]]
 - [[power-electronics|电力电子变换器]]
-- [[单相感应电机|单相感应电机]]
+- [[single-phase-induction-machine|单相感应电机]]
 - EMT详细模型
 
 ## 相关主题

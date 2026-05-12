@@ -2,10 +2,11 @@
 title: "A VSC-HVDC Model with Reduced Computational Intensity"
 type: source
 year: 2012
+tags: [hvdc, reduced, computational, intensity]
+
 journal: "IEEE Power & Energy Society General Meeting"
 created: "2026-04-13"
-sources: ["EMT_Doc/04/pesgm.2012.6345135.pdf.pdf"]
----
+sources: ["EMT_Doc/04/pesgm.2012.6345135.pdf.pdf"]---
 
 # A VSC-HVDC Model with Reduced Computational Intensity
 

@@ -2,10 +2,11 @@
 title: "A Transformer Model With Hysteresis Characteristics for Electromagnetic Transients Based on PSCADEM"
 type: source
 year: 2022
+tags: [transformer, hysteresis, characteristics, electromagnetic, transients]
+
 journal: "中国电机工程学报"
 created: "2026-04-13"
-sources: ["EMT_Doc/04/Wu 等 - 2017 - A Transformer Model With Hysteresis Characteristics for Electromagnetic Transients Based on PSCADEM.pdf"]
----
+sources: ["EMT_Doc/04/Wu 等 - 2017 - A Transformer Model With Hysteresis Characteristics for Electromagnetic Transients Based on PSCADEM.pdf"]---
 
 # A Transformer Model With Hysteresis Characteristics for Electromagnetic Transients Based on PSCADEM
 
@@ -63,7 +64,7 @@ sources: ["EMT_Doc/04/Wu 等 - 2017 - A Transformer Model With Hysteresis Charac
 
 ## 涉及的模型
 
-- [[三相变压器|三相变压器]]
+- [[transformer-model|三相变压器]]
 - [[transformer-model|换流变压器]]
 - [[transformer-model|非线性电感]]
 - BCTRAN模型
@@ -72,7 +73,7 @@ sources: ["EMT_Doc/04/Wu 等 - 2017 - A Transformer Model With Hysteresis Charac
 ## 相关主题
 
 - [[emt-simulation|电磁暂态仿真]]
-- [[励磁涌流|励磁涌流]]
+- [[transformer-model|励磁涌流]]
 - 磁滞特性建模
 - [[vsc-hvdc|高压直流输电]]
 - [[harmonic-analysis-methods|谐波分析]]

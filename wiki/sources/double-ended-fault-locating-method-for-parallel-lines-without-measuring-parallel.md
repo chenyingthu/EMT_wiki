@@ -74,7 +74,7 @@ sources: ["EMT_Doc/13&14/files/Double-Ended_Fault-Locating_Method_for_Parallel_L
 
 ## 相关主题
 
-- [[故障测距|故障测距]]
+- [[parameter-identification|故障测距]]
 - 零序互感耦合
 - [[protection-system|继电保护]]
 - [[transmission-line-model|输电线路建模]]

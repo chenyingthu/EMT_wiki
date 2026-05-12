@@ -59,7 +59,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/tpwrd.2021.3049595.pdf-1.pdf"]
 ## 使用的方法
 
 - 精确解析法
-- [[等效均匀大地法-ehem|等效均匀大地法(EHEM)]]
+- [[frequency-dependent-modeling|等效均匀大地法(EHEM)]]
 - 矩量法-表面导纳算子(MoM-SO)
 - 修正格林函数法
 - EMTP暂态仿真
@@ -67,7 +67,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/tpwrd.2021.3049595.pdf-1.pdf"]
 ## 涉及的模型
 
 - [[transmission-line-model|架空输电线路]]
-- [[多层大地模型|多层大地模型]]
+- [[frequency-dependent-modeling|多层大地模型]]
 - 大地返回阻抗/导纳模型
 
 ## 相关主题

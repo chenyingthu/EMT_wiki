@@ -58,7 +58,7 @@ Electromagnetic transient studies of large distribution systems using frequency 
 
 ## 使用的方法
 
-- [[频域分析法|频域分析法]]
+- [[frequency-scan|频域分析法]]
 - 多相节点分析
 - Kron降阶法
 - [[numerical-integration|数值拉普拉斯变换]]
@@ -66,7 +66,7 @@ Electromagnetic transient studies of large distribution systems using frequency 
 
 ## 涉及的模型
 
-- [[分布参数线路|分布参数线路]]
+- [[transmission-line-model|分布参数线路]]
 - 集中参数线路
 - [[transformer-model|变压器]]
 - [[circuit-breaker-model|断路器]]
@@ -77,7 +77,7 @@ Electromagnetic transient studies of large distribution systems using frequency 
 
 - [[emt-simulation|电磁暂态分析]]
 - 配电网建模
-- [[频域建模|频域建模]]
+- [[frequency-dependent-modeling|频域建模]]
 - [[network-equivalent|网络等值]]
 - 故障暂态分析
 - 开关操作仿真

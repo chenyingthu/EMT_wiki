@@ -73,7 +73,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/Chen 等 - 2023 - Faster-than-real-t
 
 
 - [[dfig-model|DFIG]]
-- [[异步电机|异步电机]]
+- [[induction-machine-model|异步电机]]
 - T型等效电路
 - 数字镜像IP核
 
@@ -83,7 +83,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/Chen 等 - 2023 - Faster-than-real-t
 
 - [[real-time-simulation|超实时仿真]]
 - [[parallel-computing|并行计算]]
-- [[fpga加速|FPGA加速]]
+- [[fpga-real-time-simulation|FPGA加速]]
 - [[emt-simulation|电磁暂态仿真]]
 - 数字孪生
 - [[wind-farm-modeling|风电场建模]]

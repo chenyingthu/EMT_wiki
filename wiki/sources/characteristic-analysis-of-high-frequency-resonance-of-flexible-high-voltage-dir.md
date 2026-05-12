@@ -69,16 +69,16 @@ sources: ["EMT_Doc/10/Guo 等 - 2020 - Characteristic Analysis of High-frequency
 
 - [[mmc-model|MMC]]
 - [[transformer-model|换流变压器]]
-- [[交流输电线路|交流输电线路]]
+- [[ac-transmission-line|交流输电线路]]
 - [[phase-locked-loop|锁相环]]
-- [[环流抑制控制器|环流抑制控制器]]
+- [[circulating-current-suppression|环流抑制控制器]]
 - 双闭环控制器
 
 ## 相关主题
 
 - [[vsc-model|VSC]]
 - 高频振荡
-- [[阻抗特性分析|阻抗特性分析]]
+- [[impedance-stability|阻抗特性分析]]
 - 系统稳定性
 - 阻尼控制
 - 电压前馈

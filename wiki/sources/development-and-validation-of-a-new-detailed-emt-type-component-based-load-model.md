@@ -69,7 +69,7 @@ sources: ["EMT_Doc/13&14/files/j.epsr.2021.107290.pdf.pdf"]
 - 开关电源(SMPS)
 - LED驱动电路
 - 三相感应电机
-- [[单相感应电机|单相感应电机]]
+- [[single-phase-induction-machine|单相感应电机]]
 - 变频驱动器(VSI)
 - 静态电阻负荷
 - 综合负荷模型

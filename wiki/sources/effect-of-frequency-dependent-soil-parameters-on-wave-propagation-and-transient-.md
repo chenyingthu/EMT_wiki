@@ -70,7 +70,7 @@ sources: ["EMT_Doc/13&14/files/j.ijepes.2020.106163.pdf.pdf"]
 - [[cross-bonded-cable|交叉互联电缆]]
 - [[grounding-system-model|频变土壤模型]]
 - 恒定土壤模型
-- [[大地返回阻抗模型|大地返回阻抗模型]]
+- [[frequency-dependent-modeling|大地返回阻抗模型]]
 
 ## 相关主题
 
@@ -78,8 +78,8 @@ sources: ["EMT_Doc/13&14/files/j.ijepes.2020.106163.pdf.pdf"]
 - [[transmission-line-model|波传播特性]]
 - [[emt-simulation|电磁暂态仿真]]
 - [[cable-model|地下电缆建模]]
-- [[大地返回参数计算|大地返回参数计算]]
-- [[浪涌分析|浪涌分析]]
+- [[frequency-dependent-modeling|大地返回参数计算]]
+- [[surge-arrester-model|浪涌分析]]
 
 ## 主要发现
 

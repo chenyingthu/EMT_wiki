@@ -71,7 +71,7 @@ sources: ["EMT_Doc/09/Fan和Miao - 2021 - Analytical model building for Type-3 w
 - [[dynamic-phasor|锁相环(PLL)]]
 - 转子侧变流器(RSC)
 - 网侧变流器(GSC)
-- [[串联补偿输电线路|串联补偿输电线路]]
+- [[transmission-line-model|串联补偿输电线路]]
 - 双质量轴系模型
 
 ## 相关主题

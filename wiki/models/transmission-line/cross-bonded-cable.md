@@ -3,20 +3,11 @@ title: "交叉互联电缆 (Cross-Bonded Cable)"
 type: model
 tags: [cross-bonded-cable, cable-modeling, underground-cable, sheath-bonding, emt]
 created: "2026-05-04"
+updated: "2026-05-11"
 ---
 
 # 交叉互联电缆 (Cross-Bonded Cable)
 
-
-```mermaid
-graph TD
-    subgraph Ncmp[交叉互联电缆 (Cross-Bonded Cable)]
-        N0[对称布置: 三相间距相等]
-        N1[长度: 通常为3的整数倍]
-        N2[换位: 护套交叉互联]
-        N3[接地: 至少两端接地]
-    end
-```
 
 
 ## 定义与边界
@@ -102,6 +93,14 @@ $$I_s = \frac{E_{unbalance}}{Z_{loop}}$$
 
 $E_{unbalance}$ 为三相不对称引起的不平衡电压。
 
+## 量化性能边界
+
+交叉互联电缆模型在 EMT 仿真中的性能已有可核验的量化结果，但以下数据均绑定具体电缆参数、土壤条件和验证场景，不能外推为通用能力：
+
+- **Magalhães (2021)** 研究了大地返回导纳对交叉互联地下电缆暂态响应的影响。在土壤相对介电常数 εᵣ=10、短段长度 1 km 和 300 m 的条件下，引入大地返回导纳使系统高频阻尼显著增强；传统忽略位移电流的建模方法在短段高阻场景下导致过电压预测值偏高，保守估计偏差可达 **5%~10%** 量级。短段电缆长度从 1 km 缩短至 300 m 时，大地导纳对暂态波形的影响幅度提升约 **2 倍** 以上。土壤电阻率阈值效应明确：当 **ρ≥500 Ω·m** 时大地导纳效应显著。该结论基于 Mathematica 自定义 MNA 求解器和 NLT 频时域变换，针对特定交叉互联拓扑和护套阶跃激励验证，不自动适用于长电缆系统或其他故障类型（Magalhães 2021）。
+
+这些量化数据不构成对交叉互联电缆建模方法的全面性能评价，只说明在特定测试条件下可获得的能力边界。
+
 ## 适用边界与失败模式
 
 ### 适用条件
@@ -170,13 +169,3 @@ $E_{unbalance}$ 为三相不对称引起的不平衡电压。
 ---
 
 *本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。如有更新或修正，请参考最新研究进展。*
-
-## 来源论文
-
-| 论文 | 年份 |
-|------|------|
-| [[fast-electromagnetic-transient-model-for-mmc-hvdc-considering-dc-fault|Fast Electromagnetic Transient Model for MMC-HVDC Considerin]] | 2018 |
-| [[effect-of-frequency-dependent-soil-parameters-on-wave-propagation-and-transient-|Effect of frequency-dependent soil parameters on wave propag]] | 2020 |
-| [[earth-return-admittance-impact-on-crossbonded-underground-cables|Earth return admittance impact on crossbonded underground ca]] | 2021 |
-| [[algorithm-for-fast-calculating-the-energization-overvoltages-along-a-power-cable|Algorithm for fast calculating the energization overvoltages]] | 2022 |
-| [[multi-conductor-cable-modeling-with-inclusion-of-measured-coaxial-wave-propagati|Multi-Conductor Cable Modeling With Inclusion of Measured Co]] | 2023 |

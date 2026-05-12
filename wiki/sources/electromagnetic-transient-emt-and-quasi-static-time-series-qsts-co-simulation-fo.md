@@ -71,13 +71,13 @@ Electromagnetic transient (EMT) and quasi static time series (QSTS) Co-simulatio
 - 电力电子发电机
 - IEEE 13节点测试馈线
 - 电能质量改善装置
-- [[戴维南等效网络|戴维南等效网络]]
+- [[thevenin-equivalent-model|戴维南等效网络]]
 
 ## 相关主题
 
 - [[co-simulation|混合仿真]]
 - 可再生能源并网
-- [[电能质量分析|电能质量分析]]
+- [[power-quality|电能质量分析]]
 - 配电网仿真
 - 高比例分布式电源
 

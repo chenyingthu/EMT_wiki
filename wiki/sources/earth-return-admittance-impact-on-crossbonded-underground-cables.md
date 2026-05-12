@@ -60,7 +60,7 @@ sources: ["EMT_Doc/13&14/files/j.epsr.2021.107351.pdf.pdf"]
 
 - 准TEM近似法
 - 闭式近似法
-- [[改进节点分析法|改进节点分析法]]
+- [[nodal-analysis|改进节点分析法]]
 - [[numerical-integration|数值拉普拉斯变换]]
 - 广义导纳矩阵求解
 
@@ -76,7 +76,7 @@ sources: ["EMT_Doc/13&14/files/j.epsr.2021.107351.pdf.pdf"]
 - [[emt-simulation|电磁暂态仿真]]
 - [[frequency-dependent-modeling|频率相关建模]]
 - 大地返回参数
-- [[暂态过电压分析|暂态过电压分析]]
+- [[lightning-transient-analysis|暂态过电压分析]]
 - 电缆交叉互联
 
 ## 主要发现

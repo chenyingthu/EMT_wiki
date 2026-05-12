@@ -60,7 +60,7 @@ sources: ["EMT_Doc/07&08/De Silva and Liu - 2023 - An Enhanced Method to Achieve
 
 - [[vector-fitting|矢量拟合]]
 - [[vector-fitting|有理函数逼近]]
-- [[递归卷积|递归卷积]]
+- [[numerical-integration|递归卷积]]
 - [[least-squares-method|最小二乘法]]
 - 直流校正
 - 加权拟合
@@ -69,7 +69,7 @@ sources: ["EMT_Doc/07&08/De Silva and Liu - 2023 - An Enhanced Method to Achieve
 ## 涉及的模型
 
 - [[transmission-line-model|通用线路模型(ULM)]]
-- [[频率相关输电线路模型|频率相关输电线路模型]]
+- [[frequency-dependent-modeling|频率相关输电线路模型]]
 - [[cable-model|地下电缆]]
 - [[transmission-line-model|架空线路]]
 - 高压直流输电线路
@@ -78,7 +78,7 @@ sources: ["EMT_Doc/07&08/De Silva and Liu - 2023 - An Enhanced Method to Achieve
 
 - [[emt-simulation|电磁暂态仿真]]
 - [[frequency-dependent-modeling|频率相关建模]]
-- [[曲线拟合|曲线拟合]]
+- [[curve-fitting|曲线拟合]]
 - [[vsc-hvdc|高压直流输电]]
 - 时域仿真稳定性
 - 直流响应校正

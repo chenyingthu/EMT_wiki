@@ -74,7 +74,7 @@ sources: ["EMT_Doc/17/Xiong 等 - 2020 - Electromechanical-electromagnetic trans
 - [[vsc-hvdc|VSC-HVDC]]
 - [[lcc-model|LCC]]
 - [[transformer-model|换流变压器]]
-- [[交直流滤波器|交直流滤波器]]
+- [[emi-filter-model|交直流滤波器]]
 - [[dc-rlc-filter|平波电抗器]]
 - [[transmission-line-model|直流输电线路]]
 - 500kV/1000kV交流电网

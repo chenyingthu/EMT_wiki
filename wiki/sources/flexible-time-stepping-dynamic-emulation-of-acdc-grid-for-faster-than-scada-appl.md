@@ -77,7 +77,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/tpwrs.2020.3038850.pdf.pdf"]
 
 - 超SCADA仿真
 - [[real-time-simulation|实时仿真]]
-- [[硬件仿真|硬件仿真]]
+- [[hil-simulation|硬件仿真]]
 - [[parallel-computing|并行计算]]
 - 动态安全评估
 - [[hybrid-acdc-network|交直流混合电网]]

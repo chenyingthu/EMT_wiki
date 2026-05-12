@@ -3,21 +3,11 @@ title: "子模块 (Submodule)"
 type: model
 tags: [submodule, mmc, power-electronics, converter, cell, half-bridge, full-bridge]
 created: "2026-05-02"
+updated: "2026-05-12"
+updated: "2026-05-11"
 ---
 
 # 子模块 (Submodule)
-
-
-```mermaid
-graph TD
-    subgraph Ncmp[子模块 (Submodule)]
-        N0[端口变量: 子模块端口电压 $v_{SM}$、桥臂电流 …]
-        N1[状态变量: 电容电压 $v_C$、储能 $E_C$、热状态]
-        N2[离散状态: 投入、切除、负投入、闭锁、旁路、故障]
-        N3[控制变量: 插入指数、排序/均压命令、PWM 脉冲、保护命令]
-        N4[内部变量: 开关电流、二极管状态、旁路电流、损耗]
-    end
-```
 
 
 ## 定义与边界
@@ -77,6 +67,26 @@ $$v_{arm,SM}=\sum_{j=1}^{N} S_j v_{C,j}.$$
 | 钳位或混合子模块 | 多电平、旁路或故障路径 | 混合 MMC、容错和直流电网研究 | 需为每种模式写清电流路径 |
 | 多端口子模块 | 多个外部端口和内部耦合 | 新型 MMC、储能嵌入或高效等效 | 端口方向和内部状态回代更复杂 |
 
+## 量化性能边界
+
+子模块 EMT 建模方法已有可核验的量化结果，但以下数据均绑定具体算法、层级、拓扑和仿真条件，不能外推为通用能力：
+
+- **Gnanarathna (2010)** 提出了基于戴维南桥臂叠加的 MMC 详细等效模型(DEM)。在 2400 开关（100 SM/臂 × 24 臂）MMC-HVDC 系统中，5 s 暂态仿真：传统逐开关模型 >2.5 h，DEM 仅需约 30 s，加速比约 **310 倍**。DEM 在数学上严格等价于原始开关网络，波形误差 < **0.1%**，且完全保留了子模块级电容电压动态，兼容电压平衡控制和开关故障仿真。验证限于半桥子模块 MMC-HVDC 离线 EMT 仿真 (Gnanarathna 2010)。
+
+- **Xu (2018)** 提出了基于舒尔补递归节点消去和广义诺顿等效的多端口子模块高速 EMT 模型。在每桥臂 200 个双端口子模块的三相 MMC-HVDC 系统中，桥臂参与外部求解的节点从 802 个降至 **4 个**，仿真速度提升约 **2–3 个数量级**（100–1000 倍），内部状态恢复误差 < **0.1%**。验证基于 PSCAD/EMTDC 与自定义 C++/MATLAB 算法接口，加速比随子模块数量和端口数变化 (Xu 2018)。
+
+- **Gao (2023)** 在半桥子模块(HBSM)中提出了混合数值积分方法（梯形 + 中点规则），桥臂等效电导在正常运行期间保持恒定，避免频繁 LU 分解。稳态误差 < **0.5%**，暂态峰值误差 < **1%**，相对戴维南等效模型加速 **5–15 倍**，CDA 开销 < 5%。验证限于半桥 MMC 离线 EMTP 仿真 (Gao 2023)。
+
+- **Zhang (2023)** 提出了基于同步开关状态预判的半桥子模块快速 EMT 建模方法，利用半桥子电路单元同步预判消除迭代收敛，内部节点凝聚降低全局矩阵规模。在 80 模块 SST 中实现 **20 倍**加速，波形误差 < **0.5%**。验证限于半桥 VSC 族（MMC、SST），需二极管续流路径逻辑 (Zhang 2023)。
+
+- **Xu (2015)** 综述了 MMC 高效建模的三种模型族（受控源解耦、戴维南等效、平均值模型）。戴维南等效模型在 N=200 时典型加速比 **15–20 倍**；梯形法比后退欧拉慢约 2 倍但精度高 **0.2–0.4%**。结论基于 48 SM/臂半桥 MMC-HVDC 基准系统、20 μs 步长 (Xu 2015)。
+
+- **Parvari (2023)** 用欧拉积分替代梯形积分离散子模块电容电压，使桥臂等效电阻恒定。HBSM 计算速度提升约 **30%**，FBSM 提升约 **60%**；4 站 200 FBSM 系统 31.0 s vs 84.7 s。正常运行时矩阵分解次数降为 0，仅在闭锁/解锁时更新 (Parvari 2023)。
+
+- **Stepanov (2020)** 提出了自适应模型切换方法，同一二端口诺顿接口支持 AVM/AEM/DEM 在仿真中平滑切换。401 电平 MMC-STATCOM 中，切换过程外部特性误差 < **0.5%**，切换瞬态偏差 < **0.1%** (Stepanov 2020)。
+
+这些量化数据不构成对所涉子模块建模方法的全面性能评价，只说明在特定测试条件下可获得的能力边界。
+
 ## 适用边界与失败模式
 
 - 基础开关函数模型不能描述二极管自然导通、反向恢复、器件损耗和热应力。
@@ -96,15 +106,21 @@ $$v_{arm,SM}=\sum_{j=1}^{N} S_j v_{C,j}.$$
 4. 系统级：MMC-HVDC、STATCOM 或 MTDC 工况中，聚合模型的低频、故障和恢复边界是否明确。
 5. 器件级：若报告损耗或结温，应使用器件数据、双脉冲试验、厂商模型或电热详细模型支撑。
 
+## 开放问题
+
+- 基于舒尔补的多端口子模块高速模型（Xu 2018）的 2-3 数量级加速在不同子模块拓扑（如全桥、钳位型、混合型）和极端故障工况下的保持能力尚未系统验证。
+- 混合数值积分方法（Gao 2023）和同步开关预判方法（Zhang 2023）在宽禁带器件高频开关（SiC/GaN、数百 kHz）场景下的步长选择和误差边界缺乏评估。
+- 子模块模型在不同 EMT 平台（PSCAD、EMTP-RV、XTAP）之间的加速比和精度可迁移性缺乏系统对比研究。
+- 当换流器型电源比例较高时，子模块聚合模型在弱网宽频振荡研究中的误差累积效应尚不明确。
+- 单一子模块故障、旁路或冗余策略的验证需要详细模型支撑，但大规模 MMC 中详细模型与聚合模型的混合仿真边界缺乏统一框架。
+
 ## 代表性来源
 
-| 来源 | 可支撑内容 | 证据边界 |
-|------|------------|----------|
-| [[a-review-of-efficient-modeling-methods-for-modular-multilevel-converters]] | MMC 子模块模型层级和高效建模路线 | 不给出所有拓扑通用精度结论 |
-| [[high-speed-emt-modeling-of-mmcs-with-arbitrary-multiport-submodule-structures-us]] | 任意多端口子模块的 Schur 补降阶和回代机制 | 结论限于原文结构和验证系统 |
-| [[双端口子模块mmc电磁暂态通用等效建模方法]] | 双端口子模块 EMT 等效建模入口 | 不替代单端口或多端口所有拓扑 |
-| [[计及电容过渡过程的双钳位型mmc电磁暂态高效仿真方法]] | 钳位型子模块电容过渡过程建模入口 | 适用范围需按原文拓扑判断 |
-| [[real-time-mpsoc-based-electrothermal-transient-simulation-of-fault-tolerant-mmc-]] | 子模块电热和容错 MMC 实时仿真入口 | 实时与热结论受平台和器件参数约束 |
+- [[efcient-modeling-of-modular-multilevel-hvdc-15|Gnanarathna (2010)]] 支撑 DEM 戴维南桥臂叠加方法：310 倍加速、<0.1% 误差。验证限于半桥 MMC-HVDC 离线 EMT 仿真。
+- [[high-speed-emt-modeling-of-mmcs-with-arbitrary-multiport-submodule-structures-us|Xu (2018)]] 支撑多端口子模块 Schur 补降阶：2-3 数量级加速、802→4 节点、<0.1% 误差。加速比随拓扑和工况变化。
+- [[a-review-of-efficient-modeling-methods-for-modular-multilevel-converters|Xu (2015)]] 支撑 MMC 子模块模型层级综述：戴维南 15-20 倍加速(N=200)、梯形法精度高 0.2-0.4%。结论基于 48 SM/臂基准。
+- [[双端口子模块mmc电磁暂态通用等效建模方法]] 支撑双端口子模块 EMT 等效建模入口，适用范围需按原文拓扑判断。
+- [[real-time-mpsoc-based-electrothermal-transient-simulation-of-fault-tolerant-mmc-]] 支撑子模块电热和容错 MMC 实时仿真入口，实时与热结论受平台和器件参数约束。
 
 ## 与相关页面的关系
 
@@ -113,3 +129,6 @@ $$v_{arm,SM}=\sum_{j=1}^{N} S_j v_{C,j}.$$
 - [[ideal-switch-model]]、[[detailed-switch-model]]、[[igbt-model]] 和 [[diode-model]] 描述子模块内部开关层级。
 - [[average-value-model]]、[[state-space-average-method]] 和 [[switching-function-method]] 是从详细子模块到聚合模型的常见方法。
 - [[fixed-admittance]]、[[companion-model]] 和 [[thevenin-norton-equivalent]] 支撑高效 EMT 等效和端口回代。
+---
+
+*本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*

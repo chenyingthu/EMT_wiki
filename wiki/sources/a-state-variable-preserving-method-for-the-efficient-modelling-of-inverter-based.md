@@ -2,10 +2,11 @@
 title: "A state-variable-preserving method for the efficient modelling of inverter-based resources in parall"
 type: source
 year: 2025
+tags: [state, variable, preserving, efficient, modelling]
+
 journal: "IET Generation, Transmission & Distribution"
 created: "2026-04-13"
-sources: ["EMT_Doc/04/Wang 等 - 2025 - A state-variable-preserving method for the efficient modelling of inverter-based resources in parall.pdf"]
----
+sources: ["EMT_Doc/04/Wang 等 - 2025 - A state-variable-preserving method for the efficient modelling of inverter-based resources in parall.pdf"]---
 
 # A state-variable-preserving method for the efficient modelling of inverter-based resources in parall
 
@@ -63,7 +64,7 @@ SVP模型的核心是把IBR内部网络写成离散状态空间表达式。状�
 
 ## 涉及的模型
 
-- [[逆变器型资源|逆变器型资源]]
+- [[gfl-inverter-model|逆变器型资源]]
 - 光伏发电单元
 - [[pv-power-plant|光伏电站]]
 - [[dc-dc-converter|DC/DC变换器]]

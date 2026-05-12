@@ -79,7 +79,7 @@ EMT软件大量依赖输电线路模型，但ATP-EMTP等程序通常把线路模
 - [[frequency-dependent-modeling|频变参数建模]]
 - 模态域解耦
 - ATP-EMTP模型实现
-- [[土壤频变特性|土壤频变特性]]
+- [[frequency-dependent-modeling|土壤频变特性]]
 
 ## 主要发现
 

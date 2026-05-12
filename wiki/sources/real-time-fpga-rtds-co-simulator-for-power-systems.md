@@ -76,7 +76,7 @@ sources: ["EMT_Doc/32/ACCESS.2018.2862893.pdf.pdf"]
 
 - [[real-time-simulation|实时仿真]]
 - [[co-simulation|联合仿真]]
-- [[硬件加速|硬件加速]]
+- [[gpu-accelerated-simulation|硬件加速]]
 - [[large-scale-grid-simulation|大规模电网仿真]]
 - FPGA实现
 

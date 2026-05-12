@@ -76,7 +76,7 @@ sources: ["EMT_Doc/05/Jiang 等 - 2024 - A waveform-dependence lightning impulse
 
 - 雷电过电压分析
 - 行波传播
-- [[电晕效应|电晕效应]]
+- [[corona-effect-modeling|电晕效应]]
 - 波形依赖性
 - [[emt-simulation|电磁暂态仿真]]
 

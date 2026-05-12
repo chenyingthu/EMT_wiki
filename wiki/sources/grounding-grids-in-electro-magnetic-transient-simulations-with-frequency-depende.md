@@ -69,7 +69,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/j.ijepes.2019.105546.pdf.pdf"]
 - [[grounding-system-model|接地网]]
 - [[transformer-model|变压器]]
 - [[surge-arrester-model|避雷器]]
-- [[π型等效电路|π型等效电路]]
+- [[companion-circuit|π型等效电路]]
 - 频变导纳支路
 
 ## 相关主题

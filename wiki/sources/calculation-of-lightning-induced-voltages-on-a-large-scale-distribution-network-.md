@@ -67,14 +67,14 @@ sources: ["EMT_Doc/10/De Conti和Leal - 2026 - Calculation of lightning-induced 
 ## 涉及的模型
 
 - JMartí输电线路模型
-- [[配电变压器|配电变压器]]
+- [[distribution-transformer|配电变压器]]
 - [[surge-arrester-model|避雷器]]
 - [[grounding-system-model|接地系统]]
 - 配电网负荷
 
 ## 相关主题
 
-- [[雷击感应过电压|雷击感应过电压]]
+- [[lightning-induced-voltage|雷击感应过电压]]
 - [[emt-simulation|电磁暂态仿真]]
 - 频率相关损耗建模
 - 大规模配电网

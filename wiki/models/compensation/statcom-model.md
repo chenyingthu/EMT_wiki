@@ -3,35 +3,12 @@ title: "静止同步补偿器模型 (STATCOM Model)"
 type: model
 tags: [statcom, model, vsc, reactive-power, voltage-control, facts, pwm]
 created: "2026-05-02"
+updated: "2026-05-12"
+updated: "2026-05-11"
 ---
 
 # 静止同步补偿器模型 (STATCOM Model)
 
-
-```mermaid
-graph TD
-    subgraph Ncmp[静止同步补偿器模型 (STATCOM Model)]
-        N0[详细开关模型: IGBT/GTO、二极管、PWM/触发、…]
-        N1[动态平均值模型: 调制函数、dq 控制、直流电压、受控源端口]
-        N2[基频/规划模型: 可控基波电压、电流或等效发电机]
-        N3[Thevenin/Norton 等效: 端口电压源/电流…]
-    end
-```
-
-
-## 技术背景
-
-### 发展历史
-该技术源于电力系统仿真领域的长期研究积累，随着电力电子设备在电网中的广泛应用而日益重要。
-
-### 研究现状
-当前学术界和工业界对该技术的研究主要集中在提升仿真效率、计算效率和模型通用性方面。
-
-### 技术挑战
-- 大规模系统的计算复杂度问题
-- 多时间尺度混合仿真的协调问题
-- 实时仿真的时效性要求
-- 模型验证和不确定性量化
 
 ## 定义与边界
 
@@ -89,6 +66,18 @@ $$
 
 [[average-value-model]] 适合解释动态平均值建模的取舍；[[detailed-switch-model]] 适合开关级模型边界。
 
+## 量化性能边界
+
+STATCOM EMT 模型在仿真精度和计算效率方面已有可核验的量化结果，但以下数据均绑定具体拓扑、控制结构和仿真条件，不能外推为通用能力：
+
+- **Zhang (2019)** 在大功率链式 STATCOM（三相级联 H 桥、120 个功率模块）中提出了快速等效建模方法，计算复杂度从 O(N²) 降至 O(4N)，仿真时间缩短约 **80%**（约 5 倍加速），综合误差 < **1.2%**（vs 精确开关模型）。二值电阻参数为 Ron=10⁻³Ω、Roff=10⁶Ω，电阻比 η₁=10⁻⁹。验证基于 MATLAB/Simulink 离线仿真，非实时/HIL 平台 (Zhang 2019)。
+
+- **Stepanov (2023)** 在 Delta 连接全桥 MMC-STATCOM 中提出了四级 EMT 模型（DM/DEM/AEM/AVM）与嵌入式储能的统一接口方法。控制环路解耦时间常数配置为：能量平衡 **0.05 s** < 直流电压控制 **0.1 s** < 储能频率支撑 **0.3 s**，确保三层控制动态解耦。储能功率配置范围可从部分功率（额定 ≤40%）至满功率（100%）。超级电容多分支模型覆盖秒级至十分钟级时间尺度。该验证基于 EMTP 离线仿真，四类模型交叉对比，但原文未报告可核验的误差百分比或仿真加速比 (Stepanov 2023)。
+
+- **Kosterev (2004)** 在并联 VSC/Statcon 规划建模中给出了 18 脉波 VSC 的典型参数：12.5 kV/10 MVA、5 kV 直流、200 μF 电容、电容储能时间常数 τ=**0.5 s**，最低特征谐波为 17/19 次。该模型面向多尺度规划（EMTP vs 稳定模型对比），不适用于开关级谐波或器件应力研究 (Kosterev 2004)。
+
+这些量化数据不构成对 STATCOM 建模方法的全面性能评价，只说明在特定测试条件下可获得的能力边界。
+
 ## 适用边界与失败模式
 
 - “响应快”“低电压支撑强”等说法必须绑定控制器、限流策略、直流侧容量、调制限制和测试工况；没有来源时应写成模型机制而非性能结论。
@@ -97,7 +86,15 @@ $$
 - 多电平或 MMC 型 STATCOM 还需要验证子模块电容电压平衡、桥臂环流、闭锁和能量约束。
 - HIL 或实时仿真中，接口刷新率、仿真步长、等效开关和通信延迟本身就是模型的一部分。
 
-## 验证需要
+## 开放问题
+
+- 链式 STATCOM 快速等效方法（Zhang 2019）在不同 STATCOM 拓扑（MMC 型、三电平型）下的加速比和精度保持能力缺乏验证。
+- MMC-STATCOM 四级模型（DM/DEM/AEM/AVM）的切换策略在故障穿越和非对称工况下的平滑过渡准则缺乏标准化。
+- STATCOM 在弱电网（SCR<2）和极高补偿度场景下的平均值模型误差边界缺乏系统评估。
+- 嵌入式储能 STATCOM 的控制时间常数解耦（0.05s/0.1s/0.3s）在不同储能类型（锂电池、液流电池、超级电容）和 SOC 范围内的适用性缺乏对比验证。
+- STATCOM 与 SVC 混合补偿系统的协调建模框架中，VSC 全控与晶闸管半控的等效时间常数耦合关系尚未统一描述。
+
+## 验证需求
 
 STATCOM 模型验证应按研究目标选择证据：
 
@@ -107,46 +104,15 @@ STATCOM 模型验证应按研究目标选择证据：
 - 谐波/开关：PWM 频谱、滤波器谐振、死区影响和开关插值误差。
 - 实时/HIL：步长、接口刷新率、控制保护输入输出和端口波形对比。
 
-## 研究前沿
-
-### 当前研究热点
-- **人工智能与仿真**：利用机器学习加速仿真计算
-- **数字孪生技术**：构建电力系统的数字孪生模型
-- **实时仿真技术**：满足硬件在环仿真的时效性要求
-- **云仿真平台**：基于云计算的大规模并行仿真
-
-### 开放问题
-- 超大规模系统的实时仿真能力
-- 多物理场耦合建模方法
-- 不确定性量化和风险评估
-- 模型验证和标定方法
-
-### 未来发展方向
-- 更高效的数值算法
-- 更精确的模型降阶技术
-- 更智能的参数优化方法
-- 更完善的验证和确认框架
-
-
-### 典型参数范围
-- 时间步长：1μs ~ 1ms
-- 系统规模：10~1000节点
-- 仿真时长：0.1s ~ 10s
-- 电压等级：10kV ~ 500kV
-- 功率范围：1MW ~ 1000MW
-- 频率范围：50Hz / 60Hz
-
 ## 代表性来源
 
-- [[emt-simulation]] - EMT仿真基础
-- [[power-system]] - 电力系统建模
-- [[electromagnetic-transient]] - 电磁暂态分析
-- [[control-system]] - 控制系统设计
-- [[real-time-simulation]] - 实时仿真技术
-- [[modeling-synchronous-voltage-source-converters-in-transmission-system-planning-s]] 支撑并联 VSC/Statcon 的 EMTP、潮流和稳定模型族；其定量参数和验证范围应回原文表图核查，不能外推到所有 STATCOM 拓扑。
-- [[a-vsc-hvdc-model-with-reduced-computational-intensity]] 支撑受控电压源/电流源的 VSC 动态平均值模型；其边界是论文中的三电平 VSC-HVDC、SPWM 和 PSCAD/EMTDC 对比。
-- [[modulation-index-dependent-thevenin-equivalent-circuit-model-of-vsc-and-apdr]] 支撑调制指数相关 Thevenin 等效用于 VSC 直流故障研究；该证据不等于 STATCOM 谐波或控制稳定性均可用同一等效替代。
-- [[hybrid-svc-vsc-modeling-approaches-for-hardware-in-the-loop-simulation]] 支撑混合 SVC-VSC 工程中按 HIL 接口选择小步长或常规步长模型；结论限于该项目和平台配置。
+| 来源 | 可支撑内容 | 证据边界 |
+|------|------------|----------|
+| [[modeling-of-mmc-based-statcom-with-embedded-energy-storage-for-the-simulation-of|Stepanov (2023)]] | MMC-STATCOM 四级模型框架、控制时间常数解耦 0.05s/0.1s/0.3s | Delta FB MMC-STATCOM，EMTP 离线仿真 |
+| [[modeling-synchronous-voltage-source-converters-in-transmission-system-planning-s|Kosterev (2004)]] | 并联 VSC/Statcon 规划建模参数：18 脉波、τ=0.5s | 多尺度规划，不适用开关级研究 |
+| [[a-vsc-hvdc-model-with-reduced-computational-intensity]] | VSC 动态平均值模型（受控电压源/电流源） | 三电平 VSC-HVDC、SPWM、PSCAD/EMTDC |
+| [[modulation-index-dependent-thevenin-equivalent-circuit-model-of-vsc-and-apdr]] | 调制指数相关 Thevenin 等效用于 VSC 直流故障 | 不等于谐波或控制稳定性适用 |
+| [[hybrid-svc-vsc-modeling-approaches-for-hardware-in-the-loop-simulation]] | 混合 SVC-VSC HIL 步长选择工程实证 | La Verendrye 工程、HIL 平台 |
 
 ## 与相关页面的关系
 
@@ -155,3 +121,6 @@ STATCOM 模型验证应按研究目标选择证据：
 - [[vsc-model]]：STATCOM 主电路、调制和控制接口的上位模型。
 - [[pwm-modulator-model]]：详细或插值型 PWM 表示的边界。
 - [[pll-model]]：并网同步环节，弱网和故障期间的关键风险来源。
+---
+
+*本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*

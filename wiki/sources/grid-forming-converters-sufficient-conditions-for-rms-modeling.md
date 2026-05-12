@@ -58,7 +58,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/j.epsr.2021.107324.pdf.pdf"]
 
 ## 使用的方法
 
-- [[传递函数分析|传递函数分析]]
+- [[small-signal-analysis|传递函数分析]]
 - 时域仿真验证
 - 相角与幅值裕度分析
 - RMS与EMT模型对比

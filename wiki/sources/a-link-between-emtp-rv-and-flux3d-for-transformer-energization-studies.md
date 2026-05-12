@@ -2,10 +2,11 @@
 title: "A link between EMTP-RV and FLUX3D for transformer energization studies"
 type: source
 year: 2009
+tags: [link, between, emtp, flux, transformer]
+
 journal: "Electric Power Systems Research"
 created: "2026-04-13"
-sources: ["EMT_Doc/02/Dennetière 等 - 2009 - A link between EMTP-RV and FLUX3D for transformer energization studies.pdf"]
----
+sources: ["EMT_Doc/02/Dennetière 等 - 2009 - A link between EMTP-RV and FLUX3D for transformer energization studies.pdf"]---
 
 # A link between EMTP-RV and FLUX3D for transformer energization studies
 
@@ -78,7 +79,7 @@ sources: ["EMT_Doc/02/Dennetière 等 - 2009 - A link between EMTP-RV and FLUX3D
 - 铁磁饱和
 - [[co-simulation|混合仿真]]
 - 铁芯详细建模
-- [[励磁涌流|励磁涌流]]
+- [[transformer-model|励磁涌流]]
 - 机电应力分析
 
 ## 主要发现

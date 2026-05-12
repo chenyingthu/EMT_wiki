@@ -68,8 +68,8 @@ Dead-time effect modeling for hybrid modular multilevel converter using , Jianzh
 
 - [[mmc-model|MMC]]
 - [[half-bridge-smb|半桥子模块(HBSM)]]
-- [[全桥子模块-fbsm|全桥子模块(FBSM)]]
-- [[戴维南等效模型|戴维南等效模型]]
+- [[full-bridge-smb|全桥子模块(FBSM)]]
+- [[thevenin-equivalent-model|戴维南等效模型]]
 - 详细模型
 - [[state-space-method|状态空间模型]]
 

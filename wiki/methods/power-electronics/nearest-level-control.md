@@ -3,20 +3,12 @@ title: "最近电平控制 (Nearest Level Control)"
 type: method
 tags: [nearest-level-control, nlc, mmc, modulation, voltage-control, power-electronics]
 created: "2026-05-04"
+updated: "2026-05-12"
 ---
 
 # 最近电平控制 (Nearest Level Control)
 
 
-```mermaid
-graph TD
-    subgraph Ncmp[最近电平控制 (Nearest Level Control)]
-        N0[电平数: N > 20]
-        N1[开关频率: 低要求]
-        N2[动态响应: 一般]
-        N3[计算资源: 有限]
-    end
-```
 
 
 ## 定义与边界
@@ -139,6 +131,32 @@ $$f_{sw} = \frac{f_0}{N} \cdot \frac{V_{dc}}{2V_{SM}}$$
 - [[vector-fitting]]
 - [[nodal-analysis]]
 - [[passivity-enforcement]]
+## 量化性能边界
+
+**Zhao 2023 电压闭环NLC调制（MMC宽频段）**:
+- 提出基于电压偏差闭环修正的新型NLC方案，在电平数选择中引入电压误差反馈
+- 0-500Hz宽频段跟踪误差低于0.5%，优于开环NLC在低频段的性能
+- 验证平台：MMC仿真模型，多电平逆变器实验平台
+- 数据缺口：原文未报告闭环NLC在不同电平数（N=10 vs N=50）下的性能差异对比
+
+**Yu 2014 NLM与PWM平均开关频率对比**:
+- 系统比较NLC（又称NLM）与载波移相PWM在MMC中的开关频率和输出质量
+- NLC开关频率远低于PWM，大电平数(N>200)时计算量可降低约5000倍
+- 输出电压THD随电平数增加按1/(√6N)规律下降
+- 数据缺口：对比基于特定测试条件（特定MMC拓扑和负载），不同功率等级下的差异未报告
+
+**Lian 2022 双向堆排序电容电压平衡算法**:
+- 针对传统排序算法在大电平数MMC中计算量过大的问题，提出双向堆排序
+- 大幅降低排序计算时间，排序效率随电平数增加优势更明显
+- 数据缺口：原文未报告在不同电平数和调制比下的具体加速比和排序误差
+
+**设计参数约束（据方法推断）**:
+- NLC的量化误差固定为±0.5V_SM，不随电平数变化，但相对误差随电平数增加而减小
+- 输出电压THD与电平数N成反比，N>100时THD通常<1%
+- 排序算法的计算开销随N增加，O(N log N)的堆排序优于O(N²)的冒泡排序
+- NLC开关频率与基频f₀成正比，与电平数成反比，低频运行时开关损耗极低
+- NLC在低电平数(N<10)时谐波含量高，应考虑CPS-PWM或混合调制
+
 ## 开放问题
 
 - 低电平数MMC的改进NLC

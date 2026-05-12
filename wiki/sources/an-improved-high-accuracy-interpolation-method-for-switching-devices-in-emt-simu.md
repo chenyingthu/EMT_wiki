@@ -68,11 +68,11 @@ sources: ["EMT_Doc/07&08/Na et al. - 2023 - An improved high-accuracy interpolat
 ## 涉及的模型
 
 - [[igbt-model|IGBT]]
-- [[晶闸管|晶闸管]]
+- [[igbt-model|晶闸管]]
 - [[diode-model|二极管]]
 - 电感
 - [[一种用于电磁暂态仿真的两电平电压源型换流器解耦模型|电压源]]
-- [[电力电子电路|电力电子电路]]
+- [[power-electronic-device-modeling|电力电子电路]]
 
 ## 相关主题
 

@@ -60,7 +60,7 @@ sources: ["EMT_Doc/16/Martins-Britto 等 - 2026 - Electromagnetic transient mode
 
 - 等效均匀大地模型(EHEM)
 - 严格双层大地解析法
-- [[频域分析法|频域分析法]]
+- [[frequency-scan|频域分析法]]
 - 相域时域仿真法
 - 等效电阻率近似
 - 等效传播常数法
@@ -75,7 +75,7 @@ sources: ["EMT_Doc/16/Martins-Britto 等 - 2026 - Electromagnetic transient mode
 ## 相关主题
 
 - [[emt-simulation|电磁暂态仿真]]
-- [[过电压分析|过电压分析]]
+- [[lightning-transient-analysis|过电压分析]]
 - 大地导电效应建模
 - [[transmission-line-model|波传播特性]]
 - 分层土壤建模

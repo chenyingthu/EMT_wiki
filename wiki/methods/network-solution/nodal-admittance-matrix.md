@@ -1,108 +1,211 @@
+
 ---
 title: "节点导纳矩阵 (Nodal Admittance Matrix)"
 type: method
-tags: [nodal-admittance, ybus, matrix-solution, power-flow, circuit-analysis]
-created: "2026-05-02"
+tags: [nodal-admittance-matrix, nodal-analysis, sparse-matrix, companion-circuit]
+created: "2026-04-13"
+updated: "2026-05-10"
 ---
 
 # 节点导纳矩阵 (Nodal Admittance Matrix)
 
+## 1. 物理背景与工程需求
 
-```mermaid
-graph TD
-    subgraph Ncmp[节点导纳矩阵 (Nodal Admittance Mat…]
-        N0[单相或序分量导纳矩阵: 平衡或近似平衡网络分析]
-        N1[三相块导纳矩阵: 不平衡、互感、相间耦合 EMT]
-        N2[伴随电路导纳矩阵: 动态元件离散后的时域求解]
-        N3[固定导纳矩阵: 矩阵因子复用和实时仿真]
-        N4[等值端口导纳矩阵: [[fdne-model]]、外部网…]
-    end
+### 为什么需要节点导纳矩阵？
+
+节点导纳矩阵是整个 EMTP 求解框架的数学核心。[[nodal-analysis]] 的核心思想是：将所有元件表示为诺顿等效，然后列写 KCL 方程，得到一个关于节点电压的线性方程组。这个方程组的系数矩阵就是节点导纳矩阵 $\\mathbf{Y}_n$。
+
+节点导纳矩阵的精髓在于：
+
+1. **稀疏性**：电网中每个节点只与少数几个节点相连，$\\mathbf{Y}_n$ 的非零元素比例通常在 1% 以下
+2. **叠加性**：每个独立元件的贡献可以直接累加，不需要整体重新推导
+3. **对称性**：对于不含移相器等非互易元件的网络，$\\mathbf{Y}_n$ 是对称矩阵
+4. **恒定性**：步长不变时，$\\mathbf{Y}_n$ 在仿真过程中保持不变
+
+这些性质决定了 EMT 仿真中求解策略的选择：使用稀疏矩阵技术、只做一次 LU 分解、每步只做前代回代。
+
+---
+
+## 2. 数学描述
+
+### 定义
+
+对一个有 $N$ 个节点的网络（不包括参考节点），节点导纳矩阵 $\\mathbf{Y}_n \\in \\mathbb{C}^{N \\times N}$ 定义为：
+
+$$
+\\mathbf{Y}_n \\mathbf{v} = \\mathbf{i}
+$$
+
+其中 $\\mathbf{v}$ 是节点电压向量，$\\mathbf{i}$ 是注入电流向量。
+
+矩阵元素：
+
+- **对角元** $Y_{kk}$：与节点 $k$ 相连的所有支路导纳之和
+- **非对角元** $Y_{kj}$：连接节点 $k$ 和 $j$ 的支路导纳取负
+
+### 装配规则
+
+对连接节点 $p$ 和 $q$ 的支路导纳 $y$：
+
+$$
+Y_{pp} \mathrel{+}= y, \quad Y_{qq} \mathrel{+}= y, \quad Y_{pq} \mathrel{-}= y, \quad Y_{qp} \mathrel{-}= y
+$$
+
+这个装配规则称为"叠加法"。每个元件独立贡献其导纳到矩阵的对应位置，最终 $\\mathbf{Y}_n$ 是所有元件贡献之和。
+
+### 伴随电路对矩阵的贡献
+
+经过 [[companion-circuit]] 转化后，各元件的导纳贡献为：
+
+| 元件 | 导纳贡献 | 条件 |
+|------|----------|------|
+| 电阻 $R$ | $g = 1/R$ | 恒定 |
+| 电感（梯形法） | $G_L = \\Delta t/(2L)$ | 步长不变时恒定 |
+| 电容（梯形法） | $G_C = 2C/\\Delta t$ | 步长不变时恒定 |
+| 电感（后向欧拉） | $G_L = \\Delta t/L$ | 步长不变时恒定 |
+| 电容（后向欧拉） | $G_C = C/\\Delta t$ | 步长不变时恒定 |
+| 开关（开态） | $G_{on}$（大导纳） | 随状态变化 |
+| 开关（关态） | $G_{off}$（小导纳） | 随状态变化 |
+
+---
+
+## 3. 计算模型与离散化
+
+### 稀疏性来源
+
+实际电网中，一个节点平均只与 2-5 个其他节点相连。对于一个 1000 节点的电网，$\\mathbf{Y}_n$ 中每行只有 3-6 个非零元素，稀疏度达 99.5% 以上。
+
+这意味着存储 $\\mathbf{Y}_n$ 时不能使用稠密矩阵格式。常见的稀疏存储格式：
+
+- **CSR（Compressed Sparse Row）**：三数组格式（值、列号、行指针），最常用
+- **CSC（Compressed Sparse Column）**：适用于列操作为主的算法
+- **COO（Coordinate List）**：方便装配，通常作为中间格式
+
+### LU 分解与回代
+
+$\\mathbf{Y}_n$ 的 LU 分解是 EMT 仿真中单步计算量最大的操作。恒导纳策略的核心就是尽可能减少分解次数：
+
+1. **符号分解**：分析矩阵的稀疏模式，确定填充元位置，只需一次
+2. **数值分解**：根据实际数值计算 L 和 U 因子，步长/拓扑未变时可复用
+3. **前代回代**：每步执行 $\\mathbf{L} \\mathbf{y} = \\mathbf{i}$ 和 $\\mathbf{U} \\mathbf{v} = \\mathbf{y}$，复杂度 $O(nnz)$
+
+### 参考节点的处理
+
+$\\mathbf{Y}_n$ 是奇异的（行和为零），因为所有节点电压是相对于参考节点的差值。通常的处理方式：
+
+- **直接去掉参考节点对应的行和列**：矩阵降为 $(N-1) \\times (N-1)$
+- **保留但添加大接地导纳**：数值上近似，适用于程序实现简化
+- **浮点参考**：不指定参考节点，用迭代法求解（较少使用）
+
+---
+
+## 4. 实现方法与算法细节
+
+### 矩阵装配的伪代码
+
+```text
+function assemble_y_n(elements, n_nodes):
+    Y = sparse_matrix(n_nodes, n_nodes)
+    for each element in elements:
+        p = element.node_p
+        q = element.node_q
+        g = element.equivalent_conductance()
+        if p != 0:      # 0 是参考节点
+            Y[p][p] += g
+            Y[p][q] -= g
+        if q != 0:
+            Y[q][q] += g
+            Y[q][p] -= g
+    return Y
 ```
 
+### 矩阵更新策略
 
-## 定义与边界
+| 事件类型 | 对 $\\mathbf{Y}_n$ 的影响 | 处理策略 |
+|----------|--------------------------|----------|
+| 步长变化 | 所有动态元件的 $G_{eq}$ 改变 | 重新数值分解 |
+| 开关动作（变导纳） | 开关支路导纳改变 | 更新受影响元素，部分重分解 |
+| 开关动作（恒导纳） | $\\mathbf{Y}_n$ 不变 | 补偿法修正右端项 |
+| 拓扑变化 | 矩阵结构改变 | 完整重新分解 |
+| 非线性迭代 | 增量电导变化 | 每次牛顿迭代更新 |
 
-节点导纳矩阵是把网络支路导纳、对地导纳和元件等效导纳按节点关联关系组装成的线性算子。在线性时不变网络中，它描述节点注入电流与节点电压的关系；在 EMT 中，它通常是每个离散时刻或每类开关状态下的网络矩阵。
+### 与稀疏求解器的接口
 
-基本关系为：
+实际 EMT 程序通常使用专门的稀疏线性求解器库：
+
+- **KLU**：EMTP 类程序中最流行的稀疏求解器，针对电路仿真优化
+- **AMD 重排序**：最小化 LU 分解中的填充元数量
+- **BTF（Block Triangular Form）**：将矩阵分解为块三角形式，对角块独立求解
+
+---
+
+## 5. 适用边界与失效模式
+
+### 什么条件下好？
+
+- 网络稀疏、拓扑清晰
+- 大多数元件可用导纳表示
+- 步长固定，减少重新分解次数
+
+### 什么条件下会出问题？
+
+| 问题场景 | 表现 | 原因 | 缓解办法 |
+|----------|------|------|----------|
+| 矩阵病态 | 求解精度丧失 | 大/小导纳并存导致条件数过大 | 合理选择开关电导比（$10^4\\sim10^6$） |
+| 奇异矩阵 | 求解失败 | 存在浮空节点或纯电压源回路 | 添加对地大电阻或使用增广节点法 |
+| 填充元过多 | LU 分解变慢 | 矩阵稀疏模式不佳，AMD 排序无效 | 改用其他重排序策略 |
+| 频繁重分解 | 仿真速度骤降 | 开关动作频繁，每次需更新矩阵 | 使用恒导纳模型或补偿法 |
+| 数值非对称 | 对称求解器不适用 | 含移相器或某些控制环节 | 改用非对称求解器 |
+
+### 工程经验值
+
+- 开关电导比推荐 $10^5$：$G_{on} = 10^5$，$G_{off} = 10^{-5}$（基准导纳归一化后）
+- KLU 是 1000-100000 节点规模的最优选择
+- AMD 排序通常能减少 50-80% 的填充元
+
+---
+
+## 6. 应用说明
+
+### 一个两节点示例
+
+一个电阻 $R_1 = 100\\Omega$ 连接节点 1 和 2，电阻 $R_2 = 50\\Omega$ 连接节点 2 和地，电流源 $I_s = 1$A 注入节点 1。
+
+$\\mathbf{Y}_n$ 装配过程：
+
+对 $R_1$（节点 1-2）：$g_1 = 0.01$S
+- $Y_{11} += 0.01$，$Y_{22} += 0.01$，$Y_{12} -= 0.01$，$Y_{21} -= 0.01$
+
+对 $R_2$（节点 2-地）：$g_2 = 0.02$S
+- $Y_{22} += 0.02$
+
+最终矩阵：
 
 $$
-\mathbf{i}=\mathbf{Y}\mathbf{v}
+\\mathbf{Y}_n = \\begin{bmatrix}
+0.01 & -0.01 \\\\
+-0.01 & 0.03
+\\end{bmatrix},
+\\quad
+\\mathbf{i} = \\begin{bmatrix} 1 \\\\ 0 \\end{bmatrix}
 $$
 
-其中 $\mathbf{i}$ 是节点注入电流，$\mathbf{v}$ 是节点电压，$\mathbf{Y}$ 是节点导纳矩阵。该矩阵不是潮流方程的雅可比，也不直接表示频率相关网络等值的全部动态；频变、延迟和历史项通常由外部状态或伴随源承担。
+求解得 $v_1 = 150$V，$v_2 = 50$V。这个结果可以用欧姆定律直接验证：$I_s = v_1/100 + (v_1 - v_2)/100 = 1$A。
 
-## EMT 中的作用
+---
 
-在 [[nodal-analysis]] 中，节点导纳矩阵是网络联立求解的核心对象。元件模型把本时步的电阻、电感、电容、线路、变压器和开关等效为矩阵贡献；历史项、独立源和控制注入进入右端项。
+## 7. 延伸阅读
 
-EMT 中的矩阵可能随以下因素变化：
+### 核心参考文献
 
-- 开关状态改变支路连接或等效导纳。
-- 非线性元件在牛顿迭代中更新局部增量导纳。
-- 变步长积分改变伴随电路等效导纳。
-- 分网或等值模型改变边界节点的自导纳和互导纳。
+- [[a-comparative-study-of-electromagnetic-transient-simulations-using-companion-cir]] — 系统比较不同离散方法对导纳矩阵的影响
+- [[high-speed-emt-modeling-of-mmcs-with-arbitrary-multiport-submodule-structures-us]] — MMC 多端口等效的导纳矩阵消去方法
+- [[nested-fast-and-simultaneous-solution-for-time-domain-simulation-of-integrat]] — 嵌套求解中的矩阵复用技术
 
-## 核心机制
+### 相关页面
 
-一条连接节点 $p$ 与 $q$ 的导纳支路 $y_{pq}$ 对矩阵的贡献为：
-
-$$
-\begin{bmatrix}
- y_{pq} & -y_{pq}\\
--y_{pq} &  y_{pq}
-\end{bmatrix}
-$$
-
-写入全局矩阵即：
-
-$$
-Y_{pp}\mathrel{+}=y_{pq},\quad
-Y_{qq}\mathrel{+}=y_{pq},\quad
-Y_{pq}\mathrel{-}=y_{pq},\quad
-Y_{qp}\mathrel{-}=y_{pq}
-$$
-
-节点 $p$ 的对地导纳 $y_{p0}$ 只贡献到 $Y_{pp}$。若用关联矩阵 $\mathbf{A}$ 和支路导纳矩阵 $\mathbf{Y}_b$ 表示，则可写为：
-
-$$
-\mathbf{Y}=\mathbf{A}\mathbf{Y}_b\mathbf{A}^T+\mathbf{Y}_{shunt}
-$$
-
-多相线路、互感和不对称元件会形成块矩阵。理想电压源、理想变压器和某些受控源可能需要增广变量，而不是强行写成普通导纳支路。
-
-## 分类与变体
-
-| 类型 | 用途 | 注意事项 |
-|------|------|----------|
-| 单相或序分量导纳矩阵 | 平衡或近似平衡网络分析 | 不适合直接表示强不平衡相域暂态 |
-| 三相块导纳矩阵 | 不平衡、互感、相间耦合 EMT | 维度扩大，块稀疏结构应保留 |
-| 伴随电路导纳矩阵 | 动态元件离散后的时域求解 | 依赖步长和积分公式 |
-| 固定导纳矩阵 | 矩阵因子复用和实时仿真 | 开关影响转移到等效源或补偿项 |
-| 等值端口导纳矩阵 | [[fdne-model]]、外部网络等值 | 频率相关性需由有理函数或状态空间实现 |
-
-## 适用边界与失败模式
-
-节点导纳矩阵适合稀疏、局部连接明显的电网网络。它的数值质量依赖接地参考、支路参数尺度、开关等效值和矩阵排序策略。
-
-常见风险包括：
-
-- 无参考节点、孤岛网络或理想源冲突会导致矩阵奇异或约束不一致。
-- 极大/极小开关电阻会放大条件数，影响 [[sparse-matrix-solver]] 的主元选择和舍入误差。
-- 把长线路或电缆直接用单个工频 $\pi$ 型支路表示，可能遗漏传播时延和频率相关效应；这类问题应转向 [[transmission-line-theory]]、[[bergeron-line-model]] 或 [[frequency-dependent-line-model]]。
-- 将阻抗矩阵 $\mathbf{Z}=\mathbf{Y}^{-1}$ 当作显式稀疏对象通常会破坏稀疏性；只需要端口响应时可用 [[compensation-method]] 或局部求解。
-
-## 代表性来源
-
-- [[a-combined-state-space-nodal-method-for-the-simulation-of-power-system-transient]] 支撑节点方程与设备状态方程的耦合表述。
-- [[accelerated-sparse-matrix-based-computation-of-electromagnetic-transients]] 可作为 EMT 稀疏矩阵计算加速的来源，性能结论应绑定其测试系统和实现。
-- [[2728nested-fast-and-simultaneous-solution-for-time-domain-simulation-of-integrat]] 展示嵌套和预计算求解思路，适合说明矩阵结构复用。
-- [[multi-port-frequency-dependent-network-equivalents-for-the-emtp-power-delivery-i]] 代表端口导纳等值的应用边界，不能简化成普通静态 Ybus。
-
-## 与相关页面的关系
-
-- [[nodal-analysis]] 说明节点导纳矩阵如何进入 EMT 时间步进流程。
-- [[sparse-matrix-solver]] 说明矩阵因子化、重排序、前代回代和迭代精化。
-- [[iterative-solvers]] 处理非线性或大型线性矩阵方程的迭代求解。
-- [[symmetrical-components]] 可在对称三相条件下把相域问题转为序分量问题；对不平衡 EMT 应谨慎使用。
-- [[network-partitioning]] 和 [[fixed-admittance]] 分别关注矩阵分块和矩阵复用策略。
+- [[nodal-analysis]] — 节点分析法框架
+- [[sparse-matrix-solver]] — 稀疏线性方程组的求解
+- [[companion-circuit]] — 伴随电路对导纳矩阵的贡献
+- [[fixed-admittance]] — 恒导纳建模策略
+- [[compensation-method]] — 补偿法避免矩阵重分解

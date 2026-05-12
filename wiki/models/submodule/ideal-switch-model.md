@@ -3,21 +3,11 @@ title: "理想开关模型 (Ideal Switch Model)"
 type: model
 tags: [ideal-switch, switch, power-electronics, modeling, companion-circuit, emt]
 created: "2026-05-02"
+updated: "2026-05-12"
+updated: "2026-05-11"
 ---
 
 # 理想开关模型 (Ideal Switch Model)
-
-
-```mermaid
-graph TD
-    subgraph Ncmp[理想开关模型 (Ideal Switch Model)]
-        N0[端口变量: 开关端电压 $v_{sw}$、支路电流 $i…]
-        N1[离散状态: 导通、关断、闭锁、触发允许]
-        N2[触发变量: 门极信号、二极管自然换流条件、晶闸管触发角]
-        N3[代数变量: 节点约束、等效导纳、受控源]
-        N4[历史/事件变量: 插值时刻、上一状态、事件后重初始化标记]
-    end
-```
 
 
 ## 定义与边界
@@ -72,14 +62,34 @@ $R_{on}$ 和 $R_{off}$ 不是通用常数。取值需要同时满足电路物理
 | 分段线性开关 | 近似伏安曲线 | 损耗粗估和常规器件暂态 | 参数需要器件资料支撑 |
 | 详细器件模型 | 电容、恢复、门极、热 | 器件应力、EMI、损耗 | 计算刚性强，验证成本高 |
 
+## 量化性能边界
+
+理想开关模型在 EMT 仿真中已有可核验的量化结果，但以下数据均绑定具体开关等效方式、插值方法和仿真条件，不能外推为通用能力：
+
+- **Na (2023)** 提出了结合半步长后向欧拉(BE)与插值/外推策略的改进开关仿真方法。在固定步长 EMT 中，虚假开关损耗从普通插值法的 **212.6 μJ** 降至约 **2 μJ**，消除率超过 **99%**；相位偏差趋近于零（以 0.1 μs 参考解为基准），彻底消除传统瞬时插值法的"提前一个时间步"误差。测试电路包括 IGBT/二极管感性负载、晶闸管/感性负载、单相两电平逆变器和双有源桥(DAB)，验证了该方法在不同开关电路拓扑中的通用性 (Na 2023)。
+
+- **Cao/Bonjour (2025)** 提出了基于桥臂模块(BAM)参数化固定导纳的 ADC 模型。其状态矩阵最优谱半径 ρ(A₁)=**0**，暂态误差在单步内归零；截断误差为 O(max{kL, kC})。误差 <1% 的条件为 2kL/(1+√k₁)<0.01 且 2kC(1+√k₁)<0.01。该模型适用于半桥和全桥 BAM，不适用于非互补导通工况 (Cao/Bonjour 2025)。
+
+- **Wang (2024)** 在 FPGA 实时仿真平台上实现了恒导纳开关模型的初始误差修正算法。步长可达微秒/亚微秒级，支持 50kHz SiC 固态变压器(SST)的实时仿真。初始误差修正消除了开关动作后的虚拟功率损耗，DSP 硬核资源复用降低了 FPGA 资源占用 (Wang 2024)。
+
+这些量化数据不构成对所涉理想开关等效方法的全面性能评价，只说明在特定测试条件下可获得的能力边界。
+
 ## 适用边界与失败模式
 
-- 理想开关不能用于开关损耗、热设计、反向恢复和器件过电压定量结论。
 - 同一节点间理想电压源、电容短路或电感开路可能造成代数奇异或非物理冲击。
 - 开关事件落在步长内部时，若不做 [[voltage-interpolation|插值]] 或子步处理，事件时刻误差会进入波形和能量。
 - 拓扑切换后，电感电流和电容电压历史项需要一致性处理；否则可能产生 [[numerical-oscillation-suppression|数值振荡]]。
 - 二值电阻的导纳比过大可能使 [[nodal-admittance-matrix|节点导纳矩阵]] 病态；过小则会引入明显导通压降或关断漏流。
 - 把理想开关结果与详细器件结果比较时，应分开报告拓扑误差、器件动态误差和数值积分误差。
+- 理想开关的 $R_{on}/R_{off}$ 比值没有通用标准，需要在矩阵条件数、漏流误差和数值稳定性之间折中。
+
+## 开放问题
+
+- 理想开关的固定导纳等效（如 BAM 方法）在非互补导通或故障工况下的等效精度缺乏统一验证框架。
+- 半步长 BE + 插值方法（Na 2023）在不同 EMT 平台（PSCAD、EMTP-RV、RT-LAB）之间的精度和加速比可迁移性缺乏系统对比。
+- FPGA 恒导纳修正方法（Wang 2024）在大规模开关网络（数百个子模块）中的资源扩展性和时序收敛性缺乏公开数据支撑。
+- 理想开关模型与详细器件模型之间的误差分离方法（拓扑误差 vs 器件动态误差 vs 数值积分误差）缺乏标准化流程。
+- 宽禁带器件（SiC/GaN）的高频开关（数百 kHz）场景对理想开关二值电阻模型的导纳比和插值精度要求尚不明确。
 
 ## 验证需求
 
@@ -96,11 +106,10 @@ $R_{on}$ 和 $R_{off}$ 不是通用常数。取值需要同时满足电路物理
 
 | 来源 | 可支撑内容 | 证据边界 |
 |------|------------|----------|
+| [[an-improved-high-accuracy-interpolation-method-for-switching-devices-in-emt-simu|Na (2023)]] | 半步长 BE + 插值方法：212.6→2 μJ、相位偏差趋零 | 理想开关/二值电阻、固定步长 EMT |
+| [[a-bridge-arm-module-based-fixed-admittance-adc-model-for-converters-in-emt-simul|Cao/Bonjour (2025)]] | BAM 固定导纳 ADC：ρ=0、O(max{kL,kC})、<1% 条件 | 半桥/全桥 BAM，非互补导通不适用 |
+| [[基于fpga的电力电子恒导纳开关模型修正算法及实时仿真架构|Wang (2024)]] | FPGA 恒导纳修正：亚微秒步长、虚拟损耗消除 | FPGA 实时平台、恒导纳假设 |
 | [[accurate-time-domain-simulation-of-power-electronic-circuits]] | 电力电子开关电路时域仿真的事件和数值处理入口 | 具体算法效果限于原文电路 |
-| [[a-bridge-arm-module-based-fixed-admittance-adc-model-for-converters-in-emt-simul]] | 固定导纳开关/桥臂等效路线 | 不代表所有拓扑都可免重构 |
-| [[基于fpga的电力电子恒导纳开关模型修正算法及实时仿真架构]] | FPGA 实时场景中的恒导纳修正 | 平台和步长结论需绑定原文 |
-| [[电力系统电磁暂态仿真igbt详细建模及应用]] | 详细 IGBT 模型和理想化模型边界 | 器件结论依赖参数和测试工况 |
-| [[an-improved-high-accuracy-interpolation-method-for-switching-devices-in-emt-simu]] | 开关器件事件插值方法入口 | 插值收益需限于原文算例 |
 
 ## 与相关页面的关系
 
@@ -109,17 +118,6 @@ $R_{on}$ 和 $R_{off}$ 不是通用常数。取值需要同时满足电路物理
 - [[state-space-average-method]] 和 [[average-value-model]] 平均掉开关周期细节。
 - [[detailed-switch-model]]、[[igbt-model]] 和 [[diode-model]] 描述更接近器件物理的模型。
 - [[fixed-admittance]]、[[companion-model]] 和 [[trapezoidal-rule]] 说明理想开关接入 EMT 求解器时的数值接口。
+---
 
-## 来源论文
-
-| 论文 | 年份 |
-|------|------|
-| [[creating-an-electromagnetic-transients-program-in-matlab-matemtp-power-delivery-|Creating An Electromagnetic Transients Program In Matlab: Ma]] | 2004 |
-| [[on-a-new-approach-for-the-simulation-of-transients|On a new approach for the simulation of transients]] | 2007 |
-| [[development-of-data-translators-for-interfacing-13&14|Development of Data Translators for Interfacing Power-Flow P]] | 2013 |
-| [[enhanced-high-speed-electromagnetic-transient-simulation-17|Enhanced high-speed electromagnetic transient simulation]] | 2016 |
-| [[enhanced-high-speed-electromagnetic-transient-simulation|Enhanced high-speed electromagnetic transient simulation]] | 2016 |
-| [[线性开关电路电磁暂态分析的状态方程法|线性开关电路电磁暂态分析的状态方程法]] | 2016 |
-| [[accurate-time-domain-simulation-of-power-electronic-circuits|Accurate time-domain simulation of power electronic circuits]] | 2021 |
-| [[parallel-computation-of-power-system-emts-through-polyphase-qmf-filter-banks|Parallel computation of power system EMTs through Polyphase-]] | 2021 |
-| [[equivalent-modeling-of-electromagnetic-transient-for-mmc-hvdc-based-on-semi-impl|Equivalent modeling of electromagnetic transient for MMC-HVD]] | 2026 |
+*本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*

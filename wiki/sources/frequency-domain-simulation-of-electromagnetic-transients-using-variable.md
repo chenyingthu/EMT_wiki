@@ -58,9 +58,9 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/TPWRD.2015.2449754.pdf.pdf"]
 
 ## 使用的方法
 
-- [[频域分析法|频域分析法]]
+- [[frequency-scan|频域分析法]]
 - 可变时间步长
-- [[网络等值技术|网络等值技术]]
+- [[fdne-model|网络等值技术]]
 - [[nodal-analysis|节点导纳矩阵求解]]
 - [[vector-fitting|有理函数拟合]]
 

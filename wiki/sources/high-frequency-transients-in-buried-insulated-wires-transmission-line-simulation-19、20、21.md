@@ -62,12 +62,12 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/Alipio 等 - 2024 - High-frequency t
 - [[nodal-analysis|节点导纳矩阵法]]
 - [[numerical-inverse-laplace-transform|数值拉普拉斯逆变换]]
 - [[frequency-domain-analysis|频域分析]]
-- [[准tem近似|准TEM近似]]
+- [[quasi-tem-approximation|准TEM近似]]
 
 ## 涉及的模型
 
 - 埋地绝缘电缆
-- [[大地返回阻抗模型|大地返回阻抗模型]]
+- [[frequency-dependent-modeling|大地返回阻抗模型]]
 - 大地返回导纳模型
 - PVC绝缘导线
 

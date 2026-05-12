@@ -25,7 +25,7 @@ created: "2026-05-10"
 
 ### Step 1: 行波理论入门
 
-**页面**: [[traveling-wave-theory]]
+**页面**: [[numerical-integration]]
 
 理解行波的基本概念：波速度、波阻抗、反射与折射。这是所有线路模型的理论基础。
 
@@ -76,7 +76,7 @@ created: "2026-05-10"
 - 通用线路模型（ULM）：相域直接求解
 - 折叠线路等值（FLE）技术
 
-**补充**: [[vector-fitting]]（用于拟合线路频变特性）、[[j-marti-line-model]]（JMarti 模型细节）
+**补充**: [[vector-fitting]]（用于拟合线路频变特性）、[[frequency-dependent-modeling]]（JMarti 模型细节）
 
 ---
 
@@ -109,7 +109,7 @@ created: "2026-05-10"
 
 ### Step 7: 线路模型在保护中的应用
 
-**页面**: [[transmission-line-protection]]
+**页面**: [[protection-relay-modeling]]
 
 理解线路 EMT 模型在继电保护仿真中的应用。
 
@@ -124,7 +124,7 @@ created: "2026-05-10"
 
 学习直流线路建模的特殊问题，以及长距离直流线路与换流器之间的交互。
 
-**补充**: [[hvdc-line-model]]、[[dc-line-frequency-dependent-effects]]、[[vsc-hvdc]]
+**补充**: [[vsc-hvdc]]、[[frequency-dependent-modeling]]、[[vsc-hvdc]]
 
 ## 核心模型对比
 

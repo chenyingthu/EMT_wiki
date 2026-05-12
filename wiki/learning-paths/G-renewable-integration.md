@@ -38,7 +38,7 @@ created: "2026-05-10"
 
 ### Step 2: 风力发电 EMT 基础
 
-**页面**: [[wind-turbine-model]]
+**页面**: [[dfig-model]]
 
 学习风力发电机组的基本结构和 EMT 建模方法。
 
@@ -79,7 +79,7 @@ created: "2026-05-10"
 
 ### Step 5: 光伏发电模型
 
-**页面**: [[pv-model]]
+**页面**: [[pv-system-model]]
 
 学习光伏电站的 EMT 建模。
 
@@ -107,7 +107,7 @@ created: "2026-05-10"
 
 ### Step 7: 低电压穿越与故障穿越
 
-**页面**: [[low-voltage-ride-through]]
+**页面**: [[fault-ride-through]]
 
 学习新能源并网仿真中的低电压穿越（LVRT）要求和建模方法。
 
@@ -130,13 +130,13 @@ created: "2026-05-10"
 - 阻抗法的振荡分析框架
 - 构网型控制在振荡抑制中的作用
 
-**补充**: [[harmonic-analysis]]、[[subsynchronous-interaction]]、[[grid-forming-control]]
+**补充**: [[harmonic-analysis]]、[[wideband-oscillation-stability]]、[[grid-forming-control]]
 
 ---
 
 ### Step 9（可选）: 并网保护与适应性
 
-**页面**: [[protection-in-renewable-integration]]
+**页面**: [[protection-relay-modeling]]
 
 学习新能源并网对继电保护的影响和适应性方案。
 

@@ -69,7 +69,7 @@ sources: ["EMT_Doc/23/Lefebvre和Mahseredjian - 1994 - Improved control systems 
 - TACS控制模型
 - 电力电子换流阀
 - 同步机励磁系统
-- [[facts装置|FACTS装置]]
+- [[vsc-hvdc|FACTS装置]]
 - 断路器电弧
 
 ## 相关主题

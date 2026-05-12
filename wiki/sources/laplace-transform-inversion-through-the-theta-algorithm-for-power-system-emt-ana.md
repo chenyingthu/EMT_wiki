@@ -68,7 +68,7 @@ sources: ["EMT_Doc/25/Castañón 等 - 2021 - Laplace transform inversion throug
 
 ## 涉及的模型
 
-- [[电力系统网络|电力系统网络]]
+- [[power-system-network|电力系统网络]]
 
 ## 相关主题
 

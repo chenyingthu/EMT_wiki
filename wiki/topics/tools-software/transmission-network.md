@@ -881,6 +881,21 @@ graph TD
 
 *本页面基于电力系统输电网络技术综述编写，涵盖交流输电、直流输电、网络建模、稳定控制、保护系统、调度运行、规划设计及智能电网技术等领域。*
 
+## EMT中的作用
+
+输电网络 (Transmission Network) 在EMT仿真中的核心作用：
+
+- **研究范围**：界定输电网络 (Transmission Network)在EMT仿真中的研究边界和应用场景
+- **分析方法**：提供输电网络 (Transmission Network)相关的EMT分析方法和工具
+- **系统影响**：分析输电网络 (Transmission Network)对电力系统电磁暂态特性的影响
+- **仿真验证**：为输电网络 (Transmission Network)相关研究提供仿真验证框架
+## 形式化表达
+
+从EMT仿真角度，输电网络 (Transmission Network)可形式化表达为：
+
+$$
+\text{待补充：输电网络 (Transmission Network)的数学形式化描述}
+$$
 ## 来源论文
 
 | 论文 | 年份 |

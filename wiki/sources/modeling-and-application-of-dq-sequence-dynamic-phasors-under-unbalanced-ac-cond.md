@@ -68,7 +68,7 @@ sources: ["EMT_Doc/26/Mao 等 - 2025 - Modeling and application of DQ-sequence d
 
 - [[mmc-model|MMC]]
 - [[mmc-model|MMC]]
-- [[电力电子换流器|电力电子换流器]]
+- [[power-electronic-device-modeling|电力电子换流器]]
 
 ## 相关主题
 

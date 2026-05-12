@@ -74,7 +74,7 @@ sources: ["EMT_Doc/09/Rupasinghe 等 - 2021 - Assessment of dynamic phasor extra
 - [[co-simulation|联合仿真]]
 - 动态相量提取
 - [[harmonic-analysis-methods|谐波分析]]
-- [[频域建模|频域建模]]
+- [[frequency-dependent-modeling|频域建模]]
 
 ## 主要发现
 

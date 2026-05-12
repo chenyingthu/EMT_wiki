@@ -78,7 +78,7 @@ sources: ["EMT_Doc/07&08/An Efficient Half-Bridge MMC Model for EMTP-Type Simula
 - [[emt-simulation|电磁暂态仿真]]
 - 恒定电导建模
 - 模型解耦
-- [[大规模电力系统仿真|大规模电力系统仿真]]
+- [[electromechanical-electromagnetic-hybrid-simulation|大规模电力系统仿真]]
 - EMTP型求解
 
 ## 主要发现

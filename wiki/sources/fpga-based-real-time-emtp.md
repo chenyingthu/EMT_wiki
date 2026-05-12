@@ -60,7 +60,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/TPWRD.2008.923392.pdf.pdf"]
 
 - [[parallel-computing|并行算法]]
 - 深度流水线技术
-- [[浮点运算|浮点运算]]
+- [[numerical-integration|浮点运算]]
 - [[nodal-analysis|节点分析法]]
 
 ## 涉及的模型

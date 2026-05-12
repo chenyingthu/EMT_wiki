@@ -66,13 +66,13 @@ sources: ["EMT_Doc/15/Efficient modeling of parallel counterpoise wires using an
 ## 涉及的模型
 
 - 平行接地极
-- [[杆塔接地系统|杆塔接地系统]]
+- [[grounding-system-model|杆塔接地系统]]
 - 埋地裸耦合导线
 - 频率相关土壤模型
 
 ## 相关主题
 
-- [[接地系统建模|接地系统建模]]
+- [[grounding-system-model|接地系统建模]]
 - 雷电暂态分析
 - [[frequency-dependent-modeling|频率相关建模]]
 - 地电位升分析

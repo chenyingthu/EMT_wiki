@@ -74,7 +74,7 @@ sources: ["EMT_Doc/29/Velásquez 等 - 2023 - On-site measurement of the hystere
 ## 相关主题
 
 - [[emt-simulation|电磁暂态仿真]]
-- [[励磁涌流分析|励磁涌流分析]]
+- [[transformer-model|励磁涌流分析]]
 - 磁滞特性建模
 - 饱和曲线测量
 - [[harmonic-analysis-methods|谐波分析]]

@@ -68,7 +68,7 @@ sources: ["EMT_Doc/02/Feng 等 - 2023 - A Novel Decoupled EMT Approach and Paral
 - 模块化固态变压器(MSST)
 - 多主动桥(MAB)
 - 双主动桥(DAB)
-- [[多绕组变压器|多绕组变压器]]
+- [[transformer-model|多绕组变压器]]
 - 级联H桥拓扑
 
 ## 相关主题

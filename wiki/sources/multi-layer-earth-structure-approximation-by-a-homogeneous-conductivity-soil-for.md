@@ -58,7 +58,7 @@ sources: ["EMT_Doc/27&28/Multilayer Earth Structure Approximation by a Homogeneo
 
 ## 使用的方法
 
-- [[卡森公式|卡森公式]]
+- [[frequency-dependent-modeling|卡森公式]]
 - 等效均匀介质近似
 - 逐层等效算法
 - 频率扫描分析
@@ -67,16 +67,16 @@ sources: ["EMT_Doc/27&28/Multilayer Earth Structure Approximation by a Homogeneo
 
 - 多层土壤模型
 - 架空导线
-- [[地回路阻抗模型|地回路阻抗模型]]
+- [[frequency-dependent-modeling|地回路阻抗模型]]
 - 输电线路参数
 
 ## 相关主题
 
-- [[地回路阻抗计算|地回路阻抗计算]]
+- [[frequency-dependent-modeling|地回路阻抗计算]]
 - [[frequency-dependent-modeling|频率相关建模]]
 - 土壤电导率建模
 - [[emt-simulation|电磁暂态仿真]]
-- [[输电线路参数计算|输电线路参数计算]]
+- [[frequency-dependent-modeling|输电线路参数计算]]
 
 ## 主要发现
 

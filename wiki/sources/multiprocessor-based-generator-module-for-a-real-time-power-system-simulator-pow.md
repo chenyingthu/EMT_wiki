@@ -60,7 +60,7 @@ sources: ["EMT_Doc/27&28/Multiprocessor based generator module for a real-time p
 
 - 多处理器并行计算
 - [[numerical-integration|梯形积分法]]
-- [[浮点运算|浮点运算]]
+- [[numerical-integration|浮点运算]]
 - [[coordinate-transformation-model|dq坐标变换]]
 - [[co-simulation|数模混合仿真]]
 

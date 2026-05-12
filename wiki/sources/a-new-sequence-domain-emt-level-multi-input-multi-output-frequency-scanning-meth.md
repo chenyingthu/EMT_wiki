@@ -59,7 +59,7 @@ sources: ["EMT_Doc/02/Meng 等 - 2023 - A new sequence domain EMT-level multi-in
 ## 使用的方法
 
 - EMT级频扫法
-- [[阻抗稳定性分析|阻抗稳定性分析]]
+- [[impedance-stability|阻抗稳定性分析]]
 - 耦合序域扫描
 - 多输入多输出建模
 - [[emt-simulation|电磁暂态仿真]]
@@ -73,7 +73,7 @@ sources: ["EMT_Doc/02/Meng 等 - 2023 - A new sequence domain EMT-level multi-in
 
 ## 相关主题
 
-- [[阻抗稳定性分析|阻抗稳定性分析]]
+- [[impedance-stability|阻抗稳定性分析]]
 - 镜像频率效应
 - 频域阻抗测量
 - 弱电网交互

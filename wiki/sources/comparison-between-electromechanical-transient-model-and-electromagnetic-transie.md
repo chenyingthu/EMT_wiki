@@ -76,7 +76,7 @@ sources: ["EMT_Doc/10/Wang 等 - 2013 - Comparison between electromechanical tra
 - 12脉冲换流器
 - [[transformer-model|换流变压器]]
 - [[dc-rlc-filter|平波电抗器]]
-- [[交直流滤波器|交直流滤波器]]
+- [[emi-filter-model|交直流滤波器]]
 - 直流线路T型集中参数模型
 - [[synchronous-machine-model|同步发电机]]
 

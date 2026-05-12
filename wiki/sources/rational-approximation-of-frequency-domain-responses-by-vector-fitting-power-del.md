@@ -69,13 +69,13 @@ sources: ["EMT_Doc/32/VF_paper.pdf"]
 - [[transformer-model|变压器]]
 - 网络等值模型
 - [[transmission-line-model|输电线路]]
-- [[频变参数模型|频变参数模型]]
+- [[frequency-dependent-modeling|频变参数模型]]
 
 ## 相关主题
 
 - [[frequency-dependent-modeling|频率相关建模]]
 - [[network-equivalent|网络等值]]
-- [[变压器建模|变压器建模]]
+- [[transformer-modeling|变压器建模]]
 - 频域响应拟合
 - [[emt-simulation|时域仿真]]
 

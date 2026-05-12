@@ -61,14 +61,14 @@ Electrical Power and Energy Systems 148 (2023) 108928 0142-0615/© 2022 Elsevier
 - [[numerical-integration|梯形积分法]]
 - 内部节点消元
 - 相间解耦
-- [[多线程并行计算|多线程并行计算]]
+- [[multithreaded-parallel-computing|多线程并行计算]]
 - 诺顿等值
 
 ## 涉及的模型
 
 - [[pmsm-model|PMSG]]
 - 全功率变流器
-- [[lc滤波器|LC滤波器]]
+- [[emi-filter-model|LC滤波器]]
 - [[transformer-model|变压器]]
 - [[transmission-line-model|输电线路]]
 - [[dfig-model|风力发电机]]

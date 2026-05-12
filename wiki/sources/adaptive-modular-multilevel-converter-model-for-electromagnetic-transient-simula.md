@@ -71,7 +71,7 @@ sources: ["EMT_Doc/05/TPWRD.2020.2993502.pdf.pdf"]
 - [[mmc-model|半桥子模块]]
 - [[full-bridge-smb|全桥子模块]]
 - [[mmc-model|MMC]]
-- [[耦合变压器|耦合变压器]]
+- [[transformer-model|耦合变压器]]
 
 ## 相关主题
 
@@ -79,7 +79,7 @@ sources: ["EMT_Doc/05/TPWRD.2020.2993502.pdf.pdf"]
 - [[real-time-simulation|实时仿真]]
 - [[parallel-computing|仿真加速]]
 - [[mmc-model|MMC]]
-- [[控制系统建模|控制系统建模]]
+- [[power-electronic-device-modeling|控制系统建模]]
 
 ## 主要发现
 

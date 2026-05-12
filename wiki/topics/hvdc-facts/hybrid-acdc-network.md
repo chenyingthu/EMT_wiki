@@ -19,6 +19,21 @@ graph TD
 ```
 
 
+## EMT中的作用
+
+混合交直流电网 (Hybrid AC/DC Network) 在EMT仿真中的核心作用：
+
+- **研究范围**：界定混合交直流电网 (Hybrid AC/DC Network)在EMT仿真中的研究边界和应用场景
+- **分析方法**：提供混合交直流电网 (Hybrid AC/DC Network)相关的EMT分析方法和工具
+- **系统影响**：分析混合交直流电网 (Hybrid AC/DC Network)对电力系统电磁暂态特性的影响
+- **仿真验证**：为混合交直流电网 (Hybrid AC/DC Network)相关研究提供仿真验证框架
+## 形式化表达
+
+从EMT仿真角度，混合交直流电网 (Hybrid AC/DC Network)可形式化表达为：
+
+$$
+\text{待补充：混合交直流电网 (Hybrid AC/DC Network)的数学形式化描述}
+$$
 ## 核心原理详解
 
 ### 技术概述

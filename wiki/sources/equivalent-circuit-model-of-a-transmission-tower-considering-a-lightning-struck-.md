@@ -68,7 +68,7 @@ sources: ["EMT_Doc/17/Yamanaka 等 - 2021 - Equivalent Circuit Model of a Transm
 
 - 垂直双回路输电塔
 - 横担
-- [[绝缘子串|绝缘子串]]
+- [[insulator-string-model|绝缘子串]]
 - 架空地线与相导线
 - 雷击通道传输线模型
 

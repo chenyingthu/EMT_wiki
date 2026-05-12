@@ -66,7 +66,7 @@ sources: ["EMT_Doc/26/Papadopoulos 等 - 2021 - Modal propagation characteristic
 
 ## 涉及的模型
 
-- [[多导体地下电缆|多导体地下电缆]]
+- [[cable-model|多导体地下电缆]]
 - Longmire-Smith土壤模型
 - 广义大地导电模型
 - 电缆排列构型
@@ -74,7 +74,7 @@ sources: ["EMT_Doc/26/Papadopoulos 等 - 2021 - Modal propagation characteristic
 ## 相关主题
 
 - 大地导电效应
-- [[土壤频变特性|土壤频变特性]]
+- [[frequency-dependent-modeling|土壤频变特性]]
 - [[transmission-line-model|波传播特性]]
 - [[emt-simulation|电磁暂态分析]]
 - 地下电缆系统建模

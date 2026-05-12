@@ -79,7 +79,7 @@ sources: ["EMT_Doc/22/Chrysochos 等 - 2023 - Impact of solenoid effects on seri
 - [[frequency-dependent-modeling|频率相关建模]]
 - 海底电缆暂态
 - 模态传播特性
-- [[过电压分析|过电压分析]]
+- [[lightning-transient-analysis|过电压分析]]
 
 ## 主要发现
 

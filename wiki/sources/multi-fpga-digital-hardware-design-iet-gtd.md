@@ -82,7 +82,7 @@ sources: ["EMT_Doc/27&28/Multi-FPGA digital hardware design for detailed large-s
 - [[real-time-simulation|实时仿真]]
 - 多FPGA并行计算
 - [[frequency-dependent-modeling|频率相关建模]]
-- [[大规模电力系统仿真|大规模电力系统仿真]]
+- [[electromechanical-electromagnetic-hybrid-simulation|大规模电力系统仿真]]
 - 数字硬件仿真
 
 ## 主要发现

@@ -75,15 +75,15 @@ sources: ["EMT_Doc/07&08/Analysis on dynamic characteristic of control mode for 
 - [[transformer-model|换流变压器]]
 - [[dc-rlc-filter|平波电抗器]]
 - 分布参数直流输电线路
-- [[交直流滤波器|交直流滤波器]]
+- [[emi-filter-model|交直流滤波器]]
 
 
 ## 相关主题
 
 
-- [[特高压直流输电|特高压直流输电]]
+- [[vsc-hvdc|特高压直流输电]]
 - 交直流相互作用
-- [[换相失败|换相失败]]
+- [[commutation-failure|换相失败]]
 - 控制策略对比
 - 故障动态特性
 

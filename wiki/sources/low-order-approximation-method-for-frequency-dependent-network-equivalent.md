@@ -61,12 +61,12 @@ Rational function approximations of characteristic impedance and propagation coe
 - [[vector-fitting|有理函数拟合]]
 - Bode渐近线法
 - 非线性最小二乘法
-- [[递归卷积|递归卷积]]
+- [[numerical-integration|递归卷积]]
 - [[modal-analysis|相模变换]]
 
 ## 涉及的模型
 
-- [[频变输电线路模型|频变输电线路模型]]
+- [[frequency-dependent-modeling|频变输电线路模型]]
 - J.R. Marti模型
 - 分布参数线路模型
 

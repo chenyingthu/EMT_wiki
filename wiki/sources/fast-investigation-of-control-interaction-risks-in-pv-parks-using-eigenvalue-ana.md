@@ -70,10 +70,10 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/Masoom 等 - 2026 - Fast investigati
 
 - 光伏场站
 - DC-AC变流器
-- [[升压变压器|升压变压器]]
+- [[converter-transformer-model|升压变压器]]
 - π型集电线路
 - 含故障穿越逻辑的控制器
-- [[逆变器型资源|逆变器型资源]]
+- [[gfl-inverter-model|逆变器型资源]]
 - 保护系统
 
 ## 相关主题
@@ -82,7 +82,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/Masoom 等 - 2026 - Fast investigati
 - [[small-signal-analysis|稳定性分析]]
 - 新能源并网集成
 - 特征值与模态分析
-- [[阻抗稳定性分析|阻抗稳定性分析]]
+- [[impedance-stability|阻抗稳定性分析]]
 - 快速仿真评估
 
 ## 主要发现

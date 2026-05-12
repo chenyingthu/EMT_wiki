@@ -67,7 +67,7 @@ sources: ["EMT_Doc/23/De Silva和Zhang - 2026 - Improving numerical efficiency o
 
 ## 涉及的模型
 
-- [[频变输电线路模型|频变输电线路模型]]
+- [[frequency-dependent-modeling|频变输电线路模型]]
 - [[transmission-line-model|通用线路模型]]
 - [[cable-model|地下电缆]]
 - 多回路电缆系统
@@ -80,7 +80,7 @@ sources: ["EMT_Doc/23/De Silva和Zhang - 2026 - Improving numerical efficiency o
 - [[model-order-reduction|模型降阶]]
 - [[real-time-simulation|实时仿真]]
 - 广域建模
-- [[数值效率优化|数值效率优化]]
+- [[gpu-accelerated-simulation|数值效率优化]]
 
 ## 主要发现
 

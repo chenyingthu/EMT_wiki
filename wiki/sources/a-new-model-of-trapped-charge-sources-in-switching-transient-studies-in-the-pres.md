@@ -67,7 +67,7 @@ sources: ["EMT_Doc/02/Akafi-Mobarakeh 等 - 2025 - A New Model of Trapped Charge
 ## 涉及的模型
 
 - 陷落电荷源
-- [[并联电抗器|并联电抗器]]
+- [[compensation|并联电抗器]]
 - [[transmission-line-model|输电线路]]
 - 统计开关
 - 系统等值阻抗

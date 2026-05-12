@@ -63,6 +63,21 @@ graph TD
 
 ---
 
+## EMT中的作用
+
+暂态稳定性分析 (Transient Stability Analysis) 在EMT仿真中的核心作用：
+
+- **研究范围**：界定暂态稳定性分析 (Transient Stability Analysis)在EMT仿真中的研究边界和应用场景
+- **分析方法**：提供暂态稳定性分析 (Transient Stability Analysis)相关的EMT分析方法和工具
+- **系统影响**：分析暂态稳定性分析 (Transient Stability Analysis)对电力系统电磁暂态特性的影响
+- **仿真验证**：为暂态稳定性分析 (Transient Stability Analysis)相关研究提供仿真验证框架
+## 形式化表达
+
+从EMT仿真角度，暂态稳定性分析 (Transient Stability Analysis)可形式化表达为：
+
+$$
+\text{待补充：暂态稳定性分析 (Transient Stability Analysis)的数学形式化描述}
+$$
 ## 摇摆方程 (Swing Equation)
 
 ### 基本形式

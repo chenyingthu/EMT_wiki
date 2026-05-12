@@ -3,21 +3,11 @@ title: "电压电流传感器 (Voltage/Current Sensor)"
 type: model
 tags: [sensor, voltage-sensor, current-sensor, measurement, transducer, isolation]
 created: "2026-04-30"
+updated: "2026-05-11"
 ---
 
 # 电压电流传感器 (Voltage/Current Sensor)
 
-
-```mermaid
-graph TD
-    subgraph Ncmp[电压电流传感器 (Voltage/Current Sen…]
-        N0[PT/CT: 电压/电流]
-        N1[霍尔传感器: 电流]
-        N2[罗氏线圈: 电流]
-        N3[电容分压: 电压]
-        N4[光纤传感器: 电压/电流]
-    end
-```
 
 
 ## 定义与概述
@@ -440,38 +430,64 @@ end
 - **外部干扰**：EMC影响未建模
 - **安装影响**：邻近效应未考虑
 
-### 7.3 精度边界
-| 传感器类型 | 精度 | 带宽 | 延迟 |
-|-----------|------|------|------|
-| PT/CT | ±0.1-3% | 5kHz | 1-10ms |
-| 霍尔 | ±0.5-2% | 100kHz | 1-10μs |
-| 罗氏线圈 | ±1-3% | 10MHz | <1μs |
+### 7.3 量化性能边界
 
-## 8. 来源论文
+电压电流传感器的 EMT 建模精度已有可核验的量化结果，但以下数据均绑定具体传感器型号、测量条件和验证场景，不能外推为通用能力：
 
-| 论文 | 年份 | 核心贡献 |
-|------|------|----------|
-| Modeling of instrument transformers for EMT simulation | 2013 | 互感器EMT建模 |
-| Transient performance of current transformers | 2016 | CT暂态性能 |
-| Hall effect sensors in power electronic applications | 2018 | 霍尔传感器应用 |
+- **Oliveira (2021)** 提出了基于散射参数（S参数）的多端口黑盒建模方法，用于超高压电压互感器（EHV-VT）的宽频建模。S参数模型在 MHz 频段的幅频特性拟合误差 **<3%**，高频谐振峰频率定位偏差 **<2%**；引入白/灰盒融合技术后，低频段（<100 kHz）导纳幅值测量误差从 **>15%** 降低至 **<3%**。测量频带成功扩展至 **50 MHz**，完整覆盖 VFTO 特征频段（100 kHz~50 MHz）。验证基于实际 500 kV GIS 中 EHV-VT，不自动适用于其他电压等级或不同 VT 结构（Oliveira 2021）。
 
-## 相关方法
-- [[numerical-integration|数值积分]] - 传感器动态模型离散化
-- [[state-space-method|状态空间法]] - CT饱和状态分析
-- [[frequency-dependent-modeling|频率相关建模]] - 宽频响应特性
+- **司马文霞 (2021)** 提出了基于导纳互差法的电容式电压互感器（CVT）宽频非线性耦合模型。在典型 35 kV CVT 上验证：中间变压器铁芯饱和时，所提模型励磁涌流第一峰值误差仅为 **1.71%**，远低于传统模型的 **77.79%**；模型在 **5 Hz~1 MHz** 频段的电压传递特性归一化均方误差（NMSE）为 **0.91%**；雷电冲击电压第一峰值仿真误差为 **3.11%**。验证基于典型 35 kV CVT 实物，不自动适用于其他电压等级或不同制造结构的 CVT（司马文霞 2021）。
 
-## 相关模型
+- **Chaudhary (2004)** 在 EPRI/DCG EMTP Version 2.0 中实现了 CT 和 CVT 的暂态模型。CT 模型可模拟频率高达数 kHz 的暂态过程，但限于变压器模型无分布电容，不适用于更高频率。FORTRAN 接口支持每时步数据交换，典型仿真步长 50-100 μs 时，继电器算法处理延迟 **<1 μs**。验证基于 230 kV 输电系统（1200:5 A CT、ARMCO M4 铁芯），不自动适用于其他 CT 型号或饱和程度（Chaudhary 2004）。
+
+这些量化数据不构成对电压电流传感器建模方法的全面性能评价，只说明在特定测试条件下可获得的能力边界。
+
+## 适用边界与失败模式
+
+### 适用条件
+- **频率范围**：取决于传感器类型
+- **幅值范围**：额定值±20%
+- **温度范围**：-40°C至+85°C
+- **负载范围**：额定负载±25%
+
+### 失效边界
+- **温度漂移**：未建模温度影响
+- **老化效应**：长期使用精度下降
+- **外部干扰**：EMC影响未建模
+- **安装影响**：邻近效应未考虑
+
+### 关键假设
+1. 传感器工作在额定频率范围（忽略超频段谐振效应）
+2. 二次负载在额定范围内（负载变化影响变比精度）
+3. CT 铁芯未深度饱和（深度饱和下励磁电流急剧增大）
+4. 测量信号远大于噪声基底（忽略信噪比限制）
+
+## 代表性来源
+
+- [[expanding-the-measuring-range-via-s-parameters-in-a-ehv-voltage-transformer-mode|Oliveira (2021) - Expanding the measuring range via S-parameters in a EHV voltage transformer modelling]]
+- [[考虑中间变压器饱和特性的电容式电压互感器宽频非线性模型|司马文霞 (2021) - 考虑中间变压器饱和特性的电容式电压互感器宽频非线性模型]]
+- [[protection-system-representation-in-the-electromagnetic-transients-program-power|Chaudhary (2004) - Protection system representation in the Electromagnetic Transients Program]]
+
+## 与相关页面的关系
+
 - [[transformer-model|变压器模型]] - PT/CT类似变压器结构
 - [[pi-controller-model|PI控制器]] - 使用传感器信号的控制器
 - [[pll-model|锁相环]] - 电压测量应用
 - [[emi-filter-model|EMI滤波器]] - 传感器噪声抑制
 
-## 相关主题
-- 测量系统 - 传感器精度分析
-- 保护系统 - 继电器配合
-- 计量系统 - 电能计量
-- 信号处理 - 传感器信号调理
+## 开放问题
+
+- 宽禁带器件高频开关下传感器的带宽需求
+- 数字式传感器（合并单元）的 EMT 建模
+- 光学传感器在暂态测量中的精度验证
+- 传感器饱和与保护系统配合的闭环仿真
+
+## 参考标准
+
+- IEC 60044 - 互感器标准
+- IEEE Std. C37.110 - CT 保护应用导则
+- IEEE Std. C57.13 - 互感器标准要求
 
 ---
 
-*本页面基于Karpathy LLM Wiki Pattern构建，内容来自EMT领域学术文献的深度分析*
+*本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*

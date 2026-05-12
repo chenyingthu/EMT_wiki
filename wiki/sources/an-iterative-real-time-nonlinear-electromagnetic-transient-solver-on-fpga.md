@@ -62,7 +62,7 @@ sources: ["EMT_Doc/07&08/Chen and Dinavahi - 2011 - An iterative real-time nonli
 - 牛顿-拉夫逊算法
 - 连续牛顿法
 - 分段牛顿法
-- [[稀疏矩阵技术|稀疏矩阵技术]]
+- [[sparse-matrix-solver|稀疏矩阵技术]]
 - 深度流水线浮点运算
 - 并行高斯-约当消元法
 

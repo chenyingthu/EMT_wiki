@@ -68,16 +68,16 @@ sources: ["EMT_Doc/13&14/files/TPWRD.2016.2517327.pdf.pdf"]
 
 - [[transformer-model|电力变压器]]
 - 壳式/芯式变压器
-- [[多绕组变压器|多绕组变压器]]
+- [[transformer-model|多绕组变压器]]
 - 对偶π型模型
 - BCTRAN模型
 
 ## 相关主题
 
 - 低频电磁暂态
-- [[变压器建模|变压器建模]]
+- [[transformer-modeling|变压器建模]]
 - [[ferroresonance|铁磁谐振]]
-- [[励磁涌流|励磁涌流]]
+- [[transformer-model|励磁涌流]]
 - 地磁感应电流
 - [[numerical-integration|数值稳定性分析]]
 

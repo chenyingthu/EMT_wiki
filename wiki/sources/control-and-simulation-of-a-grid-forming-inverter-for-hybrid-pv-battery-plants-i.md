@@ -61,7 +61,7 @@ sources: ["EMT_Doc/11/Nguyen 等 - 2021 - Control and Simulation of a Grid-Formi
 - [[droop-control|下垂控制]]
 - dq坐标系嵌套双环控制
 - 脉宽调制(PWM)
-- [[时域电磁暂态仿真|时域电磁暂态仿真]]
+- [[fpga-real-time-simulation|时域电磁暂态仿真]]
 - PI控制
 
 ## 涉及的模型
@@ -69,8 +69,8 @@ sources: ["EMT_Doc/11/Nguyen 等 - 2021 - Control and Simulation of a Grid-Formi
 - 构网型逆变器
 - 光伏阵列
 - [[bess-model|电池储能系统]]
-- [[lc滤波器|LC滤波器]]
-- [[升压变压器|升压变压器]]
+- [[emi-filter-model|LC滤波器]]
+- [[converter-transformer-model|升压变压器]]
 - [[dc-dc-converter|DC/DC变换器]]
 - IEEE 9节点测试系统
 

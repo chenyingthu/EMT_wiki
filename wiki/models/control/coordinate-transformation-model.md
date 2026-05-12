@@ -3,20 +3,11 @@ title: "坐标变换 (Coordinate Transformation)"
 type: model
 tags: [coordinate-transformation, park, clarke, dq0, abc, synchronous-frame, rotating-frame]
 created: "2026-04-30"
+updated: "2026-05-11"
 ---
 
 # 坐标变换 (Coordinate Transformation)
 
-
-```mermaid
-graph TD
-    subgraph Ncmp[坐标变换 (Coordinate Transformat…]
-        N0[Clarke: 静止变换]
-        N1[Park: 旋转变换]
-        N2[综合: Clarke+Park]
-        N3[反变换: Inverse]
-    end
-```
 
 
 ## 定义与概述
@@ -526,53 +517,10 @@ void dq0_to_abc(float vd, float vq, float v0, float theta,
 - **角度跳变**：2π处需特殊处理
 - **数值精度**：三角函数计算误差
 
-### 7.3 精度边界
-| 实现方式 | 角度精度 | 计算速度 | 适用场景 |
-|---------|----------|----------|----------|
-| 浮点三角函数 | 高精度 | 中等 | 离线仿真 |
-| 查表法 | 中等 | 快 | 实时仿真 |
-| CORDIC | 可调 | 快 | FPGA实现 |
-| 线性插值 | 高 | 快 | 通用 |
+### 7.3 量化性能边界
 
-## 8. 来源论文
-
-| 论文 | 年份 | 核心贡献 |
-|------|------|----------|
-| The dq0 transformation in power system analysis | 2013 | 电力系统分析中的dq0变换 |
-| Comparison of reference frames for converter control | 2016 | 换流器控制参考坐标系比较 |
-| Digital implementation of Park transformation for FPGA | 2019 | FPGA中Park变换数字实现 |
-
-## 相关方法
-- [[numerical-integration|数值积分]] - 角度积分计算
-- [[state-space-method|状态空间法]] - 坐标系状态建模
-- [[multirate-method|多速率方法]] - 不同参考系协调
-
-## 相关模型
-- [[pll-model|锁相环]] - 旋转角度生成
-- [[vsc-model|VSC模型]] - 换流器dq控制
-- [[vector-control-model|矢量控制]] - 坐标变换应用
-- [[synchronous-machine-model|同步电机]] - 转子定向控制
-
-## 相关主题
-- [[vector-control-model|矢量控制模型]] - 基于dq0的控制策略
-- 瞬时功率理论 - p-q理论
-- [[pll-model|锁相环模型]] - 参考坐标系选择
-- [[real-time-simulation|实时仿真]] - 变换实时计算
+坐标变换是精确的数学变换（在无限精度算术下无信息损失），其 EMT 仿真精度主要受限于数字实现中的数值精度和角度同步误差，而非变换本身的近似。因此不适用与传统物理模型相同的精度边界评估框架。数字实现中，64 位浮点三角函数运算可达到约 $10^{-15}$ 相对精度，32 位浮点约 $10^{-7}$，16 位定点约 $10^{-4}$，而角度同步误差（如 PLL 跟踪误差）通常是限制 dq 变换精度的主导因素。建议用户根据具体应用选择足够的数值精度，重点关注角度同步环节而非变换算法本身。
 
 ---
 
-*本页面基于Karpathy LLM Wiki Pattern构建，内容来自EMT领域学术文献的深度分析*
-
-## 来源论文
-
-| 论文 | 年份 |
-|------|------|
-| [[new-multiphase-mode-domain-transmission-line-model|New multiphase mode domain transmission line model]] | 1999 |
-| [[mode-domain-multiphase-transmission-line-model-use-in-transient-studies-power-de|Mode domain multiphase transmission line model - use in tran]] | 2004 |
-| [[multiprocessor-based-generator-module-for-a-real-time-power-system-simulator-pow|Multiprocessor based generator module for a real-time power ]] | 2004 |
-| [[a-voltage-behind-reactance-synchronous-machine-model-for-the-emtp-type-solution|A Voltage-Behind-Reactance Synchronous Machine Model for the]] | 2006 |
-| [[methods-of-interfacing-rotating-machine-models-in-emtp|Methods of Interfacing Rotating Machine Models in EMTP]] | 2010 |
-| [[comparative-study-on-electromechanical-and-electromagnetic-transient-model-for-g|Comparative study on electromechanical and electromagnetic t]] | 2014 |
-| [[a-steady-state-initialization-procedure-for-generic-voltage-source-converters-in|A steady-state initialization procedure for generic voltage-]] | 2023 |
-| [[average-value-model-for-voltage-source-converters-with-direct-interfacing-in-emt|Average-Value Model for Voltage-Source Converters With Direc]] | 2023 |
-| [[modeling-and-application-of-dq-sequence-dynamic-phasors-under-unbalanced-ac-cond|Modeling and application of DQ-sequence dynamic phasors unde]] | 2025 |
+*本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*

@@ -67,7 +67,7 @@ sources: ["EMT_Doc/01/Cao 等 - 2025 - A Bridge-Arm-Module-Based Fixed-Admittanc
 ## 涉及的模型
 
 - 桥臂模块(BAM)
-- [[电力电子换流器|电力电子换流器]]
+- [[power-electronic-device-modeling|电力电子换流器]]
 - L/C型ADC模型
 - 开关电阻模型
 

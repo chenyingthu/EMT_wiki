@@ -69,14 +69,14 @@ sources: ["EMT_Doc/25/Li 等 - 2020 - Interpolation for power electronic circuit
 
 - [[svc-tcr-model|TCR]]
 - [[vsc-model|VSC]]
-- [[电力电子电路|电力电子电路]]
+- [[power-electronic-device-modeling|电力电子电路]]
 
 ## 相关主题
 
 - [[emt-simulation|电磁暂态仿真]]
 - 电力电子电路仿真
 - 开关事件插值
-- [[数值积分算法|数值积分算法]]
+- [[numerical-integration|数值积分算法]]
 - 仿真精度与效率
 
 ## 主要发现

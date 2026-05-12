@@ -9,7 +9,7 @@ created: "2026-04-13"
 sources: ["EMT_Doc/26/Alboaouh 等 - 2025 - Modeling of inductive constant power load for electromagnetic-transient simulations–Part II.pdf"]
 ---
 
-# Modeling of inductive constant power load for electromagnetic-transient simulations–Part II
+# Modeling of inductive constant power load for electromagnetic-transient simulations–Part II (EMT_Doc/26)
 
 **作者**: Kamel Alboaouh
 **年份**: 2025

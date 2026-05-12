@@ -2,10 +2,11 @@
 title: "A Novel Interfacing Technique for Distributed Hybrid Simulations Combining EMT and Transient Stability"
 type: source
 year: 2017
+tags: [interfacing, technique, distributed, hybrid, simulations]
+
 journal: "IEEE Transactions on Power Delivery"
 created: "2026-04-13"
-sources: ["EMT_Doc/03/TPWRD.2017.2690145.pdf.pdf"]
----
+sources: ["EMT_Doc/03/TPWRD.2017.2690145.pdf.pdf"]---
 
 # A Novel Interfacing Technique for Distributed Hybrid Simulations Combining EMT and Transient Stability
 
@@ -67,7 +68,7 @@ sources: ["EMT_Doc/03/TPWRD.2017.2690145.pdf.pdf"]
 - 非线性动态负荷
 - [[synchronous-machine-model|同步电机]]
 - [[transmission-line-model|输电线路]]
-- [[机电暂态模型|机电暂态模型]]
+- [[electromechanical-model|机电暂态模型]]
 - [[emt-simulation|电磁暂态模型]]
 
 ## 相关主题

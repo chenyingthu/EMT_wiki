@@ -62,15 +62,15 @@ sources: ["EMT_Doc/09/Cao和Chen - 2007 - Application of EMTP-RV graphic softwar
 - 非线性迭代求解
 - [[emt-simulation|时域仿真]]
 - [[harmonic-analysis-methods|谐波分析]]
-- [[离散傅里叶变换|离散傅里叶变换]]
+- [[discrete-fourier-transform|离散傅里叶变换]]
 
 ## 涉及的模型
 
 - [[svc-model|SVC]]
 - [[svc-tcr-model|TCR]]
-- [[晶闸管阀组|晶闸管阀组]]
+- [[lcc-model|晶闸管阀组]]
 - ZnO避雷器
-- [[rlc支路|RLC支路]]
+- [[companion-circuit|RLC支路]]
 - [[circuit-breaker-model|断路器]]
 
 ## 相关主题

@@ -3,39 +3,11 @@ title: "半桥子模块 (Half-Bridge Submodule, HBSM)"
 type: model
 tags: [half-bridge, hbsm, mmc, submodule, power-electronics]
 created: "2026-05-02"
+updated: "2026-05-12"
 ---
 
 # 半桥子模块 (Half-Bridge Submodule, HBSM)
 
-
-```mermaid
-graph TD
-    subgraph Ncmp[半桥子模块 (Half-Bridge Submodule…]
-        N0[1.7 kV: 600 A]
-        N1[3.3 kV: 450 A]
-        N2[4.5 kV: 400 A]
-        N3[6.5 kV: 300 A]
-    end
-```
-
-
-## 核心原理详解
-
-### 技术概述
-半桥子模块是电力系统电磁暂态仿真领域的重要技术，对提高仿真精度和效率具有重要意义。
-
-### 理论基础
-该技术建立在严格的电磁场理论和电路分析基础之上，通过数学建模描述系统的动态行为。
-
-### 核心机制
-- **物理建模**：基于物理定律建立准确的数学模型
-- **数值求解**：采用高效的数值算法求解系统方程
-- **参数分析**：研究关键参数对系统性能的影响
-
-### 技术优势
-- 提高仿真精度和计算效率
-- 支持复杂系统的详细分析
-- 为工程设计和优化提供理论支撑
 
 ## 概述
 
@@ -768,6 +740,45 @@ $$V_{th} = V_C \cdot S - R_{on} \cdot i_{SM}$$
 - 参数自适应调整
 - 运行状态估计
 
+## 量化性能边界
+
+**HBSM戴维南等效模型加速比与精度**（Xu 2015, 48电平MMC-HVDC）:
+- 戴维南等效模型在 $N=200$ 子模块时仿真速度比详细模型快 **15~20倍**
+- 排序算法复杂度从 $O(N^2)$ 降至 $O(N)$（模型2）或 $2N-3$（模型3），仿真耗时与子模块数线性正比
+- 梯形法（模型3）仿真耗时斜率约为后退欧拉法（模型2）的2倍，但稳态偏差降低 **0.2%~0.4%**
+- 受控源通用模型在48电平时提速比达 **8~10倍**
+- 改进平均值模型在双极直流故障闭锁工况下，直流电压稳态误差 **<0.5%**
+- 验证系统：双端对称单极MMC-HVDC，640 kV/1000 MW，48 SM/桥臂，20 μs步长
+
+**HBSM混合数值积分模型**（Gao 2023）:
+- 混合梯形-中点规则保持桥臂等效导纳恒定，避免正常运行时LU重分解
+- 稳态误差 **<0.5%**，暂态峰值误差 **<1%**
+- 仿真加速比 **5~15倍**（相对于戴维南等效模型）
+- CDA（临界阻尼调整）开销 **<5%**
+- 适用：离线EMTP型仿真，半桥MMC-only
+
+**HBSM同步开关预判模型**（Zhang 2023）:
+- **20倍**加速比（80模块SST系统验证）
+- 波形误差 **<0.5%**（覆盖所有运行工况）
+- 通过半桥子电路单元同步预判消除迭代收敛，内部节点凝聚减少全局矩阵规模
+
+**HBSM加速DEM**（Parvari 2023）:
+- HBSM系统 **1.38x** 加速比（4站200 SM：31.9 s vs 44.0 s）
+- 波形误差 **<0.1%**
+- FBSM加速比更高（2.73x）因两倍IGBT数量
+
+**HBSM自适应MMC模型**（Stepanov 2020）:
+- 401电平MMC-HVDC验证，模型切换误差 **<0.5%**
+- 稳态切换至AVM/AEM可降低单步计算耗时 **65%~75%**
+- 阻塞模式实际收敛迭代 **<6次**（上限30次）
+
+**HBSM二极管钳位硬件均压拓扑**（Xu 2018）:
+- 电压传感器减少 **>50%**，DSP延时减少 **30~50%**
+- 电压不平衡度 **1%~2%**（vs 排序算法 <0.5%）
+- 附加硬件代价：每相N个SM需(6N+14)个二极管、4个IGBT、4个电容
+
+**数据缺口声明**：HBSM不同模型间的加速比和精度对比多基于独立算例，缺乏统一基准下的系统性横向对比。多数加速验证在离线仿真环境（PSCAD/EMTDC、EMTP-RV）中完成，实时仿真硬件（FPGA/RTDS）下的性能数据尚不充分。二极管钳位拓扑的硬件成本与可靠性增益在实际工程中的量化评估尚未报告。
+
 ## 相关模型
 
 - [[mmc-model]] - MMC换流器模型
@@ -787,16 +798,6 @@ $$V_{th} = V_C \cdot S - R_{on} \cdot i_{SM}$$
 
 ## 来源论文
 
-参见 [[index]] 获取更多半桥子模块、MMC建模、柔性直流输电相关文献。
-
-主要参考文献类别：
-- MMC拓扑与控制基础理论
-- 电容电压均衡算法
-- 电磁暂态建模方法
-- 工程应用与试验验证
-
-## 来源论文
-
 | 论文 | 年份 |
 |------|------|
 | [[34tpwrd20172749427|34/TPWRD.2017.2749427]] | 2017 |
@@ -804,3 +805,7 @@ $$V_{th} = V_C \cdot S - R_{on} \cdot i_{SM}$$
 | [[an-accelerated-detailed-equivalent-model-for-modular-multilevel-converters|An accelerated detailed equivalent model for modular multile]] | 2023 |
 | [[analysis-and-general-calculation-of-dc-fault-currents-in-mmc-mtdc-grids|Analysis and general calculation of DC fault currents in MMC]] | 2023 |
 | [[dead-time-effect-modeling-for-hybrid-modular-multilevel-converter-using-twin-map|Dead-time effect modeling for hybrid modular multilevel conv]] | 2026 |
+
+---
+
+*本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*

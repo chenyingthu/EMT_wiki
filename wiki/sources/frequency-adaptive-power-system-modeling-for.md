@@ -61,7 +61,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/TPWRS.2009.2016587.pdf.pdf"]
 - 频率自适应仿真(FAST)
 - [[dynamic-phasor|动态相量法]]
 - [[numerical-integration|梯形积分法]]
-- [[伴随模型法|伴随模型法]]
+- [[companion-circuit|伴随模型法]]
 - [[nodal-analysis|节点分析法]]
 - 解析信号处理
 
@@ -77,7 +77,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_20/TPWRS.2009.2016587.pdf.pdf"]
 - [[emt-simulation|电磁暂态]]
 - [[electromechanical-transient|机电暂态]]
 - [[vsc-hvdc-系统的动态相量法建模仿真分析|动态相量]]
-- [[频率自适应建模|频率自适应建模]]
+- [[frequency-dependent-modeling|频率自适应建模]]
 
 ## 主要发现
 

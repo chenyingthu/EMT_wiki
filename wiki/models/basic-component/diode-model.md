@@ -3,20 +3,11 @@ title: "二极管 (Diode)"
 type: model
 tags: [diode, rectifier, semiconductor, switching, snubber, power-electronics]
 created: "2026-04-30"
+updated: "2026-05-11"
 ---
 
 # 二极管 (Diode)
 
-
-```mermaid
-graph TD
-    subgraph Ncmp[二极管 (Diode)]
-        N0[整流二极管: 硅PN结]
-        N1[快恢复二极管(FRD): 硅PN结+金掺杂]
-        N2[肖特基二极管: 金属-半导体]
-        N3[功率二极管: 扩散PN结]
-    end
-```
 
 
 ## 定义与概述
@@ -459,47 +450,14 @@ D1 anode cathode DMOD
 - **寄生振荡**：开关过程中的高频振荡需特殊处理
 - **热耦合**：电-热耦合需单独建模
 
-### 7.3 精度边界
-| 模型类型 | 适用场景 | 精度 | 计算成本 |
-|---------|----------|------|----------|
-| 理想开关 | 系统级分析 | ±10% | 低 |
-| 恒定压降 | 功耗估算 | ±5% | 低 |
-| 分段线性 | 一般EMT仿真 | ±3% | 中 |
-| 详细物理 | 器件级分析 | ±1% | 高 |
-| 含反向恢复 | 开关暂态 | ±5% | 高 |
+## 量化性能边界
 
-## 8. 来源论文
+二极管作为开关器件的 EMT 仿真性能已有可核验的量化结果，但以下数据均绑定具体建模方法和验证条件，不能外推为通用能力：
 
-| 论文 | 年份 | 核心贡献 |
-|------|------|----------|
-| An improved diode model for circuit simulation | 2012 | 改进的二极管电路仿真模型 |
-| Modeling of power diodes with reverse recovery for EMT programs | 2015 | 含反向恢复的功率二极管EMT建模 |
-| Diode forward and reverse recovery modeling in power electronic circuits | 2018 | 功率电子电路二极管恢复特性建模 |
+- **Na (2023)** 提出了结合半步长后向欧拉法与插值/外推策略的改进算法，用于固定步长 EMT 仿真中开关器件（含二极管、IGBT、晶闸管）的暂态模拟。在 IGBT/二极管/电感电路测试中，虚假开关损耗从普通插值法的 **212.6 μJ** 大幅降低至约 **2 μJ**，消除率超过 **99%**。该方法彻底消除了传统瞬时插值法固有的"提前一个时间步"数值误差，电感电流/电压波形与 0.1 μs 参考解的相位偏差趋近于零。验证基于自研 EMT 仿真程序和特定电力电子拓扑，不自动适用于大规模网络或多开关频繁动作场景（Na 2023）。
 
-## 相关方法
-- [[numerical-integration|数值积分]] - 二极管开关暂态离散化求解
-- [[average-value-model|平均值模型]] - 整流器系统级仿真
-- [[fixed-admittance|恒导纳模型]] - 保持导纳矩阵恒定
-
-## 相关模型
-- [[igbt-model|IGBT模型]] - 全控型功率半导体器件
-- [[vsc-model|VSC模型]] - 电压源换流器应用
-- 整流器模型 - 二极管整流电路
-- 缓冲电路模型 - 关断过压保护
-
-## 相关主题
-- [[harmonic-analysis|谐波分析]] - 整流器谐波特性
-- [[real-time-simulation|实时仿真]] - 高速开关仿真
-- 电力电子 - 功率变换技术
-- 保护电路 - 续流与过压保护
+这些量化数据不构成对二极管建模方法的全面性能评价，只说明在特定测试条件下可获得的能力边界。
 
 ---
 
-*本页面基于Karpathy LLM Wiki Pattern构建，内容来自EMT领域学术文献的深度分析*
-
-## 来源论文
-
-| 论文 | 年份 |
-|------|------|
-| [[stability-evaluation-of-interpolation-extrapolation-and-numerical-oscillation-da|Stability Evaluation of Interpolation, Extrapolation, and Nu]] | 2020 |
-| [[an-improved-high-accuracy-interpolation-method-for-switching-devices-in-emt-simu|An improved high-accuracy interpolation method for switching]] | 2023 |
+*本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*

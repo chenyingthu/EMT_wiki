@@ -74,8 +74,8 @@ sources: ["EMT_Doc/09/Cao - 2006 - Application of EMTP in the research of UHV AC
 
 - [[synchronous-machine-model|同步电机]]
 - J.Marti输电线路模型
-- [[饱和变压器|饱和变压器]]
-- [[并联电抗器|并联电抗器]]
+- [[transformer-model|饱和变压器]]
+- [[compensation|并联电抗器]]
 - 金属氧化物避雷器
 - 隔离开关电弧重燃模型
 - TACS控制系统
@@ -87,7 +87,7 @@ sources: ["EMT_Doc/09/Cao - 2006 - Application of EMTP in the research of UHV AC
 - 特高压交流输电
 - 过电压计算
 - 零点偏移现象
-- [[谐振过电压|谐振过电压]]
+- [[ferroresonance|谐振过电压]]
 - 潜供电流熄弧
 - 暂态恢复电压
 - [[emt-simulation|电磁暂态仿真]]

@@ -1,0 +1,4 @@
+- [reading-notes-fbsm](reading-notes-fbsm.md) — FBSM重写证据: 潘可盈2024死区状态空间平均、Parvari 2023加速DEM(2.73x FBSM)、MMC Models 2013四种保真度、Yu 2013六模型对比
+- [reading-notes-dsogi-pll](reading-notes-dsogi-pll.md) — DSOGI-PLL重写证据: Ranasinghe 2024改进DSOGI-PLL(调节时间-80%,频率RMSE 2.16→0.001Hz,SCR 2.3→1.0)、Luchini 2023 ATP-GFL模型
+- [reading-notes-dem](reading-notes-dem.md) — DEM重写证据: Gnanarathna 2010 Thevenin臂等效(310x加速,<0.1%误差)、Parvari 2023欧拉积分恒定导纳、Stepanov 2020自适应切换、Meng 2020 DEM+AVM统一框架
+- [reading-notes-microgrid-control](reading-notes-microgrid-control.md) — microgrid-control重写证据: Nguyen 2021 GFM黑启动、林继灿2023 VSG一致性、Rashidirad 2023 MANA多微电网、Nurunnabi 2025 GFM PQ

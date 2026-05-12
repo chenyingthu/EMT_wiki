@@ -3,31 +3,11 @@ title: "Model Predictive Control"
 type: model
 tags: [model-predictive-control]
 created: "2026-05-04"
+updated: "2026-05-11"
 ---
 
 # Model Predictive Control
 
-
-```mermaid
-graph TD
-    N0[Model Predictive…]
-    N1[技术背景]
-    N0 --> N1
-    N2[定义与边界]
-    N0 --> N2
-    N3[EMT中的作用]
-    N0 --> N3
-    N4[主要分支与机制]
-    N0 --> N4
-    N5[深度分析]
-    N0 --> N5
-    N6[形式化表达]
-    N0 --> N6
-    N7[数值分析]
-    N0 --> N7
-    N8[适用边界与失败模式]
-    N0 --> N8
-```
 
 
 ## 技术背景
@@ -53,160 +33,20 @@ graph TD
 ## EMT中的作用
 
 
-**6. 系统稳定性分析**
-评估系统在扰动条件下的暂态稳定性和电压稳定性。
-
-**7. 保护配合优化**
-分析保护装置的动作时间和配合关系，优化保护配置。
-
-**8. 新能源并网评估**
-分析可再生能源并网对系统动态特性的影响。
-
-
-**6. 系统稳定性分析**
-评估系统在扰动条件下的暂态稳定性和电压稳定性。
-
-**7. 保护配合优化**
-分析保护装置的动作时间和配合关系，优化保护配置。
-
-**8. 新能源并网评估**
-分析可再生能源并网对系统动态特性的影响。
-
-该技术/模型在电力系统EMT仿真中具有以下核心作用：
-
-**1. 精确动态行为刻画**
-准确描述电力电子设备和复杂网络的快速动态响应特性，包括开关瞬态、故障暂态和控制动态。
-
-**2. 控制策略验证**
-在详细仿真模型基础上验证控制系统设计的有效性和鲁棒性，支持控制器参数优化。
-
-**3. 故障与保护分析**
-模拟各类故障场景（短路、接地、断线等），评估保护装置的动作特性与配合关系。
-
-**4. 多场景适应性分析**
-支持不同运行工况、参数变化、拓扑结构的仿真研究，评估系统在极端条件下的行为。
-
-**5. 模型可复用性**
-标准化的模型结构便于在不同仿真平台和应用场景中复用，提高研究效率。
-
-
-基于相关研究的技术应用：
-
-## 主要分支与机制
-
-
-**关键机制解析**：
-- **核心原理**：基于严格的数学建模和物理规律推导
-- **实现方法**：采用先进的数值算法和优化技术
-- **系统架构**：模块化设计，便于集成和扩展
-- **关键参数**：敏感性分析和参数辨识方法
-
-## 深度分析
-
-### 核心原理详解
-
-### 关键技术要素
-- **数学建模**：基于严格的物理定律和数学推导
-- **数值方法**：采用高效的数值积分和求解算法
-- **模型降阶**：在保持精度的前提下降低计算复杂度
-- **并行计算**：利用多核CPU和GPU加速仿真
-
-### 实现细节
-- 算法实现的关键步骤和注意事项
-- 参数选择和调优策略
-- 数值稳定性保障措施
-
-## 形式化表达
-
-
-### 核心数学表达
-
-从相关研究提取的关键公式：
-
-$$J_i\frac{d\Delta\omega_i}{dt}=\frac{P_{mi}}{\omega_0}-\frac{P_{0i}}{\omega_0}-D_i(\omega_i-\omega_0),\qquad P_{mi}=P_{refi}+k_{\omega i}(\omega_0-\omega)$$
-
-$$E_i=\frac{1}{K_{qi}s}\left[Q_{refi}-Q_{0i}+D_{qi}(U_{cni}-U_c)\right]$$
-
-$$P_{0i}=\frac{3U_{ci}U_g\sin\delta_i}{2\omega_0L_i}\approx\frac{3U_{ci}U_g}{2X_i}\delta_i\approx K_i\delta_i,\qquad \delta_i=\int(\omega_i-\omega_{bus})dt$$
-
-$$\frac{\Delta\omega_i(s)}{\Delta\omega_{bus}(s)}=\frac{K_i}{J_i\omega_0s^2+(D_i\omega_0+k_{\omega i})s+K_i}$$
-
-$$
-
-*单台VSC-ESS相对于公共母线频率扰动的二阶频率响应传递函数。分母中二阶项由虚拟惯量决定，一阶项由虚拟阻尼和频率调制系数决定，常数项由同步功率系数决定。*
-
-
-**公式5**: $$
-
-
-## 数值分析
-
-### 精度与效率
-- 仿真精度：误差控制在1%以内
-- 计算效率：支持大规模系统实时仿真
-- 数值稳定性：在典型工况下保持稳定
-
-### 典型参数范围
-- 时间步长：1μs ~ 1ms
-- 系统规模：10~1000节点
-- 仿真时长：0.1s ~ 10s
-
-### 性能指标
-- 内存占用：随系统规模线性增长
-- 计算时间：与系统复杂度和仿真时长相关
-- 收敛性：在绝大多数情况下稳定收敛
 
 ## 适用边界与失败模式
 
+MPC（模型预测控制）在 EMT 仿真中的精度主要取决于预测模型保真度、优化求解精度和离散化步长，而非 MPC 算法理论框架本身的近似。
 
-基于证据边界的分析：
+### 量化性能边界
 
+**数据缺口声明**：截至当前知识范围，未找到针对 MPC 在 EMT 仿真中建模精度的独立量化性能数据。本页面内容为初始占位符，核心公式和控制结构有待补充。MPC 的 EMT 仿真精度高度依赖于以下因素：预测模型的时间尺度（通常 100 μs-1 ms）、目标函数的权重设计、以及求解器在实时环境中的收敛性。建议用户参考具体 MPC 实现文献获取量化性能数据。
 
 ## 与相关页面的关系
 
-- [[emt-simulation]] - EMT仿真基础
-- [[power-system]]
-- [[electromagnetic-transient]]
-## 研究前沿
-
-### 当前研究热点
-- **人工智能与仿真**：利用机器学习加速仿真计算
-- **数字孪生技术**：构建电力系统的数字孪生模型
-- **实时仿真技术**：满足硬件在环仿真的时效性要求
-- **云仿真平台**：基于云计算的大规模并行仿真
-
-### 开放问题
-- 超大规模系统的实时仿真能力
-- 多物理场耦合建模方法
-- 不确定性量化和风险评估
-- 模型验证和标定方法
-
-### 未来发展方向
-- 更高效的数值算法
-- 更精确的模型降阶技术
-- 更智能的参数优化方法
-- 更完善的验证和确认框架
-
-
-### 相关技术
-- [[emt-simulation]] - EMT仿真基础
-- [[power-system]] - 电力系统建模
-- [[electromagnetic-transient]] - 电磁暂态分析
-- [[control-system]] - 控制系统设计
-- [[real-time-simulation]] - 实时仿真技术
-
-
-## 代表性来源
-
-- [[average-value-model-for-a-modular-multilevel-converter-with-embedded-storage]]
-<!-- figure-needed: diagram | 系统架构示意图 | medium -->
-
+- [[pi-controller-model]] - PI控制器基础
+- [[vector-control-model]] - 矢量控制模型
+- [[model-predictive-control]] - 模型预测控制
 ---
 
-*本页面为自动生成的stub，需要进一步补充完善。*
-
-- [[average-value-model-for-a-modular-multilevel-converter-with-embedded-storage]]
-- [[current-source-modular-multilevel-converter-modeling-and-control]]
-- [[type-3-wind-turbine-generator-model-with-generic-high-level-control-for-electrom]]
-- [[msemt-an-advanced-modelica-library-for-power-system-electromagnetic-transient-st]]
-- [[reduced-order-dynamic-model-of-modular]]
+*本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*

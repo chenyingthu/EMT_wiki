@@ -921,7 +921,7 @@
 ## [2026-04-13] ingest | 文件夹 26 批量摄入
 - 来源: EMT_Doc/26/ (21 篇论文)
 - 创建来源页: 21
-  modeling-of-inductive-constant-power-load-for-electromagnetic-transient-simulati.md, mitigation-of-subsynchronous-interactions-in-hybrid-acdc-grid-with-renewable-ene.md, modeling-of-cross-magnetization-effects-in-saturated-synchronous-machines-for-el.md, modal-domain-based-modeling-of-parallel.md, measurement-based-frequency-dependent-model-of-a-hvdc-transformer-for-electromag.md, modeling-of-a-modular-multilevel-converter-with-embedded-energy-storage-for-elec.md, modeling-a-mixed-residential-commercial-load-for-simulations-involving-large-dis.md, modeling-method-for-dfig-based-wind-farm-in-high-efficiency-real-time-electromag.md, modeling-and-application-of-dq-sequence-dynamic-phasors-under-unbalanced-ac-cond.md, modelica-based-simulation-of-electromagnetic-transients-using-dynao-current-stat.md...
+  modeling-of-inductive-constant-power-load-for-electromagnetic-transient-simulati-26.md, mitigation-of-subsynchronous-interactions-in-hybrid-acdc-grid-with-renewable-ene.md, modeling-of-cross-magnetization-effects-in-saturated-synchronous-machines-for-el.md, modal-domain-based-modeling-of-parallel.md, measurement-based-frequency-dependent-model-of-a-hvdc-transformer-for-electromag.md, modeling-of-a-modular-multilevel-converter-with-embedded-energy-storage-for-elec.md, modeling-a-mixed-residential-commercial-load-for-simulations-involving-large-dis.md, modeling-method-for-dfig-based-wind-farm-in-high-efficiency-real-time-electromag.md, modeling-and-application-of-dq-sequence-dynamic-phasors-under-unbalanced-ac-cond.md, modelica-based-simulation-of-electromagnetic-transients-using-dynao-current-stat.md...
 - 主题/方法/模型页: 待分析后创建
 
 ## [2026-04-13] ingest | 文件夹 27&28 批量摄入

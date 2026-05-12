@@ -3,27 +3,10 @@ title: "固态变压器 (Solid State Transformer, SST)"
 type: model
 tags: [solid-state-transformer, sst, power-electronic-transformer, pet, ac-dc-ac, isolation]
 created: "2026-05-04"
+updated: "2026-05-12"
 ---
 
 # 固态变压器 (Solid State Transformer, SST)
-
-
-```mermaid
-graph TD
-    subgraph S0[固态变压器 (Solid State Transform…]
-        N0[定义与边界]
-        N1[EMT中的作用]
-        N2[主要分支与机制]
-        N3[形式化表达]
-        N4[数值分析]
-        N5[适用边界与失败模式]
-    end
-    N0 --> N1
-    N1 --> N2
-    N2 --> N3
-    N3 --> N4
-    N4 --> N5
-```
 
 
 ## 定义与边界
@@ -92,22 +75,35 @@ $$\frac{V_{out}}{V_{in}} = m_1 \cdot n \cdot m_2$$
 $m_1$、$m_2$为PWM调制比，$n$为高频变压器变比。
 
 
-## 数值分析
+## 量化性能边界
 
-### 精度与效率
-- 仿真精度：误差控制在1%以内
-- 计算效率：支持大规模系统实时仿真
-- 数值稳定性：在典型工况下保持稳定
+**Gao 2022 SST高频链路加速等效模型**（DAB功率模块，MMC型SST）:
+- 基于节点导纳方程预处理与Kron消去法，消除DAB模块内部节点，构建多端口等效电路
+- 仿真速度较详细模型提升 **1~2个数量级**（10~100倍），特定工况可达2~3个数量级
+- 利用IGBT互补导通特性（$G_{ON}+G_{OFF}=G_x$为常数），实现单步矩阵求逆运算量为0
+- 支持ISOP/ISOS/IPOP/IPOS等多种串并联连接配置的参数统一转换
+- 验证平台：PSCAD/EMTDC + 硬件实验验证，端口波形与详细模型高度一致
+- 数据缺口：速度提升范围（1~2个数量级）来自摘要概述，原文未在不同SST功率等级下给出精确加速比
 
-### 典型参数范围
-- 时间步长：1μs ~ 1ms
-- 系统规模：10~1000节点
-- 仿真时长：0.1s ~ 10s
+**Li 2026 SFB-DEM + ImEx-Gear实时仿真模型**（60模块ISOP SST, OPAL-RT）:
+- 采用隐显多步Gear法，实现 **171x** 加速比（vs 详细模型）， **7.5x**（vs VG-DEM传统戴维南等效）
+- **3阶ImEx-G3O**格式，稳态误差 **<0.5%**，开关定位精度<1μs
+- 恒定导纳矩阵 + 节点缩减约 **60%**，单步计算复杂度从 $O(N^3)$ 降至 $O(N)$
+- 数据缺口：验证仅基于60 SM ISOP SST，故障工况和非线性磁芯尚未验证
 
-### 性能指标
-- 内存占用：随系统规模线性增长
-- 计算时间：与系统复杂度和仿真时长相关
-- 收敛性：在绝大多数情况下稳定收敛
+**Li 2025 通用解耦等效电路模型**（SFB-DEM / SFB-AVM, ISOP SST）:
+- SFB-DEM节点数从 **6N+1降至2N+3**，SFB-AVM进一步降至 **3-5节点**
+- 恒定等效导纳 $G_{eq}=C/h$，导纳矩阵呈块对角（三级独立）
+- 步长20-50μs时波形偏差 **<0.5%**（vs 1μs详细模型），相关系数>0.99
+- 验证平台：PSCAD/EMTDC，10相FBSM + 30 DAB + NPC三电平
+- 数据缺口：保护继电器配合、其他硬件平台（RTDS/FPGA）未覆盖
+
+**Wang 2025 多速率PET仿真**（CHB-DAB拓扑）:
+- 基于频率的子网划分：CHB慢速子系统（~500Hz）与DAB快速子系统（kHz级）
+- 步长比例 **10:1~20:1**（CHB 50-100μs, DAB 1-10μs）
+- 数据缺口：具体加速比数值在原文摘要中未量化报告
+
+**数据缺口声明**：PET/SST建模的加速比高度依赖于具体拓扑（ISOP/ISOS/CHB-DAB）、子模块数量和仿真平台。不同模型间的横向对比缺乏统一基准（详细模型步长、硬件配置不同）。大多数验证在离线EMT环境完成，实时硬件平台（FPGA/RTDS）下的数据仅Li 2026在OPAL-RT上报告。
 
 ## 适用边界与失败模式
 
@@ -134,25 +130,21 @@ $m_1$、$m_2$为PWM调制比，$n$为高频变压器变比。
 - [[transformer-model]] - 传统变压器模型
 - [[ieee-14-bus-system]] - IEEE 14节点测试系统
 - [[emt-simulation]] - EMT仿真基础
-- [[transmission-line-model]]
-- [[synchronous-machine-model]]
-- [[fdne-model]]
-## 代表性来源
+- [[transformer-model]] - 传统变压器模型
 
-- [[emt-simulation]] - EMT仿真基础
-- [[power-system]] - 电力系统建模
-- [[electromagnetic-transient]] - 电磁暂态分析
-- [[control-system]] - 控制系统设计
-- [[real-time-simulation]] - 实时仿真技术
-- McMurray, W., "The Thyristor Electronic Transformer," *IEEE IGA*, 1968.
-- She, X., et al., "Solid State Transformer in the Future Smart Grid," *CISS*, 2012.
-
----
-
-*本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*
+## 相关方法
+- [[average-value-model|平均值模型]] - DAB/CLLC平均值建模
+- [[fixed-admittance|恒导纳模型]] - 高频变换器恒导纳实现
 
 ## 来源论文
 
 | 论文 | 年份 |
 |------|------|
-| [[a-component-level-modeling-and-fine-grained-simulation-method-for-renewable-ener|适用于级联型电力电子拓扑电磁暂态仿真的N端口网络通用等效建模方法]] | 2024 |
+| [[accelerated-electromagnetic-transient-emt-equivalent-model-of-solid-state-transf|Accelerated EMT Equivalent Model of Solid-State Transformer]] | 2022 |
+| [[a-numerically-efficient-and-accurate-model-for-real-time-simulation-of-solid-sta|A numerically efficient and accurate model for real-time simulation of solid-state transformer]] | 2026 |
+| [[universal-decoupled-equivalent-circuit-models-of-solid-state-transformer-for-acc|Universal decoupled equivalent circuit models of solid-state transformer]] | 2025 |
+| [[multirate-emt-simulation-of-power-electronic-transformers-with-high-precision-fi|Multirate EMT Simulation of Power Electronic Transformers]] | 2025 |
+
+---
+
+*本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*

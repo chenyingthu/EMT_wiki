@@ -3,21 +3,11 @@ title: "电感 (Inductor)"
 type: model
 tags: [inductor, inductance, passive-component, saturation, core-loss, magnetic]
 created: "2026-04-30"
+updated: "2026-05-11"
 ---
 
 # 电感 (Inductor)
 
-
-```mermaid
-graph TD
-    subgraph Ncmp[电感 (Inductor)]
-        N0[空心电感: 空气]
-        N1[铁氧体电感: 铁氧体]
-        N2[铁心电感: 硅钢片]
-        N3[粉芯电感: 铁粉/合金粉]
-        N4[叠片电感: 硅钢叠片]
-    end
-```
 
 
 ## 定义与概述
@@ -451,45 +441,14 @@ SATURABLE_TRANSFORMER
 - **直流偏置**：叠加直流时的增量电感变化
 - **高频效应**：分布参数在极高频显著
 
-### 7.3 精度边界
-| 模型类型 | 频率范围 | 精度 | 适用场景 |
-|---------|----------|------|----------|
-| 理想电感 | DC-1kHz | ±5% | 线性储能分析 |
-| 含绕组电阻 | DC-100kHz | ±5% | 一般电路 |
-| 含饱和 | DC-10kHz | ±10% | 变压器/电机 |
-| 含铁损 | 50Hz-10kHz | ±15% | 功率分析 |
+### 7.3 量化性能边界
 
-## 8. 来源论文
+电感器的 EMT 仿真精度高度依赖于饱和模型、铁损模型和高频寄生参数的准确度。目前公开文献中缺乏针对电感器 EMT 建模方法的独立量化性能评估。
 
-| 论文 | 年份 | 核心贡献 |
-|------|------|----------|
-| Modeling of nonlinear inductors with hysteresis for EMT simulation | 2014 | 磁滞电感EMT建模 |
-| Frequency-dependent modeling of power inductors | 2017 | 功率电感频率相关建模 |
-| Core loss modeling for EMT simulation of power transformers | 2019 | 变压器铁损EMT建模 |
+**数据缺口声明**：截至当前知识范围，未找到针对电感器（含饱和/铁损/高频寄生参数）EMT 建模精度的独立量化性能数据。Pordanjani (2022) 提出了三种基于 Hopkinson 类比、Buntenbach 类比和对偶原理的分布式电路方法，用于电感器在 EMT 软件中的详细电磁建模，并以二维 FEM 为参考进行了验证，但原文未报告可核验的误差百分比、计算时间倍数或网格规模等数值结果。建议用户根据具体应用场景（频率范围、饱和程度、精度要求）选择合适的电感模型（线性/饱和/含铁损），并通过与实测或 FEM 参考模型对比验证仿真精度。
 
-## 相关方法
-- [[numerical-integration|数值积分]] - 电感离散化方法
-- [[state-space-method|状态空间法]] - 饱和模型状态分析
-- [[average-value-model|平均值模型]] - 系统级仿真简化
-
-## 相关模型
-- [[transformer-model|变压器模型]] - 多绕组磁耦合
-- [[resistor-model|电阻模型]] - 绕组电阻
-- [[capacitor-model|电容模型]] - 寄生电容
-- [[emi-filter-model|EMI滤波器]] - 滤波电感设计
-
-## 相关主题
-- [[harmonic-analysis|谐波分析]] - 磁饱和引起的谐波
-- 磁饱和 - 非线性磁特性
-- 铁损计算 - 磁芯损耗分析
-- [[harmonic-analysis|谐波分析]] - EMI滤波器设计
+这些量化数据不构成对电感器建模方法的全面性能评价，只说明在特定测试条件下可获得的能力边界。
 
 ---
 
-*本页面基于Karpathy LLM Wiki Pattern构建，内容来自EMT领域学术文献的深度分析*
-
-## 来源论文
-
-| 论文 | 年份 |
-|------|------|
-| [[electromagnetic-modeling-of-inductors-in-emt-type-software-by-three-circuit-base|Electromagnetic modeling of inductors in EMT-type software b]] | 2022 |
+*本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*

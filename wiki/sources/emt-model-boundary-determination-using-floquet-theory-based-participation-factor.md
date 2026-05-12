@@ -59,7 +59,7 @@ sources: ["EMT_Doc/17/Sajjadi 等 - 2026 - EMT Model Boundary Determination Usin
 ## 使用的方法
 
 - Floquet理论
-- [[参与因子分析|参与因子分析]]
+- [[eigenvalue-analysis|参与因子分析]]
 - 线性时周期系统分析
 - 数据驱动估计
 - 多端口诺顿等值
@@ -68,7 +68,7 @@ sources: ["EMT_Doc/17/Sajjadi 等 - 2026 - EMT Model Boundary Determination Usin
 
 ## 涉及的模型
 
-- [[逆变器型资源-ibr|逆变器型资源(IBR)]]
+- [[gfl-inverter-model|逆变器型资源(IBR)]]
 - [[synchronous-machine-model|同步发电机]]
 - 输电线路与母线
 - 多端口诺顿等值模型

@@ -60,7 +60,7 @@ sources: ["EMT_Doc/10/Mudunkotuwa和Filizadeh - 2018 - Co-simulation of electric
 
 - [[dynamic-phasor|动态相量法]]
 - [[multirate-method|多速率仿真]]
-- [[傅里叶级数展开|傅里叶级数展开]]
+- [[discrete-fourier-transform|傅里叶级数展开]]
 - [[numerical-integration|梯形积分法]]
 - [[nodal-analysis|节点导纳矩阵法]]
 - 接口数据映射算法

@@ -62,7 +62,7 @@ sources: ["EMT_Doc/07&08/Analysing a power transformer's internal response to sy
 - 灰箱建模
 - [[co-simulation|混合建模]]
 - 频响分析(FRA)
-- [[系统辨识|系统辨识]]
+- [[parameter-identification|系统辨识]]
 - [[state-space-method|状态空间实现]]
 - 傅里叶变换
 - [[atp-emtp|EMTP仿真]]
@@ -77,7 +77,7 @@ sources: ["EMT_Doc/07&08/Analysing a power transformer's internal response to sy
 ## 相关主题
 
 - [[emt-simulation|电磁暂态仿真]]
-- [[谐振过电压|谐振过电压]]
+- [[ferroresonance|谐振过电压]]
 - 变压器内部响应
 - [[co-simulation|混合建模]]
 - [[frequency-dependent-modeling|频率相关建模]]

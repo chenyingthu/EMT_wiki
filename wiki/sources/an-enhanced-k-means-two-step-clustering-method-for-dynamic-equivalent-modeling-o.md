@@ -63,7 +63,7 @@ sources: ["EMT_Doc/07&08/Xu et al. - 2026 - An enhanced K-means two-step cluster
 - K-Means++初始化
 - KD树加速搜索
 - Davies-Bouldin指数
-- [[动态等值建模|动态等值建模]]
+- [[fdne-model|动态等值建模]]
 - [[vector-control|矢量控制]]
 
 ## 涉及的模型
@@ -76,7 +76,7 @@ sources: ["EMT_Doc/07&08/Xu et al. - 2026 - An enhanced K-means two-step cluster
 
 ## 相关主题
 
-- [[动态等值建模|动态等值建模]]
+- [[fdne-model|动态等值建模]]
 - [[lvrt-control|低电压穿越]]
 - 风电场聚合
 - [[emt-simulation|电磁暂态仿真]]

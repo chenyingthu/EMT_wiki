@@ -69,7 +69,7 @@ sources: ["EMT_Doc/06/Ramirez 等 - 2024 - Advanced Wideband LineCable Modeling 
 - [[transmission-line-model|通用线路模型(ULM)]]
 - [[transmission-line-model|输电线路]]
 - [[cable-model|地下电缆]]
-- [[频变电缆模型-fdcm|频变电缆模型(FDCM)]]
+- [[cable-model|频变电缆模型(FDCM)]]
 - 多导体电缆系统
 
 ## 相关主题

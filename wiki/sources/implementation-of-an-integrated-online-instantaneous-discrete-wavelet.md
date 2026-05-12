@@ -74,7 +74,7 @@ sources: ["EMT_Doc/23/Mahmoudpour 等 - 2015 - Implementation of an integrated o
 - 在线信号分解
 - 小波变换
 - ATP-EMTP二次开发
-- [[电力系统暂态分析|电力系统暂态分析]]
+- [[emt-mathematical-foundation|电力系统暂态分析]]
 
 ## 主要发现
 

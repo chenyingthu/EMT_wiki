@@ -70,17 +70,17 @@ sources: ["EMT_Doc/13&14/files/Vahabzadeh 等 - 2025 - Discretized Impedance-Bas
 - [[vsc-model|VSC]]
 - 分布式能源
 - 并网滤波器
-- [[控制系统|控制系统]]
+- [[gfl-inverter-model|控制系统]]
 - 七节点测试系统
 
 ## 相关主题
 
-- [[实时电磁暂态仿真|实时电磁暂态仿真]]
-- [[状态变量仿真|状态变量仿真]]
+- [[fpga-real-time-simulation|实时电磁暂态仿真]]
+- [[state-space-method|状态变量仿真]]
 - 换流器接口建模
 - [[large-scale-system-simulation|计算效率优化]]
 - [[numerical-integration|数值稳定性]]
-- [[电力系统暂态分析|电力系统暂态分析]]
+- [[emt-mathematical-foundation|电力系统暂态分析]]
 
 ## 主要发现
 

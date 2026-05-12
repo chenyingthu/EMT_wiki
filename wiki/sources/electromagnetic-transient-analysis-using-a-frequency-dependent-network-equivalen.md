@@ -70,7 +70,7 @@ sources: ["EMT_Doc/15/Electromagnetic transient analysis using a frequency depen
 - 永磁同步发电机(PMSG)
 - 全功率背靠背变流器
 - Kundur两区域电力系统
-- [[频变网络等值模型|频变网络等值模型]]
+- [[fdne-model|频变网络等值模型]]
 
 ## 相关主题
 

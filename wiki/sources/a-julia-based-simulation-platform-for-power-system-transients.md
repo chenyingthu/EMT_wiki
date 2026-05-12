@@ -61,14 +61,14 @@ sources: ["EMT_Doc/02/Naidjate 等 - 2025 - A Julia-Based Simulation Platform fo
 - [[nodal-analysis|改进增广节点分析法(MANA)]]
 - [[numerical-integration|梯形积分法]]
 - [[nodal-analysis|牛顿迭代法]]
-- [[分段线性化|分段线性化]]
+- [[switch-modeling|分段线性化]]
 - [[sparse-matrix-solver|稀疏矩阵求解]]
 - [[parallel-computing|并行计算]]
 - 符号分解优化
 
 ## 涉及的模型
 
-- [[rlc支路|RLC支路]]
+- [[companion-circuit|RLC支路]]
 - 理想变压器
 - [[transformer-model|非线性电感]]
 - 非线性电阻
@@ -83,7 +83,7 @@ sources: ["EMT_Doc/02/Naidjate 等 - 2025 - A Julia-Based Simulation Platform fo
 - [[parallel-computing|高性能计算]]
 - [[parallel-computing|并行计算]]
 - [[nodal-analysis|网络方程求解]]
-- [[电力系统暂态分析|电力系统暂态分析]]
+- [[emt-mathematical-foundation|电力系统暂态分析]]
 
 ## 主要发现
 

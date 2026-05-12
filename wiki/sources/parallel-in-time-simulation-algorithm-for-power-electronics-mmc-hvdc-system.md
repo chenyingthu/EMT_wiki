@@ -70,7 +70,7 @@ sources: ["EMT_Doc/30/JESTPE.2019.2947411.pdf.pdf"]
 - [[mmc-model|MMC]]
 - [[mmc-model|MMC]]
 - 电力电子系统
-- [[子模块-sm|子模块(SM)]]
+- [[submodule-model|子模块(SM)]]
 
 ## 相关主题
 

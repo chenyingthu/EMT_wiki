@@ -63,7 +63,7 @@ Lightning-induced voltage analysis on a three-phase compact distribution Alberto
 - [[vector-fitting|矢量拟合]]
 - 伯德渐近法
 - 模域参数拟合
-- [[电报方程求解|电报方程求解]]
+- [[transmission-line-model|电报方程求解]]
 
 ## 涉及的模型
 
@@ -76,7 +76,7 @@ Lightning-induced voltage analysis on a three-phase compact distribution Alberto
 
 ## 相关主题
 
-- [[雷击感应电压|雷击感应电压]]
+- [[lightning-induced-voltage|雷击感应电压]]
 - [[emt-simulation|电磁暂态仿真]]
 - 紧凑型配电线路
 - 输电线路频变建模

@@ -77,7 +77,7 @@ sources: ["EMT_Doc/26/Zeng 等 - 2010 - Modeling and electromagnetic transient s
 
 - [[emt-simulation|电磁暂态仿真]]
 - [[differential-protection|变压器差动保护]]
-- [[励磁涌流分析|励磁涌流分析]]
+- [[transformer-model|励磁涌流分析]]
 - 内部故障建模
 - 二次谐波制动
 - 特高压电网

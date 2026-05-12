@@ -75,7 +75,7 @@ sources: ["EMT_Doc/23/Beddard 等 - 2016 - Improved Accuracy Average Value Model
 
 - [[emt-simulation|电磁暂态仿真]]
 - [[vsc-model|VSC]]
-- [[直流故障分析|直流故障分析]]
+- [[dc-fault-blocking|直流故障分析]]
 - [[power-electronics|换流器建模]]
 - [[large-scale-system-simulation|计算效率优化]]
 

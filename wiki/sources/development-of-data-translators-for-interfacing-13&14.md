@@ -72,7 +72,7 @@ sources: ["EMT_Doc/13&14/files/tpwrd.2012.2227836.pdf.pdf"]
 - [[induction-machine-model|感应电机]]
 - [[distributed-generation|分布式电源]]
 - PI型线路
-- [[rlc支路|RLC支路]]
+- [[companion-circuit|RLC支路]]
 - [[ideal-switch-model|理想开关]]
 - [[load-modeling|负荷]]
 
@@ -80,8 +80,8 @@ sources: ["EMT_Doc/13&14/files/tpwrd.2012.2227836.pdf.pdf"]
 
 - 潮流与电磁暂态接口
 - 数据自动转换
-- [[大规模电网建模|大规模电网建模]]
-- [[模型验证|模型验证]]
+- [[electromechanical-electromagnetic-hybrid-simulation|大规模电网建模]]
+- [[model-verification-benchmark|模型验证]]
 - 过电压与暂态分析
 
 ## 主要发现

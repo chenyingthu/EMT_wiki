@@ -78,7 +78,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/TPWRD.2018.2850848.pdf.pdf"]
 - [[emt-simulation|电磁暂态仿真]]
 - [[wind-farm-modeling|风电场建模]]
 - [[real-time-simulation|实时仿真]]
-- [[故障穿越|故障穿越]]
+- [[fault-ride-through|故障穿越]]
 - 电力电子建模
 - 现场实测验证
 

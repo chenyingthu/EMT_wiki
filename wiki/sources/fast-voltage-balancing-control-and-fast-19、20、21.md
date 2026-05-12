@@ -60,8 +60,8 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/tpwrd.2014.2351397.pdf.pdf"]
 
 - 平均比较法
 - [[numerical-integration|梯形积分法]]
-- [[最近电平控制|最近电平控制]]
-- [[混合仿真建模|混合仿真建模]]
+- [[nearest-level-control|最近电平控制]]
+- [[electromechanical-electromagnetic-hybrid-simulation|混合仿真建模]]
 - 开关线性化建模
 
 ## 涉及的模型
@@ -76,7 +76,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/tpwrd.2014.2351397.pdf.pdf"]
 
 - [[emt-simulation|电磁暂态仿真]]
 - [[vsc-hvdc|高压直流输电]]
-- [[电压均衡控制|电压均衡控制]]
+- [[submodule-model|电压均衡控制]]
 - [[适用于交直流混联电网的ch-mmc电磁暂态快速仿真模型-15|快速仿真]]
 - PSCAD建模
 

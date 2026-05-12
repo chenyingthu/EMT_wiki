@@ -60,14 +60,14 @@ sources: ["EMT_Doc/01/Huang 等 - 2025 - A Heterogeneous Multiscale Method for E
 
 - 异构多尺度方法(HMM)
 - 半解析解法(SAS)
-- [[变步长求解器|变步长求解器]]
+- [[variable-time-step-solver|变步长求解器]]
 - 核卷积近似
 - 微分变换
 - 在线自动降阶
 
 ## 涉及的模型
 
-- [[逆变器型资源-ibr|逆变器型资源(IBR)]]
+- [[gfl-inverter-model|逆变器型资源(IBR)]]
 - [[synchronous-machine-model|同步发电机]]
 - 全阶EMT网络模型
 - [[ieee-39-bus-system|IEEE 39节点系统]]

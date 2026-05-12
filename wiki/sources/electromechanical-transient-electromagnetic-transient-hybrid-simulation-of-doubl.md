@@ -78,7 +78,7 @@ sources: ["EMT_Doc/17/Gu 等 - 2015 - Electromechanical transient-electromagneti
 - 风电场等值建模
 - [[transient-stability-analysis|暂态稳定性分析]]
 - 故障动态响应
-- [[控制系统建模|控制系统建模]]
+- [[power-electronic-device-modeling|控制系统建模]]
 
 ## 主要发现
 

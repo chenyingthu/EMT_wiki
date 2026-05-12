@@ -79,7 +79,7 @@ sources: ["EMT_Doc/03/Xu 等 - 2025 - A State Variables Elimination-Based EMTP-T
 - [[average-value-model|等效建模]]
 - [[model-order-reduction|模型降阶]]
 - 恒定导纳矩阵
-- [[仿真效率优化|仿真效率优化]]
+- [[gpu-accelerated-simulation|仿真效率优化]]
 
 ## 主要发现
 

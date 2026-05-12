@@ -83,7 +83,7 @@ created: "2026-05-10"
 
 ### Step 5: FPGA 加速仿真
 
-**页面**: [[fpga-simulation]]
+**页面**: [[fpga-real-time-simulation]]
 
 学习 FPGA 在实时仿真中的应用：小步长、高精度、低延迟。
 
@@ -111,7 +111,7 @@ created: "2026-05-10"
 
 ### Step 7: 功率硬件在环
 
-**页面**: [[power-hardware-in-the-loop]]
+**页面**: [[hil-simulation]]
 
 学习 PHIL 的进阶问题：功率接口、稳定性补偿和故障保护。
 

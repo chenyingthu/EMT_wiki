@@ -2,10 +2,11 @@
 title: "A new distance relaying algorithm based on complex differential equation for symmetrical components"
 type: source
 year: 2004
+tags: [distance, relaying, complex, differential, equation]
+
 journal: "Electric Power Systems Research"
 created: "2026-04-13"
-sources: ["EMT_Doc/02/Rosołowski 等 - 1997 - A new distance relaying algorithm based on complex differential equation for symmetrical components.pdf"]
----
+sources: ["EMT_Doc/02/Rosołowski 等 - 1997 - A new distance relaying algorithm based on complex differential equation for symmetrical components.pdf"]---
 
 # A new distance relaying algorithm based on complex differential equation for symmetrical components
 

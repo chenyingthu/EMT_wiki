@@ -58,7 +58,7 @@ sources: ["EMT_Doc/27&28/Nonlinear Magnetic Equivalent Circuit-Based Real-Time S
 
 ## 使用的方法
 
-- [[磁等效电路法|磁等效电路法]]
+- [[transformer-model|磁等效电路法]]
 - Preisach磁滞模型
 - 频变等效网络
 - [[nodal-analysis|节点导纳矩阵法]]
@@ -68,7 +68,7 @@ sources: ["EMT_Doc/27&28/Nonlinear Magnetic Equivalent Circuit-Based Real-Time S
 ## 涉及的模型
 
 - Sen变压器
-- [[多绕组变压器|多绕组变压器]]
+- [[transformer-model|多绕组变压器]]
 - [[transmission-line-model|输电线路]]
 - 分接开关
 - 三维有限元模型

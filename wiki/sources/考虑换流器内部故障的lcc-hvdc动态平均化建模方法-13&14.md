@@ -61,7 +61,7 @@ sources: ["EMT_Doc/13&14/files/洪泽祺和HONG Zeqi - 2019 - 考虑换流器内
 ## 使用的方法
 
 - 动态平均化理论
-- [[电磁暂态仿真技术|电磁暂态仿真技术]]
+- [[electromechanical-electromagnetic-hybrid-simulation|电磁暂态仿真技术]]
 - 基于开关函数与端口电气量平均值的解析推导方法
 - 基于CIGRE标准系统的模型验证方法
 

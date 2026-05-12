@@ -61,7 +61,7 @@ sources: ["EMT_Doc/16/Gomez - 2025 - Electromagnetic Transient Model Reconstruct
 - [[numerical-integration|数值拉普拉斯变换]]
 - 二端口导纳模型
 - 最小范数最小二乘法
-- [[黑盒建模|黑盒建模]]
+- [[fdne-model|黑盒建模]]
 
 ## 涉及的模型
 

@@ -77,7 +77,7 @@ sources: ["EMT_Doc/04/Zhao 等 - 2026 - A state-space approach for accelerated s
 - [[parallel-computing|仿真加速]]
 - [[state-space-method|状态空间建模]]
 - 大规模电力电子系统
-- [[电容电压均衡|电容电压均衡]]
+- [[submodule-model|电容电压均衡]]
 
 ## 主要发现
 

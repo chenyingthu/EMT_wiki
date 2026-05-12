@@ -68,7 +68,7 @@ sources: ["EMT_Doc/27&28/Multi-Scale Induction Machine Model in the Phase Domain
 ## 涉及的模型
 
 - [[induction-machine-model|感应电机]]
-- [[电力系统网络|电力系统网络]]
+- [[power-system-network|电力系统网络]]
 - 定转子绕组
 
 ## 相关主题
@@ -77,7 +77,7 @@ sources: ["EMT_Doc/27&28/Multi-Scale Induction Machine Model in the Phase Domain
 - [[electromechanical-transient|机电暂态]]
 - [[co-simulation|多尺度仿真]]
 - [[dynamic-phasor|动态相量建模]]
-- [[频率自适应仿真|频率自适应仿真]]
+- [[multirate-method|频率自适应仿真]]
 
 ## 主要发现
 

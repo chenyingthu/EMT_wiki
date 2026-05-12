@@ -74,7 +74,7 @@ sources: ["EMT_Doc/17/Zhao 等 - 2023 - Equivalent model of nearest level modula
 
 - [[emt-simulation|电磁暂态仿真]]
 - [[nearest-level-modulation|最近电平调制]]
-- [[电容电压均衡|电容电压均衡]]
+- [[submodule-model|电容电压均衡]]
 - [[适用于交直流混联电网的ch-mmc电磁暂态快速仿真模型-15|快速仿真]]
 
 ## 主要发现

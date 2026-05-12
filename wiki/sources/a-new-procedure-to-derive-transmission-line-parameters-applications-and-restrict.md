@@ -2,10 +2,11 @@
 title: "A new procedure to derive transmission-line parameters Applications and restrictions"
 type: source
 year: 2005
+tags: [procedure, derive, transmission, line, parameters]
+
 journal: "IEEE Transactions on Power Delivery"
 created: "2026-04-13"
-sources: ["EMT_Doc/02/Kurokawa 等 - 2006 - A new procedure to derive transmission-line parameters Applications and restrictions.pdf"]
----
+sources: ["EMT_Doc/02/Kurokawa 等 - 2006 - A new procedure to derive transmission-line parameters Applications and restrictions.pdf"]---
 
 # A new procedure to derive transmission-line parameters Applications and restrictions
 
@@ -58,14 +59,14 @@ sources: ["EMT_Doc/02/Kurokawa 等 - 2006 - A new procedure to derive transmissi
 - [[modal-analysis|模态变换]]
 - 相域分析
 - [[frequency-dependent-modeling|频率相关建模]]
-- [[卡森公式|卡森公式]]
+- [[frequency-dependent-modeling|卡森公式]]
 - 贝塞尔函数
 - 参数反演
 
 ## 涉及的模型
 
 - [[transmission-line-model|架空输电线路]]
-- [[多相输电线路|多相输电线路]]
+- [[ac-transmission-line|多相输电线路]]
 - [[transmission-line-model|频变线路模型]]
 - 大地回路模型
 
@@ -73,7 +74,7 @@ sources: ["EMT_Doc/02/Kurokawa 等 - 2006 - A new procedure to derive transmissi
 
 - [[emt-simulation|电磁暂态]]
 - [[frequency-dependent-modeling|频率相关建模]]
-- [[输电线路参数计算|输电线路参数计算]]
+- [[frequency-dependent-modeling|输电线路参数计算]]
 - [[emt-simulation|开关暂态分析]]
 - [[modal-analysis|模态分析]]
 

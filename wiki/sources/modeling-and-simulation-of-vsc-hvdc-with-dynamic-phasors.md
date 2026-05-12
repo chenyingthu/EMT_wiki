@@ -68,7 +68,7 @@ sources: ["EMT_Doc/26/Yao 等 - 2008 - Modeling and simulation of VSC-HVDC with 
 - [[vsc-model|VSC]]
 - 电压源型换流器
 - [[transmission-line-model|直流输电线路]]
-- [[直流电容|直流电容]]
+- [[capacitor-model|直流电容]]
 - 换流电抗
 
 ## 相关主题

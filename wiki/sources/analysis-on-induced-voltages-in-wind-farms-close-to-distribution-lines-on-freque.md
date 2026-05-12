@@ -61,7 +61,7 @@ sources: ["EMT_Doc/07&08/Da Silva et al. - 2022 - Analysis on Induced Voltages i
 - 部分元等效电路法(PEEC)
 - 全波电磁场仿真
 - CIGRE频率相关土壤模型
-- [[heidler雷电流函数|Heidler雷电流函数]]
+- [[heidler-function|Heidler雷电流函数]]
 
 ## 涉及的模型
 
@@ -74,7 +74,7 @@ sources: ["EMT_Doc/07&08/Da Silva et al. - 2022 - Analysis on Induced Voltages i
 ## 相关主题
 
 - [[emt-simulation|电磁暂态分析]]
-- [[雷击感应过电压|雷击感应过电压]]
+- [[lightning-induced-voltage|雷击感应过电压]]
 - 频率相关土壤特性
 - 风电场接地系统
 - 瞬态地电位升

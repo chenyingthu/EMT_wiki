@@ -67,14 +67,14 @@ Electromagnetic transient modeling of grounding electrodes buried in frequency d
 ## 涉及的模型
 
 - 垂直接地极
-- [[水平接地极|水平接地极]]
+- [[grounding-system-model|水平接地极]]
 - [[grounding-system-model|频变土壤模型]]
 - 雷击回击电流波形
 - EMT等效电路
 
 ## 相关主题
 
-- [[接地系统建模|接地系统建模]]
+- [[grounding-system-model|接地系统建模]]
 - 土壤频率依赖性
 - 土壤含水量变化
 - 雷电暂态保护

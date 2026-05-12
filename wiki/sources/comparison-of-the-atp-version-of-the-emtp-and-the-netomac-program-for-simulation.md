@@ -67,11 +67,11 @@ sources: ["EMT_Doc/10/Lehn和Rittiger - 1995 - Comparison of the atp version of 
 ## 涉及的模型
 
 - [[lcc-model|LCC]]
-- [[交流滤波器|交流滤波器]]
+- [[emi-filter-model|交流滤波器]]
 - [[transmission-line-model|输电线路]]
 - 海底电缆
-- [[饱和变压器|饱和变压器]]
-- [[晶闸管|晶闸管]]
+- [[transformer-model|饱和变压器]]
+- [[igbt-model|晶闸管]]
 - VDCL控制器
 
 ## 相关主题
@@ -79,7 +79,7 @@ sources: ["EMT_Doc/10/Lehn和Rittiger - 1995 - Comparison of the atp version of 
 - [[vsc-hvdc|VSC-HVDC]]
 - 仿真程序对比
 - 开关延迟与数值振荡
-- [[控制系统建模|控制系统建模]]
+- [[power-electronic-device-modeling|控制系统建模]]
 - 机电暂态稳定性仿真
 - 直流侧谐波谐振
 

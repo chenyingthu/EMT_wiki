@@ -60,16 +60,16 @@ sources: ["EMT_Doc/09/Lessa 等 - 2012 - Application of π circuits for simulati
 
 - [[state-space-method|状态变量法]]
 - [[numerical-integration|梯形积分法]]
-- [[π型电路级联|π型电路级联]]
+- [[companion-circuit|π型电路级联]]
 - 并联RL支路频率拟合
 - 矩阵数值求解
 
 ## 涉及的模型
 
 - [[transmission-line-model|输电线路]]
-- [[π型等效电路|π型等效电路]]
+- [[companion-circuit|π型等效电路]]
 - 电晕效应模型
-- [[频变参数模型|频变参数模型]]
+- [[frequency-dependent-modeling|频变参数模型]]
 
 ## 相关主题
 

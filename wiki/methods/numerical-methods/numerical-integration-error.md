@@ -11,9 +11,9 @@ created: "2026-05-02"
 ```mermaid
 graph TD
     subgraph Ncmp[数值积分误差 (Numerical Integratio…]
-        N0[[[backward-euler]]: 1]
-        N1[[[trapezoidal-rule]]: 2]
-        N2[[[gear-method]]: 1 至多阶]
+        N0[[backward-euler]]: 1]
+        N1[[trapezoidal-rule]]: 2]
+        N2[[gear-method]]: 1 至多阶]
         N3[DIRK/TR-BDF2 类: 2 或更高]
         N4[显式方法: 依方法而定]
     end

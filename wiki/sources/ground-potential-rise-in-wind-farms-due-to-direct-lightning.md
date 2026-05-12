@@ -59,9 +59,9 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/j.epsr.2021.107110.pdf.pdf"]
 ## 使用的方法
 
 - 宽带多端口建模
-- [[时域电磁暂态仿真|时域电磁暂态仿真]]
+- [[fpga-real-time-simulation|时域电磁暂态仿真]]
 - 频变土壤参数建模
-- [[heidler雷电流函数|Heidler雷电流函数]]
+- [[heidler-function|Heidler雷电流函数]]
 
 ## 涉及的模型
 
@@ -78,7 +78,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/j.epsr.2021.107110.pdf.pdf"]
 - 直击雷暂态
 - 风电场防雷
 - 接地系统冲击响应
-- [[频变土壤特性|频变土壤特性]]
+- [[frequency-dependent-modeling|频变土壤特性]]
 
 ## 主要发现
 

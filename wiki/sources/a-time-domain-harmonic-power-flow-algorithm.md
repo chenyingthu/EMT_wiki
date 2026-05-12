@@ -2,10 +2,11 @@
 title: "A Time-Domain Harmonic Power-Flow Algorithm"
 type: source
 year: 2010
+tags: [time, domain, harmonic, power, flow]
+
 journal: "IEEE Transactions on Power Delivery"
 created: "2026-04-13"
-sources: ["EMT_Doc/04/tpwrd.2010.2043547.pdf.pdf"]
----
+sources: ["EMT_Doc/04/tpwrd.2010.2043547.pdf.pdf"]---
 
 # A Time-Domain Harmonic Power-Flow Algorithm
 

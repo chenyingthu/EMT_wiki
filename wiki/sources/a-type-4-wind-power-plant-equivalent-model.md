@@ -2,10 +2,11 @@
 title: "A Type-4 Wind Power Plant Equivalent Model"
 type: source
 year: 2012
+tags: [type, wind, power, plant, equivalent]
+
 journal: "IEEE Transactions on Power Systems"
 created: "2026-04-13"
-sources: ["EMT_Doc/04/tpwrs.2012.2227845.pdf.pdf"]
----
+sources: ["EMT_Doc/04/tpwrs.2012.2227845.pdf.pdf"]---
 
 # A Type-4 Wind Power Plant Equivalent Model
 

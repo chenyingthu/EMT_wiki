@@ -71,10 +71,10 @@ sources: ["EMT_Doc/24/Jalili-Marandi 等 - 2009 - Interfacing Techniques for Tra
 - [[synchronous-machine-model|同步电机]]
 - [[transmission-line-model|输电线路]]
 - [[vsc-hvdc|VSC-HVDC]]
-- [[facts装置|FACTS装置]]
+- [[vsc-hvdc|FACTS装置]]
 - [[power-electronics|电力电子变换器]]
 - 集中参数元件
-- [[分布参数线路|分布参数线路]]
+- [[transmission-line-model|分布参数线路]]
 
 ## 相关主题
 
@@ -84,7 +84,7 @@ sources: ["EMT_Doc/24/Jalili-Marandi 等 - 2009 - Interfacing Techniques for Tra
 - [[co-simulation|接口技术]]
 - [[parallel-computing|并行计算]]
 - [[network-partitioning|网络分割]]
-- [[频率自适应建模|频率自适应建模]]
+- [[frequency-dependent-modeling|频率自适应建模]]
 - [[large-scale-grid-simulation|大规模电网仿真]]
 
 ## 主要发现

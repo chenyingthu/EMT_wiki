@@ -75,7 +75,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_21/JESTPE.2014.2315833.pdf.pdf"]
 ## 相关主题
 
 - 全规模仿真
-- [[直流故障穿越|直流故障穿越]]
+- [[dc-fault-blocking|直流故障穿越]]
 - 换流器闭锁特性
 - 环流抑制
 - [[vsc-hvdc|VSC-HVDC]]

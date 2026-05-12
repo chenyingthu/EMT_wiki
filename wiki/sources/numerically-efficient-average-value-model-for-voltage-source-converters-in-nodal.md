@@ -60,9 +60,9 @@ sources: ["EMT_Doc/29/EBRAHIMI 等 - 2024 - Numerically Efficient Average-Value 
 
 - [[nodal-analysis|节点分析法]]
 - [[average-value-model|平均值建模]]
-- [[直接接口技术|直接接口技术]]
+- [[electromechanical-electromagnetic-hybrid-simulation|直接接口技术]]
 - 电导矩阵法
-- [[非迭代求解|非迭代求解]]
+- [[sparse-matrix-solver|非迭代求解]]
 
 ## 涉及的模型
 
@@ -77,7 +77,7 @@ sources: ["EMT_Doc/29/EBRAHIMI 等 - 2024 - Numerically Efficient Average-Value 
 - [[emt-simulation|电磁暂态仿真]]
 - [[multirate-method|大时间步长仿真]]
 - [[numerical-integration|数值稳定性]]
-- [[电力电子系统建模|电力电子系统建模]]
+- [[power-electronic-device-modeling|电力电子系统建模]]
 - 节点接口技术
 
 ## 主要发现

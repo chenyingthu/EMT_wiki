@@ -58,7 +58,7 @@ sources: ["EMT_Doc/31/j.epsr.2021.107281.pdf.pdf"]
 
 ## 使用的方法
 
-- [[递归卷积法|递归卷积法]]
+- [[numerical-integration|递归卷积法]]
 - 递归梯形积分法
 - [[vector-fitting|矢量拟合]]
 - 矩量法
@@ -68,7 +68,7 @@ sources: ["EMT_Doc/31/j.epsr.2021.107281.pdf.pdf"]
 ## 涉及的模型
 
 - [[grounding-system-model|接地系统]]
-- [[水平接地极|水平接地极]]
+- [[grounding-system-model|水平接地极]]
 - 网格接地极
 - [[grounding-lightning-overvoltage|雷电流源]]
 - [[grounding-system-model|频变土壤模型]]
@@ -80,7 +80,7 @@ sources: ["EMT_Doc/31/j.epsr.2021.107281.pdf.pdf"]
 - [[ground-potential-rise|地电位升]]
 - [[grounding-system-model|接地系统]]
 - [[frequency-dependent-modeling|频率相关建模]]
-- [[雷击暂态分析|雷击暂态分析]]
+- [[lightning-transient-analysis|雷击暂态分析]]
 - [[emt-simulation|时域仿真]]
 
 ## 主要发现

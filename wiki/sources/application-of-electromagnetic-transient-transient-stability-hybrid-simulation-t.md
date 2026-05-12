@@ -66,7 +66,7 @@ sources: ["EMT_Doc/09/Huang和Vittal - 2016 - Application of Electromagnetic Tra
 
 ## 涉及的模型
 
-- [[单相感应电机|单相感应电机]]
+- [[single-phase-induction-machine|单相感应电机]]
 - 空调压缩机负荷
 - [[transmission-network|输电网络]]
 - [[wscc-9-bus-system|IEEE 9节点系统]]

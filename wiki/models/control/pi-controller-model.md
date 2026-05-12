@@ -3,20 +3,11 @@ title: "PI/PID控制器 (PI/PID Controller)"
 type: model
 tags: [pi-controller, pid-controller, control-system, feedback, regulator, power-electronics]
 created: "2026-04-30"
+updated: "2026-05-11"
 ---
 
 # PI/PID控制器 (PI/PID Controller)
 
-
-```mermaid
-graph TD
-    subgraph Ncmp[PI/PID控制器 (PI/PID Controller)]
-        N0[P: $K_p$]
-        N1[PI: $K_p + \frac{K_i}{s}$]
-        N2[PD: $K_p + K_d s$]
-        N3[PID: $K_p + \frac{K_i}{s} + …]
-    end
-```
 
 
 ## 定义与概述
@@ -416,40 +407,12 @@ $$K_i = \frac{K_p}{10\tau_{current}}$$
 - **MIMO系统**：需解耦或多变量设计
 - **约束处理**：简单饱和处理可能非最优
 
-### 7.3 精度边界
-| 实现方式 | 计算精度 | 适用范围 |
-|---------|----------|----------|
-| 模拟PI | 无限（理论） | 连续系统分析 |
-| 双精度浮点 | ~1e-15 | 离线仿真 |
-| 单精度浮点 | ~1e-7 | 实时仿真 |
-| 32位定点 | ~1e-4 | FPGA/DSP |
-| 16位定点 | ~1e-2 | 低成本实现 |
+### 7.3 量化性能边界
 
-## 8. 来源论文
+PI/PID 控制器的 EMT 仿真精度主要取决于离散化方法和数值实现精度，而非控制器算法本身的近似。目前公开文献中缺乏针对 PI/PID 控制器 EMT 建模精度的独立量化性能评估。
 
-| 论文 | 年份 | 核心贡献 |
-|------|------|----------|
-| Digital PI controller design for power electronic converters | 2012 | 电力电子变换器数字PI设计 |
-| Anti-windup design for PI controllers in EMT simulation | 2015 | EMT仿真PI抗饱和设计 |
-| Tuning of PI controllers for VSC-HVDC systems | 2018 | VSC-HVDC系统PI参数整定 |
-
-## 相关方法
-- [[numerical-integration|数值积分]] - 控制器离散化实现
-- [[multirate-method|多速率方法]] - 多时间尺度仿真
-- [[state-space-method|状态空间法]] - 控制系统状态分析
-
-## 相关模型
-- [[vsc-model|VSC模型]] - 电压源换流器控制
-- [[mmc-model|MMC模型]] - 模块化多电平换流器控制
-- [[pll-model|锁相环]] - 同步参考坐标系
-- [[coordinate-transformation-model|坐标变换]] - dq变换实现
-
-## 相关主题
-- [[vector-control-model|矢量控制模型]] - 电机控制策略
-- [[droop-control-model|下垂控制模型]] - 电网支撑控制
-- 先进控制策略 - 模型预测控制
-- [[real-time-simulation|实时仿真]] - 控制器实时实现
+**数据缺口声明**：截至当前知识范围，未找到针对 PI/PID 控制器 EMT 建模精度的独立量化性能数据。PI/PID 控制器的仿真精度主要取决于以下因素：离散化方法（后向欧拉、梯形法或增量式）影响频率响应保真度；数字实现精度（双精度浮点约 $10^{-15}$、单精度浮点约 $10^{-7}$、32 位定点约 $10^{-4}$）决定稳态误差下限；抗饱和策略（条件积分或反计算）在大信号扰动下显著影响控制性能。建议用户根据仿真需求选择合适的离散化方法和数值精度，并通过与连续域参考模型对比验证。
 
 ---
 
-*本页面基于Karpathy LLM Wiki Pattern构建，内容来自EMT领域学术文献的深度分析*
+*本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*

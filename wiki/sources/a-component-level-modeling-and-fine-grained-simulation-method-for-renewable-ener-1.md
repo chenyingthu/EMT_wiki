@@ -2,10 +2,11 @@
 title: "A Component-Level Modeling and Fine-Grained Simulation Method for Renewable Energy Power Systems Suitable for GPU Architecture"
 type: source
 year: 2025
+tags: [component, level, modeling, fine, grained]
+
 journal: "IEEE Transactions on Magnetics"
 created: "2026-04-13"
-sources: ["EMT_Doc/01/Wang 等 - 2026 - A component-level modeling and fine-grained simulation method for renewable energy power systems sui.pdf"]
----
+sources: ["EMT_Doc/01/Wang 等 - 2026 - A component-level modeling and fine-grained simulation method for renewable energy power systems sui.pdf"]---
 
 # A Component-Level Modeling and Fine-Grained Simulation Method for Renewable Energy Power Systems Suitable for GPU Architecture
 

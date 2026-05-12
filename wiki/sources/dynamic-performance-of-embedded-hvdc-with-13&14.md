@@ -68,7 +68,7 @@ sources: ["EMT_Doc/13&14/files/PESGM.2015.7286425.pdf.pdf"]
 
 - [[vsc-model|VSC]]
 - [[synchronous-machine-model|同步发电机]]
-- [[交流输电线路|交流输电线路]]
+- [[ac-transmission-line|交流输电线路]]
 - IEEE 4机6节点系统
 
 ## 相关主题

@@ -76,9 +76,9 @@ sources: ["EMT_Doc/10/Azevedo 等 - 2024 - Comparison of soil modeling concernin
 
 ## 相关主题
 
-- [[雷击暂态分析|雷击暂态分析]]
-- [[接地系统建模|接地系统建模]]
-- [[频变土壤特性|频变土壤特性]]
+- [[lightning-transient-analysis|雷击暂态分析]]
+- [[grounding-system-model|接地系统建模]]
+- [[frequency-dependent-modeling|频变土壤特性]]
 - 地电位升(GPR)
 - 风机防雷保护
 - 土壤物理参数影响

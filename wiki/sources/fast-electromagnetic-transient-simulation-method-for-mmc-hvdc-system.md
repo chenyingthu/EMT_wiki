@@ -69,14 +69,14 @@ sources: ["EMT_Doc/18/Gao 等 - 2014 - Fast electromagnetic transient simulation
 
 - PWM变流器
 - 三相AC/DC变流器
-- [[直流电容|直流电容]]
+- [[capacitor-model|直流电容]]
 - 滤波电感
 - VQ控制系统
 
 ## 相关主题
 
 - [[gpu-accelerated-simulation|GPU并行计算]]
-- [[快速电磁暂态仿真|快速电磁暂态仿真]]
+- [[gpu-accelerated-simulation|快速电磁暂态仿真]]
 - 细粒度并行
 - [[large-scale-system-simulation|大规模系统仿真]]
 - 开关过程处理

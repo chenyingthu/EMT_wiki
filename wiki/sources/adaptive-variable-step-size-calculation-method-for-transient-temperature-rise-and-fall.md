@@ -58,11 +58,11 @@ sources: ["EMT_Doc/05/Liu 等 - 2024 - Adaptive Variable Step Size Calculation M
 
 ## 使用的方法
 
-- [[有限元法|有限元法]]
+- [[fem-simulation|有限元法]]
 - 本征正交分解(POD)
 - [[model-order-reduction|降阶建模]]
 - αATS自适应变步长算法
-- [[奇异值分解|奇异值分解]]
+- [[low-rank-solver|奇异值分解]]
 - 流热耦合计算
 
 ## 涉及的模型

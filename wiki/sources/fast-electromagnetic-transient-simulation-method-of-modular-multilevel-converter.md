@@ -65,7 +65,7 @@ sources: ["EMT_Doc/18/Mu 等 - 2019 - Fast Electromagnetic Transient Simulation 
 - 开关函数平均化
 - 预测校正法
 - 线性外推插值
-- [[后退欧拉法|后退欧拉法]]
+- [[backward-euler|后退欧拉法]]
 - 受控源等效模型
 
 
@@ -83,8 +83,8 @@ sources: ["EMT_Doc/18/Mu 等 - 2019 - Fast Electromagnetic Transient Simulation 
 ## 相关主题
 
 
-- [[快速电磁暂态仿真|快速电磁暂态仿真]]
-- [[风电机组建模|风电机组建模]]
+- [[gpu-accelerated-simulation|快速电磁暂态仿真]]
+- [[dfig-model|风电机组建模]]
 - 变换器简化建模
 - [[lvrt-control|低电压穿越]]
 - 仿真步长适应性

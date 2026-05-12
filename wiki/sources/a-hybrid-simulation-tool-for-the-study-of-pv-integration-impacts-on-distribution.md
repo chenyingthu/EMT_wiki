@@ -2,10 +2,11 @@
 title: "A Hybrid Simulation Tool for the Study of PV Integration Impacts on Distribution Networks"
 type: source
 year: 2016
+tags: [hybrid, simulation, tool, integration, impacts]
+
 journal: "IEEE Transactions on Sustainable Energy"
 created: "2026-04-13"
-sources: ["EMT_Doc/02/Hariri和Faruque - 2017 - A Hybrid Simulation Tool for the Study of PV Integration Impacts on Distribution Networks.pdf"]
----
+sources: ["EMT_Doc/02/Hariri和Faruque - 2017 - A Hybrid Simulation Tool for the Study of PV Integration Impacts on Distribution Networks.pdf"]---
 
 # A Hybrid Simulation Tool for the Study of PV Integration Impacts on Distribution Networks
 
@@ -76,7 +77,7 @@ sources: ["EMT_Doc/02/Hariri和Faruque - 2017 - A Hybrid Simulation Tool for the
 - 光伏并网影响
 - 配电网仿真
 - 多速率协同
-- [[电能质量分析|电能质量分析]]
+- [[power-quality|电能质量分析]]
 - 电压调节研究
 
 ## 主要发现

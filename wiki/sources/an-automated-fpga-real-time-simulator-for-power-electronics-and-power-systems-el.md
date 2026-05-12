@@ -75,7 +75,7 @@ sources: ["EMT_Doc/06/j.epsr.2016.07.022.pdf.pdf"]
 ## 相关主题
 
 - [[real-time-simulation|实时仿真]]
-- [[硬件在环-hil|硬件在环(HIL)]]
+- [[hil-simulation|硬件在环(HIL)]]
 - [[fpga-real-time-simulation|FPGA并行计算]]
 - [[emt-simulation|电磁暂态分析]]
 - 自动化求解器生成

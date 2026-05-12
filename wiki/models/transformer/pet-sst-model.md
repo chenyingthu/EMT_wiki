@@ -3,24 +3,12 @@ title: "电力电子变压器 (PET/SST)"
 type: model
 tags: [pet, sst, solid-state-transformer, power-electronics, high-frequency, isolation]
 created: "2026-04-29"
+updated: "2026-05-12"
 ---
 
 # 电力电子变压器 (Power Electronic Transformer / Solid-State Transformer)
 
 
-```mermaid
-graph TD
-    subgraph Ncmp[电力电子变压器 (PET/SST)]
-        N0[频率: 50/60Hz]
-        N1[体积/重量: 基准]
-        N2[效率: 98-99%]
-        N3[功率流向: 单向]
-        N4[功率因数: 负载决定]
-        N5[谐波: 传递]
-        N6[保护功能: 无]
-        N7[成本: 低]
-    end
-```
 
 
 ## 定义与概述
@@ -286,20 +274,35 @@ $$G_{eq,DAB} = \frac{P}{V_{dc1}^2 - V_{dc2}^2/n^2}$$
 - **热效应**：损耗-热耦合简化处理
 - **故障保护**：内部故障模型需额外开发
 
-### 5.3 精度边界
-| 模型类型 | 电压精度 | 效率误差 | 动态响应 | 适用场景 |
-|---------|---------|---------|---------|---------|
-| 详细开关 | ±0.5% | ±1% | 精确 | 设备级分析 |
-| 平均值 | ±2% | ±3% | 近似 | 系统级仿真 |
-| 等效功率源 | ±5% | ±5% | 简化 | 长时间尺度 |
+## 量化性能边界
 
-## 6. 代表性来源
+**Gao 2022 SST高频链路加速等效模型**（DAB功率模块，MMC型SST）:
+- 基于节点导纳方程预处理与Kron消去法，消除DAB模块内部节点，构建多端口等效电路
+- 仿真速度较详细模型提升 **1~2个数量级**（10~100倍），特定工况可达2~3个数量级
+- 利用IGBT互补导通特性（$G_{ON}+G_{OFF}=G_x$为常数），实现单步矩阵求逆运算量为0
+- 支持ISOP/ISOS/IPOP/IPOS等多种串并联连接配置的参数统一转换
+- 验证平台：PSCAD/EMTDC + 硬件实验验证，端口波形与详细模型高度一致
+- 数据缺口：速度提升范围（1~2个数量级）来自摘要概述，原文未在不同SST功率等级下给出精确加速比
 
-| 论文 | 年份 | 核心贡献 |
-|------|------|----------|
-| Solid-State Transformer Modeling for EMT Simulation | 2017 | SST EMT建模综合方法 |
-| Dual Active Bridge Converter Modeling for Smart Transformer | 2019 | DAB变换器智能变压器应用 |
-| Power Electronic Transformer EMT Simulation and Analysis | 2020 | PET电磁暂态仿真分析 |
+**Li 2026 SFB-DEM + ImEx-Gear实时仿真模型**（60模块ISOP SST, OPAL-RT）:
+- 采用隐显多步Gear法，实现 **171x** 加速比（vs 详细模型）， **7.5x**（vs VG-DEM传统戴维南等效）
+- **3阶ImEx-G3O**格式，稳态误差 **<0.5%**，开关定位精度<1μs
+- 恒定导纳矩阵 + 节点缩减约 **60%**，单步计算复杂度从 $O(N^3)$ 降至 $O(N)$
+- 数据缺口：验证仅基于60 SM ISOP SST，故障工况和非线性磁芯尚未验证
+
+**Li 2025 通用解耦等效电路模型**（SFB-DEM / SFB-AVM, ISOP SST）:
+- SFB-DEM节点数从 **6N+1降至2N+3**，SFB-AVM进一步降至 **3-5节点**
+- 恒定等效导纳 $G_{eq}=C/h$，导纳矩阵呈块对角（三级独立）
+- 步长20-50μs时波形偏差 **<0.5%**（vs 1μs详细模型），相关系数>0.99
+- 验证平台：PSCAD/EMTDC，10相FBSM + 30 DAB + NPC三电平
+- 数据缺口：保护继电器配合、其他硬件平台（RTDS/FPGA）未覆盖
+
+**Wang 2025 多速率PET仿真**（CHB-DAB拓扑）:
+- 基于频率的子网划分：CHB慢速子系统（~500Hz）与DAB快速子系统（kHz级）
+- 步长比例 **10:1~20:1**（CHB 50-100μs, DAB 1-10μs）
+- 数据缺口：具体加速比数值在原文摘要中未量化报告
+
+**数据缺口声明**：PET/SST建模的加速比高度依赖于具体拓扑（ISOP/ISOS/CHB-DAB）、子模块数量和仿真平台。不同模型间的横向对比缺乏统一基准（详细模型步长、硬件配置不同）。大多数验证在离线EMT环境完成，实时硬件平台（FPGA/RTDS）下的数据仅Li 2026在OPAL-RT上报告。
 
 ## 相关方法
 - [[average-value-model|平均值模型]] - DAB/CLLC平均值建模
@@ -321,4 +324,15 @@ $$G_{eq,DAB} = \frac{P}{V_{dc1}^2 - V_{dc2}^2/n^2}$$
 
 ---
 
-*本页面基于Karpathy LLM Wiki Pattern构建*
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[accelerated-electromagnetic-transient-emt-equivalent-model-of-solid-state-transf|Accelerated EMT Equivalent Model of Solid-State Transformer]] | 2022 |
+| [[a-numerically-efficient-and-accurate-model-for-real-time-simulation-of-solid-sta|A numerically efficient and accurate model for real-time simulation of solid-state transformer]] | 2026 |
+| [[universal-decoupled-equivalent-circuit-models-of-solid-state-transformer-for-acc|Universal decoupled equivalent circuit models of solid-state transformer]] | 2025 |
+| [[multirate-emt-simulation-of-power-electronic-transformers-with-high-precision-fi|Multirate EMT Simulation of Power Electronic Transformers]] | 2025 |
+
+---
+
+*本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*

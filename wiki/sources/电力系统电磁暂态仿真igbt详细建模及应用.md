@@ -74,7 +74,7 @@ sources: ["EMT_Doc/12/电力系统电磁暂态仿真IGBT详细建模及应用.pd
 
 ## 相关主题
 
-- [[电磁暂态-emt-仿真|电磁暂态（EMT）仿真]]
+- [[electromechanical-electromagnetic-hybrid-simulation|电磁暂态（EMT）仿真]]
 - 电力电子器件详细建模
 - 实时仿真与高性能计算
 - 系统解耦与并行算法

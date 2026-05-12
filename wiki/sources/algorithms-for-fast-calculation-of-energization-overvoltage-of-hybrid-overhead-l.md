@@ -62,7 +62,7 @@ sources: ["EMT_Doc/06/Huang和Vittal - 2018 - Advanced EMT and Phasor-Domain Hyb
 - 数值拉普拉斯逆变换(NILT)
 - 全频域参数计算
 - 复频域边界条件推导
-- [[电报方程求解|电报方程求解]]
+- [[transmission-line-model|电报方程求解]]
 
 ## 涉及的模型
 

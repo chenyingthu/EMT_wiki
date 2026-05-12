@@ -1,180 +1,130 @@
 ---
-title: "SVC/TCR (静止无功补偿器)"
+title: "晶闸管控制电抗器模型 (SVC-TCR Model)"
 type: model
-tags: [svc, tcr, tsc, facts, reactive-power, thyristor]
+tags: [svc, tcr, model, facts, reactive-power, thyristor, harmonic]
 created: "2026-04-29"
+updated: "2026-05-12"
+updated: "2026-05-11"
 ---
 
-# SVC/TCR (静止无功补偿器)
+# 晶闸管控制电抗器模型 (SVC-TCR Model)
 
+## 定义与边界
 
-```mermaid
-graph TD
-    subgraph Ncmp[SVC/TCR (静止无功补偿器)]
-        N0[**TCR**: 晶闸管+电抗器]
-        N1[**TSC**: 晶闸管+电容器]
-        N2[**TCR+TSC**: 组合]
-        N3[**TCR+FC**: TCR+固定电容]
-    end
-```
+TCR 是 SVC 的核心功率支路，由两个反并联晶闸管与线性电抗器串联构成，通过控制触发角改变等效基波电纳，实现感性无功的连续调节。本文只讨论 TCR 支路的 EMT 模型对象和边界，不把某一型号 TCR 的谐波水平或响应时间写成通用结论。
 
+TCR 不单独作为无功补偿装置使用，必须与固定电容器（FC）或晶闸管投切电容器（TSC）配合才能提供容性无功。[[svc-model]] 给出 SVC 整机模型的完整边界；[[thyristor-control]] 给出触发角、导通角、自然关断和半控器件的通用约束。本文以 TCR 支路为建模焦点，不重复 SVC 系统的控制保护全局逻辑。
 
-## 定义与概述
+## EMT 建模对象
 
-静止无功补偿器（SVC）是基于晶闸管控制的FACTS设备，通过调节晶闸管触发角实现无功功率的连续调节，用于电压控制、无功补偿和提高输电能力。TCR（晶闸管控制电抗器）是SVC的核心部件，与固定电容器或晶闸管投切电容器配合实现双向无功调节。本模型涵盖TCR电压-电流特性、控制系统、谐波分析，适用于高压输电系统电压稳定和无功优化研究。
+TCR 在 EMT 中至少需要定义：
 
-## 1. 物理对象概述
+- 反并联晶闸管对：触发脉冲、导通角、电流自然过零关断和正向阻断恢复。
+- 电抗器：线性电感 L 或考虑饱和的非线性模型，以及杂散电阻。
+- 触发同步：母线电压过零检测或 PLL 输出；触发角约定（以电压过零点为基准还是以相角为基准）。
+- 控制输入：触发角指令 $α$ 或等效电纳参考 $B_{ref}$，经查表或计算产生触发脉冲。
+- 保护接口：过流、过压、晶闸管结温估算和闭锁逻辑。
 
-### 1.1 功能与原理
+TCR 的 EMT 模型必须明确触发角的零点和符号约定，否则相同的 $α$ 值在不同模型中可能对应完全不同的导通角和等效电纳。
 
-静止无功补偿器(SVC)是传统的FACTS设备，用于快速无功功率调节：
+## 模型结构与接口变量
 
-**核心功能**：
-- **电压调节**：维持母线电压稳定
-- **无功补偿**：连续调节无功输出
-- **提高稳定性**：增加输电能力，抑制振荡
-- **负荷补偿**：抑制电压闪变（如电弧炉）
-- **滤波**：兼作谐波滤波器
+TCR 支路的时域方程：
 
-**响应速度**：
-- 响应时间：1-2周波（20-40ms）
-- 比机械投切电容器快10-100倍
-
-### 1.2 SVC类型
-
-| 类型 | 结构 | 无功特性 | 应用 |
-|------|------|---------|------|
-| **TCR** | 晶闸管+电抗器 | 连续感性 | 大容量补偿 |
-| **TSC** | 晶闸管+电容器 | 分级容性 | 阶梯补偿 |
-| **TCR+TSC** | 组合 | 双向连续 | 通用型 |
-| **TCR+FC** | TCR+固定电容 | 连续调节 | 最常用 |
-
-### 1.3 TCR基本原理
-
-**晶闸管控制电抗器(TCR)**：
-- 两个反并联晶闸管与电抗器串联
-- 通过控制触发角$\alpha$调节等效电感
-- $\alpha$范围：90°-180°
-
-**等效电纳**：
-$$B_{TCR}(\alpha) = \frac{2\pi - 2\alpha + \sin 2\alpha}{\pi X_L}$$
-
-其中：
-- $\alpha = 90°$：完全导通，最大感性无功
-- $\alpha = 180°$：完全关断，无功为零
-
-**基波电流**：
-$$I_1(\alpha) = \frac{V}{X_L}\left(1 - \frac{2\alpha}{\pi} + \frac{\sin 2\alpha}{\pi}\right)$$
-
-## 2. 物理模型与数学描述
-
-### 2.1 电压-电流特性
-
-**稳态特性**：
-- 线性区：电压调节范围
-- 饱和区：最大感性/容性输出
-- 斜率特性：电压-无功灵敏度
-
-**斜率电抗**：
-$$X_{SL} = \frac{\Delta V}{\Delta Q}$$
-
-典型值：$X_{SL} = 3\% \sim 5\%$（基于系统短路容量）
-
-### 2.2 控制系统
-
-**电压调节器**：
 $$
-B_{ref} = K_p(V_{ref} - V) + K_i\int(V_{ref} - V)dt$$
+L\frac{di_L}{dt}=v_s \quad \text{(晶闸管导通期间)}
+$$
 
-**触发角计算**：
-- 根据所需电纳$B_{ref}$反算触发角$\alpha$
-- 线性化：$\Delta\alpha = K_B \Delta B$
+导通期间，端点电压施加于电抗器，电流近似积分上升；关断期间支路电流为零。
 
-### 2.3 谐波特性
+基波等效电纳的常用表达式为触发角 $α$（从电压过零点起算）的函数：
 
-**特征谐波**：
-- 6脉动TCR：5, 7, 11, 13, ... 次
-- 12脉动TCR：11, 13, 23, 25, ... 次
+$$
+B_{TCR}(\alpha)=\frac{2(\pi-\alpha)+\sin 2\alpha}{\pi X_L}, \quad \alpha \in [90^\circ, 180^\circ]
+$$
 
-**谐波电流**：
-$$I_h(\alpha) = \frac{V}{hX_L}\frac{4}{\pi}\left[\frac{\sin(h+1)\alpha}{2(h+1)} - \frac{\sin(h-1)\alpha}{2(h-1)} + \frac{\cos\alpha\sin h\alpha}{h}\right]$$
+TCR 电流中含大量低次谐波，$h$ 次谐波电流幅值与触发角的关系：
 
-## 3. EMT仿真建模
+$$
+I_h(\alpha)=\frac{V}{hX_L}\cdot\frac{4}{\pi}\left[\frac{\sin(h+1)\alpha}{2(h+1)}-\frac{\sin(h-1)\alpha}{2(h-1)}+\frac{\cos\alpha\sin h\alpha}{h}\right]
+$$
 
-### 3.1 详细模型
+6 脉动 TCR 的特征谐波为 $6k\pm1$ 次（5, 7, 11, 13…）；12 脉动 TCR 为 $12k\pm1$ 次（11, 13, 23, 25…）。
 
-**晶闸管模型**：
-- 理想开关模型
-- 固定导纳模型
-- 详细晶闸管模型（考虑恢复特性）
+受控电纳模型将 TCR 写为随 $α$ 变化的等效导纳：
 
-**电抗器模型**：
-- 线性电感
-- 饱和电感（考虑铁芯饱和）
+$$
+I_{TCR}=jB_{TCR}(\alpha)V
+$$
 
-### 3.2 平均值模型
+此模型只保留基波分量，不验证谐波电流与滤波器交互。
 
-**等效电纳**：
-$$B_{TCR}^{eq}(\alpha) = \frac{2(\pi - \alpha) + \sin 2\alpha}{\pi X_L}$$
+## 建模层级
 
-**适用条件**：
-- 系统级仿真
-- 忽略开关细节
-- 工频动态分析
+| 层级 | 保留内容 | 适合问题 | 边界 |
+|------|----------|----------|------|
+| 详细晶闸管开关模型 | 反并联晶闸管导通/关断、电抗器电流、触发脉冲、自然过零 | 谐波分析、投切暂态、阀级应力验证 | 小步长，参数依赖器件资料 |
+| 动态相量模型 | 基波和若干低次谐波相量、触发角动态 | 混合仿真、系统级动态、谐波交互研究 | 依赖谐波截断阶数和周期稳态假设 |
+| 基波等效电纳模型 | $B_{TCR}(α)$、限幅和响应延迟 | 潮流、电压无功规划、粗略系统研究 | 不验证谐波、阀级暂态和滤波器交互 |
 
-## 4. 适用边界
+[[dynamic-phasor]] 给出 TCR 谐波相量的建模方法；[[average-value-model]] 给出基波等效电纳的降阶边界。
 
-**适用场景**：
-- 高压输电系统电压控制
-- 电弧炉负荷补偿
-- 风电/光伏并网无功支撑
-- 提高输电能力
-- 抑制次同步振荡
+## 量化性能边界
 
-**限制条件**：
-- 谐波产生
-- 无功调节范围有限
-- 依赖系统短路容量
-- 不能独立提供短路容量
+TCR EMT 模型在仿真精度和计算效率方面已有可核验的量化结果，但以下数据均绑定具体的 SVC 拓扑、仿真条件和验证范围，不能外推为通用能力：
+
+- **E Zhijun (2009)** 在 IEEE 9 节点和 New England 39 节点系统中提出了 SVC 动态相量（DP）混合仿真方法。TCR 建模为单相 DP 模型，保留基波和 5 次谐波相量（忽略 7 次及以上谐波对精度影响极小）。积分步长从 EMTP 的 50 $μs$ 提升至 TSP 兼容的 0.01–0.02 s，加速约 **200–400 倍**。SVC DP 模型的电压/电流波形与 DCG/EMTP 全电磁暂态基准结果高度一致，接口处未出现传统 TSP-EMTP 混合常见的相位不连续与直流偏移。该结论基于自研 DP 程序与 DCG/EMTP 的对比验证，非商业 DP 平台结果可能不同 (E Zhijun 2009)。
+
+- **Le-Huy (2023)** 在 Hydro-Québec La Verendrye 735 kV 变电站混合 SVC-VSC 改造项目的 HIL 实时仿真中，对比了小步长 EMT（3 $μs$）与常规大步长 EMT（32.5521 $μs$，512 点/60 Hz 周波）两种建模路径。波形重合度 > **99%**，动态响应偏差 < **0.5%**，稳态电压调节误差 < **0.2%**。该工程中 VSC 支路 70 Mvar/支路，TSC 支路 95 Mvar/支路，总补偿容量 +330/-110 Mvar。验证基于特定混合拓扑的 HIL 预投运测试，不适用于所有 TCR 或非 HIL 离线仿真场景 (Le-Huy 2023)。
+
+- **Li (2020)** 提出了基于矩阵指数积分与密集输出公式的 EMT 仿真框架，在 TCR 电路算例中验证了两个 L 稳定求解器（三阶精度和一阶高速）对开关事件的处理能力。原文未报告 TCR 算例的可核验误差百分比或加速比，因此不应将效率或精度表述转化为定量结论 (Li 2020)。
+
+这些量化数据不构成对 TCR/SVC 建模方法的全面性能评价，只说明在特定测试条件下可获得的能力边界。
+
+## 适用边界与失败模式
+
+- 触发角约定必须明确：同一 $α$ 值若零点定义不同（电压过零 vs 相角起点），等效电纳结果完全不同。
+- TCR 单独不产生容性无功，不能替代 STATCOM 或 TSC 在低电压下的无功支撑能力。
+- TCR 谐波含量随触发角增大而增加；在轻载（大 $α$）工况下滤波器配置可能不足，不能只靠基波公式评估滤波效果。
+- 基波等效电纳模型不能反映 TCR 的自然关断过程、晶闸管正向恢复电压以及触发失败时的不对称电流。
+- TCR 与系统阻抗的谐振风险在含滤波器和高电缆充电功率的系统中应单独验证。
+- SVC 整体响应受测量延迟、触发同步和 TCR/TSC 协调影响，TCR 单支路模型不能替代 SVC 端口响应验证。
+
+## 开放问题
+
+- TCR 动态相量模型的谐波截断阶数选择缺乏通用准则：E Zhijun (2009) 保留基波+5 次在标准算例中有效，但在高补偿度或强非线性工况下是否需要更高阶保留缺乏研究。
+- TCR 触发角非特征谐波（如 3 次、9 次）在含高比例电力电子装置系统中的放大效应缺乏 EMT 基准研究。
+- 矩阵指数积分法（Li 2020）在 TCR 电路中的开关事件定位精度与传统插值方法缺乏同条件下的系统对比。
+- TCR 与 STATCOM 混合补偿系统的建模框架中，晶闸管半控与 VSC 全控的等效时间常数耦合关系尚未统一描述。
+- TCR 在弱网（SCR<3）下的触发同步误差和 PLL 交互对等效电纳精度的影响缺乏系统评估。
+
+## 验证需求
+
+TCR 模型验证应覆盖：
+
+- 触发角扫描下的等效电纳-触发角曲线和导通角一致性。
+- TCR 电流谐波谱（各次谐波幅值随 $α$ 的变化），并与理论谐波公式交叉验证。
+- 触发角阶跃或无功指令阶跃下的动态响应时间。
+- 三相 TCR 在不对称触发或母线三相不平衡下的电流和中性点偏移。
+- 与 FC/TSC 配合后的 SVC 端口特性：电压调节斜率、谐波放大和滤波器分组投切。
 
 ## 代表性来源
 
-| 论文 | 年份 | 核心贡献 |
-|------|------|----------|
-| [[hybrid-simulation-of-power-systems-with-svc-dynamic-phasor-model|Hybrid simulation of power systems with SVC dynamic phasor model]] | 2009 | 提出基于动态相量理论的SVC混合仿真方法，建立TCR单相动态相量模型，实现积分步长200~400倍提升的同时保持波形精度 |
-| [[interpolation-for-power-electronic-circuit-simulation-revisited-with-matrix-expo|Interpolation for power electronic circuit simulation revisited with matrix exponential and dense outputs]] | 2020 | 提出矩阵指数积分与密集输出公式新框架，针对TCR等电力电子电路实现开关时刻高精度捕捉与数值振荡抑制 |
-| [[hybrid-svc-vsc-modeling-approaches-for-hardware-in-the-loop-simulation|Hybrid SVC-VSC modeling approaches for hardware-in-the-loop simulation]] | 2023 | 对比小步长与常规大步长EMT两种HIL建模方法，为SVC-VSC混合拓扑的实时仿真提供工程实证 |
+| 来源 | 可支撑内容 | 证据边界 |
+|------|------------|----------|
+| [[hybrid-simulation-of-power-systems-with-svc-dynamic-phasor-model|E Zhijun (2009)]] | SVC-DP 混合仿真：TCR 单相 DP、基波+5 次谐波、200–400 倍步长提升 | IEEE 9/39 节点、自研 DP vs DCG/EMTP |
+| [[hybrid-svc-vsc-modeling-approaches-for-hardware-in-the-loop-simulation|Le-Huy (2023)]] | 混合 SVC-VSC HIL：>99% 波形重合度、<0.5% 动态偏差、<0.2% 电压误差 | La Verendrye 735kV 工程、HIL 平台、混合拓扑 |
+| [[interpolation-for-power-electronic-circuit-simulation-revisited-with-matrix-expo|Li (2020)]] | 矩阵指数 TCR 仿真框架、L 稳定求解器 | TCR + VSC-HVDC 算例、原文未报告数值误差 |
+| [[thyristor-control]] | 触发角、自然关断和半控器件通用边界 | TCR 触发目标是电纳控制，不替代晶闸管器件物理 |
 
-## 相关方法
-- [[average-value-model|平均值模型]] - SVC平均值建模
-- [[switching-function-method|开关函数法]] - 晶闸管开关建模
-- [[numerical-integration|数值积分]] - 触发角控制仿真
-- [[harmonic-analysis-methods|谐波分析]] - TCR谐波分析
-- [[state-space-method|状态空间法]] - 控制系统状态空间
+## 与相关页面的关系
 
-## 相关模型
-- [[svc-tcr-model|TCR模型]] - 晶闸管控制电抗器
-- [[svc-tcr-model|TSC模型]] - 晶闸管投切电容器（SVC类型）
-- [[vsc-model|VSC模型]] - 对比STATCOM
-- [[transformer-model|变压器模型]] - 连接变压器
-- [[load-model|负荷模型]] - 电弧炉负荷
-
-## 相关主题
-- [[co-simulation|混合仿真]] - FACTS装置混合仿真
-- [[harmonic-analysis-methods|谐波分析]] - 谐波分析
-- [[vsc-hvdc]] - 柔性直流输电对比
-- [[real-time-simulation]] - 实时仿真
-- [[wind-farm-modeling|风电场建模]] - 新能源并网应用
-
+- [[svc-model]]：SVC 整机模型，TCR 是 SVC 的核心功率支路。
+- [[facts]]：FACTS 设备家族入口。
+- [[reactive-compensation-device]]：无功补偿设备族入口。
+- [[thyristor-control]]：触发同步和半控器件边界。
+- [[statcom-model]]：VSC 型并联补偿，TCR 不能替代 STATCOM 的低电压无功能力。
+- [[dynamic-phasor]]：TCR 动态相量建模方法。
 ---
 
-*本页面基于Karpathy LLM Wiki Pattern构建，内容来自EMT领域学术文献的深度分析*
-
-## 来源论文
-
-| 论文 | 年份 |
-|------|------|
-| [[application-of-emtp-rv-graphic-software-of-electromagnetic-transient-simulation|Application of EMTP-RV graphic software of electromagnetic t]] | 2007 |
-| [[hybrid-simulation-of-power-systems-with-svc-dynamic-phasor-model-22|Hybrid simulation of power systems with SVC dynamic phasor m]] | 2009 |
-| [[hybrid-simulation-of-power-systems-with-svc-dynamic-phasor-model|Hybrid simulation of power systems with SVC dynamic phasor m]] | 2009 |
-| [[interpolation-for-power-electronic-circuit-simulation-revisited-with-matrix-expo|Interpolation for power electronic circuit simulation revisi]] | 2020 |
+*本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*

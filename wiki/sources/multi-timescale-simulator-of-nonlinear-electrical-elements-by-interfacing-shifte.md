@@ -62,12 +62,12 @@ sources: ["EMT_Doc/27&28/Multi-timescale simulator of nonlinear electrical eleme
 - 动态相量法(DP)
 - 牛顿-拉夫逊迭代
 - [[numerical-integration|梯形积分法]]
-- [[伴随模型法|伴随模型法]]
+- [[companion-circuit|伴随模型法]]
 - [[co-simulation|混合仿真接口]]
 
 ## 涉及的模型
 
-- [[饱和变压器|饱和变压器]]
+- [[transformer-model|饱和变压器]]
 - [[vsc-model|VSC]]
 - [[transformer-model|非线性电感]]
 - 磁链控制非线性支路
@@ -79,7 +79,7 @@ sources: ["EMT_Doc/27&28/Multi-timescale simulator of nonlinear electrical eleme
 - 非线性元件建模
 - 包络跟踪
 - [[harmonic-analysis-methods|谐波分析]]
-- [[大步长仿真|大步长仿真]]
+- [[large-timestep-simulation|大步长仿真]]
 
 ## 主要发现
 

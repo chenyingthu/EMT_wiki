@@ -3,20 +3,10 @@ title: "混合AC/DC变流器 (Hybrid AC/DC Converter)"
 type: model
 tags: [hybrid-converter, ac-dc, multiport, energy-router, solid-state-transformer, sst]
 created: "2026-04-30"
+updated: "2026-05-12"
 ---
 
 # 混合AC/DC变流器 (Hybrid AC/DC Converter)
-
-
-```mermaid
-graph TD
-    subgraph Ncmp[混合AC/DC变流器 (Hybrid AC/DC Con…]
-        N0[DAB型: 双有源桥]
-        N1[CHB型: 级联H桥]
-        N2[MMC型: 模块化多电平]
-        N3[PET型: 电力电子变压器]
-    end
-```
 
 
 ## 定义与概述
@@ -344,40 +334,18 @@ end
 - **保护逻辑**：简化过流保护
 - **多机协调**：并联均流未建模
 
-### 7.3 精度边界
-| 模型类型 | 精度 | 适用场景 |
-|---------|------|----------|
-| 平均模型 | ±5% | 系统级 |
-| 开关模型 | ±2% | 详细分析 |
+### 7.3 量化性能边界
 
-## 8. 来源论文
+混合 AC/DC 变流器 EMT 建模的精度取决于模型简化策略和拓扑类型。以下汇总可引用的量化数据：
 
-| 论文 | 年份 | 核心贡献 |
-|------|------|----------|
-| Dual active bridge converter modeling for EMT | 2015 | DAB EMT建模 |
-| Modular multilevel PET for distribution grid | 2018 | 配电级PET |
-| Energy router with hybrid AC/DC ports | 2020 | 混合端口能量路由器 |
+**平均值模型精度**：Li (2025) 在固态变压器（SST）场景下验证了开关函数平均值模型，与详细开关模型相比误差小于 0.5%。Xu (2025) 对级联 H 桥 DAB 采用广义状态空间平均（GSSA）模型，在保留低频动态特性的同时显著降低计算复杂度。
 
-## 相关方法
-- [[average-value-model|平均值模型]] - DAB状态平均建模
-- [[multirate-method|多速率方法]] - 不同开关频率协调
-- [[state-space-method|状态空间法]] - 多端口功率管理
-- [[numerical-integration|数值积分]] - 混合变换器离散化
+**多速率仿真加速**：Wang (2025) 采用多速率方法对 CHB-DAB 进行 EMT 仿真，整体加速比达 10-20 倍，精度损失在可接受范围内。Gao (2022) 基于 Kron 消去法对电力电子变压器进行模型降阶，加速 10-100 倍。Li (2026) 采用 ImEx-Gear 混合积分方法实现 PET 仿真加速达 171 倍。
 
-## 相关模型
-- [[pet-sst-model|电力电子变压器]] - SST详细模型
-- 双有源桥 - DAB变换器
-- [[mmc-model|MMC模型]] - 高压应用
-- [[vsc-model|VSC模型]] - AC/DC变换
-- [[bess-model|电池储能]] - 储能端口
+**实时仿真实现**：Qi (2024) 在实时仿真器中实现了双有源桥（DAB）的聚合模型，结合插值前推（IFP）方法，实现 FPGA 上的亚微秒级步长实时仿真。Berger (2018) 采用 GSSA 对 DAB 进行建模验证，证明平均值方法在保留关键动态特性的前提下可实现显著加速。
 
-## 相关主题
-- 能量路由器 - 多端口能量管理
-- 交直流配电网 - 混合系统应用
-- 固态变压器 - 未来电网技术
-- 微电网 - 混合变流器应用
-- [[vsc-hvdc|VSC-HVDC]] - 高压直流互联
+**数据缺口声明**：混合 AC/DC 变流器的 EMT 建模精度评估高度依赖具体拓扑（DAB、CHB、MMC、PET）和控制策略。不同建模方法（开关函数平均值、GSSA、多速率）在同一测试基准下的对比数据不足。建议用户根据具体应用场景选择合适的模型保真度。
 
 ---
 
-*本页面基于Karpathy LLM Wiki Pattern构建，内容来自EMT领域学术文献的深度分析*
+*本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*

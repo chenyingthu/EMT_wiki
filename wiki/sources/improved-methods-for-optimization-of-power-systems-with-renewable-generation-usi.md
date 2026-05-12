@@ -67,7 +67,7 @@ sources: ["EMT_Doc/23/Kuranage 等 - 2023 - Improved methods for optimization of
 ## 涉及的模型
 
 - Type-4风电机组控制器
-- [[并网变流器|并网变流器]]
+- [[gfl-inverter-model|并网变流器]]
 - PSCAD/EMTDC仿真模型
 
 ## 相关主题
@@ -76,8 +76,8 @@ sources: ["EMT_Doc/23/Kuranage 等 - 2023 - Improved methods for optimization of
 - 优化算法
 - [[parallel-computing|并行计算]]
 - 可再生能源并网
-- [[控制器参数整定|控制器参数整定]]
-- [[基于仿真的优化设计|基于仿真的优化设计]]
+- [[pi-controller-model|控制器参数整定]]
+- [[parameter-identification|基于仿真的优化设计]]
 
 ## 主要发现
 

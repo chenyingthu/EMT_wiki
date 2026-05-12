@@ -2,10 +2,11 @@
 title: "A new tool for calculation of line and cable parameters"
 type: source
 year: 2023
+tags: [tool, calculation, line, cable, parameters]
+
 journal: "Electric Power Systems Research"
 created: "2026-04-13"
-sources: ["EMT_Doc/02/Morales 等 - 2023 - A new tool for calculation of line and cable parameters.pdf"]
----
+sources: ["EMT_Doc/02/Morales 等 - 2023 - A new tool for calculation of line and cable parameters.pdf"]---
 
 # A new tool for calculation of line and cable parameters
 
@@ -57,7 +58,7 @@ EMT仿真中的频变线路/电缆模型，首先依赖单位长度串联阻抗Z
 
 - [[vector-fitting|矩量法(MoM)]]
 - 表面导纳算子(SO)
-- [[傅里叶级数展开|傅里叶级数展开]]
+- [[discrete-fourier-transform|傅里叶级数展开]]
 - 等效定理
 - 电场积分方程
 

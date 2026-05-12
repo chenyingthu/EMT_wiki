@@ -59,7 +59,7 @@ sources: ["EMT_Doc/10/Hu 等 - 2015 - Compacting and partitioning-based simulati
 ## 使用的方法
 
 - [[vector-fitting|矢量拟合]]
-- [[奇异值分解|奇异值分解]]
+- [[low-rank-solver|奇异值分解]]
 - [[state-space-method|状态空间实现]]
 - [[numerical-integration|梯形积分法]]
 - [[parallel-computing|并行计算]]
@@ -77,7 +77,7 @@ sources: ["EMT_Doc/10/Hu 等 - 2015 - Compacting and partitioning-based simulati
 - [[parallel-computing|并行计算]]
 - [[frequency-dependent-modeling|频率相关建模]]
 - [[network-equivalent|网络等值]]
-- [[计算加速|计算加速]]
+- [[gpu-accelerated-simulation|计算加速]]
 
 ## 主要发现
 

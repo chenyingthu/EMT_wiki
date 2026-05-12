@@ -67,7 +67,7 @@ sources: ["EMT_Doc/19、20、21/EMT_task_19/Li 等 - 2025 - Fine-grained hardwar
 
 - 光伏阵列(PV)
 - 风力发电机(WT)
-- [[并网变流器|并网变流器]]
+- [[gfl-inverter-model|并网变流器]]
 - 控制系统详细模型
 
 ## 相关主题

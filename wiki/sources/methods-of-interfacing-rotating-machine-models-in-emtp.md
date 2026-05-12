@@ -61,7 +61,7 @@ sources: ["EMT_Doc/26/Wang 等 - 2010 - Methods of interfacing rotating machine 
 - [[nodal-analysis|节点分析法]]
 - [[state-space-method|状态变量法]]
 - 间接接口技术
-- [[直接接口技术|直接接口技术]]
+- [[electromechanical-electromagnetic-hybrid-simulation|直接接口技术]]
 - [[coordinate-transformation-model|Park变换]]
 - 耦合电路相域建模
 
@@ -78,7 +78,7 @@ sources: ["EMT_Doc/26/Wang 等 - 2010 - Methods of interfacing rotating machine 
 - [[co-simulation|接口技术]]
 - [[emt-simulation|电磁暂态仿真]]
 - EMTP工具
-- [[状态变量仿真|状态变量仿真]]
+- [[state-space-method|状态变量仿真]]
 - 旋转电机建模
 - [[numerical-integration|数值稳定性]]
 - 不对称工况分析

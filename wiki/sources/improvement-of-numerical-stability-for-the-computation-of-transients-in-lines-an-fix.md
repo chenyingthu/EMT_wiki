@@ -67,7 +67,7 @@ sources: ["EMT_Doc/23/Kocar 等 - 2010 - Improvement of Numerical Stability for 
 ## 涉及的模型
 
 - [[transmission-line-model|输电线路]]
-- [[电力电缆|电力电缆]]
+- [[cable-model|电力电缆]]
 - [[transmission-line-model|通用线路模型]]
 - 宽频模型
 

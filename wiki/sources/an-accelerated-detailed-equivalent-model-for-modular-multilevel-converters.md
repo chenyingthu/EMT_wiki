@@ -67,15 +67,15 @@ sources: ["EMT_Doc/06/Parvari 等 - 2023 - An accelerated detailed equivalent mo
 
 - [[mmc-model|MMC]]
 - [[half-bridge-smb|半桥子模块(HBSM)]]
-- [[全桥子模块-fbsm|全桥子模块(FBSM)]]
-- [[详细等效模型-dem|详细等效模型(DEM)]]
+- [[full-bridge-smb|全桥子模块(FBSM)]]
+- [[dem|详细等效模型(DEM)]]
 
 ## 相关主题
 
 - [[emt-simulation|电磁暂态仿真]]
 - [[mmc-model|MMC]]
-- [[计算加速|计算加速]]
-- [[直流故障闭锁|直流故障闭锁]]
+- [[gpu-accelerated-simulation|计算加速]]
+- [[dc-fault-blocking|直流故障闭锁]]
 - [[vsc-hvdc|VSC-HVDC]]
 
 ## 主要发现

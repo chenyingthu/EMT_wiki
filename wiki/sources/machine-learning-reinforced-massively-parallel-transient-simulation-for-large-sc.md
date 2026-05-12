@@ -64,7 +64,7 @@ sources: ["EMT_Doc/25/Cheng 等 - 2025 - Machine-Learning-Reinforced Massively P
 - 蒙特卡洛数据生成
 - 实体组件系统(ECS)架构
 - GPU实例化技术
-- [[cpu-gpu异构并行计算|CPU-GPU异构并行计算]]
+- [[gpu-accelerated-simulation|CPU-GPU异构并行计算]]
 
 ## 涉及的模型
 

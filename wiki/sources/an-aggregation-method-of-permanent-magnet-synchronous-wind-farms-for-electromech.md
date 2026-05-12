@@ -61,14 +61,14 @@ sources: ["EMT_Doc/06/Yang 等 - 2011 - An aggregation method of permanent magne
 - 聚合等值方法
 - 简化电磁暂态建模
 - d-q坐标系PI控制
-- [[π型等值电路|π型等值电路]]
+- [[companion-circuit|π型等值电路]]
 - 功率等效原则
 
 ## 涉及的模型
 
 - [[pmsm-model|PMSG]]
 - 全功率变流器
-- [[升压变压器|升压变压器]]
+- [[converter-transformer-model|升压变压器]]
 - 集电线路
 - 风电场详细模型
 - 风电场聚合模型

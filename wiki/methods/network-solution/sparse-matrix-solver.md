@@ -1,105 +1,187 @@
+
+---
+title: "稀疏矩阵求解方法 (Sparse Matrix Solver)"
+type: method
+tags: [sparse-matrix, klu, amd, btf, lu-decomposition, iterative-solver]
+created: "2026-04-13"
+updated: "2026-05-10"
+---
+
 # 稀疏矩阵求解方法 (Sparse Matrix Solver)
 
+## 1. 物理背景与工程需求
 
-```mermaid
-graph TD
-    subgraph Ncmp[sparse-matrix-solver]
-        N0[COO: 组装阶段保存三元组]
-        N1[CSR: 行访问和矩阵向量乘法]
-        N2[CSC: 稀疏直接法和列操作]
-    end
+### 为什么需要稀疏矩阵求解器？
+
+EMT 仿真每步都需要求解节点方程 $
+\mathbf{Y}_n \mathbf{v} = \mathbf{i}$。$\mathbf{Y}_n$ 的大小与电网节点数成正比——一个 1000 节点的系统就是 $1000 \times 1000$ 的矩阵。
+
+如果使用稠密高斯消去法，求解复杂度是 $O(N^3)$，1000 节点需要约 $10^9$ 次浮点运算。但 $\mathbf{Y}_n$ 是高度稀疏的（每行仅 3-6 个非零元素），这就给求解带来了极大的优化空间。
+
+稀疏矩阵求解器的核心思想：**只存储和计算非零元素，跳过所有零元素的操作**。
+
+### 为什么不能直接用稠密求解？
+
+| 节点数 | 稠密存储 | 稀疏存储（每行 5 个非零） | 稠密 LU 运算量 | 稀疏 LU 运算量 |
+|--------|----------|--------------------------|----------------|----------------|
+| 1000 | 8 MB | 40 KB | $\sim 10^9$ | $\sim 10^5$ |
+| 10000 | 800 MB | 400 KB | $\sim 10^{12}$ | $\sim 10^7$ |
+| 100000 | 80 GB | 4 MB | $\sim 10^{15}$ | $\sim 10^9$ |
+
+对于大规模电网仿真，稠密求解不仅在存储上不可行，在计算时间上也完全无法接受。
+
+---
+
+## 2. 数学描述
+
+### LU 分解
+
+$\mathbf{Y}_n \mathbf{v} = \mathbf{i}$ 的标准求解流程分为三步：
+
+1. **符号分解**：分析 $\mathbf{Y}_n$ 的稀疏模式，确定 LU 分解中填充元的位置
+2. **数值分解**：计算 $\mathbf{L}$ 和 $\mathbf{U}$ 因子的数值
+3. **前代回代**：$\mathbf{Ly} = \mathbf{i}$ 和 $\mathbf{Uv} = \mathbf{y}$
+
+其中符号分解只需做一次（只要矩阵稀疏模式不变），数值分解在步长/拓扑不变时可复用。
+
+### 填充元
+
+填充元是稀疏矩阵 LU 分解中的核心概念。即使 $\mathbf{Y}_n$ 是稀疏的，$\mathbf{L}$ 和 $\mathbf{U}$ 中也会出现 $\mathbf{Y}_n$ 中原本为零的位置——这些就是填充元。
+
+填充元的存在意味着：**$\mathbf{L} + \mathbf{U}$ 可能比 $\mathbf{Y}_n$ 稠密得多**。通过重排序来最小化填充元是稀疏矩阵技术的核心。
+
+---
+
+## 3. 计算模型与离散化
+
+### 关键算法
+
+**AMD（Approximate Minimum Degree）重排序**：
+
+AMD 通过贪心策略选择度最小的节点进行消去，目标是减少 LU 分解中的填充元数量。对于电力系统节点导纳矩阵，AMD 通常能减少 50-80% 的填充元。
+
+**BTF（Block Triangular Form）**：
+
+BTF 将矩阵重排为块对角形式，使得对角块独立求解。对于分网仿真的场景，BTF 可以将大矩阵分解为多个小矩阵并行求解。
+
+**KLU 求解器**：
+
+KLU 是专门为电路仿真设计的稀疏求解器，是 EMTP 类程序的标准选择。它结合了 BTF 预处理、AMD 重排序和左看 LU 分解。
+
+### 求解器对比
+
+| 求解器 | 适用规模 | 特性 | EMT 适用性 |
+|--------|----------|------|-----------|
+| KLU | $10^3 \sim 10^5$ | 电路优化，BTF+AMD | EMTP 标准选择 |
+| SuperLU | $10^4 \sim 10^6$ | 通用，支持分布式 | 大规模离线仿真 |
+| PARDISO | $10^4 \sim 10^6$ | 共享内存并行 | 多核 EMT 仿真 |
+| MUMPS | $10^5 \sim 10^7$ | 分布式并行 | 超大规模 EMT |
+| 迭代法（GMRES） | $10^5 \sim 10^7$ | 无需分解，收敛依赖预条件 | 适合对角占优系统 |
+
+---
+
+## 4. 实现方法与算法细节
+
+### 符号分解 vs 数值分解
+
+符号分解与数值分解的分离是稀疏矩阵技术的关键：
+
+```text
+仿真开始：
+  1. 符号分解（一次）：分析稀疏模式，计算填充元位置，分配存储
+  2. 数值分解（初次）：计算 L 和 U 因子的数值
+  3. 每时步：前代回代（复用 L 和 U）
+
+开关动作（变导纳模型）：
+  4. 局部更新：只修改受影响的行/列
+  5. 部分重分解：只重新计算受影响的 L/U 部分
+
+步长变化：
+  6. 完全数值重分解（符号分解可复用）
 ```
 
+### 部分重分解
 
-## 定义与边界
+当开关动作只影响少数支路时，不需要对完整矩阵重新做 LU 分解。部分重分解只更新被修改的行/列对应的 L/U 因子，计算量与受影响节点数成正比。
 
-稀疏矩阵求解方法利用矩阵中大量零元素的结构来求解线性方程组。EMT 中的典型问题是：
+### 补偿法的替代方案
 
-$$
-\mathbf{Y}\mathbf{v}=\mathbf{i}
-$$
-
-其中 $\mathbf{Y}$ 来自 [[nodal-admittance-matrix]]，$\mathbf{v}$ 为节点电压，$\mathbf{i}$ 为注入电流和历史源。稀疏求解器不是元件模型，也不自动保证实时性；速度和稳定性取决于矩阵结构、排序、主元策略、硬件、开关处理和右端项数量。
-
-## EMT 中的作用
-
-在每个 EMT 步长内，求解器通常承担以下任务：
-
-1. 根据网络结构进行符号分析，确定消去树、填充位置和存储布局。
-2. 在矩阵数值改变时进行数值因子化，例如 $\mathbf{Y}=\mathbf{L}\mathbf{U}$。
-3. 对每个右端项执行前代和回代，得到节点电压。
-4. 在开关、分网或非线性迭代中复用或更新已有因子。
-
-当导纳矩阵在多个时步保持不变时，符号分析和数值因子可复用；当拓扑或步长改变时，至少部分数值分解需要更新。实时仿真中的“快”通常来自矩阵复用、局部更新、分网并行或硬件实现，而不是稀疏格式本身。
-
-## 核心机制
-
-直接稀疏 LU 求解可分为：
+如果不希望修改矩阵（恒导纳策略），补偿法通过 Sherman-Morrison-Woodbury 公式修正右端项来模拟开关效果：
 
 $$
-\mathbf{P}\mathbf{Y}\mathbf{Q}=\mathbf{L}\mathbf{U}
+(\mathbf{Y}_n + \Delta \mathbf{Y})^{-1} \mathbf{i} \approx \mathbf{Y}_n^{-1} \mathbf{i} - \mathbf{Y}_n^{-1} \Delta \mathbf{Y} (\mathbf{I} + \mathbf{Y}_n^{-1} \Delta \mathbf{Y})^{-1} \mathbf{Y}_n^{-1} \mathbf{i}
 $$
 
-其中 $\mathbf{P}$ 和 $\mathbf{Q}$ 是行列置换，$\mathbf{L}$ 和 $\mathbf{U}$ 是稀疏三角因子。排序算法的目标是降低填充元，而主元策略的目标是保持数值稳定；二者可能存在取舍。
+这避免了矩阵重分解，代价是需要额外的矩阵-向量乘和小规模线性求解。
 
-常见数据结构包括：
+---
 
-| 格式 | 主要用途 | 边界 |
-|------|----------|------|
-| COO | 组装阶段保存三元组 | 求解前通常需压缩和合并 |
-| CSR | 行访问和矩阵向量乘法 | 对列消去型算法不一定最优 |
-| CSC | 稀疏直接法和列操作 | 构建阶段插入成本较高 |
+## 5. 适用边界与失效模式
 
-对于局部支路变化，可考虑 [[compensation-method]]、低秩更新或子网重分解。但这些方法只在修改范围小且原矩阵因子仍数值可靠时有意义。
+### 什么条件下好？
 
-## 分类与变体
+- 电网规模大但连接稀疏（稀疏度 $> 99\%$）
+- $\mathbf{Y}_n$ 结构稳定（符号分解可复用）
+- 节点导纳矩阵对角占优（迭代法收敛快）
 
-| 方法 | EMT 用途 | 适用边界 |
-|------|----------|----------|
-| 稀疏直接法 | 中等规模网络、多右端项、确定性步时 | 填充元过多时内存和时间上升 |
-| KLU 类电路求解器 | 电路拓扑矩阵和块三角结构 | 具体效果需按矩阵结构验证 |
-| 多波前/超节点法 | 较大矩阵或并行直接求解 | 通信和调度开销不可忽略 |
-| 预处理迭代法 | 超大规模或近似求解 | 收敛依赖预处理和条件数 |
-| 分网并行求解 | [[network-partitioning]]、实时仿真 | 边界协调可能引入延迟或迭代误差 |
+### 什么条件下会出问题？
 
-## 适用边界与失败模式
+| 问题场景 | 表现 | 原因 | 缓解办法 |
+|----------|------|------|----------|
+| 填充元爆炸 | LU 分解内存暴增 | 矩阵结构不佳，AMD 无效 | 换用更好的重排序或近似分解 |
+| 矩阵病态 | 求解精度丧失 | 大/小导纳共存 | 改善开关电导比或预处理 |
+| 迭代法不收敛 | GMRES 残差卡住 | 矩阵非对角占优 | 使用直接法或改善预条件 |
+| 频繁重分解 | 仿真速度慢 | 开关动作密集 | 使用恒导纳 + 补偿法 |
+| 并行效率低 | 多核加速比差 | BTF 块太小导致负载不均 | 合并小块或重新分网 |
 
-稀疏直接法适合拓扑稀疏、重复求解、可复用矩阵结构的 EMT 网络。它在以下情形中可能失效或收益下降：
+### 工程经验值
 
-- 网络等值或 Kron 消去使矩阵稠密化，填充元超过原始非零结构。
-- 开关每步改变矩阵结构，符号分析和数值因子化无法复用。
-- 理想元件、极端开关电阻或弱接地造成病态矩阵。
-- 并行求解中前代/回代存在依赖链，实际加速受矩阵结构和硬件调度限制。
-- 迭代法使用不当时，残差收敛不代表所有观测量误差满足 EMT 需求。
+- 1000-50000 节点：KLU 是最优选择
+- $> 50000$ 节点：考虑 SuperLU 或迭代法
+- AMD 排序通常减少 50-80% 填充元
+- BTF 分解后对角块大小与分网策略相关
 
-任何“加速倍数”“实时步长”或“可求解节点数”都应绑定测试系统、硬件、矩阵维度、非零元数量和误差指标；缺少这些条件时只能写作个案报告或实现经验。
+---
 
-## 代表性来源
+## 6. 应用说明
 
-- [[accelerated-sparse-matrix-based-computation-of-electromagnetic-transients]] 可作为稀疏矩阵 EMT 加速的代表来源，页面使用时应保留其算例条件。
-- [[sparse-solver-application-for-parallel-real-time-electromagnetic-transient-simul]] 涉及并行实时仿真中的稀疏求解应用，适合支撑分网和硬实时约束讨论。
-- [[2728nested-fast-and-simultaneous-solution-for-time-domain-simulation-of-integrat]] 说明嵌套求解和预计算策略，但不能外推到任意开关拓扑。
-- [[a-hierarchical-low-rank-approximation-based-network-solver-for-emt-simulation]] 可作为低秩或层次矩阵思路的补充来源，需与直接稀疏 LU 区分。
+### 简单示例
 
-## 与相关页面的关系
+对两节点电路：
 
-- [[nodal-admittance-matrix]] 是主要输入对象；本页关注如何高效求解矩阵方程。
-- [[nodal-analysis]] 描述求解器在 EMT 时间步进中的位置。
-- [[iterative-solvers]] 讨论 Krylov、牛顿和接口迭代；本页只在必要处说明迭代法与直接法的边界。
-- [[fixed-admittance]] 通过保持矩阵结构来减少重分解需求。
-- [[gpu-parallel-acceleration]] 和 [[parallel-computing]] 关注硬件并行实现，不能替代矩阵数值稳定性分析。
+$$
+\mathbf{Y}_n = \begin{bmatrix} 0.01 & -0.01 \\ -0.01 & 0.03 \end{bmatrix}
+$$
 
-## 来源论文
+LU 分解：
 
-| 论文 | 年份 |
-|------|------|
-| [[application-of-emtp-rv-graphic-software-of-electromagnetic-transient-simulation|Application of EMTP-RV graphic software of electromagnetic t]] | 2007 |
-| [[a-combined-state-space-nodal-method-for-the-simulation-of-power-system-transient|A combined state-space nodal method for the simulation of po]] | 2011 |
-| [[parallel-massive-thread-electromagnetic-transient-simulation-on-gpu|Parallel Massive-Thread Electromagnetic Transient Simulation]] | 2014 |
-| [[cpu-based-parallel-computation-of-electromagnetic-transients-for-large-power-gri|CPU based parallel computation of electromagnetic transients]] | 2018 |
-| [[accelerated-sparse-matrix-based-computation-of-electromagnetic-transients|Accelerated Sparse Matrix-Based Computation of Electromagnet]] | 2019 |
-| [[a-parallelization-in-time-approach-for-accelerating-emt-simulations|A parallelization-in-time approach for accelerating EMT simu]] | 2021 |
-| [[evaluation-of-time-domain-and-phasor-domain-methods-for-power-system-transients|Evaluation of time-domain and phasor-domain methods for powe]] | 2022 |
-| [[a-julia-based-simulation-platform-for-power-system-transients|A Julia-based simulation platform for power system transient]] | 2025 |
-| [[accelerating-electromagnetic-transient-simulations-using-graphical-processing-un|Accelerating electromagnetic transient simulations using gra]] | 2025 |
-| [[partial-refactorization-techniques-for-electromagnetic-transient-simulations|Partial Refactorization Techniques for Electromagnetic Trans]] | 2025 |
+$$
+\mathbf{L} = \begin{bmatrix} 1 & 0 \\ -1 & 1 \end{bmatrix},
+\quad
+\mathbf{U} = \begin{bmatrix} 0.01 & -0.01 \\ 0 & 0.02 \end{bmatrix}
+$$
+
+前代 $\mathbf{Ly} = \mathbf{i} = [1, 0]^T$：$y_1 = 1$，$y_2 = 1$
+
+回代 $\mathbf{Uv} = \mathbf{y}$：$v_2 = 50$，$v_1 = 150$
+
+本例中 $\mathbf{Y}_n$ 极小，没有填充元问题。实际大规模系统中，AMD 重排前后填充元数量可相差 5-10 倍。
+
+---
+
+## 7. 延伸阅读
+
+### 核心参考文献
+
+- [[nested-fast-and-simultaneous-solution-for-time-domain-simulation-of-integrat]] — 嵌套求解中的矩阵复用技术
+- [[a-combined-state-space-nodal-method-for-the-simulation-of-power-system-transient]] — 状态空间与节点方程结合中的矩阵处理
+- [[accurate-time-domain-simulation-of-power-electronic-circuits]] — 功率电子仿真中的稀疏矩阵技术
+
+### 相关页面
+
+- [[nodal-admittance-matrix]] — 节点导纳矩阵的构造
+- [[nodal-analysis]] — 节点分析法框架
+- [[companion-circuit]] — 伴随电路与矩阵装配
+- [[fixed-admittance]] — 恒导纳策略避免重分解
+- [[compensation-method]] — 补偿法的矩阵修正原理
+- [[parallel-computing]] — 并行求解技术

@@ -69,7 +69,7 @@ sources: ["EMT_Doc/26/Cao 等 - 2021 - Mitigation of Subsynchronous Interactions
 - 同步发电机九阶模型
 - 五质量块扭振轴系模型
 - [[vsc-hvdc|VSC-HVDC]]
-- [[串联补偿输电线路|串联补偿输电线路]]
+- [[transmission-line-model|串联补偿输电线路]]
 - [[wind-farm-modeling|风电场]]
 - 励磁控制系统(AVR/PSS)
 

@@ -71,7 +71,7 @@ sources: ["EMT_Doc/11/Bruned 等 - 2021 - Compensation method for parallel real-
 - R-L线路模型
 - 动态负荷模型
 - [[vsc-hvdc|VSC-HVDC]]
-- [[电力电子开关|电力电子开关]]
+- [[switch-modeling|电力电子开关]]
 
 ## 相关主题
 

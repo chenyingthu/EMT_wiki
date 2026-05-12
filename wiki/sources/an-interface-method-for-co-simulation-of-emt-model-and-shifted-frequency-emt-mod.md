@@ -61,9 +61,9 @@ sources: ["EMT_Doc/07&08/An Interface Method for Co-Simulation of EMT Model and 
 - ESPRIT算法
 - 频移电磁暂态仿真(SFEMT)
 - Hankel矩阵构建
-- [[奇异值分解-svd|奇异值分解(SVD)]]
+- [[low-rank-solver|奇异值分解(SVD)]]
 - 分布式输电线路接口
-- [[解析信号构造|解析信号构造]]
+- [[dynamic-phasor|解析信号构造]]
 
 ## 涉及的模型
 
@@ -77,7 +77,7 @@ sources: ["EMT_Doc/07&08/An Interface Method for Co-Simulation of EMT Model and 
 - 多尺度联合仿真
 - 频移仿真技术
 - 信号参数估计
-- [[解析信号构造|解析信号构造]]
+- [[dynamic-phasor|解析信号构造]]
 - 接口数据交互
 - 电力系统暂态仿真
 

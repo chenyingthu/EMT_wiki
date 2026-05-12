@@ -58,16 +58,16 @@ sources: ["EMT_Doc/07&08/An Equivalent Hybrid Model for a Large-Scale Modular Mu
 
 ## 使用的方法
 
-- [[混合仿真建模|混合仿真建模]]
+- [[electromechanical-electromagnetic-hybrid-simulation|混合仿真建模]]
 - [[average-value-model|详细等效模型]]
 - 扩容控制结构
-- [[硬件在环-hil|硬件在环(HIL)]]
+- [[hil-simulation|硬件在环(HIL)]]
 
 ## 涉及的模型
 
 - [[mmc-model|MMC]]
 - [[half-bridge-smb|半桥子模块(HBSM)]]
-- [[全桥子模块-fbsm|全桥子模块(FBSM)]]
+- [[full-bridge-smb|全桥子模块(FBSM)]]
 - [[vsc-model|VSC]]
 
 ## 相关主题

@@ -68,18 +68,18 @@ sources: ["EMT_Doc/26/Liu 等 - 2025 - Modeling Method for DFIG-Based Wind Farm 
 
 - [[dfig-model|DFIG]]
 - [[dfig-model|风力发电机]]
-- [[背靠背变流器|背靠背变流器]]
+- [[back-to-back-hvdc|背靠背变流器]]
 - [[transformer-model|变压器]]
 - 滤波器
 - [[wind-farm-modeling|风电场]]
 
 ## 相关主题
 
-- [[实时电磁暂态仿真|实时电磁暂态仿真]]
+- [[fpga-real-time-simulation|实时电磁暂态仿真]]
 - [[wind-farm-modeling|风电场建模]]
 - 电路复杂度降低
 - 硬件资源优化
-- [[阻抗特性分析|阻抗特性分析]]
+- [[impedance-stability|阻抗特性分析]]
 
 ## 主要发现
 

@@ -71,7 +71,7 @@ sources: ["EMT_Doc/29/j.epsr.2006.08.027.pdf.pdf"]
 - [[ideal-switch-model|理想开关]]
 - [[synchronous-machine-model|电机模型]]
 - 非线性设备
-- [[控制系统|控制系统]]
+- [[gfl-inverter-model|控制系统]]
 
 ## 相关主题
 

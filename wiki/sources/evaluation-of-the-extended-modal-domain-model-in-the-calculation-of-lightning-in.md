@@ -77,7 +77,7 @@ sources: ["EMT_Doc/18/Leal和Conti - 2021 - Evaluation of the extended modal-dom
 
 ## 相关主题
 
-- [[雷击感应电压|雷击感应电压]]
+- [[lightning-induced-voltage|雷击感应电压]]
 - [[transmission-line-model|输电线路建模]]
 - [[emt-simulation|电磁暂态仿真]]
 - [[frequency-dependent-modeling|频率相关建模]]

@@ -2,10 +2,11 @@
 title: "A Time-Domain AC Electric Arc Furnace Model for Flicker Planning Studies"
 type: source
 year: 2009
+tags: [time, domain, electric, furnace, flicker]
+
 journal: "IEEE Transactions on Power Delivery"
 created: "2026-04-13"
-sources: ["EMT_Doc/04/TPWRD.2008.2007021.pdf.pdf"]
----
+sources: ["EMT_Doc/04/TPWRD.2008.2007021.pdf.pdf"]---
 
 # A Time-Domain AC Electric Arc Furnace Model for Flicker Planning Studies
 
@@ -66,7 +67,7 @@ sources: ["EMT_Doc/04/TPWRD.2008.2007021.pdf.pdf"]
 - 交流电弧炉(EAF)
 - 非线性电弧模型
 - IEC闪变仪模型
-- [[电力系统网络|电力系统网络]]
+- [[power-system-network|电力系统网络]]
 - SVC/STATCOM补偿装置
 
 ## 相关主题

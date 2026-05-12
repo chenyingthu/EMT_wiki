@@ -71,7 +71,7 @@ sources: ["EMT_Doc/10/Sun 等 - 2014 - Comparative study on electromechanical an
 - [[dc-dc-converter|DC/DC变换器]]
 - 直流母线电容
 - [[gfl-inverter-model|并网逆变器]]
-- [[机电暂态模型|机电暂态模型]]
+- [[electromechanical-model|机电暂态模型]]
 - [[emt-simulation|电磁暂态模型]]
 
 ## 相关主题

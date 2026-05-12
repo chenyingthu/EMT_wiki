@@ -66,7 +66,7 @@ sources: ["EMT_Doc/17/González 等 - 2015 - EMTP model of a bidirectional multi
 
 ## 涉及的模型
 
-- [[固态变压器-sst|固态变压器(SST)]]
+- [[solid-state-transformer|固态变压器(SST)]]
 - 三电平NPC变换器
 - 双有源桥(DAB)变换器
 - [[transformer-model|高频隔离变压器]]
@@ -76,11 +76,11 @@ sources: ["EMT_Doc/17/González 等 - 2015 - EMTP model of a bidirectional multi
 ## 相关主题
 
 - 配电网建模
-- [[电能质量分析|电能质量分析]]
+- [[power-quality|电能质量分析]]
 - 双向功率流动
 - [[emt-simulation|电磁暂态仿真]]
 - 电压暂降与不平衡抑制
-- [[固态变压器|固态变压器]]
+- [[solid-state-transformer|固态变压器]]
 
 ## 主要发现
 

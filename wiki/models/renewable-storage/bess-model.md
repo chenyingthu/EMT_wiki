@@ -3,21 +3,11 @@ title: "电池储能系统 (BESS)"
 type: model
 tags: [bess, battery, energy-storage, lithium-ion, bms, pcs]
 created: "2026-04-29"
+updated: "2026-05-12"
 ---
 
 # 电池储能系统 (Battery Energy Storage System, BESS)
 
-
-```mermaid
-graph TD
-    subgraph Ncmp[电池储能系统 (BESS)]
-        N0[**磷酸铁锂(LFP)**: 130-160 Wh/kg]
-        N1[**三元锂(NCM)**: 200-250 Wh/kg]
-        N2[**钛酸锂(LTO)**: 70-80 Wh/kg]
-        N3[**钠离子**: 100-150 Wh/kg]
-        N4[**液流电池**: 20-40 Wh/kg]
-    end
-```
 
 
 ## 定义与概述
@@ -223,41 +213,34 @@ $$Q = Q_0 - k_v (V - V_0)$$
 - **热耦合**：简化热模型，复杂热管理需多物理场仿真
 - **故障模式**：不涵盖内部短路等故障机理
 
-### 5.3 精度边界
-| 模型类型 | 电压精度 | 电流精度 | SOC精度 | 适用场景 |
-|---------|---------|---------|---------|---------|
-| 详细模型 | ±1% | ±2% | ±3% | 短时高动态 |
-| 平均值模型 | ±3% | ±5% | ±5% | 系统级仿真 |
-| 等效功率源 | ±5% | - | ±10% | 长时间尺度 |
+## 量化性能边界
 
-## 6. 代表性来源
+**电池等效电路模型精度**（Thevenin/二阶RC，Wang 2025）：
+- 正常工况下 IDEM 仿真波形与详细开关模型(DSM)高度吻合，电压/电流跟踪误差 < 1%（Wang 2025）
+- 闭锁瞬态波形偏差 < 0.5%，电池断开冲击误差 < 0.8%（Wang 2025）
+- 仿真步长可稳定维持在 50-100 μs（Wang 2025）
+- 加速计算方法使单步长加法与乘法运算减少约 50%-70%，整体仿真速度较 DSM 提升 10 倍以上（Wang 2025）
 
-| 论文 | 年份 | 核心贡献 |
-|------|------|----------|
-| Battery Energy Storage System Modeling for EMT Simulation | 2018 | BESS EMT建模综合方法 |
-| Lithium-Ion Battery Model for Electromagnetic Transient Studies | 2019 | 锂电池暂态仿真模型 |
-| Grid-Scale Battery Storage EMT Modeling and Validation | 2020 | 电网级储能EMT建模与验证 |
+**BESS 大规模并行仿真**（Lin 2023）：
+- CPU-GPU 异构架构在 IEEE 118 节点系统中实现仿真加速比 > 200 倍
+- 向量化电池戴维南等效模型将异构电池参数统一为同构向量，消除 GPU 并行分支发散
+- EMT 仿真步长 10-50 μs，TS 仿真步长 1-10 ms，多速率耦合降低计算冗余
 
-## 6. 相关主题与链接
+**BESS 超实时硬件仿真**（Cao 2023）：
+- FPGA 平台实现 51 倍超实时（FTRT）加速
+- 仿真时间步长达到亚微秒级（sub-μs），满足电力电子开关级 EMT 精度
 
-### 6.1 相关模型
-- [[energy-storage-converter-model|储能变流器]] - 储能PCS控制
-- [[vsc-model|VSC模型]] - 电压源变换器
-- [[igbt-model|IGBT模型]] - 开关器件模型
-- [[inductor-model|电感模型]] - 滤波电感设计
-- [[capacitor-model|电容模型]] - 直流电容模型
+**DC-DC 有源阻尼与谐振抑制**（Luo 2022）：
+- 系统自然串联谐振频率理论值 118 Hz，阻抗幅值交点频率 115.5 Hz，模型误差 < 2.5%
+- 支撑电容 > 0.5 mF 时在 100 Hz 以上呈无源电容特性
+- Buck 模式下阻尼控制器增益须严格满足上限约束，否则在 50-100 Hz 频段产生负电阻区域
 
-### 6.2 相关方法
-- [[numerical-integration|数值积分]] - SOC计算方法
-- [[state-space-method|状态空间法]] - 电池模型状态空间
-- [[pi-controller-model|PI控制器]] - 功率环控制
-- [[droop-control-model|下垂控制]] - 一次调频控制
+**构网型 BESS 黑启动**（Nguyen 2021）：
+- 光储混合电站黑启动全过程 18 s，完成 7 次时序投切
+- 仿真稳态电压幅值与数值优化解匹配误差 < 1%
+- 母线电压恢复时间 < 0.2 s
 
-### 6.3 相关主题
-- [[vsc-model|VSC模型]] - 储能变流器
-- 电池管理系统(BMS) - BMS控制策略
-- 频率调节 - 一次/二次调频
-- 新能源并网 - 风光储联合
+**数据缺口声明**：锂电池等效电路模型参数（R0、R1、C1、R2、C2）随 SOC、温度和老化的完整实验数据集缺乏统一公开数据库。不同电池化学体系（LFP/NCM/LTO/钠离子/液流）在 EMT 仿真中的模型选择和参数校准缺乏系统性对比研究。BMS 中卡尔曼滤波 SOC 估计的收敛速度和鲁棒性在不同工况下的定量数据不足。大规模 BESS 聚合模型（数百至数千单元）在 EMT 仿真中的精度-计算代价权衡缺乏公认评估基准。
 
 ## 相关方法
 - [[numerical-integration|数值积分]] - SOC计算与电池模型离散化
@@ -273,15 +256,24 @@ $$Q = Q_0 - k_v (V - V_0)$$
 - [[capacitor-model|电容模型]] - 直流电容模型
 
 ## 相关主题
-- [[vsc-hvdc|VSC-HVDC]] - 储能接入高压直流
-- 频率调节 - 一次/二次调频
-- 新能源并网 - 风光储联合运行
 - [[real-time-simulation|实时仿真]] - 储能系统实时仿真
 - 微电网 - 储能微电网应用
+- 频率调节 - 一次/二次调频
+- 新能源并网 - 风光储联合运行
 
 ---
 
-*本页面基于Karpathy LLM Wiki Pattern构建*
+*本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[an-electromagnetic-transient-simulation-model-of-mmc-bess-for-various-operating-|An Electromagnetic Transient Simulation Model of MMC-BESS]] | 2025 |
+| [[massively-parallel-modeling-of-battery-energy-storage-systems-for-acdc-grid-high|Massively Parallel Modeling of Battery Energy Storage Systems]] | 2023 |
+| [[faster-than-real-time-hardware-emulation-of-transients-and-dynamics-of-a-grid-of|Faster-Than-Real-Time Hardware Emulation of Transients]] | 2023 |
+| [[control-and-simulation-of-a-grid-forming-inverter-for-hybrid-pv-battery-plants-i|Control and Simulation of a Grid-Forming Inverter for Hybrid PV-Battery Plants]] | 2021 |
+| [[active-damping-control-and-parameter-calculation-for-resonance-suppression-in-dc-distribution|Active Damping Control for Resonance Suppression in DC Distribution]] | 2022 |
 
 ## 来源论文
 

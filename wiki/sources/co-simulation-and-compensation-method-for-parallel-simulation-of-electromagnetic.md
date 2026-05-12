@@ -60,7 +60,7 @@ sources: ["EMT_Doc/10/Bruned 等 - 2026 - Co-simulation and compensation method 
 
 - 补偿法(CM)
 - [[nodal-analysis|改进增广节点分析法(MANA)]]
-- [[功能模型接口-fmi|功能模型接口(FMI)]]
+- [[electromechanical-electromagnetic-hybrid-simulation|功能模型接口(FMI)]]
 - [[numerical-integration|梯形积分法]]
 - [[nodal-analysis|牛顿迭代法]]
 - 单边框块对角分解(SBBD)

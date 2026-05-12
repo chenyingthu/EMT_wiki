@@ -77,7 +77,7 @@ sources: ["EMT_Doc/31/Gao 等 - 2023 - Portal Analysis Approach Used for the Eff
 ## 相关主题
 
 - [[emt-simulation|电磁暂态仿真]]
-- [[电力电子系统建模|电力电子系统建模]]
+- [[power-electronic-device-modeling|电力电子系统建模]]
 - [[parallel-computing|并行计算]]
 - 电路网络划分
 - 微电网仿真

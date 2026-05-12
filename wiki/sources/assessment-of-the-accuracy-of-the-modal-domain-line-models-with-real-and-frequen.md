@@ -70,7 +70,7 @@ sources: ["EMT_Doc/09/Rezende 等 - 2024 - Assessment of the accuracy of the mod
 - [[transmission-line-model|架空输电线路]]
 - 下挂地线
 - 避雷线
-- [[多导体传输线|多导体传输线]]
+- [[transmission-line-model|多导体传输线]]
 - fdLine模型
 - [[transmission-line-model|通用线路模型]]
 

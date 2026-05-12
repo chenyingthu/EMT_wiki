@@ -2,10 +2,11 @@
 title: "A rotary frequency converter model for electromechanical transient studies"
 type: source
 year: 2018
+tags: [rotary, frequency, converter, electromechanical, transient]
+
 journal: "International Journal of Electrical Power & Energy Systems"
 created: "2026-04-13"
-sources: ["EMT_Doc/03/j.ijepes.2018.10.017.pdf.pdf"]
----
+sources: ["EMT_Doc/03/j.ijepes.2018.10.017.pdf.pdf"]---
 
 # A rotary frequency converter model for electromechanical transient studies
 

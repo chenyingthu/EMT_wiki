@@ -83,7 +83,7 @@ sources: ["EMT_Doc/25/Jiang 等 - 2024 - Key Technologies and Prospects for Elec
 - [[dfig-model|DFIG]]
 - [[distributed-generation|分布式电源]]
 - 有源配电网
-- [[分布参数输电线路|分布参数输电线路]]
+- [[transmission-line-model|分布参数输电线路]]
 - [[synchronous-machine-model|同步发电机]]
 
 
@@ -92,7 +92,7 @@ sources: ["EMT_Doc/25/Jiang 等 - 2024 - Key Technologies and Prospects for Elec
 
 - [[parallel-computing|并行计算]]
 - [[multirate-method|多速率仿真]]
-- [[硬件加速|硬件加速]]
+- [[gpu-accelerated-simulation|硬件加速]]
 - [[electromechanical-electromagnetic-hybrid|机电电磁混合仿真]]
 - [[real-time-simulation|实时仿真]]
 - [[network-equivalent|网络等值]]

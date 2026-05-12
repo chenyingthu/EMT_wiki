@@ -59,7 +59,7 @@ sources: ["EMT_Doc/24/Scheibe 等 - 2022 - Interfacing real-time and offline pow
 ## 使用的方法
 
 - [[co-simulation|混合仿真]]
-- [[离散傅里叶变换|离散傅里叶变换]]
+- [[discrete-fourier-transform|离散傅里叶变换]]
 - 正序变换
 - 后向欧拉线性插值
 - [[multirate-method|多速率仿真]]

@@ -70,7 +70,7 @@ sources: ["EMT_Doc/10/Plumier 等 - 2016 - Co-Simulation of electromagnetic tran
 - 相量模式模型
 - [[emt-simulation|电磁暂态模型]]
 - 频率相关网络等效
-- [[戴维南等效网络|戴维南等效网络]]
+- [[thevenin-equivalent-model|戴维南等效网络]]
 - [[synchronous-machine-model|同步电机]]
 - [[transmission-network|输电网络]]
 

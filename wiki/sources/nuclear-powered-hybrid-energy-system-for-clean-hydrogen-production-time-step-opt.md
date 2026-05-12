@@ -78,12 +78,12 @@ sources: ["EMT_Doc/29/Chen 等 - 2026 - Nuclear-Powered Hybrid Energy System for
 ## 相关主题
 
 - [[real-time-simulation|实时仿真]]
-- [[多域协同仿真|多域协同仿真]]
+- [[electromechanical-electromagnetic-hybrid-simulation|多域协同仿真]]
 - 硬件协同仿真
 - 核能-可再生能源混合系统
 - 清洁制氢
 - 时间步长优化
-- [[fpga加速|FPGA加速]]
+- [[fpga-real-time-simulation|FPGA加速]]
 
 ## 主要发现
 

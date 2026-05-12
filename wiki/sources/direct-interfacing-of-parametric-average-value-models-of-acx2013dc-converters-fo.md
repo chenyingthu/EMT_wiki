@@ -60,7 +60,7 @@ sources: ["EMT_Doc/13&14/files/Direct_Interfacing_of_Parametric_Average-Value_Mo
 
 - [[nodal-analysis|节点分析法]]
 - 参数化平均值建模
-- [[直接接口技术|直接接口技术]]
+- [[electromechanical-electromagnetic-hybrid-simulation|直接接口技术]]
 - 方程线性化
 - [[discretization-methods|离散化]]
 
@@ -68,14 +68,14 @@ sources: ["EMT_Doc/13&14/files/Direct_Interfacing_of_Parametric_Average-Value_Mo
 
 - 线换相整流器
 - AC-DC变换器
-- [[戴维南等效网络|戴维南等效网络]]
+- [[thevenin-equivalent-model|戴维南等效网络]]
 - 直流滤波器
 
 ## 相关主题
 
 - [[emt-simulation|电磁暂态仿真]]
 - [[real-time-simulation|实时仿真]]
-- [[大步长仿真|大步长仿真]]
+- [[large-timestep-simulation|大步长仿真]]
 - [[nodal-analysis|节点分析]]
 - [[average-value-model|平均值建模]]
 - [[numerical-integration|数值稳定性]]
