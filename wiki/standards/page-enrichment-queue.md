@@ -46,7 +46,7 @@ updated: "2026-05-13"
 | 21 | coherency-clustering.md | methods | methods/simulation-technology/coherency-clustering.md | P0 | 100 | 819 | 8 | 11 | completed |
 | 22 | mbsm.md | methods | methods/power-electronics/mbsm.md | P1 | 99 | 943 | 5 | 9 | completed |
 | 23 | large-scale-system-simulation.md | topics | topics/simulation/large-scale-system-simulation.md | P1 | 96 | 2666 | 53 | 25 | completed |
-| 24 | load-modeling.md | topics | topics/component-modeling/load-modeling.md | P1 | 94 | 1289 | 5 | 24 | pending |
+| 24 | load-modeling.md | topics | topics/component-modeling/load-modeling.md | P1 | 94 | 1289 | 5 | 24 | completed |
 | 25 | low-rank-solver.md | methods | methods/network-solution/low-rank-solver.md | P1 | 91 | 1186 | 4 | 15 | pending |
 | 26 | high-performance-computing.md | methods | methods/simulation-technology/high-performance-computing.md | P1 | 91 | 1270 | 4 | 19 | pending |
 | 27 | renewable-energy-units.md | topics | topics/renewable-storage/renewable-energy-units.md | P1 | 91 | 1271 | 4 | 19 | pending |
@@ -500,3 +500,4 @@ updated: "2026-05-13"
 || 22 | 1 | 1 | 0 | mbsm页面完成（3703字，146公式，7wikilink，9章节，4种核心方法：拓扑参数化统一/舒尔补递归诺顿等效/动态平均化统一模型/GSFB-AVM与DEM组合模型，7篇来源论文）
 ||| 23 | 1 | 1 | 0 | large-scale-system-simulation页面完成（2666字，53公式，25wikilink，17章节，12篇来源论文，覆盖分网并行/BBD矩阵法/多速率仿真/混合仿真/GPU加速/ML加速六大方向，ParaEMT 36x/Nelson River/IEEE 118等量化案例）
 
+|| 24 | 1 | 1 | 0 | load-modeling页面完成（~604字正文，72公式（10块级+62行内），10wikilink（全部验证有效），9章节，6种负荷建模方法：ZIP静态/指数型V-f相关/元件级综合/fdLoad频率相关/恒功率RMS递推/感应电动机，4篇来源论文，含负荷建模分类矩阵、场景-方法推荐表、决策树）
