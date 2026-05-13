@@ -1,0 +1,513 @@
+                                                Electrical Power and Energy Systems 24 (2002) 295±304
+                                                                                                                      www.elsevier.com/locate/ijepes
+
+
+
+Analysis and estimation of truncation errors in modeling complex resonant
+                         circuits with the EMTP
+                              R. Carbone a,*, H.W. Dommel b,1, R. Langella c,2, A. Testa c,2
+                          a
+                           University of Reggio Calabria ªMediterraneaº, D.I.M.E.T., via Graziella, 89100 Reggio Calabria, Italy
+        b
+            Department of Electrical and Computer Engineering, University of British Columbia, 2356 Main Mall, Vancouver, BC, Canada V6T 1Z4
+                              c
+                               Dipartimento di Ingegneria dell'Informazione Aversa, II Univ. degli Studi di Napoli, Aversa Italy
+                                                    Received 9 August 2000; accepted 14 May 2001
+
+
+
+Abstract
+   Most common computer programs for time domain simulations of power systems calculate the state of the system step by step, either with
+®xed or with variable step size. They integrate differential equations by using numerical methods. Whichever method of integration is used,
+numerical errors in modeling power system impedances will arise, which may not be negligible in the presence of resonances. The problem
+of analytically describing these errors for complex circuits is analyzed, with particular reference to computer programs of the EMTP type.
+q 2002 Elsevier Science Ltd. All rights reserved.
+Keywords: EMTP; Resonant circuits; Truncation errors
+
+
+
+1. Introduction                                                                 resonances occur. The errors depend signi®cantly on the
+                                                                                type of the integration method, and on the circuit complex-
+   Computer programs for time domain simulations of                             ity. This ®rst error analysis was only carried out with respect
+power systems calculate the state of the system step-by-                        to the trapezoidal rule of integration and for the simplest R,
+step, either with ®xed or with variable step size. They are                     L, C resonant circuits.
+now being used over time spans, which are much larger than                         In this paper, the error analysis of the trapezoidal method
+some of the program developers originally anticipated.                          is extended to complex circuits. A generalized error inves-
+Step-by-step simulations over millions of time steps raise                      tigation with respect to resonance frequencies, impedance
+questions about numerical errors, which may have been                           amplitude at the resonance frequencies and equivalent
+unimportant before.                                                             impedance quality factors is described. For simple series
+   In a previous paper [1], Dommel reviewed some of the                         and parallel R, L, C resonant circuits analytical error indi-
+questions of round-off and truncation errors, and their                         cators are derived. For complex circuits the analysis, which
+propagation and numerical stability in the numerical                            is very dif®cult in principle, is developed by taking advan-
+integration of differential equations. Numerical errors are                     tage of a curve ®tting procedure, which preserves the use of
+unavoidable, but living with them is easier for program                         analytical indices. Furthermore, for complex circuits in
+users if the nature of the errors is well understood and if                     which very close resonances inhibit the aforementioned
+useful error indicators are available.                                          ®tting procedure, a suitable numerical procedure based on
+   The authors of Ref. [2] demonstrated that the numerical                      the introduction of an apparent angular frequency is
+integration of differential equations may cause serious                         presented. Both the introduced analytical and numerical
+mathematical truncation errors in modeling electrical                           approaches give to program users information about the
+system impedances, especially if series and/or parallel                         approximation involved in the integration method. Finally,
+                                                                                the results of some comparisons with experimental error
+ * Corresponding author. Tel.: 139-081-768-3214; fax: 139-081-504-              evaluations are discussed, which show the usefulness of
+5804.                                                                           the proposed error indicators.
+    E-mail addresses: rocarb@ing.unirc.it (R. Carbone),
+hermannd@ece.ubc.ca (H.W. Dommel), roblange@unina.it (R. Langella),
+alftesta@unina.it (A. Testa).                                                   2. Single inductor and capacitor
+  1
+    Tel.: 11-604-822-2793; fax: 11-604-822-5949.
+  2
+    Tel.: 181-5010239; fax: 181-5045804.                                              With reference to the trapezoidal rule of integration as
+0142-0615/02/$ - see front matter q 2002 Elsevier Science Ltd. All rights reserved.
+PII: S 0142-061 5(01)00043-6
+296                               R. Carbone et al. / Electrical Power and Energy Systems 24 (2002) 295±304
+
+used in the EMTP [3], analytical expressions can be derived              of the inductive reactance can now be easily obtained
+for the relative error of single inductor and single capacitor
+impedances. This error, eZ ; is de®ned as the difference                e X v  jj:                                                  5
+between the EMTP modeled impedance (apparent impe-                          For a ®xed simulation time step, this error increases with
+dance Z APP ) and the actual impedance, Z;   normalized to
+                                                                         frequency, and vice versa, for a ®xed frequency it decreases
+the actual impedance amplitude                                           when the time step decreases. In Ref. [2] it was shown that
+           Z APP v 2 Z v                                             for typical simulation time step values, the errors are signif-
+eZ v                                                         1       icantly high for frequencies above 5000 Hz.
+                 uZ vu
+                                                                            Some computer programs approximate the lumped induc-
+   This de®nition makes it easy to develop analytical rela-              tance of an inductor as a short-circuited `stub line' with
+tionships for the errors, as will be shown in the following.             distributed inductance L 0 and capacitance C 0 . If the travel
+From Eq. (1) it is also simple to evaluate the magnitude and             time of this shorted stub line is Dt/2, and if the distributed
+the phase of the apparent impedance                                      inductance multiplied with line length is equal to the value
+                                                                         of the lumped inductance, then the surge impedance of the
+Z APP  uZu´
+           eZ 1 Z;
+                  
+                                                                         line becomes 2L/Dt. The exact solution of this lossless
+which allows the calculation of any other error de®ned                   distributed parameter line gives the same answers as the
+differently.                                                             trapezoidal rule applied to the lumped inductance [3].
+   Furthermore, starting from Eq. (1) and having evaluated               This suggests a physical interpretation of the error: the
+the apparent impedance, it is possible to obtain the actual              inductance is distributed rather than lumped, with a small
+impedance by correcting it.                                              distributed shunt capacitance, which becomes smaller the
+                                                                         smaller Dt is.
+2.1. Inductors
+                                                                         2.2. Capacitor
+   By applying the trapezoidal rule of integration in the time
+interval t 2 Dt; t; the differential equation of a self induc-            Analogous results are obtained for capacitors. For a capa-
+tance is replaced by an approximate difference equation. By              citor of capacitance C, the apparent reactance X CAPP and the
+assuming that currents and voltages change sinusoidally at               analytical expression of the complex relative error are as
+one frequency, the equation in the frequency domain                      follows:
+becomes
+                                                                                           1                  B CAPP 2 BC
+     2L 1 2 e2jvt                                                       XCAPP  XC             ;      j                 ;             6
+V               I                                                                      1 1 j                    BC
+     Dt 1 1 e2jvt
+or after some rewriting                                                                   j
+                                                                       eX v  2j         :                                          7
+                vDt                                                                      11j
+          tan
+                  2 
+V  jvL                        
+                      I  jXLAPP I:                             2         As for inductors, errors are high for frequencies above
+              vDt                                                        5000 Hz.
+                2
+  Eq. (2) shows that the trapezoidal rule does not see the
+correct reactance XL, but an apparent reactance, XLAPP                   3. Simple R, L, C circuits
+
+XLAPP  XL 1 1 j;                                              3          Even if EMTP errors for single inductors and/or capaci-
+                                                                         tors can be considered negligible for typical simulation time
+where j is the real auxiliary variable
+                                                                         steps, the numerical modeling of R, L, C resonant circuits
+              
+          vDt                                                            can produce signi®cant errors, especially if a strong reso-
+    tan
+            2                                                           nance characterizes the equivalent impedance. Fig. 1 refers
+j              2 1:                                           4       to a series (a) and to a parallel (b) R, L, C test circuit for the
+        vDt
+          2                                                              data shown in the ®gure caption: although the inductive and
+                                                                         capacitive reactance errors are small, around the resonant
+  It also follows from Eq. (3)                                           frequency, the composite circuits have very big impedance
+      X LAPP 2 XL                                                        errors ( ù 100%).
+j                ;
+           XL
+                                                                         3.1. Series resonant circuits
+that is to say, j represents the relative error of the inductive
+reactance amplitude.                                                       The simple R, L, C, series resonant circuit has a resonance
+   The analytical expression for the relative complex error              angular frequency v 0, a quality factor Q and an actual
+                                      R. Carbone et al. / Electrical Power and Energy Systems 24 (2002) 295±304                                        297
+
+
+
+
+Fig. 1. EMTP error magnitudes in modeling XL, XC and the equivalent impedance, Z, of a test circuit characterized by: f0  2500 Hz; Q  10 and R  1 V; for
+a time step Dt  50 ms : (a) series connection, (b) parallel connection.
+
+equivalent impedance ZÅ, as follows:                                                Due to the simplicity of the analytical expressions for
+                          r                                                 both the actual and apparent equivalent impedances, an
+        1              1 L                                                       analytical expression for the errors can be derived
+v 0  p ;    Q            ;
+        LC             R C                                                                                   !                   !      !1=2
+                                                                                              1       v2       2 v        v2     v
+                                   v   v                                         eZ v  jQj         1 2        Q       12 2 1
+Z  R 1 jXL 2 jXC  R 1 1 jQ         2 0 :                                                     11j       v0         v0       v0     v0
+                                   v0   v
+                                                                                                                                                        8
+  By applying the trapezoidal rule, the corresponding
+apparent expressions becomes                                                        From Eq. (8), a parametric analysis of errors versus the
+                                                                                 angular frequency v can be performed, as a function of the
+                                        1
+Z APP  R 1 jXL 1 1 j 2 jX C                                                   time step Dt, the resonance angular frequency v 0, and
+                                      1 1 j                                     the circuit quality factor Q. Details of this analysis are
+                                                                             reported in Section 3.3 below.
+                   v            v    1
+      R 1 1 jQ        1 1 j 2 0          ;                                        From Eq. (8) the error at the resonance angular
+                   v0           v 1 1 j
+                                                                               frequency,eZ0; can also immediately be calculated as
+ APP    2      21 v0 Dt
+v0        tan            ;    QAPP  Q:                                                                    2 1 j0
+        Dt           2                                                           eZ0  eZ v0   jQj 0           ;                                    9
+                                                                                                            1 1 j0
+  Fig. 2 shows the modeling error effects with reference to
+the test system of Fig. 1a, for different time step values Dt.                   where j 0  j v 0 :
+                                                                                    To give a physical interpretation of j 0, let us consider the
+                                                                                 basic de®nitions of the classical ®lter theory [4]. The analy-
+                                                                                 tical expression of the ®lter impedance versus angular
+                                                                                 frequency is
+                                                                                                                    
+                                                                                                          2 1 d v
+                                                                                 Z v  R 1 1 jQd v                 ;                       10
+                                                                                                          1 1 d v
+                                                                                 where d is the auxiliary variable de®ned as
+                                                                                       v 2 v0
+                                                                                 d           :
+                                                                                         v0
+                                                                                    Due to uncertainty in the ®lter parameters, at the reso-
+                                                                                 nance angular frequency the impedance of the ®lter (appar-
+                                                                                 ent impedance) will be different from the ideal. In order to
+                                                                                 calculate the impedance error at the resonance angular
+                                                                                 frequency, it is possible to assume that
+Fig. 2. Magnitude and phase of series resonant circuit impedances, for
+different time step values Dt.                                                   Z APP v0  ù Z vAPP
+                                                                                                   0 ;                                                11
+298                                  R. Carbone et al. / Electrical Power and Energy Systems 24 (2002) 295±304
+
+where vAPP
+        0   is the resonance angular frequency of the actual                   In order to obtain an analytical expression for the relative
+®lter impedance.                                                            error eZ ; let us ®rst de®ne the following complex coef®-
+   Taking into account for Eqs. (10) and (11), expression (1)               cients, a Y ; a Z :
+gives
+                                                                                     Y APP 2 Y                  Z APP 2 Z
+                                                                            a Y                ;       a Z                :         13
+                      2 1 d vAPP
+                             0                                                          Y                           Z
+eZ0  jQd vAPP
+            0                    :                                12
+                      1 1 d vAPP
+                             0                                                Taking into account Eqs. (2) and (4), and after some
+   Finally, from a comparison between Eqs. (10) and (12), it                rewriting, a Y becomes
+                                                                                                    !            !        !21
+can be shown that the auxiliary variable j , introduced in Eq.                             1     v2        v2           v
+(4) in v assumes the physical interpretation of the classical               a Y  Qj          1 2    Q        21 2j          : 14
+                                                                                        11j      v0        v20         v0
+detuning parameter, d (v 0APP).
+                                                                               Then, it can be demonstrated that
+3.2. Parallel resonant circuits
+                                                                                         a Y
+                                                                            a Z  2            :                                       15
+   The simple R, L, C, parallel resonant circuit has an actual                         1 1 a Y
+equivalent impedance Z; a resonance angular frequency v 0,
+                                                                               Finally, the analytical expression for eZ can be obtained
+and a quality factor Q as follows:
+                         r                                                           Z
+         1                 C                                                eZ v  a Z   a Z e2jb                                 16
+v 0  p ;     QR         ;                                                          uZu
+         LC                L
+                                                                            with
+           1                    R                                                             
+Z                                   :
+                                                                            b  tan Q 21v
+                                                                                           2
+                                                                                             v0
+                                                                                                   :
+     1    1      1              v    v0
+       2j    1j        1 1 jQ      2                                                    v0   v
+     R    XL    XC              v0   v
+                                                                               From Eq. (16), a parametric analysis of errors versus
+  By applying the trapezoidal rule, the corresponding                       angular frequency v can be performed, as a function of
+apparent expressions become                                                 the time step Dt, the resonance angular frequency v 0, and
+                        1                                                   the circuit quality factor Q. The results are discussed in
+Z APP                                                                     Section 3.3.
+           1        1          1
+             2j            1j    1 1 j                                        From Eq. (16), the error at the resonance angular
+           R    XL 1 1 j     XC
+                                                                            frequency, v 0, can be calculated as
+                             R
+                                       ;                                                     a Y0
+                   v           v     1                                      eZ0  a Z0  2
+          1 1 jQ       1 1 j 2 0                                                               1 1 a Y0
+                  v0            v 1 1 j
+                                                                          with
+         2         v Dt
+v 0APP     tan21 0        ;   QAPP  Q:                                                             2 1 j0
+         Dt          2                                                      a Y0  eY0  jQj 0            :                           17
+                                                                                                     1 1 j0
+   Fig. 3 shows the modeling error effects with reference to
+the test system of Fig. 1b, for different time step values Dt.                 From ®lter theory, the ®lter admittance at the resonance
+                                                                            angular frequency, versus detuning d [4], is obtained as
+                                                                                                             
+                                                                                     1              2 1 d v
+                                                                            Y v      1 1 jQd v             ;
+                                                                                     R              1 1 d v
+                                                                            and the admittance error at the resonance angular frequency
+                                                                            results in
+                                                                                                 2 1 d vAPP
+                                                                                                        0 
+                                                                            eY0  jQd vAPP
+                                                                                        0                  :                           18
+                                                                                                 1 1 d vAPP
+                                                                                                        0 
+
+                                                                              From a comparison between Eqs. (17) and (18) the physi-
+                                                                            cal interpretation of j 0, previously underlined, is con®rmed.
+
+                                                                            3.3. Parametric error analyses
+
+                                                                               Starting from Eqs. (8) and (16), some interesting para-
+                                                                            metric error analyses can be performed for simple series and
+Fig. 3. Magnitude and phase of parallel resonant circuit impedances, for    parallel R, L, C resonant circuits. For a ®xed step size Dt, the
+different time step values Dt.                                              errors are obtained as a function of the resonance frequency
+                                      R. Carbone et al. / Electrical Power and Energy Systems 24 (2002) 295±304                                   299
+
+
+
+
+Fig. 4. Error magnitude in series (a) and parallel (b) resonant circuits,    Fig. 5. Error magnitude in series (a) and parallel (b) resonant circuits,
+characterized by f0  2500 Hz; Q from 1 to 9, and a time step Dt  50 ms:    characterized by Q  10; f0 from 500 to 4500 Hz and a time step Dt 
+                                                                             50 ms:
+
+f0, and of the quality factor Q, as shown in Figs. 4 and 5. In
+Fig. 4, the values used are, f 0  2500 Hz and Q                            3. the maximum errors in parallel resonant circuits lie at a
+1; 3; 5; 7; 9; while Fig. 5 refers to Q  10 and f0  500;                      frequency approximately 10% before the resonant
+1500, 2500, 3500,4500 Hz; in both ®gures the time step is                       frequency.
+Dt  50 ms:
+    It can be observed that maximum errors:
+                                                                             4. Complex circuits
+1. occur around f0;
+2. quasi-linearly increase with Q (Fig. 4), since their origins                 Unfortunately, when the number of inductors and/or
+   are resonance frequency shifts (Figs. 2 and 3), so the                    capacitors increases, a mathematical error analysis is very
+   sharper the impedance curve is around the resonance                       arduous if not impossible, due to the complexity of analy-
+   frequency the bigger the errors are;                                      tical expressions of circuit equivalent impedances. In the
+3. increase according to a quasi-square law with f0 (Fig. 5),                following, starting from the analytical expression (8) and
+   since they are the cumulative effect of errors in modeling                (16) in simple resonant circuits, two different proposals
+   XL and XC (Fig. 1).                                                       able to give in a simple way accurate information on errors
+                                                                             are presented and discussed.
+  Comparing the behaviors of series and parallel circuits for
+the same R, f0 and Q values, it can be observed that:                        4.1. Circuits characterized by a single resonance
+
+1. errors in modeling series resonant circuits are always                       Numerical errors in complex circuits characterized by a
+   bigger;                                                                   single main series or parallel resonance can be estimated by
+2. the maximum errors in series circuits always lie very                     taking advantage of Eq. (8) or (16) and of a curve ®tting
+   close to the resonant frequency;                                          procedure: the actual complex circuit is substituted by a
+300                                     R. Carbone et al. / Electrical Power and Energy Systems 24 (2002) 295±304
+
+simple R, L, C circuit able to accurately ®t, around f0, the                   frequency can be simply de®ned with the apparent angular
+equivalent impedance versus f of the complex circuit. In                       frequency, v APP
+practical cases, starting from complex circuit equivalent
+impedance versus f (Fig. 6), the ®tting circuit parameters,                    vAPP  v 1 1 j;                                          19
+Rfitt ; f0fitt ; Qfitt can be easily estimated as                              as
+                                           f0                                  Z APP v  Z vAPP ;                                    20
+Rfitt  Z f0 ; f0fitt  f0 ; Qfitt ù           :
+                                        f2 2 f1
+                                                                               so expression (1) becomes
+  Then, expressions (8) and (16) can be utilized in the
+neighborhood of the resonance frequency.                                               Z vAPP  2 Z v
+                                                                               eZ                      :                               21
+                                                                                            uZ vu
+4.2. Circuits characterized by two or more resonances
+                                                                                  It is important to emphasize that Eq. (21) is valid for the
+   If the complex circuit under study results characterized by                 equivalent impedance of a generic complex resonant circuit.
+two ore more resonances, it is convenient to distinguish two                      The aforementioned technique can be applied in a very
+different cases:                                                               practical way, without solving the analytical expression of
+                                                                               the actual equivalent impedance which might be very
+   (a) resonance angular frequencies are signi®cantly far                      complex, by referring to the frequency scan diagrams. In
+   from one another;                                                           this case, taking into account that
+   (b) resonance angular frequencies are close to one
+   another.                                                                    uZ APP vu  uZ vAPP u;       qAPP v  q vAPP ;
+                                                                               with q being the phase of the impedance, the graphical
+   When condition (a) is veri®ed, remembering that errors in                   representations of uZu  and q versus v (see Fig. 7a) are
+numerical modeling of equivalent impedances are more                           substituted by the representations of Fig. 7b. In these
+signi®cant in and around the resonance angular frequency,                      representations, the two curves are identical while their
+the equivalent impedance can be approximated by means of                       abscissas axis is doubled. The added axis refers the curves
+the series of different simple series and/or parallel R, L, C                  to the apparent angular frequency.
+resonant circuits. Then, errors can be separately estimated                        In this way, each point of the amplitude and phase equiva-
+by means of R, L, C ®tting circuits, and the corresponding                     lent impedance graphs contemporaneously represents the
+expression (8) and/or (16) around the corresponding                            actual values, with respect to the actual axis, and the appar-
+resonance frequencies.                                                         ent values, with respect to the apparent axis (see Fig. 7b).
+   When condition (b) is veri®ed, the aforementioned                               At each angular frequency and for each Dt of interest,
+technique is not utilizable because of the interactions                        complex relative errors can be easily evaluated from
+among resonances. Error estimations based on Eqs. (8)                          uZ APP u; qAPP ; uZu
+                                                                                                   and q on the aforementioned doubled
+and (16), separately applied to the ®tting circuits, could                     axis graphs
+result in inaccurate answers.
+                                                                                                     APP
+   On the other hand, from the apparent impedance                                       uZ APP u ejq 2 uZu
+                                                                                                          ejq
+analytical expressions of single inductors (Eq. (3)), single                   eZ v                        :
+                                                                                                     uZu
+capacitors (Eq. (6)) and, also, of R, L, C resonant circuits, it
+can be observed that apparent impedances versus angular                           It is worthwhile to emphasize that the apparent axis is not
+                                                                               linear, from Eq. (19), while the actual axis is obviously
+                                                                               linear. A simple numerical routine can be utilized to solve
+                                                                               the error calculation problem with very high frequency
+                                                                               accuracy. Anyway, remembering again that errors are signi®-
+                                                                               cant mainly in and around the resonance frequencies, expres-
+                                                                               sion (19) can also be linearized around the mean value as:
+                                                                               vAPP  k1 1 k2 v;
+                                                                               with k1 and k2 being appropriate constant parameters according
+                                                                               to Taylor's series theory, to obtain a double linear axis.
+
+
+                                                                               5. Numerical tests
+
+                                                                                  The accuracy and the usefulness of the proposed error
+                                                                               indicators are tested by means of several EMTP simulations.
+       Fig. 6. Fitting a circuit characterized by a single resonance.          Firstly, error indicators of simple resonant circuits are
+                                       R. Carbone et al. / Electrical Power and Energy Systems 24 (2002) 295±304                                         301
+
+
+
+
+Fig. 7. Amplitude and phase of actual and apparent impedances, of a double resonant test circuit for Dt  33 ms : (a) versus the actual frequency; (b) versus
+actual and apparent frequencies.
+
+considered. Then the proposed error estimation procedures                         50 ms; were performed with a supply voltage of frequencies
+are tested and their accuracy and usefulness are checked.                         1250 and 1000 Hz, respectively.
+   Four different case studies are used: the ®rst two refer to                        For both cases, the equivalent impedance of the circuit at the
+the direct application of expressions (8) and (16). The third                     considered frequency was calculated from simulation results,
+refers to the procedure developed in Section 4.2 for multi                        and then the experimental error and the analytical error were
+resonant circuits characterized by very far resonance                             obtained from Eqs. (1) and (8), respectively. In both cases, the
+frequencies. Finally, the fourth refers to the application of                     experimental results e Z;x;1250  0:00000000 1 j0:00169074;
+the procedure proposed for multi resonant circuits charac-                        eZ;x;1000  0:00000000 1 j0:00110401 practically coincide
+terized by very close resonance frequencies.                                      with the analytical results eZ;s;1250  0:00000000 1
+                                                                                  j0:00169075; eZ;s;500  0:00000000 1 j0:00112105: This
+5.1. Simple R, L, C, series resonant circuits                                     demonstrates the accuracy of the analytical index proposed
+                                                                                  for the circuit under study.
+  A simple series resonant circuit characterized by f0 
+1249:99 Hz; Q  15:3403 and R  0:200000 V as in                                  5.2. Simple R, L, C, parallel resonant circuits
+Section 3.1 is considered. The circuit is connected to a
+voltage source. Two EMTP simulations, both with Dt                                  A simple parallel resonant circuit characterized by
+302                                    R. Carbone et al. / Electrical Power and Energy Systems 24 (2002) 295±304
+
+
+
+
+                                                                                    Fig. 9. Equivalent impedance: actual (Ð) and apparent (- - -) as seen from
+          Fig. 8. Simpli®ed scheme of an industrial test system.
+                                                                                    bus IND2, versus harmonic order.
+
+f0  1249:99 Hz; Q  15:3403 and R as in Section 5.1 is
+considered. The circuit is connected to a voltage source.                              As shown in Fig. 9, the equivalent impedance as seen
+Two EMTP simulations, both with Dt  50 ms; were                                    from bus IND2 has two resonance frequencies, one around
+performed with a supply voltage of frequencies 1250 and                             the ®fth and the other around the 35th harmonic. The same
+500 Hz, respectively.                                                               ®gure also shows the EMTP apparent impedance; it
+    For both cases, the equivalent impedance of the circuit at the                  con®rms that the larger the resonance frequency, the larger
+considered frequency was calculated from the simulation                             is the resulting error.
+results, and then the experimental errors were obtained from                           Table 1 summarizes the results of the distortion analysis
+Eqs. (1) and (16), respectively. In both cases, the experimental                    at bus IND2, in terms of errors eZ;x and eZ;s ; as in Sections
+results      eZ;x;1250  20:136765 2 j0:343438;       eZ;x;500                   5.1 and 5.2. Assuming as error free the results of the
+0:000176905 1 j0:00284260 practically coincide with the                            frequency current injection method, it is evident that the
+analytical results         eZ;s;1250  20:136669 2 j0:343498;                      EMTP results are affected by representation errors,
+eZ;s;500  0:000176905 1 j0:00284260; once again demon-                           especially at the 35th harmonic. These errors decrease
+strating the accuracy of the proposed analytical index.                             signi®cantly only if the simulation time step is decreased
+                                                                                    drastically, starting from the value Dt p adopted in Ref. [5].
+5.3. Complex circuits with far resonances                                           The analytical complex errors were evaluated by ®tting the
+                                                                                    impedance curve, as shown in Fig. 6, and estimating the
+   The industrial system of Fig. 8 [5], consisting of two                           quality factors Q1  11:6; Q2  61:8; and the resonance
+buses IND1 and IND2 connected through a short 3-phase,                              frequencies f01  327:74; f02  2090:0 Hz:
+4-wire line, is considered. The system is supplied by the                              It is possible to underline as the estimated errors result
+utility through a 69 kV/13.8 kV transformer. A line-                                very close to those obtained by means of very time consum-
+commutated power-converter is connected to bus IND2.                                ing EMTP simulations.
+To calculate the harmonic voltage and total harmonic
+distortion (THD) on bus IND2, Ref. [5] suggests a                                   5.4. Complex circuits with close resonances
+frequency domain method and an EMTP simulation. In
+both cases, the converter is modeled as an ideal harmonic                             The case study considered is the same as the one already
+current injection.                                                                  used in the Section 5.3 and referred to in Fig. 7. It consists of
+
+Table 1
+Complex errors for harmonic voltages at bus IND2 of Fig. 7; experimentally obtained eZ;x ; analytically estimated eZ;s
+
+Methods                                           Fifth harmonic                                          35th harmonic
+
+                                                  eZ;x (p.u.)                eZ;s (p.u.)                eZ;x (p.u.)                  eZ;s (p.u.)
+
+Current injection                                 0 1 j0                      0 1 j0                              0 1 j0                0 1 j0
+                             p
+EMTP                       Dt  33 ms             0.0027 1 j0.0020            0.0026 1 j0.0021              2 0.72 1 j0.11                 2 0.73 1 j0.084
+                           Dt  Dtp =4            0.0002 1 j0.0001            0.0002 1 j0.0001               0.092 2 j0.046               2 0.091 2 j0.050
+                           Dt  Dtp =8            0.0000 1 j0.0000            0.0000 1 j0.0000             2 0.023 2 0.013                2 0.023 2 j0.015
+                           Dt  Dtp =16           0.0000 1 j0.0000            0.0000 1 j0.0000            2 0.0058 2 j0.0035             2 0.0057 2 j0.0038
+                           Dt  Dtp =32           0.0000 1 j0.0000            0.0000 1 j0.0000            2 0.0014 2 j0.0009             2 0.0014 2 j0.0009
+                           Dt  Dtp =64           0.0000 1 j0.0000            0.0000 1 j0.0000            2 0.0004 2 j0.0002             2 0.0004 2 j0.0000
+                                      R. Carbone et al. / Electrical Power and Energy Systems 24 (2002) 295±304                                      303
+
+
+
+
+Fig. 10. EMTP error estimation for the circuit of Fig.7; (Ð): from doubled axis procedure, ^ : from EMTP simulations, N, M: from curve ®tting procedures,
+left and right side, respectively.
+
+
+a series connection of two parallel RLC resonant circuits,                      tion about the approximation involved in the integration
+namely 1 and 2, with Q1  Q2  61:8 and f01  2091:0 Hz                         method. Finally, the results of some comparisons with
+and f02  2153:7 Hz: Fig. 10 shows the magnitude and the                        experimental error evaluations have been discussed. They
+phase of the complex error in the frequency range from 1800                     show the usefulness of the proposed error indicators.
+to 2400 Hz for Dt  33 ms: It was obtained with the doubled                        The main outcomes of the paper are:
+axis graphs procedure implemented in Matlab. For ®ve
+critical frequencies, the errors obtained by directly using                     ² errors can be expressed as a function of three parameters:
+EMTP simulations and the curve ®tting procedure are also                             the ®rst and the second, Q and f0, respectively,
+reported.                                                                            characterize the speci®c circuit sensitivity at a given
+   As can be seen, the errors estimated practically coincide                         resonance frequency;
+with those effectively caused by the EMTP. The errors                                the third, j , is a function of the simulation time step Dt,
+estimated (full triangle for right resonance ®tting, empty                           and characterizes the trapezoidal rule sensitivity
+triangle for left resonance ®tting) sensibly overestimate                            versus the same Dt and the frequency;
+the actual values.M                                                             ² analytical expressions can estimate errors very accurately
+                                                                                  and can also be adopted to correct the results of frequency
+                                                                                  scans performed by usual time step EMTP simulations.
+6. Conclusions
+
+   The error analysis of the trapezoidal method has been
+                                                                                References
+extended to complex circuits. A generalized error investiga-
+tion with respect to resonance frequencies, impedance                            [1] Dommel HW. Numerical errors in time-domain step-by-step simula-
+amplitude at the resonance frequencies and equivalent                                tions. Proceedings of EPRI/NSF Workshop on Application of
+impedance quality factors has been described. For simple                             Advanced Mathematics to Power Systems, 1993. p. 2-17±9.
+series and parallel R, L, C resonant circuits, analytical error                  [2] Carbone R, Dommel HW, Marino P, Testa A. EMTP accuracy in
+indicators have been derived. The analysis for complex                               representing electrical power system resonances. Proceedings of the
+                                                                                     Eighth IEEE International Conference on Harmonics and Quality of
+circuits, which is very dif®cult in principle, has been devel-                       Power (ICHQP), Athens, Greece, 14±16 October 1998.
+oped by taking advantage of a curve ®tting procedure, which                      [3] Electro Magnetic Transient Program, Reference Manual (EMTP
+preserves the use of analytical indices. Furthermore, for                            Theory Book). August 1986, prepared by Dommel HW.
+complex circuits in which very close resonances inhibit                          [4] Arrillaga J, Bradley DA, Bodger PS. Power system harmonics. New
+the aforementioned ®tting procedure, a useful numerical                              York: Wiley, 1985.
+                                                                                 [5] IEEE Power Engineering Society (PES), Harmonics Modeling and
+procedure based on the introduction of an apparent angular                           Simulation Task Force, reference documents: A step-by-step guide
+frequency has been presented. Both the introduced analyti-                           for harmonic analysis: document and example cases (ATP and
+cal and numerical approaches give program users informa-                             MATLAB).http://www.ee.ualberta.ca/pwrsys/IEEE/download.html.
+304                                   R. Carbone et al. / Electrical Power and Energy Systems 24 (2002) 295±304
+
+
+ Rosario Carbone was born in Taurianova, Italy, on 12 December 1965.           Roberto Langella was born in Naples, Italy, on 20 March 1972. He
+ He received his degree in Electrical Engineering from the University of       received the degree in Electrical Engineering from University of
+ Calabria, Italy, in 1990, and PhD degree in Electrical Engineering            Naples, in 1996. He is working towards the PhD degree in Electrical
+ from the Department of Electrical Engineering of University of Naples,        Energy Conversion at the `Dipartimento dell'Ingegneria dell'Informa-
+ in 1995. He is engaged in researches on electrical power systems              zione' Aversa, Italy.
+ harmonic and interharmonic analysis.
+
+
+                                                                               Alfredo Testa was born in Naples, Italy, on 10 March 1950. He
+ Hermann W. Dommel was born in Germany in 1933. He received the                received the degree in Electrical Engineering from University of
+ Dipl.-Ing. and Dr.-Ing. degrees in Electrical Engineering from Techni-        Naples, in 1975. He is a Professor in Electrical Power Systems at the
+ cal University, Munich, Germany in 1959 and 1962 respectively. From           `Dipartimento dell'Ingegneria dell'Informazione' Aversa, Italy. He is
+ 1959 to 1966 he was with Technical University Munich, and from 1966           engaged in researches on electrical power systems reliability and
+ to 1973 with Bonneville Power Administration, Portland, Oregon.               harmonic analysis. Dr Testa is a member of IEEE Power Engineering
+ Since July 1973 he has been with the University of British Columbia           Society and of AEI (the Italian Institute of Electrical Engineers).
+ in Vancouver, Canada. Dr Dommel is a Fellow of IEEE and registered
+ professional engineer in British Columbia, Canada.
+

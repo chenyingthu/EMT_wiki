@@ -1,0 +1,98 @@
+<svg viewBox="0 0 900 520" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#333"/>
+    </marker>
+    <marker id="arrow-red" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#dc2626"/>
+    </marker>
+  </defs>
+  
+  <!-- Title -->
+  <text x="450" y="28" text-anchor="middle" font-size="16" font-weight="bold" fill="#333" font-family="sans-serif">变步长求解器架构与工作流程</text>
+  
+  <!-- Input block (blue) -->
+  <rect x="30" y="55" width="160" height="60" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="110" y="78" text-anchor="middle" font-size="13" fill="#1e3a5f" font-family="sans-serif" font-weight="bold">系统状态方程</text>
+  <text x="110" y="96" text-anchor="middle" font-size="11" fill="#1e3a5f" font-family="sans-serif">ẋ = A(t)x + B(t)u(t)</text>
+  
+  <!-- Error Estimation block (yellow) -->
+  <rect x="270" y="55" width="170" height="60" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+  <text x="355" y="78" text-anchor="middle" font-size="13" fill="#5c3d1e" font-family="sans-serif" font-weight="bold">局部截断误差估计</text>
+  <text x="355" y="96" text-anchor="middle" font-size="11" fill="#5c3d1e" font-family="sans-serif">eₙ = ‖y⁽⁵⁾ − y⁽⁴⁾‖</text>
+  
+  <!-- Step Size Selection block (green) -->
+  <rect x="520" y="55" width="170" height="60" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+  <text x="605" y="78" text-anchor="middle" font-size="13" fill="#14532d" font-family="sans-serif" font-weight="bold">步长选择策略</text>
+  <text x="605" y="96" text-anchor="middle" font-size="11" fill="#14532d" font-family="sans-serif">Δtₙ₊₁ = f(eₙ, ε, p)</text>
+  
+  <!-- Integration block (yellow) -->
+  <rect x="270" y="180" width="170" height="60" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+  <text x="355" y="203" text-anchor="middle" font-size="13" fill="#5c3d1e" font-family="sans-serif" font-weight="bold">数值积分推进</text>
+  <text x="355" y="221" text-anchor="middle" font-size="11" fill="#5c3d1e" font-family="sans-serif">TR / RK45 / BDF / ExpInt</text>
+  
+  <!-- Event Detection block (red) -->
+  <rect x="520" y="180" width="170" height="60" rx="8" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+  <text x="605" y="203" text-anchor="middle" font-size="13" fill="#7f1d1d" font-family="sans-serif" font-weight="bold">事件检测与定位</text>
+  <text x="605" y="221" text-anchor="middle" font-size="11" fill="#7f1d1d" font-family="sans-serif">g(t) = 0, 插值定位 t_d</text>
+  
+  <!-- Output block (purple) -->
+  <rect x="520" y="340" width="170" height="60" rx="8" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/>
+  <text x="605" y="363" text-anchor="middle" font-size="13" fill="#3b0764" font-family="sans-serif" font-weight="bold">状态更新输出</text>
+  <text x="605" y="381" text-anchor="middle" font-size="11" fill="#3b0764" font-family="sans-serif">xₙ₊₁, tₙ₊₁ → 下一时刻</text>
+  
+  <!-- Accept/Reject decision (green) -->
+  <rect x="270" y="340" width="170" height="60" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+  <text x="355" y="363" text-anchor="middle" font-size="13" fill="#14532d" font-family="sans-serif" font-weight="bold">接受/拒绝决策</text>
+  <text x="355" y="381" text-anchor="middle" font-size="11" fill="#14532d" font-family="sans-serif">eₙ ≤ ε ? 接受 ✓ / 拒绝 ✗</text>
+  
+  <!-- Arrow: Input → Error Estimation -->
+  <line x1="190" y1="85" x2="265" y2="85" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+  
+  <!-- Arrow: Error Estimation → Step Size -->
+  <line x1="440" y1="85" x2="515" y2="85" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+  
+  <!-- Arrow: Step Size → Integration (down) -->
+  <line x1="605" y1="115" x2="355" y2="175" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+  
+  <!-- Arrow: Integration → Event Detection (right) -->
+  <line x1="440" y1="210" x2="515" y2="210" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+  
+  <!-- Arrow: Event Detection → Output (down) -->
+  <line x1="605" y1="240" x2="605" y2="335" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+  
+  <!-- Arrow: Integration → Accept/Reject (down) -->
+  <line x1="355" y1="240" x2="355" y2="335" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+  
+  <!-- Arrow: Accept → Output (right) -->
+  <line x1="440" y1="370" x2="515" y2="370" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+  
+  <!-- Reject arrow (red dashed) -->
+  <path d="M 270 370 L 200 370 L 200 140 L 265 140" stroke="#dc2626" stroke-width="2" stroke-dasharray="6,4" marker-end="url(#arrow-red)" fill="none"/>
+  <text x="185" y="260" text-anchor="middle" font-size="11" fill="#dc2626" font-family="sans-serif" font-weight="bold">拒绝: Δt ← 0.5Δt</text>
+  
+  <!-- Feedback loop: Output → Input (curved) -->
+  <path d="M 520 370 L 430 370 L 430 130 L 30 130 L 30 110" stroke="#333" stroke-width="1.5" stroke-dasharray="4,4" marker-end="url(#arrow)" fill="none"/>
+  <text x="230" y="125" text-anchor="middle" font-size="11" fill="#333" font-family="sans-serif">闭环反馈: 新状态 → 误差估计</text>
+  
+  <!-- Method selection box (bottom) -->
+  <rect x="100" y="440" width="700" height="65" rx="8" fill="#f0f4f8" stroke="#64748b" stroke-width="1.5"/>
+  <text x="450" y="462" text-anchor="middle" font-size="13" font-weight="bold" fill="#333" font-family="sans-serif">积分方法选择指南</text>
+  <text x="140" y="482" text-anchor="middle" font-size="11" fill="#1e3a5f" font-family="sans-serif">梯形法 (TR)</text>
+  <text x="140" y="496" text-anchor="middle" font-size="10" fill="#64748b" font-family="sans-serif">A-稳定, 2阶</text>
+  
+  <text x="300" y="482" text-anchor="middle" font-size="11" fill="#5c3d1e" font-family="sans-serif">RK45</text>
+  <text x="300" y="496" text-anchor="middle" font-size="10" fill="#64748b" font-family="sans-serif">4/5阶, 非刚性</text>
+  
+  <text x="460" y="482" text-anchor="middle" font-size="11" fill="#14532d" font-family="sans-serif">BDF (Gear)</text>
+  <text x="460" y="496" text-anchor="middle" font-size="10" fill="#64748b" font-family="sans-serif">L-稳定, 1~6阶</text>
+  
+  <text x="620" y="482" text-anchor="middle" font-size="11" fill="#7c3aed" font-family="sans-serif">指数积分器</text>
+  <text x="620" y="496" text-anchor="middle" font-size="10" fill="#64748b" font-family="sans-serif">L-稳定, 电力电子</text>
+  
+  <!-- Connecting lines from selection box -->
+  <line x1="140" y1="440" x2="140" y2="420" stroke="#64748b" stroke-width="1" stroke-dasharray="3,3"/>
+  <line x1="300" y1="440" x2="300" y2="420" stroke="#64748b" stroke-width="1" stroke-dasharray="3,3"/>
+  <line x1="460" y1="440" x2="460" y2="420" stroke="#64748b" stroke-width="1" stroke-dasharray="3,3"/>
+  <line x1="620" y1="440" x2="620" y2="420" stroke="#64748b" stroke-width="1" stroke-dasharray="3,3"/>
+</svg>

@@ -1,0 +1,558 @@
+                                                                  Electric Power Systems Research 189 (2020) 106714
+
+
+                                                                      Contents lists available at ScienceDirect
+
+
+                                                          Electric Power Systems Research
+                                                          journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Interpolation for power electronic circuit simulation revisited with matrix                                                                                T
+exponential and dense outputs
+Peng Li, Zixiang Meng, Xiaopeng Fu , Hao Yu, Chengshan Wang
+                                                              ⁎
+
+Key Laboratory of Smart Grid of Ministry of Education, Tianjin University, Tianjin, China
+
+
+
+
+ARTICLE INFO                                                ABSTRACT
+
+Keywords:                                                   With a high penetration of power electronic equipment, transient simulation for power electronic circuit has
+Electromagnetic transients                                  been a main challenge for performance improvement of the electromagnetic transient simulation tools. In this
+Power electronic                                            paper, two new solvers for the matrix exponential-based simulation method are proposed based on the dense
+Exponential integrator                                      output formula and Padé approximation of different orders. The proposed solvers are implemented with the
+Dense output formula
+                                                            optimal combination of numerical integration method and interpolation method. Both solvers are L-stable. One
+                                                            has 3rd-order accuracy which is more accurate than existing simulation tools in power electronic simulation. The
+                                                            other solver achieves 1st-order accuracy with a lower precision numerical integration method than the same-
+                                                            order algorithms and is appealing from computation speed perspective. Numerical studies including TCR circuit
+                                                            and two types of VSC-HVDC systems are conducted to demonstrate the effectiveness of the proposed solvers.
+
+
+
+
+1. Introduction                                                                              proposed in [3] and applied in EMTP, which eliminates various lim­
+                                                                                             itations of the classical nodal and modified nodal analysis. For the
+    With large-scale application of power electronic equipment, the                          switch events, PSCAD uses linear interpolation for the switching event
+power system is facing unprecedented challenges in its operation and                         localization and a half-step linear interpolation to suppress oscillations
+control. Considering the interaction between the high frequency power                        [4,7]. The difficulty of using higher-order interpolation formulas lies in
+electronic circuits and control systems, the electromagnetic transient                       the lack of extra points for the one-stage methods. EMTP implements
+(EMT) simulation programs become the preferred choice among system                           Backward Euler integration for the steps after switch events to avoid
+dynamic analysis tools [1]. The increasing system scale and complexity                       numerical oscillation. The power switches are optionally modeled as
+has attracted more and more attention on the computational efficiency                        nonlinear elements and solved in an iterative solution process for the
+and accuracy of EMT simulation. Facing these challenges, traditional                         accurate calculation of switch status. These 2nd-order accurate ap­
+EMT simulation methods may experience reduced accuracy level and                             proaches, however, are reported to experience accuracy degradation for
+smaller step sizes with more computational burden. All of these have                         the simulation of power electronic converter studies [8].
+pushed the research on a more accurate and efficient EMT simulation                              State space formulation is an alternative framework for EMT si­
+method.                                                                                      mulation with the advantage of flexible choice of various integration
+    The current mainstream EMT simulation tools are the Electro-                             methods. It can be used in combination with the nodal analysis for­
+Magnetic Transient Program (EMTP)-type programs, which are based                             mulation through SSN (state-space nodal) method [9]. An example in
+on the nodal analysis framework [2]. Among them, EMTP [3], PSCAD                             this category is the ARTEMiS art5 solver of RT-LAB, which is based on
+[4], and ATP [2,5] are commonly used. The trapezoidal integration                            the Padé [2/3] approximation of the matrix exponential and achieves
+formula is adopted as the numerical integration method for simulation                        5th-order accuracy [10]. However, the standard ARTEMiS solver does
+calculation in most of the tools with a few exceptions such as XTAP [6].                     not locate switch events, which leads to similar problems as the above
+The trapezoidal method has the characteristics of A-stability and 3rd-                       tools. Recently, an improved transient simulation algorithm combining
+order local truncation error (LTE), while the 2s-DIRK formula adopted                        TR-BDF2 method and quadratic interpolation formula was proposed
+in XTAP has also L-stability. The modified-augmented-nodal analysis is                       [11]. TR-BDF2 is a two-stage implicit method, which enables the
+
+
+
+  This work was supported by The National Natural Science Foundation of China under Grant 51807131 and 51961135101.
+  ⁎
+    Corresponding author.
+    E-mail addresses: lip@tju.edu.cn (P. Li), mzx1996@tju.edu.cn (Z. Meng), fuxiaopeng@tju.edu.cn (X. Fu), tjuyh@tju.edu.cn (H. Yu),
+cswang@tju.edu.cn (C. Wang).
+
+https://doi.org/10.1016/j.epsr.2020.106714
+Received 5 October 2019; Received in revised form 20 April 2020; Accepted 2 August 2020
+Available online 10 August 2020
+0378-7796/ © 2020 Elsevier B.V. All rights reserved.
+P. Li, et al.                                                                                                              Electric Power Systems Research 189 (2020) 106714
+
+
+adoption of quadratic interpolation and keeps the 2nd-order accuracy at          x (t 0 + h )         [ In 0 ]· ehA ·x 0
+switch events. However, two-stage methods require more computation
+                                                                                                        A Bu (t 0 )
+per step than the one-stage methods.                                                      A       =
+                                                                                                        0   0
+    The matrix exponential-based integration method, originated from
+the applied mathematics community [12], is recently proposed to be                        x0      = [ x (t 0 ) 1]T                                                      (2)
+used in power system EMT simulations [13]. Case studies have shown
+                                                                                 where h is the simulation step size and In is the identity matrix. It turns
+that compared to existing algorithms, matrix exponential method is
+                                                                                 out this formula is sufficiently accurate for a large portion of power
+competitive in accuracy and efficiency aspects [14], despite of the same
+                                                                                 system simulation studies and is especially attractive due to its high
+linear interpolation approach being used which limits the overall ac­
+                                                                                 computation speed. A discussion of the nonlinear system solution is
+curacy. It is noted that a salient advantage of the matrix exponential-
+                                                                                 referred to [16].
+based methods is the existence of very efficient yet accurate dense
+                                                                                     Practical application of formula (2) requires efficient computation
+output formulas, meaning that state variables at fractional step sizes are
+                                                                                 of the matrix exponential function ehA. A viable option is the Padé
+cheaply available in comparison to the multi-stage methods. This is
+                                                                                 function approximated ehA ≈ rkm(hA), where k is the order of the nu­
+achieved through unique properties of the exponential function and
+                                                                                 merator and m is the order of the denominator [17]. The local error
+implemented with a modified scaling and squaring method [15]. The
+                                                                                 introduced by the Padé [k/m] approximation is of order of O(hk+m+1)
+mentioned dense output formula opens the door to efficient combina­
+                                                                                 [18].
+tion of matrix exponential-based integration and high-order interpola­
+tions.                                                                           e hA   rkm (hA) = O ((hA) k + m +1) = O (hk + m +1)                                    (3)
+    In this paper, rational function approximation of flexible order of
+the matrix exponential is used to control the accuracy of time-integra­              Eq. (3) illustrates that the matrix exponential operator of particular
+tion. Dense output formula associated with the integration method is             accuracy can be obtained by adjusting parameter k and m in Padé ap­
+utilized for the extra internal points so that higher-order interpolations       proximation. In other words, the accuracy of matrix exponential-based
+can be combined with matrix exponential-based method. A matching                 integration can be controlled by adjusting the Padé approximation
+strategy is proposed to guide this combination aiming for the best               coefficients. This variable-order integration formula is referred as
+computation cost-effectiveness. Two new solvers for matrix ex­                   MEXP hereinafter.
+ponential-based method that are both L-stable and suitable for power
+electronic circuit simulations are proposed as examples of this matching         2.2. Dense output formulas
+strategy and discussed in details. One of them have 3rd-order accuracy
+and provides improved accuracy than the currently available simula­                  Accurate dense output formula is based on the scaling and squaring
+tion tools. Appropriate combination of integration methods and inter­            method [19], and returns 2s-1 internal outputs where s is the scaling
+polation methods improves the reduction of precision at switch events.           parameter of the method. The first s outputs located at t0+h/2s-i,
+    Section II briefly reviews the matrix exponential-based simulation           i = 0, …, s 1 are as follows.
+formulation and proposes high order interpolation method based on                           h                      hA
+dense output points. Section III discusses the accuracy of several               x t0 +                [ In 0 ]·e2s i ·x 0, i = 0, 1, ...,s   1
+                                                                                           2s i                                                                         (4)
+methods and articulates two new solvers based on the proposed
+matching strategy. Section IV presents case studies to demonstrate the               The above formula reuses the intermediate results of the scaling and
+performance of the proposed algorithms. The conclusions are sum­                 squaring method and has no additional cost. This efficiency is achieved
+marized in Section V.                                                            by exploiting the matrix calculation results of the large exponential
+                                                                                 integration steps. Considerable computation savings are realized com­
+                                                                                 pared to a smaller step simulation which generates the same number of
+2. Matrix exponential-based transient simulation and high order                  output points. In addition, because these dense outputs amount to si­
+interpolation                                                                    mulation results of repeatedly halved step sizes, their accuracy is no
+                                                                                 worse than that of the original x(t0+h). The full dense output formula
+2.1. Transient simulation based on matrix exponential                            for the complete 2s 1 outputs are available in [19].
+
+    In the state space formulation of EMT simulations, the power system          2.3. High order interpolation
+models are described by a system of ordinary differential equations.
+Since non-autonomous systems can be easily transformed into autono­                  For many existing simulation tools including the matrix ex­
+mous form by introducing time as an auxiliary state, the presentation of         ponential-based simulation program, the low precision treatment of the
+this paper is focus on the latter case. A system with p independent              switch events is the bottleneck of the overall simulation accuracy. The
+switch groups has a general form as (1).                                         key to improve is to simply use more accurate interpolation formulas.
+                                                                                 For one-stage methods, e.g. the widely used trapezoidal method, the
+x (t ) = Ax (t ) + Bu (t )                                                       difficulty of using higher-order interpolation formulas lies in the lack of
+                 p
+                                                                                 efficient yet accurate extra points. Using previous step points leads to
+   A = A0 +           Ai Si
+                                                                                 complication in the solution process. In order to apply second or higher-
+                i=1
+                 p                                                               order interpolation formulas, it is necessary to have other inner output
+   B = A0 +           Bi Si                                                      points. At least one extra accurate point is necessary for using quadratic
+                i=1                                                   (1)        interpolation. For this purpose, the accuracy and efficiency of dense
+                                                                                 output formulas satisfy this requirement. With a very conservative
+where x(t), u(t) are state variables, input variables, respectively, and         scaling of s = 1, formula (4) is able to provide the internal point that
+A0, B0, Ai, Bi (i=1, 2, …, p) are coefficient matrices. Si represents the        quadratic interpolation needs and increase the accuracy order by one.
+state of the i-th independent switch group, which is of binary value,            Intermediate points can be also found using variable time-step in nodal
+corresponding to on and off, respectively. For a linear system, the              analysis methods, e.g., through the proposed methods in [20].
+simplest exponential integration formula is derived assuming a constant              The process of quadratic interpolation with multiple switching is
+u(t) over the interval [t0, t0+h], which is                                      shown in Fig. 1. Step ①②④⑥ are numerical integration steps and step
+                                                                                 ③⑤⑦ are interpolation steps. The first time-step from t0-h to t0 is a
+
+                                                                             2
+P. Li, et al.                                                                                                          Electric Power Systems Research 189 (2020) 106714
+
+
+                                                                                       a) Assuming the local errors at each step satisfy |ek| ≤ Mhq, in which M
+                                                                                          is a constant, the global error is proved to be of (q-1)th-order.
+                                                                                       b) Assuming the local error introduced at a finite number of switch
+                                                                                          events satisfies |ek| ≤ Mhq |and dominates, we have qth-order global
+                                                                                          error.
+
+                                                                                           Taking error sources and error accumulation into account, the
+                                                                                       performance in different scenarios of EMT simulation tools can be as­
+                                                                                       sessed. When there is no switching event in the simulation, the in­
+                                                                                       tegration error is the dominant error and determines the global error.
+                                                                                       Under this circumstance, EMTP and PSCAD can achieve 2nd-order ac­
+            Fig. 1. Quadratic interpolation with multiple switch events.               curacy, while MEXP can achieve at least 6th-order accuracy. However,
+                                                                                       for high-frequency power electronic circuit simulations, un­
+                                                                                       synchronized switches lead to an O(h) local error for EMTP and a half-
+normal step without switching events. Then starting from t0, an in­
+                                                                                       step linear interpolation leads to an O(h) local error for PSCAD. The
+tegration step of matrix exponential is performed. If a switching event
+                                                                                       accuracy of EMTP and PSCAD reduce from O(h2) to O(h). Similarly,
+occurs, the trigger of the switch event, e.g., the change of current di­
+                                                                                       MEXP suffers loss of accuracy and retains only O(h2) global accuracy,
+rection, would be detected. And the points at t0, td, t0+h would be used
+                                                                                       measured with the relative rms error.
+in quadratic interpolation to locate the first switch event. Next, another
+                                                                                           The common point of the three methods is that they all have higher
+numerical integration step would be performed to look for other
+                                                                                       accuracy in simulation without switch events and will face the problem
+switching events in the time step from t0 to t0+h if they exist. Until all
+                                                                                       of precision reduction when switch events occur. Linear interpolation is
+switching events have been located, the last interpolation is used to
+                                                                                       obviously not accurate enough for matrix exponential-based methods. It
+makes time return to the integer step point for the following simulation
+                                                                                       is straightforward to apply higher-order interpolation methods and
+computation. The process of solving multiple switching events shown in
+                                                                                       improve the error of matrix exponential-based integration method.
+Fig. 1 is one of the most accurate methods among the various options
+proposed in [21]. Quadratic Lagrange interpolation formula is used in
+                                                                                       3.2. A matching strategy of integration and interpolation method and solver
+the process of switch localization and in resynchronization to control
+                                                                                       proposition
+the error introduced by the interpolation method.
+
+                                                                                           When choosing numerical integration method and method of lo­
+3. Matching strategy of integration and interpolation errors and                       cating switch events like interpolation, we should pay attention to the
+solver design                                                                          matching between them, otherwise it may face loss of accuracy and
+                                                                                       waste of computing resources in power electronic simulation. It is
+3.1. Approximation errors from different stages in switch events handling              preferable to use L-stable integration method to avoid numerical os­
+                                                                                       cillations.
+    MEXP is based on the state space formulation and there is no re­                       Assuming the errors are introduced only by numerical integration
+initialization step in the algorithm flow in contrast to nodal analysis                method and interpolation method, which are qth-order and pth-order,
+algorithms with interpolation. L-stable integration is free from oscilla­              respectively, the reasonable matching strategy can be described as:
+tions resulting in no need for additional elimination of the numerical
+oscillations. The error sources of MEXP are primarily integration and                  a) When p=q-1, the global error determined by both methods is (q-
+interpolation. As mentioned previously the matrix exponential is cal­                     1)th-order, so the algorithm is economical in this combination.
+culated with variable-order rational function approximation in previous                b) When p=q, the global error determined by numerical integration
+research, where the Padé approximation parameters k and m range                           method is (q-1)th-order, while the global error determined by in­
+from 3 to 13, leading to an O(h7~ h27) integration error. Linear inter­                   terpolation method is qth-order. The qth -order accurate interpola­
+polation introduces an O(h2) local error in steps with switch events.                     tion method puts no barrier on the accuracy of the integration and
+Local error sources of MEXP are summarized in Table 1. alongside with                     practically achieves better results. It makes sense to use a slightly
+two commonly used EMT simulation tools EMTP and PSCAD, as re­                             more accurate interpolation when the added cost is only marginal.
+ported in [8]. Unsynchronized switch refers to that EMTP does not lo­
+cate the time when switch events occur.                                                    In short, the matching strategy of numerical integration and inter­
+    Assuming that the local errors will not be magnified by system                     polation methods is to combine numerical integration methods with qth-
+dynamics, the global error can be predicted by studying the mechanism                  order LTE with qth-order or (q-1)th-order interpolation method.
+of local error accumulation in the simulation process. The effect of local                 On the basis of this matching strategy, more economical solver
+error accumulation on global error is summarized in [8], where the                     options can be found for the matrix exponential-based method. Under
+relative rms error is used as global error to assess the accuracy of the               the conservative scaling parameter s = 1, which means at least one
+algorithms:                                                                            dense output is available upon request, two solver options are proposed
+                                                                                       naturally to make full use of the advantage of matrix exponential. If
+Table 1                                                                                linear interpolation with 2nd-order accuracy is used to locate switch
+Local approximation errors at switch events.                                           events, according to the matching strategy, the numerical integration
+  Error sources                       MEXP                EMTP             PSCAD       method with 2nd-order or 3rd-order accuracy should be chosen. The
+                                                                                       numerical integration method with 3rd-order or 4th-order accuracy is
+                                                                                       another choice if quadratic interpolation is used.
+                                         7   27              3
+  Integration error                   O(h ~ h )           O(h )            O(h3)
+  Unsynchronized switch               /                   O(h)             /
+                                                                                           Table 2 lists the potential options for matrix exponential approx­
+  Interpolation                       O(h2)               /                O(h2)
+  Suppression of Oscillations         /                   O(h2)            O(h)
+                                                                                       imation from 2nd order to 4th order to combine with different inter­
+                                                                                       polation methods. Among them, the first row has the same form as the
+
+
+
+
+                                                                                   3
+P. Li, et al.                                                                                                                     Electric Power Systems Research 189 (2020) 106714
+
+
+Table 2
+Options for matrix exponential approximation.
+  Padé [k/m] Approximation                     Local error        ez ≈ rkm(z)
+
+  [1/0]                                        O(h2)              r 10 (z) = 1 + z
+  [0/1]                                        O(h2)              r01 (z) =
+                                                                               1
+                                                                             1 z
+                                                  3
+  [1/1]                                        O(h )              r 11 (z) =
+                                                                             2+z
+                                                                             2 z
+  [1/2]                                        O(h4)                            6 + 2z
+                                                                  r 12 (z) = 2
+                                                                             z     4z + 6
+                                                                                                                       Fig. 2. Single-phase TCR circuit.
+
+
+
+forward Euler method which is not A-stable, and the third row has the
+same form as the implicit trapezoid method and may face the problem
+of numerical oscillation, and is therefore eliminated. Padé [0/1] ex­
+ponential formula combined with linear interpolation and Padé [1/2]
+exponential formula combined with quadratic interpolation are more
+reasonable choices. For easy reference, these two options are abbre­
+viated as ExP01-L and ExP12-Q, respectively.
+    ExP01-L combines formula (2) and Padé [0/1] exponential op­
+erator, when it is used to calculate a step from tk to tk+h, the formula is
+given by
+
+                                1
+x (tk + h)      [ In 0 ]·               ·xk
+                            1   hA                                                     (5)
+
+    Linear interpolation would be used to control the error introduced
+by switches if switch events occur. Padé [0/1] exponential operator has                                  Fig. 3. Simulation results of TCR circuit with 50μs step size.
+the same form as the integral operator of backward Euler method which
+is L-stable, and ExP01-L does not have the problem of numerical os­                              Analytic solution is used as the reference result thanks to the simplicity
+cillation. The local error at every step is O(h2), so ExP01-L has O(h)                           of this case. To illustrate the matching strategy of the paper, matrix
+global accuracy when there exists high-frequency switches in system,                             exponential-based methods proposed in previous research is also added
+the same with PSCAD and EMTP.                                                                    to the comparison, referred as MEXP-L and MEXP-Q, which stands for
+    When Exp12-Q is used to calculate a step from tk to tk+h, the for­                           the matrix exponential-based method with linear and quadratic inter­
+mula is given by                                                                                 polation, respectively.
+                                                                                                     As Fig. 3 shows, the overall shape of simulation waveforms from
+                                    6 + 2h A
+x (tk + h)      [ In 0 ]·           2
+                                                       ·x k                                      different methods is close. However, a deviation between the wave­
+                            (h A)       4h A + 6                                       (6)       forms are in the range of 101 to 102, roughly 3% of the maximum
+                                                              4                                  current value. Fig. 4 shows the absolute errors between these methods
+    Padé [1/2] exponential operator has O(h ) local error, which make
+                                                                                                 from the analytic solution. The errors all rapidly increase when the
+ExP12-Q can achieve 3rd-order accuracy at steps without switches. The
+                                                                                                 switches close and then decrease when the switches open, so the larger
+quadratic interpolation formula preserves 3rd-order accuracy when
+                                                                                                 errors during the closing of the switches have a major impact on ac­
+switch events occur, which makes ExP12-Q have the highest accuracy
+                                                                                                 curacy. The maximum errors of the 1st-order accuracy methods, EMTP,
+among all the mentioned methods in power electronic circuits simula­
+                                                                                                 PSCAD, ARTEMiS and ExP01-L, are in the range of 101. Although
+tion.
+                                                                                                 ExP01-L uses the lowest precision numerical integration method and
+                                                                                                 ARTEMiS uses the highest, their global accuracy orders measured from
+4. Case studies                                                                                  relative rms errors are the same. The choice of the Padé [0/1] ap­
+                                                                                                 proximation is acceptable for this case as it has the same level of re­
+    This section presents a series of case studies to demonstrate the                            lative error with the widely used PSCAD and EMTP. As a 2nd-order
+proposed solvers and compare with widely used EMT simulation tools
+including EMTP, PSCAD and ARTEMiS. The cases are intentionally
+made to have manageable complexity so that the action of each solver is
+clear. Because PSCAD cannot solve the ideal switches, the binary on/off
+resistance model of power electronic devices are adopted the first two
+cases to maintain a common reference result. And ideal switch model is
+used in the last case to prove that the analysis and models are also
+effective under this model. The EMTP simulations are performed with
+the simultaneous switching option enabled. The interpolation option of
+ARTEMiS solvers, available separately from the standard package, is
+not used in these comparisons. The matrix exponential-based algo­
+rithms ExP01-L and ExP12-Q are implemented in an experimental
+MATLAB code.
+
+4.1. Thyristor controlled reactor
+
+   In order to verify that ExP01-L and ExP12-Q have the expected
+accuracy and the correctness of the matching strategy, a small case of                                  Fig. 4. Absolute error of different methods with 50μs step size.
+thyristor controlled reactor (TCR) circuit shown in Fig. 2 is simulated.
+
+                                                                                             4
+P. Li, et al.                                                                                                  Electric Power Systems Research 189 (2020) 106714
+
+
+
+
+                Fig. 5. Global error of different methods in TCR case.                Fig. 7. DC current of different methods in 2-level VSC system.
+
+
+accurate method, MEXP-L has three order of magnitude smaller max­
+imum error compared to these 1st-order methods. As 3rd-order accuracy
+methods, MEXP-Q and ExP12-Q has additional three order of magni­
+tude smaller maximum error than MEXP-L. Although ExP12-Q uses
+lower precision numerical integration method than MEXP-Q, it has
+minor effect on overall accuracy of the algorithm, strengthening the
+importance of the matching between integration and interpolation.
+    Fig. 5 shows the step size versus global error chart to show clearly
+the order of each compared solvers. The computation of global error
+excludes the first point after each switch event, as indicated in [8].
+ExP01-L has the same O(h) global accuracy with EMTP, PSCAD and
+ARTEMiS, confirming the previous analysis. Furthermore, for this case
+the error of ExP01-L is smaller than EMTP and PSCAD under all step
+sizes and achieves similar accuracy as ARTEMiS. The deviation is likely
+from the difference between state space formulation and nodal analysis
+                                                                                         Fig. 8. Absolute error comparison in 2-level VSC system.
+formulation.
+    ExP12-Q has O(h3) global error, which is the highest among all
+mentioned methods. It can be seen that the global error of ExP12-Q is          Fig. 6. Detailed system parameters are listed in Appendix A [22]. Open-
+six orders of magnitude smaller than that of PSCAD, EMTP and                   loop PWM modulation is used in this case. This simulation is started
+ARTEMiS, and three orders smaller than that of the MEXP-L at 50μs step         from zero states and the time span is 0.1 seconds with step size of 5μs
+size. Moreover, because of the 3rd-order global error property, the ac­        adopted. Analytic solution is difficult to derive for this case due to the
+curacy advantage will be more obvious when smaller step sizes are              complexity of the system. In this example, the results of each method
+used. The curves of ExP12-Q and MEXP-Q almost coincide, which in­              with ten times smaller step size are used for their respective reference.
+dicates that although Exp12-Q uses a lower order matrix exponential                Fig. 7 displays the DC current waveforms, where the results simu­
+approximation than that of MEXP-Q, the accuracy reduction is limited           lated by these methods stay close. The error comparison in Fig. 8 shows
+and the impact on accuracy is not obvious.                                     that the absolute errors of ExP01-L is larger than those of other 1st-order
+    ExP01-L and ExP12-Q solvers both achieve the expected accuracy in          accurate solvers. This reveals the issue that solvers with the same global
+this example. Comparisons with the same-order algorithms show that             accuracy order can deliver qualitatively different simulation results,
+we can get the same or better accuracy by applying the proper com­             and it is not fixed which error is greater, for both of the global error
+bination between numerical integration and interpolation methods and           dominated by numerical integration method and interpolation are 1st-
+uses lower precision numerical integration schemes than previous re­           order accuracy. In TCR case, ExP01-L is more accurate than EMTP and
+search, achieving lower computational cost with reasonable accuracy            PSCAD, while the global error of ExP01-L is greater in the simulation of
+loss.                                                                          VSC- HVDC system. ExP12-Q and MEXP-Q have the highest accuracy
+                                                                               than other methods, which is the same as the conclusion of TCR ex­
+                                                                               ample. Compared with other methods, the errors of the two methods
+4.2. 2-level VSC AC-DC System                                                  are 4-5 orders of magnitude smaller with the step size of 5μs. The error
+                                                                               of ExP12-Q is less than one order of magnitude larger than that of
+    A VSC-HVDC system is simulated to validate the solver performance          MEXP-Q, which states that the loss of accuracy is limited, although the
+in high-frequency converter systems. The system structure is shown in          numerical integration method with lower accuracy is used.
+
+                                                                               4.3. Single-phase MMC-HVDC
+
+                                                                                  The third test case is an open-loop nearest level controlled one
+                                                                               phase of a modular multilevel converter (MMC) system containing 8
+                                                                               MMC sub modules. The structure of test case is illustrated in Fig. 9 and
+                                                                               detailed system parameters are listed in Appendix B. As mentioned
+                                                                               before, the ideal switching model is used in this case. MEXP-L, MEXP-Q
+                                                                               and EMTP are used to compare with the proposed methods. The si­
+                         Fig. 6. 2-level VSC AC-DC system.
+                                                                               mulation time span is 0.1 second with a step size of 20μs adopted. The
+
+                                                                           5
+P. Li, et al.                                                                                                  Electric Power Systems Research 189 (2020) 106714
+
+
+
+
+                                                                                   Fig. 12. Global error of different methods in Single-phase MMC case.
+
+
+                                                                                Q have almost coincident error curves and three more orders of mag­
+                                                                                nitude smaller error than MEXP-L. It must be noted that the errors from
+                  Fig. 9. MMC-HVDC system and the structure of MMC.
+                                                                                all methods remain negligible from a practical point of view, as the
+                                                                                relative errors are all below 0.1%.
+                                                                                    After that, the global errors of various methods are tested and
+                                                                                shown in Fig. 12. From this case with ideal switching model, we can
+                                                                                reach the same conclusion as the cases with binary on/off resistance
+                                                                                model. Exp01-L has 1st-order global accuracy and Exp12-Q has 3rd-
+                                                                                order global accuracy. Exp12-Q still has almost the same accuracy as
+                                                                                MEXP-Q, so lower precision integration methods have a limited impact
+                                                                                on accuracy because of the reasonable matching strategy of numerical
+                                                                                integration method and interpolation method. These case studies con­
+                                                                                firm the accuracy analysis and that the proposed methods are applic­
+                                                                                able to different switch models.
+                                                                                    The simulation results of the last two cases show that the ExP12-Q
+                                                                                solver has good performance and applicability in high frequency com­
+                                                                                plex power electronic systems and has the highest accuracy in the
+                                                                                methods compared. The computing time of different solvers are sum­
+      Fig. 10. AC side Voltage of different methods in MMC-HVDC system.         marized in Appendix C for reference.
+
+
+                                                                                5. Conclusion
+
+                                                                                    In this paper, high order interpolation methods which have good
+                                                                                applicability to the matrix exponential-based method are proposed
+                                                                                based on dense output points. A matching strategy is proposed to guide
+                                                                                the combination of numerical integration method and interpolation
+                                                                                method. This paper provides two new solvers for matrix exponential-
+                                                                                based method, which are stable and one of them is more accurate than
+                                                                                existing electromagnetic transient simulation tools in power electronic
+                                                                                simulation. The proposed methods utilize Padé approximation to get
+                                                                                the integral operator of the most suitable order, and higher order in­
+                                                                                terpolation formulas enable the proposed methods to preserve accu­
+                                                                                racy, so that they can get better accuracy with lower consumption of
+                                                                                computational cost. The numerical case studies verify that ExP01-L has
+                Fig. 11. Absolute error comparison in MMC-HVDC system.          1st-order accuracy and ExP12-Q has 3rd-order accuracy. In addition,
+                                                                                more algorithms with different precisions can be obtained through the
+                                                                                matching strategy proposed in this paper. The accuracy of multiple
+results of each method with 0.1μs step size are used for their respective       switching is another important issue, and it will be studied next.
+reference. The simulation results computed by different methods are
+shown in Fig. 10 and Fig. 11.
+    As Fig. 10 shows, the curves calculated by different methods are            Declaration of Competing Interest
+basically the same. Absolute errors of different methods are specifically
+shown in Fig. 11: EMTP has the largest error, and Exp01-L has the same              The authors declare that they have no known competing financial
+order of magnitude error. Compared with 1st-order methods, MEXP-L               interests or personal relationships that could have appeared to influ­
+has three orders of magnitude smaller error; while Exp12-Q and MEXP-            ence the work reported in this paper.
+
+
+
+
+                                                                            6
+P. Li, et al.                                                                                                                        Electric Power Systems Research 189 (2020) 106714
+
+
+Appendix A
+
+     Parameters of 2-level VSC AC-DC system:
+     AC source: source voltage: Vac1=Vac2=1kV, source frequency: f=50Hz, source impedance: Lg1=Lg2=7.8mH, Rg1=Rg2=4Ω.
+     AC filter:
+     L1=L2=0.12mH, C1=C2=300μF.
+     DC link:
+     length=10km, C=1500μF (account for both the line capacitance and converter DC capacitor value).
+     RL-series cable equivalent:
+     Rcable =2.9872Ω, Lcable=6.4101mH.
+     2-level VSC:
+     Roff=1MΩ, Ron=1mΩ, switching frequency: fsw=2000Hz.
+
+Appendix B
+
+     Parameters of MMC-HVDC system:
+     DC side:
+     Vdc/2=320 kV, Lup=Ldown=100 mH.
+     Sub module:
+     Csm=500 mF, VCsm_init=160 kV (initial voltage of Csm).
+     AC side:
+     Lac=100 mH, Rac=100 Ω.
+
+Appendix C
+
+   Computing time of different solvers for the three cases are in Table 3. The computing time of the matrix exponential-based solvers include the
+time of generating the state-space matrices, which consumes in average 0.0207, 0.0799, 0.061 seconds for the three cases, respectively.
+
+
+
+                  Table 3
+                  Computing time summary.
+                    Cases                                              TCR                                    2 level-VSC                                 MMC
+
+                    Step size                                          50μs                                   5μs                                         20μs
+                    Simulation interval                                50ms                                   100ms                                       100ms
+                    Number of steps                                    103                                    2 × 104                                     5 × 103
+
+                    Computing Time
+                    Solvers                               Overall / Matrix Exponentials (s)
+
+                    MEXP-L                                0.2824 / 0.057                                3.951 / 0.038                               0.7077 / 0.023
+                    ExP01-L                               0.2038 / 0.001                                3.915 / 0.002                               0.6867 / 0.002
+                    MEXP-Q                                0.3235 / 0.043                                5.747 / 0.024                               0.9540 / 0.022
+                    ExP12-Q                               0.2825 / 0.002                                5.726 / 0.003                               0.9340 / 0.002
+                    EMTP                                  0.141                                         0.578                                       0.250
+
+
+
+
+References                                                                                          the simulation of power system transients, IEEE Trans. Power Del. 26 (2) (Apr.
+                                                                                                    2011) 928–935.
+                                                                                               [10] C. Dufour, H. Saad, J. Mahseredjian, J. Bélanger, Custom-coded models in the state
+ [1] U. Karaagac, J. Mahseredjian, S. Jensen, R. Gagnon, M. Fecteau, I. Kocar, Safe                 space nodal solver of ARTEMiS, Proceeding of the 2013 International Conference on
+     operation of DFIG-based wind parks in series-compensated systems, IEEE Trans.                  Power System Transients (IPST-2013), Vancouver, Canada, 2013, pp. 1–6.
+     Power Del. 33 (2) (Apr. 2018) 709–718.                                                    [11] J. Tant, J. Driesen, Accurate second-order interpolation for power electronic circuit
+ [2] H.W. Dommel, Digital computer solution of electromagnetic transients in single-and             simulation, 2017 IEEE 18th Workshop on Control and Modeling for Power
+     multiphase networks, IEEE Trans. Power App. Syst. PAS-88 (4) (Apr. 1969)                       Electronics (COMPEL), Stanford, CA, USA, 2017, pp. 1–8.
+     388–399.                                                                                  [12] M. Hochbruck, A. Ostermann, Exponential integrators, Acta Numerica 19 (1) (2010)
+ [3] J. Mahserdjian, S. Dennetiere, L. Dube, On a new approach for the simulation of                209–286.
+     transients in power systems, Electric Power Syst. Res. 77 (11) (Sep. 2007)                [13] C. Wang, X. Fu, P. Li, J. Wu, Multiscale simulation of power system transients based
+     1514–1520.                                                                                     on the matrix exponential function, IEEE Trans. Power Syst. 32 (3) (May 2017)
+ [4] N. Watson, J. Arrillaga, Power systems electromagnetic transients simulation,                  1913–1926.
+     London: IET Power Energy Ser. (2003) 1–4.                                                 [14] X. Fu, S.M. Seye, J. Mahseredjian, M. Cai, C. Dufour, A comparison of numerical
+ [5] M. Kizilcay, H.K. Hoidalen, Numerical analysis of power system transients and                  integration methods and discontinuity treatment for EMT simulations, Power
+     dynamics, London: IET Power and Energy Series 47-101 (2015) 169–211.                           Systems Computation Conference (PSCC), Dublin, Ireland, 2018, pp. 1–7.
+ [6] T. Noda, K. Takenaka, T. Inoue, Numerical integration by the 2-stage diagonally           [15] A.H. Al-Mohy, N.J. Higham, Computing the action of the matrix exponential, with
+     implicit Runge-Kutta method for electromagnetic transient simulations, IEEE Trans.             an application to exponential integrators, SIAM J. Sci. Comput. 33 (2) (2011)
+     Power Del. 24 (1) (Jan. 2009) 390–399.                                                         488–511.
+ [7] P. Kuffel, K. Kent, G. Irwin, The implementation and effectiveness of linear inter­       [16] X. Fu, C. Wang, P. Li, L. Wang, ''Exponential integration algorithm for large-scale
+     polation within digital simulation, Int. J. Elect. Power Energy Syst. 19 (4) (May              wind farm simulation with Krylov subspace acceleration,', Applied Energy 254
+     1997) 221–227.                                                                                 (Nov. 2019) 113692.
+ [8] J. Tant, J. Driesen, On the numerical accuracy of electromagnetic transient simu­         [17] C. Brezinski, I. Ufr, I.J. Van, A taste of padé approximation, Acta Numerica 4 (1995)
+     lation with power electronics, IEEE Trans. Power Del. 33 (5) (Oct. 2018)                       53–103.
+     2492–2501.                                                                                [18] N.J. Higham, The scaling and squaring method for the matrix exponential revisited,
+ [9] C. Dufour, J. Mahseredjian, J. Bélanger, A combined state-space nodal method for               SIAM Review 51 (4) (2009) 747–764.
+
+
+                                                                                           7
+P. Li, et al.                                                                                                                      Electric Power Systems Research 189 (2020) 106714
+
+
+[19] C. Wang, X. Fu, P. Li, J. Wu, Accurate dense output formula for exponential in­          [21] M.O. Faruque, V. Dinavahi, W. Xu, ''Algorithms for the accounting of multiple
+     tegrators using the scaling and squaring method, Appl. Math. Lett. 43 (May 2015)              switching events in digital simulation of power-electronic systems,', IEEE Trans.
+     101–107.                                                                                      Power Deliv. 20 (2) (April 2005) 1157–1167.
+[20] W. Nzale, J. Mahseredjian, I. Kocar, X. Fu, C. Dufour, Two variable time-step al­        [22] U. Vargas, A. Ramirez, M.A. Abdel-Rahman, ''Practical frequency-domain char­
+     gorithms for simulation of transients, in 2019 IEEE Milan PowerTech, Milan, Italy,            acterization of switching converters under PWM via Floquet theory,', Electric Power
+     2019, pp. 1–6.                                                                                Syst. Res. 175 (October 2019).
+
+
+
+
+                                                                                          8
+

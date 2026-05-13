@@ -1,0 +1,678 @@
+2370                                                                          IEEE TRANSACTIONS ON ENERGY CONVERSION, VOL. 36, NO. 3, SEPTEMBER 2021
+
+
+
+
+ Adaptive Heterogeneous Transient Analysis of Wind
+   Farm Integrated Comprehensive AC/DC Grids
+ Ning Lin , Member, IEEE, Shiqi Cao , Graduate Student Member, IEEE, and Venkata Dinavahi , Fellow, IEEE
+
+
+   Abstract—The increasingly complex AC/DC network as a result                        Electromagnetic transient (EMT) simulation based on time-
+of the massive integration of wind farms manifests the significance                domain model discretization and linearization is an accurate
+of a comprehensive transient study. In this work, the wind turbine                 computer-based approach for complex AC and DC systems
+(WT) and the DC grid are modeled in detail for the electromagnetic
+transient (EMT) simulation to maximize its fidelity, whilst the AC                 study, and the dynamic simulation (DS) conducted using com-
+grid transient stability is analyzed by dynamic simulation (DS). An                plex number calculations is adequate for power system electro-
+interactive EMT-DS interface is thus introduced to enable their                    mechanical interaction analysis. Therefore, these simulations
+concurrency and subsequently form a co-simulation. The CPU                         are intensively carried out to acquire system operation infor-
+which is dominant in system study faces a tremendous challenge                     mation that could be utilized to safeguard the grid against a
+in handling a great number of components albeit they exhibit
+homogeneity. The many-core graphics processing unit (GPU) fea-                     variety of contingencies [9]–[12]. Hitherto, both methods have
+turing massive parallelism is therefore exploited and following the                successfully fulfilled transient analysis with model simplifica-
+definition of an adaptive computing boundary, a flexible hetero-                   tion, such as aggregating the wind farms without considering the
+geneous sequential-parallel processing architecture is proposed                    individuality of each wind turbine and its converter system [13],
+for efficient analysis of the wind-farm-integrated AC/DC grid.                     [14]. The pursuit of an accurate dynamic security assessment of
+Topological reconfiguration of WTs is specifically carried out to
+reduce the numerical order whilst enhancing system homogeneity                     the power system requires higher modeling fidelity, especially
+that enables the GPU to thoroughly utilize its peculiar property                   for the wind farm since its turbines distributed over a vast area are
+of single-instruction multiple-thread (SIMT) compute paradigm.                     subject to distinct wind speed characteristics and the aggregation
+Consequently, significant speedups can be attained by the proposed                 falls short of revealing the actual power surplus or deficiency in
+computing framework over pure CPU computation, while its ac-                       the AC/DC grid, other than dynamics of each turbine.
+curacy is validated by the commercial EMT and dynamic security
+analysis tools PSCAD/EMTDC and DSATools, respectively.                                A heavy computational burden on the CPU, to some extent,
+                                                                                   justifies aggregating wind turbines (WTs) [15]–[17] or using
+   Index Terms—AC/DC grid, doubly-fed induction generator,                         simplified converter models [18], [19] in EMT and dynamic
+dynamic simulation, electromagnetic transients, graphics
+processing unit, multi -terminal DC, parallel processing, power
+                                                                                   simulations, as a shortage of parallel processing capability would
+system stability, wind farm.                                                       otherwise force repetitive computations of components even
+                                                                                   when they are topologically identical. The graphics processing
+                                                                                   unit (GPU) technology has made enormous strides over the
+                            I. INTRODUCTION
+                                                                                   past few years, and so has its application in high-performance
+         ORLD-WIDE wind energy has witnessed a dramatic
+W        level of penetration into the power system in a boom of
+energy supply diversification [1]. While alleviating a tremendous
+                                                                                   computing of electric power systems [20]–[22]. Remarkable
+                                                                                   speedups over CPU computation were attained due to an ex-
+                                                                                   tensive homogeneity in circuit elements, which far outweigh the
+energy demand on the grid, the stochastic attribute of wind re-                    opposite. Nevertheless, the GPU’s speed margin shrinks when
+sources poses a practical challenge which turns out to be a major                  irregularities grow and neutralize concurrency. For example, the
+concern regarding the dynamic security of transmission and                         HVDC converter could dilute the regularity of the integrated
+distribution networks [2]–[5]. The high-voltage direct current                     AC/DC grid contributed by thousands of wind turbines. The fact
+(HVDC) transmission has proven to be a promising solution for                      that various modern electric power systems will not always be
+interlinking wind farms (WFs) and the AC grid, for merits such                     efficiently handled by a single type of processor or even multiple
+as high efficiency, and a grid-forming capability that enables the                 processors loaded with fixed tasks prompts flexible coordination
+WFs to be independent of the main grid [6]–[8].                                    between CPU and GPU for transient analysis on heterogeneous
+                                                                                   sequential-parallel computing architecture as in this work.
+   Manuscript received August 16, 2020; revised October 11, 2020 and Novem-           Consequently, aiming to thoroughly exploit the available
+ber 3, 2020; accepted December 5, 2020. Date of publication December 8,
+2020; date of current version August 20, 2021. This work was supported by the      computing resources in a computer equipped with a standalone
+Natural Science and Engineering Research Council of Canada (NSERC). Paper          GPU, the two processors are flexibly assigned with different
+no. TEC-00821-2020. (Corresponding author: Ning Lin.)                              tasks: the CPU handles the AC/DC grid wherein its repeti-
+   The authors are with the Department of Electrical and Computer Engi-
+neering, University of Alberta, Edmonton, Alberta T6G 2V4, Canada (e-mail:         tiveness is inadequate to support massive parallelism; and the
+ning3@ualberta.ca; sc5@ualberta.ca; dinavahi@ualberta.ca).                         GPU is in charge of components with a large quantity, such
+   Color versions of one or more figures in this article are available at https:   as the wind turbines. To improve the homogeneity, topological
+//doi.org/10.1109/TEC.2020.3043307.
+   Digital Object Identifier 10.1109/TEC.2020.3043307                              reconfiguration is carried out to create a substantial number of
+
+                         0885-8969 © 2020 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                                       See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 01:39:32 UTC from IEEE Xplore. Restrictions apply.
+LIN et al.: ADAPTIVE HETEROGENEOUS TRANSIENT ANALYSIS OF WIND FARM INTEGRATED COMPREHENSIVE AC/DC GRIDS                                                   2371
+
+
+
+                                                                                   where x, y, and u are the vector of fluxes, currents, and input
+                                                                                   voltages, respectively. Applying the α-β transformation, these
+                                                                                   vectors, uniformly represented by ν, can be organized as
+
+                                                                                                      ν(1 : 4) = [νsα , νsβ , νrα , νrβ ]T ,              (3)
+
+                                                                                   where subscriptions s and r denote quantities of the stator and
+                                                                                   rotor. Therefore, when partitioning the DFIG, the 3-phase stator
+                                                                                   and rotor voltages Vs and Vr are retained within the boundary
+                                                                                   of induction machine, and consequently, it can be computed by
+                                                                                   its original form. Following the solution, the stator and rotor
+Fig. 1.    Doubly-fed induction machine computational boundary definition.
+                                                                                   currents in vector y are restored into the 3-phase domain and
+                                                                                   sent to neighboring transformers.
+small-dimension subsystems which are then written into various                        Regarding the coefficients, whilst the input matrix B is a
+kernels using CUDA C++ programming language to cater to the                        4 × 4 identity matrix and the output matrix C is purely based on
+parallel processor’s single-instruction multiple-thread (SIMT)                     the magnetizing, stator and rotor inductance, the state matrix
+paradigm [23]. Several boundaries and interfaces are defined                       A reflects electro-mechanical coupling since it contains the
+in the EMT-dynamic co-simulation to allow their coexistence                        electrical angular velocity ωr in addition to those stator and
+while retaining independence.                                                      rotor electrical parameters.
+   The rest of the paper is organized as follows: Section II                          The fifth differential equation describes the electro-
+introduces fine-grained reconfiguration of the doubly-fed in-                      mechanical interaction, expressed as
+duction machine (DFIG), followed by respective dynamic and                                      dωr (t)     P    P
+electromagnetic transient modeling of the AC and DC grids                                               = −F ωr + (Te (t) − Tm (t)),                      (4)
+                                                                                                  dt        J    J
+in Section III. Section IV specifies the realization of adaptive
+heterogeneous CPU-GPU computation for transient analysis of                        where P is the pole pair number, J denotes inertia, F is a friction
+the integrated AC/DC grid. The comprehensive co-simulation                         coefficient, the electromagnetic torque is obtained by
+study results are analyzed in Section V, and Section VI provides                                             3
+the conclusion.                                                                                      Te =      P (x(1)y(2) − x(2)y(1)),                   (5)
+                                                                                                             2
+          II. WIND GENERATION MODEL RECONFIGURATION                                and the mechanical torque Tm is a nonlinear function of ωr and
+                                                                                   the wind speed vw [24],
+   Fig. 1 shows the configuration of a typical DFIG system,
+which contains components with various numerical forms in                                                      1
+                                                                                                       Tm =      ρπrT3 vw
+                                                                                                                        2
+                                                                                                                          F (rT , vw , ωr ),              (6)
+terms of transient modeling. For instance, the induction machine                                               2
+is generally modeled by the state-space equation, and differential                 where ρ denotes the air density, and rT the wind turbine radius.
+equations apply to the 2 transformers. Computation structure                          The model equations should be discretized before EMT sim-
+optimization by internal decoupling is carried out to enable                       ulation. At time t, using the Trapezoidal rule, a general equation
+different types of models to be compatible in the same simu-                       can be obtained for an n-order differential equation
+lation, in addition to reducing the processing burden induced
+                                                                                                              −1              
+by a large-dimension admittance matrix established based on                                              AΔt                AΔt
+                                                                                         ν(t) = I −                · I+              ν(t − Δt)
+electrical nodes of the overall system.                                                                    2                  2
+   The prevalent EMT model formulas of the induction machine,                                                                  
+                                                                                                     BΔt
+transformer, and the power converter imply that the DFIG can be                                   +        (u(t) + u(t − Δt)) ,                   (7)
+internally partitioned into 4 subsystems which can be computed                                          2
+independently, as illustrated in Fig. 1. For an arbitrary subsys-                  where Δt denotes the simulation time-step. The above equation
+tem, the impact of its neighboring counterparts can be deemed as                   is applicable to (4), when A, u, and the identity matrix I
+equivalent current or voltage sources on the boundaries, whereas                   reduce to the coefficients of ωr , (Te (t) − Tm (t)), and constant
+a specific selection of the type conforms to the general principle                 1, respectively.
+that the lumped high-order model has a higher priority over                           Hence, the induction machine simulation commences with
+discrete low-order components.                                                     solving the state-space equation, followed by (5), and the present
+                                                                                   time-step ends with the derivation of ωr , which is an essential
+A. Induction Generator Model                                                       element in the input matrix A.
+  The original 5th-order state-space equation of an induction
+machine takes the form of                                                          B. Three-Phase Transformer
+                        ẋ(t) = Ax(t) + Bu(t),                              (1)       Though the 2 transformers are separated in boundary defini-
+                                                                                   tion attributing to indirect connection, they share an identical
+                        y(t) = Cx(t),                                       (2)    model, which is described by the relation between the terminal
+
+             Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 01:39:32 UTC from IEEE Xplore. Restrictions apply.
+2372                                                                          IEEE TRANSACTIONS ON ENERGY CONVERSION, VOL. 36, NO. 3, SEPTEMBER 2021
+
+
+
+                                                                                     Node reduction is performed to reduce the dimension of
+                                                                                  the admittance matrix. The fundamental EMT theory allows
+                                                                                  elimination of internal nodes D-F by merging Vgc and the
+                                                                                  3-phase inductor Lgc . Meanwhile, the voltages at Nodes A-C
+                                                                                  are exactly VR solved in the transformer by (9), and can thus
+                                                                                  be excluded from the following nodal voltage equation
+                                                                                                                  V = G−1 J,                            (12)
+                                                                                  where vectors V and J denote nodal voltages and equivalent cur-
+Fig. 2.   Decoupled DFIG converter system model.                                  rent injections, and G is the admittance matrix. The remaining
+                                                                                  5 nodal voltages can then be solved efficiently.
+                                                                                     The 2 controllers involve in nodal voltage solution indirectly
+voltage vT and current iT in the differential equation,                           by determining the conductance of switches in the converter
+                                                                                  system. The RSVSC controller receives 3 rotor signals and the
+                                               d
+                    vT (t) = iT (t)R + L          iT (t),                  (8)    stator voltage for generating switch gate pulses, and the GSVSC
+                                               dt                                 controller decides the status of corresponding switches based
+where R is a diagonal matrix of winding resistances, and L is                     on the DC bus voltage it regulates, along with grid-side 3-phase
+the matrix for self- and mutual-inductance.                                       voltage and current [25].
+   Following the inclusion of stator and rotor voltages into the
+induction machine subsystem, the corresponding currents Is                                     III. INTEGRATED AC/DC GRID MODELING
+and Ir are left for the 2 transformers. On the other winding,                        Fig. 3 shows an AC/DC grid integrated with wind farms. The
+as the transformer has a higher priority over a voltage-source                    AC grid undergoing dynamic simulation is based on the IEEE
+converter (VSC) regarding boundary source type selection, the                     39-bus system, whose Bus 20 and 39 connect to DCS3 and
+converter-side 3-phase currents Igc and IR are taken respec-                      DCS2 of a benchmark CIGRÉ B4 DC Grid, which is analyzed
+tively as inputs of the grid-interface transformer and rotor-side                 by EMT simulation due to a significant impact the HVDC
+transformer when establishing the matrix equation.                                converter has on the entire grid. Different modeling approaches
+   Discretization of the transformer model by applying the uni-                   are adopted and an EMT-DS interface is required to enable
+versal form (7) leads to                                                          their compatibility and consequently form an electromagnetic-
+                 iT (t) = GT vT (t) + Ihis (t − Δt),                       (9)    electromechanical transient co-simulation. The wind farm com-
+                                                                                  posing of an array of DFIGs is modeled in detail to reveal the
+where the equivalent admittance matrix and recursive history                      exact impact of wind speeds on its overall output, and it can
+current are                                                                       also be scaled down or even lumped. Various contingencies
+                       −1                                                       such as F1-F3 can be conducted in the interactive grids for a
+                Δt −1           Δt −1                                             comprehensive study.
+   GT = I +        L R        ·   L ,                   (10)
+                2               2
+Ihis (t) = 2GT (I − RGT )vT (t) +(I − 2RGT )Ihis (t − Δt).                        A. AC Grid Electro-Mechanical Modeling
+                                                      (11)                           The AC grid dynamic simulation is mainly based on a set of
+                                                                                  differential-algebraic equations,
+   In the DFIG system, the current vector iT is known since it is
+formed by the boundary currents, and the nodal voltage vector                                                ẋ(t) = f (x(t), u(t)),                    (13)
+vT can be solved after multiplying the reversed equivalent ad-
+                                                                                                             g(x(t), u(t)) = 0.                         (14)
+mittance matrix GT −1 with (iT -Ihis ). Then, the nodal voltages
+are sent to other subsystems, e.g., Vs and Vr to the induction                       The differential equation depicts the dynamics of synchronous
+machine and grouped as vector u after α-β transformation, for                     generators in the AC/DC grid. The rotor contributes 6 fundamen-
+their solution in the next time-step.                                             tal states, and therefore, the vector x is written as
+                                                                                      x(t) = [δ(t), Δω(t), ψf d (t), ψ1d (t), ψ1q (t), ψ2q (t), . . .],
+C. DFIG Converter System                                                                                                                              (15)
+   The rotor-side VSC (RSVSC) and grid-side VSC (GSVSC)                           where the first 2 states are related to rotor motion and the rest
+are formed by discrete low-order reactive components and                          for the electrical circuit.
+switches. The converter system after DFIG internal partitioning                      Taking the following s-domain forms of
+is given in Fig. 2, where Vgc and VR are the 3-phase boundary                                        v1 = vt · (1 + sTR )−1 ,                           (16)
+voltage sources on the grid side and rotor side. The power semi-
+conductor switches T1 -T6 and S1 -S6 can be deemed as two-state                                      v2 = sKW TW (1 + sTW )−1 Δω,                       (17)
+resistors, i.e., small resistance and high impedance representing
+                                                                                                     v3 = (1 + sT1 )(1 + sT2 )−1 v2 ,                   (18)
+the ON- and OFF-state, respectively. When establishing the
+admittance matrix of the converter system, the resistance is                      where vt is the terminal voltage of the synchronous generator,
+converted into admittance.                                                        and TR , KW , TW , T1 , and T2 are constants, the excitation system
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 01:39:32 UTC from IEEE Xplore. Restrictions apply.
+LIN et al.: ADAPTIVE HETEROGENEOUS TRANSIENT ANALYSIS OF WIND FARM INTEGRATED COMPREHENSIVE AC/DC GRIDS                                                  2373
+
+
+
+
+Fig. 3.   Comprehensive AC/DC grid integrated with wind farms.
+
+
+
+contributes an additional 3 states, i.e., v1 (t), v2 (t), and v3 (t), to
+x after the Inverse Laplace Transform.
+  The stator of the synchronous machine is solved as part of the
+AC network in the algebraic equation. Considering the buses can
+be categorized according to the injection, the following matrix
+equation is established,
+                                            
+                    Ji       Yii Yir        Vi
+                         =                         ,               (19)
+                    0        Yri Yrr Vr
+where subscription i denotes buses with current injections, r
+represents the remaining nodes. Manipulation of the matrix
+equation results in
+                 Vi = (Yii − Yir Yrr −1 Yri )−1 Ji ,                     (20)
+                                                                                  Fig. 4.   Three-phase MMC topology and detailed submodule circuit model.
+which guarantees an independent solution of the stator without
+involving network elements, and a further substitution into (19)
+derives the network nodal voltages.                                               anti-parallel freewheeling diode, further affects the computation
+   The AC grid provides bus voltages for the DC converters, and                   accuracy of a detailed MMC.
+buses with the same number on the 2 sides are thus connected                         As depicted, the IGBT is generally modeled as a combination
+by a zero-impedance line (ZIL), which provides an interface                       of a switch whose ON/OFF state is controlled by the gate signal
+between the DS and EMT simulation. Solution of the AC net-                        g, forward voltage drop represented by Vf , and the on-state
+work equation (19) results in bus voltages in p.u. and their phases               resistance ron . The freewheeling diode consists of the p-n
+Vi,r ∠θi,r , which are then converted into time-domain sinusoidal                 junction voltage Vj , on-state resistance, and an ideal diode D0
+functions Vi,r Vrt sin(ωt + θi,r ) by multiplying the voltage rating              representing its unidirectional conduction. When S1 is turned on
+Vrt . In the meantime, transient computation of the DC grid yields                and its complementary switch S2 is under OFF state, determined
+the injected power from converters under the exact voltages, so                   by the direction of arm current, the capacitor is either charging
+its AC counterpart can proceed network solution in the next                       or discharging; otherwise, the SM is bypassed by S2 . Therefore,
+time-step.                                                                        when the MMC is under normal operation, the SMs’ status can
+                                                                                  be summarized as
+                                                                                                                   
+B. Detailed EMT Modeling                                                                                       iSM
+                                                                                   vSM = iSM ron + g1                  dt + (g1 − sgn(iSM ))2 Vf
+   Fig. 4 shows the full-scale of a half-bridge submodule (SM)-                                                  C
+based modular multilevel converter (MMC) operating as a DC                                    + (g1 + sgn(iSM ) − 1)Vj ,                                 (21)
+grid terminal, where hundreds of submodules are usually de-
+ployed to sustain high voltages. A remarkable fidelity can be                     where g1 is a binary denoting the ON/OFF state of switch S1 by
+achieved when an exact number of SMs in the converter are taken                   1 and 0, the sign function sgn(·) yields 1 and 0 for positive and
+into account, while modeling of the IGBT module, especially its                   negative values, respectively.
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 01:39:32 UTC from IEEE Xplore. Restrictions apply.
+2374                                                                          IEEE TRANSACTIONS ON ENERGY CONVERSION, VOL. 36, NO. 3, SEPTEMBER 2021
+
+
+
+                                                                                     With the low voltage (LV) boosted by grid-interface trans-
+                                                                                  formers, all DFIGs are connected to a common MV bus. The
+                                                                                  availability of vGF thus enables the solution of induction ma-
+                                                                                  chines’ state-space equations, and following converting y(t)
+                                                                                  into the 3-phase domain, the currents are aggregated on the MV
+                                                                                  bus and fed into the GF-MMC for its computation.
+                                                                                     In EMT simulation, the transmission lines or cables linking
+                                                                                  a WF to the MMC provide a natural partitioning scheme fol-
+                                                                                  lowing discretization, and therefore, all DFIGs are physically
+Fig. 5.   General d-q frame GC/GF MMC controller.                                 independent and can be computed in parallel. As the distance
+                                                                                  between each turbine is normally a few hundred meters, the
+                                                                                  transmission delay is considered identical, or in other words, the
+   Deemed as a time-varying voltage source, the derivation of                     transmission from all WTs to the MV/HV transformer and vice
+vSM decouples all SMs from the remaining circuit and therefore                    versa are completed within the same time-step. At an arbitrary
+dramatically reduces the computational burden of a detailed                       grid interface, the transmission line, which adopts the traveling
+MMC, which, from a mathematical point of view, contains                           wave model, is involved in the formation of admittance matrix
+a huge number of electrical nodes contributed by cascaded                         and history current,
+submodules. Each of the 6 arms is then turned into a Thévenin                                              1              −1
+equivalent circuit, and discretizing the arm inductor yields the                                                I 3×3 03×3
+                                                                                      VT (t) = GT +         Z C                  (Ihis (t − Δt)
+following formula,                                                                                           03×3 03×3
+
+       varm (t) = (ZLu/d + RLu/d )iarm (t)                                                           + [Im (t − Δ), −Is (t) − Igc (t)]T ,               (24)
+                     N
+                      
+                   +      vSM (t − Δ) + 2vLi
+                                                 (t) ,                   (22)     where ZC is the characteristic impedance of the line, and Im
+                                             u/d
+                            1                                                     represents the 3-phase history current of the transmission line
+                 i
+                                                                                  at LV/MV transformer side. Similarly, the line elements also
+where ZLu,d and vL u,d
+                       denote the impedance and incident pulse                    participate in the formation of an 8 × 8 MMC matrix equation
+respectively after taking an inductor as a section of lossless                    along with the HV/MV transformer.
+transmission line [26], and RLu,d is the parasitic resistance of
+the arm inductor.
+                                                                                         IV. ADAPTIVE SEQUENTIAL-PARALLEL PROCESSING
+   By converting the arms into their Norton equivalent circuits,
+only 5 essential nodes are left on the AC and DC ports, as                        A. Heterogeneous CPU-GPU Processing Boundary Definition
+shown in the figure, and consequently, the MMC circuit yields a                      The scale of EMT simulation varies from case to case,
+5 × 5 admittance matrix. Then, the solution of a corresponding                    and generally, the computational burden may also differ sig-
+matrix equation gives the arm currents, which are also the                        nificantly even for the same system due to the flexibility of
+submodule terminal currents iSM , and the computation repeats                     choosing a component with distinct model complexities. The
+by calculating the submodule voltage in the next time-step.                       subsequent uncertainty in computational burden is handled by
+   It can be inferred from Fig. 3 that 2 types of converter control               adaptive sequential-parallel processing (ASP2) which automat-
+schemes, i.e., grid-connected (GC) and grid-forming (GF), exist                   ically shifts the transient analysis between CPU and GPU,
+in the DC grid. As mentioned, the solution of (19) in the AC                      termed as host and device, respectively. The fact that both
+grid dynamic simulation provides the grid-connected MMCs                          processors are individually capable of processing any number
+with voltage Vi,r and phase angle reference θi,r . A phase-locked                 of components indicates the ASP2 can split into heterogeneous
+loop (PLL) is included to track the grid phase for the controller,                sequential-parallel computing, pure CPU execution, and GPU
+which regulates DC voltage or active power on the d-axis, and                     implementation, and the quantity of a certain type of subsystem
+AC bus voltage or reactive power on the q-axis. A grid-forming                    – a component or a group of components that could be written
+inverter, on the other hand, generates voltage and phase angle                    as a function by programming languages – is a major criterion
+reference for the wind farms to support the operation of induction                for the mode selection. In the comprehensive AC/DC grid, the
+machines. The d-and q-axis control AC voltage magnitude and                       MMC submodules and DFIGs are potential sources of massively
+reactive power, respectively, and control target can be on both                   parallel computing.
+sides of the transformer, i.e., the high-voltage (HV) and medium-                    Grid-connection and pursuit of high power quality propel
+voltage (MV) buses. Though the specific control quantities vary,                  full-scale MMC modeling with a sufficient number of submod-
+they share an identical scheme, as shown in Fig. 5. Thus, a GF-                   ules, alongside the demand for very detailed converter internal
+MMC provides a stable voltage for an array of W × H DFIGs                         phenomena study. Based on its element quantities, the MMC
+                                                 
+                  2      2
+                                                 2                                can be internally divided into 2 parts, as illustrated in Fig. 6.
+  vGF (t) = Vgd + Vgq · sin            ω0 dt + k π , k = 0, 1, 2
+                                                 3                                A 3-phase high-voltage-oriented MMC contains hundreds or
+                                                              (23)                even thousands of submodules, and a further multiplied quantity
+where Vgd and Vgq are the three-phase voltages in d-q frame,                      due to the existence of a few terminals in the DC grid caters
+and ω0 is the desired angular frequency.                                          to the concept of massive parallelism and manifests the SIMT
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 01:39:32 UTC from IEEE Xplore. Restrictions apply.
+LIN et al.: ADAPTIVE HETEROGENEOUS TRANSIENT ANALYSIS OF WIND FARM INTEGRATED COMPREHENSIVE AC/DC GRIDS                                                 2375
+
+
+
+
+Fig. 6. Sequential and potential parallel processing boundary definition in
+wind-farm-integrated AC/DC grid.
+
+
+paradigm. While only 1 outer-loop GC/GF controller is required
+for each MMC, the inner-loop counterpart has a dramatic differ-
+ence, the average-voltage control (AVC) and balancing control
+(BC) correspond to each phase and submodule [27], respectively.
+Therefore, the BC blocks are allocated within a potential parallel
+processing region (PPPR), and the AVC is also included there
+to facilitate reading the capacitor voltage from each submodule.
+   The remaining parts, including the MMC frame and the
+GC/GF controller, as well as DC lines linking a station to its
+counterparts, are processed on the CPU, as their numbers in a
+regular DC grid are inadequate to support massively parallel
+processing. The HV/MV transformer is solved along with the                       Fig. 7. CPU and GPU computational efficiency comparison and threshold
+                                                                                 identification for (a) MMC, (b) WT, and ASP2 computational efficiency under
+MMC frame and is thus separated from the WF, and the trans-                      various (c) MMC levels and (d) WT numbers.
+mission line between them provides an inherent boundary. For
+an arbitrary phase, the DFIG-side transmission lines have a si-
+multaneous history current update; in contrast, their MMC-side
+                                                                                    Fig. 7(a)–(b) compares the processing efficiency of CPU and
+counterpart is a sum of all secondary side quantities, as given by
+                                                                                 GPU to ascertain an approximate boundary, based on 10-sec
+                                  2                                              simulations of the optimized AC/DC grid on a server with
+Im [i](t) = −Ik (t − Δt) −          Vk (t − Δt), i ∈ [0, 3W H)
+                                 ZC                                              192 GB RAM, 20-core Intel Xeon E5-2698 v4 CPU, and
+                                                                                 NVIDIA Tesla V100 GPU. Fig. 7(a) shows that the CPU is
+                                                              (25)
+                                                                                 more efficient in simulating the DC grid when the MMC voltage
+                3W
+                 H                                                            level is 5; nevertheless, its many-core counterpart gains a high
+                                               2
+Ik (t) = −                   Im [k](t − Δt) +    Vm [k](t − Δt) .                speedup with practical voltage levels for HVDC grid, e.g.,
+                                              ZC
+             k=3i+0/1/2                                                          10 times under 401-level MMCs. Estimation based on linear
+                                                                                 interpolation indicates that the crossover occurs near 15-level
+         i ∈ [0, W H)                                                   (26)
+                                                                                 MMC, and therefore, neighboring levels ranging from 9 to 21
+The concurrency of DFIG computation is therefore ensured by                      are also tested to obtain an accurate threshold Nth . Since the
+(25), and the sum operation is conducted on the CPU along with                   computational capability of GPU is below its limit in these cases,
+other processes to form an EMT-dynamic co-simulation on a                        the parallel execution time falls within a small range of 29 to 35
+heterogeneous sequential-parallel computing architecture.                        seconds despite different levels. Based on 70 samples in total, the
+   It should be pointed out that the CPU-GPU processing bound-                   box-plot is drawn to extract the median value, which is 30.6 sec,
+ary is not definitive and shifts according to the computational                  and subsequently, the threshold can be ascertained as 15-level
+burden induced by system scale in conjunction with the preva-                    in the horizontal bar graph following comparisons with CPU
+lence of homogeneity or its opposite. For instance, when a                       execution time. Similarly, it can be found that the GPU enables
+low-level MMC is configured, or the WF is largely aggregated,                    a remarkable speedup over CPU and the threshold is around
+the CPU outperforms its many-core counterpart in handling                        100 wind turbines. In both cases, the threshold can be slightly
+equipment originally in the PPPR, and therefore, the ASP2 will                   higher than the statistically obtained value since the CPU is still
+eventually regress to conventional CPU simulation to maintain                    efficient.
+high efficiency. On the other hand, if the numbers of MMC                           The computational efficiency of the ASP2 framework, repre-
+converter stations, synchronous generators, and AC buses keep                    sented by the speedup over pure CPU execution, is depicted in
+increasing, the hybrid simulation will ultimately evolve into pure               Fig. 7(c)–(d), which indicates that with more cores to share the
+massively parallel processing.                                                   computational burden, the time GPU requires to complete its
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 01:39:32 UTC from IEEE Xplore. Restrictions apply.
+2376                                                                        IEEE TRANSACTIONS ON ENERGY CONVERSION, VOL. 36, NO. 3, SEPTEMBER 2021
+
+
+
+                                                                                boundary exists between the AC and DC grids, the MMC d-q
+                                                                                frame controllers always operate on the CPU one after another
+                                                                                till all NS stations are completed, and under ASP2 scheme, the
+                                                                                output modulation signals denoted by mabc are copied to CUDA
+                                                                                memory and starting from the inner-loop controller, the program
+                                                                                enters parallel computing stage, albeit the implementation of
+                                                                                different kernels is still sequential.
+                                                                                    The number of threads invoked by each kernel using a single
+                                                                                CUDA C++ command is exactly the actual component quantity,
+                                                                                and this concurrency ensures a remarkable efficiency improve-
+                                                                                ment. Each AVC and BC corresponds to an MMC phase and
+                                                                                submodule, respectively, and consequently their thread numbers
+Fig. 8. Adaptive sequential parallel processing scheme of WF-integrated         are 3NS and 3NS · 2N . As each SM proceeds independently,
+AC/DC grid on heterogeneous CPU-GPU computing architecture.
+                                                                                the output voltage vSM is summed up with its counterparts in
+                                                                                another kernel before returning to the CPU temporarily to handle
+                                                                                MMC linear part, which derives the medium voltage for wind
+tasks remain relatively stable and thus the speedup climbs. With
+                                                                                farms. Then, the process moves onto the GPU again so that the
+the 5 wind farms in Fig. 3 aggregated as 5 separate DFIGs, the
+                                                                                DFIG kernels can eventually yield the injection current into the
+GPU’s speedup rises alongside the MMC level, and it fluctuates
+                                                                                DC grid. In the meantime, the CPU counts the simulation time,
+around 20 when 8000 WTs account for the major computational
+                                                                                the program should either continue as the next time-step or end.
+burden, as shown in Fig. 7(c). Meanwhile, a growing WT number
+                                                                                    On the other hand, if the scale of either – or both – of MMC
+leads to an increasingly evident GPU performance enhancement
+                                                                                and DFIG is insufficient, CPU will take charge of computation,
+in Fig. 7(d). The adaptability of the proposed framework is
+                                                                                and memory copy between the 2 processors’ physical layer is
+manifested by the fact that its efficiency curve is constantly above
+                                                                                no longer necessary for that equipment. All of its components
+or overlapping that of CPU and GPU. As an optimum solution,
+                                                                                corresponding to CUDA kernels are implemented as C++ func-
+the ASP2 can flexibly switch among its 3 processing modes to
+                                                                                tions repeatedly in a sequential manner instead of SIMT-based
+maintain the efficiency maximum possible, i.e., regression to
+                                                                                massive parallelism.
+pure CPU execution when the GPU’s speedup is below 1 under
+                                                                                    It can be seen from the ASP2 framework that all AC/DC grid
+the 5-level-MMC and 5-WT scenario, proceeding with GPU’s
+                                                                                components and control sections are implemented in the form
+massive parallelism for high-level MMCs and large groups of
+                                                                                of C++ functions or CUDA C++ kernels, and this modularized
+WTs when the ASP2’s efficiency curve overlaps with that of
+                                                                                style prevailing in time-domain simulations facilitates allocating
+the GPU, and a joint CPU-GPU processing with the efficiency
+                                                                                a component type to either the parallel processing region or
+higher than that of GPU and CPU if the system possesses
+                                                                                outside it based on its quantity during the program initialization
+substantial homogeneity and inhomogeneity.
+                                                                                stage.
+B. Adaptive Sequential-Parallel Processing Framework
+                                                                                           V. EMT-DYNAMIC CO-SIMULATION RESULTS
+   In the adaptive heterogeneous transient analysis of the WF-
+                                                                                   The proposed detailed modeling methodology provides an in-
+integrated hybrid AC/DC grid, various block types located in
+                                                                                sight into intricate interactions within the WF-integrated AC/DC
+the PPPR are designed into kernels, i.e., global functions pro-
+                                                                                grids that is otherwise unavailable in general modeling and
+grammed by CUDA C++, for massively parallel implemen-
+                                                                                simulation where identical components are aggregated or aver-
+tation using the single-instruction multiple thread manner. In
+                                                                                aged. The consequent computational burden is, as indicated in
+the meantime, they are also written into C++ functions along
+                                                                                Fig. 7, alleviated by the adaptive sequential-parallel processing.
+with the remaining components for potential sequential execu-
+                                                                                In the proposed heterogeneous co-simulation, the EMT and
+tion. The EMT-dynamic co-simulation is always initiated on
+                                                                                dynamic simulations adopt a time-step of 20 μs and 5 ms,
+the CPU where variables of C++ functions and GPU kernels
+                                                                                respectively. Thus, for results validation, PSCAD/EMTDC and
+are defined in the host and device memory, respectively. The
+                                                                                DSATools/TSAT simulations are conducted under the same
+ASP2 distinguishes itself from single processor computation by
+                                                                                time-steps, i.e., 20 μs and 5 ms.
+identifying tasks that should be assigned to the GPU according
+                                                                                   Distributed over a wide area, the turbines are subjected to
+to the threshold before analyzing the system, as shown in Fig. 8,
+                                                                                different wind speeds, and Fig. 9(a) gives the probability density
+and in this case variables corresponding to kernel inputs and
+                                                                                function by Weibull distribution,
+outputs should be copied to CUDA memory via PCIe, which
+is a common channel for signal exchange between the two                                                           α−1
+                                                                                                       α vw − γ               vw −γ α
+processors.                                                                       D(vw ; α, β, γ) =                       e−( β ) , vw ≥ γ (27)
+                                                                                                       β       β
+   The co-simulation formally commences with AC grid tran-
+sient stability analysis on the CPU, and as implied by (20), the                where α, β, and γ are shape, scale, and location parameters,
+generator is solved first after establishing the Jacobian matrix,               respectively. Starting at t = 10 s, the wind intensifies at a
+followed by network solution. Though no definitive computing                    rate of 1 m/s in the following 5 seconds, i.e., γ rises from 0
+
+         Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 01:39:32 UTC from IEEE Xplore. Restrictions apply.
+LIN et al.: ADAPTIVE HETEROGENEOUS TRANSIENT ANALYSIS OF WIND FARM INTEGRATED COMPREHENSIVE AC/DC GRIDS                                                   2377
+
+
+
+
+Fig. 9. Impact of WF modeling on AC/DC grid dynamics: (a) wind speed,
+(b) OWF4-5 output power and Generator 5 and 10 frequency under (c) Weibull
+Distribution and (d) unified wind speeds.
+
+
+
+
+to 5 m/s, and the function is discretized as the histogram to
+calculate the exact output power of two 100-DFIG wind farms
+OWF4 and OWF5, as shown in Fig. 9(b). The huge disparities
+among these curves indicate that adopting a uniform wind speed,
+either the median from box-plot or its neighboring values, falls                 Fig. 10. AC grid-side contingency: (a)–(c) generator voltage, rotor angle, and
+short of precise power calculation under the entire operation                    output power, (d) Cm-B2 power, (e)–(f) generator frequency.
+stage. Hence, the AC grid exhibits distinct dynamic responses
+in Fig. 9(c)-(d). The converter station Cm-B2 controlling the
+DC voltage witnesses a slight power injection increase into Bus
+39, and the consequent surplus induces a slow frequency ramp,
+which leaves sufficient time for the HVDC to take remedial
+actions to enter a new stable system operating point. In contrast,
+the simulation yields incorrect generator frequency response
+without distinguishing each DFIG, as it will induce either a
+dramatic increase or decrease.
+   Fig. 10 depicts the AC grid stability following internal contin-
+gencies. The 3-phase fault at Bus 21 incurs a significant voltage
+drop at Generators 4-7, along with large rotor angle and power
+oscillations, yet the AC grid can restore steady-state operation
+once it is eliminated 50 ms later, and its impact on the DC
+system is negligible. At t = 60 s, Bus 39 has a sudden 100
+MW load increase, and the DC grid is ordered to take remedial
+actions. Fig. 10(d)–(f) demonstrates that with a corresponding
+100 MW step by the HVDC station Cm-B2, the IEEE 39-bus
+system stabilizes instantly. However, it is unstable if the same                 Fig. 11. Deviations of the proposed heterogeneous ASP2-based EMT-
+amount of power ramp occurs in 20 seconds as the grid frequency                  dynamic co-simulation of the AC/DC grid.
+keeps decreasing, an approximate 104 MW is required in power
+ramp Scheme 2 to maintain stability.
+   The proposed EMT-dynamic co-simulation exhibits a good                        39 has around 8% and 9% mismatches shortly after the 3-phase
+agreement with the selected TSAT results in Fig. 10. For a                       fault on Bus 21 and power injection step of HVDC converter
+comprehensive analysis of the modeling accuracy, the deviations                  Cm-B2 on Bus 39 at t = 40 s and 60 s, respectively. Different
+of quantities in the AC grid are given in Fig. 11. The terminal                  modeling methodologies account for this phenomenon, since in
+voltage, rotor angle, and frequency of all generators are iden-                  the AC/DC grid co-simulation, the controller of Cm-B2 has a
+tical to DSATools/TSAT simulation results since the errors are                   response time, and in TSAT the analysis is merely applied to
+virtually negligible. The active power of the generator on Bus                   the AC grid where equivalent loads are used to represent the
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 01:39:32 UTC from IEEE Xplore. Restrictions apply.
+2378                                                                         IEEE TRANSACTIONS ON ENERGY CONVERSION, VOL. 36, NO. 3, SEPTEMBER 2021
+
+
+
+                                                                                                              VI. CONCLUSION
+                                                                                    This work investigates the feasibility of adaptive sequential
+                                                                                 parallel processing for detailed and efficient transient analysis of
+                                                                                 modern complex power systems integrated with power convert-
+                                                                                 ers and a significant amount of distributed energy resources.
+                                                                                 Topological optimization by internal component-level parti-
+                                                                                 tioning towards the modular multilevel converter and doubly-
+                                                                                 fed induction generator reduces the dimension of their matrix
+                                                                                 equations, whilst creating a sufficient number of physically
+                                                                                 separated subsystems which could consequently be processed
+                                                                                 by a corresponding number threads invoked by CUDA C++
+                                                                                 kernels using the single-instruction multiple thread manner.
+                                                                                 The external system-grade division, on the other hand, en-
+                                                                                 ables the compatibility of dynamic and EMT simulations, in
+                                                                                 addition to contributing to independent sequential and paral-
+                                                                                 lel computing. The proposal of a flexible CPU-GPU process-
+                                                                                 ing boundary yields a generic heterogeneous transient analysis
+                                                                                 methodology which maintains the highest possible simulation
+                                                                                 efficiency regardless of the system scale following a combination
+                                                                                 of merits of available computational hardware resources, i.e.,
+                                                                                 the massive parallelism capability of many-core GPU and the
+                                                                                 excellent single-thread processing feature of CPU. Test results
+                                                                                 demonstrate that a comprehensive study is able to reveal the
+                                                                                 interaction of various sections within the AC/DC grid and thus
+                                                                                 provides critical information for power system planning and
+Fig. 12. AC/DC grid response to DC-side contingency: (a)–(b) converter           operation.
+power and generator frequencies under DC line fault F2, (c)–(f) SM capacitor
+voltage, MMC DC voltage and power, and generator frequencies under Cm-B2
+internal fault F3.                                                                                                  REFERENCES
+                                                                                  [1] S. Koebrich, T. Bowen, and A. Sharpe, Renewable Energy Data Book.
+                                                                                      Office of Energy Efficiency & Renewable Energy, Washington, DC, USA:
+                                                                                      U.S. Department of Energy, 2018. [Online]. Available: https://www.nrel.
+converter stations. It, therefore, indicates better fidelity of the                   gov/analysis/energy-data-books.html
+EMT-dynamic co-simulation which is compatible with versatile                      [2] N. W. Miller, “Keeping it together: Transient stability in a world of wind
+                                                                                      and solar generation,” IEEE Power Energy Mag., vol. 13, no. 6, pp. 31–39,
+models, and the results can be used for accurate dynamic security                     Dec. 2015.
+assessment of complex power systems.                                              [3] M. Amin, A. Rygg, and M. Molinas, “Self-synchronization of wind farm
+   Fig. 12 shows the impact of DC-side faults on system stability.                    in an MMC-based HVDC system: A stability investigation,” IEEE Trans.
+                                                                                      Energy Convers., vol. 32, no. 2, pp. 458–470, Jun. 2017.
+When the middle of DC line touches the ground for 1 ms,                           [4] T. M. L. Assis, S. Kuenzel, and B. C. Pal, “Impact of multi-terminal HVDC
+the fault F2 causes minor perturbations to the DC voltages,                           grids on enhancing dynamic power transfer capability,” IEEE Trans. Power
+and its impact on AC grid transient stability is insignificant                        Syst., vol. 32, no. 4, pp. 2652–2662, Jul. 2017.
+                                                                                  [5] Y. Wu, S. Chang, and P. Mandal, “Grid-connected wind power plants: A
+since the generators are able to maintain at 60 Hz, as given in                       survey on the integration requirements in modern grid codes,” IEEE Trans.
+Fig. 12(a)-(b). In contrast, the MMC internal fault F3, depending                     Ind Appl., vol. 55, no. 6, pp. 5584–5593, Dec. 2019.
+on the percentage of faulty submodules in an arm, could have a                    [6] L. Xu, L. Yao, and C. Sasse, “Grid integration of large DFIG-based wind
+                                                                                      farms using VSC transmission,” IEEE Trans. Power Syst., vol. 22, no. 3,
+remarkable disturbance to both AC and DC grids, as depicted in                        pp. 976–984, Aug. 2007.
+Fig. 12(c)-(f). A proportion below 10% indicates a continuation                   [7] S. M. Muyeen, R. Takahashi, and J. Tamura, “Operation and control
+of the normal operation of the entire hybrid grid; nevertheless,                      of HVDC-connected offshore wind farm,” IEEE Trans. Sustain. Energy,
+                                                                                      vol. 1, no. 1, pp. 30–37, Apr. 2010.
+its further increase results in a more vulnerable system. The DC                  [8] Y. Li, Z. Xu, J. Ostergaard, and D. J. Hill, “Coordinated control strategies
+capacitor voltages VC on the remaining submodules have to rise                        for offshore wind farm integration via VSC-HVDC for system frequency
+to sustain the DC grid voltage, accompanied by a higher chance                        support,” IEEE Trans. Energy Convers., vol. 32, no. 3, pp. 843–856,
+                                                                                      Sep. 2017.
+of equipment breakdown; yet the ripples enlarge and the DC                        [9] G. Pinares and M. Bongiorno, “Modeling and analysis of VSC-based
+grid voltages are subjected to severer oscillations, and so are the                   HVDC systems for DC network stability studies,” IEEE Trans. Power
+transferred powers. Meanwhile, the AC grid will also quickly                          Del., vol. 31, no. 2, pp. 848–856, Apr. 2016.
+                                                                                 [10] J. Renedo, A. García-Cerrada, and L. Rouco, “Active power control
+lose stability, e.g., it takes around 1 minute when half of all                       strategies for transient stability enhancement of AC/DC grids with VSC-
+submodules in an MMC arm are internally short-circuited. Thus,                        HVDC multi-terminal systems,” IEEE Trans. Power Syst., vol. 31, no. 6,
+from an operation perspective, the MMC should be blocked once                         pp. 4595–4604, Nov. 2016.
+                                                                                 [11] Y. Huang and D. Wang, “Effect of control-loops interactions on power
+the faulty SM percentage in an arbitrary arm exceeds 10% to                           stability limits of VSC integrated to AC system,” IEEE Trans. Power Del.,
+protect equipment from over-current.                                                  vol. 33, no. 1, pp. 301–310, Feb. 2018.
+
+
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 01:39:32 UTC from IEEE Xplore. Restrictions apply.
+LIN et al.: ADAPTIVE HETEROGENEOUS TRANSIENT ANALYSIS OF WIND FARM INTEGRATED COMPREHENSIVE AC/DC GRIDS                                                          2379
+
+
+
+[12] P. Kou, D. Liang, Z. Wu, Q. Ze, and L. Gao, “Frequency support from                                     Ning Lin (Member, IEEE) received the B.Sc. and
+     a DC-Grid offshore wind farm connected through an HVDC link: A                                          M.Sc. degrees in electrical engineering from Zhejiang
+     communication-free approach,” IEEE Trans. Energy Convers., vol. 33,                                     University, China, in 2008 and 2011, respectively, and
+     no. 3, pp. 1297–1310, Sep. 2018.                                                                        the Ph.D. degree in electrical and computer engineer-
+[13] X. Zha, S. Liao, M. Huang, Z. Yang, and J. Sun, “Dynamic aggre-                                         ing from the University of Alberta, Edmonton, AB,
+     gation modeling of grid-connected inverters using Hamilton’s-action-                                    Canada, in 2018. From 2011 to 2014, he was an En-
+     based coherent equivalence,” IEEE Trans. Ind. Electron., vol. 66, no. 8,                                gineer on flexible AC transmission system (FACTS)
+     pp. 6437–6448, Aug. 2019.                                                                               and high-voltage direct current (HVDC) transmis-
+[14] W. Du, W. Dong, H. Wang, and J. Cao, “Dynamic aggregation of same wind                                  sion. His research interests include electromagnetic
+     turbine generators in parallel connection for studying oscillation stability                            transient simulation, transient stability analysis, real-
+     of a wind farm,” IEEE Trans. Power Syst., vol. 34, no. 6, pp. 4694–4705,                                time simulation, device-level modeling, integrated
+     Nov. 2019.                                                                      AC/DC grids, massively parallel processing, heterogeneous high-performance
+[15] L. P. Kunjumuhammed, B. C. Pal, C. Oates, and K. J. Dyke, “The adequacy         computing of power systems and power electronics.
+     of the present practice in dynamic aggregated modeling of wind farm
+     systems,” IEEE Trans. Sustain. Energy, vol. 8, no. 1, pp. 23–32, Jan. 2017.
+[16] P. Wang, Z. Zhang, Q. Huang, N. Wang, X. Zhang, and W. Lee, “Improved
+     wind farm aggregated modeling method for large-scale power system
+     stability studies,” IEEE Trans. Power Syst., vol. 33, no. 6, pp. 6332–6342,
+     Nov. 2018.
+[17] Y. Zhou, L. Zhao, I. B. M. Matsuo, and W. Lee, “A dynamic weighted
+     aggregation equivalent modeling approach for the DFIG wind farm con-                                      Shiqi Cao (Graduate Student Member, IEEE) re-
+     sidering the Weibull distribution for fault analysis,” IEEE Trans. Ind Appl.,                             ceived the B.Eng. degree in electrical engineering and
+     vol. 55, no. 6, pp. 5514–5523, Dec. 2019.                                                                 automation from the East China University of Science
+[18] N. Trinh, M. Zeller, K. Wuerflinger, and I. Erlich, “Generic model of                                     and Technology, China, in 2015, and the M.Eng.
+     MMC-VSC-HVDC for interaction study with AC power system,” IEEE                                            degree in power system from Western University,
+     Trans. Power Syst., vol. 31, no. 1, pp. 27–34, Jan. 2016.                                                 Canada, in 2017. He is currently working toward the
+[19] A. F. Cupertino, W. C. S. Amorim, H. A. Pereira, S. I. Seleme Junior, S.                                  Ph.D. degree in electrical and computer engineering
+     K. Chaudhary, and R. Teodorescu, “High performance simulation models                                      with the University of Alberta, Canada. His research
+     for ES-STATCOM based on modular multilevel converters,” IEEE Trans.                                       interests include power system dynamic simulation
+     Energy Convers., vol. 35, no. 1, pp. 474–483, Mar. 2020.                                                  and stability analysis.
+[20] R. C. Green, L. Wang, and M. Alam, “Applications and trends of high
+     performance computing for electric power systems: Focusing on smart
+     grid,” IEEE Trans. Smart Grid, vol. 4, no. 2, pp. 922–931, Jun. 2013.
+[21] Z. Zhou and V. Dinavahi, “Parallel massive-thread electromagnetic tran-
+     sient simulation on GPU,” IEEE Trans. Power Del., vol. 29, no. 3,
+     pp. 1045–1053, Jun. 2014.
+[22] D. Chen, H. Jiang, Y. Li, and D. Xu, “A two-layered parallel static security
+     assessment for large-scale grids based on GPU,” IEEE Trans. Smart Grid,                                    Venkata Dinavahi (Fellow, IEEE) received the
+     vol. 8, no. 3, pp. 1396–1405, May 2017.                                                                    B.Eng. degree in electrical engineering from the
+[23] NVIDIA Corp., CUDA C++ Programming Guide, Aug. 2020.                                                       Visveswaraya National Institute of Technology
+[24] G. Abad, J. López, M. Rodríguez, L. Marroyo, and G. Iwanski, Doubly Fed                                    (VNIT), Nagpur, India, in 1993, the M.Tech. degree
+     Induction Machine: Modeling and Control for Wind Energy Generation                                         in electrical engineering from the Indian Institute of
+     Applications. Hoboken, NJ, USA: Wiley, 2011.                                                               Technology (IIT) Kanpur, India, in 1996, and the
+[25] H. Abu-Rub, M. Malinowski, and K. Al-Haddad, Power Electronics for                                         Ph.D. degree in electrical and computer engineering
+     Renewable Energy Systems, Transportation and Industrial Applications.                                      from the University of Toronto, Ontario, Canada, in
+     Hoboken, NJ, USA: Wiley, 2014.                                                                             2000. He is currently a Professor with the Department
+[26] H. Selhi, C. Christopoulos, A. F. Howe, and S. Y. R. Hui, “The appli-                                      of Electrical and Computer Engineering, University
+     cation of transmission-line modelling to the simulation of an induction                                    of Alberta, Edmonton, AB, Canada. His research
+     motor drive,” IEEE Trans. Energy Convers., vol. 11, no. 2, pp. 287–297,         interests include real-time simulation of power systems and power electronic
+     Jun. 1996.                                                                      systems, electromagnetic transients, device-level modeling, large-scale systems,
+[27] M. Hagiwara and H. Akagi, “Control and experiment of pulsewidth-                and parallel and distributed computing.
+     modulated modular multilevel converters,” IEEE Trans. Power Electron.,
+     vol. 24, no. 7, pp. 1737–1746, Jul. 2009.
+
+
+
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 01:39:32 UTC from IEEE Xplore. Restrictions apply.
+

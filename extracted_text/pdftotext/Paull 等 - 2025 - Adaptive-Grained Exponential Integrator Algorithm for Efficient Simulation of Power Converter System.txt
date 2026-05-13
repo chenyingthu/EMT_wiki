@@ -1,0 +1,944 @@
+1114                                                                                     IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 40, NO. 2, APRIL 2025
+
+
+
+
+  Adaptive-Grained Exponential Integrator Algorithm
+  for Efficient Simulation of Power Converter Systems
+  Jared Paull , Graduate Student Member, IEEE, Carl Knickle , Member, IEEE, Nicole Lofroth , Member, IEEE,
+                       Liwei Wang , Senior Member, IEEE, and Wei Li , Member, IEEE
+
+
+   Abstract—Electromagnetic transient (EMT) simulation                             efficient EMT simulation algorithms increases as power elec-
+is increasingly important for complex power electronic                             tronic systems grow increasingly complex. Fast EMT simulation
+converter system design and validation. This paper proposes                        aids in design and validation of existing or emerging power con-
+an adaptive-grained exponential integrator (AGEI) algorithm
+designed to efficiently simulate power electronic networks. The                    verter technologies [1]. Simulation of power electronic circuits
+AGEI algorithm relies on precomputation of carefully-chosen                        involves in the integration of continuous state variables (currents
+discretization steps to reduce memory burden. It then performs                     and voltages), while accurately capturing converter switching
+sequential intermediate integrations between discrete switching                    behavior. Power electronic circuits often present numerically
+events to accelerate transient simulation. The variable time-step,                 stiff problems, making the solver choice non-trivial. Low order
+high-order integration algorithm finds a balance between simula-
+tion run-time and computational overhead. The AGEI algorithm                       implicit integration methods such as trapezoidal rule, backwards
+varies the number of the forcing function terms to meet desirable                  Euler method, or low order numerical differentiation formula
+error thresholds. The proposed algorithm is L-stable and can be                    are often used to guarantee numerical stability. These low order
+flexibly applied to stiff and non-stiff circuit systems, rendering                 methods generally require a small discretization time-step to
+it suitable for a wide arrange of power converter topologies and                   ensure accuracy, leading to many computed points. Additionally,
+parameters. A hardware experimental study validates the AGEI
+algorithm’s accuracy while simulation case studies demonstrate                     small fixed time-step solvers are often implemented to accurately
+the AGEI algorithm significantly improves numerical efficiency.                    capture switching events [2]. Imprecise switching event detec-
+It is shown in the typical converter case studies that the proposed                tion can inject low order harmonics into waveforms or introduce
+algorithm enables more than 8-fold and 3-fold simulation speedup                   unrealistic jitter, noise, and inductive current chopping [2], [3].
+compared to popular simulation tools, i.e., Simulink and PLECS,                    Switching interpolation techniques can be used to greatly reduce
+respectively. The numerical efficiency gains of the proposed
+algorithm become more apparent for power converter circuits                        errors associated with switching event detection in fixed step
+with only-DC input sources or stiff circuit systems.                               solvers [3].
+                                                                                      Variable time-step solvers serve as an alternative to fixed
+   Index Terms—Adaptive-grained exponential integrator (AGEI),
+discrete-state event-driven (DSED) simulation, state-space equa-
+                                                                                   time-step solvers. Variable time-step solvers have been used
+tion, electromagnetic transient simulation, power electronic                       to accurately pinpoint discrete switching events, eliminating
+system.                                                                            the need for switching interpolation [4]. Variable step solvers
+                                                                                   reduce the step size when transients occur and then increase the
+                                                                                   step size once steady state is achieved [5]. By adapting the step
+                            I. INTRODUCTION
+                                                                                   size according to system transient behavior, both fast and slow
+     LECTRO-MAGNETIC transient (EMT) simulation of
+E    power electronic converter circuit is a historically chal-
+lenging task. Power converter circuits contain switching el-
+                                                                                   transient phenomena can be captured with maximum efficiency
+                                                                                   [6]. The challenge with variable step solvers lies in choosing
+                                                                                   the suitable step size. It is not always clear when transient ends,
+ements that rapidly change the circuit topologies. Frequent                        or if all frequency transients have ended [6]. In [6], variable
+switching events introduce complex transients and alters the sys-                  step algorithms are proposed which analyze transient trends to
+tem matrices used to express the circuit. Demand for numerically                   adapt the step size accordingly. Variable step solvers typically
+                                                                                   implement low order integration techniques which limit the max-
+   Received 16 March 2024; revised 23 July 2024 and 22 October 2024; accepted      imum step size that they can use [4], [5], [6], [7], [8]. Although
+1 February 2025. Date of publication 7 February 2025; date of current version 20   the variable-step techniques [4], [5], [6], [7], [8] in general
+March 2025. This work was supported by the Natural Sciences and Engineer-          compute fewer points than fixed-step solvers, these low-order
+ing Research Council (NSERC) of Canada. Paper no. TPWRD-00424-2024.
+(Corresponding author: Liwei Wang.)                                                variable-step solvers still require numerous computed points
+   Jared Paull, Carl Knickle, Nicole Lofroth, and Liwei Wang are with the          between switching events to ensure numerical accuracy. Still,
+School of Engineering, University of British Columbia Okanagan, Kelowna,           variable step solvers are prevalent for offline EMT simulation
+BC V1V 1V7, Canada (e-mail: jared.paull@ubc.ca; carlknickle@gmail.com;
+nicolelofroth@icloud.com; liwei.wang@ubc.ca).                                      of power electronic systems. Popular EMT simulation tool such
+   Wei Li is with the OPAL-RT Technologies, Montréal, QC H3K 1G6, Canada           as PLECS is equipped with the variable step Dormand-Prince
+(e-mail: wei.li@opal-rt.com).                                                      (DOPRI) solver, while Simulink/Simscape Electrical toolbox
+   Color versions of one or more figures in this article are available at
+https://doi.org/10.1109/TPWRD.2025.3539681.                                        utilizes Simulink suite of variable step ODE solvers including
+   Digital Object Identifier 10.1109/TPWRD.2025.3539681                            ode45, ode15s, ode23tb, amongst others. Recently, a variable
+
+      0885-8977 © 2025 IEEE. All rights reserved, including rights for text and data mining, and training of artificial intelligence and similar technologies.
+Personal use is permitted, but republication/redistribution requires IEEE permission. See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 01:31:50 UTC from IEEE Xplore. Restrictions apply.
+PAULL et al.: ADAPTIVE-GRAINED EXPONENTIAL INTEGRATOR ALGORITHM FOR EFFICIENT SIMULATION OF POWER CONVERTER SYSTEMS                                    1115
+
+
+
+step Taylor-series-based ODE solver has found success for                       for stiff ODE system, leading to slow simulation speed in
+EMT simulation [9], [10]. The Taylor series ODE solver is                       the event of small system time constants. In [19], a backward
+well suited for both step-size and numerical order adjustments.                 differentiation formula (BDF)-based DSED solver is proposed
+However, since the Taylor-series-based ODE solver is explicit,                  to handle network stiffness when discretizing state equations.
+their numerical efficiency is affected by its limited numerical                 The backwards DSED (BDSED) solver is slightly more com-
+stability region (being not A-stable) [9], especially for stiff                 putationally efficient than Simulink’s existing ode15s solver.
+circuit network where a small time step is required to maintain                 The BDSED solver requires many discretization steps between
+numerical stability.                                                            switching events, reducing the speedup and making it non-ideal
+   Nowadays, commercial circuit simulators incorporate either                   for non-stiff systems.
+a nodal analysis approach or a state-space equation approach.                      Exponential integrators are an alternative to both low or-
+The nodal analysis approach discretizes the circuit at the branch               der discretization methods, and Taylor-series-based approxima-
+level with low order techniques such as trapezoidal or Euler’s                  tions. Given that low order discretization methods are based
+method. The state-space equation approach provides a complete                   on truncated Padé approximations, increasing the discretiza-
+system description in the form of state-equations. Higher order                 tion order can serve to increase accuracy, stability, and to
+discrete time formula can then be applied to the state-equation                 eliminate numerical oscillation. This concept was first intro-
+representation. Accordingly, state-equation based solvers can                   duced into EMT simulation by Watson in [20], where the
+benefit from more accurate solver techniques [11]. In the pres-                 so-called root-matching (exponential) method was proposed to
+ence of switching, nodal-based approaches have benefited from                   replace the trapezoidal rule in nodal analysis. By using high
+system equations that are easy to obtain and recalculate [1].                   order exponentials, the solver eliminated numerical oscilla-
+State-equation solvers rely on the system’s state-space matrices                tion while retaining stability, which enables better handling of
+to solve the system of ordinary differential equations (ODEs).                  discrete events. However, the root matching methods in [13]
+Obtaining the system matrices is a non-trivial task as traditional              and [14] rely on small, fixed time-step to maintain numerical
+automatic state equation generation methods are not equipped                    accuracy.
+to efficiently handle switching elements [12]. However, many                       Prior-art implementations of the exponential integrator are
+techniques exist and are commonly used in simulation tools for                  typically for power system transient simulations, which uses
+automatic state equation generation of power electronic convert-                either a phasor model or an average value model (AVM) of
+ers [12], [13], [14], [15]. Recently, an automated semi-symbolic                power converters. In [21], [22], [23], the exponential integra-
+state equation generation method is presented which greatly                     tor algorithm was used for time domain simulation of very-
+reduces the cost to find the system matrices per computation                    large-scale-integration (VLSI). However, the formulation and
+point [16]. Using this methodology, state equations can be auto-                scale of these circuits are not comparable to the detailed model
+matically derived as a function of switch state before simulation               (DM) formulation of power electronic converters. In [24], the
+runtime, making recalculation trivial.                                          exponential integrator is applied to large-scale power deliv-
+   Numerical integration algorithms are not the only factor influ-              ery networks, which are formulated as differential-algebraic
+encing simulation efficiency. Simulation framework is equally                   equations (DAEs). The network was formulated as a simple
+important. Traditionally, transient simulations were entirely time              RLC network with time-varying supply voltage and current
+driven, meaning the discretization time-steps were based on                     sources [24], i.e., without semiconductor switching involved.
+a predetermined scheme. In [17], a discrete-state event-driven                  In [25], the exponential integrator is implemented specifically
+(DSED) simulation framework was proposed which adjusts inte-                    for simulation of large-scale nonlinear circuits. The method was
+gration order and time-step size dynamically, based on an event-                designed specifically for DAE formulation of VLSI systems. In
+driven mechanism. The DSED solver determines discretization                     [26] and [27], exponential integrator is applied to a large-scale
+time-step using a converter’s digital control signals, allowing                 network for electromagnetic transient simulation using GPU
+for intelligent step size selection, based on predicted switching               and AVM of power converters. Within the limited quantity of
+events. The DSED method has served as an essential framework                    existing literature on exponential integrator algorithms for DMs
+for other innovative power electronic circuit solvers in [9], [18].             of power converters, all the prior-art solvers are fixed-step fixed-
+   In [9], the DSED method works in conjunction with the                        forcing function term solvers. In [28], exponential integrator is
+developed flexible-adaptive (FA) algorithm, resulting in a high-                used for simulation of large-scale wind farms using detailed
+speed non-stiff circuit solver. The FA algorithm accepts vari-                  models of a wind farm. The solver is fixed step, fixed order,
+able time-step sizes from the DSED framework and adjusts                        and specifically designed for large-scale networks, i.e., scale
+the integration order to ensure an error threshold is met. The                  of hundreds to thousands of system states. In [29] and [30],
+DSED solver only re-calculates the system states whenever a                     exponential integrator is utilized for DM of power electronic
+switching or control event occurs within the circuit, reducing                  converters. However, the proposed ART solver [29], [30] is of
+the total number of intermediate calculated points between the                  fixed step, fixed order, and specifically designed for real-time
+events. It is shown in [18] and [9] that the DSED framework                     simulation. Meaning, the ART solver uses a limited maximum
+paired with the FA algorithm is orders of magnitude faster than                 step size due to the use of single forcing function term, hence
+commercial power converter circuit simulators, e.g., PLECS                      limiting its simulation efficiency. There is no prior-art work on
+and Simulink/Simscape Electrical toolbox. However, the FA                       DM exponential integrator solvers using variable time-step and
+algorithm proposed in the DSED framework is not suitable                        incorporating the DSED framework. The proposed solver in this
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 01:31:50 UTC from IEEE Xplore. Restrictions apply.
+1116                                                                                   IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 40, NO. 2, APRIL 2025
+
+
+
+paper focuses specifically on DM simulation of power electronic                   The state-space equation in (1) can be solved analytically
+converters.                                                                     using the exponential integrator as
+   This paper proposes a new power converter simulation algo-                                             tn +h
+rithm based on the exponential integrator. The key attributes of                    xn+1 = eAk h xn +            eAk (tn +h−τ ) Bk u (τ ) dτ (2)
+the proposed algorithm, and overall contributions of this paper                                                  tn
+are summarized as follows.                                                      where the integration time step is h; xn and xn+1 are the states
+   1) A high-order, variable time-step, variable forcing func-                  at tn and tn+1 , respectively.
+      tion term exponential integrator solver is proposed with                     The solution of xn+1 in (2) is composed of two parts in
+      computation techniques that enables numerically efficient                 summation, i.e., homogenous solution and forcing-function-
+      simulation of complex power converter systems. The pro-                   dependent solution, involving the input source vector u(t). The
+      posed exponential integrator algorithm utilizes the DSED                  forcing-function-dependent solution in (2) can be expanded
+      framework to implement variable time-step solver, which                   using Taylor series as [31]
+      decreases the number of computed points, leading to a                                                        ∞
+      significant speedup compared to existing solvers.                                                                                    d(j−1) un
+                                                                                         xn+1 = eAk h xn +               ϕj (Ak h) hj Bk                (3)
+   2) An adaptive-grained approach is proposed to precompute                                                      j =1
+                                                                                                                                             dt(j−1)
+      the matrix exponentials before simulation execution.
+      The proposed adaptive-grained precomputation method                       where the so-called ϕ-function is defined as
+      greatly accelerates the simulation efficiency of the                                                   1
+                                                                                                      1
+      proposed exponential integrator. The adaptive-grained                             ϕj (z) =                e(1−θ)z θj−1 dθ, j ≥ 1.                 (4)
+                                                                                                   (j − 1)! 0
+      approach separates an overarching time-step size into
+      sequential grained step sizes, drastically reducing the                      It is noted that the exponential integrator (3) is an explicit ODE
+      number of precomputed terms.                                              solver of state-space (1). Calculations of the matrix exponential
+   3) The proposed algorithm is fully explicit, L-stable, and                   eAk h and the ϕ-functions in (4) are essential for the exponential
+      suitable for dynamic topology or step-size adjustments.                   integrator (3). Many numerical techniques have been developed
+      For stiff circuits, the proposed algorithm demonstrates sig-              for the calculation of both the matrix exponential and accompa-
+      nificant speedup of simulation efficient, compared to com-                nying ϕ-functions, as summarized below.
+      monly used power electronic circuit solvers. For non-stiff                   1) Computing the Matrix Exponential: Calculation of the
+      circuits, the proposed algorithm has comparable efficiency                matrix exponential is a classic problem. There are two common
+      to the fastest explicit solvers, proposed in [9], [10], [11].             ways to calculate the matrix exponential, either by a Padé
+                                                                                approximation, or by using Krylov subspace. Krylov subspaces
+                                                                                have been shown to be effective in exceptionally large systems
+       II. BACKGROUND ON EXPONENTIAL INTEGRATOR                                 [21]. For smaller systems involving detailed power-electronic
+   This section introduces exponential integrator for solving                   switching transients, the Padé-based methods are more efficient
+state space equations. Recent progress in numerical computation                 [32]. A Padé approximation is a rational function that represents
+of matrix exponential techniques is applied to the proposed                     the ratio of two power series. The order of a Padé approximation
+power electronic circuit solver. The numerical stability of the                 is defined by a (p, q) pair representing the order of the numerator
+exponential integrator is discussed in this section to illustrate               and denominator power series, respectively. For example, a
+the advantage of the proposed power electronic circuit solver                   (3, 3) Padé approximation to the matrix exponential is expressed
+for the efficient simulation of stiff ordinary differential equation            as
+(ODE) system.                                                                                    I + Ak h/2 + (Ak h)2 /10 + (Ak h)3 /120
+                                                                                      eAk h =                                            .              (5)
+                                                                                                 I − Ak h/2 + (Ak h)2 /10 − (Ak h)3 /120
+A. Exponential Integrator for Solving State-Space Equation                         For power converter circuit solvers, the discretization order is
+  A power converter system consists of passive elements, in-                    referred to as p + q for its equivalent (p, q) Padé approximation.
+dependent sources, switches, controllers, and other electrical                  For instance, the 2nd -order trapezoidal rule approximates the
+components, which can be modeled by a piece-wise linear                         homogeneous solution in (2) using a (1, 1) Padé approximation
+system in the form of state-space equation as                                   [29]. Fixed high-order discretization methods are introduced
+                                                                                in [29], [30] which use a (2, 3) Padé and (4, 5) Padé approx-
+                   ẋ (t) = Ak x (t) + Bk u (t)                                 imations, respectively. It is well understood that Padé approx-
+                                                                                imations of the matrix exponential are optimally computed by
+                   y (t) = Ck x (t) + Dk u (t)                           (1)    selecting diagonal approximates, i.e., p = q [33]. Commonly
+                                                                                denoted to as a (q, q) Padé approximation or referred to as a
+where x is a set of independent system states, u is a set of the                diagonal Padé approximation. The algorithm proposed in [34],
+independent inputs of the system, y is a set of the outputs of the              and [35] utilizes a scaling and squaring technique alongside an
+system, and Ak , Bk , Ck , Dk are the state-space matrices which                optimized Padé approximation algorithm. The algorithm varies
+are temporal and dependent on switch states.                                    the diagonal Padé approximation order to optimally reduce
+
+
+         Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 01:31:50 UTC from IEEE Xplore. Restrictions apply.
+PAULL et al.: ADAPTIVE-GRAINED EXPONENTIAL INTEGRATOR ALGORITHM FOR EFFICIENT SIMULATION OF POWER CONVERTER SYSTEMS                                    1117
+
+
+
+truncation error. The minimum order used in [34], [35] is a                     system in (8), producing
+(3, 3) Padé approximation making it a 6th order discretization
+                                                                                                                          |xn+1 |  hλ 
+technique. With respect to power electronic converter transient                                 xn+1 = ehλ xn ⇒                  = e       .           (9)
+simulation, this technique is considered a high-order solver.                                                              |xn |
+   2) Computing the ϕ-Functions: Computing the ϕ-functions
+are more challenging than computing the matrix exponential due                     The cases for all Re{λ} < 0 in (9) results in |x|xn+1
+                                                                                                                                       n|
+                                                                                                                                          |
+                                                                                                                                            < 1 or
+to its exponential integration form. The ϕ-functions are defined                |xn+1 | < |xn |, demonstrating the exponential integrator is A-
+in (4), which is commonly solved by a recursive formula as                      stable. Furthermore, the exponential integrator is L-stable, given
+                                                                                the decay rate increases as Re{λ} moves further negative.
+                                           1                                       In power electronic converter simulations A-stable methods
+            ϕj (z) = zϕj+1 (z) +              , ϕ0 = e z ,               (6)
+                                           j!                                   guarantee converging numerical solution regardless of step-size
+                                                                                or system stiffness. However, A-stable methods may exhibit
+or by a pth order Taylor series expansion as [31]                               numerical oscillation due to circuit topology switching, dis-
+                                  p                                             continuity, or the presence of small network time constants.
+                                        zn
+                     ϕj (z) =                  .                         (7)    On the other hand, L-stable methods (e.g., Backward Euler or
+                                  n=0
+                                      (j + n)!                                  Gear’s 2nd order method) will converge regardless of step-size
+                                                                                or stiffness with no numerical oscillation, which makes L-stable
+   The recursive form in (6) is suitable when the eigenvalues                   algorithms the most desirable solvers for power electronic con-
+of z are large but fails as the determinant of z approaches or                  verter simulation due to fast-transients associated with high
+becomes zero [36]. The Taylor series in (7) is accurate when                    frequency switching.
+the eigenvalues of z are small but requires excessive terms
+for stiff systems. Studies have shown that there are additional
+                                                                                       III. ADAPTIVE-GRAINED SIMULATION FRAMEWORK
+scenarios where both methods yield incorrect approximations
+[37], making a conjoined approach infeasible. In [36], a scal-                     The proposed adaptive-grained exponential integrator (AGEI)
+ing and modified squaring approach is presented alongside                       algorithm is a variable time-step ODE solver based on an
+other more novel methods. However, the computation is higher                    adaptive-grained precomputations of matrix exponential and
+than the scaling and squaring method for matrix exponential.                    ϕ-functions. The resulting algorithm has all the benefits of the
+Recently, a simultaneous computation algorithm is presented                     exponential integrator’s numerical stability and gains significant
+in [38] based on the work in [39]. The proposed algorithm                       simulation speedup due to the precomputations. This section
+calculates the matrix exponential and accompanying ϕ func-                      focuses on the simulation framework of the AGEI algorithm,
+tions simultaneously by performing the matrix exponential of                    combined with discrete state event scheduling of power con-
+a modified matrix. The most efficient method to calculate ϕ                     verter systems.
+functions involve a composite approach implementing scaling
+and modified squaring alongside a simultaneous computation                      A. Variable Time-Step Simulation Using Exponential
+approach [38]. Using this methodology, there are no restrictions                Integrator With Fixed-Order Scheme
+on the form of the Ak matrix, making it widely applicable for
+                                                                                   The state-equation matrices of a power electronic circuit
+electric circuit simulation.
+                                                                                are time-variant and depend on the states of both controllable
+                                                                                and uncontrollable switches. The general semi-symbolic state
+B. Numerical Stability of Exponential Integrator                                equations can be pre-generated using the algorithm proposed in
+   The ϕ-function-based exponential integrator in (3) is fully                  [16], while the specific state equations at t = tk can be found
+explicit, eliminating the need to solve an implicit algebraic equa-             by extracting the switching states using the DSED technique
+tion. Conventional explicit ODE solvers make trade-off between                  in [17]. The technique utilizes a digital controller’s zero-order-
+computation complexity and numerical stability. However, the                    hold (ZOH) placed on the modulation signal within a control
+exponential integrator is both explicit and numerically stable.                 cycle (TSW ). By comparing the constant modulation signal with
+Numerical stability of a given numerical ODE solver is defined                  the carrier signal all discrete switching events are known for
+based on the behavior of a test system as [40]                                  an entire control cycle, illustrated in Fig. 1. The step size is
+                                                                                then adjusted precisely to when the switching event occurs for
+                                ẋ = λx.                                 (8)    maximum accuracy, as shown in Fig. 1(c).
+                                                                                   The proposed high-order ODE solver incorporates both vari-
+   The stability region R is defined as the set of complex numbers              able step-size and variable forcing-function terms in (3). While
+z, with z = hλ such that |xn+1 | < |xn | in the test system of                  the proposed algorithm does not vary the discretization order
+(8). Intuitively, the stability region is where the homogeneous                 (i.e., the order of a Padé approximation) of the matrix ex-
+solution converges to zero. An algorithm is called A-stable if the              ponential in the homogeneous solution in (3), the number of
+stability region contains the entire left-half plane, the algorithm             forcing-function terms in (3) varies to meet desired error thresh-
+is further L-stable if the decay speed increases as Re{λ} moves                 olds. Thus, the proposed algorithm is a variable step-size fixed
+further negative. The exponential integrator’s stability region is              high-order ODE solver with variable forcing-function terms.
+found by applying the homogeneous solution of (3) to the test                   Variable step-size algorithms may be the optimal framework
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 01:31:50 UTC from IEEE Xplore. Restrictions apply.
+1118                                                                                     IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 40, NO. 2, APRIL 2025
+
+
+
+
+Fig. 1. Variable step selection scheme of high order EI solver. (a) Carrier and
+modulation wave overlapped to show switching instants. (b) Generated PWM.
+(c) Step-size selection scheme based on generated PWM.
+
+
+
+for efficient simulation of power electronic converter systems,
+compared to a fixed step-size low-order ODE solver [9]. The
+advantages are well understood, variable step-sizes allow the
+solver to calculate only at switching points, decreasing the total
+number of simulated points. Additionally, dynamic controllable
+accuracy allows the solver to incorporate supplementary forcing-
+function terms for large steps or a minimal number of terms
+for smaller step sizes, eliminating unnecessary computation and
+reducing the need for step-size adjustments.
+   The proposed variable time-step, high-order, variable-
+forcing-function-term exponential integrator is shown in the
+flowchart of Fig. 2. The solver starts by receiving a variable
+step-size using the DSED scheme, then truncating the analytical
+series in (3) up to the pth term such that the LTE is less than
+a desired error tolerance (εtol ). For a series up to the pth term,
+the LTE is the remaining terms from (p + 1) and beyond. For
+numerically non-stiff systems, the terms in the series of (3) are
+strictly decreasing at a rapid rate, for stiff systems the rate of
+decrease is slower. Accordingly, the LTE can be approximated
+                                                                                  Fig. 2. Flowchart of variable-step high-order variable-forcing-function-term
+using the (p + 1)th term of the original series, as in                            exponential integrator algorithm.
+                       ∞
+                                                 d(j−1) un
+                ε=            ϕj (Ak h) hj Bk
+                      j=p+1
+                                                   dt(j−1)
+                                                                                  leading to small number of forcing-function terms in the expo-
+                                                  (p)                             nential integrator solution in (3). Regardless of the number of
+                                                d un
+                  ≈ ϕp+1 (Ak h) hp+1 Bk                .                 (10)     forcing-function terms needed, the numerical errors introduced
+                                                 dt(p)
+                                                                                  in the calculation of matrix exponential and ϕ-functions are very
+   The evaluation of the LTE equation in (10) is numerically                      small since a high-order Padé approximation technique is used
+efficient as the error estimate is also the next term in the series               to calculate the matrix exponential and the ϕ-functions. This
+of the forcing-function solution in (3), eliminating additional                   algorithm serves as the building block for the AGEI solver with
+computation to approximate the LTE. For an incredibly stiff                       precomputation, introduced in the following subsection.
+system with a low switching frequency, the number of terms
+may become large, a maximum number of permitted ϕ functions
+                                                                                  B. Adaptive-Grained Algorithm With Precomputations of
+(qmax ) is assigned for practical implementation. If the maximum
+number of terms is reached and the error has not converged, the                   Matrix Exponential and ϕ-Functions
+step-size is decreased by half to redo the exponential integration                   The matrix exponential and the ϕ-functions need to be recal-
+calculation. The exponential integrator effectively captures the                  culated whenever the power electronic circuit topology or the
+eigen-structure of the system in the matrix exponential and                       simulation time step changes. Updating the matrix exponential
+ϕ functions, thus the number of terms required is normally                        and ϕ-functions during simulation execution is numerically ex-
+small. Furthermore, the input function u is often DC or AC                        pensive, leading to excessive simulation burden. Since switching
+with a relatively low fundamental frequency (e.g., 50 or 60 Hz),                  time and the corresponding step size are only known once a
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 01:31:50 UTC from IEEE Xplore. Restrictions apply.
+PAULL et al.: ADAPTIVE-GRAINED EXPONENTIAL INTEGRATOR ALGORITHM FOR EFFICIENT SIMULATION OF POWER CONVERTER SYSTEMS                                      1119
+
+
+
+switching event or discrete-control event occurs, precomputa-
+tions of the matrix exponential and the ϕ-functions for arbitrary
+integration step size are impossible.
+   However, power converter circuit topologies and pre-defined
+simulation time-step sizes can be used for the precomputations
+of these terms, prior to simulation execution. For a given con-
+verter circuit, all possible switching topologies are found in
+advance by cycling through the allowable switching configu-
+rations. For a circuit with n switches, there are 2n possible
+topologies. However, power electronic circuits often contain
+                                                                                  Fig. 3.   Adaptive-grained algorithm example.
+complimentary pairs of switches, significantly decreasing the
+total number of unique topologies. Additionally, the range of
+possible discretization step-sizes can be found in advance. The                   by one through nine, the total number of discretization steps
+minimum possible step size is determined by the user or by the                    decreases from 999 to 27. Now, only 2700 matrix exponential
+granularity of the switching signals, whereas the maximum pos-                    and 2700qmax ϕ-functions will be precalculated, decreasing
+sible step size is determined by the highest switching frequency                  the total number of precalculated terms by 97, 200(1 + qmax ),
+(smallest switching period) in the system. It is critical to know                 a decrease of 92%. The consequence of this approach is that
+the maximum step-size to avoid unnecessary precomputation                         a single discretization time-step between switching events
+and storage. The carrier signal with the smallest switching period                may not be applied. Instead, sequential integrations will
+will determine the maximum step-size, since a switching event                     be performed, where each integration corresponds to the
+must occur within a control cycle for each carrier signal. In a                   pre-defined time steps with different orders of magnitude. The
+multifrequency carrier system, the switching events from the                      AGEI algorithm greatly reduces precomputation burden by
+smallest switching period carrier will then occur continuously                    carefully selecting of large, fine, and ultra-fine grain step-sizes,
+and repeatedly within the switching period of lower frequency                     however, precomputation may still be challenging for circuits
+converters. With both the minimum and maximum time-step                           with many switches. For larger power converter network
+sizes known, all intermediate step sizes are simply a multiple                    or complicated converters with many switching elements
+of the minimum step size up to the maximum step size. This                        such as modular multilevel converters (MMCs) or solid-state
+range could be potentially large depending on the minimum                         transformers (SSTs), circuit network decoupling via DC link
+step-size granularity and the switching frequency. With the                       capacitors can be applied to explore network matrix sparsity
+possible circuit topologies and the range of discretization step                  property to reduce precomputation and overall simulation
+sizes known, all possible Ak h combinations can be used to                        burden, as proposed in [18]. Furthermore, while this paper
+precompute the matrix exponential and ϕ-functions. A circuit                      focuses exclusively on the exponential-integrator-based solver,
+with 2n unique topologies, and m unique discretization step                       lower-order ODE solvers can be used for ultra-fine grain steps
+sizes requires 2n m precomputed matrix exponential terms and                      to further decrease precomputations.
+2n mqmax precomputed ϕ-function, where qmax is the maximum                           Consider a fictitious scenario where two switching events
+ϕ-function term used in the numerical integration.                                occurring 44.4 μs apart, as illustrated in Fig. 3, the total time step
+   If n or m is large, the number of precomputed terms can be                     of 44.4 μs is decomposed into three back-to-back consecutive
+enormous, which motivates an adaptive-grained step-size pre-                      time steps for intermediate integrations. The first integration has
+computations approach. The adaptive-grained algorithm dras-                       a step size of hinter = 40 μs; the second step size is hinter = 4 μs;
+tically reduces the total number of precomputed terms by de-                      and the final smallest step size is hinter = 0.4 μs. Changing the
+creasing the number of pre-defined discretization time-steps. It                  step size magnitude, as shown in Fig. 3, can be thought of
+functions by decomposing a single large time-step into multiple                   as changing the granularity of the solver. The algorithm will
+smaller time-steps of different orders of magnitude. Then, in-                    begin with a large grain step, then decrease to fine grain, then
+stead of precomputing for every possible step-size between the                    ultra-fine grain steps. It is noted that the proposed exponential
+minimum and maximum step-sizes, only the scaling factors of                       integrator algorithm has high numerical accuracy, thanks to the
+1–9 for each magnitude step size are used for the precomputa-                     high-order Padé approximation and variable number of forcing
+tions of the matrix exponential and the ϕ-functions.                              function terms, determined by the error tolerance. Therefore,
+   Consider a fictitious power converter circuit, where                           the use of large step size, e.g., hinter = 40 μs, still provides
+there are 100 unique topologies with a minimum step-size                          accurate simulation results. A flowchart of the AGEI algorithm
+granularity of 0.1 μs and a maximum step-size of 99.9 μs.                         is illustrated in Fig. 4.
+Thus, there are ( 99.9         μs
+                           0.1 μs ) = 999 possible discretization
+time-steps. Without the adaptive-grained approach, there
+are 99, 900 matrix exponential terms, and 99, 900 qmax                                                        IV. CASE STUDIES
+ϕ-function terms that must be precomputed. On the                                    In this section, case studies are presented to illustrate the
+other hand, the adaptive-grained approach only requires                           numerical accuracy and efficiency of the proposed AGEI
+the precomputations at the following discretizing steps:                          algorithm. Firstly, the numerical accuracy of the AGEI solver
+(0.1 μs, 0.2 μs, . . . 0.9 μs, 1 μs, 2 μs, . . . , 9 μs, 10 μs, 20 μs, . . . ,    is validated against the Simulink/Simscape Electrical model
+90 μs). By only computing each order of magnitude scaled                          solved by Simulink solver, i.e., ode8 and a small time-step of
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 01:31:50 UTC from IEEE Xplore. Restrictions apply.
+1120                                                                                     IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 40, NO. 2, APRIL 2025
+
+
+
+
+                                                                                  Fig. 5.   Non-stiff converter circuit with DC source input.
+
+
+                                                                                     This case study demonstrates the most significant gains on
+                                                                                  accuracy and efficiency of the AGEI algorithm. Since the input
+                                                                                  sources are constant, a single term forcing-function in (3) can
+                                                                                  be used, leading to zero truncation error in (3). Thus, the (3)
+                                                                                  represents exact/analytical solution to (2). The circuit is simu-
+                                                                                  lated from time t = 0 to 0.06 s, using the proposed AGEI algo-
+                                                                                  rithm. The resulting waveforms compared to a small time-step
+                                                                                  Simulink reference solution are shown in Fig. 6, where the AGEI
+                                                                                  algorithm solutions match the Simulink reference solutions very
+                                                                                  well. The adaptive-grained step-size technique is further illus-
+                                                                                  trated in Fig. 7 using the simulation results of the DC input case
+                                                                                  study as an example. As shown in Fig. 7, the AGEI discretization
+                                                                                  step-size is plotted against simulation time for the system state
+                                                                                  variable ib1 . Fig. 7(c) and (d) show zoomed-in subfigures from
+                                                                                  0.9 ms to 0.91 ms for better visualization of the simulated points
+                                                                                  as noted by the markers in Fig. 7(d) and the corresponding
+                                                                                  step-sizes as shown in Fig. 7(c). In these subplots, it is shown that
+Fig. 4.   Flowchart of proposed adaptive grained exponential integrator solver.   a large 5.56 μs step-size between two switching events is broken
+                                                                                  into three variable grained step-sizes of 5 μs, 0.5 μs and 60 ns
+                                                                                  that are simulated sequentially. The step-sizes of the AGEI solver
+                                                                                  are shown between the markers on Fig. 7(d). It is noted that the
+0.1 μs for a non-stiff system with DC input sources and a stiff                   proposed variable-step high-order EI solver can accommodate
+system with both AC and DC input sources. The numerical                           much larger step sizes, compared to the conventional variable-
+accuracy of the proposed AGEI solver is also verified using                       step low-order solvers due to its higher numerical order. The pro-
+hardware experimental results. In Section B, the numerical                        posed EI solver modulates the number of forcing function terms
+efficiency of the proposed AGEI solver is compared against other                  (3) to further increase its numerical accuracy, allowing the maxi-
+commonly used solvers, using three typical power converter                        mum possible step size to be equal to a pulse width. The proposed
+circuits, i.e., a non-stiff circuit with DC input sources, a non-stiff            AGEI solver decomposes a maximum possible step size (i.e., a
+circuit with DC and AC input sources, and a stiff circuit with                    pulse width) into the combination of large, fine, and ultrafine
+DC and AC input sources. Each circuit topology has its unique                     grained time steps, as shown in Fig. 7(c) and (d). This adaptive-
+features and showcases important advantages of the proposed                       grained arrangement is only for memory saving consideration
+AGEI algorithm.                                                                   and not because of numerical accuracy limitation of the EI solver.
+                                                                                  Therefore, the AGEI solver achieves less simulated points due to
+                                                                                  the use of large grained steps, leading to a higher overall numer-
+A. Numerical Accuracy Comparison                                                  ical efficiency than the prior art low-order variable-step solvers.
+   Numerical accuracy of the proposed AGEI algorithm is val-                         An error analysis on the simulation data is performed using
+idated by comparing with a small time-step size (0.1μs) solu-                     relative (percentage) error. The relative error of the AGEI solu-
+tion obtained from Simulink/Simscape Electrical model using                       tion is evaluated for each system state variable using the 2-norm
+Simulink solver, i.e., ode8. It is then compared against hardware                 (Euclidean norm) of the error vector divided by the 2-norm of
+experimental results. Fig. 5 illustrates the circuit structure of the             the reference solution vector as
+DC input case study. It is composed of two interleaved boost
+                                                                                                   | |xAGEI,i − xref,i | |2
+converters interfaced with two three-phase two-level converters                         εrel,i =                            , ∀i ∈ {1, 2, . . . , n}    (11)
+via a DC link capacitor.                                                                                | |xref,i | |2
+
+
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 01:31:50 UTC from IEEE Xplore. Restrictions apply.
+PAULL et al.: ADAPTIVE-GRAINED EXPONENTIAL INTEGRATOR ALGORITHM FOR EFFICIENT SIMULATION OF POWER CONVERTER SYSTEMS                                     1121
+
+
+
+
+Fig. 6. DC input case study waveform results. (a) Boost converter upper leg current. (b) DC link capacitor voltage. (c) Three-phase inductor currents. (d) AC
+phase voltage.
+
+
+where n is the number of system states and xAGEI,i , xref,i are                  used for the power converter circuit simulation. However, the
+vectors of the ith system state for AGEI and the reference signal,               proposed AGEI solver still produces accurate simulation results
+respectively.                                                                    for the high frequency CM voltage and current at the simulated
+   The geometric mean of all system state variables is taken to                  points in Fig. 9, because of the high discretization order of
+find the overall relative error of the AGEI solution as                          Padé approximation and variable term forcing function in (3).
+                        √                                                        It is noted that an optional small maximum time step can be
+                εtot = n εrel,1 · εrel,2 · . . . · εrel,n .   (12)               introduced to the proposed AGEI algorithm over a desired short
+   For the DC input case study, the overall relative error is                    window of time to capture high frequency converter dynamics
+2.34e-7, indicating the high accuracy of the proposed AGEI                       that are missed in Fig. 9. This waveform “zoom-in” option
+algorithm.                                                                       aims to increase output waveform quality for a specific time
+   The next accuracy comparison is a circuit which presents                      window while maintaining numerical stability during the entire
+high stiffness designed to demonstrate the numerical stability                   simulation. The insights from a small-step-size window are
+of the AGEI algorithm. The circuit is shown in Fig. 8, the                       meaningful since the high frequency transients typically repeat
+topology is a modified version of Fig. 5 with the addition of                    themselves. Alternatively, the proposed AGEI algorithm is well
+a neutral to ground RC common-mode (CM) circuit and AC                           suited for parallel simulation in time. Each discretization step
+side independent voltage sources.                                                between two switching events only requires information on the
+   The circuit in Fig. 8 is simulated from time t = 0 to 0.25s.                  step-size, system inputs, and the system states at the previous
+The CM capacitor voltage, CM current, and AC line voltage are                    computed point. Therefore, multiple different time steps can
+shown in Fig. 9 where it is compared with a small time-step                      be simulated between two switching events concurrently using
+Simulink reference. As shown in Fig. 9, the AGEI algorithm                       parallel computing hardware, such as multicore CPU or GPU
+maintains numerical accuracy and stability for the case study                    threads. Additionally, it is possible to precompute the ϕ-terms
+with high stiffness and fast transient. Interestingly, in Fig. 9                 in parallel before the time-domain simulation loop starts, since
+the AGEI algorithm doesn’t capture the entire high frequency                     the ϕ-terms are independent of each other. Parallel simulation of
+oscillations of the RC CM circuit, due to the large time steps                   the AGEI algorithm can be utilized for multiple subsystems of a
+
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 01:31:50 UTC from IEEE Xplore. Restrictions apply.
+1122                                                                                      IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 40, NO. 2, APRIL 2025
+
+
+
+
+Fig. 7. Adaptive-grained step-size visualization. (a) Step-size through simu-
+lation. (b) Boost converter upper leg current. (c) Step-size through simulation –
+zoom-in. (d) Boost converter upper leg current – zoom-in.
+
+
+
+
+                                                                                    Fig. 9. Stiff case study results. (a) CM capacitor voltage. (b) CM current. (c)
+                                                                                    AC line voltage.
+
+
+                                                                                    is the same configuration as Fig. 5, except for only one inter-
+Fig. 8. Stiff converter circuit with neutral-ground RC CM circuit and AC            leaved boost, and one three-phase two-level converter. Fig. 10
+sources added to Fig. 5.                                                            presents the comparison between the AGEI algorithm and the
+                                                                                    experimental waveforms. As shown in Fig. 10, the simulation
+                                                                                    results faithfully reflect the experimental waveforms. The accu-
+large power converter network decoupled through the DC-link                         rate simulation results demonstrated in Fig. 10 are as expected,
+capacitors.                                                                         since the AGEI algorithm is based on high-order exponential
+   It is also important to note that oftentimes stiffness is not the                integrator. The benefits associated with the proposed AGEI
+point of interest in a power electronics circuit; instead, it is hid-               algorithm largely lies in the numerical efficiency improvement,
+den out of plain sight. Stiffness can be present, for instance, due                 compared to the existing numerical integration techniques.
+to semiconductor switch representation in state-space equation
+generation, where numerical snubber resistors, inductors and
+capacitors are used to facilitate state-space equation generation.                  B. Numerical Efficiency Comparison
+These numerical snubber components often take very small                               To demonstrate the efficiency of the proposed AGEI algo-
+or large values which can cause significant stiffness. In these                     rithm it is compared against the FA algorithm of [9], Simulink
+cases, the high frequency oscillations due to numerical snubbers                    ode23t (a modified trapezoidal rule), Simulink ode15s, based on
+are completely irrelevant. However, the AGEI algorithm will                         variable order NDFs [41], Simulink ode45 (Dormand-Prince),
+perform much better than the other explicit numerical algorithms                    and PLECS DOPRI (Dormand-Prince). The algorithms used for
+(including FA), which do not have the property of Absolute                          comparison are all variable time-step solvers. The FA algorithm
+stability, i.e., A-stability.                                                       and ode15s are variable order solvers, whereas ode23t, ode45,
+   Next, the simulated waveforms, obtained from the AGEI algo-                      and DOPRI are fixed order solvers. All solvers are set with a
+rithm, are verified by hardware experimental results. The circuit                   common relative error tolerance of 10−4 . The chosen algorithms
+topology contains an interleaved boost converter interfaced to                      are common and popular for simulation of power electronic
+a three-phase two-level converter via a DC link capacitor. It                       circuits, making the case study results highly relevant. Other
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 01:31:50 UTC from IEEE Xplore. Restrictions apply.
+PAULL et al.: ADAPTIVE-GRAINED EXPONENTIAL INTEGRATOR ALGORITHM FOR EFFICIENT SIMULATION OF POWER CONVERTER SYSTEMS                                     1123
+
+
+
+
+                                                                                 Fig. 11.   MFB-CDA converter topology.
+
+
+                                                                                 in Fig. 5, except for additional independent AC-side three-phase
+                                                                                 voltage sources in series with the three-phase RL loads. The
+                                                                                 third case study circuit of interest was previously introduced in
+                                                                                 Fig. 8. This case study will demonstrate the AGEI algorithm’s
+                                                                                 efficiency compared to other solving methods when solving an
+                                                                                 extremely stiff system. These three topologies are simulated
+                                                                                 from t = 0to 0.25 s. Aside from the stiff CM branch, all passive
+                                                                                 element values and switching frequencies are shared among
+                                                                                 topologies.
+                                                                                     The fourth and final case study circuit involves an active rec-
+                                                                                 tifier coupled to a multileg full-bridge Class-D amplifier (MFB-
+                                                                                 CDA), shown in Fig. 11. The AC-DC converter is operated to
+                                                                                 maintain a constant DC link voltage while the MFB-CDA output
+                                                                                 voltage follows the reference signal. The converters feature a
+                                                                                 100 kHz and 2 kHz switching frequency for the MFB-CDA and
+                                                                                 active rectifier, respectively. The reference signal has a 1 kHz
+                                                                                 frequency. For the first 1ms the reference signal is a triangle
+                                                                                 signal, it then changes to a sinusoidal signal. The converter is
+Fig. 10. Hardware validation results. (a) Boost converter upper-leg current.     simulated for 2.5 ms. The output capacitor (Co ) is subjected
+(b) Boost converter lower-leg current. (c) Three-phase inductor currents.        to a short-circuit fault at 0.75 ms for a duration of 50 us. That
+                                                                                 is, the short-circuit fault at Co is cleared at 0.8 ms. At 0.75 ms
+                                                                                 when the short-circuit fault occurs, the system is subjected to
+simulation software vendors such as as OPAL-RT, EMTP-RV,                         output capacitor fast discharging transient with a small time
+PSCAD, PSIM, Simba, Typhoon, and ASMG provide compet-                            constant, which dramatically increases network stiffness. The
+itive offerings depending on the users’ needs and the focused                    output simulation waveforms comparing AGEI to a 1ns small
+applications. For general purpose comparison with well-known                     step reference signal is shown in Fig. 12. From Fig. 12, it is clear
+software, we opt to compare AGEI solver to Simulink and                          the AGEI algorithm matches well will the small step reference
+PLECS. The AGEI algorithm efficiency is presented both with                      and maintains accuracy though the brief short circuit fault.
+and without the precomputation time included. Simulink based                         The numerical efficiency results are presented for each case
+models are simulated using Simulink/ Simscape Electrical tool-                   study in Table I, where each algorithm is applied to the three
+box while the AGEI and FA algorithms are coded using MAT-                        case studies to demonstrate the flexibility of the AGEI algorithm.
+LAB script. The AGEI and FA algorithm code are identical aside                   The results in Table I show that the AGEI algorithm is effective
+from the numerical integration scheme.                                           across a diverse set of case studies, demonstrating its general
+   The purpose of the case studies is to demonstrate the AGEI                    applicability. In the DC input case study, the AGEI algorithm is
+algorithm’s numerical efficiency for different circuit topologies.               at its maximum efficiency due to exact solution of the forcing
+The efficiency comparison will be performed using four con-                      function terms in (3). The CPU times show the AGEI algorithm
+verter topologies. The first topology was introduced in Fig. 5,                  is the most efficient algorithm tested, both including or excluding
+i.e., the DC input source case study. The second case study                      the precomputation time. The AC and DC input case study repre-
+focuses on a circuit that contains AC and DC input sources.                      sents a general application of the algorithm in a non-stiff system.
+Including AC sources provides a general efficiency compari-                      In this case study, the AGEI algorithm is comparable to the FA
+son between the AGEI algorithm and the competitors. Unlike                       algorithm but much faster than the Simulink solvers, or PLECS.
+the DC input case study, the solver must vary the number of                      The FA algorithm is shown to be the fastest numerical integration
+forcing-function terms to meet the desired accuracy threshold.                   technique in [9], thus the results are significant. The third case
+The circuit structure of this case study is similar to the first case            study demonstrates that the unique property and significant
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 01:31:50 UTC from IEEE Xplore. Restrictions apply.
+1124                                                                                   IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 40, NO. 2, APRIL 2025
+
+
+
+                                                                  TABLE I
+                                COMPUTATIONAL EFFICIENCY COMPARISON AMONG NUMERICAL INTEGRATION TECHNIQUES
+
+
+
+
+                                                                                                           TABLE II
+                                                                                 COMPUTATION COMPARISON BETWEEN AGEI AND FA PER COMPUTED POINT
+
+
+
+
+                                                                                the significance of the proposed AGEI algorithm. The AGEI
+                                                                                algorithm is as fast as the best explicit solvers for non-stiff
+                                                                                systems, and faster than the quickest stiff systems solvers. Often
+                                                                                there is a large trade-off between numerical stability and numer-
+                                                                                ical efficiency. Explicit methods are used for quick simulation
+                                                                                on non-stiff systems, while slow implicit methods handle stiff
+                                                                                systems. The AGEI algorithm excels regardless of the stiffness
+                                                                                of the network, lending it to be a generally applicable algorithm
+                                                                                with high simulation efficiency.
+                                                                                   The presented efficiency results in Table I provide commensu-
+                                                                                rable comparison given AGEI is implemented within MATLAB.
+                                                                                Thus, AGEI and Simulink’s solvers share a similar computa-
+                                                                                tional overhead inside the MATLAB framework. The speedup
+                                                                                results can easily be amplified by implementing AGEI in C++
+                                                                                or a similar language with minimal computational overhead.
+                                                                                The efficiency improvements of the AGEI algorithm are at-
+                                                                                tributed to the adaptive grained approach with precomputation.
+Fig. 12. MFB-CDA case study waveforms. (a) MFB-CDA reference signal.            Precomputation accelerates the simulation runtime, while the
+(b) Output capacitor voltage v o . (c) Inductor L1 current.
+                                                                                adaptive-grained technique minimizes the total time and mem-
+                                                                                ory allocated on precomputation. The algorithm’s efficiency per
+                                                                                computed point is compared with the FA algorithm of [9] in
+advancement of the AGEI algorithm resides in its numerical                      Table II.
+stability. This case study is extremely stiff due to the RC CM                     It is noted that the proposed AGEI algorithm often requires
+circuit. Typically, a low order, slow implicit method must be used              fewer forcing function terms than the order of the FA algorithm
+to ensure numerical stability. The AGEI algorithm, while being                  (i.e., p < q). A power system’s independent source input is
+accurate, shows a significant speed advantage against prominent                 typically slow changing, i.e., DC or 50/60Hz, compared to
+Simulink or PLECS solvers. The final case study is generally                    power converter switching frequency. Thus, the forcing function
+non-stiff, however, it experiences significant stiffness during the             solution in (3) requires very few terms to achieve high accuracy.
+imposed short circuit fault. During the fault, FA solver struggles              A high numerical order may be needed for the FA algorithm
+to achieve a large step size due to its limited stability region.               to capture the homogeneous solution dynamics, even if the
+The FA algorithm needs to reduce its step size and increase                     independent source input is slow changing. This is especially
+the number of computed points. The AGEI algorithm, however,                     true for stiff systems where the FA algorithm often requires
+is unaffected by the network stiffness and does not require a                   step size adjustment. Thus, since the AGEI algorithm generally
+step size adjustment. Compared to PLECS and Simulink ode15s                     requires fewer forcing function terms than the order of the
+solvers, the proposed AGEI solver is still 3-fold and 5-fold faster             Taylor series expansion in FA algorithm, the AGEI algorithm
+than each of them respectively. Simulink ode45 notably was not                  requires fewer multiplications and additions comparable to the
+able (N/A) to finish the simulation. These case studies illustrate              FA algorithm per computed point. For power converter circuits
+
+         Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 01:31:50 UTC from IEEE Xplore. Restrictions apply.
+PAULL et al.: ADAPTIVE-GRAINED EXPONENTIAL INTEGRATOR ALGORITHM FOR EFFICIENT SIMULATION OF POWER CONVERTER SYSTEMS                                      1125
+
+
+
+                          TABLE III
+COMPUTATION COMPARISON BETWEEN AGEI AND FA PER COMPUTED POINT
+                    FOR ONLY-DC INPUT CASE
+
+
+
+
+featuring only-DC input sources, the efficiency per point of
+the AGEI algorithm surpasses the FA algorithm, as shown in                      Fig. 13. Decoupling decomposition technique. (a) Original converter system.
+Table III.                                                                      (b) Decoupled converter system.
+   The only-DC input case study presents the largest efficiency
+advantage of the AGEI algorithm over the FA algorithm for
+either stiff or non-stiff system. This is explained in Table III                while subsystem s and coupling system m can be expressed as
+where the AGEI algorithm in (3) only needs a single term forcing                (14) and (15), respectively.
+function approximation without any truncation error. The AGEI
+algorithm produces an analytical solution given the high order                                                          ⎡      ⎤
+                                                                                                                          vc,1
+of the Padé approximation. This single term forcing function                                                            ⎢vc,2 ⎥
+                                                                                                                        ⎢      ⎥
+leads to little computation effort per time step, manifesting                                  ẋs = As xs + Bs us + Es ⎢ . ⎥          (14)
+in significant efficiency advantage. The AGEI algorithm often                                                           ⎣ .. ⎦
+requires multiple consecutive computed points between each                                                                vc,r
+switching event, thus, while the per point computation is less,                                              ⎡ ⎤
+                                                                                                               i1
+the total computation varies. The case studies presented show                                                ⎢ i2 ⎥
+                                                                                                             ⎢ ⎥
+that the proposed algorithm accommodates multiple sequential                                   v̇c,m = Ec,m ⎢ . ⎥                      (15)
+steps given that the AGEI algorithm efficiencies are faster that,                                            ⎣ .. ⎦
+or as fast as the FA algorithm.                                                                                        ik
+
+                                                                                   In (14), As , Bs are the cofficient matrices of subsystem s;
+                                                                                xs , us are the state variables and inputs of subsystem s; Es is the
+                           V. DISCUSSION                                        matrix representing the connection between the coupling capac-
+   With the advancement of multimodule and multilevel con-                      itors and the subsystems’ state variables; and vc,1 , vc,2 . . . vc,r
+verters such as solid-state transformer (power electronic trans-                are the coupling capacitor’s input voltages for a system with r
+former), the number of switches can be as large as a few                        coupling capacitors. Equation (15) is the state-space equation
+hundreds. EMT simulation of such complex and large-scale                        representation of coupling system m, where Ec,m is the ma-
+converter system represents a significant challenge for the state-              trix representing the connection between subsystem interfacing
+of-the-art EMT simulation tools. Power converter system decou-                  currents (i.e., i1 , i2 , . . . ik ) and coupling capacitor voltage vc,m .
+pling technique [18] can be used to accelerate EMT simulation.                     The interfacing currents i1 , i2 , . . . ik may be subsystem state-
+Decoupling the entire converter system into several smaller                     variables, but are generally subsystem outputs to be calculated
+subsystems enables smaller dimensions of state-space equations                  as
+and faster simulation speed. It can also drastically reduce the                                                                    ⎡      ⎤
+                                                                                                                                     vc,1
+number of converter circuit topologies that are precomputed for                                                                    ⎢vc,2 ⎥
+the proposed AGEI method. Power converter systems can be                                                                           ⎢      ⎥
+                                                                                                  y s = C s x s + D s u s + Fs ⎢ . ⎥                 (16)
+analytically decoupled through either series inductor or parallel                                                                  ⎣ .. ⎦
+DC-link capacitor [18]. In this manuscript, parallel DC-link                                                                          vc,r
+capacitor is used as an illustrative example. A depiction of the
+decoupling principle is shown in Fig. 13.                                       where ys is a vector containing one or more interfacing currents
+   As shown in Fig. 13, the original converter system is decou-                 for submodule s; Cs and Ds are coefficient matrices relating
+pled at its DC-link capacitor into two separate subsystems that                 state variables and inputs to output variables, and Fs links the
+share an interface with the coupling system (i.e., the middle                   coupling capacitor inputs to the interfacing currents.
+circuit of Fig. 13(b)) through a system input. The original                        The proposed high-order AGEI algorithm can be applied to
+converter system can be expressed mathematically as                             (14) to generate a time-domain solution using the step-size h as
+                                                                                                                      p1
+                                                                                                                      
+                                                                                                    As h                                       d(j−1) us (t)
+                                                                                 xs (t + h) = e            xs (t) +          ϕj (As h) hj Bs
+                           ẋ = Ax + Bu.                               (13)                                                                      dt(j−1)
+                                                                                                                      j =1
+
+
+
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 01:31:50 UTC from IEEE Xplore. Restrictions apply.
+1126                                                                                   IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 40, NO. 2, APRIL 2025
+
+
+                                                      ⎛⎡
+                                                       ⎤⎞
+                                              vc,1 (t)
+                                   d(j−1) ⎜ ⎢          ⎥⎟
+                 p2
+                                         ⎜⎢vc,2 (t)⎥⎟
+               +    ϕj (As h) hj Es (j−1) ⎜⎢ . ⎥⎟ .
+                   j =1
+                                   dt     ⎝⎣ .. ⎦⎠
+                                                           vc,r (t)
+                                                                        (17)
+
+  Similarly, (15) can be discretized using AGEI with step-size
+h as
+
+vc,m (t + h) = e0h vc,m (t)
+                                                      ⎤⎞  ⎛⎡
+                                               i1 (t)
+                                     d(j−1) ⎜⎢        ⎥⎟
+                    p
+                                           ⎜⎢i2 (t)⎥⎟
+                                                                                Fig. 14.   Supplementary SST case study using network decoupling.
+                  +   ϕj (0h) hj Ec,m (j−1) ⎜⎢ . ⎥⎟ .
+                     j =1
+                                     dt     ⎝⎣ .. ⎦⎠
+                                                               ik (t)                                        TABLE IV
+                                                                                  COMPUTATIONAL EFFICIENCY COMPARISON OF SOLID-STATE TRANSFORMER
+                                                                        (18)                            WITH 30 SUBMODULES
+
+  Equation (18) can be simplified to Taylor series expansion as
+                                                 ⎛⎡         ⎤⎞
+                                                     i1 (t)
+                                        d(j−1) ⎜   ⎢        ⎥⎟
+                           p
+                                hj               ⎜⎢i2 (t)⎥⎟
+vc,m (t + h) = vc,m (t)+           Ec,m (j−1) ⎜⎢ . ⎥⎟ .
+                          j =1
+                                j!      dt       ⎝⎣ .. ⎦⎠
+                                                     ik (t)
+                                                             (19)
+
+   Equations (17) and (19) requires the higher order derivatives
+of the system inputs, i.e., the coupling capacitor voltage and the
+subsystem injection currents. Recursive substitution and differ-
+entiation of (14), (16), and (15) allow for convenient calculation
+of all higher order derivatives. Once all high order derivatives
+of interfacing variables are known, (17) and (19) can be effec-
+tively applied for every subsystem and each coupling system.
+Complete knowledge of initial conditions, including high order
+derivatives allows for independent calculation of each subsystem                Fig. 15. SST case study waveforms. (a) HVAC phase-a source current.
+                                                                                (b) Phase-a module-1 transformer primary current. (c) Phase-a module 1 MVDC
+and the coupling system. For CPU implementation, the calcu-                     capacitor voltage. (d) Phase-a module-1 secondary DC current.
+lations for each subsystem or coupling system are performed in
+sequential order. On parallel computing hardware such as GPU
+or FPGA, the calculations can be performed simultaneously,                         In order to demonstrate the viability of the proposed decou-
+which has the potential to further increase simulation efficiency.              pling technique for the proposed AGEI solver, a large-scale con-
+   In the context of precomputing ϕ-functions, system decou-                    verter system is simulated. The case study features a three-stage
+pling allows for precomputation of each subsystem individually,                 input-series output-parallel 3-phase solid-state transformer with
+which significantly reduces the precomputation efforts of the                   10 dual active bridge (DAB) modules per phase, as shown in
+AGEI algorithm for large systems. For instance, considering 10                  Fig. 14. Without converter decoupling, there are over 1230 · 7
+three-phase two-level converters connected to a single coupling                 possible topologies. With converter decoupling, there are only
+capacitor. Each three-phase two-level converter is assumed to                   30 topologies that must be precomputed.
+have 7 possible circuit topologies. Without system decoupling,                     The Solid-state transformer in Fig. 14 is simulated for 60ms
+there are 710 = 282, 475, 249 possible circuit topologies that                  using several variable-step-size solvers, i.e., the proposed AGEI,
+must be precomputed. With system decoupling, the ϕ-terms                        PLECS, and Simulink/SimPowerSystems (SPS). The simulation
+for each topology are computed independently. Thus, the total                   times of different solvers are shown in Table IV.
+number of precomputed topologies becomes a summation of                            When system decoupling is implemented, the proposed AGEI
+the number of precomputed topologies for each subsystem,                        solver achieves 17-fold and 83-fold speedups compared to
+i.e., 7 × 10 = 70 precomputed topologies. In this fictitious                    PLECS and Simulink ode23t, respectively. The simulation re-
+example, decoupling results in a 99.9999784% decrease in pre-                   sults are overlapped with a small step Simulink/SPS reference
+computed topologies. This feature allows the AGEI algorithm                     solution for comparison in Fig. 15. As shown in Fig. 15,
+to be applied to very large converter systems such as solid-state               the AGEI with decoupling overlaps well with the small step-
+transformer.                                                                    size SPS reference waveform. This supplementary case study
+
+         Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 01:31:50 UTC from IEEE Xplore. Restrictions apply.
+PAULL et al.: ADAPTIVE-GRAINED EXPONENTIAL INTEGRATOR ALGORITHM FOR EFFICIENT SIMULATION OF POWER CONVERTER SYSTEMS                                            1127
+
+
+
+demonstrates that system decoupling technique can be imple-                         [12] J. Jatskevich and T. Aboul-Seoud, “Automated state-variable formulation
+mented alongside the AGEI algorithm. Decoupling significantly                            for power electronic circuits and systems,” in Proc. IEEE Int. Symp.
+                                                                                         Circuits Syst., 2004, pp. 952–955.
+reduces the precomputation burden, allowing the AGEI algo-                          [13] O. Wasynczuk and S. D. Sudhoff, “Automated state model generation
+rithm to solve very large converter systems.                                             algorithm for power circuits and systems,” IEEE Trans. Power Syst.,
+                                                                                         vol. 11, no. 4, pp. 1951–1956, Nov. 1996.
+                                                                                    [14] J. H. Allmeling and W. P. Hammer, “PLECS-piece-wise linear electrical
+                             VI. CONCLUSION                                              circuit simulation for simulink,” in Proc. IEEE Int. Conf. Power Electron.
+                                                                                         Drive Syst., 1999, vol. 1, pp. 355–360.
+   In this paper, an adaptive-grained exponential-integrator-                       [15] N. Watson and J. Arrillaga, Power Systems Electromagnetic Transients
+                                                                                         Simulation, 2nd ed. London, U.K.: IET, 2019.
+based numerical integration technique is presented. The al-                         [16] Z. Yu, Z. Zhao, B. Shi, Y. Zhu, and J. Ju, “An automated semi-symbolic
+gorithm incorporates adaptive precomputation and sequential                              state equation generation method for simulation of power electronic
+integrations to dynamically change the simulation time-step                              systems,” IEEE Trans. Power Electron., vol. 36, no. 4, pp. 3946–3956,
+                                                                                         Apr. 2021.
+while retaining fast simulation speed with significantly reduced                    [17] B. Li, Z. Zhao, Y. Yang, Y. Zhu, and Z. Yu, “A novel simulation method for
+overhead. Sequential intermediate integration steps between                              power electronics: Discrete state event driven method,” CES Trans. Elect.
+discrete events are used to drastically reduce the set of possible                       Mach. Syst., vol. 1, no. 3, pp. 273–282, Jul. 2020.
+                                                                                    [18] B. Shi, Z. Zhao, Y. Zhu, Z. Yu, and J. Ju, “Discrete state event-driven
+discretization step sizes allowing for practical precomputation of                       simulation approach with a state-variable-interfaced decoupling strategy
+matrix exponential and ϕ-functions. The precomputation is done                           for large-scale power electronics systems,” IEEE Trans. Ind. Electron.,
+using optimized computation techniques, enabling accelerated                             vol. 68, no. 12, pp. 11673–11683, Dec. 2021.
+                                                                                    [19] J. Ju, B. Shi, Z. Yu, Y. Zhu, and Z. Zhao, “Backward discrete state event-
+simulation run-time. The algorithm’s flexibility with variable                           driven approach for simulation of stiff power electronic systems,” IEEE
+step-size and a variable term forcing function, along with its                           Access, vol. 9, pp. 28573–28581, 2021.
+L-stability makes it well-suited for power electronic converter                     [20] N. R. Watson and G. D. Irwin, “Accurate and stable electromagnetic
+                                                                                         transient simulation using root-matching techniques,” Int. J. Elect. Power
+systems. The algorithm maintains a high numerical efficiency                             Energy Syst., vol. 21, no. 3, pp. 225–234, Mar. 1999.
+and stability, making it suitable for stiff or non-stiff systems                    [21] S. -H. Weng, Q. Chen, and C. -K. Cheng, “Time-domain analysis of
+alike. The introduced computation techniques render the algo-                            large-scale circuits by matrix exponential method with adaptive control,”
+                                                                                         IEEE Trans. Comput.-Aided Des. Integr. Circuits Syst., vol. 31, no. 8,
+rithm robust across various circuit topologies and input sources,                        pp. 1180–1193, Aug. 2012.
+enhancing its broad applicability.                                                  [22] P. Chen, C. -K. Cheng, D. Park, and X. Wang, “Transient circuit simulation
+                                                                                         for differential algebraic systems using matrix exponential,” in Proc.
+                                                                                         IEEE/ACM Int. Conf. Comput.-Aided Des., 2018, pp. 1–6.
+                                   REFERENCES                                       [23] H. Zhuang et al., “Simulation algorithms with exponential integra-
+                                                                                         tion for time-domain analysis of large-scale power delivery networks,”
+ [1] J. Mahseredjian, V. Dinavahi, and J. A. Martinez, “Simulation tools for             IEEE Trans. Comput.-Aided Des. Integr. Circuits Syst., vol. 35, no. 10,
+     electromagnetic transients in power systems: Overview and challenges,”              pp. 1681–1694, Oct. 2016.
+     IEEE Trans. Power Del., vol. 24, no. 3, pp. 1657–1669, Jul. 2009.              [24] X. Wang, P. Chen, and C. -K. Cheng, “Stability and convergency ex-
+ [2] A. M. Gole, I. T. Fernando, G. D. Irwin, and O. Nayak, “Modeling of                 ploration of matrix exponential integration on power delivery network
+     power electronic apparatus: Additional interpolation issues,” in Proc. Int.         transient simulation,” IEEE Trans. Comput.-Aided Des. Integr. Circuits
+     Conf. Power Syst. Transients, 1997, pp. 455–459.                                    Syst., vol. 39, no. 10, pp. 2735–2748, Oct. 2020.
+ [3] G. Sybille, H. Le-Huy, R. Gagnon, and P. Brunelle, “Analysis and im-           [25] Q. Chen, “EI-NK: A robust exponential integrator method with singu-
+     plementation of an interpolation algorithm for fixed time-step digital              larity removal and Newton-Raphson iterations for transient nonlinear
+     simulation of PWM converters,” in Proc. IEEE Int. Symp. Ind. Electron.,             circuit simulation,” IEEE Trans. Comput.-Aided Des. Integr. Circuits Syst.,
+     2007, pp. 793–798.                                                                  vol. 41, no. 6, pp. 1693–1703, Jun. 2022.
+ [4] J. M. Zavahir, J. Arrillaga, and N. R. Watson, “Hybrid electromagnetic         [26] J. Zhao, J. Liu, P. Li, X. Fu, G. Song, and C. Wang, “GPU based parallel
+     transient simulation with the state variable representation of HVDC con-            matrix exponential algorithm for large scale power system electromagnetic
+     verter plant,” IEEE Trans. Power Del., vol. 8, no. 3, pp. 1591–1598,                transient simulation,” in Proc. IEEE Innov. Smart Grid Technol. - Asia,
+     Jul. 1993.                                                                          2016, pp. 110–114.
+ [5] J. J. Sanchez-Gasca, R. D’Aquila, W. W. Price, and J. J. Paserba, “Variable    [27] C. Wang, X. Fu, P. Li, J. Wu, and L. Wang, “Multiscale simulation of
+     time step, implicit integration for extended-term power system dynamic              power system transients based on the matrix exponential function,” IEEE
+     simulation,” in Proc. Power Ind. Comput. Appl. Conf., 1995, pp. 183–189.            Trans. Power Syst., vol. 32, no. 3, pp. 1913–1926, May 2017.
+ [6] W. Nzale, J. Mahseredjian, I. Kocar, X. Fu, and C. Dufour, “Two variable       [28] X. Fu, C. Wang, P. Li, and L. Wang, “Exponential integration algorithm
+     time-step algorithms for simulation of transients,” in Proc. IEEE Milan             for large-scale wind farm simulation with Krylov subspace acceleration,”
+     PowerTech, 2019, pp. 1–6.                                                           Appl. Energy, vol. 254, Nov. 2019, Art. no. 113692.
+ [7] N. Lin and V. Dinavahi, “Variable time-stepping modular multilevel con-        [29] C. Dufour, H. Saad, J. Mahseredjian, and J. Bélanger, “Custom-coded
+     verter model for fast and parallel transient simulation of multiterminal DC         models in the state space Nodal Solver of ARTEMiS,” in Proc. Int. Conf.
+     grid,” IEEE Trans. Ind. Electron., vol. 66, no. 9, pp. 6661–6670, Sep. 2019.        Power Syst. Transients, 2013, pp. 1–6.
+ [8] J. Y. Astic, A. Bihain, and M. Jerosolimski, “The mixed Adams - BDF            [30] L. -A. Gregoire, S. Cense, M. Ndungu, and J. Belanger, “Design and
+     variable step size algorithm to simulate transient and long term phenomena          implementation of real-time simulation solver for high frequency power,”
+     in power systems,” IEEE Trans. Power Syst., vol. 9, no. 2, pp. 929–935,             in Proc. IEEE Transp. Electrific. Conf. Expo., 2022, pp. 462–466.
+     May 1994.                                                                      [31] A. H. Al-Mohy and N. J. Higham, “Computing the action of the matrix
+ [9] Y. Zhu, Z. Zhao, B. Shi, and Z. Yu, “Discrete state event-driven framework          exponential, with an application to exponential integrators,” SIAM J. Sci.
+     with a flexible adaptive algorithm for simulation of power electronic               Comput., vol. 33, no. 2, pp. 488–511, 2011.
+     systems,” IEEE Trans. Power Electron., vol. 34, no. 12, pp. 11692–11705,       [32] W. Wu, P. Li, X. Fu, Z. Wang, J. Wu, and C. Wang, “GPU-based
+     Dec. 2019.                                                                          power converter transient simulation with matrix exponential integration
+[10] N. Gabriela, V. Petr, and Š. Václav, “Modern Taylor series method in                and memory management,” Int. J. Elect. Power Energy Syst., vol. 122,
+     numerical integration: PART 2,” in Proc. Czech-Polish Conf. Modern                  Nov. 2020, Art. no. 106186.
+     Math. Methods Eng., 2018, pp. 211–220.                                         [33] C. Moler and C. Van Loans, “Nineteen dubious ways to compute the
+[11] S. Bhattacharya, L. -A. Gregoire, J. Kallo, M. Stevic, M. Garg, and C.              exponential of a matrix,” SIAM Rev., vol. 20, no. 4, pp. 801–836, 1978.
+     Willich, “FPGA-based real-time simulation for LLC resonant converter           [34] N. J. Higham, “The scaling and squaring method for the matrix exponential
+     prototyping,” in Proc. IEEE 13th Int. Symp. Power Electron. Distrib. Gener.         revisited,” SIAM J. Matrix Anal. Appl., vol. 26, no. 4, pp. 1179–1193,
+     Syst., 2022, pp. 1–6.                                                               Jul. 2005.
+
+
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 01:31:50 UTC from IEEE Xplore. Restrictions apply.
+1128                                                                                      IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 40, NO. 2, APRIL 2025
+
+
+
+[35] A. H. Al-Mohy and N. J. Higham, “A new scaling and squaring algorithm                                    Nicole Lofroth (Member, IEEE) received the B.Sc.
+     for the matrix exponential,” SIAM J. Matrix Anal. Appl., vol. 31, no. 3,                                 (Hons.) degree in physics from the University of
+     pp. 970–989, Aug. 2009.                                                                                  Northern British Columbia, Prince George, BC,
+[36] B. Skaflestad and W. M. Wright, “The scaling and modified squaring                                       Canada, in 2022, and the M.A.Sc. degree in electrical
+     method for matrix functions related to the exponential,” Appl. Numer.                                    engineering from the University of British Columbia,
+     Math., vol. 59, no. 3/4, pp. 783–799, Mar. 2009.                                                         Kelowna, BC, in 2024. She is currently working
+[37] S. M. Cox and P. C. Matthews, “Exponential time differencing for stiff                                   toward the Ph.D. degree in biomedical engineer-
+     systems,” J. Comput. Phys., vol. 176, no. 2, pp. 430–455, Mar. 2002.                                     ing with the University of Calgary, Calgary, AB,
+[38] J. C. Jimenez, H. de la Cruz, and P. A. De Maio, “Efficient computation of                               Canada. Her research interests include power system
+     phi-functions in exponential integrators,” J. Comput. Appl. Math., vol. 374,                             modeling and offline simulation, and magnetic reso-
+     Aug. 2020, Art. no. 112758.                                                                              nance imaging pulse sequence development for stroke
+[39] R. B. Sidje, “Expokit: A software package for computing matrix exponen-                                  imaging.
+     tials,” ACM Trans. Math. Softw., vol. 24, no. 1, pp. 130–156, Mar. 1998.
+[40] U. M. Ascher and C. Greif, A First Course in Numerical Methods.
+     Philadelphia, PA, USA: SIAM, 2011.
+[41] The MathWorks Inc., “Simulink user’s guide,” R2023a, 2023. [On-
+     line]. Available: https://www.mathworks.com/help/pdf_doc/simulink/
+     simulink_ug.pdf
+
+                                                                                                               Liwei Wang (Senior Member, IEEE) received the
+                                                                                                               Ph.D. degree in electrical and computer engineering
+                                                                                                               from the University of British Columbia, Vancouver,
+                                                                                                               BC, Canada, in 2010. In 2010, he joined the ABB
+                                                                                                               Corporate Research Center, Västerås, Sweden, as a
+                          Jared Paull (Graduate Student Member, IEEE) re-                                      Scientist and then as a Senior Scientist. Since 2014,
+                          ceived the B.A.Sc. degree in electrical engineering
+                                                                                                               he has been with the School of Engineering, the
+                          from the University of British Columbia, Kelowna,
+                                                                                                               University of British Columbia, Kelowna, BC, where
+                          BC, Canada, in 2022. He is currently working to-
+                                                                                                               he is currently an Associate Professor. His research
+                          ward the Ph.D. degree with the University of British                                 interests include power system modeling and simu-
+                          Columbia, Kelowna, BC. His research interests in-
+                                                                                                               lation, electrical machines and drives, utility power
+                          clude simulation of power electronic systems for
+                                                                                    electronics applications and distributed generation.
+                          offline and real-time applications, power converter
+                          modelling, and efficient power electronic converter
+                          topologies.
+
+
+
+
+                                                                                                              Wei Li (Member, IEEE) received the B.Eng. de-
+                                                                                                              gree from Zhejiang University, Hangzhou, China, the
+                          Carl Knickle (Member, IEEE) received the B.A.Sc.                                    M.Eng. degree from the National University of Singa-
+                          degree in electrical engineering from the University                                pore, Singapore, and the Ph.D. degree from McGill
+                          of British Columbia, Kelowna, BC, Canada, in 2024.                                  University, Montreal, QC, Canada. He is currently
+                          He is currently a Protection and Controls Engineer-in-                              a Senior Power System Simulation Specialist with
+                          Training, Calgary, AB, Canada. His research interests                               Opal-RT Technologies, Montréal, QC. His research
+                          include power electronics and high voltage power                                    interests include power electronics, renewable energy,
+                          system design.                                                                      and distributed generation. His current research fo-
+                                                                                                              cuses mainly on real-time simulation and controls
+                                                                                                              of modular multilevel converter HVDC systems and
+                                                                                                              FACTS devices.
+
+
+
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 01:31:50 UTC from IEEE Xplore. Restrictions apply.
+

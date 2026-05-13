@@ -1,0 +1,1096 @@
+1162                                                                                  IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 39, NO. 1, JANUARY 2024
+
+
+
+
+                 An Efficient Half-Bridge MMC Model for
+                    EMTP-Type Simulation Based on
+                      Hybrid Numerical Integration
+             Shilin Gao , Member, IEEE, Ying Chen , Senior Member, IEEE, Yankan Song, Member, IEEE,
+                                    Zhitong Yu, Member, IEEE, and Yenan Wang
+
+
+   Abstract—Electromagnetic transient (EMT) simulation is criti-                   the most promising because of its high voltage ratings, small
+cal and fundamental in the design and operation of the modular                     harmonic components and low losses [3]. In recent years, MMCs
+multilevel converter (MMC). This article proposes a highly effi-                   are widely used in wind energy and photovoltaic plant integra-
+cient EMT simulation model for MMC based on hybrid numerical
+integration. The topology and operational principle of MMC are                     tion systems, high voltage direct current (HVDC) transmission
+elaborated first. Based on this, an efficient simulation model for                 systems, flexible ac transmission systems and medium voltage
+MMC is proposed. Each arm of the MMC is reduced to a two-node                      distribution grids [4], [5], [6], [7].
+Norton equivalent circuit in the main network simulation. The                         For the design and operation of MMC systems, the electro-
+computation of the capacitor dynamic equations is decoupled from                   magnetic transient (EMT) simulation is indispensable [8], [9].
+that of the arm inductor dynamic equation. They are computed
+in a leapfrog manner. This makes the equivalent conductance                        In [10], a real-time EMT simulator for hardware-in-the-loop
+of the MMC arm constant and greatly improves the simulation                        (HIL) testing of modular multilevel converter controller is pre-
+efficiency. Moreover, the dynamic equations of the capacitors are                  sented based on RTLAB, a state-space method-based simulator.
+also decoupled from each other. Various operational conditions of                  A 1500-SM MMC system, along with the I/O protocol driver, is
+the MMC are also considered, and accuracy and adaptability are                     simulated using the simulator with a time step of 500 ns. In [11],
+thus ensured. Extensive studies on power systems with different
+scales verify the accuracy and improved efficiency of the proposed                 a real-time simulation of MMC systems is presented under the
+EMT simulation model for MMC.                                                      framework of the nodal analysis method (i.e., EMTP-type sim-
+                                                                                   ulation). By constructing a fictitious Bergeron transmission line
+   Index Terms—Constant conductance, electromagnetic transient
+simulation, hybrid numerical integration, midpoint rule, modular
+                                                                                   model on the MMC arm, the MMC arm and the main network
+multilevel converter.                                                              are decoupled and the computational burden is reduced. In EMT
+                                                                                   simulation with a time step smaller than 1.5 μs, the fictitious
+                                                                                   Bergeron transmission line model does not affect the accuracy.
+                            I. INTRODUCTION                                        When the time-step increases, the accuracy may not be ensured.
+         ITH the improved current and voltage ratings of the                       Both of the above two simulation methods are applicable for
+W        insulated gate bipolar transistor (IGBT), the voltage
+source converter (VSC) expands rapidly in the fields of power
+                                                                                   real-time simulation and HIL tests of MMC with a very small
+                                                                                   time-step, and give results close to reality. So far, the computa-
+generation, transmission and distribution [1], [2]. This is mainly                 tional time of offline EMT simulation for the power system with
+due to their flexibility and immunity against commutation failure                  MMCs may be unacceptable [12]. There are two main reasons
+in comparison with the line-commutated converters. Within                          for the low efficiency. First, an MMC system will add thousands
+the VSCs, the modular multilevel converter (MMC) is one of                         of electric nodes to the power system in EMT simulation. Thus,
+                                                                                   the nodal equations of the system are high-dimensional. Second,
+                                                                                   due to the switching of converters, the system equivalent con-
+   Manuscript received 6 July 2022; revised 26 November 2022 and 15 March
+2023; accepted 22 March 2023. Date of publication 28 March 2023; date of
+                                                                                   ductance matrix is time-varying and changed frequently during
+current version 26 December 2023. This work was supported by the Natural           the simulation. This leads to frequent LU decomposition for
+Science Foundation of China under Grants U22B2096, 52211530051, and                the equivalent conductance matrix. For the first problem, the
+52007101. Paper no. TPWRS-01001-2022. (Corresponding author: Ying Chen.)
+   Shilin Gao is with the College of Electrical Engineering, Sichuan University,
+                                                                                   averaged-value model (AVM) of MMC [13], [14], [15] is an
+Chengdu 610065, China (e-mail: gaoshilin@scu.edu.cn).                              effective solution, where each arm of an MMC is simplified as a
+   Ying Chen and Yenan Wang are with the Department of Electri-                    controlled current source. Nevertheless, the AVM is dependent
+cal Engineering, Tsinghua University, Beijing 100084, China (e-mail:
+chen_ying@tsinghua.edu.cn; wangyena18@tsinghua.org.cn).
+                                                                                   on the operational conditions and is unable to simulate the
+   Yankan Song and Zhitong Yu are with the Sichuan Energy Research                 inner dynamics of MMC accurately. In addition to AVMs, the
+Internet Institute, Tsinghua University, Chengdu 610213, China (e-mail:            Thévenin equivalence-based (TE-based) models of MMC are
+songyankan@cloudpss.net; yuzhitong@cloudpss.net).
+   Color versions of one or more figures in this article are available at
+                                                                                   presented in [16], [17], [18], which consider the dynamics of
+https://doi.org/10.1109/TPWRS.2023.3262584.                                        the submodule (SM) of the MMC. Each MMC is equivalent
+   Digital Object Identifier 10.1109/TPWRS.2023.3262584                            to six Thévenin circuits in the main network solution. When
+
+
+                         0885-8950 © 2023 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                                       See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 06:30:29 UTC from IEEE Xplore. Restrictions apply.
+GAO et al.: EFFICIENT HALF-BRIDGE MMC MODEL FOR EMTP-TYPE SIMULATION BASED ON HYBRID NUMERICAL INTEGRATION                                             1163
+
+
+
+the voltages and currents of the Thévenin ports are obtained in                 solution with the proposed LIM-based MMC model is presented,
+the main network solution, the inner dynamic equations of the                   where the CDA process is involved. It presents a demonstration
+MMCs are calculated for updating parameters of the Thévenin                     of the integration of LIM-based models into the EMTP-type
+equivalent circuits in the next time step. This method improves                 solution framework and can be adopted in the modeling of other
+simulation efficiency under the premise of accuracy. For the                    power system components.
+second cause of low efficiency mentioned above, it is rarely                       The remainder of this article is organized as follows.
+raised and solved in the TE-based model of MMC because the                      Section II presents an efficient MMC model for the EMTP-type
+equivalent conductance of MMC is inherently changing due to                     solution based on the hybrid numerical integration, obtaining a
+the switching of converters.                                                    two-node Norton equivalent circuit for each arm with constant
+   To address the above problem, this article proposes an efficient             conductance. Section III gives the flowchart of the EMT simu-
+EMT simulation model for MMC based on hybrid numerical                          lation for a power system with the proposed MMC, where the
+integration of midpoint rule and trapezoidal rule. The midpoint                 CDA is elaborated carefully. Section IV validates the accuracy
+rule has traditionally been used in the simulation of large pas-                and efficiency of the proposed method. Conclusions are drawn
+sive transmission networks in semiconductor devices for more                    in Section V.
+than ten years, which is called the latency insertion method
+(LIM) [19], [20]. Following the idea of LIM in integrated                         II. EFFICIENT EMT MODELING AND SIMULATION OF MMC
+circuit simulation, the real-time simulation of power convert-                            USING HYBRID NUMERICAL INTEGRATION
+ers based on LIM is proposed [21]. It is highly parallelizable
+and can be implemented on the field-programmable gate array                     A. Limitations of EMT Simulation for Power Systems
+(FPGA) with simulation step sizes of dozens of nanoseconds.                     With MMCs
+Further, the LIM-based power system EMT simulation is pro-                         In modern power systems, MMCs are widely used in the
+posed [22], [23], [24], which is highly efficient. In these methods,            power generation, transmission and distribution system. To sim-
+power system components are modeled and solved in the LIM                       ulate the power system with a number of MMCs, the EMT
+framework. The distributed LIM is rather different from the                     model of the MMC should be constructed and integrated into
+EMTP-type solution and it has limitations in modeling some                      the existing EMTP-type simulation tools. When MMCs are
+power system components. In contrast to LIM, the EMTP-type                      integrated into the power systems, electric nodes in the net-
+simulation programs are extensively used by power engineers                     work will increase dramatically because there are thousands of
+and researchers in industry and academia all over the world as                  switches in each MMC. Moreover, since massive switches exist
+standard simulation tools. Thus, it is of great significance to                 in the MMCs, the equivalent nodal conductance matrix is time-
+integrate the LIM-based models into the existing EMTP-type                      varying, resulting in frequent LU decomposition for the system
+solution. In [25], a real-time hybrid simulation is proposed                    equivalent conductance matrix. Since the LU decomposition
+for the microgrid based on the LIM and EMTP-type method,                        of the large-scale matrix is time-consuming, the computational
+where the ac lines are modeled and simulated by LIM. It has                     time of power system EMT simulation will increase sharply with
+good accuracy and scalability. The disadvantage is that the                     MMCs integrated [26], [27]. Aiming at improving the simulation
+critical damping adjustment (CDA) of the system solution is                     efficiency of EMT simulation of power systems with MMCs, this
+not considered, which makes it difficult to deal with switches                  article proposes an efficient EMT simulation model of MMC
+and faults in the EMTP network. This article aims to formulate                  with constant equivalent conductance for EMTP-type solution.
+an MMC model for the EMTP-type solution based on the
+hybrid numerical integration method. In the proposed model,
+the dynamic equations of the arm inductor and SM capacitors                     B. System Structure and Operation Principles of an MMC
+are decoupled. In the EMTP-type solution of the main network,                      The topology of a three-phase MMC is shown in Fig. 1(a).
+each arm is reduced to a two-node Norton equivalent circuit and                 Each arm is composed of N half-bridge SMs (HBSM) in series.
+the equivalent conductance of the arm is constant. In the solution              The structure of an HBSM is shown in Fig. 1(b), which consists
+to the SM capacitor equations, the dynamic equations of the SM                  of two groups of IGBT/diode switches and a capacitor. In
+capacitors are decoupled from each other. Moreover, note that                   Fig. 1, L0 represents the arm inductance, Csm represents the
+the CDA process is considered in the modeling of the MMC.                       SM capacitance, Idc represents dc-side current of the MMC,
+   Contributions and features of the proposed method are three-                 i1 and i2 represent the currents of the upper and lower legs of
+fold. 1) A dynamic model of the MMC is constructed, where the                   the HBSM, respectively, T1 and D1 represent the IGBT and
+normal and abnormal operating conditions of the HBSMs in the                    diode in the first IGBT/diode group (upper leg in Fig. 1(b)),
+MMC are all considered. The proposed model is accurate in var-                  respectively, T2 and D2 represent the IGBT and diode in the
+ious operational conditions. 2) A hybrid numerical integration of               second IGBT/diode group (lower leg in Fig. 1(b)).
+midpoint rule and trapezoidal rule is used to discretize the MMC                   For the HBSMs, it can be found that there are four states in the
+model and the difference equation is represented as the Norton                  normal operation, according to the analyses of switching states
+equivalence form. This not only reduces the dimension of the                    of the two IGBT/diode groups in the HBSM. The four states and
+nodal equation but also makes the equivalent conductance matrix                 the corresponding details of the IGBTs, diodes and arm voltages
+of the system constant, which will improve the EMT simulation                   and currents are presented in Table I, where ism and vsm are the
+efficiency of a power system with MMCs. 3) The EMTP-type                        output current and voltage of the HBSM, respectively, and vci is
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 06:30:29 UTC from IEEE Xplore. Restrictions apply.
+1164                                                                                IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 39, NO. 1, JANUARY 2024
+
+
+
+
+                                                                                Fig. 2. (a) Equivalent circuit of an SM in the EMT simulation. (b) Equivalent
+                                                                                circuit of the SM with R1 = RT1 ||RD1 and R2 = RT2 ||RD2 .
+
+
+
+Fig. 1. (a) Structure of an MMC, where SMi represents an HBSM.
+(b) Topology of an HBSM.
+
+
+                           TABLE I
+ OPERATIONAL MODES OF THE HBSMS AND THE CORRESPONDING SWITCH
+                            STATES
+
+
+
+
+                                                                                Fig. 3. Further equivalent circuit of the HBSM in the EMT simulation under
+                                                                                normal operational conditions. (a) The upper leg of the HBSM conducts.
+                                                                                (b) The lower leg of the HBSM conducts.
+
+
+
+                                                                                   1) Normal Condition: In normal operational conditions,
+                                                                                there is only one leg conducting in the HBSM. Based on this
+                                                                                and the equivalent circuit of HBSM in Fig. 2(b), the HBSM
+the capacitor voltage [28]. According to Table I, it can be found               can be further equivalent to the circuit shown in Fig. 3 if the
+that during normal operation, only one of the four switches in the              OFF-resistance of the switch (Roﬀ ) is considered to be ∞.
+HBSM is ON, which means that there is only one leg conducting                   When T1 or D1 turns on, the HBSM is equivalent to the circuit
+in the SM. Moreover, vsm is equal to vci or zero, which can be                  shown in Fig. 3(a). When T2 or D2 turns on, the HBSM is
+determined according to the switching state of the HBSM [29].                   equivalent to the circuit illustrated in Fig. 3(b), where the SM
+   In some abnormal operating conditions, the two legs of the                   capacitor is bypassed and its voltage remains unchanged in this
+HBSM may turn on or off at the same time. For example, if                       circumstance.
+vsm > 0 and vc > vsm and the IGBTs are blocked, both legs                          According to the equivalent circuit of HBSMs shown in Fig. 3,
+will turn off. If ism < 0, vc < vsm , vsm < 0 and vc < 0, D1 and                the dynamic equation of an MMC arm can be written as:
+D2 conduct at the same time. When both legs of the HBSM turn
+on or off at the same time, the dynamic equations of the arm                                   diarm (t)
+                                                                                          L0             = varm (t) − Req1 iarm (t) − K 1 v c (t)          (1)
+inductor and SM capacitors are different from those in normal                                     dt
+conditions. Note that the ON/OFF states of the IGBTs and diodes                 with
+in HBSMs can be determined by using the gate signals, currents                                       N
+and voltages of the switches in the EMT simulation [30], [31].                                       
+                                                                                           Req1 =          Ronj                                            (2)
+                                                                                                     j=1
+C. Modeling of MMC Arm With Trapezoidal and                                                                                                          T
+Midpoint Rules                                                                            v c (t) = vc1 (t) · · ·        vci (t)   ···    vcN (t)          (3)
+   In the EMT simulation, the switch can be represented by a                                        
+                                                                                            K 1 = k1i 1×N                                                  (4)
+two-value resistance. When the switch is ON, it is equivalent to
+a small resistance, and when the switch is OFF, it is equivalent                where v c (t) is the SM capacitor voltage vector, N is the number
+to a large resistance. Therefore, the HBSM shown in Fig. 1(b)                   of HBSMs in an MMC arm and K 1 is a coefficient vector that
+can be equivalent to the circuit shown in Fig. 2(a) in the EMT                  represents the SM with the upper leg conducting. k1i equals 0
+simulation, where RT1 , RD1 , RT2 and RD2 are the resistance                    or 1 according to the SM state. For the ith HBSM, if only the
+of the switches, respectively. Furthermore, let R1 = RT1 ||RD1                  upper leg is ON, k1i = 1. Otherwise, k1i = 0. k1i is calculated
+and R2 = RT2 ||RD2 where || represents the parallel operator,                   according to the switch states of the MMC and it is obtained
+the HBSM can be equivalent to the circuit illustrated in Fig. 2(b).             before the solution of the electric network in the simulation. iarm
+
+         Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 06:30:29 UTC from IEEE Xplore. Restrictions apply.
+GAO et al.: EFFICIENT HALF-BRIDGE MMC MODEL FOR EMTP-TYPE SIMULATION BASED ON HYBRID NUMERICAL INTEGRATION                                               1165
+
+
+
+
+                                                                                  Fig. 5.    Equivalent circuits of an HBSM when zero legs conduct.
+
+
+
+                                                                                  equation of arm inductor can be readily obtained and represented
+                                                                                  as:
+Fig. 4.   Equivalent circuits of an HBSM when the two legs conduct at the same
+time.                                                                                diarm (t)
+                                                                                   L0          = varm (t) − Req2 iarm (t) − K 1 v c (t) − K 2 v ceq (t)
+                                                                                         dt
+                                                                                                                                                     (7)
+is the arm current, varm is the branch voltage of the arm and vci                 with
+is the capacitor voltage in ith HBSM. Ronj is the ON-resistance                                 
+of the ON-state switch in the jth HBSM. If the IGBT conducts,                           K 2 = k2i 1×N                                                (8)
+Ronj = RonT . If the diode turns ON, Ronj = RonD . Here, RonT                                                                              T
+represents the ON-resistance of the IGBT and RonD represents                        v ceq (t) = vceq1 (t) · · · vceqi (t) · · · vceqN (t)            (9)
+the ON-resistance of the diode. In the power system transient
+analysis, RonT and RonD can be assumed to be equal [32], [33],                          Req2 = Req1 − n2 Reqon                                           (10)
+and both of them can be assumed to be Ron . Then, Req1 will keep
+                                                                                  where k2i equals 0 or 1 according to the SM state. For the ith
+constant in the EMT simulation. The EMT simulation results
+                                                                                  HBSM, if both legs of the HBSM are ON, k2i = 1. Otherwise,
+obtained with equal switch ON-resistances and unequal switch
+                                                                                  k2i = 0. vceqi (t) = vci (t)/2 is the equivalent source voltage of
+ON-resistance are nearly the same because the ON-resistances
+                                                                                  the ith SM and n2 is the number of HBSMs with two conducting
+of the power switches are all very small.
+                                                                                  legs. Req1 , K 1 and v c (t) can be found in (2)–(3). It is worth
+   The modeling of the MMC arm above is based on the premise
+                                                                                  noting that (1) is included in (7). When n2 is zero, (7) is equal
+that there is exactly one leg of the HBSM conducting during the
+                                                                                  to (1).
+operation of MMC. When there are HBSMs with zero ON legs
+                                                                                     3) Two Legs of HBSM Turning Off at the Same Time: If the
+or two ON legs, the proposed model needs to be modified. The
+                                                                                  two legs of an HBSM turn off simultaneously, the HBSM can
+details are elaborated as follows.
+                                                                                  be equivalent to the circuit shown in Fig. 5(a). It can be readily
+   2) Two Legs of HBSM Conducting at the Same Time: Assum-
+                                                                                  found that this HBSM can be equivalent to an open circuit. It is
+ing that there is only an HBSM in an arm of the MMC, each arm
+                                                                                  regarded as a huge impedance in the simulation, which can be
+can be equivalent to a circuit illustrated in Fig. 4(a). According to
+                                                                                  modeled as the Norton circuit in Fig. 5(b). It is worth noting that
+Kirchhoff’s law, the SM capacitor can be equivalent to a voltage
+                                                                                  there are some differences between Figs. 5(b) and 3(b) although
+source with the same voltage when calculating the currents of
+                                                                                  both cases can be regarded as open circuits. For the equivalent
+the inductance and resistance. Thus, Fig. 4(a) can be equivalent
+                                                                                  circuit in Fig. 3(b) where the lower leg of the HBSM turns on
+to Fig. 4(b) [34], where vc1 is the capacitor voltage. Note
+                                                                                  and the upper leg turns off, the resistance of the lower leg is
+that the voltage of the controlled voltage source is variable,
+                                                                                  much smaller than that of the upper leg. When the resistance
+which contains the capacitor dynamics. It varies with capacitor
+                                                                                  of the one leg is millions of times more than that of the other
+voltage. Further, it can be equivalent to the circuit in Fig. 4(c)
+                                                                                  leg, the leg with much larger resistance can be neglected. For
+by Norton equivalence [35]. The parallel resistances in Fig. 4(c)
+                                                                                  the equivalent circuit in Fig. 5(a) where both legs of the HBSM
+are equivalent to one resistance, obtaining the equivalent circuit
+                                                                                  turn off, the resistances of the upper leg and the lower leg are
+in Fig. 4(d). According to the equivalent circuit, the dynamic
+                                                                                  the same. In such a situation, no leg can be ignored. The SM
+equation of the arm inductor can be written as:
+                                                                                capacitor voltage will influence the dynamic of the system.
+                      diarm (t) Ron                  vc1 (t)                         According to Fig. 5(b), the dynamic equation of the arm
+       varm (t) = L0            +         iarm (t) +           . (5)
+                         dt         2                 Ron                         inductor L0 can be written as:
+                                                                                                                                           
+   Let Reqon = Ron /2 and vceq1 = vc1 (t)/2, (5) can be rewritten                                     diarm (t) Roff                vc1 (t)
+as:                                                                                    varm (t) = L0           +         iarm (t) +           . (11)
+                                                                                                         dt         2                Roff
+            diarm (t)
+         L0           = varm (t) − Reqon iarm (t) − vceq1 (t). (6)                   Let Reqoff = Roff /2, (11) can be rewritten as:
+               dt
+   It can be found that (6) has the same form as (1). According                                  diarm (t)
+to (1), (6) and the superposition theorem [36], the dynamic                                 L0             = varm (t) − Reqoff iarm (t) − vceq1 (t).     (12)
+                                                                                                    dt
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 06:30:29 UTC from IEEE Xplore. Restrictions apply.
+1166                                                                                 IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 39, NO. 1, JANUARY 2024
+
+
+
+   For the purpose of unifying the form, when there is an HBSM                   with
+with two legs OFF simultaneously in the MMC arm at time                                                                     N
+                                                                                                               Δt              Δt
+instant t, the arm dynamic equation can be simplified as                                        RNorton =          + Req +            k1i
+                                                                                                               2L0         i=1
+                                                                                                                               2C smi
+   diarm (t)
+L0           = varm (t) − Req3 iarm (t) − K 1 v c (t) − K 2 v ceq (t)                                              N
+      dt                                                                                                                   Ron Δt
+                                                                (13)                                           +                       k2i .           (21)
+where                                                                                                              i=1
+                                                                                                                       8Ron Csmi + 2Δt
+                                            n2          n0
+  Req3 = Req1 − (N − n2 − n0 )Ron +              Ron +      Roﬀ                     It can be found from (19) that the equivalent conductance Gtr
+                                             2           2
+                                                                (14)             is related to k1i , k2i and Req . In the normal operation of MMC,
+             i                                                                 Req = Req1 , k2i = 0, but k1i changes frequently. It means that
+   K 2 = k2 1×N                                                 (15)             the equivalent conductance is variable in the normal operation,
+                                                                                 which will lead to frequent LU decomposition of the network
+where n0 is the number of HBSMs with zero legs conducting.
+                                                                                 equivalent conductance matrix. Note that although Ron in (20)
+k2i = 1 if both legs of the HBSM are ON or both legs of the
+                                                                                 and (21) should be replaced by Roﬀ if the ith HBSM has zero
+HBSM are OFF. Otherwise, k2i = 0.
+                                                                                 ON legs, the conclusion of the variable equivalent conductance
+                                                                                 Gtr will not change. The derivation of (18)–(21) is presented in
+D. Discretization of the Dynamic Model and
+                                                                                 Appendix A.
+EMTP-Type Solution
+                                                                                    To cope with the problem of variable equivalent con-
+  According to Section II-C, it can be found that the dynamic                    ductance, the midpoint rule is introduced to the discretiza-
+equation of an MMC arm can be represented as a unified form:                     tion of the MMC arm dynamic equation. With the mid-
+      diarm (t)                                                                  point rule, the part Δt(K 1 v c (t) + K 1 v c (t − Δt))/(2L0 ) in
+ L0             = varm (t) − Req iarm (t) − K 1 v c (t) − K 2 v ceq (t)          (17) can be replaced by (K 1 v c (t − Δt   2 ))Δt/L0 and the part
+         dt
+                                                                   (16)          Δt(K 2 v ceq (t) + K 2 v ceq (t − Δt))/(2L0 ) can be replaced by
+where Req equals Req1 , Req2 or Req3 according to the switch                     (K 2 v ceq (t − Δt
+                                                                                                 2 ))Δt/L0 . Then, (17) can be rewritten as:
+states of the HBSMs.
+                                                                                                                   Δt
+   To obtain the numerical solution of the dynamic equations                      iarm (t) = iarm (t − Δt) +           (varm (t) − Req iarm (t)
+of MMC arms, the differential equations need to be discretized                                                     2L0
+first. The trapezoidal rule is widely used in modern EMTP-type                                 + varm (t − Δt) − Req iarm (t − Δt))
+simulators for discretization. By using the trapezoidal rule, (16)                                                                        
+                                                                                                 Δt                Δt                      Δt
+can be discretized as:                                                                         −        K 1 vc t −         + K 2 v ceq t −        .
+                             Δt                                                                  L0                 2                      2
+iarm (t) = iarm (t − Δt)+         (varm (t) − Req iarm (t)                                                                                     (22)
+                            2L0
+                                                          Δt                       For EMTP-type solution, (22) can be represented as the
+           + varm (t − Δt)−Req iarm (t −Δt))−                 (K 1 v c (t)       Norton equivalent circuit form:
+                                                          2L0
+           + K 1 v c (t − Δt) + K 2 v ceq (t) + K 2 v ceq (t − Δt))                                    iarm (t) = Gvarm (t) + ihist (t)                (23)
+                                                                (17)
+                                                                                 where G is the equivalent conductance, and ihist (t) is the history
+where Δt is the integration time step. For EMTP-type solution,                   current source. They can be respectively represented as:
+(17) should be represented as the Norton equivalent circuit form.
+(17) is represented as (18) when all the HBSMs have ON legs:                                              Δt
+                                                                                              G=                   ,                                   (24)
+                   iarm (t) = Gtr varm (t) + itr                                                      2L0 + Req Δt
+                                              hist (t)                  (18)
+                                                                                                          Δt
+where                                                                                   ihist (t) =                varm (t − Δt)
+                                                                                                      2L0 + Req Δt
+             1
+   Gtr =           ,                                                    (19)                            2L0 − Req Δt
+           RNorton                                                                                    +              iarm (t − Δt)
+                                                                                                        2L0 + Req Δt
+itrhist (t) = Gtr varm (t − Δt)                                                                                                      
+                                                                                                            2Δt                   Δt
+                            N              Req Δt                                                     −              K 1 vc t −
+                            i=1 k1i 2Csmi − 2L0
+                   Δt                Δt
+                1− 2L                                                                                   2L0 + Req Δt               2
+            −         0
+                                                  Gtr iarm (t − Δt)
+                                Δt                                                                                                    
+                                2L0                                                                         2Δt                     Δt
+                                                                                                   −              K 2 v ceq t −       .             (25)
+                   N
+                                                                                                       2L0 + Req Δt                 2
+                               2Ron Csmi       1
+            + Gtr     k2i                    −                 vci (t − Δt)
+                  i=1
+                           4R  on C smi + Δt   2                                    In normal operation, G keeps constant because Req = Req1 .
+                                                                                It only changes when the number of conducting legs of the
+                   Ron Δt                                                        HBSM varies. Note that G keeps constant on the premise that
+            −                i1i (t − Δt)                               (20)
+              4Ron Csmi + Δt                                                     the ON-resistances of IGBT and diode are the same according
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 06:30:29 UTC from IEEE Xplore. Restrictions apply.
+GAO et al.: EFFICIENT HALF-BRIDGE MMC MODEL FOR EMTP-TYPE SIMULATION BASED ON HYBRID NUMERICAL INTEGRATION                                             1167
+
+
+
+to Section II-C. If unequal resistances of the IGBTs and diodes
+are considered, Req will not keep constant any more.
+
+E. SM Capacitor Dynamics Modeling
+  1) Capacitor Dynamic Modeling of the HBSM With One Leg
+on: According to the equivalent circuit of HBSM in Fig. 3, the
+dynamic equations of the capacitors in the HBSMs with the
+upper leg ON can be represented as:
+                         dvci (t)
+                       Csmi       = iarm (t)             (26)
+                           dt
+where Csmi is the capacitance of the ith SM with the upper leg
+on.
+  Using the midpoint rule, (26) can be discretized as:
+                                  
+               Δt                 Δt       Δt
+    vci t +         = vci t −          +       iarm (t). (27)
+               2                  2       Csmi
+   For the HBSM with the lower leg ON, the SM capacitor
+is bypassed and its voltage keeps unchanged: vci (t + Δt2 )=
+vci (t − Δt2 ).
+   2) Capacitor Dynamic Modeling of the HBSM With Two on
+Legs: According to the equivalent circuit of HBSM in Fig. 4,
+to obtain the capacitor voltages of the HBSMs with two legs
+conducting, the current of the upper leg in the HBSM (denoted
+as i1i ) should be calculated first by:
+                   vci (t) = Ron (i1i (t) + i2i (t))                            Fig. 6. Flowchart of EMT simulation with the proposed hybrid numerical
+                                                                       (28)
+                   iarm (t) = i2i (t) − i1i (t)                                 integration-based MMC model.
+
+where i2i (t) is the current of the lower leg in the ith HBSM. In
+(28), vci (t) is hard to be calculated, which makes it difficult to
+obtain i1i (t). Fortunately, vci will not change suddenly in the                as time progresses [37] because there is a latency of Δt/2. After
+simulation. In contrast, it remains roughly unchanged during a                  the capacitor voltage of the HBSM at t − Δt  2 (i.e., vci (t − 2 ))
+                                                                                                                                               Δt
+
+time step of Δt. Thus, vci (t) can be replaced by vci (t − Δt                   is calculated, the arm inductor current at t (i.e., iarm (t)) can
+                                                                2 )
+with a latency of Δt/2. Then, i1i (t) is obtained by solving (28):              be calculated, then the capacitor voltage at t + Δt2 (i.e., vci (t +
+                                                                                Δt
+                                                                                2 )) is calculated. This process will repeat until the simulation
+                        1 vci t − Δt                                            end time is reached. During the simulation, the computations
+              i1i (t) =               2
+                                          − iarm (t) .        (29)
+                        2        Ron                                            of HBSM capacitor dynamic equations and the arm inductor
+                                                                                dynamic equation are decoupled completely due to the latency
+   Next, the capacitor voltage of the ith HBSM with two ON                      of Δt/2 between the two parts. Specifically, the dynamic model
+legs is obtained.                                                               of the arm inductor is calculated within the EMTP-type solution
+                                  
+                Δt               Δt        Δt                                   of the main electric network. Moreover, it can be found that the
+       vci t +        = vci t −        −       i1i (t). (30)                    computations of HBSM capacitance dynamics are decoupled
+                  2               2       Csmi
+                                                                                from each other and can be readily and efficiently implemented.
+  3) Capacitor Dynamic Modeling of the HBSM With Zero ON
+Legs: The capacitor voltage of the HBSM with zero ON legs
+will remain constant.                                                           B. Flowchart of EMT Simulation With the Proposed
+                                                                            MMC Model
+                       Δt              Δt
+              vci t +        = vci t −      .        (31)                          The flowchart of the EMT simulation with the proposed
+                        2              2
+                                                                                MMC model is shown in Fig. 6, where only some critical
+ III. PROCEDURE OF EMT SIMULATION FOR POWER SYSTEM                              steps are presented. As Fig. 6 shows, at the beginning of the
+       WITH THE PRESENTED EFFICIENT MMC MODEL                                   computation for each time step, the control system is solved.
+                                                                                Based on this, the switch states are judged and the SM states
+A. Efficient Leapfrog Solution to the Discretized Models of
+                                                                                are further determined. Then, the equivalent conductance of the
+Arm Inductor and SM Capacitor                                                   MMC is calculated according to the switch states. Next, the
+  For the solution of the discretized model of arm inductor (i.e.,              simulation engine checks whether the equivalent conductance
+(23)) and the discretized model of SM capacitor (i.e., (27), (30)               of a component changes. If the equivalent conductance of a
+and (31)), they can be computed alternately in a leapfrog manner                component changes at time t, the CDA process is executed. The
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 06:30:29 UTC from IEEE Xplore. Restrictions apply.
+1168                                                                                  IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 39, NO. 1, JANUARY 2024
+
+
+
+details of the CDA process are elaborated in Section III-C. If
+the conductance matrix does not change, the history currents of
+HBSMs and the network components are computed. After that,
+the network nodal equations are solved and the branch currents
+are calculated (including iarm ). Last, the SM capacitor voltages
+are computed according to iarm . After the computation of each
+time step, the program checks whether the simulation duration
+is reached. If it is not touched, the simulation time instant is
+updated (i.e., t ← t + Δt) and the computation of the next time
+step is implemented.
+
+C. CDA for the Proposed MMC Model
+   In the EMT simulation, the CDA [38] is implemented to                          Fig. 7.   Flowchart of the CDA process.
+suppress numerical oscillation when there is a network switch. In
+the CDA process of the main network, the proposed MMC model
+above needs to be modified. The CDA process includes the
+numerical integration of two half-time-step with the backward                     the two half-time-step computations of the main network, the
+Euler method. Assume that a network switch occurred in the                        system switches to the normal simulation process, as shown in
+power system at the time t, (16) can be discretized with a time                   Fig. 6.
+step of Δt/2 and iarm (t − Δt2 ) are calculated as:
+                                                         
+              Δt                      Δt                   Δt                     D. Features of the Proposed Model
+    iarm t −        = Gvarm t −             + ihist t −
+              2                        2                   2
+                                                              (32)                   The features of the proposed model are briefly explained as
+with                                                                              follows.
+                                                                                     1) Each arm of the MMC is equivalent to a Norton circuit
+                           Δt
+               G=                    ,                        (33)                      in the EMTP-type solution of the main network, greatly
+                     2L0 + Req Δt                                                       reducing the dimension of nodal equations. The com-
+              
+            Δt            2L0                                                           putations for capacitor and inductor dynamic equations
+  ihist t −      =                   iarm (t − Δt)                                      of MMC are decoupled. If the inductor current is ob-
+            2        2L0 + Req Δt
+                                                                                      tained, the capacitor voltages can be calculated explicitly.
+                              Δt                      Δt                                Furthermore, the computations of capacitor voltages of
+                     −                   K 1 vc t −
+                        2L0 + Req Δt                   2                                the HBSMs are independent of each other, which also
+                                                                                      improves computational efficiency.
+                              Δt                        Δt
+                     −                   K 2 v ceq t −        (34)                   2) With the hybrid numerical integration of the midpoint
+                        2L0 + Req Δt                     2
+                                                                                        rule and trapezoidal rule, the equivalent conductance of
+                                              2 (i.e., vci (t −
+where the capacitor voltages at the time t − Δt                                         an MMC arm keeps constant under normal operational
+Δt
+   )) are calculated by (27) or (30).                                                   conditions. It only changes when the number of con-
+ 2
+   Then, the numerical integration from t − Δt                                          ducting legs varies. Compared with the existing models
+                                             2 to t is imple-
+mented and the discretized dynamic equation of the MMC is                               (e.g., the TE-based model), this model avoids the frequent
+written as:                                                                             LU decomposition of the equivalent conductance matrix
+                                                                                        of the power system in the EMT simulation and greatly
+                     iarm (t) = Gvarm (t) + ihist (t)                    (35)           accelerates the simulation.
+                                                                                     3) The midpoint rule is second-order, which is the same as the
+with
+                                                                                        trapezoidal rule. Compared with the traditional first-order
+                         Δt                                                             one-step delay method (i.e., forward Euler method), the
+            G=                    ,                                      (36)
+                     2L0 + Req Δt                                                       midpoint rule is more accurate. In addition to the accuracy,
+                                                                                      the midpoint rule has a larger absolute stability region than
+                         2L0                  Δt
+       ihist (t) =                iarm t −                                              the forward Euler method, which means that the midpoint
+                     2L0 + Req Δt              2
+                                                                                      rule is more numerically stable [39].
+                            Δt                    Δt                                 4) The proposed model is convenient to interface with the
+                     −               K 1 vc t −
+                       2L0 + Req Δt                2                                    trapezoidal rule-based EMTP-type simulation. In con-
+                                                                                      trast to the hybrid numerical integration, the Runge-Kutta
+                            Δt                      Δt
+                     −               K 2 v ceq t −       .               (37)           method or Huen’s method-based models cannot make the
+                       2L0 + Req Δt                  2                                  equivalent conductance constant and is hard to interface
+   To sum up, the flowchart of the CDA process is illustrated                           with the existing trapezoidal rule-based EMTP-type sim-
+in Fig. 7. It includes the calculation of two half-steps. After                         ulation program.
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 06:30:29 UTC from IEEE Xplore. Restrictions apply.
+GAO et al.: EFFICIENT HALF-BRIDGE MMC MODEL FOR EMTP-TYPE SIMULATION BASED ON HYBRID NUMERICAL INTEGRATION                                                1169
+
+
+
+
+Fig. 8.   Schematic diagram of the single-HBSM test system.
+
+
+                               TABLE II
+                PARAMETERS OF THE SINGLE-HBSM SYSTEM
+
+
+
+
+                                                                                  Fig. 9. Currents of the arm inductor L0 obtained from the TE-based model
+                                                                                  and the proposed model. (a) A global perspective. (b) A magnified view of the
+                                                                                  arm inductor currents.
+
+
+
+
+                           IV. CASE STUDIES
+  In this section, the accuracy and efficiency of the presented
+MMC model are demonstrated on several test systems by com-
+paring it with the TE-based model [16]. The schematic diagram
+of the TE-based model and the corresponding description are
+presented in Appendix B. The accuracy and efficiency of the TE-
+based model have already been validated by theoretical analyses
+and tests in the literature. It is considered as the reference here.
+The two models are implemented on the EMTP-type simulation
+program CloudPSS [40]. The CloudPSS is developed using C++
+programming language. It is widely used by researchers and
+engineers in academia and industry [41], [42].
+
+A. Accuracy Validation for the Proposed Model                                     Fig. 10. Voltages of the SM capacitor obtained from the TE-based model
+                                                                                  and the proposed model. (a) A global perspective. (b) A magnified view of the
+   1) The Single HBSM: The proposed model is first tested on                      capacitor voltages.
+the single-HBSM system shown in Fig. 8. The PWM modulation
+(called open-loop control) is adopted for the HBSM, with a duty
+ratio d = 0.5. Parameters of the test system are listed in Table II.                 Next, a network switch action is considered. In the beginning,
+   First, the IGBTs of the single HBSM system are blocked at t =                  the switch S is ON, it turns OFF at t = 0.11 s. The test system
+0.05s. This test system is simulated by the TE-based model [16]                   is simulated with the proposed model and traditional TE-based
+and the proposed model with a Δt of 10 μs, respectively. The                      model, respectively. Voltages of the inductor Ls obtained by
+arm inductor currents and the capacitor voltages obtained by the                  different models are depicted in Fig. 11. It can be found from
+two ways are illustrated in Figs. 9 and 10. Note that the blue                    Fig. 11(b) that incorrect simulation results will be obtained if the
+dash-dot lines represent the results obtained from the proposed                   CDA is not considered. The numerical oscillation occurs in the
+model without considering the cases of zero ON legs and two                       EMT simulation without the CDA. In contrast, with the CDA
+ON legs of the HBSM. It can be found that the results obtained                    process, accurate results will be obtained from the proposed
+from the proposed model and the TE-based model are coincident                     model, as shown in Fig. 11(a).
+with each other, which illustrates the accuracy of the proposed                      2) An MMC With Ten HBSMs: Following the case of a single-
+model. This is because the midpoint rule and trapezoidal rule                     HBSM system, different operational conditions of an MMC with
+have similar accuracy. It is worth noting that noticeable errors                  ten HBSMs (shown in Fig. 12) are studied. Parameters of the
+will emerge in the results obtained from the proposed model if                    test system are listed in Table III.
+the case of zero conducting legs is not considered. In this case                     With a time step of 10 μs, the currents of arm inductor L0 and
+study, the two legs of the HBSM turn off simultaneously during                    capacitor voltages of SM1 are calculated by the proposed model
+some time intervals (e.g., [0.0827, 0.0846] s).                                   and the TE-based model, respectively. They are then illustrated
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 06:30:29 UTC from IEEE Xplore. Restrictions apply.
+1170                                                                                  IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 39, NO. 1, JANUARY 2024
+
+
+
+
+Fig. 11. Voltages of inductor Ls . (a) Voltages of inductor Ls obtained with      Fig. 13. Currents of the arm inductor L0 . (a) Currents of the arm inductor
+the TE-based model and the proposed model. (b) Voltage of the inductor Ls         L0 obtained from the TE-based model and the proposed model (b) Capacitor
+obtained with the proposed model when the CDA is not considered.                  voltages of the SM1 obtained from different models.
+
+
+
+
+Fig. 12.   Schematic diagram of the ten-HBSM system.
+
+
+                              TABLE III
+                  PARAMETERS OF THE TEN-HBSM SYSTEM
+
+
+
+
+                                                                                  Fig. 14. Voltage of Bus 1 in the ten-SM system. (a) Voltage of Bus 1 in the
+                                                                                  ten-SM system obtained from the TE-based and the presented model. (b) Voltage
+                                                                                  of Bus 1 obtained with the proposed model when the CDA is not considered.
+
+
+
+in Fig. 13, where the blue dash-dot lines represent the results                   oscillation, a very large resistance can be connected to the arm
+obtained from the proposed model without considering the cases                    inductor in parallel to suppress the oscillation.
+of zero ON leg and two ON legs of the HBSM. As Fig. 13 shows,                        As for numerical stability, the numerical stability of LIM has
+the same conclusion as that in the single-HBSM case can be                        been discussed in many works [43], [44]. Further, the numerical
+drawn in this case. The proposed model is accurate. Moreover,                     stability of the hybrid LIM-EMTP solution is analyzed in [25].
+it is worth noting that the SM capacitor is charged from t = 0                    The numerical stability is related to the time step size and the
+s to t = 0.007 s. Then, it gradually discharges to 0 V. From                      capacitance and inductance of the MMC. Usually, under the
+t = 0.017 s to t = 0.025 s, both the two legs of the HBSM are                     premise of numerical stability, the larger the node capacitance
+ON and the capacitor voltage is near 0 V. In this case, if the                    and branch inductance in the LIM network, the larger the time-
+scenario of two ON legs is not considered, the proposed model                     step size can be selected. The capacitance and inductance of
+will be inaccurate from t = 0.017 s.                                              the MMC are typically thousands of microfarads and dozens
+    Next, similar to the single-HBSM test system, the switch S                    of millihenries, respectively [45], which means that they are
+in the ten-module system turns off at t = 0.11s. The test system                  relatively large. The proposed MMC model is numerically stable
+is simulated using the proposed model and the TE-based model,                     even with a time step of more than ten microseconds.
+respectively. Voltages of Bus 1 obtained from different models                       3) Two-Terminal MMC-HVDC: In this subsection, a two-
+are shown in Fig. 14. The numerical oscillation also happens                      terminal MMC-HVDC system with closed-loop control is uti-
+when the CDA is not considered. If there is still a numerical                     lized to validate the accuracy of the proposed model. The
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 06:30:29 UTC from IEEE Xplore. Restrictions apply.
+GAO et al.: EFFICIENT HALF-BRIDGE MMC MODEL FOR EMTP-TYPE SIMULATION BASED ON HYBRID NUMERICAL INTEGRATION                                               1171
+
+
+
+
+Fig. 15.   Schematic diagram of the two-terminal MMC-HVDC system.
+
+
+
+
+                                                                                  Fig. 17. AC-side (i.e., PCC bus) active power of the MMC2 obtained from
+                                                                                  different models, respectively, when the active power reference steps from
+Fig. 16. Simulation results of the two-terminal MMC-HVDC where the SM             −900 MW to 0 MW. (a) A global perspective. (b)-(c) zoomed-in views.
+capacitors are charged from 0 V by antiparallel diodes.
+
+
+
+schematic diagram of the two-terminal MMC-HVDC system
+is shown in Fig. 15. In this test system, MMC1 works as the
+rectifier and MMC2 works as the inverter. By the way, the ca-
+pacitor voltage balancing strategy [46] is also considered for the
+MMCs in all the following tests. Parameters of the two-terminal
+MMC-HVDC system are listed in Appendix C.
+   First, the steady state of the two-terminal system is considered.
+The whole system is started up from zero. Before t = 0.08 s, all
+the IGBTs and controllers of the two MMCs are blocked and
+the SM capacitors are charged from 0 V by antiparallel diodes.
+After t = 0.08 s, the IGBTs and the controllers are triggered.
+The parameters of the controllers can be found in Table VI.
+The two-terminal MMC-HVDC is simulated using the TE-based
+model and the proposed model, respectively, with a time step of
+10 μs. The simulation results are illustrated in Fig. 16. It can be
+found that the results obtained with the proposed model and the
+TE-based model are coincident with each other, which illustrates
+the accuracy of the proposed model in both the start-up process
+and the steady-state. By the way, in this case, G changes 159
+times before t = 0.08 s. From t = 0.08 s, G keeps constant.
+Therefore, in the whole simulation, G changes 159 times in                        Fig. 18. C-side active power of the MMC2 obtained from different models,
+total. The number of simulation steps of the whole simulation is                  respectively, when the active power reference steps from −900 MW to 0 MW.
+                                                                                  (a) A global perspective. (b)-(c) zoomed-in views.
+200000. Therefore, the percentage of constant G in this case is
+99.9205%.
+   Then, the operational condition of Psref = 0 and Qsref = 0                     the two MMCs are 8.421 kV. The simulation results respectively
+is considered. For the two-terminal MMC-HVDC system, the                          obtained from the proposed model and the TE-based model are
+reference of the active power of MMC station 2 steps from                         shown in Figs. 17 and 18, where the black curves represent
+−900 MW to 0 MW at t = 1 s. This is simulated using the                           the results obtained by the TE-based model and the red curves
+proposed model and the TE-based model, respectively, both with                    represent the results obtained by the proposed model. It can be
+a time-step of 10 μs. Note that the initialization of the MMC is                  found that both the ac-side power and dc-side power obtained
+also considered in this case and the initial capacitor voltages of                by the two models are nearly the same as each other. This shows
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 06:30:29 UTC from IEEE Xplore. Restrictions apply.
+1172                                                                                 IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 39, NO. 1, JANUARY 2024
+
+
+
+
+Fig. 19. Simulation results obtained from different MMC models and with a        Fig. 20. Simulation results obtained from different MMC models and with a
+time-step of 50 µs. (a) AC-side active power of MMC station 2. (b) DC voltage    time-step of 100 µs. (a) AC-side active power of MMC station 2. (b) DC voltage
+of MMC station 1.                                                                of MMC station 1.
+
+
+
+
+that the delay of Δt/2 in the proposed model does not cause
+energy loss/creation. Furthermore, the active power efficiencies
+of MMC2 with different models are calculated by comparing
+Figs. 17(b) and 18(b). The active power efficiency of MMC2
+obtained with the TE-based model is 98.988% and the active
+power efficiency of MMC2 obtained with the proposed model is
+98.999%. They are nearly the same. It further validates that there
+                                                                                 Fig. 21.   Schematic diagram of the CIGRE four-terminal five-node dc grid.
+is no energy loss/creation in the proposed model. By the way, in
+this case and hereafter, the MMC capacitors are initialized and
+the percentage of constant G in the simulations is 100%.
+   Furthermore, to illustrate the accuracy of the proposed mode                     At t = 1.5s, the active power reference of converter station 3
+in large-step EMT simulation, the two-terminal MMC-HVDC                          steps from −500 MW to −400 MW. With a time-step of 10 μs,
+are simulated with time steps of 50 μs and 100 μs, respectively.                 the four-terminal five-node MMC-HVDC system is simulated
+First, the two-terminal MMC-HVDC system is simulated with                        using the TE-based model and the proposed model, respectively.
+a time step of 50 μs. At t = 1.0 s, the active power reference                   The test results obtained from the two models are illustrated in
+of MMC station 2 steps from −900 MW to −400 MW. The                              Fig. 22. As can be seen from Fig. 22, the presented model is
+ac-side active power of MMC station 2 and the dc voltage of                      accurate and the results obtained from the proposed model coin-
+MMC station 1 are shown in Fig. 19. The reference result is                      cide with those computed by TE-based models. Moreover, it can
+obtained by the TE-based model with a time-step of 1 μs. It                      be found that the dc voltage drops to another steady-state value.
+can be found that the results obtained from the TE-based model                   This is because the dc voltage-active power control is adopted.
+and the proposed model are nearly the same and both of them                      When there is a power shortage, the dc voltage decreases. This
+are near to the reference. This demonstrates the accuracy of                     also shows the correctness of the proposed model. In a word, the
+the proposed model in the EMT simulation of the two-terminal                     proposed model is accurate in the multi-terminal dc grid with
+MMC-HVDC with a relatively large time-step. Then, the two-                       various control modes.
+terminal MMC-HVDC system is simulated with a time step of                           5) Large-Scale AC/DC Power System With MMC-HVDC:
+100 μs. The ac-side active power of MMC station 2 and the dc                     Finally, the proposed model is tested on a large-scale power
+voltage of MMC station 1 are shown in Fig. 20. It can be found                   grid with an MMC-HVDC system. The one-line diagram of the
+that the proposed model is also accurate in large-step simulation                test system is shown in Fig. 23. This test system has 10594
+of the two-terminal MMC-HVDC. In summary, the proposed                           single-phase nodes, including 134 generators, 1442 transmission
+model with a latency of Δt/2 does not affect the accuracy of the                 lines, 1124 transformers, 1676 loads and an MMC-HVDC sys-
+EMT simulation of MMC-HVDC.                                                      tem. The test system is abstracted from the huge real-life power
+   4) Multi-Terminal MMC-HVDC: Next, the proposed model                          system of Southwest China. It is a subsystem of the whole power
+is tested on the CIGRE four-terminal five-node MMC-HVDC                          system of Southwest China, obtained by distributed transmission
+system. Its schematic diagram is shown in Fig. 21. In this                       line-based task decoupling. Thus, the subsystem here under test
+test system, the dc voltage-active power (V-P) droop control                     is simulated without any task decoupling. The EMT model of the
+is considered. The d-axis of the converter stations 1 and 2 are                  large-scale power system is built up by transferring the transient
+V-P droop control. Detailed parameters of this test system are                   stability (TS) model of the studied power system automatically.
+listed in Appendix D.                                                            The transient stability model is created using PSASP [47].
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 06:30:29 UTC from IEEE Xplore. Restrictions apply.
+GAO et al.: EFFICIENT HALF-BRIDGE MMC MODEL FOR EMTP-TYPE SIMULATION BASED ON HYBRID NUMERICAL INTEGRATION                                               1173
+
+
+
+
+                                                                                    Fig. 23.   One-line diagram of a large-scale power grid with MMC-HVDC
+                                                                                    system.
+
+
+
+                                                                                                               TABLE IV
+Fig. 22. Simulation results of the CIGRE four-terminal five-node dc grid when          COMPUTATIONAL TIME COMPARISON BETWEEN DIFFERENT MODELS (s)
+the active power of converter station 3 steps from −500 MW to 400 MW. (a)
+Active power of converter station 3 obtained from the TE-based model and the
+proposed model, respectively. (b) Active power of converter station 2. (c) Active
+power of converter station 1. (d) DC voltage of converter station 1.
+
+
+
+
+In [48] and [49], the automatic model transformation method
+from the TS model on PSASP to the EMT model on CloudPSS
+has been introduced carefully. Parameters of the MMC-HVDC                           TE-based model in various test systems and different operational
+system are the same as those in Table VI.                                           conditions.
+   At t = 1.5 s, a phase-C-to-ground fault occurs at Bus ZM
+of the receiving-end system. The short-circuit fault is cleared
+                                                                                    B. Efficiency Validation of the Proposed Model
+at t = 1.55 s. This test system is simulated using the proposed
+model and TE-based model. The results are depicted in Fig. 24.                         1) Efficiency Enhancement: The CPU computational time of
+It can be found that, for the large-scale power system, the results                 the TE-based model and the proposed model in simulating the
+obtained with the two models are nearly the same as each other,                     above power systems with MMC-HVDC is tested and summa-
+which further illustrates the accuracy of the proposed model.                       rized in Table IV. The tests are carried out on a desktop computer
+Besides, as Fig. 24 shows, the sending-end converter station is                     with an Intel i7 CPU processor and 32 GB RAM. The time step
+not affected by the fault occurring at the receiving-end converter                  for the simulations is 10 μs and the simulation duration is 3 s.
+station due to the isolation of the MMC-HVDC. It is worth noting                       It can be found that the proposed model is much faster than the
+that there are four CDA steps in this case. Specifically, when the                  TE-based model. For the large-scale ac/dc power system under
+short-circuit fault occurs, there are two CDA steps. When the                       test, the speedup of the proposed model is about 9.79. which
+short-circuit fault is cleared, there are another two CDA steps.                    shows the high efficiency of the proposed model in large-scale
+If the CDA of the MMC model is not considered, the EMT                              power systems simulation. The root cause is that the proposed
+simulation of this test system cannot be implemented.                               MMC model has a constant equivalent conductance. It avoids
+   In summary, according to the test results above, it can be found                 the frequent LU decomposition of the high-dimensional nodal
+that the proposed model has the same accuracy as the traditional                    conductance matrix. Note that there is no task decoupling in the
+
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 06:30:29 UTC from IEEE Xplore. Restrictions apply.
+1174                                                                                       IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 39, NO. 1, JANUARY 2024
+
+
+
+                                                                                                                  TABLE V
+                                                                                       COMPUTATIONAL TIME OF THE TE-BASED MODEL AND PROPOSED MODEL
+                                                                                                     WITH DIFFERENT NUMBER OF SMS (s)
+
+
+
+
+                                                                                     model can improve the computational efficiency of the elec-
+                                                                                     tric network, it has a relatively low speedup for the whole
+                                                                                     system.
+
+                                                                                                                V. CONCLUSION
+                                                                                       This article proposes an efficient MMC model for EMTP-type
+                                                                                     simulation. Each arm of the MMC is reduced to a two-node
+                                                                                     Norton circuit with constant conductance in the main network
+                                                                                     solution and the dynamic equations of the SM capacitors are
+                                                                                     decoupled from each other. These endow the model with higher
+                                                                                     simulation speed under the premise of similar accuracy com-
+Fig. 24. Simulation results of the large-scale ac/dc power system when a             pared with the TE-based model. In future research, due to the ad-
+phase-C-to-ground fault occurs at the receiving-end converter station. (a) Voltage   vantages of the leapfrog computation framework, the presented
+of phase C of PCC bus at receiving-end converter station. (b) Voltage of phase
+C of PCC bus at sending-end converter station. (c) DC voltage.                       method can also be applied to the EMTP-type modeling and
+                                                                                     simulation of other VSCs.
+
+                                                                                                              ACKNOWLEDGMENT
+EMT simulation of the large network. If a distributed transmis-                         The authors would like to thank Prof. Shujun Yao from
+sion line model is used for task decoupling in the EMT simu-                         North China Electric Power University, China for the helpful
+lation of a large-scale system, the system will be divided into                      discussion and also the editor and anonymous reviewers for the
+several small networks. When the network is relatively small,                        valuable comments and suggestions.
+the speedup gain of constant conductance will decrease because
+the computational complexity of LU decomposition is relatively                                                  APPENDIX A
+low compared to the overall computational complexity of the                                                DERIVATION OF (18)–(21)
+system. This can be seen in the two-terminal MMC-HVDC and                                  According to (17), the difference equation of the MMC arm
+four-terminal MMC-HVDC test systems, where the electric net-                         is:
+works and the dimension of the network equivalent conductance
+matrices are small while the scales of the controllers are huge.                                                  Δt
+Especially, for the four-terminal CIGRE MMC-HVDC grid, the                           iarm (t) = iarm (t − Δt)+        (varm (t) − Req iarm (t)
+                                                                                                                  2L0
+total number of electric nodes is 193, while the number of control
+                                                                                                                                              Δt
+nodes is more than 15000. The computational burden of the                                         + varm (t − Δt)−Req iarm (t −Δt))−              (K 1 v c (t)
+controllers is much larger than the electric network. Therefore,                                                                              2L0
+the acceleration of electrical network computation only provides                                  + K 1 v c (t − Δt) + K 2 v ceq (t) + K 2 v ceq (t − Δt)) .
+a relatively small improvement in the computational efficiency                                                                                        (A1)
+of the whole system.
+   2) Impact of the Number of SMs on the Efficiency: Further-                           In (A1), v c (t) and v ceq (t) are unknown. It makes that (A1)
+more, the efficiency of the proposed model is tested on the                          cannot be represented as a Norton equivalent circuit. Thus, v c (t)
+two-terminal MMC-HVDC system with different numbers of                               and v ceq (t) are derived first by using iarm (t), varm (t) and the
+SMs. The time step for the simulations is also 10 μs. The CPU                        history variables at time instant t − Δt.
+time consumption is listed in Table V.                                                  For the ith HBSM with the upper leg ON, according to the
+   As Table V shows, the proposed model is more efficient than                       trapezoidal rule, the difference equation of the SM capacitor can
+the TE-based model in the MMCs with arbitrary numbers of                             be represented as:
+SMs. The speedup of the proposed model decreases when the
+number of SMs increases. This is because the computational                                                             Δt
+time of the control system increases dramatically as the number                            vci (t) = vci (t − Δt) +         (iarm (t) + iarm (t − Δt)) .
+                                                                                                                      2Csmi
+of SMs increases. In this circumstance, although the proposed                                                                                         (A2)
+
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 06:30:29 UTC from IEEE Xplore. Restrictions apply.
+GAO et al.: EFFICIENT HALF-BRIDGE MMC MODEL FOR EMTP-TYPE SIMULATION BASED ON HYBRID NUMERICAL INTEGRATION                                              1175
+
+
+
+   For the ith HBSM with both legs ON, the difference equation
+of the SM capacitor can be represented as:
+                                    Δt
+  vci (t) = vci (t − Δt) −               (i1i (t) + i1i (t − Δt))      (A3)
+                                   2Csmi
+where i1i (t) represents the current of the upper leg of the HBSM
+and can also be calculated by:
+
+                    vci (t) = Ron (i1i (t) + i2i (t))                            Fig. 25. Schematic diagram of the TE-based model. (a) An MMC arm. (b)
+                                                                       (A4)
+                    iarm (t) = i2i (t) − i1i (t)                                 TE-based model of the MMC arm. (c) Two-part network with a reduced number
+                                                                                 of nodes in the main network.
+
+where i2i (t) represents the current of the lower leg of the HBSM.
+By solving the simultaneous equations (A3) and (A4), vci (t) can                                              TABLE VI
+be obtained:                                                                              PARAMETERS OF THE TWO-TERMINAL MMC-HVDC SYSTEM
+
+               4Ron Csmi                  Ron Δt
+ vci (t) =                 vci (t−Δt)+               iarm (t)
+             4Ron Csmi +Δt             4Ron Csmi +Δt
+                    2Ron Δt
+              −                 ili (t − Δt).                          (A5)
+                  4Ron Csmi +Δt
+
+  Then, vceqi (t) = vci2(t) can be derived:
+
+                             2Ron Csmi
+             vceqi (t) =                  vci (t − Δt)
+                           4Ron Csmi + Δt
+                                     Ron Δt
+                            +                   iarm (t)
+                                8Ron Csmi + 2Δt
+                                    Ron Δt
+                            −                  i1i (t − Δt).           (A6)
+                                4Ron Csmi + Δt
+   By substituting (A2) and (A6) into (A1), (A1) can be repre-
+sented as the Norton equivalent circuit form in (A7) when all
+the HBSMs have ON legs:
+
+                    iarm (t) = Gtr varm (t) + itr
+                                               hist (t)                (A7)
+
+where
+               1                                                                                           APPENDIX B
+   Gtr =             ,                                                 (A8)
+             RNorton                                                                           DESCRIPTION OF THE TE-BASED MODEL
+itrhist (t) = Gtr varm (t − Δt)                                                     The schematic diagram of the TE-based model is shown
+                                N              Req Δt                            in Fig. 25 [16]. In the TE-based model, each MMC arm is
+                                i=1 k1i 2Csmi − 2L0
+                    Δt                   Δt
+                 1− 2L
+             −         0
+                                                      Gtr iarm (t − Δt)          established as a TE circuit, like the proposed model. Different
+                                    Δt
+                                    2L0                                          from the proposed model, the TE-based model has a variable
+                    N                                                         equivalent conductance.
+                               2Ron Csmi      1
+             + Gtr     k2i                   −                 vci (t − Δt)
+                   i=1
+                            4Ron Csmi + Δt 2
+                                                                                                        APPENDIX C
+                                           
+                    Ron Δt                                                              PARAMETERS OF THE TWO-TERMINAL MMC-HVDC
+             −                i1i (t − Δt)                             (A9)
+               4Ron Csmi + Δt                                                       Parameters of the two-terminal MMC-HVDC system are
+                                                                                 listed in Table VI.
+with
+                                       N
+                           Δt               Δt                                                        APPENDIX D
+         RNorton =             + Req +            k1i
+                           2L0             2C smi                                PARAMETERS OF THE CIGRE FOUR-TERMINAL FIVE-NODE DC
+                                       i=1
+                                                                                                         GRID
+                               N
+                                       Ron Δt                                      Parameters of the converter stations in the CIGRE four-
+                           +                       k2i .              (A10)
+                               i=1
+                                   8Ron Csmi + 2Δt                               terminal five-node MMC-HVDC are listed in Table VII.
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 06:30:29 UTC from IEEE Xplore. Restrictions apply.
+1176                                                                                  IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 39, NO. 1, JANUARY 2024
+
+
+
+                           TABLE VII                                              [10] W. Li, L.-A. Grégoire, S. Souvanlasy, and J. Bélanger, “An FPGA-
+ PARAMETERS OF CONVERTER STATIONS IN THE FOUR-TERMINAL FIVE-NODE                       based real-time simulator for HIL testing of modular multilevel con-
+                          MMC-HVDC                                                     verter controller,” in Proc. IEEE Energy Convers. Congr. Expo., 2014,
+                                                                                       pp. 2088–2094.
+                                                                                  [11] T. Maguire, B. Warkentin, Y. Chen, and J. Hasler, “Efficient techniques
+                                                                                       for real time simulation of MMC systems,” in Proc. Int. Conf. Power Syst.
+                                                                                       Transients, 2013, pp. 1–7.
+                                                                                  [12] J. Peralta, H. Saad, S. Dennetiere, J. Mahseredjian, and S. Nguefeu,
+                                                                                       “Detailed and averaged models for a 401-level MMC–HVDC system,”
+                                                                                       IEEE Trans. Power Del., vol. 27, no. 3, pp. 1501–1508, Jul. 2012.
+                                                                                  [13] J. Xu, A. M. Gole, and C. Zhao, “The use of averaged-value model of
+                                                                                       modular multilevel converter in DC grid,” IEEE Trans. Power Del., vol. 30,
+                                                                                       no. 2, pp. 519–528, Apr. 2015.
+                                                                                  [14] A. Beddard, C. E. Sheridan, M. Barnes, and T. C. Green, “Improved
+                                                                                       accuracy average value models of modular multilevel converters,” IEEE
+                                                                                       Trans. Power Del., vol. 31, no. 5, pp. 2260–2269, Oct. 2016.
+                                                                                  [15] N. T. Trinh, M. Zeller, K. Wuerflinger, and I. Erlich, “Generic model of
+                                                                                       MMC-VSC-HVDC for interaction study with AC power system,” IEEE
+                                                                                       Trans. Power Syst., vol. 31, no. 1, pp. 27–34, Jan. 2016.
+                                                                                  [16] U. N. Gnanarathna, A. M. Gole, and R. P. Jayasinghe, “Efficient model-
+                                                                                       ing of modular multilevel HVDC converters (MMC) on electromagnetic
+                                                                                       transient simulation programs,” IEEE Trans. Power Del., vol. 26, no. 1,
+                                                                                       pp. 316–324, Jan. 2011.
+                              TABLE VIII                                          [17] F. B. Ajaei and R. Iravani, “Enhanced equivalent model of the modular
+       PARAMETERS OF THE TRANSMISSION LINES IN THE FOUR-TERMINAL                       multilevel converter,” IEEE Trans. Power Del., vol. 30, no. 2, pp. 666–673,
+                        FIVE-NODE MMC-HVDC                                             Apr. 2015.
+                                                                                  [18] J. Xu, S. Fan, C. Zhao, and A. M. Gole, “High-speed EMT modeling
+                                                                                       of MMCs with arbitrary multiport submodule structures using gener-
+                                                                                       alized Norton equivalents,” IEEE Trans. Power Del., vol. 33, no. 3,
+                                                                                       pp. 1299–1307, Jun. 2018.
+                                                                                  [19] J. Schutt-Aine, “Latency insertion method (LIM) for the fast transient
+                                                                                       simulation of large networks,” IEEE Trans. Circuits Syst. I., Fundam.
+                                                                                       Theory Appl., vol. 48, no. 1, pp. 81–89, Jan. 2001.
+                                                                                  [20] T. Sekine and H. Asai, “Block-latency insertion method (Block-LIM)
+                                                                                       for fast transient simulation of tightly coupled transmission lines,” IEEE
+                                                                                       Trans. Electromagn. Compat., vol. 53, no. 1, pp. 193–201, Feb. 2011.
+                                                                                  [21] M. Milton and A. Benigni, “Latency insertion method based real-time
+   In the four-terminal five-node MMC-HVDC system, the                                 simulation of power electronic systems,” IEEE Trans. Power Electron.,
+transmission lines are modeled using the π-section circuit. Pa-                        vol. 33, no. 8, pp. 7166–7177, Aug. 2018.
+rameters of the transmission lines are listed in Table VIII.                      [22] S. Yao, B. Pang, G. Wu, H. Dai, Y. Wang, and M. Han, “A method of parallel
+                                                                                       computing for electromagnetic transient simulation based on semi-implicit
+                                                                                       latency decoupling technology–Part I: Theory and AC network partitioning
+                                  REFERENCES                                           and parallel,” Chin. Soc. Elect. Eng., vol. 42, no. 7, pp. 2486–2497,
+                                                                                       Apr. 2022.
+ [1] N. R. Chaudhuri, B. Chaudhuri, R. Majumder, and A. Yazdani, Multi-           [23] S. Yao et al., “Semi-implicit latency decoupling technology based elec-
+     Terminal Direct-Current Grids: Modeling, Analysis, and Control. Hobo-             tromagnetic transient simulation–Part II: General decoupling and fast
+     ken, NJ, USA: Wiley, 2014.                                                        simulation for single-port sub-module MMC,” Chin. Soc. Elect. Eng.,
+ [2] D. Wang, L. Liang, L. Shi, J. Hu, and Y. Hou, “Analysis of modal resonance        vol. 42, no. 13, pp. 4775–4785, Jul. 2022.
+     between PLL and DC-link voltage control in weak-grid tied VSCs,” IEEE        [24] W. Chen, J. Xu, K. Wang, G. Li, and Q. Wang, “Fine-grained parallel
+     Trans. Power Syst., vol. 34, no. 2, pp. 1127–1138, Mar. 2019.                     electromagnetic transient simulation of three-phase transmission network
+ [3] S. Liu, Z. Xu, W. Hua, G. Tang, and Y. Xue, “Electromechanical transient          based on block latency insertion method,” Chin. Soc. Elect. Eng., vol. 42,
+     modeling of modular multilevel converter based multi-terminal HVDC                no. 7, pp. 2577–2588, Apr. 2022.
+     systems,” IEEE Trans. Power Syst., vol. 29, no. 1, pp. 72–83, Jan. 2014.     [25] J. Xu, K. Wang, P. Wu, and G. Li, “FPGA-based sub-microsecond-level
+ [4] T. Xue, J. Lyu, H. Wang, and X. Cai, “A complete impedance model of a             real-time simulation for microgrids with a network-decoupled algorithm,”
+     PMSG-based wind energy conversion system and its effect on the stability          IEEE Trans. Power Del., vol. 35, no. 2, pp. 987–998, Apr. 2020.
+     analysis of MMC-HVDC connected offshore wind farms,” IEEE Trans.             [26] L. Wang and J. Jatskevich, “Approximate voltage-behind-reactance induc-
+     Energy Convers., vol. 36, no. 4, pp. 3449–3461, Dec. 2021.                        tion machine model for efficient interface with EMTP network solution,”
+ [5] Q. Hao, J. Man, F. Gao, and M. Guan, “Voltage limit control of modular            IEEE Trans. Power Syst., vol. 25, no. 2, pp. 1016–1031, May 2010.
+     multilevel converter based unified power flow controller under unbalanced    [27] Y. Xia and K. Strunz, “Multi-scale induction machine model in the phase
+     grid conditions,” IEEE Trans. Power Del., vol. 33, no. 3, pp. 1319–1327,          domain with constant inner impedance,” IEEE Trans. Power Syst., vol. 35,
+     Jun. 2018.                                                                        no. 3, pp. 2120–2132, May 2020.
+ [6] Z. Wang, J. He, Y. Xu, and F. Zhang, “Distributed control of VSC-MTDC        [28] B. D. Gemmell, J. Dorn, D. Retzmann, and D. Soerangr, “Prospects of
+     systems considering tradeoff between voltage regulation and power shar-           multilevel VSC technologies for power transmission,” in Proc. IEEE PES
+     ing,” IEEE Trans. Power Syst., vol. 35, no. 3, pp. 1812–1821, May 2020.           Transmiss. Distrib. Expo. Conf., 2008, pp. 1–16.
+ [7] J. Li, B. Zhao, Q. Song, Y. Huang, and W. Liu, “Minimum voltage tracking     [29] M. Guan and Z. Xu, “Modeling and control of a modular multilevel
+     balance control based on switched resistor for modular cascaded converter         converter-based HVDC system under unbalanced grid conditions,” IEEE
+     in MVDC distribution grid,” IEEE Trans. Ind. Electron., vol. 63, no. 9,           Trans. Power Electron., vol. 27, no. 12, pp. 4858–4867, Dec. 2012.
+     pp. 5437–5441, Sep. 2016.                                                    [30] S. Gao, Y. Song, Y. Chen, Z. Yu, and R. Zhang, “Fast simulation model of
+ [8] H. Saad et al., “Modular multilevel converter models for electromag-              voltage source converters with arbitrary topology using switch state pre-
+     netic transients,” IEEE Trans. Power Del., vol. 29, no. 3, pp. 1481–1489,         diction,” IEEE Trans. Power Electron., vol. 37, no. 10, pp. 12167–12181,
+     Jun. 2014.                                                                        2022.
+ [9] N. Herath, S. Filizadeh, and M. S. Toulabi, “Modeling of a modular           [31] T. Maguire, S. Elimban, E. Tara, and Y. Zhang, “Predicting switch ON/OFF
+     multilevel converter with embedded energy storage for electromagnetic             statuses in real time electromagnetic transients simulations with voltage
+     transient simulations,” IEEE Trans. Energy Convers., vol. 34, no. 4,              source converters,” in Proc. IEEE Conf. Energy Internet Energy Syst.
+     pp. 2096–2105, Dec. 2019.                                                         Integr., 2018, pp. 1–7.
+
+
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 06:30:29 UTC from IEEE Xplore. Restrictions apply.
+GAO et al.: EFFICIENT HALF-BRIDGE MMC MODEL FOR EMTP-TYPE SIMULATION BASED ON HYBRID NUMERICAL INTEGRATION                                                    1177
+
+
+
+[32] Manitoba Hydro International Ltd., “CIGRE B4-57 working group devel-                                   Ying Chen (Senior Member, IEEE) received the
+     oped models,” Feb. 2015. [Online]. Available: https://www.pscad.com/                                   B.S. and Ph.D. degrees in electrical engineering from
+     knowledge-base/article/57                                                                              Tsinghua University, Beijing, China, in 2001 and
+[33] Manitoba Hydro International Ltd., “HVDC VSC transmission linking                                      2006, respectively. He is currently a Professor with
+     an (offshore) islanded wind farm with (onshore) AC grid,” Jan. 2022.                                   the Department of Electrical Engineering, Tsinghua
+     [Online]. Available: https://www.pscad.com/knowledge-base/article/223                                  University.
+[34] D. Johnson, “Origins of the equivalent circuit concept: The voltage-source                                His research interests include parallel and dis-
+     equivalent,” Proc. IEEE, vol. 91, no. 4, pp. 636–640, Apr. 2003.                                       tributed computing, electromagnetic transient sim-
+[35] D. Johnson, “Origins of the equivalent circuit concept: The current-source                             ulation, cyber-physical system modeling, and cyber
+     equivalent,” Proc. IEEE, vol. 91, no. 5, pp. 817–821, May 2003.                                        security of smart grids.
+[36] J. A. Svoboda and R. C. Dorf, Introduction to Electric Circuits. Hoboken,
+     NJ, USA: Wiley, 2013.
+[37] A. Iserles, “Generalized leapfrog methods,” IMA J. Numer. Anal., vol. 6,
+     no. 4, pp. 381–392, Oct. 1986.
+[38] J. Lin and J. R. Marti, “Implementation of the CDA procedure in the
+     EMTP,” IEEE Trans. Power Syst., vol. 5, no. 2, pp. 394–402, May 1990.
+[39] A. Greenbaum and T. P. Chartier, Numerical Methods: Design, Analy-
+     sis, and Computer Implementation of Algorithms. Princeton, NJ, USA:                                    Yankan Song (Member, IEEE) received the Ph.D.
+     Princeton Univ. Press, 2012.                                                                           degree in electrical engineering from Tsinghua Uni-
+[40] Y. Song, Y. Chen, Z. Yu, S. Huang, and C. Shen, “CloudPSS: A high-                                     versity, Beijing, China, in 2018. From 2018 to 2020,
+     performance power system simulator based on cloud computing,” Energy                                   he was a Postdoctoral Scholar with Tsinghua Uni-
+     Rep., vol. 6, pp. 1611–1618, Dec. 2020.                                                                versity. He is currently the R&D Manager with the
+[41] Y. Liu, Y. Song, Z. Wang, and C. Shen, “Optimal emergency frequency                                    Center of Cloud-Based Simulation and Intelligent
+     control based on coordinated droop in multi-infeed hybrid AC-DC sys-                                   Decision-Making (CSAID), Sichuan Energy Internet
+     tem,” IEEE Tran. Power Syst., vol. 36, no. 4, pp. 3305–3316, Jul. 2021.                                Research Institute, Tsinghua University.
+[42] Y. Li et al., “Siting and sizing of synchronous compensator based on                                     His research interests include power system model-
+     electromagnetic transient simulation,” Energy Rep., vol. 8, pp. 1350–1357,                             ing and electromagnetic transient simulation, parallel
+     Jul. 2022.                                                                                             computing, and hybrid simulation of interconnected
+[43] S. N. Lalgudi, M. Swaminathan, and Y. Kretchmer, “On-chip power-grid                                   AC-DC systems.
+     simulation using latency insertion method,” IEEE Trans. Circuits Syst. I:
+     Reg. Papers, vol. 55, no. 3, pp. 914–931, Apr. 2008.
+[44] S. N. Lalgudi and M. Swaminathan, “Analytical stability condition of
+     the latency insertion method for nonuniform GLC circuits,” IEEE Trans.
+     Circuits Syst. II: Exp. Briefs, vol. 55, no. 9, pp. 937–941, Sep. 2008.
+[45] H. Ye, S. Gao, G. Li, and Y. Liu, “Efficient estimation and characteristic
+     analysis of short-circuit currents for MMC-MTDC grids,” IEEE Trans.
+     Ind. Electron., vol. 68, no. 1, pp. 258–269, Jan. 2021.                                                Zhitong Yu (Member, IEEE) received the B.S. and
+[46] M. Saeedifard and R. Iravani, “Dynamic performance of a modular multi-                                 M.S. degrees in electrical engineering from Tsinghua
+     level back-to-back HVDC system,” IEEE Trans. Power Del., vol. 25, no. 4,                               University, Beijing, China, in 2014 and 2017, respec-
+     pp. 2903–2912, Oct. 2010.                                                                              tively. He is currently the Executive Director with
+[47] Z. Wu and X. Zhou, “Power system analysis software package (PSASP)-an                                  the Center of Cloud-Based Simulation and Intelligent
+     integrated power system analysis tool,” in Proc. Int. Conf. Power Syst.                                Decision-Making, Sichuan Energy Internet Research
+     Technol., 1998, pp. 7–11.                                                                              Institute, Tsinghua University.
+[48] Z. Tan, Y. Song, S. Gao, Z. Liu, C. Ying, and S. Chen, “Automatic gen-                                    His research interests include electromagnetic tran-
+     eration and parameter verification of large-scale EMT simulation models                                sient simulation, GPU-based high-performance com-
+     based on TSP projects,” in Proc. Power Syst. Green Energy Conf., 2021,                                 puting, and digital twin of power system.
+     pp. 107–111.
+[49] D. Zhang et al., “Generating large-scale electromagnetic transient simula-
+     tion model on CloudPSS using PSASP projects,” in Proc. IEEE Sustain.
+     Power Energy Conf., 2020, pp. 781–786.
+
+
+                            Shilin Gao (Member, IEEE) received the B.S. and
+                            M.S. degrees in electrical engineering from Shandong                            Yenan Wang received the B.S. degree in electrical en-
+                            University, Jinan, China, in 2017 and 2019, respec-                             gineering from Tsinghua University, Beijing, China,
+                            tively, and the Ph.D. degree in electrical engineer-                            in 2022, where she is working toward the M.S. degree.
+                            ing from the Department of Electrical Engineering,                                 Her research interests include modeling, simula-
+                            Tsinghua University, Beijing, China, in 2023. He is                             tion and analysis of modular multilevel converter-
+                            currently an Associate Professor with the College of                            based high voltage direct current systems.
+                            Electrical Engineering, Sichuan University, Chengdu,
+                            China.
+                               His research interests include power system elec-
+                            tromagnetic transient simulation, power system sta-
+bility analysis and control, and MTDC grid.
+
+
+
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 06:30:29 UTC from IEEE Xplore. Restrictions apply.
+
