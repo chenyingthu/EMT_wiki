@@ -33,7 +33,7 @@ updated: "2026-05-13"
 || 8 | current-trajectory-similarity.md | methods | methods/system-studies/current-trajectory-similarity.md | P0 | 126 | 873 | 1 | 9 | completed |
 || 9 | hardware-in-loop.md | topics | topics/simulation/hardware-in-loop.md | P0 | 122 | 940 | 4 | 18 | completed |
 | 10 | cdsm.md | methods | methods/power-electronics/cdsm.md | P0 | 122 | 10033 | 53 | 12 | completed |
-| 11 | model-verification-benchmark.md | topics | topics/test-system/model-verification-benchmark.md | P0 | 119 | 1023 | 3 | 18 | pending |
+|| 11 | model-verification-benchmark.md | topics | topics/test-system/model-verification-benchmark.md | P0 | 119 | 5800 | 51 | 14 | completed |
 | 12 | gpu-parallel-acceleration.md | methods | methods/simulation-technology/gpu-parallel-acceleration.md | P0 | 115 | 861 | 5 | 13 | pending |
 | 13 | dc-fault-blocking.md | topics | topics/hvdc-facts/dc-fault-blocking.md | P0 | 113 | 866 | 6 | 15 | pending |
 | 14 | ieee-118-bus-system.md | topics | topics/test-system/ieee-118-bus-system.md | P0 | 113 | 1114 | 6 | 27 | pending |
@@ -485,4 +485,5 @@ updated: "2026-05-13"
 ||||| 7 | 1 | 1 | 0 | ccvt页面完成（5415字，69公式，12wikilink，1SVG） |
 ||| 8 | 1 | 1 | 0 | current-trajectory-similarity页面完成（4735字，66公式，9wikilink，1SVG） |
 || 9 | 1 | 1 | 0 | hardware-in-loop页面完成（5178字，38公式，11wikilink，1SVG） |
-|| 10 | 1 | 1 | 0 | cdsm页面完成（10033字，53公式，12wikilink，1SVG，4种建模方法） |
+||| 10 | 1 | 1 | 0 | cdsm页面完成（10033字，53公式，12wikilink，1SVG，4种建模方法） |
+||| 11 | 1 | 1 | 0 | model-verification-benchmark页面完成（5800字，51公式，14wikilink，1SVG，7篇来源论文） |
