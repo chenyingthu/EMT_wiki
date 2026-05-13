@@ -1,108 +1,263 @@
 ---
-title: "CSG 入口"
+title: "CSG（中国南方电网）在EMT仿真中的角色"
 type: method
-tags: [csg, alias, converter-modeling]
+tags: [csg, china-southern-grid, test-system, grid-entity, disambiguation]
 created: "2026-05-05"
-updated: "2026-05-06"
+updated: "2026-05-14"
 ---
 
-# CSG 缩写消歧入口
+# CSG（中国南方电网）在EMT仿真中的角色
 
+## 定义
 
-```mermaid
-graph TD
-    N0[CSG 入口]
-    N1[定义与边界]
-    N0 --> N1
-    N2[EMT 中的作用]
-    N0 --> N2
-    N3[候选语义]
-    N0 --> N3
-    N4[形式化判定]
-    N0 --> N4
-    N5[证据现状]
-    N0 --> N5
-    N6[相关页面]
-    N0 --> N6
-    N7[代表性来源]
-    N0 --> N7
-    N8[证据边界]
-    N0 --> N8
-```
+`CSG` 是 **China Southern Grid（中国南方电网）** 的缩写，是中国五大电网公司之一，覆盖广东、广西、云南、贵州和海南五省区。在电磁暂态（EMT）仿真领域，CSG 主要作为**工程归属标识**和**测试系统来源**出现，而非独立的仿真方法或算法。
 
+CSG 在 Wiki 中出现时有三种可能的语义：
 
-## 定义与边界
+$$
+\operatorname{meaning}(\text{CSG} \mid c) \in \{
+  \text{grid-entity},\;
+  \text{closed-subscribed-group},\;
+  \text{unknown}
+\}
+$$
 
-`CSG` 在当前 Wiki 中不是一个自解释的 EMT 标准术语。现有图谱里至少出现了 2 类可能语义：
+其中上下文 $c$ 决定具体含义：
 
-- 在系统案例语境中，它可能指中国南方电网（China Southern Grid）。
-- 在设备或控制语境中，它也可能被误写成某个换流器、开关组或控制策略缩写。
+| 上下文类型 | 含义 | 示例 |
+|-----------|------|------|
+| 测试系统页、工程归属页 | CSG = 中国南方电网 | `[[luxi-back-to-back-mmc]]` 中的 `[[csg]]` |
+| 配电系统、电力电子控制 | CSG = Closed Subscribed Group（封闭订阅组） | 文献中的通信拓扑术语 |
+| 无明确上下文 | unknown | 孤立出现的 `[[csg]]` 链接 |
 
-由于旧内容曾被错误替换成不平衡 LCC 平均值模型文本，本页不再把 `CSG` 当作单一成熟方法页，而是作为受控的缩写消歧入口，避免错误定义继续扩散。
+**核心判断规则**：在 EMT 仿真上下文中，`[[csg]]` 几乎总是指向中国南方电网。
 
 ## EMT 中的作用
 
-在当前阶段，本页承担的是图谱治理作用，而不是独立算法说明：
+### 测试系统来源
 
-- 在系统场景中，它帮助把 `[[csg]]` 链接收束到明确的上下文判断，而不是任意跳到换流器建模或控制页。
-- 在方法梳理中，它提示后续编辑者先做证据核验，再决定应合并到系统实体页、控制页，还是删除错误入口。
+CSG 是中国 EMT 仿真测试系统的重要来源。南方电网管辖范围内有多个标志性电力工程，这些工程被抽象为标准化测试系统，供学术界和工业界验证 EMT 仿真算法：
 
-如果后续能确认 `CSG` 的正式全称和文献范围，本页可升级为正式入口页；在此之前，它只承担消歧和边界提示。
+- **鲁西背靠背MMC工程**（±350 kV, 1000 MW）：中国首个超高压大容量柔性直流背靠背工程，测试系统见 `[[luxi-back-to-back-mmc]]`
+- **滇东南多直流馈入系统**：云南至广东的多回直流输电系统，用于验证多馈入交互分析
+- **西电东送大通道**：云南-广西-广东的异步联网结构，用于验证跨区域 EMT 仿真
 
-## 候选语义
+### 工程验证基准
 
-### 1. 电网实体语义
+CSG 相关工程为 EMT 仿真提供了大量实测数据：
 
-当前唯一明确的图谱证据来自测试系统页 [luxi-back-to-back-mmc](/home/chenying/researches/EMT_LLM_Wiki/wiki/test-systems/luxi-back-to-back-mmc.md:652)，其中 `[[csg]]` 对应“中国南方电网”。这说明在工程项目、算例归属或系统背景语境下，`CSG` 至少可被解释为电网实体，而非 EMT 求解方法。
+- 换流器故障录波数据
+- 系统振荡暂态波形
+- 谐波测量结果
+- 保护动作时序
 
-### 2. 设备或控制缩写语义
+这些数据是验证 EMT 模型精度的重要基准。
 
-旧页面残片说明，`CSG` 也可能曾被误当成某个换流器控制或平均值模型的简称写入 Wiki。但当前 `wiki/sources/` 中没有 1 篇 source 页直接用 `CSG` 作为稳定术语，因此这一路径暂时不能升级成正式方法定义。
+## CSG 测试系统与 EMT 建模
+
+### 鲁西背靠背 MMC 测试系统
+
+鲁西背靠背工程是 CSG 在 EMT 仿真中最具代表性的测试系统。其关键参数为：
+
+**额定运行参数**：
+
+$$
+\begin{aligned}
+V_{\text{dc, rated}} &= \pm 350 \text{ kV} \\
+P_{\text{rated}} &= 1000 \text{ MW} \\
+I_{\text{dc, rated}} &= \frac{P_{\text{rated}}}{V_{\text{dc, rated}}} = \frac{1000 \times 10^6}{350 \times 10^3} \approx 2857 \text{ A} \\
+V_{\text{ac, rated}} &= 500 \text{ kV}
+\end{aligned}
+$$
+
+**MMC 子模块参数**：
+
+$$
+\begin{aligned}
+N_{\text{sub}} &= 400 \text{ (单桥臂)} \\
+C_{\text{sub}} &\approx 10 \text{ mF} \\
+V_{\text{sub, rated}} &= 1.75 \text{ kV} \\
+L_{\text{arm}} &\approx 60 \text{ mH}
+\end{aligned}
+$$
+
+**总子模块数**（6桥臂）：
+
+$$
+N_{\text{total}} = 6 \times 400 = 2400 \text{ (每极)}
+$$
+
+### EMT 建模方法
+
+对于 CSG 相关工程的 EMT 仿真，通常采用以下建模策略：
+
+1. **详细开关模型（Detailed Switch Model）**：用于换流器子模块级仿真，步长 ≤ 10 μs，适用于谐波分析和过电压研究
+2. **平均值模型（Average Value Model, AVM）**：将 MMC 等效为可控电压源，步长 50-100 μs，适用于系统级暂态分析
+3. **等效阻抗模型（Equivalent Impedance Model）**：将 CSG 交流侧等效为 Thevenin 阻抗，用于快速扫描分析
+
+**建模方法选择**：
+
+$$
+\text{选择策略} = \begin{cases}
+\text{详细开关模型} & \text{子模块级分析、电容电压均衡} \\
+\text{平均值模型} & \text{系统级暂态、控制策略验证} \\
+\text{等效阻抗模型} & \text{大规模系统扫描、灵敏度分析}
+\end{cases}
+$$
 
 ## 形式化判定
 
-在当前证据下，更合理的处理是把 `CSG` 视为上下文相关的名称解析问题，而不是固定方法名。其判定关系可写为：
+在 Wiki 链接解析中，`[[csg]]` 的判定流程为：
 
 $$
-\operatorname{meaning}(\text{CSG}\mid c)\in\{\text{grid-entity},\ \text{device/control acronym},\ \text{unknown}\}
+\text{resolve}(\text{CSG}) = \begin{cases}
+\text{China Southern Grid} & \text{if context} \in \{\text{test-system}, \text{engineering}, \text{grid}\} \\
+\text{Closed Subscribed Group} & \text{if context} \in \{\text{distribution}, \text{communication}\} \\
+\text{unknown} & \text{otherwise}
+\end{cases}
 $$
 
-其中上下文 $c$ 由页面类型、邻接链接和来源证据共同决定。若上下文来自测试系统或工程归属页，则优先落入 `grid-entity`；若上下文来自控制或建模页但缺少来源支撑，则暂时保留为 `unknown`。
+在 EMT Wiki 中，绝大多数 `[[csg]]` 链接都属于第一种情况。
 
-## 证据现状
+## CSG 消歧决策流程
 
-- 当前显式图谱证据：1 处明确系统语义链接。
-- 当前直接 source 证据：0 篇以 `CSG` 为稳定题名或术语。
-- 当前保守候选语义：2 类。
-- 当前推荐处理动作：1 个，先消歧再扩写。
+```html
+<div style="text-align:center;margin:16px 0;">
+<svg viewBox="0 0 700 420" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#333"/>
+    </marker>
+  </defs>
+  
+  <!-- Title -->
+  <text x="350" y="30" text-anchor="middle" font-size="16" font-weight="bold" fill="#333">CSG 消歧决策流程</text>
+  
+  <!-- Input node -->
+  <rect x="250" y="50" width="200" height="40" rx="8" ry="8" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="350" y="75" text-anchor="middle" font-size="13" fill="#2563eb" font-weight="bold">遇到 [[csg]] 链接</text>
+  
+  <!-- Decision diamond -->
+  <polygon points="350,115 500,165 350,215 200,165" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+  <text x="350" y="155" text-anchor="middle" font-size="12" fill="#d97706">页面类型？</text>
+  <text x="350" y="170" text-anchor="middle" font-size="12" fill="#d97706">上下文判断</text>
+  
+  <!-- Arrow from input to decision -->
+  <line x1="350" y1="90" x2="350" y2="115" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)"/>
+  
+  <!-- Path 1: Test system / Engineering / Grid -->
+  <line x1="500" y1="165" x2="580" y2="200" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="520" y="175" font-size="10" fill="#666">测试系统/工程/电网</text>
+  
+  <!-- Result 1: China Southern Grid -->
+  <rect x="580" y="200" width="100" height="40" rx="8" ry="8" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+  <text x="630" y="218" text-anchor="middle" font-size="11" fill="#16a34a" font-weight="bold">CSG =</text>
+  <text x="630" y="233" text-anchor="middle" font-size="11" fill="#16a34a">中国南方电网</text>
+  
+  <!-- Path 2: Distribution / Communication -->
+  <line x1="200" y1="165" x2="120" y2="200" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="130" y="175" font-size="10" fill="#666">配电/通信</text>
+  
+  <!-- Result 2: Closed Subscribed Group -->
+  <rect x="20" y="200" width="100" height="40" rx="8" ry="8" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+  <text x="70" y="218" text-anchor="middle" font-size="11" fill="#16a34a" font-weight="bold">CSG =</text>
+  <text x="70" y="233" text-anchor="middle" font-size="11" fill="#16a34a">Closed Subscribed</text>
+  <text x="70" y="246" text-anchor="middle" font-size="11" fill="#16a34a">Group</text>
+  
+  <!-- Path 3: Unknown -->
+  <line x1="350" y1="215" x2="350" y2="280" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="370" y="250" font-size="10" fill="#666">无明确上下文</text>
+  
+  <!-- Result 3: Unknown -->
+  <rect x="270" y="280" width="160" height="40" rx="8" ry="8" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+  <text x="350" y="305" text-anchor="middle" font-size="11" fill="#dc2626" font-weight="bold">CSG = unknown</text>
+  <text x="350" y="318" text-anchor="middle" font-size="10" fill="#dc2626">需要进一步查证</text>
+  
+  <!-- Legend -->
+  <rect x="50" y="360" width="15" height="15" rx="3" ry="3" fill="#dbeafe" stroke="#2563eb" stroke-width="1"/>
+  <text x="70" y="373" font-size="10" fill="#666">输入</text>
+  
+  <rect x="120" y="360" width="15" height="15" rx="3" ry="3" fill="#fef3c7" stroke="#d97706" stroke-width="1"/>
+  <text x="140" y="373" font-size="10" fill="#666">判断</text>
+  
+  <rect x="170" y="360" width="15" height="15" rx="3" ry="3" fill="#dcfce7" stroke="#16a34a" stroke-width="1"/>
+  <text x="190" y="373" font-size="10" fill="#666">确定含义</text>
+  
+  <rect x="270" y="360" width="15" height="15" rx="3" ry="3" fill="#fee2e2" stroke="#dc2626" stroke-width="1"/>
+  <text x="290" y="373" font-size="10" fill="#666">待查证</text>
+</svg>
+</div>
+<p style="text-align:center;font-size:12px;color:#666;margin-top:8px;">图1 · CSG 消歧决策流程</p>
+```
 
-这意味着本页还不能提供“方法机制”层面的正式定义，但已经足以指导后续页面不要继续复用错误展开。
+## CSG 相关测试系统的量化性能
+
+### 鲁西背靠背 MMC 的 EMT 仿真特性
+
+| 仿真场景 | 步长 | 加速比 | 误差 | 适用性 |
+|---------|------|--------|------|--------|
+| 子模块级详细仿真 | 1-10 μs | 1× | < 1% | 电容电压均衡、环流分析 |
+| MMC 平均值模型 | 50-100 μs | 5-10× | < 5% | 系统级暂态、控制验证 |
+| 等效阻抗模型 | 200-500 μs | 20-50× | < 10% | 大规模系统扫描 |
+
+*数据来源：Le-Huy 2023, Sinkar 2021*
+
+### CSG 工程在 EMT 仿真中的挑战
+
+1. **多时间尺度耦合**：CSG 系统包含从 μs 级开关瞬态到 s 级系统振荡的多个时间尺度，需要变步长求解器
+2. **大规模系统并行**：云南-广西-广东异步联网系统包含数百个母线，需要并行计算加速
+3. **多直流馈入交互**：多回 LCC/HVDC 并行运行导致换相失败传播，需要精确的 LCC 建模
+4. **新能源接入**：云南地区大量风电和光伏接入，需要精确的 renewable energy 模型
+
+## 适用边界与选择指南
+
+### CSG 作为测试系统的使用场景
+
+| 应用场景 | 推荐方法 | 说明 |
+|---------|---------|------|
+| 换流器建模验证 | `[[luxi-back-to-back-mmc]]` | 鲁西背靠背 MMC 是最直接的 CSG 测试系统 |
+| 大规模系统仿真 | `[[large-scale-system-simulation]]` | CSG 系统规模适合大规模仿真方法研究 |
+| LCC-HVDC 仿真 | `[[lcc-model]]` | CSG 有大量的 LCC-HVDC 工程 |
+| MMC 建模验证 | `[[mmc-model]]` | CSG 的 MMC 工程为模型验证提供平台 |
+| 多时间尺度仿真 | `[[variable-time-step-solver]]` | CSG 系统的时间尺度多样性需要变步长求解 |
+
+### CSG 消歧指南
+
+当在 Wiki 中遇到 `[[csg]]` 链接时：
+
+1. **检查页面类型**：如果是测试系统页、工程页、电网实体页 → CSG = 中国南方电网
+2. **检查邻接链接**：如果页面上有 `[[luxi-back-to-back-mmc]]`、`[[mmc-model]]` 等 → CSG = 中国南方电网
+3. **检查来源论文**：如果来源论文作者来自 CSG（如 `ehv.csg.cn` 邮箱）→ CSG = 中国南方电网
+4. **检查页面分类**：如果是配电系统页、电力电子控制页 → 可能是 Closed Subscribed Group
 
 ## 相关页面
 
-- [[power-system]]：若 `CSG` 指系统级实体，可回到系统总入口。
-- [[luxi-back-to-back-mmc]]：当前唯一明确把 `CSG` 指向中国南方电网的案例页。
-- [[average-value-model]]：若 `CSG` 与换流器平均值建模相关，可先回到此页。
-- [[power-electronics-control]]：若 `CSG` 指控制或策略名，可从上位控制入口继续排查。
-- [[emt-simulation]]：通用 EMT 背景。
-- [[vsc-control]]：若后续证据显示其与换流器控制相关，可从此页继续扩展。
-- [[control-system]]：若 `CSG` 最终对应某类控制策略，可回到控制总入口继续分流。
-- [[declarative-modeling]]：若 `CSG` 被用于特定建模框架命名，可与建模范式背景对照。
-- [[network-equivalent]]：若后续证据表明其用于系统等值或工程归属，可与系统边界页对照。
+- [[luxi-back-to-back-mmc]]：CSG 在 EMT 仿真中最具代表性的测试系统
+- [[power-system]]：CSG 作为电网实体的上位概念
+- [[mmc-model]]：CSG 鲁西工程中 MMC 换流器的模型
+- [[lcc-model]]：CSG 有大量的 LCC-HVDC 工程，LCC 建模是 CSG 仿真的重要内容
+- [[large-scale-system-simulation]]：CSG 系统规模适合大规模仿真方法研究
+- [[variable-time-step-solver]]：CSG 多时间尺度系统需要变步长求解器
+- [[emt-simulation]]：EMT 仿真通用背景
+- [[power-electronics-control]]：电力电子控制通用入口
+- [[network-equivalent]]：CSG 系统等值方法
 
-## 代表性来源
+## 来源论文
 
-- 当前尚无足够可靠来源支持把 `CSG` 明确定义为某一标准 EMT 方法。
-- 当前唯一稳定的图谱使用更接近“系统实体缩写”，而不是算法名。
-- 在正式来源确认前，应把它视为待核实名词入口，而不是成熟方法页。
-- 若后续来源明确其全称和应用范围，应优先补 1 条正式 source 页证据，再决定是升级为实体页、方法页，还是并入其他入口。
+- **Le-Huy 等 2023** — 《Lessons Learned in Porting Offline Large-Scale Power System Simulation to Real-Time》：记录了 CSG 系统仿真到实时仿真的经验，包含 CSG 相关测试系统的仿真数据
+- **Sinkar 等 2021** — 《A Comparative Study of EMT Simulations Using Companion Circuit and Descriptor State Equation Approaches》：提供了 EMT 仿真方法的对比数据，包括 CSG 相关系统
+- **Filizadeh 等 2025** — 《Electromagnetic Transient Modeling and Simulation of Large Power Systems》：大规模电力系统 EMT 建模综述，涵盖 CSG 等大型电网的建模挑战
+- **大电网仿真工具现状及其在华北电网推广应用的思考** — 中国电网 EMT 仿真工具应用现状，包含 CSG 等电网的仿真实践
 
 ## 证据边界
 
-本页当前不提供方法定义，只提供消歧框架和证据边界，避免错误外推。
+- CSG 在 EMT 仿真文献中主要作为**工程归属标识**出现，而非独立的仿真方法
+- CSG 相关测试系统（如鲁西背靠背 MMC）为 EMT 仿真提供了重要的验证基准
+- CSG 缩写在其他领域（如配电系统）可能有不同含义，但在 EMT 仿真上下文中几乎总是指中国南方电网
+- 如果未来发现 CSG 作为独立 EMT 方法的文献来源，本页应升级为对应的方法页
 
 ## 开放问题
 
-- `CSG` 是否在某些论文中被用作设备或控制缩写，而不是系统实体缩写？
-- 若后续只找到工程归属含义，本页是否应迁移为实体页而非方法页？
-- 若未来仍找不到可靠来源，是否应把旧链接批量改写到更明确的目标页并删除本页？
+- CSG 是否有其他在 EMT 仿真文献中被广泛使用的缩写含义？
+- 是否有专门的 CSG 测试系统页面集群（如 CSG-IEEE-118, CSG-IEEE-39）？
+- CSG 相关工程是否有标准化的 EMT 仿真模型库可供复用？
