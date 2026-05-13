@@ -1,3 +1,10 @@
+---
+title: "小信号分析方法 (Small-Signal Analysis)"
+type: method
+tags: [small, signal]
+created: "2026-05-13"
+---
+
 # 小信号分析方法 (Small-Signal Analysis)
 
 

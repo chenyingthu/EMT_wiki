@@ -1,3 +1,10 @@
+---
+title: "硬件在环仿真 (Hardware-in-the-Loop Simulation)"
+type: method
+tags: [hardware, loop]
+created: "2026-05-13"
+---
+
 # 硬件在环仿真 (Hardware-in-the-Loop Simulation)
 
 

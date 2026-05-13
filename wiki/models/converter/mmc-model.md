@@ -1,159 +1,301 @@
 ---
 title: "模块化多电平换流器 (MMC)"
 type: model
-tags: [mmc, hvdc, converter, sub-module, arm]
+tags: [mmc, hvdc, converter, sub-module, arm, modular-multilevel]
 created: "2026-04-13"
-updated: "2026-05-12"
+updated: "2026-05-13"
 ---
 
 # 模块化多电平换流器 (MMC)
 
-## 概述
+## 定义
 
-模块化多电平换流器（Modular Multilevel Converter, MMC）是当前高压直流输电（HVDC）和柔性交流输电系统的主流拓扑。由多个子模块（SM）级联构成桥臂，具有模块化、可扩展、低谐波等优势。
+模块化多电平换流器（Modular Multilevel Converter, MMC）是柔性直流输电（VSC-HVDC）的核心换流器拓扑，由德国慕尼黑联邦国防军大学Marquardt教授于2003年首次提出【Lesnicar 2003】。其基本结构由三个独立相单元组成，每个相单元包含上、下两个桥臂，每个桥臂串联连接$N$个子模块（Sub-Module, SM）和桥臂电抗器。通过有选择地投入或切除各子模块，MMC能够在交流侧合成多级阶梯波电压，输出波形逼近正弦波，谐波含量极低。
+
+MMC的拓扑优势在于：（1）**模块化扩展**：子模块数量$N$可根据直流电压等级线性调整，无需串联电力电子器件；（2）**低开关损耗**：每个子模块的电压摆幅仅为总直流电压的$1/N$，降低了开关应力和损耗；（3）**低谐波**：输出波形多级化，无需大型交流滤波器即可满足电能质量要求。
+
+$$
+\text{MMC交流侧输出电压电平数} = N + 1
+$$
+
+## EMT中的角色
+
+在电磁暂态（EMT）仿真中，MMC建模面临的核心挑战是**计算规模与仿真精度的矛盾**。一个工程级MMC换流器通常包含数百个子模块每桥臂，单个半桥子模块包含2个IGBT和2个反并联二极管，6个桥臂共需建模数千个开关器件。在传统EMT仿真中，每次开关状态变化都需重新求逆节点导纳矩阵，导致仿真速度呈指数增长，使大规模MMC系统的EMT仿真在实用计算机上几乎不可行。
+
+因此，MMC的EMT建模目标是在**保持子模块电容电压充放电细节和开关动态精度的前提下**，通过电路等效和数值离散技术大幅降低导纳矩阵阶数，实现仿真提速100～1000倍。
 
 ## EMT建模方法
 
-### 1. 详细模型
-- 每个子模块单独建模
-- 包含开关动态和电容电压
-- 计算量极大，适用于少量SM
+### 1. 详细开关模型（Detailed Model）
 
-### 2. 平均值模型 (AVM)
-- 桥臂平均化处理
-- 忽略开关纹波，保留低频动态
-- 计算效率提升1-2个数量级
-- 增强平均值模型（考虑环流）
+**原理**：使用EMT仿真软件（PSCAD/EMTDC、MATLAB/Simulink）元件库中的IGBT、二极管、电容等器件，逐器件搭建MMC换流桥臂上的各个子模块。拓扑结构与物理MMC完全一致。
 
-### 3. 等效模型
-- Thevenin等效桥臂
-- 嵌套快速求解方法
-- 任意多端口子模块结构
+**数学表达**：每个子模块的开关状态由离散变量$s_{k,i} \in \{0, 1\}$描述（$k$为子模块编号，$i$为相单元编号），子模块输出电压$u_{SM,k} = s_{k} \cdot v_{C,k}$，其中$v_{C,k}$为子模块电容电压。桥臂总电压为串联子模块电压之和：
 
-### 4. 固定导纳模型
-- ADC建模，避免矩阵重构
-- 适用于实时仿真
-- FPGA硬件实现
+$$
+u_{arm}(t) = \sum_{k=1}^{N} s_{k}(t) \cdot v_{C,k}(t)
+$$
 
-### 5. 动态相量模型
-- 频域MMC建模
-- 适用于混合仿真
-- 宽频暂态分析
+**特点**：
+- **精度最高**：完整保留每个子模块的开关动态、电容电压充放电过程
+- **可仿真故障**：能够模拟单个子模块IGBT失效、电容故障等异常工况
+- **计算量极大**：节点数随子模块数线性增长，导纳矩阵求逆次数随开关动作频率呈指数增长
+- **适用场景**：子模块数$N \leq 50$的小规模系统、控制保护策略验证、子模块级故障分析
+
+**局限**：对于工程级MMC（$N \geq 100$），单相仿真耗时可达数小时，不适用于系统级暂态研究。
+
+### 2. 基于戴维南等效的整体模型（Detailed Equivalent Model, DEM）
+
+**原理**：由Gnanarathna等（2011）【Gnanarathna 2011】首次在PSCAD/EMTDC中提出，开创了MMC高精度与高效率并重的建模研究新领域。核心思想是将每个子模块离散化为戴维南等效电路（等效电阻+历史电压源），然后将同一桥臂内$N$个子模块的戴维南电路串联叠加，合并为一个桥臂等效电阻和等效电压源，作为2节点支路接入外部网络求解。
+
+**数学表达**：子模块电容通过梯形积分法离散化为戴维南等效：
+
+$$
+R_{SM} = \frac{\Delta t}{2C}, \quad E_{SM}(t) = v_C(t-\Delta t) + \frac{\Delta t}{2C} \cdot i_{SM}(t-\Delta t)
+$$
+
+其中$R_{SM}$为戴维南等效电阻，$E_{SM}$为历史电压源。桥臂等效电路为$N$个子模块戴维南电路的串联叠加：
+
+$$
+R_{arm} = \sum_{k=1}^{N} R_{SM,k} = N \cdot R_{SM}, \quad E_{arm}(t) = \sum_{k=1}^{N} E_{SM,k}(t)
+$$
+
+**三种变体**（Xu 2015综述）：
+
+| 模型 | 积分方法 | 排序算法复杂度 | 精度 | 速度 |
+|------|----------|----------------|------|------|
+| 等效模型1 | 梯形积分 | $O(N^2)$（全排序） | 高 | 中等 |
+| 等效模型2 | 后退欧拉 | $O(N)$（分组排序） | 中等 | 快 |
+| 等效模型3 | 梯形积分 | $O(N)$（分组排序） | 高 | 快 |
+
+**关键改进**（等效模型2，Xu 2014）：
+1. 假设开关关断电阻为无穷大，简化等效电阻计算
+2. 采用后退欧拉法离散电容，导通组和切除组的子模块电容电压增量完全一致
+3. 初始全排序后，后续仅需在导通组和切除组之间比较，排序复杂度从$O(N^2)$降至$O(N)$
+
+**特点**：
+- **精度与效率兼顾**：仿真精度与详细模型几乎一致，相对误差$< 0.1\%$
+- **线性复杂度**：仿真耗时随子模块数线性增长，而非详细模型的指数增长
+- **保留子模块信息**：可输出每个子模块的电容电压，支持电容电压平衡控制仿真
+- **适用场景**：大规模MMC-HVDC系统仿真、控制保护设计、参数优化
+
+**量化性能**（Gnanarathna 2011）：
+- 100子模块/桥臂（2400个开关器件）：详细模型需2.5小时，DEM仅需30秒，加速比**310倍**
+- 仿真步长20 μs，5秒仿真时长，Intel Core 2 Duo E8400 3.00 GHz
+
+**局限**：
+- 假设开关关断电阻无穷大，在极低电平数或大仿真步长下精度略降
+- 闭锁时需要二极管插值处理，避免数值振荡
+
+### 3. 基于Schur补法的多端口等效模型（Schur-Complement Based Model）
+
+**原理**：由Xu等（2018）【Xu 2018】提出，针对含多端口子模块（如两端口SM）的新型MMC拓扑。采用Schur补技术递归消去子模块内部节点，将每个子模块简化为多端口诺顿等效电路，然后递归串联得到整个桥臂的诺顿等效。
+
+**数学表达**：子模块节点导纳方程为$Y_{SM}V_{SM} = J_{SM} + I_{SM}$，其中$Y_{SM}$为$n \times n$导纳矩阵。将节点分为接口节点（$2m$个，$m$为端口数）和内部节点（$n-2m$个），分块后：
+
+$$
+\begin{bmatrix} Y_{11} & Y_{12} \\ Y_{21} & Y_{22} \end{bmatrix} \begin{bmatrix} V_{IF} \\ V_{IN} \end{bmatrix} = \begin{bmatrix} J_{IF} \\ J_{IN} \end{bmatrix} + \begin{bmatrix} I_{IF} \\ 0 \end{bmatrix}
+$$
+
+通过Schur补消去内部节点：
+
+$$
+Y_{IF} = Y_{11} - Y_{12}Y_{22}^{-1}Y_{21}, \quad J_{IF} = J_{IF} - Y_{12}Y_{22}^{-1}J_{IN}
+$$
+
+得到多端口诺顿等效$Y_{IF}V_{IF} = J_{IF} + I_{IF}$。
+
+**递归流程**：
+1. **外向流（Outward Flow）**：逐个合并子模块，消去内部节点，最终得到桥臂诺顿等效（仅$2m$个接口节点）
+2. **网络求解（Network Solution）**：将桥臂等效叠加到外部网络导纳矩阵，求解接口节点电压
+3. **内向流（Inward Flow）**：从桥臂接口节点电压出发，递归计算各子模块内部节点电压，更新历史项
+
+**特点**：
+- **支持任意多端口子模块**：适用于两端口SM、三端口SM等新型拓扑
+- **节点规模大幅缩减**：200子模块/桥臂时，节点数从802缩减至4（每桥臂）
+- **计算效率提升2～3个数量级**
+- **适用场景**：含多端口子模块的MMC系统、直流故障穿越能力研究
+
+**量化性能**（Xu 2018）：
+- 576子模块/桥臂：加速比**1246倍**（3个数量级）
+- 计算时间与子模块数呈线性关系：$CT = 0.15k + 1.8$（$k$为子模块数）
+- 详细模型呈多项式关系：$CT = 0.053k^{2.3} + 80$
+
+### 4. 基于受控源的通用等效模型（Controlled-Source Based Model）
+
+**原理**：由Xu等（2013）【Xu 2013】提出。将详细模型每个桥臂中全部子模块断开电气连接，子模块正端口连接受控电流源，负端口接地。六个桥臂均置换为受控电压源，实现桥臂与子模块之间的电气解耦，仅通过二次信息（电压、电流、开关状态）交换。
+
+**特点**：
+- **一次系统可视化程度强**：桥臂结构在仿真中可见，便于调试
+- **易于实现**：直接使用仿真软件元件库已有元件
+- **支持子模块级故障仿真**：可替换单个子模块为详细模型
+- **适用场景**：大规模双端MMC-HVDC系统仿真、子模块故障分析
+
+**局限**：随着电平数增加，仿真用时呈近似线性增长，但斜率高于DEM。
+
+### 5. 平均值模型（Average Value Model, AVM）
+
+**原理**：将每个桥臂等效为一个等效电容和受控源组合，忽略子模块间的电容电压差异，保留桥臂平均电压输出。通过开关函数理论将子模块输出电压平均化：
+
+$$
+S_{arm}(t) = \frac{1}{N}\sum_{k=1}^{N} s_k(t)
+$$
+
+桥臂等效电容值$C_{arm} = C_{SM}/N$。
+
+**改进平均值模型**（Xu 2015）：引入并联二极管和级联开关结构，解决传统AVM在换流器闭锁和直流故障时的拓扑失效问题。正常运行时开关S3与级联开关S1闭合，S2打开；闭锁时S3断开，S2闭合，确保直流电压不出现负值。
+
+**特点**：
+- **计算效率极高**：忽略开关级细节，适合系统级暂态分析
+- **无法仿真子模块电容均压**：所有子模块等效为一个电容
+- **改进AVM可仿真闭锁和直流故障**：保留二极管钳位作用
+- **适用场景**：大规模MMC-MTDC系统分析、交直流混联系统稳定性研究
+
+**局限**：
+- 前提条件：子模块电容值足够大以确保电容电压近似均衡
+- 无法用于验证电容电压平衡算法
+- 不适用于子模块级故障分析
+
+### 6. 固定导纳模型（Fixed Admittance Model, ADC）
+
+**原理**：采用欧拉积分替代梯形积分，使桥臂等效导纳在正常运行时保持恒定，仅在闭锁工况下更新。Parvari等（2023）【Parvari 2023】在此基础上提出加速DEM。
+
+**特点**：
+- **避免矩阵重构**：导纳恒定，无需每步更新
+- **适用于实时仿真**：FPGA硬件实现
+- **HBSM加速比提升30%，FBSM提升60%**（vs传统DEM）
+- **适用场景**：实时仿真（RTDS、OPAL-RT）、FPGA硬件在环
+
+**量化性能**（Parvari 2023）：
+- 4站MMC-MTDC（200 FBSM/站）：31.0秒 vs 84.7秒（传统DEM）
+
+## 形式化表达
+
+MMC桥臂的EMT建模可形式化概括为以下核心方程：
+
+**子模块电容电压动态**：
+$$
+\frac{dv_{C,k}}{dt} = \frac{i_{arm}(t)}{C} \cdot (1 - s_k(t))
+$$
+
+**桥臂输出电压**：
+$$
+u_{arm}(t) = \sum_{k=1}^{N} s_k(t) \cdot v_{C,k}(t) + i_{arm}(t) \cdot R_{arm}^{eq}
+$$
+
+**DEM桥臂等效电路**：
+$$
+R_{arm}^{eq} = N \cdot \frac{\Delta t}{2C}, \quad E_{arm}(t) = \sum_{k=1}^{N} \left(v_{C,k}(t-\Delta t) + \frac{\Delta t}{2C} \cdot i_{arm}(t-\Delta t)\right)
+$$
+
+**诺顿等效接口**：
+$$
+I_{arm}(s) = Y_{arm}(s) \cdot \left(E_{arm}(s) - V_{arm}(s)\right)
+$$
 
 ## 关键技术挑战
 
-- 子模块电容电压平衡
-- 环流抑制控制
-- 直流故障穿越
-- 损耗建模（虚假功率问题）
-- 大规模MMC-MTDC系统仿真
+### 1. 子模块电容电压平衡
+
+电容电压平衡是MMC控制的核心问题。在正常运行时，每个子模块的电容电压应维持在额定值附近。平衡控制器通过比较各子模块电容电压，按电压升序排列，根据桥臂电流方向决定投入低电压还是高电压的子模块，确保电容电压均衡。
+
+**排序算法复杂度**是DEM模型的关键瓶颈：
+- 全排序：$O(N^2)$
+- 分组排序（后退欧拉）：$O(N)$
+- 分组排序（梯形积分，4组）：$O(2N-3)$
+
+### 2. 环流抑制控制
+
+MMC内部环流（两桥臂电流之差中的二次谐波分量）会导致子模块电容电压波动和额外损耗。环流抑制控制通过在桥臂电压参考值中注入负序谐波分量，抵消环流。环流模型在EMT仿真中需要精确表征，否则会影响电容电压平衡和子模块应力评估。
+
+### 3. 直流故障穿越
+
+半桥子模块（HBSM）不具备直流故障电流阻断能力，需要依赖交流侧断路器切除故障。全桥子模块（FBSM）和双钳位子模块（CDSM）可通过关断所有IGBT，利用反并联二极管自然阻断直流故障电流。不同子模块拓扑的直流故障响应特性是EMT仿真的重要验证内容。
+
+### 4. 损耗建模与虚假功率问题
+
+等效模型在简化过程中可能引入虚假功率（Spurious Power），即等效电路在闭锁或故障工况下产生不真实的功率流动。del Giudice等（2024）和文献【Spurious Power 2020】指出，需要在等效模型中精确处理闭锁时的二极管导通路径，避免虚假功率影响仿真精度。
+
+### 5. 大规模MMC-MTDC系统仿真
+
+多端MMC系统（MMC-MTDC）包含数千个子模块，仿真规模进一步放大。自适应模型切换策略（Stepanov 2020）在稳态时切换至AVM/AEM降低计算耗时，暂态时切换至DEM保持精度，整体加速比$> 3.5$倍。
 
 ## 量化性能边界
 
-**Gnanarathna 2010 DEM — 基于戴维南等效的MMC详细等效模型（Detailed Equivalent Model）**:
-- 采用梯形积分法将每个子模块等效为戴维南电路，再将桥臂内N个子模块聚合为单一戴维南等效电路
-- 仿真速度较详细开关模型提升 **310x**，相对误差 < **0.1%**
-- 验证系统：2400个开关元件的MMC-HVDC，仿真时间从5s缩短至30s（PSCAD/EMTDC）
-- 起动、功率反向、交流故障等工况均验证，波形与详细模型高度重合
-- 数据缺口：原文验证基于单一MMC-HVDC系统，MMC-MTDC多端工况下的加速比未单独报告
+**DEM加速比**（Gnanarathna 2011）：
+- 100子模块/桥臂（2400开关器件）：详细模型2.5小时 → DEM 30秒，加速比**310倍**
+- 相对误差$< 0.1\%$，波形与详细模型高度重合
+- 验证工况：起动、功率反向、交流故障
 
-**Xu 2018 Schur补法 — 任意多端口子模块高速EMT等效模型**:
-- 基于Schur补数技术递归消去子模块内部节点，构建连接外部网络的多端口诺顿等效电路
-- 节点规模从 **802个缩减至4个**/桥臂，计算效率提升 **2～3个数量级**
-- 相对误差 < **0.1%**，完整保留子模块内部动态信息
-- 支持半桥、全桥、双扣位等多种子模块结构，无需解析推导
-- 数据缺口：对极高子模块数（N > 500）的性能表现未系统评估
+**Schur补法加速比**（Xu 2018）：
+- 72子模块/桥臂：加速比**$> 100$倍**（2个数量级）
+- 576子模块/桥臂：加速比**1246倍**（3个数量级）
+- 相对误差$< 0.2\%$
 
-**Xu 2015 综述 — 多种等效模型横向对比**:
-- 戴维南等效模型在N=200时加速比≈15～20x（vs详细开关模型）
-- 梯形积分法比后退欧拉法慢约2x，但精度高 **0.2～0.4%**
-- 电磁暂态平均简化模型在交直流故障中仍保持较高精度
-- 数据缺口：多种模型间缺乏统一基准测试系统和标准化工况
+**固定导纳模型**（Parvari 2023）：
+- 4站MMC-MTDC（200 FBSM/站）：31.0秒 vs 84.7秒（传统DEM）
+- HBSM加速比提升**+30%**，FBSM提升**+60%**
 
-**Gao 2023 混合数值积分MMC模型**:
-- 采用混合数值积分（BE+蛙跳法）实现MMC内外动态方程完全解耦，桥臂等效电导恒定
-- 仿真速度提升 **5～15x**（vs详细开关模型）
-- 稳态误差 < **0.5%**，暂态峰值误差 < **1%**
-- 验证平台：EMTP-type仿真，波形与详细模型高度重合
-- 数据缺口：FBSM拓扑下的加速比和精度未单独报告
+**自适应模型切换**（Stepanov 2020）：
+- 401电平MMC：稳态时切换至AVM/AEM，降低单步计算耗时**65～75%**
+- 整体加速比$> 3.5$倍
+- 模型切换过程外部电气特性误差$< 0.5\%$
 
-**Parvari 2023 加速DEM — 欧拉积分恒定导纳模型**:
-- 采用欧拉积分替代梯形积分，恶化开关状态下的导纳矩阵更新频率（仅闭锁工况更新）
-- HBSM加速比提升 **+30%**，FBSM加速比提升 **+60%**（vs传统DEM）
-- 4站MMC-MTDC（200FBSM/站）：31.0s vs 84.7s（传统DEM）
-- 数据缺口：欧拉积分引入的数值误差增量未与梯形法量化对比
+## 适用边界与选择指南
 
-**Stepanov 2020 自适应MMC模型（AVM/AEM/DEM）**:
-- AVM/AEM/DEM三档自适应切换，模型切换过程外部电气特性误差 < **0.5%**
-- 验证系统：401电平MMC，仿真平台PSCAD/EMTDC
-- 闭锁模式求解器迭代上限30次，实际收敛 < **6次**
-- 稳态时切换至AVM/AEM可降低单步计算耗时65～75%，整体加速比 > **3.5x**
-- 数据缺口：多端MTDC工况下的自适应切换策略未验证
-
-**del Giudice 2024 打靶法MMC初始化**:
-- 两阶段AVM到Thévenin映射的打靶法初始化，直接从接近稳态启动
-- 消除传统初始化所需的长时间仿真过渡
-- 兼容不同详细程度的MMC模型，支持包含调制策略与电容电压平衡算法的复杂控制方案
-- 数据缺口：具体初始加速比和稳态逼近误差在原文摘要中未量化报告
-
-**数据缺口声明**：MMC建模的加速比高度依赖于子模块数N、子模块类型（HBSM/FBSM/CDSM）和仿真平台。不同模型间的横向对比缺乏统一基准（详细模型步长、硬件配置不同）。大多数验证在离线EMT环境完成，实时硬件平台（FPGA/RTDS/OPAL-RT）下的数据仅少数文献报告。特别是多端MTDC工况下的自适应模型切换策略仍缺乏充分验证。
+| 应用场景 | 推荐模型 | 原因 |
+|----------|----------|------|
+| 子模块级故障分析 | 详细模型 | 需精确表征每个子模块的开关动态 |
+| 小规模MMC（$N \leq 50$） | 详细模型 | 计算量可接受，精度最高 |
+| 大规模MMC-HVDC系统 | DEM（等效模型3） | 精度与效率的最佳平衡 |
+| 多端口子模块MMC | Schur补法模型 | 支持任意多端口拓扑 |
+| 交直流混联系统暂态 | 改进AVM | 计算效率高，可仿真闭锁和故障 |
+| 实时仿真（FPGA/RTDS） | 固定导纳模型 | 避免矩阵重构，满足实时性 |
+| 大规模MTDC系统 | 自适应模型切换 | 稳态/暂态自动切换，兼顾效率与精度 |
 
 ## 相关方法
-- [[average-value-model]]
-- [[fixed-admittance]]
-- [[state-space-method]]
-- [[dynamic-phasor]]
+
+- [[thevenin-equivalent-model|戴维南等效模型]] - DEM的核心数学基础
+- [[norton-equivalent|诺顿等效]] - Schur补法等效的接口形式
+- [[backward-euler|后退欧拉法]] - 等效模型2的电容离散方法
+- [[trapezoidal-rule|梯形法则]] - 等效模型1和3的积分方法
+- [[average-value-model]] - 平均值模型
+- [[schur-complement|Schur补法]] - 多端口等效的数学工具
 
 ## 相关模型
+
 - [[vsc-model|VSC模型]] - 两电平/三电平换流器对比
-- [[fdne-model|频变网络等值(FDNE)]] - MMC外部网络等值
+- [[lcc-model|LCC模型]] - 线路换相换流器对比
 - [[transformer-model|换流变压器]] - MMC换流变建模
 - [[cable-model|电缆模型]] - 直流电缆连接
 - [[mtdc-model|MTDC模型]] - 多端MMC系统
+- [[submodule-hbsm|半桥子模块（HBSM）]]
+- [[submodule-fbsm|全桥子模块（FBSM）]]
 
 ## 相关主题
-- [[vsc-hvdc]]
-- [[real-time-simulation]]
-- [[co-simulation]]
-- [[frequency-dependent-modeling]]
-- [[parallel-computing]]
+
+- [[vsc-hvdc|VSC-HVDC]] - 柔性直流输电系统
+- [[mtdc-system|多端直流系统（MTDC）]]
+- [[real-time-simulation|实时仿真]]
+- [[hil-simulation|硬件在环仿真]]
+- [[co-simulation|联合仿真]]
+- [[frequency-dependent-modeling|频变建模]]
 
 ## 来源论文
 
-| 论文 | 年份 |
-|------|------|
-| [[efcient-modeling-of-modular-multilevel-hvdc-15|Efﬁcient Modeling of Modular Multilevel HVDC]] | 2010 |
-| [[electromechanical-transient-modeling-of-modular-multilevel-converter-based-multi|Electromechanical Transient Modeling of Modular Multilevel C]] | 2013 |
-| [[modular-multilevel-converter-models|Modular Multilevel Converter Models]] | 2013 |
-| [[ahmed-等-a-computationally-efficient-continuous-model-for-the-modular-multilevel-|Ahmed et al. | A Computationally Efficient Continuous Model for t]] | 2014 |
-| [[average-value-models-for-modular-multilevel-converters-operating-in-a-vsc-hvdc-grid|Average-Value Models for Modular Multilevel Converters Opera]] | 2014 |
-| [[a-review-of-efficient-modeling-methods-for-modular-multilevel-converters|A review of efficient modeling methods for modular multileve]] | 2015 |
-| [[comparison-of-detailed-modeling-techniques-for-mmc-employed-on-vsc-hvdc-schemes|Comparison of Detailed Modeling Techniques for MMC Employed ]] | 2015 |
-| [[transient-stability-analysis-of-mmc-hvdc-system-considering-dc-side-fault|Transient Stability Analysis of MMC-HVDC System Considering ]] | 2015 |
-| [[模块化多电平换流器戴维南等效整体建模方法|模块化多电平换流器戴维南等效整体建模方法]] | 2015 |
-| [[improved-accuracy-average-value-models-of-modular-multilevel-converters|Improved Accuracy Average Value Models of Modular Multilevel]] | 2016 |
-| [[high-speed-emt-modeling-of-mmcs-with-arbitrary-multiport-submodule-structures-us|High-Speed EMT Modeling of MMCs With Arbitrary Multiport Sub]] | 2018 |
-| [[an-enhanced-average-value-model-of-modular-multilevel-converter-for-accurate-rep|An Enhanced Average Value Model of Modular Multilevel Conver]] | 2018 |
-| [[unified-high-speed-emt-equivalent-and-implementation-method-of-mmcs-with-single-|Unified High-Speed EMT Equivalent and Implementation Method ]] | 2018 |
-| [[a-universal-blocking-module-based-average-value-model-of-modular-multilevel-conv|A Universal Blocking-Module-Based Average Value Model of Mod]] | 2019 |
-| [[modeling-of-a-modular-multilevel-converter-with-embedded-energy-storage-for-elec|Modeling of a Modular Multilevel Converter With Embedded Ene]] | 2019 |
-| [[parallel-in-time-simulation-algorithm-for-power-electronics-mmc-hvdc-system|Parallel-in-Time Simulation Algorithm for Power Electronics:]] | 2019 |
-| [[adaptive-modular-multilevel-converter-model-for-electromagnetic-transient-simula|Adaptive Modular Multilevel Converter Model for Electromagne]] | 2020 |
-| [[combining-detailed-equivalent-model-with-switching-function-based-average-value-|Combining Detailed Equivalent Model With Switching-Function-]] | 2020 |
-| [[spurious-power-and-its-elimination-in-modular-multilevel-converter-models|Spurious power and its elimination in modular multilevel con]] | 2020 |
-| [[average-value-model-for-a-modular-multilevel-converter-with-embedded-storage|Average-Value Model for a Modular Multilevel Converter With ]] | 2021 |
-| [[parallelization-of-mmc-detailed-equivalent-model|Parallelization of MMC detailed equivalent model]] | 2021 |
-| [[wave-function-and-multiscale-modeling-of-mmc-hvdc-system-for-wide-frequency-tran|Wave Function and Multiscale Modeling of MMC-HVdc System for]] | 2021 |
-| [[an-equivalent-hybrid-model-for-a-large-scale-modular-multilevel-converter-and-co|An Equivalent Hybrid Model for a Large-Scale Modular Multile]] | 2022 |
-| [[high-frequency-oscillation-analysis-and-suppression-strategy-of-mmc-hvdc-system-|High-frequency oscillation analysis and suppression strategy]] | 2022 |
-| [[mmc-mtdc系统的电磁-机电暂态建模与实时仿真分析|MMC-MTDC系统的电磁-机电暂态建模与实时仿真分析]] | 2022 |
-| [[an-efficient-half-bridge-mmc-model-for-emtp-type-simulation-based-on-hybrid-nume|An Efficient Half-Bridge MMC Model for EMTP-Type Simulation ]] | 2023 |
-| [[an-accelerated-detailed-equivalent-model-for-modular-multilevel-converters|An accelerated detailed equivalent model for modular multile]] | 2023 |
-| [[generalized-electromagnetic-transient-equivalent-modeling-and-implementation-of-|Generalized Electromagnetic Transient Equivalent Modeling an]] | 2023 |
-| [[shooting-method-based-modular-multilevel-converter-initialization-for-electromag|Shooting method based modular multilevel converter initializ]] | 2024 |
-| [[a-state-space-approach-for-accelerated-simulation-of-modular-multilevel-converte|A state-space approach for accelerated simulation of modular]] | 2025 |
-| [[decoupled-detailed-equivalent-model-for-parallel-and-multi-rate-emt-type-simulat|Decoupled Detailed Equivalent Model for Parallel and Multi-R]] | 2026 |
+**奠基性文献**：
+- [[gnanarathna-2011-efficient-mmc|Gnanarathna et al. 2011]] - 首次提出基于戴维南等效的MMC高效模型
+- [[xu-2013-accelerated-mmc|Xu et al. 2013]] - 基于受控源的MMC通用等效模型
+- [[xu-2014-thevenin-mmc|Xu et al. 2014]] - 戴维南等效整体建模方法（后退欧拉法）
+- [[xu-2015-review-mmc|Xu et al. 2015]] - MMC高效建模方法综述（三种微秒级模型横向对比）
+- [[xu-2018-schur-mmc|Xu et al. 2018]] - 基于Schur补的多端口MMC高速等效模型
+
+**进阶文献**：
+- [[parvari-2023-accelerated-dem|Parvari et al. 2023]] - 加速DEM（欧拉积分恒定导纳）
+- [[stepanov-2020-adaptive-mmc|Stepanov et al. 2020]] - 自适应MMC模型（AVM/AEM/DEM三档切换）
+- [[del-giudice-2024-shooting-mmc|del Giudice et al. 2024]] - 打靶法MMC初始化
+- [[spurious-power-2020|Spurious Power 2020]] - MMC模型中的虚假功率及其消除
 
 ---
 
-*本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*
+*本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。核心模型描述基于Gnanarathna 2011、Xu 2013、Xu 2014、Xu 2015、Xu 2018等文献的PDF原文提取和交叉验证。*

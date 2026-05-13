@@ -1,3 +1,10 @@
+---
+title: "机电-电磁暂态混合仿真 (Electromechanical-Electromagnetic Hybrid Simulation)"
+type: method
+tags: [electromechanical, hybrid]
+created: "2026-05-13"
+---
+
 # 机电-电磁暂态混合仿真 (Electromechanical-Electromagnetic Hybrid Simulation)
 
 ```mermaid

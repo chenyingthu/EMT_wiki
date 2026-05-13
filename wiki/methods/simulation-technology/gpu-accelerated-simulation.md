@@ -1,3 +1,10 @@
+---
+title: "GPU加速仿真 (GPU-Accelerated Simulation)"
+type: method
+tags: [accelerated]
+created: "2026-05-13"
+---
+
 # GPU加速仿真 (GPU-Accelerated Simulation)
 
 

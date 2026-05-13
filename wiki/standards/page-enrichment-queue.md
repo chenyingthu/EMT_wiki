@@ -23,7 +23,7 @@ updated: "2026-05-13"
 
 | 序号 | 页面 | 类型 | 优先级 | hollow_score | 字数 | 公式 | wikilinks | 状态 |
 |------|------|------|--------|-------------|------|------|-----------|------|
-| 1 | model-predictive-control.md | models | P0 | 160 | 459 | 0 | 3 | pending |
+| 1 | model-predictive-control.md | models | P0 | 160 | 3412 | 58 | 7 | completed |
 | 2 | tsc.md | methods | P0 | 146 | 690 | 1 | 10 | pending |
 | 3 | distribution-network.md | methods | P0 | 143 | 663 | 5 | 17 | pending |
 | 4 | tbs.md | methods | P0 | 140 | 746 | 1 | 10 | pending |
