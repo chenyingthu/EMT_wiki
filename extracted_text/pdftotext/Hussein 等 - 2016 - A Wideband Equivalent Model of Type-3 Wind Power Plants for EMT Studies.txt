@@ -1,0 +1,665 @@
+2322                                                                                   IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 31, NO. 5, OCTOBER 2016
+
+
+
+
+         A Wideband Equivalent Model of Type-3 Wind
+                Power Plants for EMT Studies
+       Dalia N. Hussein, Member, IEEE, Mahmoud Matar, Senior Member, IEEE, and Reza Iravani, Fellow, IEEE
+
+
+   Abstract—This paper presents the development and validation of                    appropriate models to analyze their response to the wide range
+an accurate and computationally efficient wideband reduced-order                     of phenomena in the power system. For EMT studies, the full-
+dynamic equivalent model for the Type-3-based wind power plant                       order models based on differential equations of the components
+(WPP). The proposed Type-3 WPP equivalent model reproduces
+the dynamic behavior of the WPP in response to an electromag-                        of the WPP are used for time-domain simulation which require
+netic transient in the host power system and is composed of two                      a small integration time-step. The small integration time-step
+parts: 1) a static frequency-dependent network equivalent model                      and the large number of differential equations due to the com-
+which represents the response of all passive components of the WPP                   plex configuration of the doubly-fed asynchronous generator
+in a wideband frequency range, and 2) a dynamic low-frequency                        (DFAG)1 and the large number of DFAG units within the WPP
+equivalent model that represents the aggregated dynamic model of
+the doubly-fed asynchronous generator (which is also referred to                     result in a significant computational burden and prohibitively
+as doubly-fed induction generator) wind turbine generators, their                    prolong the simulation time.
+local controls, and the WPP supervisory control. The proposed                           This paper presents a novel wideband dynamic equivalent
+model significantly reduces the hardware/software computational                      model that overcomes the aforementioned limitation. The pro-
+burden and the computation time, as compared to the WPP detailed
+                                                                                     posed equivalent model is simple yet accurate in modeling the
+models, without compromising the accuracy of the simulation re-
+sults. The proposed model is incorporated as a software module                       electromagnetic transients (EMTs) behavior of the Type-3 based
+in the PSCAD/EMTDC environment and its computational effi-                           WPP to EMTs in the host power system, external to the WPP,
+ciency and accuracy are verified based on comparing the results                      within a wide frequency range. The salient features of the pro-
+with those of a detailed model.                                                      posed equivalent model are:
+   Index Terms—Collector system, doubly-fed asynchronous gen-                           1) It represents the dynamic behavior of the WPP compo-
+erator, dynamic equivalent, electromagnetic transients, modeling,                          nents including: (i) the WPP collector network and pas-
+type-3 WTG, vector fitting, wind power plants.                                             sive components, (ii) the WPP supervisory control, and
+                                                                                           (iii) WTGs and their local controls.
+                           NOMENCLATURE
+                                                                                        2) It is computationally efficient, i.e., significantly reduces
+WPP        Wind power plant.
+                                                                                           the hardware/software computational burden as compared
+FDNE       Frequency-dependent network equivalent.
+                                                                                           to the WPP detailed model.
+DLFE       Dynamic low-frequency equivalent.
+                                                                                        3) It accurately mimics the terminal response of the WPP
+DFAG       Doubly-fed asynchronous generator.
+                                                                                           with respect to the power system EMTs over a wideband
+WTG        Wind turbine generator.
+                                                                                           of the frequency spectrum.
+EMT        Electromagnetic transient.
+                                                                                        4) It represents the fault-ride through behavior of the WPP
+RSC        Rotor-side converter.
+                                                                                           which is a mandatory requirement of the grid codes.
+GSC        Grid-side converter.
+                                                                                        5) It is suitable for real-time simulation based on practically
+PCC        Point of common coupling.
+                                                                                           available computational resources.
+PLL        Phase-locked loop.
+                                                                                        This paper introduces the proposed equivalent model and
+FRT        Fault-ride through.
+                                                                                     its implementation in the time-domain simulation platform
+DVR        Dynamic voltage restorer.
+                                                                                     (PSCAD/EMTDC) for off-line EMT analysis. The paper also
+VSC        Voltage-sourced converter.
+                                                                                     validates the accuracy of the proposed equivalent model with
+VF         Vector fitting.
+                                                                                     respect to a detailed model of a benchmark system of a Type-3
+                                                                                     based WPP.
+                             I. INTRODUCTION
+                                                                                        The remainder of this paper is organized as follows.
+          ITH the wide use and increased capacity of the Type-3
+W         wind power plants (WPPs), it is necessary to develop
+                                                                                     Section II describes the DFAG unit as the building block of
+                                                                                     the Type-3 WPP. Section III presents the general structure
+                                                                                     of the proposed equivalent model. Section IV presents the
+   Manuscript received May 31, 2015; revised January 21, 2016; accepted March
+18, 2016. Date of publication April 6, 2016; date of current version September
+                                                                                     structure of the DLFE. Sections V–VII present the modules
+21, 2016. Paper no. TPWRD-00655-2015.                                                of the DLFE, i.e., the equivalent model of the wind turbines,
+   D. N. Hussein and R. Iravani are with the University of Toronto, Toronto, ON      the WPP supervisory control, and the equivalent model of the
+Canada (e-mail: dalia.hussein@ieee.org; iravani@ecf.utoronto.ca).
+   M. Matar is with the Centre for Applied Power Electronics, the University
+                                                                                     generators and their converters systems. The accuracy of the
+of Toronto, Toronto, ON, Canada, and also with Ain Shams University, Cairo,
+Egypt (e-mail: mahmatar@ieee.org).                                                     1 Although a Type-3 machine is commonly referred to as DFIG, however, it
+   Color versions of one or more of the figures in this paper are available online   has to be noted that Type-3 machine is not an induction machine, but rather
+at http://ieeexplore.ieee.org.                                                       an asynchronous machine in which rotor and stator winding are excited by AC
+   Digital Object Identifier 10.1109/TPWRD.2016.2551287                              sources at different frequencies.
+                          0885-8977 © 2016 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+           Authorized licensed See
+                               use http://www.ieee.org/publications
+                                   limited to: Tsinghua University. Downloaded  on April 10,2026 at 01:41:50 UTC
+                                                                      standards/publications/rights/index.html forfrom
+                                                                                                                    moreIEEE  Xplore. Restrictions apply.
+                                                                                                                          information.
+HUSSEIN et al.: WIDEBAND EQUIVALENT MODEL OF TYPE-3 WIND POWER PLANTS FOR EMT STUDIES                                                                  2323
+
+
+
+
+Fig. 1. Schematic Diagram of the Doubly-Fed Asynchronous Generator
+(DFAG) Unit, Grid-Side Converter (GSC), Rotor-Side Converter (RSC).
+
+
+
+developed model is demonstrated through several case studies,                   Fig. 2.   Structure of the Wide-band Equivalent Model of a Type-3 WTGs-based
+using the PSCAD/EMTDC in Sections VIII and IX. Discussion                       WPP.
+of the study results and the conclusions are in Sections X and
+XI, respectively.
+                                                                                   1) A frequency-dependent network equivalent (FDNE)
+                         II. BACKGROUND                                               model [8] that represents the frequency response of the
+   The DFAG-based WTG, Fig. 1 is widely used in the existing                          passive components within the WPP, e.g., the collector
+WPPs [1] where each DFAG unit is connected to the collector                           network, transformers, passive loads, and capacitor banks
+network directly through its stator while its rotor is interfaced                     over the desired frequency spectrum. The Vector Fitting
+to the network through a back-to-back converter system, Fig. 1.                       (VF) technique [8] is used to fit the frequency response to
+The converter system allows independent control of the active                         a rational function representation of the form
+power delivery and the reactive power exchange with the grid.                                                        
+                                                                                                                     n
+                                                                                                                           ci
+The rotor-side converter (RSC) often controls the stator power                                         ff it (s) =               + d + sh               (1)
+                                                                                                                         s −  ai
+flow based on a smaller percentage of power injected into the                                                        i=1
+rotor circuit; therefore, the back-to-back converter is typically                      where residues ci and poles ai are either real or com-
+rated to 30–40% of the machine rated power. The reduced size                           plex numbers while d and h are real. The fitting process
+of the converter translates to a reduced cost of both the converter                    estimates the parameters of (1) such that a least square
+and its filter. In addition, it reduces converter losses, compared                     approximation of ff it (s) is obtained over the frequency
+to a full rated converter [2], [3].                                                    range of interest.
+   There are various control schemes for a DFAG-based WTG                              The VF technique solves the nonlinear problem of (1) se-
+in a WPP [4]. The equivalent model of this paper is based                              quentially in two stages. Based on an initial set of poles,
+on the DFAG detailed model of Appendix A where the RSC                                 each stage is mathematically formulated as a linear prob-
+controls the generator torque and the stator reactive power flow                       lem with a known set of poles [8]. To interface the FDNE
+and the grid-side converter (GSC) controls the DC-link voltage                         with the electrical network model, the companion cir-
+and the reactive current at the machine terminal. The GSC and                          cuit approach is adopted [9]–[11]. Based on the bilinear
+RSC controls utilize decoupled current-controllers with inner                          transformation each of the rational functions of (1) is rep-
+dq current control loops. The detailed model is also used as a                         resented by a conductance and a current source whose
+benchmark to validate the accuracy of the developed equivalent                         value depends on the circuit solution from the previous
+model. It has to be noted that the proposed model can readily                          time-step.
+accommodate other control strategies as well.                                      2) A dynamic low frequency equivalent (DLFE) model that
+   The DFAG-based WPP is required to meet the fault-ride-                              represents the aggregated dynamic model of the DFAG-
+through (FRT) requirements [1], [5]–[7]. This paper adopts a                           WTGs, their local controls, and the WPP supervisory con-
+dynamic voltage restoration mechanism [6], [7] to assist in                            trol, typically, in a frequency range of 0 up to 20 Hz.
+boosting the unit terminal voltage during transients and thus                          The DLFE is interfaced to the electrical network model
+enable the DFAG unit and the WPP to provide ride-through                               through a three-phase current-controlled current source.
+capability.                                                                        The combined FDNE model and the DLFE model constitute
+                                                                                the net model of the WPP with respect to its host power system at
+     III. DYNAMIC EQUIVALENT MODEL OF TYPE-3 WPP
+                                                                                the PCC in the desired wide frequency range. As demonstrated in
+   Unlike the detailed WPP model which explicitly models each                   [12], neither the FDNE model nor the DLFE model individually
+of the individual components of a WPP, i.e., the WTG units and                  can accurately represent the WPP. Both the FDNE model and
+their power electronic converters, local controllers, the collec-               the DLFE model have to be jointly used to provide an accurate
+tor network, and the WPP supervisory controller, the proposed                   model of the WPP.
+equivalent emulates the collective terminal behavior of the WPP                    It has to be noted that the proposed model is not a valid
+at the PCC using a reduced-order wideband model. The pro-                       representation if the disturbance is within the WPP. The
+posed equivalent model consists of two main parts, Fig. 2:                      main assumption in the development and applications of the
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 01:41:50 UTC from IEEE Xplore. Restrictions apply.
+2324                                                                                  IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 31, NO. 5, OCTOBER 2016
+
+
+
+
+Fig. 3.    Dynamic Low-Frequency Equivalent of Type-3 WPP.
+                                                                                   Fig. 4.   Wind Turbine Equivalent Model.
+
+proposed model is that the imposed disturbances are outside
+of the WPP and thus the configuration of the WPP remains
+unchanged. Therefore, the FDNE accurately represents the col-                      fault ride-through subsequent to transients [15], [16]. The gener-
+lector system and passive components of the WTG units. The                         ators and converters equivalent block represents the dynamics of
+FDNE only represents linear components.                                            the aggregated machines, converters, and their local controllers.
+   The second part of the proposed equivalent model represents                     This block injects currents into the system at the PCC, in re-
+the WTG units, the WTG unit controls, and the supervisory con-                     sponse to the current references generated by the supervisory
+trol of the WPP. Any of these three entities is subject to math-                   control. The following sections elaborate on the details of each
+ematical/physical nonlinearities. However, these nonlinearities                    block.
+are included in the DLFE part of the model.
+                                                                                               V. EQUIVALENT MODEL OF WIND TURBINES
+          IV. STRUCTURE OF THE DYNAMIC LOW-FREQUENCY
+                                                                                      This model is an equivalent of the WPP wind turbines rotating
+               EQUIVALENT MODEL OF THE TYPE-3 WPP
+                                                                                   mechanical system. This model provides transformation of the
+   The DLFE model of the Type-3 based WPP, Fig. 3, repre-                          wind energy into mechanical power and the aggregated dynamic
+sents the dynamics of the aggregated WTG units and the natural                     behavior of the drive-trains and is composed of two main parts,
+modes of controls. Based on the DFAG structure and its compo-                      Fig. 4:
+nents, described in Appendix A, the DLFE of Fig. 3 is proposed.                       1) The aerodynamic-equivalent model that determines the
+The DLFE constitutes a complete equivalent of the DFAG-based                             mechanical power harnessed from the wind based on the
+WPP low-frequency dynamics.                                                              wind speed and the power coefficient (Cp ).
+   The measurement block represents the functions of the mea-                         2) The drive-train model that determines the equivalent
+suring devices of the WPP. It acquires instantaneous three-phase                         generator and turbine angular speeds ωreq and ωteq
+PCC voltage and the WPP net current (at the HV-side of WPP                               respectively.
+substation transformer) and generates the required signals for                        The following subsections elaborate on the components of
+control and phase-locked loop (PLL) blocks. The PLL pro-                           the wind turbines equivalent model.
+vides synchronization to the positive-sequence PCC voltages.
+The wind turbines equivalent block represents the dynamics of
+the aggregated wind turbines. It determines the WPP equivalent                     A. Aerodynamic Equivalent Model
+mechanical power that corresponds to the wind speed, taking                          This equivalent model computes the mechanical power
+into consideration the wind turbine characteristics. This block                    dPm ech extracted from the wind, [17], as a function of the wind
+also includes an equivalent drive-train model that computes the                    speed and the turbine power coefficient Cp
+equivalent angular frequency ωreq , Fig. 3.
+   The supervisory control block represents the functions of the                                               1    3                WTG
+                                                                                                  Pm ech =       ρAυwind Cp (λ, β) /Sbase                (2)
+WPP supervisory control which includes the control of active                                                   2
+and reactive power components injected by the WPP into the
+system [13], [14]. This block determines the d- and q-current                      where ρ, A, υwind , λ, β and Sbase
+                                                                                                                  WTG
+                                                                                                                        are the air density in kg/m3 ,
+                                                                                                                     2
+references corresponding to the WPP P and Q reference values.                      the area of the rotor blades in m , the wind speed in m/s, the
+The FRT control function is also represented in this block. The                    blade tip speed ratio, the blade pitch angle, and the base power
+FRT control provides the reference currents to enable the WPP                      of one WTG respectively; the output Pm ech is in per unit. λ is
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 01:41:50 UTC from IEEE Xplore. Restrictions apply.
+HUSSEIN et al.: WIDEBAND EQUIVALENT MODEL OF TYPE-3 WIND POWER PLANTS FOR EMT STUDIES                                                                  2325
+
+
+
+the ratio between the speed at the blade tip and the wind speed
+                         υtip     (ωreq /G) .r
+                    λ=         =                             (3)
+                        υwind        υwind
+where r is the blade radius and G is the gearbox ratio. The
+turbine power coefficient Cp (λ, β) is usually represented by a
+set of curves; each curve relates Cp and λ for a certain pitch
+angle β. Typically these curves are mathematically represented
+by [17], [18]:
+                                                      
+                     c2                              −c7
+   Cp (λ, β) = c1        − c3 β − c4 β − c6 exp
+                                      c5
+                                                            ,(4)
+                     λi                               λi
+                                       −1
+                        1              c9
+          λi =                  −                            (5)
+                    λ + c8 β        β3 + 1
+where constants c1 to c9 are determined such that the resulting                 Fig. 5.   Block diagram of the Two-Mass Drive-Train Model.
+equation/curves represent the performance of the actual tur-
+bine [18]–[20]. An optimization algorithm, described in Sub-
+Section V-B is used to determine these constants based on the                   that of the original WTG unit (Pm or g ). This requires measure-
+simulation results or field measurements. Pm ech of one WTG                     ments results or detailed simulation results of Pm or g , υw in d ,
+unit (2) is then scaled to all the units within the WPP.                        β, and ωr . Based on this data and a least square minimization
+   Typically, all units within the WPP are of the same size and                 process, an optimization with the objective function
+type; therefore, the per unit mechanical power calculated from
+                                                                                                              Pm ech − Pm or g 
+(2), based on the WTG unit MVA, also provides the total power                                          F =                        ,                    (7)
+of the WPP when multiplied by the WPP base MVA. If the units                                                      Pm or g 
+within the WPP are of different sizes or have different turbine                 is constructed. The MATLAB optimization toolbox is used for
+characteristics, each set of identical units can be aggregated as               minimizing (7) [22].
+a sub-group. The total mechanical power of each sub-group is
+calculated as described before and then the WPP’s total power                   C. Drive-Train Mechanical Model
+is the summation of those sub-groups. If the units experience
+different wind speeds with small deviations, then                                 This paper adopts the widely accepted approach of represent-
+                                                                                ing the wind turbine drive-train with two rigid masses [23], [24]
+                                    1
+                                        n
+                           υeq =          υi                             (6)    representing the turbine and the the generator inertias
+                                    n i=1                                                    dω t e q                                 
+                                                                                        2Ht       dt         Dt + Dtg −Dtg             ωteq
+where υeq is the WPP equivalent wind speed, n is the number                                              +
+                                                                                        2Hg     dω r e q
+                                                                                                             −Dtg       Dg + Dtg       ωreq
+                                                                                                  dt
+of WTG units, and υi is the wind speed at unit i. If wind units
+                                                                                                                                    
+are exposed to noticeably different wind speeds, then the WPP                                               Ktg − Ktg      θt      Tm
+                                                                                                         +                      =          , (8)
+equivalent speed is calculated using the WPP power curve [21]                                                −Ktg Ktg      θr      −Te
+as follows.
+     i) For each unit, based on its wind speed, the WTG output                  where
+        power Pi is obtained using the WTG power curve and                                                dθt        dθr
+                                                                                                              = ωt ,     = ωr ,                        (9)
+        the total WPP output power is the summation of power                                             dt          dt
+        components of all units PW P P = ni=1 Pi .                              and Tm and Te are the mechanical and electrical torques respec-
+    ii) An equivalent WPP power curve is obtained by summing                    tively. H, D, and K are the inertia constant, damping coefficient,
+        the individual WTG units power curves. This is done by                  and stiffness coefficient respectively. θ is the angular position.
+        summing the powers of the individual WTG units for                      Subscripts t and g refer to the turbine and generator respectively.
+        each incoming wind speed.                                               Fig. 5 illustrates a block diagram model of the the drive-train.
+   iii) From the curve of (ii), the WPP equivalent wind speed,                  The inputs to the model are the equivalent mechanical and elec-
+        corresponding to the WPP power of (i) is obtained.                      trical power components from the aerodynamic model and the
+                                                                                WPP supervisory control, respectively. The outputs of the model
+B. Parameter Estimation of Wind Turbine Equivalent Model                        are the turbine and generator equivalent angular frequencies. It
+   If the wind turbine manufacturers data is not available, an                  is to be noted that this model represents the low-frequency dy-
+optimization algorithm is used to identify the parameters for the               namics of aggregated WTG units drive-trains in a frequency
+wind turbine model. This is based on the results from simulation                range up to about 3 Hz [14].
+of the detailed model or the field measurements.                                   The model of (8) can be further simplified to a single-mass
+   The constants c1 to c9 of (4) need to be determined to mini-                 model in which the inertia constant (Ht + Hg ) and the damp-
+mize deviation between Pm ech of the equivalent model (2) and                   ing coefficient represents the net damping of the drive-train,
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 01:41:50 UTC from IEEE Xplore. Restrictions apply.
+2326                                                                                 IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 31, NO. 5, OCTOBER 2016
+
+
+
+                                                                                     The Q control, Fig. 6, is a coordinated Q/V controller that
+                                                                                  determines the reactive current command IQref to satisfy the
+                                                                                  requirements of both Qr ef and voltage control at the PCC. Qref
+                                                                                  is determined based on either the PCC voltage control, power
+                                                                                  factor control, or the PCC reactive power control.
+                                                                                     During transients, e.g., faults, that are accompanied with volt-
+                                                                                  age fluctuations at the PCC, the FRT should retain the WPP in
+                                                                                  service and enable ride through the fault [15], [16]. Based on
+                                                                                  the voltage at the WPP terminals, the FRT control determines
+                                                                                  the value of the supplied IQref during the ride-through process
+                                                                                  [27]. It also coordinates the increase in reactive current/reactive
+                                                                                  power injected by the WPP with a decrease in real current/power
+                                                                                  injection through the less than unity Pmultiplier , Fig. 6, to avoid
+                                                                                  overload conditions.
+                                                                                     The limits applied on Qref represent the WTG limits with
+                                                                                  respect to the reactive power generation/absorption. The limits
+                                                                                  on IPref and IQref are applied such that their net effect does not
+                                                                                  exceed the total current limit of the aggregated WTG units. The
+                                                                                  priority of generation may be given to the active or the reactive
+                                                                                  current based on the steady state/transient operation. The out-
+                                                                                  puts of the supervisory control module are: (i) the dq-current
+                                                                                  references for the module of the generators and converters equiv-
+Fig. 6.   Block Diagram of the Supervisory Control Module.
+                                                                                  alent model, and (ii) the electrical power Pe , Fig. 6, for the wind
+                                                                                  turbines equivalent module.
+[14], [25], [26],
+                                 dω
+                2 (Ht + Hg )        = Tm − Te − Dω.                      (10)      VII. EQUIVALENT MODEL OF THE GENERATORS ELECTRICAL
+                                 dt
+                                                                                                   SIDE AND CONVERTERS
+                 VI. WPP SUPERVISORY CONTROL                                         This section presents the dynamic equivalent model of the
+   The supervisory control constitutes a part of the WPP DLFE                     DFAG units, their converters, and local controls. This equivalent
+equivalent model, Fig. 3, and represents the operation of the                     model represents the response of the WTG units to commands
+WPP central control. It includes (i) P control, (ii) Q control,                   from the WPP supervisory control, Fig. 3. The equivalent model
+(iii) fault-ride through (FRT) control, and (iv) current limits                   of one WTG unit is developed in per unit on the unit base
+calculations. The functions of this equivalent module include:                    values. By scaling the base values, the equivalent model is used
+   1) Generation of the dq-current references to satisfy the grid                 to approximate the response of all units within the WPP. The
+       requirements corresponding to P and Q and/or to satisfy                    equivalent model is deduced based on the detailed model of the
+       certain control objectives, e.g., PCC voltage control, tak-                DFAG unit, (16)–(19), Appendix A, as follows.
+       ing into consideration feedback signals from the PCC.                         By substituting is in (19) from (18)
+   2) Representing the active and reactive power generation                                                             
+       availability of WTG units, taking into consideration the                                      r = Lm −
+                                                                                                     ψ
+                                                                                                             →        L2 − →
+                                                                                                             ψs + Lr − m ir .                               (11)
+       available wind and the units generation limits.                                                    Ls          Ls
+   3) Enabling the FRT control based on the grid requirements.
+                                                                                                               2
+   4) Enabling the limits that should be imposed on the WTG                       Defining σ = 1 − LLs mL r          , σs = LLms − 1, and σr = LLmr − 1,
+       units reference currents/power based on the operation re-                  from (11) we deduce
+       quirements.
+   The above functions are implemented through the control                                                          
+                                                                                                r =          1          −
+                                                                                                                         →                   →
+                                                                                                                                             −
+structure of Fig. 6. The P control block, Fig. 6, can be switched                               ψ                        ψs + σ (1 + σr ) Lm ir .           (12)
+                                                                                                            1 + σs
+between two modes:
+   1) Maximum Power Tracking Mode—The maximum power                                                                                        
+       that can be extracted from the wind is calculated from                     By differentiating (12) and substituting for ddt
+                                                                                                                                ψr
+                                                                                                                                   from (17)
+                      3
+       Pref = Kopt ωreq . This power set point is limited to the                                                    →
+                                                                                                                    −
+       rated power of the WPP to avoid over loading.                                                               d ir                   r .
+                                                                                                                         r − Rrir − jΔω ψ
+                                                                                              σ (1 + σr ) Lm            =V                                  (13)
+   2) Operator Requirement Mode—The active power set point                                                          dt
+       Pref is received from the operator. Pref is limited to the
+                                                                                                                                                        
+       power value at point 1, Fig. 6, to guarantee that the control              Note that the stator flux derivative is neglected, i.e., ddt
+                                                                                                                                            ψs
+                                                                                                                                               =0
+       set point does not exceed either the WPP rating or the                     [4], [13], [28], [29]. This assumption is valid because of the
+       power available from the wind.                                             voltage restoration mechanism which limits the stator voltage
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 01:41:50 UTC from IEEE Xplore. Restrictions apply.
+HUSSEIN et al.: WIDEBAND EQUIVALENT MODEL OF TYPE-3 WIND POWER PLANTS FOR EMT STUDIES                                                                     2327
+
+
+
+
+Fig. 7.    Block Diagram of DFAG Equations.
+
+
+
+
+Fig. 8.    RSC Current Control.
+                                                                                   Fig. 11.   Schematic Diagram of the Type-3 WPP Test System.
+
+
+
+                                                                                   directly related to the WTG parameters. These parameters can
+                                                                                   be directly obtained from an optimization process that mini-
+                                                                                   mizes the error between the responses of the equivalent model
+                                                                                   and a detailed DFAG model [30].
+
+Fig. 9.    DFAG Model and RSC Control.
+                                                                                                              VIII. TEST SYSTEM
+                                                                                      The system of Fig. 11 is used to validate the accuracy of the
+                                                                                   proposed WPP equivalent model in representing the dynamic
+                                                                                   response of Type-3 based WPPs. The WPP is composed of (i)
+                                                                                   one 13.8/115-kV transformer, (ii) a 13.8-kV collector system,
+Fig. 10.    Equivalent Model of the Generator and Converter.                       (iii) 2.3-kV DFAG WTG units and their local controllers that
+                                                                                   are connected to the collector system through dynamic voltage
+                         r from (12) in (13) and dividing by Rr
+variations. Substituting ψ                                                         restorers (DVRs) and 2.3/13.8-kV Yg/Δ transformers, and (iv)
+        →
+        −                                                                          the WPP supervisory control. The WPP includes eight 1.7 MW
+      d ir    r
+              V                        s
+                                       ψ                                           Type-3 units. The transmission lines and WTG unit parameters
+  στr       =     − ir − jΔω                  + στrir , (14)
+       dt     Rr                  (1 + σs ) Rr                                     are available in [12].
+                                                                                      The AC-side terminal of each grid-side converter is connected
+where τr = (1+σRrr)L m . Re-arranging (14) results in (15)                         to a three-phase RL filter and a three-phase 0.6/2.3-kV Y/Δ
+      →
+      −                                                                            transformer. Each converter is equipped with a dq-current con-
+     d ir      r
+                V     (1 − σ) τr                                                   troller that regulate its ip and iq current injection. The WPP
+ στr     + ir =    −j               s − jΔωστrir . (15)
+                                 Δω ψ
+      dt        Rr       Lm                                                        supervisory control provides reference values for each WTG
+and illustrated in Fig. 7. The inputs to the block diagram of Fig. 7               unit to meet the grid power requirements and FRT requirements
+are the rotor voltages V r and the outputs are the rotor currents.                during transients. The adopted FRT characteristics are described
+r is controlled by the RSC control as described in Appendix B.
+V                                                                                  in [15], [27].
+The RSC inner control, Fig. 17, can be represented as shown
+in Fig. 8. Figs. 7 and 8 provide the DFAG model depicted in
+                                                                                                             IX. STUDY RESULTS
+Fig. 9. To further simplify the model and present it in a form that
+relates the inputs and outputs of the WTG unit, independent of                        A set of case studies are performed on the system of Fig. 11
+the internal parameters, the following can be considered [13]:                     to demonstrate the performance and verify the accuracy of the
+   1) The feedback and the cross coupling terms in the machine                     WPP equivalent model. The test cases cover different types of
+       model, Fig. 9, are canceled out by a similar terms in the                   faults at different locations in the system with respect to the
+       RSC control model.                                                          PCC. The test cases also include (i) symmetrical and asymmet-
+   2) The magnetizing current is assumed to be negligible; thus,                   rical fault scenarios and (ii) successful and unsuccessful auto-
+       the per unitized rotor currents are replaced with the per                   reclosure of circuit breakers. For each case study, the power
+       unitized stator currents.                                                   system (right-side of the PCC of Fig. 11) is modeled in the
+   Considering the above simplifications, the resultant machine                    PSCAD/EMTDC environment and the WPP (left-side of the
+and converter equivalent model is composed of one P I con-                         PCC of Fig. 11) is represented once by its detailed model, and
+troller and one first-order function as depicted in Fig. 10. This                  once by its equivalent model. Due to page limitation, only the re-
+model can be used to represent the entire WTG; however, in                         sults for two case studies are presented and the reader is referred
+this case, the parameters of the equivalent model are no longer                    to [12] for more test cases.
+
+             Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 01:41:50 UTC from IEEE Xplore. Restrictions apply.
+2328                                                                                 IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 31, NO. 5, OCTOBER 2016
+
+
+
+
+                                                                                  Fig. 13. PCC Output Currents of the Detailed and the Equivalent Models—
+                                                                                  Case I. (a) Phase a (b) Phase b (c) Phase c.
+
+
+
+
+Fig. 12.   PCC Voltages of the Detailed and the Equivalent Models, Case I.
+
+
+
+A. Case I
+   The system is subjected to a 150-ms temporary L-L-L-G
+fault, 15-km from the PCC on line T2 at t = 3.8 s. Prior to the
+fault, the system is under steady-state conditions and the WPP
+delivers 12 MW to the system at PCC. Figs. 12––14 show the
+system response to the fault based on the detailed model and the
+equivalent model of the WPP.
+   Fig. 12 shows the instantaneous PCC voltages prior, during,
+and immediately after the fault and illustrates close agreement
+between the results of the equivalent model and the detailed
+model. Fig. 13 shows the injected currents by the WPP into
+the system (at the WPP transformer HV-side) during and after
+                                                                                  Fig. 14. WPP Outputs (a) Active Power (b) Reactive Power (c) Active Current
+the fault clearance and also indicates close agreement between                    (d) Reactive Current (e) PCC Voltage of the Detailed and the Equivalent Models.
+the results of the two models.
+   Fig. 14 shows real and reactive power and current compo-
+                                                                                  demonstrate also close agreement between the results of the de-
+nents and the PCC rms voltage. Fig. 14 also illustrates the PCC
+                                                                                  tailed and the equivalent models underunbalanced conditions.
+voltage FRT characteristic [15]. Fig. 14 indicates that during the
+fault, the WPP remains in service even when the PCC voltage,
+Fig. 14(e), drops to 35% of its nominal value. Figs. 14(c) and                                                 X. DISCUSSIONS
+14(d) show the WPP output reactive current increases to 1.0 p.u.                     The close agreement between the time-domain simulation
+while the active current drops to zero when the voltage drop.                     results obtained from the detailed and the equivalent models
+                                                                                  of the WPP verifies the accuracy of the proposed equivalent
+                                                                                  model for EMT-type studies external to the WPP. In addition, the
+B. Case II
+                                                                                  variety of the simulation scenarios that cover (i) different types
+   This case study is similar to Case I except that the fault type                of faults at different locations outside the WPP and (ii) multiple
+is changed to L-G fault. Figs. 15 and 16 show the PCC voltages                    switching transients demonstrate the accuracy of the proposed
+and the WPP output currents, respectively, based on the detailed                  model subject to symmetrical/asymmetrical faults regardless of
+model and the equivalent model of the WPP. Figs. 15 and 16                        their location, even when they occur at the PCC.
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 01:41:50 UTC from IEEE Xplore. Restrictions apply.
+HUSSEIN et al.: WIDEBAND EQUIVALENT MODEL OF TYPE-3 WIND POWER PLANTS FOR EMT STUDIES                                                                    2329
+
+
+
+
+                                                                                  Fig. 17.   Block Diagram of the Rotor Side Converter Control.
+
+
+                                                                                     The proposed equivalent model significantly reduces the com-
+                                                                                  putational time and resources and hence enables comprehensive
+                                                                                  time-domain simulation studies of the system transients, e.g.,
+                                                                                  statistical EMT-type studies to identify and evaluate worst case
+                                                                                  fault scenarios, e.g., fault instant on the voltage waveform. The
+                                                                                  time required to conduct a 5-second real-time simulation run,
+                                                                                  with a 5 μs time-step, using the detailed system model, corre-
+                                                                                  sponding to Fig. 11, requires approximately 31 hours and 34
+                                                                                  minutes using a quad-core Intel 3.07 GHz i7 computer with
+                                                                                  6 GB of memory. The proposed equivalent model reduces the
+                                                                                  computational time for the same case study (and with the same
+                                                                                  simulation time-step) to about 45.12 seconds, i.e., a reduction in
+                                                                                  computation time by a factor of 2480. The computational effi-
+                                                                                  ciency of the equivalent model makes it a prime choice when it
+                                                                                  is required to conduct large-scale EMT-type studies for systems
+Fig. 15.   PCC Voltages of the Detailed and the Equivalent Models, Case II.       with multiple WPPs or for the use within a real-time simulation
+                                                                                  environment.
+
+                                                                                                              XI. CONCLUSION
+                                                                                     This paper presents a reduced-order dynamic equivalent
+                                                                                  model that represents the Type-3-based wind power plant
+                                                                                  for the analysis of electromagnetic transients external to the
+                                                                                  plant, within the desired frequency bandwidth. To evaluate the
+                                                                                  computational efficiency and validate the numerical accuracy
+                                                                                  of the proposed equivalent model, the adopted test system
+                                                                                  transients are simulated in the PSCAD/EMTDC environment
+                                                                                  once based on the WPP detailed model and once based on the
+                                                                                  WPP equivalent model and the corresponding time-domain
+                                                                                  simulation results are compared. The studies show close
+                                                                                  agreement between the corresponding results. The study results
+                                                                                  show that the proposed equivalent WPP model can reduce
+                                                                                  computational time by a factor of 2480, e.g., from 31 hours and
+                                                                                  34 minutes to 45.12 seconds.
+
+                                                                                                                  APPENDIX A
+                                                                                     The differential equations that describe the performance of
+                                                                                  the DFAG in the synchronous reference frame [4], [28] are
+
+                                                                                                                 
+                                                                                                  s = Rsis + dψs + jωs ψ
+                                                                                                  V                      s ,                            (16)
+                                                                                                                dt
+Fig. 16. PCC Output Currents of the Detailed and the Equivalent Models—                                          
+Case II. (a) Phase a (b) Phase b (c) Phase c.                                                     r = Rrir + dψr + j (ωs − ωr ) ψ
+                                                                                                  V                               r                     (17)
+                                                                                                                dt
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 01:41:50 UTC from IEEE Xplore. Restrictions apply.
+2330                                                                               IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 31, NO. 5, OCTOBER 2016
+
+
+
+
+where V s and Vr are the stator and rotor voltages; is and ir                                                  REFERENCES
+are the stator and rotor currents; ψs and ψ  r are the stator and              [1] J. Lopez, E. Gubia, E. Olea, J. Ruiz, and L. Marroyo, “Ride through
+rotor fluxes; Rs and Rr are the stator and rotor resistances                         of wind turbines with doubly fed induction generator under symmetrical
+                                                                                     voltage dips,” IEEE Trans. Ind. Electron., vol. 56, no. 10, pp. 4246–4254,
+respectively. ωs is the stator synchronous frequency; and ωr is                      Oct. 2009.
+the angular frequency of the rotor. All parameters of the above                  [2] S. Muller, M. Deicke, and R. De Doncker, “Doubly fed induction generator
+equations are referred to the stator side of the DFAG. The stator                    systems for wind turbines,” IEEE Ind. Appl. Mag., vol. 8, no. 3, pp. 26–33,
+                                                                                     May/Jun. 2002.
+and rotor fluxes are given by [4], [28]                                          [3] IEEE PES Wind Plant Collector System Design Working Group, “Char-
+                         s = Lsıs + Lmır ,                                        acteristics of wind turbine generators for wind power plants,” presented at
+                         ψ                                             (18)          the IEEE Power Energy Soc. Gen. Meeting, Calgary, AB, pp. 1–5, 2009.
+                                                                                 [4] G. Abad, J. Lopez, M. A. Rodriguez, P. Guez, L. Marroyo, and G. Iwanski,
+                         r = Lmıs + Lrır ,
+                         ψ                                             (19)          Dynamic Modeling of the Doubly Fed Induction Machine. Hoboken, NJ,
+                                                                                     USA: Wiley, 2011.
+                          Ls = Lσ s + Lm ,                             (20)      [5] D. Xiang, L. Ran, P. Tavner, and S. Yang, “Control of a doubly
+                                                                                     fed induction generator in a wind turbine during grid fault ride-
+                          Lr = Lσ r + Lm                               (21)          through,” IEEE Trans. Energy Convers., vol. 21, no. 3, pp. 652–662,
+                                                                                     Sep. 2006.
+where Lm is the magnetizing inductance; Lσ s and Lσ r are the                    [6] A. Ibrahim, T. Nguyen, L. D, and S. Kim, “A fault ride-through technique
+                                                                                     of DFIG wind turbine systems using dynamic voltage restorers,” IEEE
+stator and rotor winding leakage inductances respectively. The                       Trans. Energy Convers., vol. 26, no. 3, pp. 871–882, Sep. 2011.
+rotor dynamics are represented by                                                [7] C. Wessels, F. Gebhardt, and F. Fuchs, “Fault ride-through of a dfig
+                                                                                     wind turbine using a dynamic voltage restorer during symmetrical and
+                      dωr    1                                                       asymmetrical grid faults,” IEEE Trans. Power Electron., vol. 26, no. 3,
+                          =    (Tm − Te ) ,                            (22)          pp. 807–815, Mar. 2011.
+                       dt   2H
+                                                                                 [8] B. Gustavsen and A. Semlyen, “Rational approximation of frequency
+where Tm and Te are the mechanical and electrical torques                            domain responses by vector fitting,” IEEE Trans. Power Del., vol. 14,
+                                                                                     no. 3, pp. 1052–1061, Jul. 1999.
+respectively and H is the inertia constant.                                      [9] B. Gustavsen and O. Mo, “Interfacing convolution based linear models
+   The RSC and the GSC are three-phase two-level VSCs. The                           to an electromagnetic transients program,” in Proc. Int. Conf. Power Syst.
+RSC and GSC local controls are developed in a synchronously                          Transients, Jun. 2007, pp. 1–6.
+                                                                                [10] M. Matar, M. Abd-El-Rahman, and A. Soliman, “Developing an FPGA
+rotating dq-frame of reference. The RSC with the decoupled                           coprocessor for real time simulation of power systems,” presented at the
+current controller controls the amplitude and frequency of ro-                       ICEEC, Cairo, Egypt, Aug. 2004.
+tor voltages to control the generator torque and stator reactive                [11] M. Matar and R. Iravani, “FPGA implementation of a modified two-layer
+                                                                                     network equivalent for real-time simulation of electromagnetic transients,”
+power. The GSC controls its output voltages to maintain the                          in International Conference on Power Systems Transients, 2009.
+dc-link voltage and to control the reactive power exchange with                 [12] D. N. Hussein, A wide-band dynamic equivalent model of wind power
+the network.                                                                         plants for the analysis of electromagnetic transients in power systems,
+                                                                                     Ph.D. dissertation, Dept. Elect. Comput. Eng. University of Toronto,
+                                                                                     Toronto, Canada, ON, 2014.
+                             APPENDIX B                                         [13] J. Fortmann, S. Engelhardt, J. Kretschmann, C. Feltes, M. JanBen, T.
+                                                                                     Neumann, and I. Erlich, “Generic simulation model for DFIG and full size
+   The local control of the RSC controls the generator torque                        converter based wind turbines,” in IEEE PES General Meeting, Detroit,
+and the stator reactive power flow through an inner and outer                        MI, USA, pp. 1–8, 2011.
+                                                                                [14] K. Clark, N. W. Miller, and J. J. Sanchez-Gasca, “Modeling of GE wind
+control loops. In the outer control loop, the torque and reactive                    turbine-generators for grid studies,” Version 4.5, Apr. 2010.
+power references are translated to a corresponding dq current                   [15] , The Wind Generation Task Force (WGTF), The Technical Basis for the
+references. The current references are then sent to the RSC                          New Wecc Voltage Ride-Through (VRT) Standard a White Paper Devel-
+                                                                                     oped by the Wind Generation Task Force1 (WGTF), 2007 Tech. Rep., [On-
+inner decoupled current control loop [4], [28]. The control of                       line]. Available: www.wecc.bi3/Realibility/VoltageRide Through white
+the RSC is derived in a synchronously rotating dq-reference                          Paper.pdf
+frame synchronized with the stator flux. Based on (16)–(22),                    [16] I. Erlich, W. Winter, and A. Dittrich, “Advanced grid requirements for
+                                                                                     the integration of wind turbines into the german transmission system,”
+the stator reactive power and the electromagnetic torque are                         presented at the IEEE Power Eng. Soc. Gen. Meeting, Montreal, QC,
+[28]                                                                                 2006.
+                                                                            [17] S. Heier, Grid Integration of Wind Energy Conversion Systems. New York,
+              3           V̂s2          3        1                                   USA: Wiley, 1998.
+     Qs =                            −                V̂s ir d , (23)           [18] O. Wasynczuk, D. T. Man, and J. P. Sullivan, “Dynamic behavior of a
+              2 (1 + σs ) Lm ωs         2 (1 + σs )                                  class of wind turbine generators during random wind fluctuations,” IEEE
+                                                                                   Trans. Power App. Syst., vol. PAS-100, no. 6, pp. 2837–2845, Jun. 1981.
+             Pe         3        V̂s                                            [19] P. Anderson and A. Bose, “Stability simulation of wind turbine systems,”
+     Te =       =−                      ir q                     (24)                IEEE Trans. Power App. Syst., vol. PAS-102, no. 12, pp. 3791–3795,
+             ωr         2 (1 + σs ) ωs
+                                                                                     Dec. 1983.
+where                                                                           [20] J. Slootweg, S. W. H. De Haan, H. Polinder, and W. Kling, “General
+                                                                                     model for representing variable speed wind turbines in power system dy-
+                                                  Ls                                namics simulations,” IEEE Trans. Power Syst., vol. 18, no. 1, pp. 144–151,
+            V̂s =       Vd2 + Vq2 , and σs =          − 1.             (25)          Feb. 2003.
+                                                   Lm                           [21] L. Fernndeza, C. Garcaa, J. Saenza, and F. Juradob, “Equivalent models
+                                                                                     of wind farms by using aggregated wind turbines and equivalent winds,”
+The reference currents determined by (23) and (24) are sent                          Energy Convers. Manage., vol. 50, pp. 691–704, 2009.
+                                       17. σ andτ refer to
+to the RSC inner current controller, Fig.                                       [22] Matlab Optimization Toolbox—User’s Guide, The Math Works Inc.
+the machine parameters, i.e., σ = 1 − L2m / (Ls Lr ) and τr =                   [23] Wind Power in Power Systems. T. Ackermann, Eds., Hoboken, NJ, USA:
+                                                                                     Wiley, 2005.
+Lr /Rr .
+
+
+         Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 01:41:50 UTC from IEEE Xplore. Restrictions apply.
+HUSSEIN et al.: WIDEBAND EQUIVALENT MODEL OF TYPE-3 WIND POWER PLANTS FOR EMT STUDIES                                                                       2331
+
+
+
+[24] M. Singh and S. Santoso, “Dynamic model for full-converter wind turbines                               Mahmoud Matar (S’00–M’10–SM’12) received the
+     employing permanent magnet alternators,” in Proc. IEEE Power Energy                                    B.Sc. and M.Sc. degrees in electrical engineering
+     Soc. Gen. Meeting, 2011, pp. 1–7.                                                                      from Ain Shams University, Cairo, Egypt, in 2001
+[25] A. Perdana, Dynamic models of wind turbines, Ph.D. dissertation,                                       and 2004, respectively, and the Ph.D. degree in elec-
+     Chalmers University of Technology, Gothenburg, Sweden, 2008.                                           trical engineering from the University of Toronto,
+[26] I. Hiskens, “Dynamics of type-3 wind turbine generator models,” IEEE                                   Toronto, ON, Canada, in 2009.
+     Trans. Power Syst., vol. 27, no. 1, pp. 465–474, Feb. 2012.                                                His research interests include modeling and real-
+[27] E. on Netz Grid Code, Apr. 2006. http://www.pvupscale.org/img/pdf.                                     time simulation of power systems and power elec-
+[28] A. Yazdani and R. Iravani, Voltage-Sourced Converter in Power Systems.                                 tronics.
+     Piscataway, NJ, USA: IEEE/Wiley, 2010.
+[29] I. Erlich, J. Kretschmann, J. Fortmann, S. Mueller-Engelhardt, and H.
+     Wrede, “Modeling of wind turbines based on doubly-fed induction gen-
+     erators for power system stability studies,” IEEE Trans. Power Syst.,
+     vol. 22, no. 3, pp. 909–919, Jul. 2007.
+[30] A. Gole, S. Filizadeh, R. Menzies, and P. Wilson, “Electromagnetic tran-
+     sients simulation as an objective function evaluator for optimization of
+     power system performance,” presented at IPST, New Orleans, LA, USA,                                    Reza Iravani (M’85–SM’00–F’03) received the
+     2003.                                                                                                  B.Sc. degree in electrical engineering from Tehran
+                                                                                                            Polytechnic University, Tehran, Iran, in 1976, and
+                                                                                                            the M.Sc. and Ph.D. degrees in electrical engineer-
+                          Dalia N. Hussein (M’16) received the B.Sc. and                                    ing from the University of Manitoba, Winnipeg, MB,
+                          M.Sc. degrees in electrical engineering from Cairo                                Canada, in 1981 and 1985, respectively.
+                          University, Cairo, Egypt, in 2002 and 2006, respec-                                   Currently, he is a Professor at the University of
+                          tively, and the Ph.D. degree in electrical engineering                            Toronto, Toronto, ON, Canada. His research interests
+                          from the University of Toronto, Toronto, ON, Canada,                              include power electronics and power system dynam-
+                          in 2014.                                                                          ics and control.
+                              Her research interests include modeling, power
+                          system dynamics, and distributed generation.
+
+
+
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 01:41:50 UTC from IEEE Xplore. Restrictions apply.
+

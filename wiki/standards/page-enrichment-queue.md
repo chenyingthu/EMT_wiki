@@ -52,7 +52,7 @@ updated: "2026-05-13"
 | 27 | renewable-energy-units.md | topics | topics/renewable-storage/renewable-energy-units.md | P1 | 91 | 1271 | 4 | 19 | completed |
 | 28 | haileselassie-2012-mtdc-control.md | methods | methods/system-studies/haileselassie-2012-mtdc-control.md | P1 | 90 | 856 | 8 | 8 | completed |
 | 29 | vsc-mmc-test-system.md | models | models/equivalent/vsc-mmc-test-system.md | P1 | 90 | 965 | 6 | 8 | completed |
-| 30 | renewable-energy-integration.md | topics | topics/renewable-storage/renewable-energy-integration.md | P1 | 89 | 1500 | 5 | 32 | pending |
+| 30 | renewable-energy-integration.md | topics | topics/renewable-storage/renewable-energy-integration.md | P1 | 89 | 1500 | 5 | 32 | completed |
 | 31 | jiles-atherton-model.md | methods | methods/power-electronics/jiles-atherton-model.md | P1 | 89 | 1033 | 6 | 11 | pending |
 | 32 | simulation-practice-guide.md | topics | topics/tools-software/simulation-practice-guide.md | P1 | 85 | 1063 | 7 | 13 | pending |
 | 33 | csg.md | methods | methods/power-electronics/csg.md | P1 | 84 | 1279 | 2 | 11 | pending |
@@ -506,3 +506,4 @@ updated: "2026-05-13"
 |||| 27 | 1 | 1 | 0 | renewable-energy-units页面完成（1234字，46公式（14块级+32行内），35wikilink全部验证有效，11章节，6种新能源机组类型详解：Type-3 DFIG/Type-4 PMSG/PV/GFL逆变器/GFM逆变器/储能，6篇来源论文，五类模型精度-效率对比表，建模粒度选择指南表，量化性能边界表）
 || 28 | 1 | 1 | 0 | haileselassie-2012-mtdc-control页面完成（959字，50公式（8块级+42行内），10wikilink全部验证有效，9章节，4种控制策略详解：下垂控制/V/f构网/定电压/定功率，6篇来源论文综合，含MTDC控制架构SVG图）
 || 28 | 1 | 1 | 0 | vsc-mmc-test-system页面完成（4967字，38公式，8wikilink，1SVG，10章节，4种建模方法详解：TDM详细模型/DEM戴维南等效/AM加速模型/AVM平均模型，4篇来源论文，310倍加速比量化数据）
+|| 29 | 1 | 1 | 0 | renewable-energy-integration页面完成（3501字，32公式（12块级+20行内），19wikilink（18有效+1修正pmsg-model→pmsg-single-unit），1SVG图，10章节，9篇来源论文，五类逆变器建模精度-效率映射框架，GFL/GFM控制架构对比，场站聚合与并行仿真方法）
