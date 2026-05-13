@@ -1,0 +1,751 @@
+IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 33, NO. 3, JUNE 2018                                                                                           1299
+
+
+
+
+               High-Speed EMT Modeling of MMCs With
+                Arbitrary Multiport Submodule Structures
+                 Using Generalized Norton Equivalents
+        Jianzhong Xu, Member, IEEE, Shengtao Fan , Member, IEEE, Chengyong Zhao, Senior Member, IEEE,
+                                      and Aniruddha M. Gole, Fellow, IEEE
+
+
+   Abstract—In order to improve features, such as fault current
+blocking and capacitor voltage balancing, modular multilevel
+converter (MMC) topologies incorporating multiport submodules
+(SMs) are being considered as candidates for HVdc transmission
+applications. This paper presents high-speed and accurate
+electromagnetic transient (EMT) models for MMCs composed of
+such multiport SMs. The approach uses the Schur’s complement
+technique to recursively eliminate internal nodes of the converter
+structure to create a multiport Norton equivalent that connects
+to the external network. Thus, the final admittance matrix seen by
+the EMT solver has a dimension orders of magnitude smaller than
+that of the unreduced structure. As with previously developed
+approaches for MMCs with single-port SMs, all internal infor-
+mation, such as individual SM capacitor voltages, is preserved
+and can be output by the program if needed. This increases the
+bookkeeping effort, but the overall reduction in matrix size more
+than compensates for any resulting time penalty. Approximately
+two to three orders of magnitude speedup over a straightforward
+implementation in an EMT program is achieved.
+  Index Terms—Modular multilevel converter (MMC), Schur’s                            Fig. 1.   Schematic diagram of single-port three-phase MMC.
+complement, electromagnetic transient (EMT), multi-port sub-
+modules (SMs), high speed modeling, generalized Norton
+equivalent.                                                                          upper and lower arms. Within each arm, there are numerous (up
+                                                                                     to several hundred) series connected single-port sub-modules
+                             I. INTRODUCTION                                         (SMs). These can be half-bridge SMs (HBSM), full-bridge SMs
+      HE modular multilevel converter (MMC) has become a                             (FBSMs), or a combination of both types [3]. The fully de-
+T     highly desired topology for point-to-point high voltage di-
+rect current (HVdc) transmission as well as for construction
+                                                                                     tailed electromagnetic transient (EMT) simulation of MMCs on
+                                                                                     EMT programs is a challenge, due to their extremely large SM
+of large scale dc grids [1], [2]. A traditional single-port MMC                      count in each arm and high number of nodes in the topology
+topology shown in Fig. 1 includes three phase legs each with                         [4], [5].
+                                                                                        Reference [6] proposed the Nested Fast and Simultaneous
+                                                                                     Solutions for the power electric networks, indicating that the
+   Manuscript received April 25, 2017; revised June 23, 2017; accepted August
+12, 2017. Date of publication August 17, 2017; date of current version April 6,      network can be partitioned into nested subsystems; thus re-
+2018. This work was supported by the National Key Research and Development           ducing the computational burden of the circuit without losing
+Plan of China under Grant 2016YFB0900903. Paper no. TPWRD-00583-2017.                any information. The approach is similar to the diakoptics ap-
+(Corresponding author: Jianzhong Xu.)
+   J. Xu is with the State Key Laboratory of Alternate Electrical Power Sys-         proach of Kron and others [7]–[9]. Reference [10] introduced
+tem with Renewable Energy Sources, North China Electric Power University,            the nested theory to EMT modeling of MMCs, where each of the
+Beijing 102206, China, and also with the Department of Electrical and Com-           six arms of the MMC is reduced to a single two-node Thévenin-
+puter Engineering, University of Manitoba, Winnipeg, MB R3T 2N2, Canada
+(e-mail: Jianzhong.xu@umanitoba.ca).                                                 equivalent. This admittance matrix of this reduced system is
+   S. Fan and A. M. Gole are with the Department of Electrical and Computer          overlaid on the admittance matrix of the remainder of the ac and
+Engineering, University of Manitoba, Winnipeg, MB R3T 2N2, Canada (e-mail:           dc side networks in the EMT solver. As none of the hundreds of
+shengtaofan@gmail.com; aniruddha.gole@umanitoba.ca).
+   C. Zhao is with the State Key Laboratory of Alternate Electrical Power Sys-       internal nodes appear in the overlaid matrix, the admittance ma-
+tem with Renewable Energy Sources, North China Electric Power University,            trix in the EMT solver remains at a manageable size for further
+Beijing 102206, China (e-mail: chengyongzhao@ncepu.edu.cn).                          LU (or other) factorization when the semiconductor switches in
+   Color versions of one or more of the figures in this paper are available online
+at http://ieeexplore.ieee.org.                                                       the sub-module operate. This leads to a significant improvement
+   Digital Object Identifier 10.1109/TPWRD.2017.2740857                              in the simulation time.
+                          0885-8977 © 2017 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                              See http://www.ieee.org/publications standards/publications/rights/index.html for more information.
+
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 14:13:01 UTC from IEEE Xplore. Restrictions apply.
+1300                                                                                         IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 33, NO. 3, JUNE 2018
+
+
+
+
+                                                                                   Fig. 3.    The two-port MMC structure.
+
+
+
+Fig. 2.    (a) Two-port SM and (b) its companion circuit.
+                                                                                   and the conventional arises from its ability to simplify voltage
+                                                                                   balancing. At any given instance, the MMC uses a certain num-
+   It must be realized that in these more traditional full- or half-
+                                                                                   ber of sub-modules in series to provide the ordered voltage at
+bridge topologies as in Fig. 1, each SM is a single-port with
+                                                                                   its output. The remaining sub-modules are bypassed. Because
+only two terminals. Hence all SMs in an arm carry the same
+                                                                                   of the availability of its second port, these idle sub-modules
+current [10] and this makes the procedure for obtaining a single
+                                                                                   can then be connected with neighboring active modules so that
+Thévenin equivalent for the arm very straightforward.
+                                                                                   the capacitors are paralleled and automatically become equal in
+   After its initial introduction, several researchers have ex-
+                                                                                   voltage. A detailed description of the operation of the topology
+tended the modeling approach in [10] to accurately represent
+                                                                                   is available in [18], [19].
+blocking behavior [11], fast voltage balancing control [12], [13]
+                                                                                      For MMCs with the multi-port SM (such as the two-port
+and higher simulation speeds [14]. A similar algorithm is also
+                                                                                   example in Fig. 2), a generalized nested approach such as that
+used in the real-time digital simulations [15]–[17].
+                                                                                   in [6] can be used to reduce the computational burden of the
+   Recently, new MMC topologies are emerging [18]–[21] for
+                                                                                   host EMT program into which the model is introduced. As in
+HVdc applications that add enhanced functionality to the con-
+                                                                                   earlier publications [10], this is achieved by representing each
+verter, such as the ability to ride through dc faults and simplified
+                                                                                   of the six arms of the MMC of Fig. 1 as a Thévenin or Norton
+capacitor voltage balancing. These MMCs can be composed
+                                                                                   equivalent. However, for the one-port SMs in [10], the same
+of multi-port SMs. A two-port SM example [18] is shown in
+                                                                                   current flows in all the sub-modules and allows one to simply add
+Fig. 2, which has two ports (P1 , N1 ) and (P2 , N2 ). Note that the
+                                                                                   the Thévenin resistances and Thévenin voltage sources of each
+term “port” is used loosely in this paper for convenience, as a
+                                                                                   of the SMs into a single Thévenin equivalent. In contrast, the
+strict definition would require the current entering and leaving
+                                                                                   newer generation of MMCs with multi-port SMs, do not enjoy
+any port to be the same, i.e., IP1 + IN1 = 0, etc., which is not
+                                                                                   this property. Modeling these multi-port MMCs (e.g., the two-
+the case here. Instead, the following identity is satisfied by the
+                                                                                   port MMCs in this paper) using detailed EMT simulation models
+terminal currents: IP1 + IP2 = IN1 + IN2 . It could have been
+                                                                                   becomes time-expensive, and so there is a need to develop high-
+referred to as a four terminal sub-module, but that create confu-
+                                                                                   speed models without sacrificing accuracy for such devices.
+sion when the MMC itself being used as part of a multi-terminal
+                                                                                      The companion circuit of the two-port module is shown in
+dc grid.
+                                                                                   Fig. 2(b). G1 , G2 , . . . , G8 , are the conductance of the module’s
+   This paper develops an approach using generalized multi-port
+                                                                                   eight switches which are either equal to the off-state switch con-
+Norton Equivalents for modeling various emerging multi-port
+                                                                                   ductance GOFF or the on-state conductance GON . The internal
+MMC topologies that is more than two orders of magnitude
+                                                                                   capacitor is represented by a Norton circuit (i.e., the Norton
+faster than a non-reduced model. The methodology is demon-
+                                                                                   current source ICEQ and Norton conductance GC ), which is a
+strated with the modeling of an MMC with two-port modules
+                                                                                   function of the integration method, SM capacitance and simu-
+of the form in Fig. 2.
+                                                                                   lation time step.
+                                                                                      The companion circuit for a generalized multi-port
+          II. RECURSIVE APPROACH TO MODELLING OF THE                               SM is shown in Fig. 4. It has m ports ((P1 , N1 ),
+                        MULTI-PORT MMC
+                                                                                   (P2 , N2 ), . . . , (Pm , Nm )). It has n nodes, in which nodes 1
+   Fig. 3 shows how the two-port module is used within an                          to 2m are at the m port terminals that interface to other sub-
+MMC structure. The advantage of the two-port topology over                         modules (or in case of the terminal SMs, to the dc bus or ac arm
+traditional approaches is not discussed here and can be found in                   inductance). Nodes 2m + 1 to n are internal nodes and nodes
+[18] and [19]. The main difference between the two-port MMC                        n − 1 and n are the sub-module’s capacitor terminals.
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 14:13:01 UTC from IEEE Xplore. Restrictions apply.
+XU et al.: HIGH-SPEED EMT MODELING OF MMCs                                                                                                               1301
+
+
+
+                                                                                  facing to the other SMs which are m in number, this final block
+                                                                                  represents a circuit with N × (n − m) + m nodes. However, in
+                                                                                  the developed Norton equivalent, there are only 2m nodes per
+                                                                                  arm to be included in the external system’s EMT solver. Thus
+                                                                                  adding the MMC arm increases the size of the external system’s
+                                                                                  admittance matrix by 2m. This is what results in the simulation
+                                                                                  efficiency as the representation of the arm in the main EMT sim-
+                                                                                  ulation (PSCAD/EMTDC in this case) has a very small number
+                                                                                  of nodes. For example, with the two-port SM in Fig. 2, and
+Fig. 4.   The companion circuit of the generalized multi-port SM.
+                                                                                  assuming 200 sub-modules per arm, this reduces the node count
+                                                                                  from 802 (i.e., 200 × (6 − 2) + 2)) to 4 for each arm.
+
+                                                                                  B. Solving the Full Network (Excluding Internal Nodes)
+                                                                                     Note that the outward flow is essentially a method to obtain
+                                                                                  a Norton equivalent for the MMC arm for presentation to the
+                                                                                  EMT solver of the full network. No internal MMC voltages
+                                                                                  are calculated. With the reduced equivalent circuits all six arms
+                                                                                  added to the overall network’s admittance matrix, the EMT
+                                                                                  solver can readily solve for the network and obtain node voltages
+                                                                                  for all network nodes including the 2m terminal nodes of each
+                                                                                  arm.
+
+                                                                                  C. Calculating Internal SM Quantities to Generate New
+                                                                                  History Terms (Inward Flow)
+                                                                                     Because the external EMT solver does not have access to
+                                                                                  the internal structure of the sub-modules, additional steps are
+                                                                                  necessary within the MMC module to calculate these. Such
+Fig. 5.   The recursive procedure of the proposed algorithm.                      calculations are necessary to generate the history terms neces-
+                                                                                  sary in Section II-A described above. They are also needed to
+   When constructing a MMC, the multi-port SMs are cascaded                       calculate quantities like the sub-module’s internal currents or
+by connecting all the interface nodes, which is structurally                      capacitor voltages which are required for the voltage balancing
+similar to the typical three-phase MMC configuration, as in                       algorithm. This is easily implemented.
+Fig. 1, except that now the connection is a multi-port connec-                       Once the solution for the arm’s external nodes is obtained, the
+tion instead of a single-port one.                                                internal nodes of Block N can be solved for. Note that the admit-
+   The proposed Recursive Solution Algorithm in this paper                        tance matrix required for this solution is the admittance matrix
+includes several steps to obtain the equivalent circuit of the                    of the sub-module itself overlaid with the additional equiva-
+MMC arm with cascaded multi-port SMs, as in Fig. 5.                               lent circuit admittances of Block N-1. The excitation sources
+                                                                                  for calculating the solution include the voltages calculated in
+                                                                                  Section II-B for the external nodes and the history sources from
+A. Eliminating SM Circuits to Obtain a Single Arm Equivalent                      Block N-1. Once the solution for Block N is obtained, the ter-
+(Outward Flow)                                                                    minal voltages for Block N-1 become available and can be used
+   First, the internal nodes within each SM k (k ∈                                to solve for Block N-2. The process is continued until the so-
+{1, 2, . . . , N}); where N is the total number of sub-modules                    lution for Block 1 is obtained. Note that in each inward step,
+in an arm, are eliminated. Next, the first sub-module, SM1, con-                  only the voltages of the current block under consideration are
+tained within Block 1 at the center of Fig. 5 is combined with                    calculated exactly once. The inward and outward steps there-
+the next SM resulting in Block 2; and internal nodes are once                     fore have no overlap and do not calculate the same voltage more
+again eliminated. Block 2 now contains the collapsed equiva-                      than once.
+lents of two sub-modules. This block is then combined with the                       The following section describes the mathematical details re-
+SM3, to give Block 3, and again, internal nodes are eliminated.                   quired for implementing the Recursive Solution Algorithm.
+The process is continued and culminates with Block N which
+now contains the equivalent companion circuit for one entire                              III. NODE ELIMINATION FOR OBTAINING NORTON
+bridge arm, which is essentially the multi-port Norton Equiv-                                       EQUIVALENT OF MMC ARM
+alent circuit for the arm. Note that in order to do the above
+                                                                                  A. Node Elimination Within Each SM
+steps, it is necessary to know the history terms, i.e., voltage and
+current in the SM capacitor from the previous time step. With                        Details of the sub-module node elimination process men-
+N sub-modules with n nodes each, and discounting nodes inter-                     tioned in Section II-A above are now presented. In Fig. 4,
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 14:13:01 UTC from IEEE Xplore. Restrictions apply.
+1302                                                                                        IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 33, NO. 3, JUNE 2018
+
+
+
+assuming a remote ground, the nodal admittance equations for                            The structure for JSM arises from the fact that only the ca-
+any one of the N multi-port SMs is given in (1).                                    pacitor contributes to the history current, and it is assumed that
+                                                                                    the sub-module only has a single capacitor as in Fig. 4. If more
+                       YSM VSM = JSM + ISM                                (1)
+                                                                                    energy storage elements are present, there will be additional
+   YSM is the n × n sized admittance matrix of the SM. It has the                   history terms. The structure for ISM is as shown because current
+form given in (2). In (2), the elements Gi,j (i, j ∈ {1, 2, . . . , n});            injections from the circuit external to the SM only occur at the
+are calculated from consideration of component conductance                          interface nodes. Equations (2) and (4) are partitioned where VIF
+(G) values. For switching components, the conductance is either                     is the voltage vector of interface nodes (the subscript “IF” stands
+G = GON , the on state conductance or G = GOFF the off                              for interface in this paper) and VIN of internal nodes. With this,
+state conductance of the IGBT switch. The state is determined                       (1) can be written as (5).
+from the firing pulses, and also from the voltages across or                                                                       
+                                                                                                   Y11 Y12       VIF         0        IIF
+currents in the switch in the previous time step. For the capacitor                                                     =         +                 (5)
+component G is equal to GC , the companion circuit capacitor                                       Y21 Y22       VIN       JIN         0
+conductance. For off-diagonal entries, i.e., i = j, Gi,j = −G                        Eliminating VIN in (5) using Schur’s Complement gives (6):
+and for diagonal elements, Gi,i = the sum of all conductance
+values of components incident on node i [22].                                                               YIF VIF = JIF + IIF                        (6)
+                                                                  
+                          (Y11 )2m ·2m     (Y12 )2m ·(n−2m )                        in which,
+YSM = [Gi,j ]n·n =                                                                                                        −1
+                        (Y21 )(n−2m )·2m (Y22 )(n−2m )·(n−2m )                                           YIF = Y11 − Y12 Y22 Y21                       (7)
+                                                                     n·n
+                                                                     (2)                                              −1
+                                                                                                          JIF = −Y12 Y22 JIN                           (8)
+   As an example, for the two-port MMC module in Fig. 2(a),
+the corresponding YSM obtained from its companion circuit in                           The form (6) together with (7) and (8) is the multi-port Norton
+Fig. 2(b) is as (3), shown at the bottom of this page.                              Equivalent [23] for each sub-module. This step is necessary in
+   In (1), VSM is the n × 1 sized column vector of the node                         the ‘outward flow’ process for obtaining the reduced Norton
+voltages, JSM is n × 1 sized column vector of the current injec-                    Equivalent for the arm, as described in Section II-A.
+tions and ISM is n × 1 sized column vector of injected currents                        The interface node voltages VIF can be calculated using the
+from any externally connected circuit, these column vectors are                     recursive method described in Section II-A and further discussed
+respectively shown in (4), at the bottom of this page.                              in Section III-C.
+
+                                             ⎡                                          ⎤
+                                         G1 + G3    0       0       0    −G1     −G3
+                                       ⎢    0    G2 + G4    0       0    −G2     −G4 ⎥
+                                       ⎢                                                ⎥
+                                       ⎢    0       0    G5 + G7    0    −G5     −G7 ⎥
+                                       ⎢                                                ⎥
+                                       ⎢    0       0       0    G6 + G8 −G6     −G8 ⎥
+                                       ⎢                                                ⎥
+                                       ⎢                                G1 + G2         ⎥
+                                       ⎢                                                ⎥
+                                       ⎢                                                ⎥
+                                       ⎢
+                                 YSM = ⎢ −G1      −G2     −G5     −G6    +G5 +   −GC ⎥                                                                 (3)
+                                                                                        ⎥
+                                       ⎢                                                ⎥
+                                       ⎢                                G6 + GC         ⎥
+                                       ⎢                                                ⎥
+                                       ⎢                                        G3 + G4 ⎥
+                                       ⎢                                                ⎥
+                                       ⎢                                                ⎥
+                                       ⎢ −G       −G4     −G7     −G8    −GC     +G7 + ⎥
+                                       ⎣      3                                         ⎦
+                                                                                                               G8 + GC
+
+
+                                    ⎧    ⎡       ⎤                              ⎡                       ⎤                 ⎧    ⎡      ⎤
+                                    ⎪
+                                    ⎪      VP1                                               0                            ⎪
+                                                                                                                          ⎪       IP1
+                                    ⎪
+                                    ⎪                                                                                     ⎪
+                                                                                                                          ⎪
+                                    ⎪
+                                    ⎪    ⎢ .. ⎥                                 ⎢            ..      ⎥                    ⎪
+                                                                                                                          ⎪    ⎢ .. ⎥
+                                    ⎪
+                                    ⎪    ⎢ . ⎥                                  ⎢             .      ⎥                    ⎪
+                                                                                                                          ⎪    ⎢ . ⎥
+                                    ⎪
+                                    ⎨    ⎢       ⎥                              ⎢                    ⎥                    ⎪
+                                                                                                                          ⎨    ⎢      ⎥
+                                         ⎢ VPm ⎥                                ⎢             0      ⎥                         ⎢ IPm ⎥
+                              VIF        ⎢       ⎥                              ⎢                    ⎥         IIF             ⎢      ⎥
+                                    ⎪    ⎢ VN1 ⎥                                ⎢             0      ⎥             ⎪           ⎢ −IN1 ⎥
+                                    ⎪
+                                    ⎪    ⎢       ⎥                              ⎢                    ⎥             ⎪
+                                                                                                                   ⎪           ⎢      ⎥
+                                    ⎪
+                                    ⎪    ⎢ .. ⎥                                 ⎢             ..     ⎥             ⎪
+                                                                                                                   ⎪           ⎢ .. ⎥
+                                    ⎪
+                                    ⎪    ⎢ . ⎥                                  ⎢              .     ⎥             ⎪
+                                                                                                                   ⎪           ⎢ . ⎥
+                   VSM =            ⎪
+                                    ⎪    ⎢       ⎥, J =                         ⎢                    ⎥ , ISM =     ⎪
+                                                                                                                   ⎪           ⎢      ⎥                (4)
+                                    ⎩    ⎢ VNm ⎥ SM                             ⎢             0      ⎥             ⎩           ⎢ −INm ⎥
+                                    ⎧    ⎢       ⎥           ⎧                  ⎢                    ⎥                         ⎢      ⎥
+                                         ⎢V      ⎥                              ⎢             0      ⎥                         ⎢ 0 ⎥
+                                    ⎪
+                                    ⎪    ⎢ 2m +1 ⎥           ⎪
+                                                             ⎪                  ⎢                    ⎥                         ⎢      ⎥
+                                    ⎪
+                                    ⎨    ⎢ . ⎥               ⎪
+                                                             ⎨                  ⎢              ..    ⎥                         ⎢ . ⎥
+                                         ⎢ .. ⎥                                 ⎢                    ⎥                         ⎢ .. ⎥
+                              VIN        ⎢       ⎥      J                       ⎢               .    ⎥                         ⎢      ⎥
+                                    ⎪    ⎣ V     ⎦        IN
+                                                             ⎪                  ⎣ I         (t − ΔT) ⎦                         ⎣ 0 ⎦
+                                    ⎪
+                                    ⎪       n−1              ⎪
+                                                             ⎪                        CEQ
+                                    ⎩       Vn               ⎩                      −ICEQ (t − ΔT)                                 0
+
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 14:13:01 UTC from IEEE Xplore. Restrictions apply.
+XU et al.: HIGH-SPEED EMT MODELING OF MMCs                                                                                                             1303
+
+
+
+   Once VIF is obtained, required in the ‘inward flow’ process                  Matrix.
+for determining the internal voltages, VIN can be updated us-                                           ⎡               ⎤ 
+                                                                                                             −I 0     00
+ing (9), to give the capacitor voltage solutions, necessary for                               ALL      Y          Y
+                                                                                                     ⎢ LL 0 −I LR 0 0 ⎥      ALR
+computing the history currents JIN in the next time step.                                          ⎢                    ⎥ 
+                                                                                                     ⎣        00      I0⎦
+                                                                                              ARL      YRL        YRR        ARR
+                                                                                                              00      0I
+                    VIN = Y−1
+                           22 [JIN − Y21 VIF ]                           (9)                          ⎡V ⎤
+                                                                                                           L
+                                                                                                  XL    ⎢ I ⎥ J 
+                                                                                                      ⎢⎢  L ⎥      L
+                                                                                                ·            ⎥=                                        (13)
+B. Node Elimination Between Interconnecting Adjacent SMs                                                ⎣ VR ⎦    J R
+                                                                                                  XR
+   This section describes how the node elimination procedure is                                           IR
+recursively implemented between two adjacent multi-port SMs                       For convenience, the four submatrices are labeled ALL , ALR ,
+until a single equivalent for the whole arm consisting of only                  ARL and ARR , as marked in (13). Similarly, the vectors XL
+2m interface nodes results. This arm equivalent circuit can then                and XR are defined to represent the left and right-hand side
+be interfaced to the main interface solver.                                     voltage and current vectors. With these new definitions, (13)
+   After elimination of the internal nodes the interface node                   becomes (14):
+equivalent (6), which is applicable for any individual multi-port                                                 
+SM, can be written as (10), by substituting (4) into (6).                                        ALL ALR       XL         JL
+                                                                                                                     =                     (14)
+                                                                                                 ARL ARR       XR        JR
+                    ⎡     ⎤       ⎡        ⎤
+                  ⎧   VP1       ⎧   JIF P1                                         Equation (14) is the generic form of an individual multi-port
+                  ⎨ ⎢ . ⎥       ⎨ ⎢ . ⎥
+                    ⎢ .. ⎥        ⎢ .. ⎥                                        SM with all the internal nodes eliminated. The next step is to
+               VL            JL
+                  ⎩ ⎢     ⎥
+                    ⎢ VPm ⎥     ⎩ ⎢        ⎥
+                                  ⎢ JIF Pm ⎥                                    eliminate the interface nodes between two adjacent SMs. Let
+         YIF ·    ⎧ ⎢     ⎥     ⎧ ⎢        ⎥
+                  ⎨ ⎢     ⎥=    ⎨ ⎢        ⎥                                    superscripts k and k + 1 respectively indicate the adjacent SMs
+                    ⎢ VN1 ⎥       ⎢ JIF N1 ⎥                                    k and k + 1 in (15) and (16).
+               VR   ⎢  .  ⎥  JR   ⎢    . ⎥
+                  ⎩ ⎣ .. ⎦      ⎩ ⎣ .. ⎦                                                                         
+                                                                                                AkLL AkLR     XkL        JkL
+                             VNm                     JIF Nm                                                         =                       (15)
+                                                                                                 k     k        k
+                                     ⎡          ⎤                                              ARL ARR        XR         JkR
+                              ⎧    IP1                                                                                        
+                              ⎨ ⎢ .. ⎥                                                         Ak+1   A k+1
+                                                                                                                X k+1
+                                                                                                                             J k+1
+                           IL   ⎢ . ⎥                                                            LL     LR        L
+                                                                                                                        =      L
+                                                                                                                                            (16)
+                              ⎩ ⎢
+                                ⎢
+                                       ⎥
+                                       ⎥                                                       Ak+1
+                                                                                                 RL ARR
+                                                                                                        k+1
+                                                                                                                Xk+1         Jk+1
+                +             ⎧ ⎢ IPm ⎥                                (10)
+                                                                                                                  R            R
+                              ⎨ ⎢ −IN1 ⎥
+                                ⎢
+                                       ⎥                                           The right-hand side of SM k is connected to the left-hand
+                          −IR   ⎢ . ⎥
+                              ⎩ ⎣ .. ⎦                                          side of SM k + 1, indicating that the node voltages are identical
+                                         −INm                                   at this interface. Also because of the sign convention chosen in
+                                                                                Fig. 4, where left hand side currents are positive entering the
+                                                                                sub-module, whereas the right hand side currents are positive
+   In (10) the vectors are re-arranged as those correspond-                     exiting the sub-module, the currents at the interface are also
+ing to the interface left-hand side nodes (P1 , P2 , . . . , Pm ) in            equal. Thus let:
+Fig. 4 and right-hand side nodes (N1 , N2 , . . . , Nm ), re-labeled
+as subscripts ‘L’ and ‘R’. The right-hand side nodes connect to                                                 XRL = XkR = Xk+1
+                                                                                                                             L                         (17)
+the left-hand side interface nodes of the next SM, and for this                   Substituting (17) into (15) and (16), and restructuring, gives
+purpose, YIF is partitioned to indicate left and right side vectors             (18) and (19).
+as (11):                                                                                          k   k −1  k                     
+                                                                                       AkLL 0            ALR      ARR         ARL 0
+                                                                                                  −
+                         (YLL )m ·m (YLR )m ·m                                          0 Ak+1 RR       Ak+1
+                                                                                                          RL      Ak+1
+                                                                                                                    LL          0 Ak+1
+                                                                                                                                     LR
+            YIF =                                                      (11)                                        k   k −1  k 
+                         (YRL )m ·m (YRR )m ·m )                                             XkL                JkL    ALR   ARR      JR
+                                                         2m ·2m
+                                                                                    ·                  =             −
+                                                                                            Xk+1
+                                                                                             R                 Jk+1
+                                                                                                                R      Ak+1
+                                                                                                                        RL   Ak+1
+                                                                                                                              LL     Jk+1
+                                                                                                                                      L
+  Substituting (11) into (10) and get (12)                                        or
+                                                                                                        k→k+1 
+                                                                           Ak→k+1
+                                                                                     LL   Ak→k+1
+                                                                                           LR        XkL    JL
+               YLL YLR          VL         JL          IL                                            k+1  = k→k+1                                      (18)
+                                         =          +                  (12)        Ak→k+1
+                                                                                     RL   Ak→k+1
+                                                                                           RR
+                                                                                                    XR      JR
+               YRL YRR          VR         JR         −IR                                         −1  k   k −1  k      k 
+                                                                                              AkRR       JR     ARR   ARL 0     XL
+                                                                                 XRL =                        −
+  Moving current vectors IL and IR to the left-hand side of (12)                              Ak+1
+                                                                                               LL       J k+1
+                                                                                                          L     Ak+1
+                                                                                                                 LL    0 Ak+1
+                                                                                                                          LR   Xk+1
+                                                                                                                                R
+and re-arranging into (13), in which ‘I’ indicates the Identity                                                                   (19)
+
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 14:13:01 UTC from IEEE Xplore. Restrictions apply.
+1304                                                                                    IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 33, NO. 3, JUNE 2018
+
+
+
+   The superscript “k → k + 1” identifies that SMs k and k+1                       The external EMT network solver then can solve for all node
+are combined. Equation (18) has an identical form as that of                    voltages in VN , which includes the external system voltages
+the individual SM given by (14). Then this combined block is                    as well as the 2m interface node voltages, but not the internal
+next combined with the next SM to give a block of similar form,                 node voltages inside the MMC. However, once the 2m inter-
+and so on, until the outermost sub-module is reached. Note that                 face node voltages are calculated, we can recursively calculate
+at each stage we require the history terms and the firing pulses                the node voltages of all internal nodes using the procedure de-
+of each newly combined SM; and the interface node voltages,                     scribed in Section II-A. These are required for finding the history
+which are required to update the internal voltages and the history              terms of the internal blocks 1 to N for the next solution time
+terms, as in Fig. 5. The resultant is a Norton equivalent for the               step.
+entire arm to be used in the external EMT solver.                                  Note that the MMC does not increase the number of nodes in
+                                                                                the external circuit because the 2m interface nodes also belong
+C. Norton Equivalent of MMC Arm                                                 to the external circuit. If a direct solution were attempted, it
+                                                                                would have added all the N × (n − m) + m internal nodes of
+   Once all the internal nodes of the N cascaded multi-port SMs
+                                                                                the MMC to the external circuit, thereby significantly increasing
+are eliminated, we obtain a form similar to (18), as:
+                                                                                its size and the corresponding solution effort. It must be realized
+                                     1→N 
+                A1→N   A1→N       X1L       JL                                  however, that the price paid for the reduction in size is the added
+                  LL      LR
+                                    N   = 1→N               (20)                complexity of the recursive procedure.
+                A1→N
+                  RL   A  1→N
+                          RR
+                                  X R       JR
+
+  Realizing that XL = [VL , IL ]T , etc., as in (13), the matrix                D. Special Considerations for Implementation of Blocking
+on the left hand side of (20) can be re-written as (21):                           The two-port MMC was originally proposed for its advan-
+                                                                              tageous dc fault current blocking and capacitor voltage self-
+                     1→N     1→N 1→N      1→N
+         A1→N
+            LL  {   aLL    αLL   a LR   αLR      }A1→N
+                                                    LR                          balancing features. First, consider the traditional MMC in
+            1→N                           1→N }A1→N
+         ARL { a1→N  RL
+                             1→N 1→N
+                           αRL   aRR αRR            RR                          Fig. 1. In normal operation, either switch T1 /D1 or T2 /D2 is
+                ⎡ 1⎤                                                            on. However, when the arm is blocked, firing pulses are removed
+                   VL        1→N 
+                ⎢ I1 ⎥                                                          from all IGBTs so that a diode network remains. The state of
+               ·⎢   L ⎥ = JL                               (21)                 the diode now depends on the direction of current in it, and the
+                ⎣ VR N⎦
+                              J1→N
+                               R                                                diode must be turned off if the current in it is momentarily nega-
+                   IN
+                    R                                                           tive. In a real diode, the diode current can never be negative, and
+  Now (21) can be re-arranged to (22):                                          these momentary negative values can result in voltage spikes.
+                          1→N 1→N   1                                     Interpolation is a well-known technique to ensure that the diode
+                    1→N −1
+          −α1→N
+             LL   αLR         aLL aLR       VL                                  is turned off at the right instant [24], and has been used for mod-
+          −α1→N
+             RL αRR
+                    1→N
+                              a1→N
+                                RL aRR
+                                       1→N
+                                            VRN
+                                                                                elling the traditional MMC [11]. With reference to the diode,
+                           
+                       1→N −1 J1→N
+                                          1                                  the technique can briefly be described as follows: if the diode
+             −α1→N
+                LL   αLR            L        IL                                 current iD (t) was positive in the previous time step (say t), and
+         =                                +    N
+             −α1→N
+                RL   α 1→N
+                       RR         J 1→N
+                                    R
+                                            −I R                                is negative in the next time step (t + Δt), time is not updated
+  or                                                                            to t + Δt. Instead, using linear interpolation the time t + δt
+                                                                                (where δt ≤ Δt) is determined, where a straight line joining
+                    1→N 1→N
+                   YIF VIF = J1→N
+                              IF  + I1→N
+                                     IF                                (22)     iD (t) and iD (t + Δt) on a plot of diode current versus time,
+                                                                                intersects the time axis. This is deemed to be where the current
+   Equation (22) now permits the MMC model to be interfaced
+                                                                                actually crossed zero, and the entire solution of the network is
+with the main EMT solver, which has a structure as in (23), with
+                                                                                linearly interpolated to this time. Additional interpolation steps
+YEX , VEX and JEX being the admittance matrix, nodal voltage
+                                                                                are taken to avoid the phenomenon of chatter and to reposition
+vector and internal current injection vectors of the external net-
+                                                                                the solution to the original time grid as described in [24].
+work. IEX represents the currents injected from the interface.
+                                                                                   The same procedure is used here for modelling blocking in
+Thus its elements are zero for non-interface nodes, and equal
+                                                                                the multi-port MMC. For instance, when simulating blocking,
+to the corresponding entries from I1→NIF (in (22)) for interface                in the two-port MMC of Fig. 3, each arm can be represented
+nodes.
+                                                                                by a two-port SM with eight diodes and one Norton equivalent
+                      YEX VEX = JEX + IEX                              (23)     circuit to update the capacitor voltage increments for all the
+                                                                                sub-modules in each time step. Normally, the blocking mode is
+                1→N
+   Similarly, VIF     is a vector of nodal voltages only at the                 used in start-up process and during dc fault blocking.
+2m interface nodes, which are also part of the external circuit.
+Hence, to obtain the final admittance matrix for the entire sys-                          IV. MODEL VALIDATION AND SPEEDUP FACTOR
+                                                            1→N
+tem, the elements of the reduced MMC admittance matrix YIF
+are added to the elements of YEX for the corresponding node                        This section shows that the proposed approach has negligi-
+pairs to give (24).                                                             ble accuracy loss. It also quantifies the speedup afforded by
+                                                                                the proposed equivalent algorithm in comparison with a fully
+                             YN VN = JN                                (24)     detailed model. In the detailed model case, the two-port MMC
+
+         Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 14:13:01 UTC from IEEE Xplore. Restrictions apply.
+XU et al.: HIGH-SPEED EMT MODELING OF MMCs                                                                                                               1305
+
+
+
+
+Fig. 6.   Diagram of the point-to-point HVdc system.
+
+
+
+
+                                                                                  Fig. 8.   The real power during step change.
+
+
+
+
+                                                                                  Fig. 9. The waveforms during dc fault blocking: (a) The dc voltage; (b) The
+                                                                                  ac line current.
+
+
+                                                                                  A in the rectifier MMC1. Results are shown for the proposed
+                                                                                  equivalent model (EM) as well as for the fully detailed model
+                                                                                  (DM) for comparison.
+Fig. 7. The waveforms during steady state: (a) The MMC arm voltage; (b)
+The sub-module capacitor voltage; (c) The capacitor current.
+                                                                                     In Fig. 7 the two traces are essentially overlapping and in-
+                                                                                  distinguishable. As an additional accuracy check, Fig. 7(b) also
+                                                                                  shows the error between the two waveforms from the two mod-
+is modelled entirely within PSCAD, the main EMT solver. In
+                                                                                  els. Again, the agreement is excellent, with the peak error typi-
+the proposed equivalent model, the recursive model is handled
+                                                                                  cally less than 0.2%, indicating that the proposed approach has
+outside the main EMT solution and interfaces to the EMT solver
+                                                                                  negligible accuracy loss.
+as a Norton Equivalent as described in Section III-C.
+                                                                                     2) Step Change in Power Order: At t = 7.0s, the power ref-
+   The computer used in this paper is an Intel(R) Core(TM) i7-                    erence is changed from Pref = 300 MW to Pref = 260 MW,
+6700 3.40 GHz CPU with 16 GB RAM and 64-bit Windows
+                                                                                  and the resulting ac side power is plotted in Fig. 8. Again, the
+10 Operating System. All the models were implemented on
+                                                                                  results are virtually indistinguishable.
+PSCAD/EMTDC Professional V4.6.
+                                                                                     3) DC Fault Blocking: One of the desirable features of the
+                                                                                  two-port sub-module is that it is able to clear a dc side fault.
+A. Accuracy                                                                       This is evidenced by the simulation in Fig. 9. At t = 11.3 s,
+   For checking its accuracy, as in Fig. 6, a point-to-point HVdc                 a pole-to-pole short-circuit fault is applied at the dc-line of the
+transmission system, modelled with the proposed equivalent                        MMC-HVdc system. After fault detection, which takes about 3
+circuit approach is compared with a fully detailed EMT model.                     ms, the firing pulses to all IGBTs in the inverter and rectifier
+The converter topology is as in Fig. 3 with 8 SMs per arm. The                    MMCs are blocked at t = 11.303s. The dc voltage and ac line
+rectifier MMC controls the dc voltage and its ac bus voltage                      current are shown in Fig. 9(a) and (b). On fault application the
+while the inverter MMC controls the real power and its ac bus                     dc voltage collapses to zero. As is clearly evident, the simple
+voltage. The converter is rated at 300 MW, +/−200 kV. Each                        act of blocking firing pulses results in the ac side current going
+SM capacitance is 480 μF.                                                         to zero and this clears the dc side fault, which would not be the
+   1) Steady-State Operation: Fig. 7 shows the steady state                       case for the traditional one-port half-bridge MMC. Again, the
+voltage waveform of an arm and the steady capacitor volt-                         proposed model gives virtually the same result as the detailed
+age and currents of the 3rd sub-module in upper arm of phase                      model.
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 14:13:01 UTC from IEEE Xplore. Restrictions apply.
+1306                                                                                      IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 33, NO. 3, JUNE 2018
+
+
+
+                                TABLE I                                           (2m×2m-size) admittance matrix is overlaid onto the external
+                            CPU TIMES RESULTS
+                                                                                  systems admittance matrix, and the history current contributions
+                                                                                  from the MMC circuit are added to the history current contri-
+            SM count       CPU times      CPU times      Speedup                  butions of the external network only at the interface nodes. This
+            per arm (k)     (s) (DM)       (s) (EM)       factor
+                                                                                  greatly reduces the computational burden on the main EMT
+            48                456.9           7.9          57.8                   solver and achieves significant speedup which can be over three
+            72               1125.1           10.6        106.1                   orders of magnitude for large SM counts. Although internal
+            144              5122.5           23.5        217.9
+            288             26 722.8          45.2        591.2                   nodes are eliminated in this approach, internal node voltages
+            576             110 235.6         88.5        1245.6                  and branch currents are recovered by a recursive procedure that
+                                                                                  works inwards once the interface nodes are solved for by revers-
+                                                                                  ing the process by which the blocks were created.
+                                                                                     The developed high-speed multi-port MMC models are val-
+                                                                                  idated by comparison with an EMT simulation of the detailed
+                                                                                  model with each SM modelled separately. Simulation results
+                                                                                  show that the proposed models are accurate and the simulation
+                                                                                  time scales linearly with the SM count, as opposed to an order
+                                                                                  2.3 with the detailed model.
+
+
+                                                                                                             ACKNOWLEDGMENT
+                                                                                    The authors would like to show their thanks to Dr. Yi Zhang
+                                                                                  and Dr. Hui Ding from RTDS Technologies Inc. for providing
+                                                                                  many useful suggestions.
+
+
+                                                                                                                     REFERENCES
+Fig. 10.   CPU times of the MMC models.                                            [1] S. Debnath, J. Qin, B. Bahrani, M. Saeedifard, and P. Barbosa, “Operation,
+                                                                                       control, and applications of the modular multilevel converter: A review,”
+                                                                                       IEEE Trans. Power Del., vol. 30, no. 1, pp. 37–53, Jan. 2015.
+B. Speedup Factor                                                                  [2] H. Wang, G. Tang, Z. He, and J. Yang, “Efficient grounding for modular
+                                                                                       multilevel HVDC converters (MMC) on the ac side,” IEEE Trans. Power
+   In order to quantify the speedup, an MMC terminal together                          Del., vol. 29, no. 3, pp. 1262–1272, Jun. 2014.
+with the ac side network of short circuit ratio of 3 was simulated                 [3] W. Lin, D. Jovcic, S. Nguefeu, and H. Saad, “Full-bridge MMC converter
+                                                                                       optimal design to HVDC operational requirements,” IEEE Trans. Power
+with two-port sub-module numbers of 48, 72, 144, 288 and                               Del., vol. 31, no. 3, pp. 1342–1350, Jun. 2016.
+576 SMs per arm. The simulation time step was 20 μs and                            [4] J. Xu, C. Zhao, W. Liu, and C. Guo, “Accelerated model of modu-
+duration was 1s. The computational times as well as the speedup                        lar multilevel converters in PSCAD/EMTDC,” IEEE Trans. Power Del.,
+                                                                                       vol. 28, no. 1, pp. 129–136, Jan. 2013.
+factor for the varying number of SMs are listed in Table I.                        [5] G. P. Adam and B. W. Williams, “Half- and full-bridge modular multi-
+   For a SM count 72, the speedup is over 2 orders of magnitude.                       level converter models for simulations of full-scale HVDC links and mul-
+With 576 SMs, which is a number in the upper side of the                               titerminal dc grids,” IEEE Emerging Sel. Topics Power Electron., vol. 2,
+                                                                                       no. 4, pp. 1089–1108, Dec. 2014.
+practical range of actual MMCs, the proposed model gives a                         [6] K. Strunz and E. Carlson, “Nested fast and simultaneous solution for time-
+speedup of 1245.6, which is over 3 orders of magnitude faster                          domain simulation of integrative power-electric and electronic systems,”
+than the detailed model.                                                               IEEE Trans. Power Del., vol. 22, no. 1, pp. 277–287, Jan. 2007.
+                                                                                   [7] G. Kron, Diakoptics. London, U.K.: Macdonald, 1963.
+   The CPU times in Table I are also graphically shown in                          [8] A. Brameller, M. N. John, and M. R. Scott, Practical Diakoptics for
+Fig. 10. Both x- and y-axis scales are logarithmic. An interesting                     Electrical Networks. London, U.K.: Chapman & Hall, 1969.
+observation is that the computation time (CT) for the proposed                     [9] Z. Xu, X. Dai, and L. Zhao, “The digital simulation of HVDC system by
+                                                                                       diakoptic interface variable equation approach,” in Proc. Int. Conf. Power
+EM is almost linear with the SM count k approximated by the                            Syst. Technol., vol. 1, Sep. 1991, pp. 440–443.
+linear equation CT = 0.15 k + 1.8. On the other hand, for the                     [10] U. N. Gnanarathna, A. M. Gole, and R. P. Jayasinghe, “Efficient model-
+DM, the CT rises more drastically and follows a polynomial re-                         ing of modular multilevel HVDC converters (MMC) on electromagnetic
+                                                                                       transient simulation programs,” IEEE Trans. Power Del., vol. 26, no. 1,
+lationship of order 2.3, with the SM count, approximately given                        pp. 316–324, Jan. 2011.
+by CT = 0.053 k2.3 + 80.                                                          [11] F. B. Ajaei and R. Iravani, “Enhanced equivalent model of the modular
+                                                                                       multilevel converter,” IEEE Trans. Power Del., vol. 30, no. 2, pp. 666–673,
+                                                                                       Apr. 2015.
+                             V. CONCLUSION                                        [12] J. Xu et al., “Enhanced high-speed electromagnetic transient simulation
+                                                                                       of MMC-MTdc grid,” Int. J. Electr. Power Energy Syst., vol. 83, no. 1,
+   In this paper, a fast and accurate electromagnetic transient                        pp. 7–14, 2016.
+modeling approach of the MMC-HVDC converters composed                             [13] F. Yu, W. Lin, X. Wang, and D. Xie, “Fast voltage-balancing control and
+of arbitrary multi-port SMs using generalized Norton Equiv-                            fast numerical simulation model for the modular multilevel converter,”
+                                                                                       IEEE Trans. Power Del., vol. 30, no. 1, pp. 220–228, Feb. 2015.
+alents is developed. It sequentially combines SM blocks into                      [14] A. Beddard, M. Barnes, and R. Preece, “Comparison of detailed modeling
+larger blocks until a single equivalent is realized for the bridge                     techniques for MMC employed on VSC-HVDC schemes,” IEEE Trans.
+arm with only 2m external interface nodes. The resulting small                         Power Del., vol. 30, no. 2, pp. 579–589, Apr. 2015.
+
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 14:13:01 UTC from IEEE Xplore. Restrictions apply.
+XU et al.: HIGH-SPEED EMT MODELING OF MMCs                                                                                                                    1307
+
+
+
+[15] M. Matar, D. Paradis, and R. Iravani., “Real-time simulation of modular                                 Shengtao Fan (M’11) was born in Shandong, China,
+     multilevel converters for controller hardware-in-the-loop testing,” IEEE                                in 1981. He received the B.Sc. degree in electronic
+     Trans. Power Del., vol. 9, no. 1, pp. 42–50, Feb. 2016.                                                 information science and technology from Shandong
+[16] H. Saad, T. Ould-Bachir, J. Mahseredjian, C. Dufour, S. Dennetière, and S.                             University, Weihai, China, in 2002, and the Ph.D. de-
+     Nguefeu, “Real-time simulation of MMCs using CPU and FPGA,” IEEE                                        gree in mechatronics engineering from Beihang Uni-
+     Trans. Power Del., vol. 30, no. 1, pp. 259–267, Jan. 2015.                                              versity, Beijing, China, in 2009. From 2009 to 2012,
+[17] T. Ould-Bachir, H. Saad, S. Dennetière, and J. Mahseredjian,                                           he worked in the Power System Department, China
+     “CPU/FPGA-based real-time simulation of a two-terminal MMC-HVDC                                         Electric Power Research Institute with an emphasis
+     system,” IEEE Trans. Power Del., vol. 32, no. 2, pp. 647–655, Apr. 2017.                                on the development of TS-EMT hybrid simulation.
+[18] S. M. Goetz, A. V. Peterchev, and T. Weyh, “Modular multilevel converter                                From 2012 to 2014, he worked as a Postdoctoral Fel-
+     with series and parallel module connectivity: topology and control,” IEEE                               low with the University of Manitoba, Winnipeg, MB,
+     Trans. Power Del., vol. 30, no. 1, pp. 203–215, Jan. 2015.                    Canada, working on the computation of electromagnetic transients in power
+[19] S. M. Goetz, Z. Li, X. Liang, C. Zhang, S. M. Lukic, and A. V. Peterchev,     systems. Currently, he is working as a Research Assistant with the University
+     “Control of modular multilevel converter with parallel connectivity—          of Manitoba.
+     Application to battery systems,” IEEE Trans. Power Electron., vol. 32,
+     no. 11, pp. 8381–8392, Nov. 2017.
+[20] S. M. Goetz, Z. Li, A. V. Peterchev, X. Liang, C. Zhang, and S.
+     M. Lukic, “Sensorless scheduling of the modular multilevel series-
+     parallel converter: Enabling a flexible, efficient, modular battery,” in
+     Proc. IEEE Appl. Power Electron. Conf. Expo., Long Beach, CA, USA,
+     Mar. 2016, pp. 2349–2354.                                                                               Chengyong Zhao (M’05–SM’15) was born in
+[21] C. Gao, X. Liu, J. Liu, Y. Guo, and Z. Chen, “Multilevel converter with                                 Zhejiang, China. He received the B.S., M.S., and
+     capacitor voltage actively balanced using reduced number of voltage sen-                                Ph.D. degrees in power system and its automa-
+     sors for high power applications,” IET Power Electron., vol. 9, no. 7,                                  tion from North China Electric Power University
+     pp. 1462–1473, Jun. 2016.                                                                               (NCEPU), Beijing, China, in 1988, 1993, and 2001,
+[22] H. W. Dommel, “Digital computation of electromagnetic transients                                        respectively. He was a Visiting Professor with the
+     in single and multi-phase networks,” IEEE Trans. Power App. Syst.,                                      University of Manitoba from Jan. 2013 to Apr. 2013
+     vol. PAS-88, no. 4, pp. 388–399, Apr. 1969.                                                             and Sep. 2016 to Oct. 2016. Currently, he is a Profes-
+[23] G. Corazza, C. Someda, and G. Longo, “Generalized Thevenin’s theorem                                    sor in the School of Electrical and Electronic En-
+     for linear N-Port networks,” IEEE Trans. Circuit Theory, vol. 16, no. 4,                                gineering, NCEPU. His research interests include
+     pp. 564–566, Nov. 1969.                                                                                 HVdc system and dc grid.
+[24] A. M. Gole et al., “Modeling of power electronic apparatus: Additional
+     interpolation issues,” in Proc. Int. Conf. Power Syst. Transients, Seattle,
+     WA, USA, Jun. 1997, pp. 23–28.
+
+
+                       Jianzhong Xu (M’14) was born in Shanxi, China.
+                       He received the B.S. and Ph.D. degrees from North                                     Aniruddha M. Gole (S’77–M’82–SM’04–F’10) re-
+                       China Electric Power University (NCEPU), Beijing,                                     ceived the B.Tech. degree in electrical engineering
+                       China, in 2009 and 2014, respectively. Currently, he                                  from the Indian Institute of Technology, Bombay,
+                       is an Associate Professor in the State Key Laboratory                                 India, in 1978, and the Ph.D. degree from the Univer-
+                       of Alternate Electrical Power System with Renew-                                      sity of Manitoba, Winnipeg, MB, Canada, in 1982. He
+                       able Energy Sources, NCEPU. From 2012 to 2013                                         is a Distinguished Professor and an NSERC Indus-
+                       and 2016 to 2017, he was, respectively, a joint Ph.D.                                 trial Research Chair in Power Systems Simulation,
+                       student and a Postdoctoral Fellow with the Univer-                                    University of Manitoba. Prof. Gole is a Registered
+                       sity of Manitoba. He is currently working on the high-                                Professional Engineer in the Province of Manitoba.
+                       speed electromagnetic transient modeling and control                                  He received the IEEE Power Engineering Society
+and protection of MMC-HVdc and dc grid.                                                                      Nari Hingorani FACTS Award in 2007.
+
+
+
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 14:13:01 UTC from IEEE Xplore. Restrictions apply.
+
