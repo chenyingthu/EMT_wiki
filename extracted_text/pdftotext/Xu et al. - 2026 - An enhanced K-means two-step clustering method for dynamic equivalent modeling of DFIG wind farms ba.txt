@@ -1,0 +1,668 @@
+                                                                Electric Power Systems Research 252 (2026) 112367
+
+
+                                                                      Contents lists available at ScienceDirect
+
+
+                                                          Electric Power Systems Research
+                                                             journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+An enhanced K-means two-step clustering method for dynamic equivalent
+modeling of DFIG wind farms based on LVRT characteristics
+Junhua Xu * , Jiyuan Shen , Xinyu You , Chunwei Wang , Bin Liu
+School of Electrical Engineering, Guangxi University, located in Nanning, China
+
+
+
+
+A R T I C L E I N F O                                       A B S T R A C T
+
+Keywords:                                                   To enhance the accuracy of dynamic equivalent models for wind farms utilizing doubly-fed induction generators
+DFIG wind farms                                             (DFIGs), an enhanced k-means two-step clustering method for dynamic equivalent modeling of DFIG wind farms
+Dynamic equivalent modeling                                 based on low-voltage ride-through (LVRT) characteristics is proposed in this study. First, the entire turbine fleet
+LVRT characteristics
+                                                            is divided into two categories based on their active power output and LVRT response: those exhibiting clustering
+Two-step clustering
+Enhanced k-means clustering
+                                                            characteristics and those that do not. For the latter, an enhanced k-means algorithm is applied. This approach
+                                                            optimizes initial center selection through probabilistic selection, improves search efficiency by utilizing a (K-
+                                                            Dimensional Tree) KD tree (reducing data search time by approximately 75% compared to traditional k-means),
+                                                            and determines the ideal cluster count using the Davies-Bouldin Index (DBI). The method overcomes the limi-
+                                                            tations of existing algorithms that require manual specification of initial centers and cluster numbers. Simulation
+                                                            results demonstrate that the equivalent model accurately corresponds to the detailed model during faults.
+                                                            Notably, the simulation time is reduced by about 90% while maintaining high precision, providing an efficient
+                                                            and accurate modeling approach for power system stability analysis with high wind power penetration.
+
+
+
+
+1. Introduction                                                                              responses–essential for wind farm equivalent modeling–remains a
+                                                                                             distinct, unresolved technical problem. Thus, while adjacent fields
+    The large-scale integration of renewable energy into the power grid                      provide valuable context, they emphasize the need for domain-specific
+poses severe challenges to system stability and reliability [1]. The                         innovations.
+intermittency and volatility of wind power further complicate the                                As a mainstream equivalent modeling approach, clustering still faces
+analysis of system dynamic behavior [2]. Against this backdrop, the                          challenges. Early methods reduced computational load [21], quantified
+DFIG has been widely adopted due to its excellent performance [3], and                       turbine contributions [22], incorporated kinetic energy [23], or used
+its dynamic response during LVRT is critical for system stability analysis.                  fuzzy C-means for output characteristics [24]. Despite these advances,
+    Dynamic simulation of large wind farms is computationally intensive                      two key limitations remain: dependence on subjective parameters and
+[4], necessitating dynamic equivalent modeling to balance accuracy and                       neglect of LVRT analysis, reducing model reliability during faults.
+efficiency [5]. Equivalent modeling methods include single-machine                               To integrate LVRT characteristics, Crowbar-based binary models
+and multi-machine approaches [6,7]. The former cannot reflect                                were developed [25,26], yet their oversimplified "switch" behavior
+turbine-specific dynamics arising from geographical and equipment                            reduced accuracy. Later three-step methods [27,28] offered improve-
+variations [8–10], making the latter the main research focus.                                ments but still assumed uniform LVRT responses across turbines, over-
+    While energy system optimization has advanced in areas like                              looking output-dependent variations. Although [29] analyzed LVRT
+distributed coordination [11], multi-stage techno-economic modeling                          control strategies’ impact on output and compared results with exten-
+[12], demand response privacy [13], bidding systems [14], robust                             sive field data, the absence of quantitative clustering indices hindered
+optimization [15], risk management [16], stochastic frameworks [17],                         effective clustering.
+decentralized self-healing [18], and storage-response synergy [19,20],                           Thus, a clear gap remains for a clustering method that incorporates
+these efforts focus on system-level and market challenges, whereas the                       LVRT characteristics for equivalent modeling during faults. To address
+core    task    of    accurately    aggregating     unit-level    dynamic                    this gap, this paper proposes an improved LVRT-based k-means two-step
+
+
+
+ * Corresponding author.
+   E-mail address: minghuxjh@126.com (J. Xu).
+
+https://doi.org/10.1016/j.epsr.2025.112367
+Received 30 August 2025; Received in revised form 24 September 2025; Accepted 11 October 2025
+Available online 15 October 2025
+0378-7796/© 2025 Elsevier B.V. All rights are reserved, including those for text and data mining, AI training, and similar technologies.
+J. Xu et al.                                                                                                                      Electric Power Systems Research 252 (2026) 112367
+
+
+clustering method, with these key contributions: (1) a novel two-step
+framework pre-classifying units by active power and LVRT response;
+(2) an automated algorithm integrating K-Means++ initialization, KD-
+trees (75% faster search), and DBI for optimal cluster count; and (3) a
+high-fidelity model replicating detailed dynamics (>98% accuracy),
+reducing simulation time by 90%, and outperforming existing methods.
+    The paper is structured as follows: Section 2 analyzes DFIG LVRT
+response; Section 3 details clustering method; Section 4 presents case
+tests; Section 5 concludes and outlines future work.
+
+2. LVRT response characteristics of DFIGs
+
+2.1. DFIG topology and response characteristics                                                                      Fig. 2. Control diagram of RSC.
+
+
+     The typical topology of a DFIG is depicted in Fig. 1 [30]. The stator                 By aligning the d-axis with the stator flux linkage direction, the ex-
+windings are directly connected to the electrical grid, while the rotor                 pressions for stator active and reactive power can be derived:
+windings are linked via a back-to-back converter. The rotor-side con-                   ⎧
+                                                                                               3Lm
+verter (RSC) utilizes a vector control approach oriented to the stator                  ⎪
+                                                                                        ⎨ Ps = 2Ls ω1 ψ s irq
+                                                                                        ⎪
+                                                                                        ⎪
+flux, and the grid-side converter (GSC) uses a control strategy based on                                   (           )                                      (3)
+grid voltage orientation.                                                               ⎪
+                                                                                        ⎪       3Lm ω1 ψ s          ψ
+                                                                                        ⎩ Qs =
+                                                                                        ⎪                     ird − s
+     During operation, the GSC ensures the stability of the DC-link                                2Ls              Lm
+voltage, while the RSC manages the regulation of power output.                              As indicated by Eq. (3), the vector control strategy oriented toward
+     As shown in Fig. 2, the RSC uses a dual-loop control structure with                the stator flux achieves decoupling of active and reactive power in the
+outer power and inner rotor current loops. The outer power loop oper-                   DFIG.
+ates in two modes: steady-state control and fault ride-through control,                     Furthermore, wind farms are required to provide dynamic reactive
+which are selected based on the terminal voltageUs1 . When the LVRT                     power support during fault conditions [32]. The dynamic reactive cur-
+detection signal (LF) triggers (LF = 1), the control system switches from               rentIQ must respond to fluctuations in voltage levels at the Point of
+steady-state (LF = 0) to LVRT mode. The control output from the outer                   Common Coupling (PCC) and satisfy [33]:
+power loop functions as the reference values (i∗rd ,i∗rq ) for the inner rotor d-       {
+and q-axis current loop control, thereby regulating the power output of                   IQ = K1 (0.9 − Us1 )IN
+                                                                                                                                                             (4)
+the DFIG [31]. Key references includeP∗s (stator active power),                           0.2p.u. ≤ Us1 ≤ 0.9p.u.
+id1 /iq1 (steady-state d/q-axis currents), andid2 /iq2 (LVRT d/q-axis
+                                                                                        WhereIN is the rated turbine current; andK1 is the reactive current sup-
+currents).
+                                                                                        port coefficient (typically 1.5–3 per grid codes).
+     During steady-state operation, neglecting the zero-sequence
+                                                                                            Therefore, during turbine faults, the benchmark values for the rotor
+component, the voltage and magnetic flux linkage equations of the
+                                                                                        current d-axis componenti∗rd and reactive power outputQfault are given by:
+DFIG in the d- and q-axis coordinate system are derived by decoupling
+                                                                                        ⎧
+the coefficient matrix through coordinate transformation [31]:
+                                                                                        ⎨ i∗ = ψ sd + Ls [K1 (0.9 − Us1 )IN ]
+                                                                                        ⎪
+⎧
+   usd = Rs isd + pψ − ω1 ψ
+                                                                                           rd
+                                                                                                   Lm Lm                                                       (5)
+⎪
+⎨ u = R i + pψ sd + ω ψ sq
+⎪                                                                                       ⎪
+                                                                                        ⎩Q
+     sq      s sq    sq    1 sd                                                              fault = Us1 K1 (0.9 − Us1 )IN
+                                                                             (1)
+⎪
+⎪  urd = Rr ird + pψ rd − S1 ψ rq
+⎩
+   urq = Rr irq + pψ rq + S1 ψ rd                                                       To enhance LVRT voltage support, the RSC’s control prioritizes reactive
+⎧                                                                                       power by constraining rotor currents, preventing overcurrent while
+⎪ ψ = Ls isd + Lm ird                                                                   supplying the required reactive power. The q-axis current refer-
+⎨ ψ sd = L i + L i
+⎪
+     sq        s sq   m rq
+                                                                             (2)        encei∗rq and active powerPfault are calculated as follows [34].
+⎪ ψ = Lm isd + Lr ird
+⎩ rd
+⎪                                                                                                   {[                         ∫ (               ) √̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅
+                                                                                                                                                                 ( )2̅
+                                                                                                                                                                             ]}
+  ψ rq = Lm isq + Lr irq                                                                ⎧                  (           )
+                                                                                        ⎨ irq = min Kppr Ps fault − Ps + Kipr
+                                                                                        ⎪
+                                                                                        ⎪
+                                                                                           ∗                  ∗
+                                                                                                                                   P∗s fault − Ps dt, i2r lim − i∗rd
+whereusd andusq are the stator d- and q-axis voltages;urd andurq are the                              (               √̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅ )
+                                                                                        ⎩ Pfault = min P0 , 3Lm ω1 ψ i2 − ( i∗ )2
+                                                                                        ⎪
+                                                                                        ⎪
+rotor d- and q-axis voltages;isd andisq are the stator d- and q-axis                                                s
+                                                                                                            2Ls         r lim           rd
+currents;ird andirq are the rotor d- and q-axis currents;ψ sd andψ sq are the
+                                                                                                                                                                               (6)
+stator d- and q-axis flux linkages;ψ rd andψ rq are the rotor d- and q-axis
+flux linkages;Rs andRr are the stator and rotor resistances;ω1 is the syn-              Where,Kppr andKipr represent the proportional and integral coefficients of
+chronous speed;S1 is the slip;pis the differential operator;Ls andLr are the            the rotor-side PI controller, respectively;P∗s fault is the active power
+stator and rotor inductances; andLm is the mutual inductance.                           reference value during the fault period; P0 is the output active power
+                                                                                        before the fault; andir lim is the current limit value of the RSC.
+
+
+                                                                                        2.2. DFIG LVRT active power characteristics analysis
+
+                                                                                           Due to varying wind speeds, the LVRT dynamic responses of wind
+                                                                                        turbines differ [27]. To investigate these characteristics of a DFIG under
+                                                                                        varying output power conditions, a detailed electromagnetic transient
+                                                                                        (EMT) model of a 2.25-MW DFIG was built in PSCAD/EMTDC (v4.6.2).
+                                                                                        The characteristics of the induction machine and converter controls
+                                                                                        involved are listed in Table 1.
+                             Fig. 1. DFIG topology.                                        This study proposes a two-step clustering method. First, wind tur-
+
+                                                                                    2
+J. Xu et al.                                                                                                                        Electric Power Systems Research 252 (2026) 112367
+
+
+Table 1
+Induction machine and converter control parameters.
+  Component             Parameter      Description                        Value
+                                                                          (Unit)
+
+  Induction machine     S              Rated power                        2.25(MW)
+                        UN             Rated voltage                      690(V)
+                        H              Inertia constant                   78(Kg*m2)
+                        Rs             Stator resistance                  0.022(p.u.)
+                        Rr             Rotor resistance                   0.026(p.u.)
+                        Ls             Stator inductance                  0.177(p.u.)
+                        Lr             Rotor inductance                   0.116(p.u.)
+                        Lm             Magnetizing inductance             4.68(p.u.)
+  Converter control     Kppr,Kipr      Active power control (PI) in RSC   2,0.02
+                        Kpqr,Kiqr      Reactive power control (PI) in     2,0.05
+                                       RSC
+                        KpIr,KiIr      Current control (PI) in RSC        2,0.025
+                        Kpug,Kiug      DC voltage control (PI) in GSC     2,0.01                            Fig. 4. Dynamic response of active power at PCC.
+                        KpIg,KiIg      Current control (PI) in GSC        2,0.01
+                        Kppll,Kipll    PLL control (PI)                   500,2000
+                        ir lim         current limit value of the RSC     1.6(p.u.)         across operational zones, this paper proposes an enhanced k-means two-
+  Crowbar               Rcrowbar       Crowbar resistor                   0.25(p.u.)        step clustering method for dynamic equivalent modeling of DFIG wind
+    protection          Icrowbar on    Activation current threshold       1.5(p.u.)         farms based on LVRT characteristics.
+    parameters          Vcrowbar off   Deactivation voltage threshold     0.9(p.u.)
+                                                                                                As shown in Fig. 5. First, by establishing an electromagnetic transient
+                                                                                            (EMT) simulation model of a single DFIG, the dynamic response prop-
+bines are classified based on their real-time active power output (P)                       erties of each wind turbine generator during LVRT under varying output
+according to the presence or absence of "clustering characteristics" (i.e.,                 conditions. Second, based on real-time output, wind turbines are cate-
+highly similar active power responses during LVRT). The definitive                          gorized into clusterable and unclusterable groups. Subsequently, an
+power thresholds derived from Fig. 3 are as follows: start-up area (A–B,P                   enhanced k-means clustering algorithm is adopted to perform secondary
+< 0.072p.u.), MPPT area (B–C,0.072p.u. ≤ P < 0.91p.u.), constant speed                      clustering on units with unclusterable characteristics, thereby obtaining
+area (C–D,0.91p.u. ≤ P < 1.0p.u.), and constant power area (D–E,P =                         equivalent machines for the entire wind farm. Finally, LVRT fault sim-
+ 1.0p.u.).                                                                                  ulations validate the equivalent model through quantitative error
+    Units operating in areas A-B, C-D, and D-E exhibit high intra-zone                      analysis.
+similarity in their response curve shape, dip depth, and recovery tra-
+jectory and are therefore grouped as possessing clustering characteris-                     3.2. Selection of clustering criteria for secondary clustering
+tics. In contrast, units in the MPPT area (B-C) exhibit greater active
+power fluctuations due to rotational speed adjustments forCp tracking                           Active power output is a key indicator for evaluating wind turbine
+and are thus separated for subsequent secondary clustering.                                 performance, not only directly reflects power generation efficiency but
+    Fig. 3 shows the wind speed (Vw ), active power (P), and wind power                     also indirectly indicates critical operational parameters such as terminal
+coefficient (Cp ) curves of the DFIG, which form the basis for the afore-                   voltage and current, thereby enabling effective assessment of unit
+mentioned thresholds. The method was validated by simulating a three-                       characteristics across different operating areas. Wind speed determines
+phase voltage dip (0.2 p.u., 625 ms). The dynamic response of active                        the mechanical input power; given the spatial heterogeneity of wind
+power at the PCC (Fig. 4) confirmed significant distinctions between                        speeds within actual wind farms, employing turbine-specific wind
+operational areas: high similarity within zones A-B, C-D, and D-E, and                      speeds as clustering indices better represents operational contexts.
+greater variability within the MPPT zone (B-C). These observed dis-                         TheCp value critically determines mechanical capture efficiency and
+tinctions serve as the basis for the first-step clustering.                                 aerodynamic performance. Fig. 3 shows that identicalCp values may
+                                                                                            correspond to different wind speeds, while similar wind speeds may
+3. Two-step clustering-based equivalent modeling method                                     yield distinctCp values. Therefore, considering their interaction improves
+                                                                                            operational state identification.
+3.1. Workflow of the two-step clustering-based equivalent modeling                              In summary, active power outputP, wind speedVw , and wind power
+method                                                                                      coefficientCp are chosen as clustering indices.
+
+    Given the significant differences in LVRT active power responses
+                                                                                            3.3. Secondary clustering using enhanced K-means algorithm
+
+                                                                                               The conventional k-means algorithm divides a data-
+                                                                                            setTintoKclusters, each represented by a center. It seeks to minimize the
+                                                                                            Within-Cluster Sum of Squares (WCSS), Which is the total squared dis-
+                                                                                            tance from each point to its cluster centroid [35].
+                                                                                                     K ∑
+                                                                                                     ∑
+                                                                                            WCSS =             x∈Ci
+                                                                                                                      ‖ x − μi ‖2                                                (7)
+                                                                                                      i=1
+
+
+                                                                                            WhereCi is the data points of the i-th cluster (representing a cluster
+                                                                                            grouping),xis a point inCi ,μi is the centroid ofCi (typically the mean of its
+                                                                                            points), and‖ x − μi ‖is the Euclidean distance fromxtoμi .
+                                                                                                Although this algorithm offers advantages such as computational
+                                                                                            efficiency and broad applicability, its random initialization of cluster
+                                                                                            centroids and predefined cluster number tends to converge to local op-
+                 Fig. 3. Wind speed vs. active power vs. Cp curves.                         tima. For this purpose, this paper introduces an enhanced k-means
+
+                                                                                        3
+J. Xu et al.                                                                                                      Electric Power Systems Research 252 (2026) 112367
+
+
+
+
+                                                      Fig. 5. Wind farm equivalent modeling flowchart.
+
+
+algorithm. It improves the accuracy in identifying the initial positions of        function among all possible dimensions.
+centroids through probabilistic selection, employs a KD-tree index for                 Recursively apply Step 1 to the left and right subtrees until the
+efficient retrieval of high-dimensional data [36], and minimizes the DBI           number of nodes in each subtree is less than or equal to a predefined
+to optimize the ratio of intra-cluster dispersion to inter-cluster separa-         threshold (set to 5 in this study). During subsequent distance calcula-
+tion [37]. The detailed procedure is as follows:                                   tions between data points and cluster centroids, the KD-tree efficiently
+                                                                                   identifies relevant points, thereby reducing redundant computations
+Step 1. KD-tree Construction. For a dataset comprisingadata points
+                                                                                   and improving the overall clustering efficiency.
+andDclustering features (represented as ana × Dmatrix), compute the
+variance along each dimension. Select the splitting axis as the dimension          Step 2. The computational complexity of the assignment phase in
+with maximum variance. The variance formula is:                                    traditional K-means isO(a⋅K⋅D),Ddenotes the data dimensionality, (in
+                      a
+                                                                                   this studyD = 3). To enhance efficiency, the proposed algorithm utilizes
+                  1 ∑
+Var(Xd ) =               (vdi − μd )2                                   (8)        the constructed KD-tree to accelerate the assignment step: each cluster
+               a − 1 i=1                                                           centroid serves as a query point to perform a nearest neighbor search on
+                                                                                   the KD-tree built from all data points. This search locates the nearest
+   Where,Xd is the dataset along the d-th dimension,d ∈ {1, 2, ⋯, D};vdi           subset of data points through recursive comparison and backtracking,
+denotes the value of the i-th data point in the d-th dimension; andμd is the       enabling batch assignment.
+mean value of the d-th dimension.
+                                                                                      This optimization reduces the average complexity of this phase
+   Sort data points according to the current splitting axis. Select the            toO(a⋅log(a)⋅D). This reduction is achieved because a single search in a
+median point as the current node, assign all points smaller than the               balanced KD-tree has a complexity ofO(loga), and this operation is
+median to the left subtree, and points greater than or equal to it to the          performed once for each of theKcentroids. Given thatK << ain wind
+right subtree. Then, update the splitting axis to the next dimension.              farm scenarios, it follows thatO(a⋅loga)≪O(a⋅K), thereby significantly
+   Determine the next splitting axis and update it. The dimension                  improving the computational efficiency of large-scale clustering. Tests
+indexd∗ for the next splitting axis is calculated as follows:                      reveal that the proposed method consumes only 25.1% of the runtime of
+d∗ = argmaxd Var(Xd )                                                   (9)        traditional methods per iteration.
+                                                                                   Step 3.   Given the number of clustersK,K ∈ {2, 3, ⋯, a}, the initial
+Whereargmaxd denotes the value of d that maximizes the objective
+
+                                                                               4
+J. Xu et al.                                                                                                           Electric Power Systems Research 252 (2026) 112367
+
+
+centroids are selected according to the k-means++ algorithm [38]. The             ⎧
+procedure begins by randomly selecting one data point from the dataset            ⎪
+                                                                                  ⎪        1 ∑
+                                                                                  ⎪
+                                                                                  ⎪
+                                                                                  ⎪ Si =             ‖ x − μi ‖
+as the first centroidc1 . For each data pointxnot yet chosen as a cen-            ⎪
+                                                                                  ⎪
+                                                                                  ⎪      |Ci | x∈Ci
+                                                                                  ⎪
+troidx ∈ {1,2,⋯,a}, compute its minimum Euclidean distanceD(x) to the             ⎪
+                                                                                  ⎪
+                                                                                  ⎨        1 ∑
+existing centroids using the KD-tree avoid redundant calculations and               Sj = ⃒⃒ ⃒⃒ x∈C ‖ x − μj ‖                                                     (14)
+                                                                                  ⎪
+                                                                                  ⎪        Cj       j
+
+improve initialization efficiency:                                                ⎪
+                                                                                  ⎪
+                                                                                  ⎪
+                                                                                  ⎪
+                                                                                  ⎪
+                                                                                  ⎪         1 ∑K           Si + Sj
+       √̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅
+       √ D                                                                        ⎪
+                                                                                  ⎪ DBI =         max
+       √∑                                                                         ⎪
+                                                                                  ⎩         K i=1 j∕  =i ‖ μi − μj ‖
+D(x) = √        (xd − cid )2                                      (10)
+               d=1
+                                                                                  whereSi andSj denote the intra-cluster dispersion of the i-th and j-th
+   Wherexd andcid are the values of data pointxand centroidcid in the d-th        clusters, respectively; |Ci |and|Cj |represent the number of data points in
+dimension, respectively.                                                          the i-th and j-th clusters;μi andμj are the centroids of the i-th and j-th
+                                                                                  clusters;‖ x − μi ‖and‖ x − μj ‖indicate the Euclidean distances from data
+   Based on the computed minimum distances, sequentially calculate
+the selection probabilityP(x) for each data not yet chosen as a centroid to       pointxin the cluster to centroidsμi andμj , respectively.
+be selected as the next centroid:                                                    For each candidateK, repeat Steps 3–5. Select theKcorresponding to
+                D2(x)                                                             the minimum DBI value as the optimal cluster count (i.e., the secondary
+P(x) = ∑                                                              (11)        clustering number), thereby establishing the final cluster partition.
+               y∈T\t D(y)
+                      2
+
+
+                                                                                  3.4. Equivalent parameter calculation and error analysis
+Whereydenotes the set of data points not yet selected as centroids;T\t
+represents the remaining dataset after removing all selected centroids
+                                                                                  3.4.1. Equivalent parameter calculation
+from the complete dataset.
+                                                                                      In wind farm equivalent modeling using the proposed method, the
+   Stochastically sample the next centroid based on point probabilities.
+                                                                                  voltage equations, state equations, and control parameters of the
+Repeat the centroid selection process from Step 3 untilKcentroids have
+                                                                                  equivalent generating unit remain consistent with those of an individual
+been selected.
+                                                                                  unit prior to equivalence. For clusters, the equivalent parameter calcu-
+Step 4. Perform k-means clustering using theKcentroids from Step 3.               lation formulas for asynchronous generators and step-up transformers
+Each iteration assigns data points to their nearest centroid to form              are as follows:
+clusters for the current iteration. Let the i-th cluster beCi , con-              ⎧                   ∑N                       ∑N
+tainingni data points. Represent the data as anni × 3matrixxi , where each
+                                                                                  ⎪
+                                                                                  ⎪
+                                                                                  ⎪  Seq = NS, Peq =     i=1
+                                                                                                             Pi = NP, Qeq =       i=1
+                                                                                                                                      Qi = NQ
+                                                                                  ⎪
+                                                                                  ⎪
+column corresponds to a clustering feature and each row represents a              ⎪
+                                                                                  ⎪
+                                                                                  ⎨           Xm           Xs            Xr
+data point:                                                                          Xm eq = , Xs eq = , Xr eq =
+                                                                                  ⎪
+                                                                                  ⎪            N           N             N
+     ⎡                  ⎤                                                         ⎪
+                                                                                  ⎪
+       P1 Vw1 Cp1                                                                 ⎪
+                                                                                  ⎪          Rs           Rr                                       Z
+     ⎢ P2 Vw2 Cp2 ⎥                                                               ⎩ Rs eq = , Rr eq = , Ceq = NC, ST− eq = NST , ZT− eq = T
+                                                                                  ⎪
+xi = ⎢                  ⎥                                             (12)                    N           N                                        N
+     ⎣ ⋮            ⋮ ⎦
+              ⋮                                                                                                                                       (15)
+       Pni Vwni Cpni
+                                                                                  WhereNis the number of units before equivalence;S,P,Qare capacity,
+   By integrating Eq. (7) and Eq. (12), the objective function can be             active, and reactive power;Xm ,XS ,Xr are magnetizing, stator leakage, and
+rewritten as:                                                                     rotor leakage reactance;Rs andRr are stator and rotor resistance;Cis DC-
+                                                                                  link capacitance;ST is generator terminal transformer capacity;ZT is
+                K    ( (          ) )
+               ∑             1 T T                                                generator terminal transformer impedance. and the subscript eq denotes
+WCSS =             tr xi I −    11 xi                                 (13)
+               i=1
+                             ni                                                   equivalent parameters of the corresponding variables.
+                                                                                      According to the equivalent line loss model, the equivalent impe-
+WhereIdenotes the3 × 3identity matrix, and1represents the all-ones                danceZequ of the collector circuit is given by:
+vector.                                                                                    n
+                                                                                           ∑ i2 Zi
+   This objective function is employed in each iteration of the k-means           Zequ =                                                                          (16)
+algorithm to assess cluster tightness and guide the updating of cluster                    i=1
+                                                                                                 n2
+centroids.
+                                                                                  Wherenis the total quantity of segments in the collector circuit before
+Step 5. Introduce the DBI to determine the selection ofKvalues. The               equivalence;Zi represents the impedance value of the corresponding
+formula for its calculation is presented below:                                   segment.
+
+
+
+
+                                                           Fig. 6. Wind farm topology diagram.
+
+                                                                              5
+J. Xu et al.                                                                                                             Electric Power Systems Research 252 (2026) 112367
+
+
+3.4.2. error analysis
+   In order to assess the accuracy of the proposed multi-machine
+equivalent method, the root mean square error (RMSE) metricEis
+defined against detailed model simulations as:
+    √̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅
+    √        m (                       )2
+    √1 ∑              Ai − Aeqi
+E=√                                                         (17)
+       m i=1                Ai
+
+Wheremis the number of sampling points;Ai andAeqi are the electrical
+quantities from the detailed model and equivalent model, respectively.
+
+4. Case study analysis
+
+4.1. Case study description                                                                    Fig. 7. Variation trend of WCSS under different cluster counts.
+
+    Fig. 6 shows the topological structure of a wind farm located in South              Fig. 7 shows that atK = 2, the WCSS decline slows markedly, indicating
+China.
+                                                                                        that the true cluster count is approximately 2. Meanwhile, Fig. 8 dem-
+    The wind farm comprises 20 DFIG wind turbines (2.25 MW, 0.69 kV                     onstrates thatK = 2achieves the lowest DBI, indicating an optimal
+each). The unit-related parameters are listed in Table 1. Each output is
+                                                                                        equilibrium between the compactness within clusters and the separation
+stepped up to 35 kV via a pad-mounted transformer and fed into col-                     between clusters. This further validates the rationality of dividing
+lector lines. Power is aggregated at the substation’s low-voltage bus and
+                                                                                        generating units with wind speeds in the B–C area (MPPT area) into two
+supplied to the grid through a 35/220 kV main transformer.                              clusters.
+                                                                                            To evaluate the validity of the proposed equivalent modeling
+4.2. Validation of enhanced K–means algorithm effectiveness                             approach (Method A), the detailed model serves as the benchmark.
+                                                                                        Comparisons include Existing k-means clustering (Method B), the fuzzy
+    Three variables–wind speedVw , active powerP, and wind power co-                    C-means algorithm from [24] (Method C), and single-unit equivalent
+efficient Cp–serves as clustering features. Using the methodology illus-                modeling (Method D), all applied to cluster units under the states listed
+trated in Fig. 5, clustering is performed on the wind farm units, with                  in Table 2. The clustering results for Methods A to C are presented in
+initial states provided in Table 2.                                                     Table 3.
+    For units on the same collector circuit in Table 2, wind speeds are                     As shown in Table 3, the clustering results of the three equivalent
+calculated using the Jensen wake model [39], which assumes no mutual                    methods exhibit notable differences. Although all methods consistently
+interference between collector lines. The wind speed at a downwind unit                 identify the core cluster EM2 (containing F01, F03, F18, F19), signifi-
+located at a distanceXalong the wind direction is:                                      cant distinctions exist in the grouping of the remaining units.
+           [    √̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅ ]                                                     Method A demonstrates clear physical interpretability: EM1 exclu-
+                          CT ∂X
+V(X) = V0 1 −     1−                                               (18)                 sively comprises low-wind-speed units F10 and F20, while EM3 aggre-
+                            2r20
+                                                                                        gates most units operating in the MPPT region, reflecting its ability to
+                                                                                        achieve consistent clustering based on operational conditions.In
+WhereV0 is the original wind speed (3 − − 13m/s); the thrust coef-                      contrast, Method B and Method C exhibit obvious shortcomings. Method
+ficientCT is 0.8; the wake decay coefficient∂is 0.075; andr0 = 38m in-                  B shows undesirable fragmentation, such as dispersing functionally
+dicates the blade radius of the generating unit.                                        similar units F10 and F20 into EM3 and EM4. Although Method C
+    According to Eq. (14), the case ofK = 1is typically excluded. As                    correctly clusters some MPPT units (e.g., F05, F08, etc.), its EM3
+indicated by Eq. (7), asKapproaches the true value, the clustering results              grouping omits several other similar units (such as F06 and F09), indi-
+align with the actual data distribution; the reduction in intra-cluster                 cating deficiencies in clustering sensitivity and completeness.
+distance plateaus; and the WCSS curve slope changes significantly.                          In summary, Method A significantly outperforms the other methods
+                                                                                        by delivering more compact, consistent, and interpretable clustering
+Table 2                                                                                 results, thereby laying a foundation for constructing higher-fidelity
+Initial states of clustering features for wind turbine generating units.                equivalent models.
+  Unit number         Wind speed(m/s)          Active power(p.u.)          Cp               To validate Method A, corresponding models were developed in
+  F01                 11.5226                  1.0003                      0.3543       PSCAD/EMTDC (v4.6.2) based on the clustering results presented in
+  F02                 9.2892                   0.7403                      0.4757
+  F03                 10.9013                  1.0003                      0.4299
+  F04                 8.9095                   0.6573                      0.4795
+  F05                 6.1815                   0.2087                      0.4829
+  F06                 5.3492                   0.1307                      0.4829
+  F07                 7.3914                   0.3685                      0.4829
+  F08                 6.7169                   0.2729                      0.4829
+  F09                 4.8557                   0.0947                      0.4823
+  F10                 3.1311                   0.0103                      0.2277
+  F11                 5.0432                   0.1076                      0.4829
+  F12                 6.7976                   0.2837                      0.4829
+  F13                 4.941                    0.1002                      0.4825
+  F14                 7.6755                   0.4157                      0.4829
+  F15                 5.1966                   0.1192                      0.4829
+  F16                 5.1652                   0.1168                      0.4829
+  F17                 6.8345                   0.2888                      0.4829
+  F18                 12.3556                  1.0003                      0.2864
+  F19                 10.9942                  1.0003                      0.4052
+  F20                 3.3125                   0.0164                      0.299
+                                                                                              Fig. 8. Comparison of DBI values across different cluster counts.
+
+                                                                                    6
+J. Xu et al.                                                                                                      Electric Power Systems Research 252 (2026) 112367
+
+
+Table 3. A three-phase voltage dip at the PCC to 0.2 p.u. was simulated           referred to as Model A, with other equivalent models named
+with a fault duration of 625 ms. Using the detailed model as the                  accordingly.
+benchmark, the error was calculated via Eq. (17). The average wind                    As illustrated in Table 3, the clustering outcomes from Methods B
+speed was obtained from Table 2, and the total output power of the wind           and C are highly similar, leading to nearly identical simulation outputs
+farm was derived aspWF = 0.3969p.u.using Fig. 3. Fig. 9 presents dy-              for Models B and C in Fig. 9. Fig. 9.(a), 9(b), and 9(d) show that all
+namic responses and errors of voltage, active power, and reactive power           equivalent models closely match the detailed model in voltage and
+during the fault for all models. The model derived using Method A is              active power accuracy during the fault simulation, particularly before
+                                                                                  fault initiation and after clearance, with Model A achieving the highest
+Table 3                                                                           precision. Further analysis of Fig. 9. (c) and 9 (d) reveals that Model A
+Clustering results by different methods.                                          reduces the reactive power error by an average of 2.65% compared to
+                                                                                  Models B, C, and D during both steady-state and transient processes,
+  Method A                  Method B                  Method C
+                                                                                  exhibiting significantly enhanced agreement with the detailed model. In
+  Equivalent   Unit         Equivalent     Unit       Equivalent   Unit           summary, compared to existing methods, Method A not only achieves
+  unit         number       unit           number     unit         number
+                                                                                  higher accuracy but also significantly reduces the simulation time (as
+  EM1          F10,F20      EM1            F05,F07,   EM1          F02,F04,       evidenced in Table 4), demonstrating strong practical engineering
+                                           F08,F12                 F07,F14
+                                                                                  utility.
+                                           F14,F17
+  EM2          F01,F03,     EM2            F01,F03,   EM2          F01,F03,
+               F18,F19                     F18,F19                 F18,F19
+  EM3          F05,F06,     EM3            F02,F04    EM3          F05,F08,
+               F08,F09                                             F12,F17        Table 4
+               F11,F12,                                                           Comparison of simulation time among different models.
+               F13,F15
+               F16,F17                                                             Equivalent model   Detailed       Model       Model B     Model      Model
+  EM4          F02,F04,     EM4            F06,F09,   EM4          F06,F09,                           Model          A                       C          D
+               F07,F14                     F10,F11                 F10,F11         Simulation Time/   5850           560         635         621        110
+                                           F13,F15,                F13,F15,          S
+                                           F16,F20                 F16,F20
+
+
+
+
+Fig. 9. Comparison of dynamic responses between the detailed model and the proposed equivalent model during a low-voltage fault; (a) Voltage at the PCC; (b)
+Active power output; (c) Reactive power output; (d) Deviation between the detailed and equivalent models.
+
+                                                                              7
+J. Xu et al.                                                                                                                        Electric Power Systems Research 252 (2026) 112367
+
+
+5. Contribution and conclusion                                                                  [8] D. Li, C. Shen, Y. Liu, Y. Chen, S. Huang, A dynamic equivalent method for PMSG-
+                                                                                                    WTG based wind farms considering wind speeds and fault severities, IEEE Trans.
+                                                                                                    Power Syst. 39 (2) (2024) 3738–3751.
+    This study proposes an enhanced k-means two-step clustering                                 [9] J. Brochu, C. Larose, R. Gagnon, Validation of single-and multiple-machine
+method for dynamic equivalent modeling of DFIG wind farms based on                                  equivalents for modeling wind power plants, IEEE Trans. Energy Convers. 26 (2)
+LVRT characteristics to improve DFIG wind farm equivalent modeling.                                 (2011) 532–541.
+                                                                                               [10] Y. Zhang, E. Muljadi, D. Kosterev, M. Singh, Wind power plant model validation
+Key contributions include: First, a novel clustering framework incor-                               using synchrophasor measurements at the point of interconnection, IEEE Trans.
+porating LVRT dynamics improves accuracy in stability scenarios,                                    Sustain. Energy 6 (3) (2015) 984–992.
+marking a shift from static to dynamic clustering. Second, an automated                        [11] S.A. Mansouri, E. Nematbakhsh, A. Ramos, M. Tostado-Véliz, J.A. Aguado,
+                                                                                                    J. Aghaei, A robust ADMM-enabled optimization framework for decentralized
+algorithm integrates K-Means++ initialization, KD-tree (75% faster                                  coordination of microgrids, IEEE Trans. Ind. Inf. 21 (2) (2025) 1479–1488.
+search), and DBI for optimal clusters, eliminating subjective parameter                        [12] S.F. Dai, S.A. Mansouri, S.J. Huang, Y.Z. Alharthi, Y.F. Wu, L. Bagherzadeh,
+selection and improving reproducibility. Third, a high-fidelity model                               A multi-stage techno-economic model for harnessing flexibility from IoT-enabled
+                                                                                                    appliances and smart charging systems: developing a competitive local flexibility
+replicates detailed dynamics during LVRT with >98% accuracy and 90%                                 market using Stackelberg game theory, Appl. Energy 373 (2024) 123868.
+faster simulation, balancing precision and efficiency for high wind                            [13] S.A. Mansouri, A. Ramos, J.P.C. Ávila, J. García-González, J.A. Aguado, A DSO-
+penetration power system analysis.                                                                  driven privacy-preserving mechanism for managing power exchanges in Australian
+                                                                                                    networks, IEEE Trans. Ind. Inf. (2025) 1–11.
+    Based on these contributions, this study constructed a wind farm                           [14] S.A. Mansouri, E. Nematbakhsh, A. Ramos, J.P.C. Ávila, J. García-González, A.
+model with 20 DFIG units and used a detailed Electromagnetic Transient                              R. Jordehi, Bi-level mechanism for decentralized coordination of internet data
+(EMT) model as a benchmark to compare and validate against three                                    centers and energy communities in local congestion management markets, in:
+                                                                                                    Proceedings of the 2023 IEEE International Conference on Energy Technologies for
+alternative methods. The results confirm that the proposed equivalent
+                                                                                                    Future Grids (ETFG), 2023.
+model maintains high consistency with the detailed benchmark during                            [15] S.A. Mansouri, M.S. Javadi, A robust optimisation framework in composite
+LVRT transient processes, offering an efficient and reliable solution for                           generation and transmission expansion planning considering inherent
+stability analysis in power systems with high wind energy integration.                              uncertainties, J. Exp. Theor. Artif. Intell. 29 (4) (2017) 717–730.
+                                                                                               [16] S.A. Mansouri, E. Nematbakhsh, A.R. Jordehi, M. Tostado-Véliz, F. Jurado,
+However, it should be noted that this study is primarily based on                                   Z. Leonowicz, A risk-based bi-level bidding system to manage day-ahead electricity
+simulation validation. Although the adopted simulation tools and                                    market and scheduling of interconnected microgrids in the presence of smart
+models are well-recognized in the field, physical prototype experimen-                              homes, in: Proceedings of the 2022 IEEE International Conference on Environment
+                                                                                                    and Electrical Engineering and 2022 IEEE Industrial and Commercial Power
+tation will be prioritized in future work to further validate the effec-                            Systems Europe (EEEIC /I&CPS Europe), Prague, Czech Republic, 2022.
+tiveness of the proposed equivalent modeling method in real-world                              [17] S.A. Mansouri, S. Maroufi, A. Ahmarinejad, A tri-layer stochastic framework to
+environments and explore its potential for practical engineering                                    manage electricity market within a smart community in the presence of energy
+                                                                                                    storage systems, J. Energy Storage 71 (2023) 108130.
+applications.                                                                                  [18] J. Chen, W.Y. Gu, Y.Z. Alharthi, S.J. Huang, S.A. Mansouri, A decentralized
+                                                                                                    framework for self-healing in hydrogen-integrated energy systems, Energy 331
+CRediT authorship contribution statement                                                            (2025) 137033.
+                                                                                               [19] M. Tostado-Véliz, A.R. Jordehi, H.M. Hasanien, N. Khosravi, S.A. Mansouri,
+                                                                                                    F. Jurado, On different collective storage schemes in energy communities with
+   Junhua Xu: Supervision, Methodology, Conceptualization. Jiyuan                                   internal market, J. Energy Storage 75 (2024) 109699.
+Shen: Writing – review & editing, Writing – original draft. Xinyu You:                         [20] S.A. Mansouri, A. Ahmarinejad, M.S. Javadi, A.E. Nezhad, M. Shafie-Khah, J.P.
+                                                                                                    S. Catalão, Demand response role for enhancing the flexibility of local energy
+Supervision. Chunwei Wang: Supervision. Bin Liu: Supervision.                                       systems, Eds., in: G. Graditi, M. Di Somma (Eds.), Distributed Energy Resources in
+                                                                                                    Local Integrated Energy Systems, Elsevier, 2021, pp. 279–313.
+                                                                                               [21] J. Han, S. Miao, Y. Li, H. Yin, D. Zhang, W. Yang, Q. Tu, Improved equivalent
+Declaration of competing interest                                                                   method for large-scale wind farms using incremental clustering and key parameters
+                                                                                                    optimization, IEEE Access 8 (2020) 172006–172020.
+    The authors declare the following financial interests/personal re-                         [22] N. Shabanikia, A.A. Nia, A. Tabesh, S.A. Khajehoddin, Weighted dynamic
+                                                                                                    aggregation modeling of induction machine–based wind farms, IEEE Trans.
+lationships which may be considered as potential competing interests:                               Sustain. Energy 12 (3) (2021) 1604–1614.
+    Jiyuan shen reports financial support was provided by Innovation                           [23] Z. Wenzhe, B. Jing, Z. Ningyu, Z. Qian, L. Jiankun, Dynamic clustering equivalence
+Project of Guangxi Graduate Education(YCSW2025107). If there are                                    of wind farms considering complex terrain, in: Proc Int Conf Sens, Diagn,
+                                                                                                    Prognostics, Control (SDPC), 2018, pp. 790–795.
+other authors, they declare that they have no known competing financial                        [24] J. Zou, C. Peng, H. Xu, Y. Yan, A fuzzy clustering algorithm-based dynamic
+interests or personal relationships that could have appeared to influence                           equivalent modeling method for wind farm with DFIG, IEEE Trans. Energy
+the work reported in this paper.                                                                    Convers. 30 (4) (2015) 1329–1337.
+                                                                                               [25] Y. Gao, Y. Jin, P. Ju, Q. Zhou, Dynamic equivalence of wind farm composed of
+                                                                                                    double fed induction generators considering operation characteristic of crowbar,
+Data availability                                                                                   Power Syst. Technol. 39 (3) (2015) 628–633.
+                                                                                               [26] Y. Jin, P. Ju, X. Pan, Analysis on controller aggregation method for equivalent
+                                                                                                    modeling of DFIG-based wind farm, Autom. Electr. Power Syst. 38 (3) (2014)
+    Data will be made available on request.
+                                                                                                    19–24.
+                                                                                               [27] A.P. Gupta, A. Mitra, A. Mohapatra, S.N. Singh, A multi-machine equivalent model
+References                                                                                          of a wind farm considering LVRT characteristic and wake effect, IEEE Trans.
+                                                                                                    Sustain. Energy 13 (3) (2022) 1396–1407.
+                                                                                               [28] S. Lin, W. Yao, Y. Xiong, Z. Shi, Y. Zhao, X. Ai, J. Wen, Three-stage dynamic
+ [1] Q. Liu, D. Jin, Exploration on the application of new energy in power system
+                                                                                                    equivalent modeling approach for wind farm using accurate crowbar status
+     thermal energy and power conversion, Proc. Int. Conf. Energy Eng. Power Syst.
+                                                                                                    identification and voltage differences among wind turbines, Electr. Power Syst.
+     (EEPS) (2023) 453–456.
+                                                                                                    Res. 228 (2024) 110091.
+ [2] Y. Wang, Q. Hu, L. Li, A.M. Foley, D. Srinivasan, Approaches to wind power curve
+                                                                                               [29] W. Li, P. Chao, X. Liang, J. Ma, D. Xu, X. Jin, A practical equivalent method for
+     modeling: a review and discussion, Renew. Sustain. Energy Rev. 116 (2019)
+                                                                                                    DFIG wind farms, IEEE Trans. Sustain. Energy 9 (2) (2018) 610–620.
+     109422.
+                                                                                               [30] X. Deng, L. Wu, X. Wang, H. Gong, R. Li, J. Jia, Transient modeling and stability
+ [3] P. Hu, Y. Li, Y. Yu, F. Blaabjerg, Inertia estimation of renewable-energy-dominated
+                                                                                                    analysis of DFIG under different power control mode, Electr. Power Syst. Res. 242
+     power system, Renew. Sustain. Energy Rev. 183 (2023) 113481.
+                                                                                                    (2025) 111449.
+ [4] J. Zou, C. Peng, Y. Yan, H. Zheng, Y. Li, A survey of dynamic equivalent modeling
+                                                                                               [31] Z. Wu, J. Pei, Y. Li, Multi-machine equivalent method for DFIG–based wind farm
+     for wind farm, Renew. Sustain. Energy Rev. 40 (2014) 956–963.
+                                                                                                    based on power characteristic of low voltage ride–through, Autom. Electr. Power
+ [5] C.R. Schmidlin Jr, F.K.d.A. Lima, F.G. Nogueira, C.G.C. Branco, F.L. Tofoli,
+                                                                                                    Syst. 46 (19) (2022) 95–103.
+     Reduced-order modeling approach for wind energy conversion systems based on
+                                                                                               [32] M. Atallah, A. Mezouar, L.M. Fernández-Ramírez, K. Belgacem, Y. Saidi, M.
+     the doubly-fed induction generator, Electr. Power Syst. Res. 192 (2021) 106963.
+                                                                                                    A. Benmahdjoub, B. Brahmi, Supervisory control of reactive power in wind farms
+ [6] B. Shao, S. Zhao, B. Gao, Y. Yang, F. Blaabjerg, Adequacy of the single-generator
+                                                                                                    with doubly fed induction generator-based wind turbines for voltage regulation
+     equivalent model for stability analysis in wind farms with VSC-HVDC systems, IEEE
+                                                                                                    and power losses reduction, Electr. Power Syst. Res. 228 (2024) 110059.
+     Trans. Energy Convers. 36 (2) (2021) 907–918.
+                                                                                               [33] GB/T 19963.1-2021: Technical Specification For Connecting Wind Farm To Power
+ [7] S.G. Varzaneh, M. Abedi, G.B. Gharehpetian, A new simplified model for
+                                                                                                    System Part 1: On Shore Wind Power, Standards Press of China, Beijing, 2021.
+     assessment of power variation of DFIG-based wind farm participating in frequency
+     control system, Electr. Power Syst. Res. 148 (2017) 220–229.
+
+
+                                                                                           8
+J. Xu et al.                                                                                                                         Electric Power Systems Research 252 (2026) 112367
+
+[34] P. Chao, W. Li, X. Jin, J. Qi, X. Chang, An active power response based practical           [37] Y.A. Wijaya, D.A. Kurniady, E. Setyanto, W.S. Tarihoran, D. Rusmana, R. Rahim,
+     equivalent method for DFIG wind farms, Proc. Chin. Soc. Electr. Eng. 38 (6) (2018)               Davies Bouldin Index algorithm for optimizing clustering case studies mapping
+     1639–1646.                                                                                       school facilities, TEM J. (2021) 1099–1103.
+[35] M. Mehrjoo, M.J. Jozani, M. Pawlak, B. Bagen, A multilevel modeling approach                [38] S. Vassilvitskii, K-means++: Algorithms, Analyses, Experiments, Stanford
+     towards wind farm aggregated power curve, IEEE Trans. Sustain. Energy 12 (4)                     University, 2007. Ph.D. dissertation.
+     (2021) 2230–2237.                                                                           [39] P. Zhang, H. Liu, G. Zhang, J. Yin, C. Chen, L. Li, Study on wake numerical
+[36] Y. Cao, X.J. Zhang, B.H. Duan, W.J. Zhao, H.Z. Wang, An improved method to                       simulation based on improved Jensen model, Acta Energ. Sol. Sin. 44 (6) (2023)
+     build the KD tree based on presorted results, Proc. IEEE Int. Conf. Softw. Eng. Serv.            509–513.
+     Sci. (ICSESS) (2020) 71–75.
+
+
+
+
+                                                                                             9
+

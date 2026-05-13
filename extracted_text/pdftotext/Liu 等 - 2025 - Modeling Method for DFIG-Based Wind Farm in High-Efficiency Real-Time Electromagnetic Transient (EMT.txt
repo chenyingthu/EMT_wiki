@@ -1,0 +1,791 @@
+13632                                                                          IEEE TRANSACTIONS ON POWER ELECTRONICS, VOL. 40, NO. 9, SEPTEMBER 2025
+
+
+
+
+        Modeling Method for DFIG-Based Wind Farm in
+         High-Efficiency Real-Time Electromagnetic
+                 Transient (EMT) Simulations
+                         Yifan Liu, Jianzhong Xu , Senior Member, IEEE, Yiyang Zhu, Zhaoxuan Tian,
+                         Chengyong Zhao , Senior Member, IEEE, and Gen Li , Senior Member, IEEE
+
+
+   Abstract—With the increasing integration of renewable energy                       Electromagnetic transient (EMT) modeling and simulation
+into power systems, electromagnetic transient simulation has be-                   are pivotal technologies for analyzing electrical power systems
+come indispensable for accurate system analysis. However, the com-                 [4]. Real-time simulation of large-scale wind farms (WFs) holds
+plexity of wind turbine modeling, characterized by a large number
+of electrical nodes, poses significant challenges and necessitates                 significant engineering importance in supplier selection, valida-
+substantial real-time simulation hardware. Existing methods for                    tion of station design plans, investigation of grid connection
+reducing circuit complexity improve simulation efficiency, but are                 stability, and development of dispatch control strategies [5].
+each associated with inherent limitations. Aggregation methods                     However, the complex nature of WT core equipment, frequent
+sacrifice considerable internal station information, while existing                switching of converter groups, and high node count pose chal-
+decoupling techniques are constrained by specific requirements.
+This article proposes a real-time simulation model for a doubly                    lenges, leading to constraints in simulation step size and node
+fed induction generator-based wind farm (WF) using latency de-                     scalability issues—the so-called “dimensionality disaster” [6],
+coupling and a multilevel nested fast and simultaneous solution                    [7]. Consequently, there is a pressing need for research on
+approach, effectively reducing node count while preserving inter-                  real-time simulation modeling methods for large-scale WFs.
+nal details. A WF test model is implemented in real-time digital                   Current research on wind power modeling has focused on two
+simulator (RTDS) for validation. Results demonstrate highly accu-
+rate impedance characteristics and time-domain waveforms of the                    primary aspects: equipment-level and station-level modeling.
+proposed model, utilizing only 33.3% of the hardware resources                        The acceleration of modeling techniques for individual WT
+compared to the traditional detailed model.                                        primarily centers on simplifying core equipment components.
+   Index Terms—Doubly fed induction generator (DFIG),
+                                                                                   Notably, the mathematical models of DFIG and back-to-back
+electromagnetic transient (EMT) simulation, latency decoupling                     fully-rated converter (FRC) are intricate and offer opportunities
+method, multilevel nested fast and simultaneous solution                           for model optimization. Dommel [8] presents the state-space
+(M-NFSS), real-time simulation.                                                    equations of the DFIG model in the dq0 frame. A harmonic
+                                                                                   model for DFIG to analyze the spectral characteristics of DFIG
+                            I. INTRODUCTION                                        controller signals is developed in [9]. In [10], a noniterative
+                                                                                   method is proposed to compute steady-state operating condi-
+      HE development of an integrated energy system and a
+T     clean energy supply with a high proportion of renewables is
+crucial for energy and environmental strategies [1]. The doubly
+                                                                                   tions for DFIG-based WTs. Buragohain and Senroy [11] propos
+                                                                                   a reduced-order DFIG model to investigate grid synchronization
+                                                                                   stability. However, these models primarily rely on state-space
+fed induction generator (DFIG) based wind turbine (WT) is
+                                                                                   methods, often necessitating the integration of equations for
+recognized for its stable technical performance, mature supply
+                                                                                   other components solved using Matlab’s ode function.
+chains, and favorable economics, establishing itself as a promi-
+                                                                                      In contrast, the electromagnetic transient program (EMTP),
+nent type in commercial wind power applications [2], [3].
+                                                                                   employing nodal analysis, facilitates discrete component model-
+                                                                                   ing through a graphical interface, allowing intuitive component
+   Received 30 July 2024; revised 30 September 2024, 1 January 2025, and 30
+March 2025; accepted 30 April 2025. Date of publication 5 May 2025; date
+                                                                                   placement and interconnection [12]. Mainstream EMTP simula-
+of current version 30 June 2025. This work was supported by the National           tion tools like PSCAD/EMTDC and RTDS offer DFIG models
+Natural Science Foundation of China under Grant 52277094. Recommended              commonly used by researchers. However, the specific modeling
+for publication by Associate Editor B. Singh. (Corresponding author: Jianzhong
+Xu.)
+                                                                                   principles of these “black/gray box “models remain opaque
+   Yifan Liu, Jianzhong Xu, Yiyang Zhu, Zhaoxuan Tian, and Chengyong Zhao          and inaccessible to users, limiting the widespread adoption of
+are with the State Key Laboratory of Alternate Electrical Power System with        accelerated modeling approaches. Thus, it is timely to develop
+Renewable Energy Sources, North China Electric Power University (NCEPU),
+Beijing 102206, China (e-mail: xujianzhong@ncepu.edu.cn).
+                                                                                   a method for constructing a DFIG nodal model based on the
+   Gen Li is with the Energy Technology and Computer Science Section,              original state equations.
+Department of Engineering Technology and Didactics, Technical University              In large-scale WF simulations, emphasis typically shifts away
+of Denmark (DTU), 2750 Ballerup, Denmark (e-mail: genli@dtu.dk).
+   Color versions of one or more figures in this article are available at
+                                                                                   from individual switching devices towards output modeling
+https://doi.org/10.1109/TPEL.2025.3567136.                                         methods based on external characteristics, treating power elec-
+   Digital Object Identifier 10.1109/TPEL.2025.3567136                             tronic devices as unified entities [13]. Two predominant output
+      0885-8993 © 2025 IEEE. All rights reserved, including rights for text and data mining, and training of artificial intelligence and similar technologies.
+Personal use is permitted, but republication/redistribution requires IEEE permission. See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:52:33 UTC from IEEE Xplore. Restrictions apply.
+LIU et al.: MODELING METHOD FOR DFIG-BASED WF IN HIGH-EFFICIENCY REAL-TIME EMT SIMULATIONS                                                             13633
+
+
+
+modeling methods currently exist: the averaging model and
+the switching function model. The averaging method has been
+extensively validated across diverse research scenarios includ-
+ing voltage and frequency stability [14], enabling enhanced
+simulation efficiency and larger time steps [15]. However, it
+overlooks high-frequency components [16]. In contrast, the
+switching function model preserves the original pulsewidth                      Fig. 1.   DFIG-based WT topology.
+modulation (PWM) characteristics [17], facilitating ac and dc
+circuit decoupling and proving advantageous in modeling WTs
+                                                                                  3) The M-NFSS method is proposed by using “multiple times
+postequipment integration [18].
+                                                                                      with low-order” instead of “one time with high-order,”
+   At the station level, mainstream equivalent modeling meth-
+                                                                                      which can further reduce the number of nodes and expand
+ods encompass single- and multimachine representations. The
+                                                                                      the scale of the WF that can be simulated.
+former commonly utilizes the capacity-weighted equivalent
+                                                                                  The rest of thos article is organized as follows: Section II
+method [19], [20]. Meanwhile, the latter categorizes WTs based
+                                                                                presents the circuit-based decoupling modeling method for the
+on specified criteria and aggregates each group into a single
+                                                                                core equipment of WTs. Section III introduces the M-NFSS
+equivalent machine [21], [22]. Recent research has incorporated
+                                                                                method in wind power collection systems. Section IV provides
+additional elements into fundamental aggregation principles for
+                                                                                comprehensive validation through tests conducted on RTDS.
+WF modeling, such as low voltage ride-through behavior [23]
+                                                                                Finally, Section V concludes this article.
+and impedance characteristics [24]. These advancements aim
+to enhance the accuracy of aggregation methods and broaden
+                                                                                              II. WIND TURBINE MODELING PRINCIPLES
+their applicability across a wider range of scenarios. However,
+while these methods can scale up WF simulations, they often                        Fig. 1 depicts the topology of a DFIG-based WT. The elec-
+sacrifice internal characteristics such as individual WT feeders.               trical components include four core devices: DFIG; FRC; trans-
+Developing a refined model that preserves all WTs and their                     former, and filter. The resistor-capacitor filter model discretizes
+associated feeders is essential to ensure comprehensive infor-                  the capacitor as described in [32]. The converter utilizes a
+mation integrity.                                                               switching function model, details of which are omitted here.
+   To address the “dimensionality disaster” issue in node-based                 Notably, the converter models feature a large capacitor in the dc
+simulations, network decoupling and nested fast and simultane-                  circuit and smoothing reactors in the ac circuit, ensuring smooth
+ous solution (NFSS) methods aim to reduce matrix dimensions                     transitions in dc voltage Vdc (t) and ac current Ii (t) (i = a,b,c)
+requiring direct inversion. Common network decoupling meth-                     between consecutive steps. To achieve this, a decoupling method
+ods include transmission-line (TL) natural decoupling [25], mul-                replaces Vdc (t) and Ii (t) with Vdc (t-Δt) and Ii (t-Δt), respectively.
+tiarea Thevenin equivalent (MATE) [26], and latency insertion                   This section introduces decoupling modeling methods for both
+method (LIM) [27]. TL methods are constrained by transmission                   the DFIG and transformer, reducing the WT model’s node count
+line lengths [25], while MATE involves node tearing or branch                   from 24 to just 3 nodes connected to the external circuit.
+segmentation, necessitating sequential network solution with
+lower computational efficiency [26]. LIM introduces additional                  A. DFIG Model by Decoupling Stator and Rotor
+inductors/capacitors and delays for mutual decoupling, altering
+                                                                                   Existing DFIG models face challenges in interfacing with
+system dynamics and imposing constraints on simulation step
+                                                                                other equipment and are cumbersome to program in simulation
+size [27]. NFSS, widely applied in modular multilevel converters
+                                                                                software, often necessitating direct circuit connections between
+[28], [29] and power electronic transformers [30], offers highly
+                                                                                the stator and rotor. To address these issues, a discretization-
+accurate speed-up modeling without numerical oscillation risks.
+                                                                                based modeling approach coupled with latency decoupling is
+Recent applications include direct-drive WT modeling [31].
+                                                                                proposed, establishing a singular electrical signal connection
+However, due to the complex structure of renewable energy
+                                                                                between the stator and rotor. The mathematical model of the
+generation, large internal node counts limit its acceleration
+                                                                                DFIG comprises voltage equations, flux-linkage equations, and
+benefits compared to smaller systems [28], [29]. Decoupling
+                                                                                the rotor mechanical equation, outlined as follows:
+and NFSS methods complement each other in scope and can be                             
+separately improved and combined for enhanced effectiveness.                             Uabcs = Rs Iabcs + dψdtabcs
+
+                                                                                                              dψabcr                         (1)
+   The main contributions of the algorithm are as follows:                               Uabcr = Rr Iabcr + dt
+   1) By employing discretization and latency decoupling, this                         
+                                                                                         ψabcs = (Lls + Lm )Iabcs + n1 Lm Iabcr ejθr
+       article establishes a node model for DFIG enabling sep-                                                                               (2)
+                                                                                         ψabcr = (Llr + n12 Lm )Iabcr + n1 Lm Iabcs e−jθr
+       arate handling of stator and rotor connections to external
+       circuits. This breakthrough addresses significant modeling                       dωr
+                                                                                          J   = T e − T m − KD ω r                           (3)
+       challenges of DFIG.                                                               dt
+   2) It decouples the core WT equipment into four parts, allow-                where U, I, and ψ denote the winding voltage, current, and flux-
+       ing three subnetworks to be independently solved with                    linkage; the subscripts abcs and abcr denote the stator winding
+       reduced matrix dimensions. This approach substantially                   and rotor winding in the abc frame; Rs and Rr represent the
+       lowers computational demands.                                            stator and rotor winding resistance; Lls and Llr represent the
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:52:33 UTC from IEEE Xplore. Restrictions apply.
+13634                                                                       IEEE TRANSACTIONS ON POWER ELECTRONICS, VOL. 40, NO. 9, SEPTEMBER 2025
+
+
+
+leakage inductance of the stator and rotor; Lm is the excitation
+inductance; n denotes the turn ratio; θr is the rotor angle between
+a- and d- axis; ω r represents the rotor speed; Tm is the mechanical
+torque exerted by the prime mover on the motor shaft; Te is the
+electromagnetic torque; J is the rotational inertia; and KD is the
+mechanical damping coefficient.
+   The stator and rotor variables are converted by analogy be-                  Fig. 2.   DFIG equivalent circuit.
+tween the primary and secondary sides of the transformer. The
+conversion equations are as follows:
+              ⎧                
+              ⎨nψabcr = ψabcr
+                                                
+                 nUabcr = Uabcr       nIabcr = Iabcr   .         (4)
+              ⎩ 2
+                 n Rr = Rr           n2 Llr = Llr
+   To convert the mathematical model of the DFIG into a con-
+stant coefficient equation, the abc/dq0 transformation is utilized.             Fig. 3.   Transformer T-type equivalent circuit.
+Following this transformation, the voltage and flux-linkage
+equations in matrix form in the dq0 frame are expressed as
+follows:                                                                        in which
+                dψ                                                                           −1                                         −1            
+  U = RI +          +e                                          (5)                 G11 G12    P1                     0          Lss   Lsr           P1   0
+                                                                                             =
+                dt                                                                  G21 G22     0                    P −1
+                                                                                                                       2         Lsr   Lrr           0    P2
+  ψ = LI                                                     (6)                                                                                            (11)
+  ⎧                                 
+                                                 
+                                                T
+  ⎪U = Uds Uqs U0s Udr Uqr U0r
+  ⎪
+  ⎪
+                                                                                where P1 and P2 represent Park transformation matrices; trans-
+  ⎪
+  ⎪                                                                           formation angles are ϕ and (ϕ-θr ), respectively, and ϕ denotes
+  ⎪
+  ⎪ R = diag Rs Rs Rs Rr Rr Rr
+  ⎪
+  ⎪                                                                             the angle between stator a-axis and the A-axis of the rotating
+  ⎪
+  ⎪                                       
+  ⎪
+  ⎪ I = Ids Iqs I0s Idr        
+                               Iqr       T
+                                      I0r                                       magnetic field.
+  ⎪
+  ⎪
+  ⎪
+  ⎪                                                                              The matrix G is an admittance matrix, and the nondiago-
+  ⎪
+  ⎪ ψ = ψds ψqs ψ0s ψdr                     T
+  ⎪
+  ⎪                               ψqr      ψ0r                                  nal elements represent the mutual admittance. Obtaining the
+  ⎨                                                    T
+                                                                              equivalent circuit of the DFIG according to (10) results in
+    e = −ω1 ψqs ω1 ψds 0 −ωs ψqr               ωs ψdr 0    . (7)
+  ⎪
+  ⎪     ⎡                                       ⎤                               mutual admittance between the stator and rotor nodes, including
+  ⎪
+  ⎪
+  ⎪
+  ⎪        Ls 0    0     Lm 0              0                                    the ground node, complicating subsequent WT solutions. To
+  ⎪
+  ⎪     ⎢0                                 0 ⎥
+  ⎪
+  ⎪     ⎢      L s 0     0        L m           ⎥                               simplify, matrix G is decomposed into G = G1 +G2 , where
+  ⎪
+  ⎪     ⎢                                  0 ⎥
+  ⎪
+  ⎪ L   ⎢  0   0   Lls 0          0             ⎥                               U(t) multiplied by G2 part is delayed as U(t-Δt), transforming
+  ⎪
+  ⎪   = ⎢ Lm 0           Lr 0             0 ⎥
+  ⎪
+  ⎪     ⎢          0                            ⎥                               the node admittance matrix to G1 . This adjustment alters node
+  ⎪
+  ⎪     ⎣0                        Lr 0 ⎦
+  ⎪
+  ⎩            Lm 0      0                                                      interconnections. To facilitate the overall modeling of the WT, it
+           0   0   0     0        0        Llr                                 is expected to realize coupling between the stator and the rotor
+   Select the current as the state variable, substitute (6) into (5)            as well as the coupling of the three phases for DFIG. Thus, set
+to eliminate the flux-linkage term, and use the implicit Euler                  G1 = 0, G2 = G and obtain
+method to discretize                                                                                                                     
+                                                                                  I abcs (t)      G11 G12 U abcs (t − Δt)          I s (t − Δt)
+   L (I(t) − I(t − Δt)) = Δt (U (t) − RI(t) − e(t)) .                    (8)      I abcr (t)
+                                                                                               =
+                                                                                                  G21 G22 U abcr (t − Δt)
+                                                                                                                               + 
+                                                                                                                                   I r (t − Δt)
+                                                                                                                                                  .
+   To avoid the computational complexity involving time-                                                                                     (12)
+varying asymmetric matrices, the speed electromotive force e
+in (8) is treated as a historical value. Eq. (8) is then partitioned              The decoupled equivalent circuit of the DFIG is depicted in
+into stator and rotor blocks to obtain:                                         Fig. 2. It illustrates a circuit where the seven nodes are not
+                                                                          connected by admittance, consisting solely of controlled current
+             Lss Lsr I dq0s (t)                U dq0s (t)
+                                       = Δt                                     sources. Signal transmission occurs through these controlled
+             Lsr Lrr I  dq0r (t)              U  dq0r (t)
+                                                                                sources, preserving the coupling relationship between the stator
+            + Δte(t − Δt) + LI(t − Δt).                                  (9)    and rotor.
+   The Park transformation is applied separately to the stator
+and rotor, and (9) is transformed into the abc frame to facilitate              B. Transformer Model By Decoupling the Primary and
+connection with the external circuit. This transformation yields                Secondary Sides
+the DFIG equation in the form of I = GU+J, illustrated as
+                                                                                   The modeling method for the transformer has been previously
+follows:
+                                                                        documented in [30], without accounting for the transformer
+     I abcs (t)      G11 G12 U abcs (t)          I s (t − Δt)
+                  =                          +                                  winding resistance. To enhance the model’s comprehensiveness,
+     I abcr (t)     G21 G22 U abcr (t)         I r (t − Δt)                  the winding resistors are incorporated into the T-type equivalent
+                                                               (10)             circuit, as depicted in Fig. 3.
+
+         Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:52:33 UTC from IEEE Xplore. Restrictions apply.
+LIU et al.: MODELING METHOD FOR DFIG-BASED WF IN HIGH-EFFICIENCY REAL-TIME EMT SIMULATIONS                                                               13635
+
+
+
+                                                                                  A. π-type Line Model Considered Coupling Between Phases
+                                                                                     The WT outlet line is short and can be modeled using a π-type
+                                                                                  equivalent circuit, as shown in Fig. 6. in which, R and L are in
+                                                                                  matrix form, and there are resistors and inductors connected
+                                                                                  between nodes at the receiving and sending sides
+                                                                                            ⎡                   ⎤        ⎡                 ⎤
+                                                                                              Rs Rm Rm                      Ls Lm Lm
+                                                                                     [R] = ⎣Rm Rs Rm ⎦ , [L] = ⎣Lm Ls Lm ⎦ . (16)
+Fig. 4.   Transformer equivalent circuit.
+
+                                                                                              Rm Rm Rs                     Lm Lm Ls
+  The voltages across the coupled windings are shown as                              The resistance, inductance, and capacitance are derived from
+ ⎧
+ ⎪              di (t)       d(i (t)+i (t)/N )                                    the sequence parameter, as in
+ ⎨uT 1 (t) = L1 Tdt1 + Lm T 1 dtT 2            + RiT 1 (t)                                         ⎧         R +2R            R −R
+                                                                            .                      ⎪
+                                                                                                   ⎪  Rs = z 3 p , Rm = z 3 p
+ ⎪
+ ⎩uT 2 (t) = Lm d(iT 1 (t)+iT 2 (t)/N ) + L2 diT 2 (t) + RiT 2 (t)                                 ⎨
+                                                                                                             L +2L           L −L
+                  N            dt                     dt                                              Ls = z 3 p , Lm = z 3 p                    (17)
+                                                                                                   ⎪
+                                                                                                   ⎪
+                                                                         (13)                      ⎩          C −C
+                                                                                                      C = 12 p 3 z , Cm = C2z
+   Discretize (13) and organize into the form of I = GT U + JT ,
+as shown in                                                                       where the subscripts p and z represent positive- and zero-
+                                                    −1                        sequence, respectively.
+  iT 1 (t)        L1 + Lm + ΔtR          Lm /N                                       After discretization, the π-type line model is shown in
+            =                                              ·                                    ⎧
+  iT 2 (t)             Lm /N       L2 + LNm2 + ΔtR                                                i(t) = G[utr (t) − ure (t)] + J
+                                                                                        ⎪
+                                                                                                ⎪
+                                                                                                ⎨                       −1
+           uT 1 (t)     L1 + L m   Lm /N         iT 1 (t−Δt)                                      G = {[R] + Δt  2
+                                                                                                                   [L]}
+    Δt               +                                          .                                                                       .        (18)
+           uT 2 (t)      Lm /N L2 + Lm /N 2 iT 2 (t−Δt)                                         ⎪
+                                                                                                ⎪ J = G[utr (t − Δt) − ure (t − Δt)
+                                                                                                ⎩
+                                                             (14)                                       +( Δt2
+                                                                                                               [L] − [R])i(t − Δt)]
+where N is the transformer ratio.                                                    For (18), although the decoupling method similar to the DFIG
+   Adopt the decoupling method similar to DFIG modeling in                        modeling in Section II-A can be used, it can only decouple the
+Section II-A and perform matrix splitting on the matrix GT . For                  three phases, not the receiving and sending sides. In this case, it
+the transformer, decoupling the primary and secondary sides can                   cannot split the circuit into two parts for further simplifying the
+greatly simplify the solution of the overall network, so take the                 circuit solution. Hence the decoupling method is not used for
+splitting form as                                                                 the π-type line. Instead, The string composed of multiple WTs
+                                                                              and lines is processed using the M-NFSS method below.
+                    G11    0               0    G12
+            G1 =                , G2 =                .      (15)
+                     0    G22             G21    0                                B. String Equivalent Method Using M-NFSS
+   Since the primary and secondary sides of the transformer                          Fig. 7 illustrates a schematic of the string topology. The string
+are two-terminal ports, the conductance and current source can                    is composed of WTs connected with short transmission lines.
+be placed across the two terminals without grounding each                         Multiple strings gather power at a 35kV bus and transmit it to
+individually. Fig. 4 illustrates the decoupled equivalent circuit                 the ac system via a step-up transformer and long transmission
+of the transformer.                                                               lines.
+                                                                                     Taking a string comprising m WTs and m lines as an example.
+C. Whole WT Equivalent Model                                                      Since the machine-side, grid-side, and dc circuits of each WT
+                                                                                  are independent, the string topology only encompasses the outer
+   Based on the above core equipment decoupling modeling
+                                                                                  terminals of the transformer’s primary side of each WT and the
+methods, according to the WT topology, the equivalent circuit
+                                                                                  terminals on both sides of the line.
+of the WT can be obtained as shown in Fig. 5. Employing the
+                                                                                     The principles of NFSS are provided here. First, the network
+decoupling method, the equivalent circuit is divided into four
+                                                                                  equations are divided into blocks according to the division of
+distinct parts, including the converter’s machine-side circuit, the
+                                                                                  internal and external nodes, as shown in
+dc-side circuit, the converter’s grid-side circuit, and the external                                                              
+circuit. The three complete circuits can be solved independently                                  A B U EX               J EX       I EX
+                                                                                                                    =           +          .      (19)
+through U = Y-1 J, while the external terminals can be connected                                  B T C U IN             J IN        0
+to external circuits for solution.                                                   Eliminate the internal nodes and obtain
+                                                                                                      
+                                                                                      A − BC −1 B T U EX = I EX + J EX − BC −1 J IN .                    (20)
+          III. MODELING METHOD FOR THE WIND FARM                                     It is expected to only retain four external nodes (including the
+   This section establishes a π-type line model taking into ac-                   abc nodes and the ground node). If NFSS is directly applied to
+count inter-phase coupling and subsequently establishes a four-                   the string, the number of internal nodes is 3m, and the matrix
+node equivalent model of a string based on M-NFSS. Several                        inversion of C is still complex. As the matrix order increases,
+string models converge at the point of common coupling (PCC)                      the computational complexity of matrix inversion increases
+to form the WF model.                                                             exponentially, so NFSS can be improved by using ‘multiple
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:52:33 UTC from IEEE Xplore. Restrictions apply.
+13636                                                                         IEEE TRANSACTIONS ON POWER ELECTRONICS, VOL. 40, NO. 9, SEPTEMBER 2025
+
+
+
+
+Fig. 5.   Whole WT equivalent circuit.
+
+
+
+
+Fig. 6.   π-type equivalent circuit.
+
+
+
+
+Fig. 7.   Schematic of the string topology.
+
+
+
+times with low-order’ instead of “one time with high-order.”
+By re-extracting a smaller circuit from the circuit composed of
+the initial internal nodes, and further dividing the internal and
+external nodes, the M-NFSS method is proposed, so that the                        Fig. 8.   Flow chart of the proposed M-NFSS method.
+required calculations for each level will be much less.
+   In Fig. 8, only the seven-node model in the dotted rectangular
+box is considered during each step. First, the internal nodes                        The information of internal nodes can be obtained by the
+between WT1 and line1 are eliminated to obtain EM1 . Next,                        inverse solution, as shown in
+the first equivalent model EM1 is combined with line2 and the
+internal nodes are once again eliminated. Repeat this step m                                          U IN = Y −1
+                                                                                                               22 (J IN − Y 21 U EX ) .                 (22)
+times and obtain the final equivalent model EMm . During each
+step, the equivalent is performed according to (19), (20), and                       The calculations are divided into m stages and each stage
+(20) can be rewritten as                                                          involves computations of order 3. This iterative approach cul-
+                   ⎧                                                              minates in obtaining a four-node equivalent model of the string
+                   ⎨I EX = GEQ U EX + J EQ                                        with low computational complexity. Importantly, all internal
+                     G = A − BC −1 B T .                     (21)
+                   ⎩ EQ                                                           node information can be accurately resolved through inverse
+                     J EQ = BC −1 J IN − J EX                                     calculations, ensuring the integrity of internal data.
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:52:33 UTC from IEEE Xplore. Restrictions apply.
+LIU et al.: MODELING METHOD FOR DFIG-BASED WF IN HIGH-EFFICIENCY REAL-TIME EMT SIMULATIONS                                                                13637
+
+
+
+                                                                                                                   TABLE I
+                                                                                                         PARAMETERS OF THE TEST MODEL
+
+
+
+
+                                                                                                         ls
+
+                                                                                                         lr
+
+                                                                                                         m
+
+
+
+
+Fig. 9.    Photo of the hardware set-up.
+
+
+                                                                                                          f
+
+                                                                                                         f
+
+                                                                                                         Tb
+
+
+
+
+                                                                                      This article does not focus on parameter and control strat-
+Fig. 10.    Schematic of the wind farm test system.                                egy design, therefore, all WTs and lines in simulations share
+                                                                                   identical settings. The control strategy of the test model is
+                              IV. VALIDATION                                       traditional vector control, a standard approach in RTDS. PWM
+                                                                                   is used for converter modulation. The grid-side control regulates
+   The WT equivalent model (EM1 ) introduced in Section II                         the dc-bus voltage and the ac voltage, while the machine-side
+and the string model comprising m WTs and m lines (EMm )                           control regulates the electromagnetic torque and the reactive
+introduced in Section III are implemented in the Cbuilder custom                   power. Additionally, it is important to note that the proposed
+component function in real-time digital simulator (RTDS). A                        model represents an equivalent circuit and does not involve any
+WF simulation test model was constructed to verify the ac-                         simplification of the control system. Consequently, this model
+curacy of time-domain waveforms, impedance characteristics,                        is compatible with any reasonable control system, allowing for
+and simulation resource occupation of the established model                        varied initial settings among WTs before the start of simulation.
+through comparison with the detailed model (DM) and the
+average model (AVM). Additionally, the EM1 model was further
+evaluated through hardware-in-the-loop (HIL) tests. A rapid                        A. Accuracy Test
+control prototyping (RCP) system was utilized to generate trig-                       1) Time-Domain Simulations Under Varying Wind Speeds:
+ger signals for the grid-side converter, with input and output                     First, take n = m = k = 1 and exclude the line to verify the
+handled through GTAI/GTAO interface boards. These interface                        accuracy of the EM1 . The simulation conditions under varying
+boards were connected to the RTDS via fiber optic cables. The                      wind speeds, and the corresponding waveforms for wind speed,
+RCP and the RTDS simulator were linked to their respective                         mechanical torque, electromagnetic torque, dc voltage, active
+host PCs using network cables. The hardware set-up is shown                        power, and reactive power are presented in Fig. 11.
+in Fig. 9.                                                                            Fig. 11(a) illustrates that the wind speed decreases from
+   The system parameters of the test model are given in                            12 to 6 m/s at t = 3 s, then ramps up to 16 m/s at t = 15 s, and
+Table I. The filter parameter design follows the example model                     ultimately returns to 12 m/s, achieving a stable state. Fig. 11(b)
+documentation provided by RTDS and considers the following                         illustrates that under pitch angle control, sudden variations in
+factors: ac current ripple; dc voltage utilization; reactive power                 wind speed do not induce abrupt changes in mechanical torque.
+limits; resonant frequency; and damping resistor [33].                             Consequently, electrical characteristics, such as electromagnetic
+   Fig. 10 illustrates the schematic of the test system.                           torque and active power also display smooth trends of increase
+             Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:52:33 UTC from IEEE Xplore. Restrictions apply.
+13638                                                                        IEEE TRANSACTIONS ON POWER ELECTRONICS, VOL. 40, NO. 9, SEPTEMBER 2025
+
+
+
+                                                                                 the DM model, it fails to capture the fluctuations of electrical
+                                                                                 quantities, such as dc voltage and electromagnetic torque, near
+                                                                                 their steady-state values due to the omission of the switching
+                                                                                 process, as shown in Fig. 11(c) and (d).
+                                                                                    2) Time-Domain Simulations Under Faults: A single-phase
+                                                                                 grounding short-circuit fault is set at Fault1 in Fig. 10 to further
+                                                                                 verify the accuracy of the EM1 under faults. The fault time is
+                                       (a)
+                                                                                 0.1 s. The waveforms of active power, reactive power, dc voltage,
+                                                                                 phase A voltage at the PCC, and phase A voltage at the outlet
+                                                                                 of the grid-side converter are recorded, as shown in :
+                                                                                    Fig. 12 illustrates the temporal evolution of various electrical
+                                                                                 quantities during the fault. The fault is triggered at t = 0.1 s,
+                                                                                 leading to a decrease in active power, which reaches its minimum
+                                                                                 at t = 0.2 s. Meanwhile, the dc voltage increases and the active
+                                       (b)                                       power is dissipated in the dc energy-consuming branch. The
+                                                                                 electromagnetic torque of the DFIG exhibits oscillations and
+                                                                                 gradually recovers fault removal. The phase A voltage will drop,
+                                                                                 but due to the presence of ground fault resistance, it will not drop
+                                                                                 to zero. The average relative errors of EM1 and HIL are both less
+                                                                                 than 3% and smaller than that of the AVM, which proves the
+                                                                                 accuracy of each component and the overall modeling method
+                                                                                 mentioned in Section II. Furthermore, as depicted in Fig. 12(f),
+                                       (c)
+                                                                                 due to the neglect of high-frequency harmonics in the switching
+                                                                                 function model and AVM, the harmonic characteristics of the
+                                                                                 voltage at the outlet of the converter cannot be fully reflected.
+                                                                                 Therefore, DM remains necessary for device-level simulations.
+                                                                                    Due to computational constraints, each RTDS core can simu-
+                                                                                 late only three detailed WT models. Therefore, taking k = n = 1,
+                                                                                 m = 3 to verify the accuracy of the EM3 . In this test scenario, a
+                                       (d)                                       three-phase short-circuit fault is introduced at Fault2 in Fig. 10.
+                                                                                 The active power and reactive power waveforms of the station
+                                                                                 are recorded, as shown in Fig. 13.
+                                                                                    Fig. 13 shows that, during the fault period, the changes in ac-
+                                                                                 tive power and reactive power are more severe, and the recovery
+                                                                                 process is more complicated during a three-phase short-circuit
+                                                                                 fault. These waveforms provide insights into the station’s re-
+                                       (e)                                       sponse to fault conditions and the EM3 can still achieve fitting
+                                                                                 of the DM and can be applied to the simulation of steady-state,
+                                                                                 fault of the WF. The average relative error is still less than 3.6%,
+                                                                                 and the accuracy of M-NFSS is high.
+                                                                                    3) Frequency Domain Impedance Characteristic: By com-
+                                                                                 paring the impedance characteristic scanning results to verify
+                                                                                 whether the frequency domain characteristics of the EM3 are
+                                       (f)                                       consistent with the DM. The frequency scanning component
+                                                                                 is used to inject harmonics. The frequency scanning area is
+                                                                                 on the left side of the ac system outlet bus in Fig. 10. Since
+Fig. 11. Waveforms of WT under changing wind speeds. (a) Wind speed.             the wind power oscillation problem mainly focuses on sub-,
+(b) Mechanical torque. (c) Electromagnetic torque. (d) DC voltage. (e) Active
+power. (f) Reactive power.
+                                                                                 super-synchronous oscillation, and broadband oscillation, the
+                                                                                 range is set to 1–100 Hz and 1000–2000 Hz, with intervals of
+                                                                                 1 and 2 Hz respectively. The results, illustrated in Fig. 14,
+and decrease, thereby confirming the robustness of the control                   validate the consistency of frequency domain characteristics
+system under fluctuating wind speed conditions. The average                      between EM3 and DM.
+error between the EM1 model and the DM model is less than 1%,                       The impedance amplitude and phase angle results demon-
+indicating high accuracy. HIL testing brings minor errors due to                 strate that the EM3 closely matches DM across most frequencies.
+line losses and transmission delays. Despite this, the waveforms                 At 25–27 Hz, slight deviations are observed where the amplitude
+closely align with the DM results, indicating that the proposed                  shows a relative error of 15% and the phase angle exhibits
+modeling method is highly compatible with the actual controller.                 near-opposite values. The phase angle of the DM and EM3 at
+Although the waveform trends of the AVM align with those of                      26 Hz are 3.047 and −3.03, respectively, indicating that the
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:52:33 UTC from IEEE Xplore. Restrictions apply.
+LIU et al.: MODELING METHOD FOR DFIG-BASED WF IN HIGH-EFFICIENCY REAL-TIME EMT SIMULATIONS                                                                13639
+
+
+
+
+                                        (a)                                                                               (a)
+
+
+
+
+                                        (b)                                                                               (b)
+
+
+                                                                                  Fig. 13.   Waveforms of string. (a) Active power. (b) Reactive power.
+
+
+
+
+                                        (c)
+
+
+
+
+                                        (d)
+
+
+
+
+                                        (e)
+
+
+                                                                                  Fig. 14.   Impedance characteristic scanning results.
+
+                                                                                                                 TABLE II
+                                                                                                         NUMBER OF MODELS IN A CORE
+
+
+                                         (f)
+
+
+Fig. 12. Waveforms of WT under faults. (a) Active power. (b) Reactive power.
+(c) DC voltage. (d) Phase A voltage at the point of common coupling. (e) Phase
+A voltage at the outlet of the grid-side converter. (f) Details of (e).
+
+
+impedance is near the mutation point of 180° (−180°). The
+actual error on the vector diagram is not large. Moreover, the
+minimum scanning interval of the scanning component is 1 Hz.
+Further refinement with smaller scanning intervals below 1 Hz                     B. Efficiency Test
+could enhance accuracy. The average relative error of waveform                       This section validates the resource efficiency of the proposed
+comparisons is consistently below 3%, affirming the impedance                     modeling method by comparing the number of WTs simulated
+characteristics established in Section III align closely with DM.                 per core in the NovaCor simulator between DM, AVM, and EM1 .
+This equivalence supports the utility of the proposed model for                   Take n = k = 1 and short transmission lines are excluded here. As
+auxiliary analysis in small disturbance stability assessments.                    the simulation step size continues to expand, record the number
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:52:33 UTC from IEEE Xplore. Restrictions apply.
+13640                                                                         IEEE TRANSACTIONS ON POWER ELECTRONICS, VOL. 40, NO. 9, SEPTEMBER 2025
+
+
+
+                                                                       TABLE III
+                                                      COMPARISON OF AVERAGE MODEL, EM1 , AND EMm
+
+
+
+
+Fig. 15.   Waveforms of the three-phase fault condition.
+                                                                                  Fig. 16.   Waveforms of oscillation condition.
+
+of WTs in the dashed box in Fig. 10. The results are summarized
+in Table II.                                                                      show minor oscillations, they intensify over time. This trend
+   The results show that the EM1 takes up less resources than the                 is similarly observed in group1 and the station. Figs. 15 and 16
+DM and AVM. On the one hand, the computational complexity                         demonstrate that the developed model accurately simulates inter-
+of a WT is lower and the simulation step requirements are lower;                  nal faults and oscillation conditions, enabling the measurement
+on the other hand, as the simulation step increases from 5.56                     of electrical quantities for each WT. The model retains com-
+to 10 μs, the DM and AVM encounter limitations due to the                         prehensive internal information, making it suitable for studying
+number of electrical nodes, whereas EM1 remains unaffected.                       fault traceability and oscillation propagation characteristics.
+Overall, at a 10 μs step size, EM1 ’s resource usage is 33.3% of
+that required by DM, enabling a threefold increase in simulation                  D. Discussions
+scale. In addition, according to the above analysis, the EM1 at 10
+μs is mainly limited by the calculations of the model, suggesting                    This section aims to provide a comprehensive comparison of
+that the EMm does not have an obvious resource-saving effect.                     the proposed method with existing approaches, highlighting its
+Nonetheless, EMm effectively eliminates additional nodes in-                      innovations and application scenarios. Table III gives a compar-
+troduced by transmission lines, potentially extending the upper                   ison among the DM, AVM, NFSS method, EM1 , aggregation
+limit of simulatable WTs as the step size increases.                              model, and EMm .
+                                                                                     The existing modeling methods each possess distinct ad-
+                                                                                  vantages and limitations. The DM serves as a benchmark for
+C. WF Scale Test                                                                  accuracy but suffers from slow simulation speeds, making it
+   To verify that using the modeling method proposed in this                      suitable mainly for the core device or individual WT verification.
+article has the ability to simulate a refined large-scale WF in                   The AVM sacrifices some WT internal accuracy and simplifies
+real-time, this section uses four Novacor simulators, taking                      component-level details, albeit failing to resolve the “dimen-
+n = 4, m = 5, and using the EM5 equivalent model. Build a WF                      sionality disaster” of node complexities. Consequently, AVM is
+model of hundreds of WTs for simulation. The WT capacity is                       suitable for small-scale station simulations and larger time step
+2.5 MW and the WF capacity reaches 250 MW. A three-phase                          simulations due to its ability to disregard switching processes.
+short circuit fault is set at Fault2 in Fig. 10, and waveforms of                 The aggregation model loses most of the internal information of
+power test points are shown in Fig. 15.                                           the station and the WTs, and can only reflect the system’s output
+   Modify the WT1 control parameter Kp from 0.1 to 100 to                         characteristics to a certain extent. However, due to the limitation
+excite an oscillation, the results are shown in Fig. 16.                          of hardware resources, the aggregation method is still inevitably
+   WT1 exhibits pronounced oscillations starting at t = 1 s, which                used in the simulation of ultra-large-scale WFs or multiple
+escalate significantly by t = 4 s. While other WTs initially                      large-scale WFs. The NFSS, EM1 , and EMm are all aimed at
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:52:33 UTC from IEEE Xplore. Restrictions apply.
+LIU et al.: MODELING METHOD FOR DFIG-BASED WF IN HIGH-EFFICIENCY REAL-TIME EMT SIMULATIONS                                                                   13641
+
+
+
+refined modeling methods for large-scale WFs, encompassing                         [10] M. Wu and L. Xie, “Calculating steady-state operating conditions for
+all WTs and lines. Among these, the proposed method in this                             DFIG-based wind turbines,” IEEE Trans. Sustain. Energy, vol. 9, no. 1,
+                                                                                        pp. 293–301, Jan. 2018.
+article markedly improves simulation efficiency and emphasizes                     [11] U. Buragohain and N. Senroy, “Reduced order DFIG models for PLL-
+parameter prestorage and parallelism for real-time simulations.                         based grid synchronization stability assessment,” IEEE Trans. Power Syst.,
+It is worth mentioning that, higher model integration enhances                          vol. 38, no. 5, pp. 4628–4639, Sep. 2023.
+                                                                                   [12] C. Dufour, J. Mahseredjian, and J. Bélanger, “A combined State-space
+efficiency but reduces flexibility for users to modify internal                         nodal method for the simulation of power system transients,” IEEE Trans.
+topology. Therefore, the EMm model can improve simulation                               Power Del., vol. 26, no. 2, pp. 928–935, Apr. 2011.
+efficiency more than the EM1 model, but it loses some flexibility.                 [13] N. Guo and W. Liu, “Power electronic switching models for numerical
+                                                                                        simulations of power system electromagnetic transient,” in Proc. IEEE 8th
+                                                                                        Int. Conf. Adv. Power Syst. Automat. Protection, 2019, pp. 1026–1030.
+                                                                                   [14] C. Shah et al., “Review of dynamic and transient modeling of power elec-
+                             V. CONCLUSION                                              tronic converters for converter dominated power systems,” IEEE Access,
+   In this article, a DFIG-based WT using the latency decoupling                        vol. 9, pp. 82094–82117, 2021.
+                                                                                   [15] S. Ebrahimi, T. Vahabzadeh, and J. Jatskevich, “Numerically effi-
+method is proposed. The established DFIG model facilitates                              cient average-value model for voltage-source converters in nodal-based
+seamless interfacing with other devices for simulations, over-                          programs,” IEEE Open J. Power Electron., vol. 5, pp. 93–105, 2024.
+coming traditional modeling challenges. Ultimately, the WT                         [16] S. Shao et al., “Modeling and advanced control of dual-active-bridge dc-
+                                                                                        dc converters: A review,” IEEE Trans. Power Electron., vol. 37, no. 2,
+model is condensed into a three-node equivalent, significantly                          pp. 1524–1547, Feb. 2022.
+simplifying network solution complexities. M-NFSS method is                        [17] H. Jin, “Behavior-mode simulation of power electronic circuits,” IEEE
+proposed and used to establish a string model that can further                          Trans. Power Electron., vol. 12, no. 3, pp. 443–452, May 1997.
+                                                                                   [18] Q.-T. An, L.-Z. Sun, K. Zhao, and L. Sun, “Switching function model based
+expand the number of simulated WTs. By adopting “multiple                               fast-diagnostic method of open-switch faults in inverters without sensors,”
+times with low-order,” this method enhances NFSS efficiency                             IEEE Trans. Power Electron., vol. 26, no. 1, pp. 119–126, Jan. 2011.
+particularly when handling numerous internal nodes.                                [19] W. Li, P. Chao, X. Liang, D. Xu, and X. Jin, “An improved single-machine
+                                                                                        equivalent method of wind power plants by calibrating power recovery
+   Through various tests in RTDS and HIL testing, the results                           behaviors,” IEEE Trans. Power Syst., vol. 33, no. 4, pp. 4371–4381,
+show that the computational complexity of the WT model is                               Jul. 2018.
+greatly reduced while the impedance characteristics and the                        [20] J.-Y. Ruan, Z.-X. Lu, Y. Qiao, and Y. Min, “Analysis on applicability
+                                                                                        problems of the aggregation-based representation of wind farms consid-
+time-domain waveform’s errors are within acceptable range.                              ering DFIGs’ LVRT behaviors,” IEEE Trans. Power Syst., vol. 31, no. 6,
+Moreover, unlike traditional single-machine or multimachine                             pp. 4953–4965, Nov. 2016.
+aggregation methods for station equivalents, the refined model                     [21] J. Zou, C. Peng, H. Xu, and Y. Yan, “A fuzzy clustering algorithm-based
+                                                                                        dynamic equivalent modeling method for wind farm with DFIG,” IEEE
+retains all individual WTs. This approach proves advantageous                           Trans. Energy Convers., vol. 30, no. 4, pp. 1329–1337, Dec. 2015.
+for studying fault conditions and oscillation propagation charac-                  [22] M. Ali, I.-S. Ilie, J. V. Milanovic, and G. Chicco, “Wind farm model
+teristics within WFs. The proposed method emphasizes param-                             aggregation using probabilistic clustering,” IEEE Trans. Power Syst.,
+                                                                                        vol. 28, no. 1, pp. 309–316, Feb. 2013.
+eter preprocessing and shows promise for further development                       [23] A. P. Gupta, A. Mitra, A. Mohapatra, and S. N. Singh, “A multi-machine
+on hardware platforms with enhanced parallelism.                                        equivalent model of a wind farm considering LVRT characteristic and
+                                                                                        wake effect,” IEEE Trans. Sustain. Energy, vol. 13, no. 3, pp. 1396–1407,
+                                                                                        Jul. 2022.
+                                  REFERENCES                                       [24] W. Yubo et al., “An impedance-based equivalent method for wind farms
+                                                                                        with PMSGs to evaluate power system oscillation stability,” in Proc. 9th
+ [1] J. Yang et al., “A 5.5–276 W integrated photovoltaic energy harvesting             Asia Conf. Power Elect. Eng., 2024, pp. 60–64.
+     system with 99.95% MPPT efficiency and 98.74% power conversion                [25] J. Marti and L. Linares, “Real-time EMTP-based transients simulation,”
+     efficiency,” IEEE Trans. Power Electron., vol. 40, no. 3, pp. 4522–4535,           IEEE Trans. Power Syst., vol. 9, no. 3, pp. 1309–1317, Aug. 1994.
+     Mar. 2025.                                                                    [26] J. R. Martí, L. R. Linares, J. A. Hollman, and F. A. Moreira, “OVNI:
+ [2] S. Chen et al., “Transient stability analysis and improved control strategy        Integrated software/hardware solution for real-time simulation of large
+     for dc-link voltage of DFIG-based WT during LVRT,” IEEE Trans. Energy              power systems,” in Proc. 14th Power Syst. Comput. Conf., 2002,
+     Convers., vol. 37, no. 2, pp. 880–891, Jun. 2022.                                  pp. 1–7.
+ [3] Y. Ma, D. Zhu, J. Hu, R. Liu, X. Zou, and Y. Kang, “Optimized design          [27] M. Milton and A. Benigni, “Latency insertion method based real-time
+     of demagnetization control for DFIG-based wind turbines to enhance                 simulation of power electronic systems,” IEEE Trans. Power Electron.,
+     transient stability during weak grid faults,” IEEE Trans. Power Electron.,         vol. 33, no. 8, pp. 7166–7177, Aug. 2018.
+     vol. 40, no. 1, pp. 76–81, Jan. 2025.                                         [28] J. Xu, S. Fan, C. Zhao, and A. M. Gole, “High-speed EMT modeling
+ [4] C. Jin, Z. Ji, K. Liu, W. Chen, and J. Zhao, “A region-folding electro-            of MMCs with arbitrary multiport submodule structures using gener-
+     magnetic transient simulation approach for large-scale power electronics           alized Norton equivalents,” IEEE Trans. Power Del., vol. 33, no. 3,
+     system,” IEEE Trans. Power Electron., vol. 38, no. 8, pp. 9755–9766,               pp. 1299–1307, Jun. 2018.
+     Aug. 2023.                                                                    [29] J. Xu et al., “Enhanced high-speed electromagnetic transient simulation
+ [5] X. Guillaud et al., “Applications of real-time simulation technologies in          of MMC-MTDC grid,” Int. J. Elect. Power Energy Syst., vol. 83, no. 1,
+     power and energy systems,” IEEE Power Energy Technol. Syst. J., vol. 2,            pp. 7–14, Dec. 2016.
+     no. 3, pp. 103–115, Sep. 2015.                                                [30] M. Feng, C. Gao, J. Ding, H. Ding, J. Xu, and C. Zhao, “Hierarchical
+ [6] Z. Yu, Z. Zhao, B. Shi, and H. Xu, “An automatic circuit partitioning              modeling scheme for high-speed electromagnetic transient simulations
+     strategy for accelerated simulation of power electronic systems,” IEEE             of power electronic transformers,” IEEE Trans. Power Electron., vol. 36,
+     Trans. Power Electron., vol. 38, no. 5, pp. 5619–5625, May 2023.                   no. 9, pp. 9994–10004, Sep. 2021.
+ [7] X. Guo, X. Yuan, D. Zhu, X. Zou, and J. Hu, “Evaluation and optimization      [31] M. Zou et al., “Integrated equivalent model of permanent magnet syn-
+     of DFIG-based WTs for constant inertia as synchronous generators,” IEEE            chronous generator based wind turbine for large-scale offshore wind
+     Trans. Power Electron., vol. 39, no. 8, pp. 10453–10464, Aug. 2024.                farm simulation,” J. Modern Power Syst. Clean Energy, vol. 11, no. 5,
+ [8] H. W. Dommel, Electromagnetic Transients Program Reference Manual                  pp. 1415–1426, Sep. 2023.
+     (EMTP Theory Book). Portland: Bonneville Power Administration, 1986.          [32] N. Watson and J. Arrillaga, Power Systems Electromagnetic Transients
+ [9] N. Sarma, P. M. Tuohy, and S. Djurović, “Modeling, analysis, and val-             Simulation. London, U.K.: Inst. Elect. Eng., 2003.
+     idation of controller signal interharmonic effects in DFIG drives,” IEEE      [33] RTDS Technologies Inc., RTDS User’s Tutorial Manual, Winnipeg, MB,
+     Trans. Sustain. Energy, vol. 11, no. 2, pp. 713–725, Apr. 2020.                    Canada, 2021.
+
+
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:52:33 UTC from IEEE Xplore. Restrictions apply.
+13642                                                                       IEEE TRANSACTIONS ON POWER ELECTRONICS, VOL. 40, NO. 9, SEPTEMBER 2025
+
+
+
+                       Yifan Liu was born in Jiangsu, China. He received                                  Chengyong Zhao (Senior Member, IEEE) was born
+                       the B.S. degree in electrical engineering and its au-                              in Zhejiang, China. He received the B.S., M.S.,
+                       tomation in 2021 from North China Electric Power                                   and Ph.D. degrees in power systems and its automa
+                       University (NCEPU), Baoding, China, where he is                                    tion from North China Electric Power University
+                       currently working toward the Ph.D. degree in electri-                              (NCEPU), Beijing, China, in 1988, 1993, and 2001,
+                       cal engineering.                                                                   respectively.
+                          His research interests include the electromagnetic                                 From January to April 2013 and from September
+                       transient equivalent modeling of wind power genera-                                to October 2016, he was a Visiting Professor with the
+                       tion system and real-time simulation.                                              University of Manitoba, Winnipeg, MB, Canada. He
+                                                                                                          is currently a Professor with the School of Electrical
+                                                                                                          and Electronic Engineering, NCEPU. His research
+                                                                                interests include HVdc systems and dc grid.
+
+
+
+
+                       Jianzhong Xu (Senior Member, IEEE) was born in                                     Gen Li (Senior Member, IEEE) received the B.Eng.
+                       Shanxi, China. He received the Ph.D. degree in elec-                               degree in electrical engineering from Northeast Elec-
+                       trical engineering from North China Electric Power                                 tric Power University, Jilin, China, in 2011, the M.Sc.
+                       University (NCEPU), Beijing, China, in 2014.                                       degree in Power Engineering from Nanyang Tech-
+                          He is currently a Professor with the State Key                                  nological University, Singapore, in 2013, and the
+                       Laboratory of Alternate Electrical Power System with                               Ph.D. degree in electrical engineering from Cardiff
+                       Renewable Energy Resources, NCEPU. His research                                    University, Cardiff, U.K., in 2018.
+                       interests include electromagnetic transient equivalent                                He is currently an Associate Professor with the
+                       modeling, simulation, and the analysis of HVdc grid.                               Technical University of Denmark (DTU), Kongens
+                                                                                                          Lyngby, Denmark. From 2013 to 2016, he was been a
+                                                                                                          Marie Curie Early Stage Research Fellow funded by
+                                                                                European Commission’s MEDOW project. He has been a Visiting Researcher
+                                                                                with China Electric Power Research Institute, Beijing, China, Elia, Brussels,
+                       Yiyang Zhu was born in Henan, China. She received        Belgium, and Toshiba International, Staines, U.K. He was a Research Associate
+                                                                                at Cardiff University from 2018 to 2022. His research interests include control
+                       the B.S. degree in electrical engineering and its au-
+                                                                                and protection of HV and MVdc, offshore wind, and offshore energy islands.
+                       tomation in 2023 from North China Electric Power
+                                                                                   Dr. Li is a Chartered Engineer in the U.K., an Associate Editor for IEEE
+                       University (NCEPU), Baoding, China, where she is
+                       currently working toward the master’s degree in elec-    TRANSACTIONS ON POWER DELIVERY, IEEE TRANSACTIONS ON SUSTAINABLE
+                                                                                ENERGY, and CSEE Journal of Power and Energy Systems and an Editorial
+                       trical engineering.
+                                                                                Board Member of CIGRE ELECTRA. He was the recipient of the CIGRE NGN
+                          Her research interests include electromagnetic
+                                                                                Significant Contribution Award in 2024 and the First CIGRE Thesis Award in
+                       transient equivalent modeling and simulation meth-
+                                                                                2018. He is now a Steering Committee Member of CIGRE Denmark NGN and
+                       ods for internal faults in wind generators.
+                                                                                a Member of CIGRE Working Group B4.96.
+
+
+
+
+                       Zhaoxuan Tian was born in Hebei, China. She re-
+                       ceived the B.S. degree in electrical engineering from
+                       the Hebei University of Technology, Tianjin, China,
+                       in 2024. She is currently working toward master’s de-
+                       gree in electrical engineering at North China Electric
+                       Power University (NCEPU), Beijing, China.
+                          Her current research focuses on the application of
+                       artificial intelligence in power systems.
+
+
+
+
+        Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:52:33 UTC from IEEE Xplore. Restrictions apply.
+

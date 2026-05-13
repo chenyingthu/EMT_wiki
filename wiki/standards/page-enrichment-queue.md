@@ -43,7 +43,7 @@ updated: "2026-05-13"
 | 18 | parallel-in-time.md | methods | methods/simulation-technology/parallel-in-time.md | P0 | 101 | 3135 | 95 | 15 | completed |
 | 19 | declarative-modeling.md | methods | methods/simulation-technology/declarative-modeling.md | P0 | 100 | 3562 | 49 | 13 | completed |
 | 20 | power-system.md | topics | topics/tools-software/power-system.md | P0 | 100 | 3438 | 63 | 15 | completed |
-| 21 | coherency-clustering.md | methods | methods/simulation-technology/coherency-clustering.md | P0 | 100 | 819 | 8 | 11 | pending |
+| 21 | coherency-clustering.md | methods | methods/simulation-technology/coherency-clustering.md | P0 | 100 | 819 | 8 | 11 | completed |
 | 22 | mbsm.md | methods | methods/power-electronics/mbsm.md | P1 | 99 | 943 | 5 | 9 | pending |
 | 23 | large-scale-system-simulation.md | topics | topics/simulation/large-scale-system-simulation.md | P1 | 96 | 2374 | 3 | 74 | pending |
 | 24 | load-modeling.md | topics | topics/component-modeling/load-modeling.md | P1 | 94 | 1289 | 5 | 24 | pending |
@@ -496,3 +496,4 @@ updated: "2026-05-13"
 ||| 18 | 1 | 1 | 0 | parallel-in-time页面完成（3135字，95公式，15wikilink，3种时间并行方法：Parareal/MGRIT、矩阵对角化、PEGR，含MMC-HVDC/IEEE-118/VFTO等量化结果） |
 ||| 19 | 1 | 1 | 0 | declarative-modeling页面完成（3562字，49公式，13wikilink，6种核心机制：无因果建模/DAE索引降阶/FMI标准/Dynaωo架构/传输线建模/组件示例，6篇来源论文） |
 |||| 20 | 1 | 1 | 0 | power-system页面完成（3438字，63公式，15wikilink，1SVG，13章节，8篇来源论文，五层方法体系架构SVG图，覆盖全EMT/混合仿真/相量域三大层级，ParaEMT 36x/HPC/GPU加速数据，Hydro-Québec 1666母线实测数据） |
+|| 21 | 1 | 1 | 0 | coherency-clustering页面完成（16461字，90公式，6wikilink，1SVG，9章节，4种核心方法：电流轨迹相似度/增强K-means两阶段/神经网络通用等值/延迟解耦+M-NFSS，6篇来源论文）
