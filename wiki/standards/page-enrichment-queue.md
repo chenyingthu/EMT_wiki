@@ -34,7 +34,7 @@ updated: "2026-05-13"
 || 9 | hardware-in-loop.md | topics | topics/simulation/hardware-in-loop.md | P0 | 122 | 940 | 4 | 18 | completed |
 | 10 | cdsm.md | methods | methods/power-electronics/cdsm.md | P0 | 122 | 10033 | 53 | 12 | completed |
 || 11 | model-verification-benchmark.md | topics | topics/test-system/model-verification-benchmark.md | P0 | 119 | 5800 | 51 | 14 | completed |
-| 12 | gpu-parallel-acceleration.md | methods | methods/simulation-technology/gpu-parallel-acceleration.md | P0 | 115 | 861 | 5 | 13 | pending |
+| 12 | gpu-parallel-acceleration.md | methods | methods/simulation-technology/gpu-parallel-acceleration.md | P0 | 115 | 15210 | 74 | 13 | completed |
 | 13 | dc-fault-blocking.md | topics | topics/hvdc-facts/dc-fault-blocking.md | P0 | 113 | 866 | 6 | 15 | pending |
 | 14 | ieee-118-bus-system.md | topics | topics/test-system/ieee-118-bus-system.md | P0 | 113 | 1114 | 6 | 27 | pending |
 | 15 | hbsm.md | methods | methods/power-electronics/hbsm.md | P0 | 111 | 986 | 2 | 10 | pending |
@@ -487,3 +487,4 @@ updated: "2026-05-13"
 || 9 | 1 | 1 | 0 | hardware-in-loop页面完成（5178字，38公式，11wikilink，1SVG） |
 ||| 10 | 1 | 1 | 0 | cdsm页面完成（10033字，53公式，12wikilink，1SVG，4种建模方法） |
 ||| 11 | 1 | 1 | 0 | model-verification-benchmark页面完成（5800字，51公式，14wikilink，1SVG，7篇来源论文） |
+||| 12 | 1 | 1 | 0 | gpu-parallel-acceleration页面完成（15210字，74公式，13wikilink，1SVG，7篇核心PDF） |

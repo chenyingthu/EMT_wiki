@@ -1,0 +1,573 @@
+                    Received 27 March 2019; revised 27 July 2019; accepted 10 September 2019. Date of publication 11 November 2019;
+                                                        date of current version 2 January 2020.
+                                                              Digital Object Identifier 10.1109/OAJPE.2019.2952776
+
+
+
+
+                Accelerated Sparse Matrix-Based
+             Computation of Electromagnetic Transients
+                            A. ABUSALAH1 , (Member, IEEE), O. SAAD2 , (Member, IEEE),
+                       J. MAHSEREDJIAN 1 , (Fellow, IEEE), U. KARAAGAC 3 , (Member, IEEE),
+                                      AND I. KOCAR 1 , (Member, IEEE)
+                                   1 Polytechnique Montréal, Campus Université de Montréal, Montréal, QC H3T 1J4, Canada
+                                                    2 IREQ, Hydro-Québec, Varennes, QC J3X 1S1, Canada
+                                   3 Department of Electrical Engineering, The Hong Kong Polytechnic University, Hong Kong
+
+                                               CORRESPONDING AUTHOR: J. Mahseredjian (jeanm@polymtl.ca)
+                   This work was supported by the NSERC Industrial Research Chair, Hydro-Quebec, RTE, EDF, Opal-RT, and InnovEE.
+
+
+
+
+          ABSTRACT       This paper is related to research on parallelization methods for the simulation of electro-
+          magnetic transients (EMTs). It presents an automatic parallelization approach based on the solution of
+          sparse matrices resulting from the formulation of network equations. Modified-augmented-nodal analysis
+          is used to formulate network equations. The selected sparse matrix solver is parallelized and adapted to
+          improve performance by pivot validity testing and partial refactorization. Refactorization is needed when
+          dealing with varying topology networks and nonlinear models. The EMT solver employs a fully iterative
+          method for nonlinear functions. Conventional computer CPU-based parallelization is achieved and does not
+          require any user intervention for given arbitrary network topologies. The presented approach is tested on real
+          networks with complex models, including nonlinearities and power-electronics converters for wind generator
+          applications.
+
+          INDEX TERMS           Electromagnetic transients, modified-augmented-nodal-analysis, KLU, sparse matrix
+          solver, parallelization.
+
+
+
+I. INTRODUCTION                                                                             improvements in model performance using, for example,
+
+T     HE computing time reduction for the simulation of
+      electromagnetic transients [1], [2] (EMTs) is a cru-
+cial research topic. The EMT-type [2] simulation methods
+                                                                                            average-value models [5] for power-electronics based sys-
+                                                                                            tems or circuit reduction [6]. Network reduction can be
+                                                                                            also achieved using frequency domain fitting [7] or through
+are circuit based and can use very accurate models for an                                   dynamic equivalents [8]. Other approaches include usage of
+extended frequency range of power system phenomena. This                                    multiple time-steps [9], waveform relaxation [10] and com-
+qualifies them as being of wideband type. In fact the EMT                                   binations of different methods [11].
+approach is applicable to both slower electromechanical tran-                                  Although for some models the numerical performance
+sients and much faster electromagnetic transients. The com-                                 improvements can be generalized, the above methods can-
+putation of electromechanical transients can be achieved with                               not be applied automatically and require user intervention
+EMT-type solvers for very large networks [3] and requires                                   and various other manual modifications. A more direct
+significant computing time when compared to phasor-domain                                   path towards computational speed improvement in EMT-type
+approaches, but even for smaller networks, the computing                                    numerical methods is through efficient sparse matrix solvers
+time can become a key factor due to numerical integration                                   and parallelization. The latter has been initiated in real-
+time-step constraints or model complexity level. More and                                   time simulation tools [12]–[14] and followed also in off-line
+more challenging simulation cases are created for studying                                  [2], [15], [16] applications. The network tearing approach for
+modern power systems, those include, for example, HVDC                                      parallelization is based on the exact separation created by
+systems [4] and wind generation [4].                                                        distributed parameter transmission line/cable models. Other
+   There are several techniques for improving computational                                 methods [17], [18] can be applied for cutting networks at
+performance in EMT-type solvers. Such techniques include                                    arbitrary locations.
+
+                 This work is licensed under a Creative Commons Attribution 4.0 License. For more information, see http://creativecommons.org/licenses/by/4.0/
+VOLUME 7, 2020                                                                                                                                                   13
+   An important problem in network solution paralleliza-             is given by
+tion methods, such as [16], [17], is that user intervention is
+                                                                                                Ax = b                                 (1)
+required for setting the network separation locations. In [18]
+the derivation of bordered-block-diagonal matrices (diakop-          This sparse system of equations is solved for the vector of
+tics) allows to cut networks without using transmission line         unknowns x at each time-point in time-domain, after updat-
+delays. But such methods are demonstrated for linear and             ing the matrix of coefficients A and the vector of known
+fixed topology networks that do not require time consum-             variables b. The vector b contains history terms and other
+ing matrix updating and refactorizations. Moreover, large            independent functions, such as independent sources. The sys-
+network test cases are created by replicating a given small          tem (1) is non-symmetric and can also accommodate generic
+network a few hundred times. Such idealistic situations do           equations, such as
+not occur for actual real power grids.
+                                                                                k1 vk + k2 vm + k3 ix + k4 iy + · · · = bz             (2)
+   This paper targets off-line simulation methods and presents
+CPU-based parallelization for conventional multi-core com-           where the terms on the left contribute coefficients (kj ) into the
+puters using a sparse matrix solver, named KLU [19], [20].           A matrix for voltage (vj ) and current (ij ) unknowns, and bz is a
+Such a solver has been already applied for circuit simulation        cell in the b vector. This equation allows to integrate directly
+problems [20]–[23], including the simulation of electromag-          source and switch equations. For an ideal switch equation, for
+netic transients in [22], [23]. This paper contributes several       example,
+significant improvements over [22], [23]. Fully automatic
+                                                                                        kvk − kvm − ks ikm = 0                         (3)
+parallelization is again achieved through block-triangular fac-
+torization (BTF), but new modification of the KLU solver             In switch closed position, k = 1 and ks = 0. When the ideal
+allow to significantly improve performance. The modifica-            switch is open, k = 0 and ks = 1. It is also possible to model
+tions include pivot validity testing and partial refactorization     non-ideal switches by setting k = 1 and replacing ks by high
+for a fully iterative sparse matrix solver. Refactorization is       and low resistance values. Other models, such as ideal trans-
+required to account for varying topologies (switching) and           formers with tap control can be easily accommodated [25].
+nonlinear models. The capability to efficiently account for             The NEs (1) are solved at each time-point after updating A
+iterations and refactorization in realistic networks is a distinc-   for switch position changes, transformer tap changes or any
+tive aspect in the presented research.                               other modifications in model equations. For nonlinear models
+   Another improvement in this work is more efficient                (NMs), the NEs must be solved iteratively to achieve an
+implementation of parallelization through distributed thread         accurate simultaneous solution. This is done by linearizing
+memory.                                                              each model [25] at each operating point change and solving
+   The proposed approach is implemented in EMTP [24]                 iteratively (1) until convergence for all nonlinear models.
+and tested on realistic large scale networks. The demon-             Model linearization results into a Norton equivalent with
+stration on such networks/benchmarks constitutes another             the Norton resistance contributing changes into A and the
+important contribution of this paper. The solution process           Norton current contributing updates into the b vector. This
+includes seamless transition from load-flow solution to time-        is a Newton method with A being the Jacobian matrix.
+domain parallel computations using modified-augmented-                  For time-varying models (TVMs), such as switches or
+nodal analysis.                                                      transformer tap positions, it is also possible to update A
+   The proposed approach can be implemented in any                   iteratively without advancing to the next time-point. This
+EMT-type simulation tool. Moreover, the proposed improve-            accuracy option, marked as iterative time-varying method
+ments in KLU are applicable to other types of solvers.               (ITVM), allows to achieve a simultaneous solution for the
+   This paper starts by reviewing the main structures of the         determination of all changes and dependencies between mod-
+EMT-type solver for which the sparse matrix code is being            els at the same time-point. This process also includes the
+replaced. It follows by the presentation of the new parallel         sequential re-calculation of control system equations [25].
+sparse matrix solution process and then its implementation.             In EMTP the NE (1) are currently solved on a single CPU-
+Test cases are presented to demonstrate the numerical perfor-        core using a non-symmetric direct sparse solver method based
+mance advantages.                                                    on minimum degree ordering [26]. The permuted matrix A
+                                                                     does not result into decoupled blocks and cannot be used for
+II. REVIEW OF EMTP STRUCTURE AND SOLVER                              parallelization.
+The new approach proposed in this paper is implemented                  The fact that many models, such as the coefficients in (3),
+using the modified-augmented-nodal analysis (MANA) for-              are time-varying and also for continuous changes that may be
+mulation method [24]. This method offers several advan-              required by model updates in A during iterations, it is neces-
+tages [25] over classical nodal analysis. Its formulation is         sary to recalculate the LU factors of A. The refactorization
+briefly recalled here to relate to material presented in the         process of the complete matrix A is time-consuming. The
+following sections. In MANA the system of equations is               number of refactorizations is case dependent and has fluctu-
+generic and can use different types of unknowns in addition          ating impact on numerical performance. This is an important
+to voltage. In MANA the system of network equations (NEs)            aspect.
+
+14                                                                                                                           VOLUME 7, 2020
+Abusalah et al.: Accelerated Sparse Matrix-Based Computation of EMTs
+
+
+
+                                                                                In KLU it is also possible to apply a scaling matrix for
+                                                                             the above equation, but it was not retained here since its
+                                                                             calculation process can create inefficiencies and there were
+                                                                             no advantages for the applications studied in this paper.
+                                                                                In the standard KLU approach, when at least one element
+                                                                             of Ai is modified, it is needed to perform full re-factorization
+                                                                             with updated pivoting. This process becomes inefficient for
+FIGURE 1. KLU pseudocode for LU factorization.
+                                                                             the refactorization needs expressed in the previous section.
+                                                                             In KLU it is also possible to request refactorization reusing
+                                                                             the previously calculated nonzero pattern, but in that case
+  The upgrading of the sparse matrix solver for accelerating                 there is no pivot validity testing and the solution accuracy may
+computations is described in the following sections.                         deteriorate significantly.
+                                                                                To improve the performance of the existing KLU code
+III. BLOCK TRIANGULAR FACTORIZATION AND KLU
+                                                                             for the EMT computation methods presented in this paper,
+The Block Triangular Factorization (BTF) method [20], [27]                   the following enhancements are contributed in this paper:
+can be used during symbolic analysis of A to transform it                    ‘‘Pivot validity test’’ and ‘‘Partial re-factorization’’ using a
+into a block-diagonal form ABTF . To do so, two matrices are                 parallel implementation.
+calculated and applied, the row permutation matrix PR and                       In the following text, the acronym SMPEMT (sparse
+the column permutation matrix PC , and result into                           matrix package for EMTs) refers to the enhanced KLU ver-
+                                                                             sion presented in this paper.
+                         ABTF = PR APC                                 (4)
+                                                                             A. PIVOT VALIDITY TEST
+   This process is able to automatically find the subnetworks
+                                                                             One of the challenging problems is the refactorization pro-
+decoupled by distributed parameter transmission line/cable
+                                                                             cess for time-varying and iterative model coefficients in Ai .
+models. The blocks in ABTF are decoupled (independent) at
+                                                                             Instead of performing full refactorization (standard KLU)
+each solution time-point and can be solved in parallel. The
+                                                                             as explained above, significant computational gains can be
+resulting block sizes vary according to subnetwork sizes.
+                                                                             achieved by applying pivot validity testing. This algorithm is
+   The blocks in ABTF can be solved using any efficient sparse
+                                                                             described by the following steps for Ai :
+matrix solver. Let us assume that Ai is the ith block in ABTF
+and there are N blocks in the network.                                       1. First call to SMPEMT:
+   The sparse solver method selected here is the KLU method.                     a. Perform symbolic analysis with AMD
+It is currently one of the most efficient packages for circuit-                  b. Perform full factorization to find Li and Ui
+based simulations [20]. This choice was made after testing                       c. Go to step 3
+other packages, including SuperLU [28] and [26].                             2. Not first call to SMPEMT:
+   The KLU solver, as other sparse matrix solvers, applies                      a) Perform re-factorization using existing nonzero pattern
+ordering to reduce the fillings in the LU-factorization. The                        with new enabled invalid pivot testing
+AMD (approximate minimum degree ordering) [19] and                                   i. Invalid pivot found: go to step 1.b
+COLAMD (column approximate minimum degree order-
+                                                                                b) Go to step 3
+ing) [19] ordering methods are available in KLU. AMD
+allowed to achieve the best performance for the test cases                   3. Backward and Forward substitution
+studied in this paper. The symbolic analysis of AMD is                       The step 2.a is applied when matrix Ai has changed. The
+conducted only once at the startup of the simulation process.                structure (non-zero elements) of the matrix is established at
+   The second stage in KLU is the numerical analysis stage                   the beginning and cannot change, only matrix cell values can
+which involves two main steps. First the Gilbert-Peierls algo-               change.
+rithm is used to find the nonzero patterns of L and U matrices.                 For the step 2, the pseudocode used in Fig. 1 starts with a
+Once the nonzero pattern is established, a left-looking numer-               modified matrix, but initially keeps the previously calculated
+ical factorization with partial pivoting is used to calculate the            permutations due to partial pivoting (step 2.b in Fig. 1). The
+L and U numerical values. This process can be expressed by                   pivot validity test is now applied instead of step 2.b in Fig. 1.
+                                                                             The invalid pivot (pivot validity) test is based on a definable
+                         Li Ui = PRi Ai PCi                            (5)   tolerance εp . When
+where PRi and PCi are now permutation matrices for the ith                                           εp anew > aold                       (6)
+block. The complete LU factorization process [19] of KLU is
+summarized (pseudocode) in Fig. 1 for an n × n matrix Ai .                   the old pivot aold is discarded and a new pivot anew is selected.
+It is noticed that the matrix Li is calculated from left to right            The process restarts as shown in the step 2.a.i above. The
+and column by column.                                                        pivot search is performed in each column of Li . By default
+   In the above code, I is the identity matrix.                              εp = 1%. It is noticed that for circuit equations, the diagonal
+
+VOLUME 7, 2020                                                                                                                             15
+of Ai is typically dominant and consequently the number of               The parallel solver is developed based on the distributed
+pivot changes is small.                                               thread memory concept that was found to be the most efficient
+                                                                      application of OpenMP. This approach minimizes thread
+B. PARTIAL RE-FACTORIZATION                                           waiting time and memory access delays.
+To reduce the computational cost of refactorization for Ai               Parallelization is applied to the blocks found from the
+even further, it is possible to apply partial refactorization.        BTF, that is for each matrix Ai . Each matrix Ai has its own
+In a given matrix Ai it is possible to determine the cells            memory allocation that is part of designated thread memory.
+occupied by NMs and TVMs. Those dynamic cells may                     Each thread launches a call to the sparse matrix solver for
+change between solution time-points and iterations at a given         its own Ai . The call allocates (done once, at startup only)
+time-point. The changes require refactorization (recalculating        memory on the thread stack and uses thread’s own cache
+Li and Ui ).                                                          to solve. This type of allocation helps all threads to fetch
+   The matrix Ai is reordered using AMD and can be writ-              data faster and write results quicker compared to getting data
+ten as                                                                and writing data to the main thread memory. All threads are
+                          
+                            Pcc Pcd
+                                                                     launched and joined using OpenMP statements.
+                    Ai =                                   (7)           Since there is a limited number of CPU cores and the
+                            Pdc Pdd
+                                                                      computing gains are limited by the largest network blocks,
+where the subscripts c and d mean constant and dynamic                it is necessary to apply a balancing technique for the given
+respectively. The c columns do not have any dynamic parts,            number of cores. In this paper, the following approaches have
+but the d columns have dynamic cells.                                 been implemented.
+   In the left-looking algorithm of Fig. 1, the columns of Li            In the first approach a pre-programmed method allows
+are derived one-by-one by solving for each column of Ai .             to estimate the number of floating-point operations for the
+If, for example, the lower matrix decomposition of Ai is              solution of each block (NFPOi ). The following formula is
+stopped at its first dynamic column then                              used for a matrix block of n × n:
+                                      
+                       p     Lcc    0                                              n
+                                                                                      
+                                                                                        j−1
+                                                                                                                             
+                      Li =                                (8)
+                             Pdc Idd
+                                                                                  X     X
+                                                                      NFPOi =              2Llen (m) + 3Llen(j) + 2Ulen(j) + n
+         p
+where Li is a partially computed lower-triangular matrix, Lcc                    j=1   m=1
+is a lower-triangular matrix, Pdc and Lcc contain the columns                                                                      (10)
+                       p
+of the static part of Li and Idd is the identity matrix. Once Pdd
+                                                                      where j and m are the indices of columns, Llen and Ulen
+is determined (status of time-varying devices or iterative Nor-
+                                                                      are the counts of non-zeros in L0 i and U0 i , respectively. This
+ton equivalent) at a given solution time-point, the calculation
+                                                                      formula accounts for the LU-factorization based on the initial
+process is continued until the replacement of Idd to obtain L0 i
+        p                                                             LU nonzero patterns. It also accounts for the backward-
+from Li . The upper-triangular matrix U0 i is calculated within
+                                                                      forward substitution step.
+the calculation process of L0 i . For (8), the partial upper matrix
+                                                                         In the second approach, the number of non-zeros in each
+factorization is available for all constant columns
+                                                                    block (NNZi ) is available from its nonzero pattern. However,
+                           p       Ucc                                for all the test cases presented in this paper, using NNZi was
+                          Ui =                                  (9)
+                                    0                                 less efficient than using NFPOi .
+   In the above approach it is not necessary to restart                  The blocks are assigned to cores using the number of
+the partial factorization process for the complete set of             available cores (NC ) and the factor kd = NFPO/NC , where
+columns of Pdd . Better efficiency can be gained, if partial          NFPO is the total number for the entire system of equations.
+re-factorization is applied by restarting from the first left         Since the number of blocks N could be higher than NC , it is
+modified column jmd in Pdd . As before, since KLU is a left-          necessary to verify the limiting kd for each assignment. If a
+looking solver, all unchanged columns to the left of jmd can          given core is assigned a block with NFPOi less than kd then it
+maintain the previous contributions to the LU factors.                can contain additional blocks until kd is reached or exceeded.
+   It is also possible to apply a permutation technique that          This is basically a packing procedure for populating available
+forces Pdd to contain only NMs and TVMs (similar to [29]).            cores.
+But such an approach interferes with the AMD ordering and                If a block’s NFPOi falls below a minimum size, then it must
+creates extra fill-ins which hinder the performance gains.            be packed into an assigned core since threading for such a
+                                                                      block can become inefficient.
+IV. IMPLEMENTATION OF SMPEMT                                             The same is applicable using NNZi instead of NFPOi .
+Both the sequential and parallel versions of the SMPEMT
+described in the preceding section have been implemented              V. TEST CASES
+in this paper. The parallel version has been programmed               The objective of this section is to test SMPEMT for practical
+using the OpenMP [30] multithreading approach. It can be              power system grids. The tests are conducted directly without
+advantageously used in any EMT-type package as a high-                any topological/data changes (user intervention) on existing
+level programming method.                                             networks. This aspect is fundamental, since it is not desirable
+
+16                                                                                                                        VOLUME 7, 2020
+Abusalah et al.: Accelerated Sparse Matrix-Based Computation of EMTs
+
+
+
+to ask software users to perform manipulations for helping
+implicated numerical issues. The presented realistic cases
+have different levels of complexities and allow to test differ-
+ent aspects. In all cases, the simulation is initialized to reach
+steady-state from a load-flow solution and a perturbation
+(fault) is applied in time-domain.
+   The computer used for testing was a Lenovo Intel(R)
+Xeon(R) CPU E5-2650 v4 @ 2.20GHz, with two clusters
+of 12 cores, with cache of 30MB and RAM of 32GB.
+   In the following tables, the tested solvers are: EMTP [24]
+for the existing sparse matrix package [26] programmed
+on single core; KLU represents the standard KLU single-
+core code without the improvements presented in this
+paper, SMPEMT1 is the upgraded KLU solver with the
+above ‘‘Pivot validity test’’ and SMPEMT2 is the upgraded
+KLU solver with both ‘‘Pivot validity test’’ and ‘‘Partial
+                                                                       FIGURE 2. Test case HQ-grid, network matrix before BTF.
+re-factorization’’. Both SMPEMT1 and SMPEMT2 are
+implemented in parallel and contrary to the standard KLU,
+these two methods are set to refactor only the changed
+matrices Ai .
+   In all cases in this paper, SMPEMT2 was faster than
+SMPEMT1, but the gains depend on the presence and loca-
+tion of dynamic columns, which is related to the simulated
+case equations.
+   The simulation results are identical with all solvers.
+   The applied models are listed for each case. The syn-
+chronous generators are modeled using the dq0 approach
+(see [32]). Details about solution methods including the iter-
+ative process for nonlinear models, can be found in [25].
+   In the text below, computational gain or performance gain
+is actually acceleration ratio between different solution meth-
+ods with different core numbers.
+
+A. FIRST TEST CASE: HYDRO-QUEBEC GRID
+                                                                       FIGURE 3. Test case HQ-grid, network matrix after BTF.
+This test case is an upgraded version of the one presented
+in [3]. It is based on the actual Hydro-Quebec grid (HQ-grid).
+The summary of main power components is:
+ RLC branches: 23181                                                     It is apparent that the KLU method alone does not have
+ PI/RL coupled branches, 3-phase: 860                                 performance gains. It is even less efficient than the EMTP
+ Lines (distributed parameters): 1354 phases                          method. This is due to the fact that re-factorization is applied
+ Ideal transformer units (for 3-phase transformers): 6294             to all blocks without the improvements of SMPEMT1 and
+ Ideal switches: 3675                                                 SMPEMT2.
+ Zinc-Oxide Arresters: 174;                                              For this case, SMPEMT2 and SMPEMT1 gave similar
+ Nonlinear inductances (transformer magnetization): 99                timings.
+ Synchronous        generators (with exciters and gover-                 The computational gain against existing EMTP solver is
+   nors): 349;                                                         1048/31 = 33.8 with 12 cores. The gain over the standard
+ Loads: 2701                                                          single-core KLU solver is 1216/31 = 39 with 12 cores.
+   The initial network matrix A is shown in Fig. 2. Its BTF               Performance plots are presented in Fig. 4. The maximum
+version is presented in Fig. 3. The size of A is 41815 × 41815         gain over the single core SMPEMT2 version is 9.2 and there
+with 168025 non-zeros. The network has 29803 nodes. The                are no significant gains after 12 cores. This is mainly due
+BTF matrix version has 217 blocks, with the largest block              to the limitation imposed by the largest block, increased
+size being 2898 × 2898.                                                memory exchange and thread management costs.
+   The HQ-grid performance timings are presented in Table 1               Comparison of simulation results between EMTP and
+for a numerical integration time-step of 1t = 50 µs and for            SMPEMT2 for a fault event are shown in Fig. 5 and Fig. 6
+the simulation time of 1 s. The average number of iterations           (zoomed version). The waveforms are identical. The studied
+per time-point is 2.0.                                                 scenario is a fault on phase-a to ground occurring at 400 ms.
+
+VOLUME 7, 2020                                                                                                                       17
+                                                                DM in [4]) approach which includes nonlinear IGBT models
+                                                                with diodes in parallel. Further details on the IGBT model
+                                                                also used for HVDC converters, can be found in [4], [5].
+                                                                   A second version of this test case with average-value mod-
+                                                                els (AVMs) [4] for converters is also tested below.
+                                                                   In addition to the above, the network contains:
+                                                                 RLC branches: 2319;
+
+                                                                 PI/RL coupled branches, 3-phase: 595
+
+
+                                                                 Lines (distributed parameters): 174 phases
+
+                                                                 Ideal transformer units (for 3-phase transformers): 606
+FIGURE 4. CPU timings and gains (against 1-core), HQ-grid,
+SMPEMT2 method.                                                  Controlled switches (converter switches): 190
+
+                                                                 Ideal switches: 254
+
+                                                                 Nonlinear resistances (used for IGBT models): 270
+
+                                                                 Nonlinear inductances (transformer magnetization): 564
+
+
+                                                                 Loads: 1029
+
+                                                                 Asynchronous generators (wind parks): 10
+
+
+
+
+FIGURE 5. Line breaker SWm current, phase-a, EMTP and
+SMPEMT2 solutions.
+
+
+
+
+                                                                FIGURE 7. Test case T0-grid, network matrix before BTF.
+FIGURE 6. Line breaker SWm current (zoom), phase-a, EMTP
+(circle) and SMPEMT2 (cross) solutions.
+
+
+The breaker SWm on the right of a transmission line opens
+its phase-a at current-zero crossing near 472 ms.
+
+B. SECOND TEST CASE: T0-GRID
+This test case is designed to stress computational perfor-
+mance using a system with integration of renewables. The top
+level view of the simulation network is presented in Fig. 10.
+The complete data of this network is available in [31].
+   This is a realistic 400 kV, 50 Hz network. The yellow
+boxes include the sub-transmission networks at 154 kV with
+pi-section models for transmission lines. The green boxes
+include 154 kV sub-transmission and wind generation.
+   There is a total of 72 synchronous generators. All gener-
+ators are modeled with exciters and governors. The 10.5 kV      FIGURE 8. Test case T0-grid, network matrix after BTF.
+generators connected to the 400 kV grid include total (dq)
+saturation data.                                                  The initial network matrix A is shown in Fig. 7. Its BTF
+   There is a total of 10 wind parks with aggregated wind       version is presented in Fig. 8. The size of A is 4703 × 4703
+generators. The wind parks are operating on reactive power      with 25117 non-zeros. The network has 3407 nodes. The
+control mode. The wind generators are of DFIG-type and          BTF matrix version has 28 blocks, with the largest block size
+include all control and protection systems. The DFIG con-       being 573 × 573 and the smallest block size is 3 × 3. It is
+verters are modeled using the detailed modeling (see DFIG       apparent from Fig. 8 that the presence of the sub-transmission
+
+18                                                                                                                  VOLUME 7, 2020
+Abusalah et al.: Accelerated Sparse Matrix-Based Computation of EMTs
+
+
+
+TABLE 1. HQ-grid performance timings (s).
+
+
+
+
+TABLE 2. T0-grid performance timings (s), DM converters.
+                                                                       FIGURE 9. CPU timings and gains (against 1-core), T0-grid,
+                                                                       SMPEMT2 method for DM converter models.
+
+                                                                       TABLE 3. T0-grid performance timings (s), AVM converters.
+
+
+
+
+grids creates a more balanced distribution of blocks. The sub-
+transmission networks are using pi-section type line models
+(short) and disable further decoupling in matrix blocks.
+   The complete network is initialized from its load-flow              SMPEMT2. On average, the largest block is able to reduce
+solution. The studied event is a (phase-a-to-ground) fault             its computing timings with repetitive re-factorizations and
+on the transmission line ADAPA_to_GOKCE connected                      perform faster.
+between the lines ADAPA and GOKCE (see fault symbol                       The computational performance with AVM even on a sin-
+in Fig. 10). The fault occurs at 1 s, the phase-a breaker on           gle core, is already significantly better than with DM and that
+the left of the line receives the opening signal at 1.08 s and         is also why it becomes difficult to improve it with more cores.
+the one on the right at 1.1 s. The phase-a breaker on the                 Although the approach proposed in this paper is based on
+left recloses at 1.48 s and the one on the right at 1.5 s. The         the complete avoidance of user intervention in simulation
+reclosing is unsuccessful and all breakers (all left and right         cases, it has been observed that inserting a one-time-step
+phases) receive the opening signal at 1.56 s to isolate the line.      delay transmission line for decoupling the wind generator
+   The T0-grid performance timings are presented in Table 2            model from its sub-transmission network, allows to achieve
+(DM) and Table 3 (AVM) for a numerical integration time-               gains up to 13 cores for both DM and AVM versions. In the
+step of 1t = 10 µs and for the simulation time of 2 s.                 case of DM the maximum gain over 1-core becomes 7.7. For
+The average number of iterations per time-point is 5.91 in             AVM the same gain increases to 4.7.
+the DM case and 1.7 in the AVM case. The higher number in                 The simulation results from EMTP and SMPEMT2 are
+the DM case is mainly due to the nonlinear IGBT models in              compared in Fig. 11. The waveforms are perfectly overlapped
+the converters. This is a numerically challenging benchmark.           and confirm the validity of SMPEMT2 computations.
+   It is observed again that the standard KLU method is slower
+than EMTP due to numerous refactorizations. In the DM case             VI. DISCUSSION
+SMPEMT2 is able to gain over SMPEMT1 due to numerous                   The above demonstrations have been made for practical net-
+nonlinearities. There is no difference between both methods            works and it is apparent that performances of parallel com-
+for the AVM version.                                                   putations vary according to simulated network topology and
+   A gain of 2580/204 = 12.6 over EMTP is achieved with                contents. In this paper the parallelization process is based on
+12 cores for the DM case. In the case of AVM, the gain is              transmission line delay decoupling of networks into subnet-
+253/27 = 9.4 with 8 cores. The same gains over the single-             works. A limitative factor is the size and/or contents of result-
+core KLU method are 4379/204 = 21.5 and 336/27 = 12.4,                 ing subnetworks. Further parallelization may be achieved by
+respectively.                                                          tearing subnetworks using diakoptics. This means cutting
+   Performance plots with SMPEMT2 for the DM version are               through generic branches when transmission lines are not
+presented in Fig. 9. The maximum gain over the single core             available. It comes back to the usage of a bordered-block-
+SMPEMT2 solution is 6.9 with 12 cores.                                 diagonal matrix in the form of
+   It is apparent from Table 3 that the largest block in this                      i                  i   i 
+                                                                                     A1     0     S1       x1        b1
+network (see subnetwork AI in Fig. 10) imposes a limit after                       0      Ai2 S2        x i  =  bi           (11)
+                                                                                                         2  2
+8 cores with the AVM case. The AVM converters do not                                  T      T              i          i
+                                                                                     S1    S2     Sd       is         bs
+require refactorization. For the case of DM converters, it is
+observed in Table 2 that the SMPEMT2 method is able to gain            In (11), the matrix Ai (ith subnetwork found through BTF)
+after 8 cores. This is due to partial re-factorization option of       is decomposed, for example, into two sub-subnetworks
+
+VOLUME 7, 2020                                                                                                                       19
+ FIGURE 10. T0-grid, top view.
+
+
+
+
+                                                                 used in this paper. The system used in [18] is based on dupli-
+                                                                 cation of a small system and does not account for realistic
+                                                                 network topologies.
+                                                                    It was not possible to use the approach of (11) to achieve
+                                                                 further gains for the test cases of this paper.
+
+                                                                 VII. CONCLUSION
+                                                                 This paper presents a new sparse matrix based method for
+                                                                 acceleration of computations in the simulation of electromag-
+FIGURE 11. Generator 3-phase power, GOKCEHPP, EMTP (blue)
+                                                                 netic transients. The proposed method accounts for varying
+and SMPEMT2 (black) solutions.
+                                                                 topologies and the accurate iterative solution of nonlinear
+                                                                 models. The proposed method is generic and demonstrated
+(matrices Ai1 and Ai2 ) interconnected by the border matrices    on practical systems.
+S. In the MANA formulation recalled in section II, it is pos-       The network equations are solved using a sparse matrix
+sible to use interconnecting wires modeled by ideal switches,    solver (KLU). Parallelization is programmed after applying
+in which case Sd = 0 and bis = 0. The switch currents are        block-triangular factorization. This is a fully automatic pro-
+given by iis . Any number of sub-subnetworks can be created.     cess and does not require any user intervention for arbitrary
+   Equation (11) can be solved in parallel using, for example,   small and large scale power systems.
+the approach presented in [18], [34], [35], or the compensa-        In addition to parallelization, the KLU solver is improved
+tion method [29], [33]. The difficulty in such methods is that   using pivot validity testing and partial refactorization. This
+in practical networks, such as those presented in this paper,    is an important contribution for achieving shown significant
+the matrices Aij encounter switching events and/or contain       computational gains.
+nonlinearities which require repetitive refactorizations and        The proposed method is applicable to any software tool
+supplementary duplications of time-consuming matrix oper-        for the computation of electromagnetic transients. Moreover,
+ations (see, for example, determination of LU factors in [18])   the proposed enhancements to the KLU solver are applicable
+required to account for the border matrices Sj . Moreover, the   to other power system computation tools.
+automatic determination of the bordered-block-diagonal sys-         The computational gains are demonstrated for practical
+tem requires further research for arbitrary topology networks    and large networks. The demonstration benchmarks and
+
+20                                                                                                                 VOLUME 7, 2020
+Abusalah et al.: Accelerated Sparse Matrix-Based Computation of EMTs
+
+
+
+results constitute another contribution of this paper for                             [17] C. Dufour, J. Mahseredjian, and J. Bélanger, ‘‘A combined state-space
+research on practical problem solutions.                                                   nodal method for the simulation of power system transients,’’ IEEE Trans.
+                                                                                           Power Del., vol. 26, no. 2, pp. 928–935, Apr. 2011.
+                                                                                      [18] S. Fan, H. Ding, A. Kariyawasam, and A. M. Gole, ‘‘Parallel electromag-
+REFERENCES                                                                                 netic transients simulation with shared memory architecture computers,’’
+ [1] J. Mahseredjian, I. Kocar, and U. Karaagac, ‘‘Solution techniques for elec-           IEEE Trans. Power Del., vol. 33, no. 1, pp. 239–247, Feb. 2018.
+     tromagnetic transients in power systems,’’ in Transient Analysis of Power        [19] T. A. Davis and E. P. Natarajan, ‘‘Algorithm 907: KLU, a direct sparse
+     Systems: Solution Techniques, Tools and Applications, J. A. Martinez-                 solver for circuit simulation problems,’’ ACM Trans. Math. Softw., vol. 37,
+     Velasco, Eds. Hoboken, NJ, USA: Wiley, 2014.                                          no. 3, pp. 36:1-36:17, Sep. 2010.
+ [2] J. Mahseredjian, V. Dinavahi, and J. A. Martinez, ‘‘Simulation tools             [20] E. P. Natarajan, ‘‘KLU—A high performance sparse linear solver for circuit
+     for electromagnetic transients in power systems: Overview and chal-                   simulation problems,’’ M.S. thesis, Univ. Florida, Gainesville, FL, USA,
+     lenges,’’ IEEE Trans. Power Del., vol. 24, no. 3, pp. 1657–1669,                      2005.
+     Jul. 2009.                                                                       [21] N. Kapre and A. DeHon, ‘‘Parallelizing sparse matrix solve for SPICE cir-
+ [3] L. Gérin-Lajoie and J. Mahseredjian, ‘‘Simulation of an extra large net-              cuit simulation using FPGAs,’’ in Proc. Int. Conf. Field-Program. Technol.,
+     work in EMTP: From electromagnetic to electromechanical transients,’’ in              Dec. 2009, pp. 190–198, doi: 10.1109/FPT.2009.5377665.
+     Proc. Int. Conf. Power Syst. Transients (IPST), Kyoto, Tokyo, Jun. 2009,         [22] A. Abusalah, O. Saad, J. Mahseredjian, U. Karaagac, L. Gerin-Lajoie, and
+     pp. 1–8.                                                                              I. Kocar, ‘‘CPU based parallel computation of electromagnetic transients
+ [4] U. Karaagac, J. Mahseredjian, L. Cai, and H. Saad, ‘‘Offshore wind                    for large scale power systems,’’ in Proc. Int. Power Syst. Transients Conf.
+     farm modeling accuracy and efficiency in MMC-based multiterminal                      (IPST), Seoul, South Korea, Jun. 2017, pp. 1–6.
+     HVDC connection,’’ IEEE Trans. Power Del., vol. 32, no. 2, pp. 617–627,          [23] A. Abusalah, O. Saad, J. Mahseredjian, U. Karaagac, L. Gerin-Lajoie, and
+     Apr. 2017.                                                                            I. Kocar, ‘‘CPU based parallel computation of electromagnetic transients
+ [5] H. Saad et al., ‘‘Dynamic averaged and simplified models for MMC-based                for large power grids,’’ Electr. Power Syst. Res., vol. 160, pp. 57–63,
+     HVDC transmission systems,’’ IEEE Trans. Power Del., vol. 28, no. 3,                  Sep. 2018.
+     pp. 1723–1730, Apr. 2013.                                                        [24] J. Mahseredjian, S. Dennetière, L. Dubé, B. Khodabakhchian, and
+ [6] U. N. Gnanarathna, A. M. Gole, and R. P. Jayasinghe, ‘‘Efficient model-               L. Gérin-Lajoie:, ‘‘On a new approach for the simulation of transients in
+     ing of modular multilevel HVDC converters (MMC) on electromagnetic                    power systems,’’ Electr. Power Syst. Res., vol. 77, no. 11, pp. 1514–1520,
+     transient simulation programs,’’ IEEE Trans. Power Del., vol. 26, no. 1,              Sep. 2007.
+     pp. 316–324, Jan. 2011.                                                          [25] J. Mahseredjian, U. Karaagac, S. Dennetière, and H. Saad, ‘‘Simulation
+ [7] B. Gustavsen, ‘‘Passivity enforcement of rational models via modal                    of electromagnetic transients with EMTP-RV,’’ in Numerical Analysis of
+     perturbation,’’ IEEE Trans. Power Del., vol. 23, no. 2, pp. 768–775,                  Power System Transients and Dynamics, A. Ametani, Ed. Edison, NJ,
+     Apr. 2008.                                                                            USA: IET, 2015.
+ [8] U. D. Annakkage et al., ‘‘Dynamic system equivalents: A survey of avail-         [26] S. C. Eisenstat, M. C. Gursky, M. H. Schultz, and A. H. Sherman, ‘‘Yale
+     able techniques,’’ IEEE Trans. Power Del., vol. 27, no. 1, pp. 411–420,               sparse matrix package,’’ Dept. Comput. Sci., Yale Univ., New Haven, CT,
+     Jan. 2012.                                                                            USA, Res. Rep. 114, 1982.
+ [9] A. Benigni, A. Monti, and R. A. Dougal, ‘‘Latency-based approach to              [27] I. S. Duff and J. K. Reid, ‘‘Algorithm 529: Permutations to block trian-
+     the simulation of large power electronics systems,’’ IEEE Trans. Power                gular form [F1],’’ ACM Trans. Math. Softw., vol. 4, no. 2, pp. 189–192,
+     Electron., vol. 29, no. 6, pp. 3201–3213, Jun. 2014.                                  1978.
+[10] J. M. Bahi, K. Rhofir, and J.-C. Miellou, ‘‘Parallel solution of linear DAEs     [28] X. S. Li, J. W. Demmel, J. R. Gilbert, L. Grigori, M. Shao, and I. Yamazaki,
+     by multisplitting waveform relaxation methods,’’ Linear Algebra Appl.,                ‘‘SuperLU users’ guide,’’ Lawrence Berkeley Nat. Lab., Berkeley,
+     vols. 332–334, pp. 181–196, Aug. 2001.                                                CA, USA, Tech. Rep., Sep. 1999. [Online]. Available: http://citeseerx.
+[11] Y. Zhang, A. M. Gole, W. Wu, B. Zhang, and H. Sun, ‘‘Development                      ist.psu.edu/viewdoc/download?doi=10.1.1.366.2886&rep=rep1&type=pdf
+     and analysis of applicability of a hybrid transient simulation platform          [29] H. W. Dommel, ‘‘Nonlinear and time-varying elements in digital sim-
+     combining TSA and EMT elements,’’ IEEE Trans. Power Syst., vol. 28,                   ulation of electromagnetic transients,’’ IEEE Trans. Power App. Syst.,
+     no. 1, pp. 357–366, Feb. 2013.                                                        vol. PAS-90, no. 6, pp. 2561–2567, Nov. 1971.
+[12] D. Paré et al., ‘‘Validation tests of the Hypersim digital real time simulator   [30] OpenMP Application Programming Interface, Version 4.5. Accessed:
+     with a large AC-DC network,’’ in Proc. Int. Conf. Power Syst. Transients,             Nov. 2015. [Online]. Available: https://www.openmp.org/wp-content/
+     New Orleans, LA, USA, 2003, pp. 1–6.                                                  uploads/openmp-4.5.pdf
+[13] S. Abourida, C. Dufour, J. Belanger, G. Murere, N. Lechevin, and B. Yu,          [31] A. Haddadi and J. Mahseredjian, ‘‘Power system test cases for EMT-
+     ‘‘Real-time PC-based simulator of electric systems and drives,’’ in Proc.             type simulation studies,’’ CIGRE, Paris, France, Tech. Rep. CIGRE WG
+     17th Annu. IEEE Appl. Power Electron. Conf. Expo. (APEC), vol. 1,                     C4.503, 2018, pp. 1–142.
+     Mar. 2002, pp. 433–438.                                                          [32] U. Karaagac, J. Mahseredjian, and O. Saad, ‘‘An efficient synchronous
+[14] R. Kuffel, J. Giesbrecht, T. Maguire, R. P. Wierckx, and P. G. McLaren,               machine model for electromagnetic transients,’’ IEEE Trans. Power Del.,
+     ‘‘RTDS—A fully digital power system simulator operating in real time,’’               vol. 26, no. 4, pp. 2456–2465, Oct. 2011.
+     in Proc. EMPD, vol. 2, Nov. 1995, pp. 498–503.                                   [33] W. F. Tinney, ‘‘Compensation methods for network solutions by opti-
+[15] R. Singh et al., ‘‘Using local grid and multi-core computing in electro-              mally ordered triangular factorization,’’ IEEE Trans. Power App. Syst.,
+     magnetic transients simulation,’’ in Proc. Int. Conf. Power Syst. Transients,         vol. PAS-91, no. 1, pp. 123–127, Jan. 1972.
+     Vancouver, BC, Canada, 2013, pp. 1–6.                                            [34] F. M. Uriarte, R. E. Hebner, and A. L. Gattozzi, ‘‘Accelerating the simu-
+[16] S. Montplaisir-Gonçalves, J. Mahseredjian, O. Saad, X. Legrand, and                   lation of shipboard power systems,’’ in Proc. Grand Challenges Modeling
+     A. El-Akoum, ‘‘A semaphore-based parallelization of networks for elec-                Simulation Conf., The Hague, Netherlands, Jun. 2011, pp. 22–29.
+     tromagnetic transients,’’ in Proc. Int. Conf. Power Syst. Transients,            [35] F. M. Uriarte, ‘‘On Kron’s diakoptics,’’ Electr. Power Syst. Res., vol. 88,
+     Vancouver, BC, Canada, 2013, pp. 1–6.                                                 pp. 146–150, Jul. 2012.
+
+
+
+
+VOLUME 7, 2020                                                                                                                                                     21
+
