@@ -50,7 +50,7 @@ updated: "2026-05-13"
 | 25 | low-rank-solver.md | methods | methods/network-solution/low-rank-solver.md | P1 | 91 | 1186 | 4 | 15 | completed |
 | 26 | high-performance-computing.md | methods | methods/simulation-technology/high-performance-computing.md | P1 | 91 | 1270 | 4 | 19 | completed |
 | 27 | renewable-energy-units.md | topics | topics/renewable-storage/renewable-energy-units.md | P1 | 91 | 1271 | 4 | 19 | completed |
-| 28 | haileselassie-2012-mtdc-control.md | methods | methods/system-studies/haileselassie-2012-mtdc-control.md | P1 | 90 | 856 | 8 | 8 | pending |
+| 28 | haileselassie-2012-mtdc-control.md | methods | methods/system-studies/haileselassie-2012-mtdc-control.md | P1 | 90 | 856 | 8 | 8 | completed |
 | 29 | vsc-mmc-test-system.md | models | models/equivalent/vsc-mmc-test-system.md | P1 | 90 | 965 | 6 | 8 | pending |
 | 30 | renewable-energy-integration.md | topics | topics/renewable-storage/renewable-energy-integration.md | P1 | 89 | 1500 | 5 | 32 | pending |
 | 31 | jiles-atherton-model.md | methods | methods/power-electronics/jiles-atherton-model.md | P1 | 89 | 1033 | 6 | 11 | pending |
@@ -504,3 +504,4 @@ updated: "2026-05-13"
 ||| 25 | 1 | 1 | 0 | low-rank-solver页面完成（2305字，129公式（22块级+107行内），16wikilink（全部验证有效），11章节，4种核心方法：分层低秩近似/Zhang 2021、分裂状态空间/Fu 2025、LDE分解/Duan 2020、FDNE压缩/Hu 2015，4篇来源论文，含方法对比表、场景-方法推荐表、量化性能边界表，公式密集型页面跳过SVG）
 ||| 26 | 1 | 1 | 0 | high-performance-computing页面完成（5377字，39公式（10块级+29行内），12wikilink全部验证有效，15章节，10篇来源论文，5表格，覆盖6种并行架构：共享内存/分布式内存/任务并行/混合并行/CPU-GPU异构/机器学习增强并行）
 |||| 27 | 1 | 1 | 0 | renewable-energy-units页面完成（1234字，46公式（14块级+32行内），35wikilink全部验证有效，11章节，6种新能源机组类型详解：Type-3 DFIG/Type-4 PMSG/PV/GFL逆变器/GFM逆变器/储能，6篇来源论文，五类模型精度-效率对比表，建模粒度选择指南表，量化性能边界表）
+|| 28 | 1 | 1 | 0 | haileselassie-2012-mtdc-control页面完成（959字，50公式（8块级+42行内），10wikilink全部验证有效，9章节，4种控制策略详解：下垂控制/V/f构网/定电压/定功率，6篇来源论文综合，含MTDC控制架构SVG图）
