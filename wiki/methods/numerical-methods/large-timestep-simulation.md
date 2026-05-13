@@ -20,6 +20,14 @@ graph TD
 ```
 
 
+## 形式化表达
+
+大步长仿真 (Large Timestep Simulation) 的形式化数学描述：
+
+$$
+\text{待补充：大步长仿真 (Large Timestep Simulation) 的数学形式化描述}
+$$
+
 ## 概述
 
 大步长仿真（Large Timestep Simulation）是指在满足目标精度和稳定性边界的前提下，使用比详细 EMT 更大的时间步长进行暂态计算。它不是单一积分算法，而是一组建模、积分、分区和验证策略的组合。常见路径包括隐式积分、[[dynamic-phasor]] 或移频建模、[[average-value-model]]、[[model-order-reduction]]、[[multirate-method]] 和频率相关网络等效。

@@ -19,6 +19,14 @@ graph TD
 ```
 
 
+## 形式化表达
+
+电流注入法 (Current Injection Method) 的形式化数学描述：
+
+$$
+\text{待补充：电流注入法 (Current Injection Method) 的数学形式化描述}
+$$
+
 ## 概述
 
 电流注入法（Current Injection Method）是在 EMT 网络方程中把外部设备、受控源或离散化元件表示为节点注入电流的方法。它通常与 [[nodal-analysis]]、[[nodal-admittance-matrix]] 和 [[companion-circuit]] 一起使用：线性或等效线性部分进入导纳矩阵，随时间变化的源项、历史项和控制输出进入右端电流向量。

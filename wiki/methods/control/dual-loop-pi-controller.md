@@ -19,6 +19,14 @@ graph TD
 ```
 
 
+## 形式化表达
+
+双闭环PI控制器 (Dual-Loop PI Controller) 的形式化数学描述：
+
+$$
+\text{待补充：双闭环PI控制器 (Dual-Loop PI Controller) 的数学形式化描述}
+$$
+
 ## 概述
 
 双闭环 PI 控制器（Dual-Loop PI Controller）是电力电子变流器中常见的级联控制结构：外环根据功率、电压、直流母线或交流电压目标生成电流参考，内环跟踪电流并输出调制电压或等效控制量。它常用于 [[vsc-model]]、[[mmc-model]]、并网逆变器、储能变流器和部分电机驱动模型。
