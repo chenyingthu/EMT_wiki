@@ -44,7 +44,7 @@ updated: "2026-05-13"
 | 19 | declarative-modeling.md | methods | methods/simulation-technology/declarative-modeling.md | P0 | 100 | 3562 | 49 | 13 | completed |
 | 20 | power-system.md | topics | topics/tools-software/power-system.md | P0 | 100 | 3438 | 63 | 15 | completed |
 | 21 | coherency-clustering.md | methods | methods/simulation-technology/coherency-clustering.md | P0 | 100 | 819 | 8 | 11 | completed |
-| 22 | mbsm.md | methods | methods/power-electronics/mbsm.md | P1 | 99 | 943 | 5 | 9 | pending |
+| 22 | mbsm.md | methods | methods/power-electronics/mbsm.md | P1 | 99 | 943 | 5 | 9 | completed |
 | 23 | large-scale-system-simulation.md | topics | topics/simulation/large-scale-system-simulation.md | P1 | 96 | 2374 | 3 | 74 | pending |
 | 24 | load-modeling.md | topics | topics/component-modeling/load-modeling.md | P1 | 94 | 1289 | 5 | 24 | pending |
 | 25 | low-rank-solver.md | methods | methods/network-solution/low-rank-solver.md | P1 | 91 | 1186 | 4 | 15 | pending |
@@ -497,3 +497,4 @@ updated: "2026-05-13"
 ||| 19 | 1 | 1 | 0 | declarative-modeling页面完成（3562字，49公式，13wikilink，6种核心机制：无因果建模/DAE索引降阶/FMI标准/Dynaωo架构/传输线建模/组件示例，6篇来源论文） |
 |||| 20 | 1 | 1 | 0 | power-system页面完成（3438字，63公式，15wikilink，1SVG，13章节，8篇来源论文，五层方法体系架构SVG图，覆盖全EMT/混合仿真/相量域三大层级，ParaEMT 36x/HPC/GPU加速数据，Hydro-Québec 1666母线实测数据） |
 || 21 | 1 | 1 | 0 | coherency-clustering页面完成（16461字，90公式，6wikilink，1SVG，9章节，4种核心方法：电流轨迹相似度/增强K-means两阶段/神经网络通用等值/延迟解耦+M-NFSS，6篇来源论文）
+|| 22 | 1 | 1 | 0 | mbsm页面完成（3703字，146公式，7wikilink，9章节，4种核心方法：拓扑参数化统一/舒尔补递归诺顿等效/动态平均化统一模型/GSFB-AVM与DEM组合模型，7篇来源论文）

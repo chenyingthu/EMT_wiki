@@ -1,0 +1,534 @@
+316                                                                              IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 26, NO. 1, JANUARY 2011
+
+
+
+
+      Efficient Modeling of Modular Multilevel HVDC
+      Converters (MMC) on Electromagnetic Transient
+                   Simulation Programs
+                Udana N. Gnanarathna, Student Member, IEEE, Aniruddha M. Gole, Fellow, IEEE, and
+                                        Rohitha P. Jayasinghe, Member, IEEE
+
+
+
+   Abstract—The number of semiconductor switches in a modular                  of this topology is the significant switching power loss resulting
+multilevel converter (MMC) for HVDC transmission is typically                  from large voltage swings.
+two orders of magnitudes larger than that in a two or three level                 One approach to improving the waveform and reducing
+voltage-sourced converter (VSC). The large number of devices
+creates a computational challenge for electromagnetic transient                switching losses is to use multilevel converters. These con-
+simulation programs, as it can significantly increase the simula-              verters provide an output waveform with a several voltage
+tion time. The paper presents a method based on partitioning the               levels so that each step in voltage waveform is a fraction of
+system’s admittance matrix and deriving an efficient time-varying              the total voltage swing [5]–[8]. The resulting waveform can
+Thévenin’s equivalent for the converter part. The proposed                     be designed to be closer to that of a sine-wave. Moreover,
+method does not make use of approximate interfaced models,
+and mathematically, is exactly equivalent to modelling the entire              the switching frequency of each individual power electronics
+network (converter and external system) as one large network. It               switch is smaller than that of a two level converter. The voltage
+is shown to drastically reduce the computational time without sac-             step at each level is also smaller. These two factors result in a
+rificing any accuracy. The paper also presents control algorithms              reduced switching loss.
+and other modelling aspects. The efficacy of the proposed method                  The recent introduction of a new topology, the modular mul-
+is demonstrated by simulating a point-to-point VSC-MMC-based
+HVDC transmission system.                                                      tilevel converter (MMC) is a major step forward in VSC con-
+                                                                               verter technology for HVDC transmission [9]. Unlike previous
+  Index Terms—Electromagnetic transients (EMT) simulation,
+                                                                               multilevel topologies, the MMC uses a stack of identical mod-
+HVDC transmission, modular multilevel converter (MMC),
+Thévenin’s equivalents, voltage-sourced converter (VSC).                       ules, each providing one step in the resulting multilevel ac wave-
+                                                                               form. The topology is easily adaptable to any voltage level, as
+                                                                               the number of modules can be adjusted in proportion to the se-
+                           I. INTRODUCTION                                     lected dc voltage. The resulting waveform has a very small har-
+                                                                               monic content and has reduced transient voltage stresses and
+    N RECENT years, the voltage and power ratings of                           hence lower high frequency (HF) noise. Also, the topology does
+I   voltage-sourced converters (VSCs) have increased signifi-
+cantly, making them potential candidates for use in high power
+                                                                               not require series connection of several semiconductor switches,
+                                                                               which has been a challenge in earlier VSC configurations for
+high-voltage direct-current (HVDC) applications [1]–[3].                       HVDC [5].
+Unlike the valves of the conventional thyristor-based line com-                   However, the large number of switching elements in the
+mutated converters (LCCs), the VSC’s valves can be turned                      MMC introduces a challenge for modelling the converter,
+off with an electronic gate signal. The VSC converter thus has                 on electromagnetic transient (EMT) simulation programs. To
+many advantages over the LCC, such as the ability to operate                   properly model the switching operation, the admittance matrix
+without reactive power support into weak or dead networks.                     which has a size equal to the total number of nodes in the
+With suitable pulsewidth modulated (PWM) control, its ac filter                network subsystem, must be inverted (re-triangularized) every
+requirements are also drastically reduced.                                     time a switch operates. In comparison to a two or three level
+   Until recently, VSC converters for HVDC applications used a                 VSC, the number of nodes (and, hence, matrix size) in the
+two or three level topology [4] that applied two or three different            MMC is typically orders of magnitude larger. Also a large
+voltage levels to the ac terminal of the converter. One drawback               number of switching operations are necessary to generate the
+                                                                               large number of output waveform levels. Therefore, without an
+   Manuscript received March 25, 2010; revised June 26, 2010; accepted
+                                                                               approach such as the one proposed in this paper, it would be
+July 17, 2010. Date of publication October 21, 2010; date of current version   practically impossible to simulate HVDC systems containing
+December 27, 2010. This work was supported by the Industrial Research Chair    MMC converters on EMT-type simulation programs.
+(IRC) Program of the Natural Sciences and Engineering Research Council
+(NSERC) of Canada. Paper no. TPWRD-00216-2010.
+                                                                                  Simplified averaged models have been proposed for dynamic
+   U. N. Gnanarathna and A. M. Gole are with the Department of Electrical      and steady state behavior of the MMC converter [10]. However,
+and Computer Engineering, University of Manitoba, Winnipeg, MB R3T 2N2,        since they do not model every level independently, they are not
+Canada (e-mail: udana@ee.umanitoba.ca; gole@ee.umanitoba.ca).                  able to simulate abnormal operation of the converter such as
+   R. P. Jayasinghe is with the Manitoba HVDC Research Centre, Winnipeg,
+MB R3P 1A3, Canada (e-mail: jayas@HVDC.ca).                                    failure of a module’s control system or failure of the module
+   Digital Object Identifier 10.1109/TPWRD.2010.2060737                        itself. To overcome this drawback, this paper introduces a new
+                                                             0885-8977/$26.00 © 2010 IEEE
+GNANARATHNA et al.: EFFICIENT MODELING OF MODULAR MULTI-LEVEL HVDC CONVERTERS                                                             317
+
+
+
+
+                                                                     Fig. 3. Level order signal n(t) for an MMC with 12 submodules per multi-
+                                                                     valve.
+
+
+
+
+                                                                     Fig. 4. Firing pulse control algorithm of the MMC.
+
+
+
+                                                                        Assuming the capacitor voltage is       , the output voltage
+Fig. 1. Modular structure of the MMC scheme.                                of each submodule can take on one of two different
+                                                                     voltage levels. With T1 in the on state,         is equal to     ,
+                                                                     and when T2 is on,          is zero. Therefore, it is possible to
+                                                                     selectively and separately control each of the individual sub-
+                                                                     modules in the converter to provide a voltage which is either
+                                                                     or zero. The switches of the submodules are operated so that
+                                                                     the individual voltages from each submodule add up to form a
+                                                                     multilevel, near-sinusoidal stepped waveform at the converter
+                                                                     terminals as shown in Fig. 3.
+Fig. 2. MMC building block: power submodule.
+                                                                     B. MMC Internal Controls
+                                                                         In the next discussion, the term “ON” signifies that a given
+approach to modelling the MMC, using the method of Nested
+                                                                     submodule is outputting a voltage          and “OFF” indicates that
+Fast and Simultaneous Solution [11]. It partitions the solution
+                                                                     it is outputting zero voltage. The firing control system for a mul-
+into two parts, with the external network solution being imple-
+                                                                     tivalve of the MMC converter is shown in Fig. 4. It generates
+mented in the main EMT solver. Each phase of the MMC is
+                                                                     switching pulses for each          submodule in a multivalve to turn
+interfaced as a specially designed Thévenin equivalent, thereby
+                                                                     it “ON” or “OFF,” in order to generate a desired reference wave-
+greatly reducing the number of nodes. The MMC is solved sep-
+                                                                     form       . In the following discussion,        refers to the number
+arately in an efficient manner, by exploiting its simple topology.
+                                                                     of submodules that must be ordered to be in the “OFF” state
+Mathematically, the method is exactly equivalent to conducting
+                                                                     at time , to closely track the voltage reference waveform. The
+an EMT simulation in the traditional manner, but can be imple-
+                                                                     complementary signal                            refers to the number
+mented with much reduced computational effort while retaining
+                                                                     of submodules required to be “ON.”
+the accuracy. The paper presents the operation, modeling, vali-
+                                                                         The reference sine wave is compared with “               ” discrete
+dation, and performance analysis of the proposed MMC model.
+                                                                     equidistant quantization thresholds, which determine the in-
+                                                                     teger        as the index of the threshold closest to the reference
+      II. MODULAR MULTILEVEL CONVERTER TOPOLOGY                      waveform. Thus, as the reference signal traces out its sinusoidal
+                                                                     waveform, it generates the stepped waveform                 . The
+A. MMC Circuit Structure
+                                                                     step change occurs at a time            , each time a new threshold
+   The structure of the three-phase modular multilevel converter     is attained, as in Fig. 3. Note that in the interval             ,
+(MMC) [4] is shown in Fig. 1. The converter consists of three        remains constant at a value of           .
+phase units, each with upper and lower multivalves. Each mul-            This request        is fed to a capacitor voltage balancing con-
+tivalve has a modular structure with a number           of series-   troller, which generates the firing pulses to turn the submodules
+connected power submodules. Each submodule contains two in-          “ON” or “OFF.” From Fig. 2, it is evident that when the sub-
+sulated-gate bipolar transistor (IGBT)/diode switches (T1 and        module is “ON,” capacitor C has an increasing voltage if the
+T2) and a capacitor, C as shown in Fig. 2. In normal operation,      module current           is positive and a decreasing voltage if it is
+exactly one of T1 or T2 is on at a given time instant .              negative.
+318                                                                           IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 26, NO. 1, JANUARY 2011
+
+
+
+   The capacitor balancing controller uses this property to con-
+trol the capacitor voltage levels in a manner similar to that de-
+scribed in [9]. The capacitor voltages of each submodules in
+a multivalve are measured at the beginning of each change of
+     , at time          . These are sorted in order of their mag-
+nitudes. Since the multivalve consists of a stack of series con-
+nected submodules, the submodule current                is the same as      Fig. 5. Partitioning of the system into smaller subsystems.
+the multivalve current           . Therefore, the direction of indi-
+vidual submodule current            is identical to that of the multi-
+valve current       . If this current is positive at time          (i.e.,   hierarchical approach partitions the network into smaller sub-
+resulting in capacitor voltage increase), the              submodules       networks and solves the admittance problem for each separately.
+at the bottom of the sorted list are turned ON. This ensures that           Although, this increases the number of steps in the solution, the
+in the interval             , the         capacitors with the lowest        size of each of the admittance matrices is much smaller than that
+voltages will increase in voltage. Similarly, if            is negative,    of the admittance matrix of the full network, which can lead to
+the          submodules at the top of the sorted list are turned            a reduction in simulation time.
+ON so that their voltages will be reduced during the converter                 The algorithm is explained using the two-part network shown
+operation. The voltage can be controlled in a narrow band by                in Fig. 5. The equivalent admittance matrix formulation for this
+applying this methodology for all three phases [9].                         network can be written as (1)
+
+                                                                                                                                             (1)
+                     III. MODELING OF MMC
+   In HVDC converters, the number of submodules per mul-                    where
+tivalve        is selected to be large because this reduces the
+voltage rating per module [12]. This also makes the output                                       admittance matrices for the partitions 1 and
+waveform more harmonic-free, thereby greatly improving the                                       2, respectively;
+power quality. There is essentially no ac-side filtering require-                                admittance matrices for interconnections;
+ment when        exceeds 200 [13].
+                                                                                                 unknown node voltage vectors for the
+   The large count in semiconductor switches (IGBTs and
+                                                                                                 partitions;
+diodes) creates a significant challenge for EMT programs. At
+every turn-on or turn-off of a switch, the admittance matrix,                                    source current vectors (obtained from branch
+which has a size equal to the total number of nodes in the                                       history and other sources).
+network subsystem, must be inverted (re-triangularized). In-                   Assuming the number of nodes in the two partitions to be
+verting a large-sized admittance matrix several hundred times               and     , respectively, a straightforward, direct solution for the
+in a cycle is computationally very inefficient. For example, to             unknown voltage vector               would require an admittance
+model an MMC with 100 submodules per multivalve requires                    matrix of size                           to be retriangularized.
+the modelling of 1200 IGBTs and 1200 reverse diodes. In                        The second row of (1) can be rearranged in the form of (2)
+comparison, a two-level VSC converter has only 6 IGBTS and                  to express voltage       as a function of     and other sources.
+6 reverse diodes.                                                           Substituting (2) into the first row of (1) yields (3). Note that
+   To overcome this computational hurdle, this paper introduces             the quantity in parenthesis in (3) is the Norton equivalent of
+a new approach to model the MMC, using the method of Nested                     as seen from the boundary nodes of System 1 and includes
+Fast and Simultaneous Solution [11]. The modeling is based on               a term for the Norton current source                   and a term
+the conversion of a multinode network into an exact but com-                               for the Norton admittance.
+putationally simpler electrical equivalent using the Thévenin’s
+theorem [14]. This approach will be discussed.                                                                                               (2)
+                                                                                                                                             (3)
+A. Nested Fast and Simultaneous Simulation Approach
+                                                                                                                                             (4)
+   Most EMT programs use Dommel’s algorithm [15], which
+through the application of trapezoidal integration, converts each              Equation (3) can be further simplified to (4) which is a set of
+dynamic element into a Norton equivalent current source in par-             linear equations of dimension . It can be solved for . Then,
+allel with a conductance. The current source is updated each                    can be substituted into (2) to calculate . Once all voltages
+time-step and is a function of the history of the network in ear-           are known, all currents can readily be calculated.
+lier time-steps. The equations necessary for solving the full cir-             Note that this procedure requires the inversion of two ma-
+cuit can be formulated using nodal analysis, from the resulting             trices      of dimension             and                        of
+network of current sources and conductances. The number of                  dimension            . Although described for a partition of the
+rows and columns of the nodal admittance matrix is each equal               original system into two subsystems, the approach can be gen-
+to the number of nodes in the network.                                      eralized to multiple subsystems. In the model developed here,
+   A recent enhancement to the Dommel’s algorithm is the use                each multivalve is modeled as its own subsystem which reduces
+of Nested Fast and Simultaneous Solution [11]. This multistep               the maximum subsystem size even further.
+GNANARATHNA et al.: EFFICIENT MODELING OF MODULAR MULTI-LEVEL HVDC CONVERTERS                                                       319
+
+
+
+
+Fig. 6. Equivalent circuit for a submodule.
+
+
+
+   However, rather than applying the procedure in a formal
+mathematical manner using (2) and (3) as in the original paper
+on Nested Fast and Simultaneous Solutions which considers
+circuits in general [11], the Norton equivalent-based equation
+of the form (2) is used here. This Norton equivalent for the
+MMC can be obtained in a very straightforward manner di-            Fig. 7. Equivalent circuit representation for a multivalve.
+rectly, as will be shown. Applying the formal procedure of [11]
+still requires inversion of fairly large matrices corresponding
+to each multivalve, whereas the direct derivation of the Norton     where
+equivalent can reduce computations very drastically.
+
+B. Thévenin or Norton Equivalent Circuit for the Submodule
+   The IGBT switches can be treated as two state resistive de-
+vices [16]. Since the parallel connection of an IGBT and a diode
+acts as a bidirectional switch and only one device is conducting
+at a given instance, the pair is still considered as a single two
+state resistance. Using the trapezoidal integration method, the
+capacitor can be represented as an equivalent voltage source and    C. Dynamic Model for Multivalve
+a resistor [15] as in (5)                                             By daisy-chaining the individual submodules of Fig. 6, the
+                                                                    equivalent circuit of Fig. 7 for the multivalve can be constructed.
+                                                                    This structure corresponds to system 2, and due to the daisy-
+                                                                    chaining, the resulting matrix        is sparse and has a banded
+                                                                    diagonal, making its inversion more computationally efficient.
+                                                                    However, as it turns out, its Thévenin equivalent can be deter-
+                                                                    mined very simply, and so even this mathematical step can be
+hence                                                               simplified. Since output terminals of the submodules are series
+                                                                    connected, the multivalve voltage is the sum of all the individual
+                                                             (5)    submodule voltages as shown
+
+where
+
+
+
+
+   From (5), the equivalent resistance        depends on the ca-
+pacitance of the submodule and simulation time step only. The
+equivalent voltage          is simply calculated by using the ca-                                                                  (7)
+pacitor current and voltage values in the past time-step (history
+terms). With the aforementioned capacitor representation, in-       where
+cluding switch resistances       and , generates the mathemat-
+                                                                               number of submodules in a multivalve.
+ically equivalent circuit shown in Fig. 6.
+   The values of resistor     (similarly, ) depend on the switch       Equation (7) can be converted into a Thévenin equivalent cir-
+state and is either the “ON” state resistance       or the “OFF”    cuit consisting of a series connected equivalent voltage source
+state resistance         . The terminal voltage of an individual    and a resistor. Since the same multivalve current passes through
+submodule can be determined as a function of its current as (6)     all submodules, this equation can be used to develop a dynamic
+                                                                    equivalent model for the multivalve as in Fig. 8, which is simple,
+                                                             (6)    yet exact. The inputs to the equivalent shown in Fig. 8 are those
+320                                                                         IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 26, NO. 1, JANUARY 2011
+
+
+
+                                                                          time step [18], assuming that the actual system is stable. How-
+                                                                          ever, recently there have been other A-stable methods used for
+                                                                          obtaining the equivalent that claim superior accuracy to trape-
+                                                                          zoidal integration. The two stage—diagonally implicit Runge-
+                                                                          Kutta (2S-DIRK) is one of these methods [19]. In addition to the
+                                                                          conventional EMT approach of trapezoidal integration, the pro-
+                                                                          posed equivalent was also implemented by using this method.
+                                                                          However, the results show that this did not make any significant
+Fig. 8. Thévenin equivalent of a multivalve of MMC.                       difference either to the accuracy or to the speed of the algorithm.
+
+                                                                                              IV. MODEL VALIDATION
+                                                                             The proposed dynamic model was validated by comparison
+                                                                          with the traditional EMT time domain simulation of a full, unre-
+Fig. 9. Two-part network with a reduced number of nodes in subsystem 2.
+                                                                          duced model of the MMC using the PSCAD/EMTDC program.
+                                                                          The number of submodules was varied from 2 to 120 and the
+                                                                          simulation time-step used was         s. The comparison was con-
+that are required to determine the value of the Thévenin equiva-          ducted for a single converter phase, as simulation using the
+lent’s parameters. For example, from (6) and (7),it is evident that       traditional approach would have required extremely large cen-
+the determination of          requires knowledge of the ON/OFF            tral-processing unit (CPU) time, especially when the number of
+state of each submodule.                                                  submodules was large. Results of these comparisons, shown in
+   This is determined from the firing pulses (input “FP” in Fig.          the following sections, confirm that the equivalent model main-
+8) that are generated by the MMC control system discussed in              tains the full accuracy of the traditional model but significantly
+Section II-B and shown in Fig. 4. Also, since all of the submod-          reduces the computational burden.
+ules are now collapsed into a single equivalent, their individual
+                                                                          A. Accuracy
+identities are no longer available in the main EMT solver. The
+Thévenin equivalent solver, however, does consider each sub-                 The waveforms generated by the equivalent were compared
+module separately and so has a record of the individual capacitor         with those from the traditional model in order to assess the ac-
+voltages. These are outputs from the block and made available             curacy of the equivalencing approach.
+for the controller of Fig. 4 since they are needed by the capacitor          1) Simulation of Normal Operation: Fig. 10 shows the sub-
+voltage balancing controller.                                             module and converter waveforms for comparison. Waveforms
+   The nodal admittance matrix solver requires a Norton equiv-            for the firing signal, the voltage across one of the modules
+alent, for which the conversion from the Thévenin equivalent is           (top-most module in the upper multivalve), module capacitor
+straightforward and trivial. Each multivalve in the MMC is thus           voltage and current, and the output voltage of the converter are
+reduced to a single 2-node element in the main EMT solver as              shown. The results are essentially identical for the equivalent
+shown in Fig. 9 and, thus, the size of the resulting admittance           and the traditional model. Therefore, the proposed model is able
+matrix of the full network is reduced typically by several orders         to model each submodule separately and shows the behavior of
+of magnitude. This greatly speeds up the computation as will be           the complete multivalve. In this example, only 12 submodules
+shown later.                                                              were used so that the steps in the output waveform are notice-
+   The proposed algorithm was interfaced to the PSCAD/                    able. An actual MMC application typically has a significantly
+EMTDC simulation program [17] in this research. The number                larger number of modules [20], as will be exemplified in a later
+of submodules is user-selectable.                                         example.
+   Another benefit of the model is that the inner loop controls              2) Simulation of a Submodule Switch Failure: In contrast to
+(e.g., IGBT switching, capacitor voltage balancing) are pack-             averaged models [10], [21] that can simulate the MMC’s ex-
+aged into the block and, hence, the user is relieved from the             ternal behavior but are unable to model the abnormal operation
+details of modeling these, and can concentrate on system level            of the converter, such as the failure of a module’s control system
+modelling. However, the interface between the inner-loop con-             or failure of the module itself, the proposed model is capable of
+trols and the power electronic module is accessible, permitting           representing the exact behavior of this operation in a manner
+the advanced user to override the built in controls.                      identical to the traditional approach. The MMC output wave-
+                                                                          forms for the failure of a semiconductor switch in a single sub-
+D. Numerical Integration Methods                                          module are shown in Fig. 11. In this case, the lower switch in the
+   The trapezoidal rule has been traditionally used in EMT-type           submodule is assumed to fail into a permanent “ON” state. The
+programs to construct a time-domain Norton equivalent model               proposed model matches the transient as well as steady state be-
+of typical power system elements [15] as mentioned at the be-             havior of the traditional model even for this maloperation.
+ginning of Section III-A. The form for the submodule equiv-
+alent derived in (5) uses this method. The main advantages of             B. CPU Efficiency
+the trapezoidal rule are that it is A-stable and reasonably accu-           A 5-s period was simulated with a simulation time step of
+rate. A-stability implies that the method does not diverge for any        20 s. The simulations were conducted on a Microsoft Win-
+GNANARATHNA et al.: EFFICIENT MODELING OF MODULAR MULTI-LEVEL HVDC CONVERTERS                                                                             321
+
+
+
+
+Fig. 10. Submodule and MMC converter waveforms from proposed and tra-          Fig. 12. (a) CPU times for traditional and proposed models. (b) Speed-up ratio.
+ditional models. From top to bottom: (a) firing pulse , (b) submodule output
+voltage, (c) submodule capacitor voltage, (d) capacitor current, and (e) MMC
+output voltage.
+
+
+
+
+Fig. 11. MMC output voltage waveforms of: (a) traditional and ( b) proposed    Fig. 13. (a) Capacitor voltages in two candidate submodules showing the effect
+equivalent s models during a firing failure of a single submodule.             of enabling/disabling voltage balancing control. (b) MMC output voltage (i)
+                                                                               without and (ii) with voltage balancing in operation.
+
+                              TABLE I
+               TIME COMPARISON OF THE PROPOSED MODEL
+                                                                               takes more than 2.5 h whereas the proposed model takes 30 s, a
+                                                                               speedup of 31,107% or over 310 times faster.
+                                                                                  In addition to the conventional trapezoidal integration
+                                                                               method, Table I also includes CPU times obtained with the
+                                                                               2S-DIRK method. The results are not significantly different.
+
+                                                                               C. Simulation of Voltage Balancing Controller Operation
+                                                                                  In this section, the capacitor balancing controller discussed
+                                                                               in Section II-B is disabled at 1.0 s, causing the voltages of two
+                                                                               candidate capacitors to diverge as shown in Fig. 13(a). The di-
+                                                                               vergence of capacitor voltage waveforms is caused by the length
+                                                                               of the charging (or discharging) interval which depends on the
+dows XP Professional platform with a 3.00 GHz Intel Core 2                     module’s duty cycle. The capacitors having the longest ON pe-
+Duo E8400 CPU, 3.37 GB of RAM running PSCAD version X4                         riod either overcharge or undercharge based on the current di-
+(Beta). Table I tabulates the CPU times for the proposed equiva-               rection. Of course, the sum of the capacitor voltages of all “ON”
+lent converter model and the traditional model for different num-              state submodules must be equal to the dc bus voltage at any in-
+bers of submodules and two different integration methods.                      stant.
+   The data are also plotted on a semi-log graph in Fig. 12 to pro-               However, when the balancing controller is re-enabled at 2.0 s,
+vide a more visual comparison. As the number of submodules                     the capacitor voltages quickly become equal. The corresponding
+grows, the CPU time of the traditional model grows at a much                   converter output voltage waveforms around the 1.83 s mark
+faster rate than that of the proposed model. For 120 submod-                   without capacitor voltage balancing and at the 2.7 s mark with
+ules per multivalve (i.e., 240 in total), the traditional simulation           voltage balancing enabled are also shown in Fig. 13(b).
+322                                                                     IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 26, NO. 1, JANUARY 2011
+
+
+
+
+Fig. 14. MMC-based HVDC system.
+
+
+                          TABLE II
+       PARAMETERS OF MMC-BASED HVDC SIMULATION SYSTEM.
+
+
+
+
+                                                                     Fig. 15. Voltage controller (rectifier side).
+
+
+
+
+  V. SIMULATION OF A POINT-POINT MMC-BASED HVDC
+                TRANSMISSION SYSTEM                                  Fig. 16. Power controller (inverter side).
+
+   This section shows how the proposed model can be used in
+the simulation of a complete point-point HVDC transmission
+system which is designed to transfer power from the ac system        voltage and Bus1 ac voltage. MMC2 operates in the power con-
+1 (AC1) to system 2 (AC2) through a dc link as shown in Fig. 14.     trol mode and regulates the power transfer.
+The dc system is rated at 400 MW and 200 kV. MMC1 op-                   1) Rectifier Side DC Voltage Controller: In the “direct con-
+erates as a rectifier feeding the dc link. The receiving-end con-    trol” method, the dc voltage is regulated by control of the phase
+verter MMC2 operates as an inverter and converts the dc link         shift angle      between the VSC generated converter side ac
+power back to ac. The proposed MMC model was used to model           waveform at Bus 1A and the ac system waveform at Bus 1 in
+the power converters in the HVDC system. The internal con-           Fig. 14. This effectively changes the real power flowing into the
+trols of the converters were used for capacitor voltage balancing    rectifier. The local busbar voltage is also maintained at its refer-
+and firing signal generations as discussed in Section II-B. The      ence by controlling the magnitude of the Bus 1A waveform via
+number of submodules was selected based on the converter’s dc        the modulation index       . These signals             are generated
+voltage rating and has a nominal voltage of 4.0 kV. Complete         via the proportional-integral (PI) control loops shown in Fig. 15.
+system data are given in Table II.                                   They are then fed to the reference signal generator which gen-
+   Each converter consists of 100 submodules per multivalve          erates three sinusoidal reference signals for the firing controller
+(in each phase) in this example, giving a total of 2400 semicon-     of MMC as described in Section II-B.
+ductor switches. This large system would have been extremely            2) Power Controller: The structure of the inverter side con-
+challenging to model by using the traditional approach on            troller is shown in Fig. 16, and is similar to that of the recti-
+present day personal computers without an approach such as           fier controller. The main difference is that the delay angle is
+the one developed in this paper.                                     generated from the power error signal, which is the difference
+                                                                     between the ordered power            and the real power at bus2.
+                                                                     The modulation index         as in the rectifier controller, regulates
+A. Controls of the MMC–HVDC System
+                                                                     the ac busbar voltage. Again, three sinusoidal reference signals
+   The direct control strategy [22] is applied for the system con-   are generated by using the controlled for the firing controller of
+trollers. Converter MMC1 is responsible for controlling the dc       MMC2.
+GNANARATHNA et al.: EFFICIENT MODELING OF MODULAR MULTI-LEVEL HVDC CONVERTERS                                                                                     323
+
+
+
+
+Fig. 17. System response for the power reference change from 1 p.u. to 0.5
+p.u. Top to bottom: (a) Inverter side power. (b) Inverter side busbar1 voltage. (c)
+Rectifier side dc voltage. (d) Rectifier side busbar2 voltage.
+                                                                                      Fig. 19. Inverter side waveforms after an L-G fault is applied for 150 ms on
+                                                                                      phase “A” at 8 s. Top to bottom: (a) Line A current, (b) dc voltage, (c) dc side
+                                                                                      current, (d) ac power, and (e) top-most capacitor voltage of phase “A.”
+
+
+
+                                                                                      those from the traditional model. Fig. 19 shows waveforms for
+                                                                                      inverter side ac phase “A” current, dc voltage, dc current, and
+                                                                                      power waveforms for fault application and removal. The pro-
+                                                                                      posed model is seen to accurately reproduce the results from
+                                                                                      the traditional model. Due to the excessive CPU time required
+                                                                                      by the traditional model, the size of the MMC was confined to
+                                                                                      24 submodules per multivalve (48 per phase unit).
+
+                                                                                      D. CPU Efficiency–HVDC System Simulations
+                                                                                         The CPU run time was measured for a 5-s run of full HVDC
+                                                                                      system simulations at the 20- s solution time step as in Sec-
+                                                                                      tion IV-B. By comparing the CPU run times for the traditional
+                                                                                      model and the proposed model as shown in Table III, the CPU
+Fig. 18. Rectifier side voltage and current waveforms. (a) Power order change.        efficiency of the proposed model becomes clear. With 96 sub-
+(b) Valve side voltages. (c) AC system side voltages. (d) AC line currents.           modules, the estimated CPU time with the traditional approach
+                                                                                      would be more than 14 h, whereas it is less than 2 min with the
+                                                                                      proposed method. The 14-h time was estimated by conducting
+B. Simulation During a Power Order Change of the HVDC                                 a very short duration run (0.1 s) and scaling it to the actual run
+System                                                                                length of 5 s.
+   Fig. 17 shows how the dc and the ac voltages (rectifier side)
+at the rectifier and inverter are affected when the power order is                                                VI. CONCLUSION
+changed from 1 p.u. to 0.5 p.u. The plots show that the power                            An approach for modelling modular multilevel converters
+order change (to 90% of final setting) can be achieved in 47 ms,                      with a very large number of switching devices was introduced.
+with less than 8% fluctuation in the ac or dc voltages.                               The approach used the “nested fast and simultaneous solution”
+   The actual waveforms of the rectifier side ac voltages on the                      algorithm to develop a Thévenin equivalent model for the
+valve side and ac system side as well as the line currents are                        converter that still maintains the individual identity of every
+shown in Fig. 18. The MMC output waveforms are effectively                            submodule. Several comparisons were carried out between the
+sinusoidal, even though there are no ac filters. The simulation                       proposed model and a traditional model of converter phase unit.
+time for a 5-s simulation on the same computer as discussed in                        The speed-up factor in CPU time increased with the number
+Section IV-B, was 117 s using a 20- s time-step. These sim-                           of submodules and could be higher than 2 orders of magnitude
+ulations demonstrate that the proposed converter model can be                         without the loss of accuracy. This approach enables what was
+effectively used in the simulation of full HVDC systems.                              hitherto not practical, the modelling of large MMC-based
+                                                                                      HVDC systems on personal computers.
+C. Simulation of a Line-to-Ground Fault                                                  The proposed model was used to efficiently simulate a point-
+   A 9-cycle duration (150 ms) line-to-ground fault was applied                       point dc transmission system and showed that it could be used
+at 8 s, to the inverter side busbar (Bus 2 in Fig. 14) on phase                       effectively to model larger systems. Although the approach con-
+“A.” The results from the proposed model were compared with                           siders the specific case of the MMC, it is easily adaptable for the
+324                                                                                    IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 26, NO. 1, JANUARY 2011
+
+
+
+                                TABLE III                                               [15] H. W. Dommel, “Digital computation of electromagnetic transients in
+                TIME COMPARISON OF MMC–HVDC SIMULATION                                       single and multi-phase networks,” IEEE Trans. Power App. Syst., vol.
+                                                                                             PAS-88, no. 4, pp. 388–399, Apr. 1969.
+                                                                                        [16] PSCAD X4 User’s Guide. Winnipeg, MB, Canada, Manitoba HVDC
+                                                                                             Res. Ctr., 2009.
+                                                                                        [17] User’s Guide: Comprehensive Resource for EMTDC-Transient Anal-
+                                                                                             ysis for PSCAD Power System Simulation. Winnipeg, MB, Canada,
+                                                                                             Manitoba HVDC Res. Ctr., 2005.
+                                                                                        [18] G. Dahlquist, “A special stability problem for linear multistep
+                                                                                             methods,” BIT Numer. Math., vol. 3, no. 1, pp. 27–43, 1963.
+                                                                                        [19] T. Noda, K. Takenaka, and T. Inoue, “Numerical integration by the
+                                                                                             2-stage diagonally implicit Runge-Kutta method for electromagnetic
+                                                                                             transient simulations,” IEEE Trans. Power Del., vol. 24, no. 1, pp.
+                                                                                             390–399, Jan. 2009.
+                                                                                        [20] B. Gemmell, J. Dorn, D. Retzmann, and D. Soerangr, “Prospects of
+                                                                                             multilevel VSC technologies for power transmission,” presented at the
+simulation of other power-electronics converter topologies with                              IEEE T&D Conf. Expo., Chicago, IL, Apr. 21–24, 2008.
+very large switch counts.                                                               [21] G. Ding, G. Tang, Z. He, and M. Ding, “New technologies of voltage
+                                                                                             source converter (VSC) for HVDC transmission system based on
+                                                                                             VSC,” in Proc.IEEE Power Eng. Soc. General Meet. Conversion and
+                                  REFERENCES                                                 Delivery of Electrical Energy in the 21st Century, Jul. 2008, pp. 1–8.
+                                                                                        [22] CIGRÉ, SC B4 HVDC and Power Electronics, Working Group B4-37,
+       [1] T. Nakajima and S. Irokawa, “A control system for HVDC transmission               VSC Transmission, CIGRÉ Tech. Brochure no. 269 2005.
+           by voltage sourced converters,” in Proc. IEEE Power Eng. Soc. Summer
+           Meet., Edmonton, AB, Canada, 1999, vol. 2, pp. 1113–1119.                                            Udana N. Gnanarathna (S’09) was born in
+       [2] J. Kreusel, “Integrated AC/DC transmission systems—benefits                                          Colombo, Sri Lanka, in 1979. He received the B.Sc.
+           of power electronics for security and sustainability of power                                        degree in electrical engineering from the University
+           supply—survey paper, part 2,” presented at the 16th Power Sys-                                       of Moratuwa, Sri Lanka, in 2004, the M.Sc. degree
+           tems Computation Conf., Glasgow, Scotland, Jul. 2008.                                                from KAIST, Taejon, South Korea, in 2007, and is
+       [3] D. Ettrich, A. Krummholz, D. Retzmann, and K. Uecker, “Prospects                                     currently pursuing the Ph.D. degree in electrical and
+           of HVDC & FACTS for bulk power transmission and system security,”                                    computer engineering at the University of Manitoba,
+           presented at the Int. Exhibit. Seminar—Electrical Networks of Russia                                 Winnipeg, MB, Canada.
+           LEP, Moscow, Russia, 2007.                                                                              In 2007, he was a Lecturer in the Department of
+       [4] D. Retzmann and K. Uecker, “Benefits of HVDC & FACTS for sus-                                        Electrical Engineering, University of Moratuwa, Sri
+           tainability and security of power supply,” presented at the Powerafrica                              Lanka. His research interests are the applications of
+           Conf. Expo., Johannesburg, South Africa, Jul. 2007.                       flexible ac transmission systems and HVDC devices and transients simulation
+       [5] J. Lai and F. Z. Peng, “Multilevel converters—A new breed of power        of power electronics systems.
+           converters,” IEEE Trans. Ind. Appl., vol. 32, no. 3, pp. 509–517, May/
+           Jun. 1996.
+       [6] Y. Liu, Z. Zhao, C. Qian, and X. Zhou, “A novel three-phase multi-
+           level voltage source converter,” in Proc. Power Electronics and Motion
+           Control Conf., Beijing, China, 2000, vol. 3, pp. 1172–1175.                                          Aniruddha M. Gole (S’77–M’82–SM’04–F’10) re-
+       [7] K. Oguchi, Y. Maki, and Y. Sunaga, “Three-phase multilevel-voltage                                   ceived the B.Tech. degree in electrical engineering
+           source converters with low switching frequencies and less distorted                                  from the Indian Institute of Technology, Bombay, in
+           input voltages,” IEEE Trans. Ind. Appl., vol. 30, no. 5, pp. 1156–1165,                              1978 and the Ph.D. degree from the University of
+           Sep./Oct. 1994.                                                                                      Manitoba, Winnipeg, MB, Canada, in 1982.
+       [8] G. Gateau, M. Fadel, P. Maussion, R. Bensaid, and T. A. Meynard,                                        Since 2009, he has been Distinguished Professor
+           “Multicell converters: Basic concepts and industry applications,” IEEE                               at the University of Manitoba.
+           Trans. Ind. Electron., vol. 49, no. 5, pp. 955–964, Oct. 2002.                                           Dr. Gole is a member of the original development
+       [9] A. Lesnicar and R. Marquardt, “An innovative modular multilevel con-                                 team for the PSCAD/EMTDC program, and con-
+           verter topology suitable for a wide power range,” in Proc. IEEE Power                                tinues to conduct research on the modeling of power
+           Tech Conf., Bologna, Italy, Jun. 2003, vol. 3.                                                       systems with embedded power electronic apparatus.
+      [10] S. P. Teeuwsen, “Simplified dynamic model of a voltage-sourced            He is the 2007 recipient of the IEEE PES Nari Hingorani FACTS Award. He is
+           converter with modular multilevel converter design,” presented at the     a Registered Professional Engineer in the Province of Manitoba, Canada.
+           IEEE/Power Eng. Soc. -Power Systems Conf. Expo., Seattle, WA,
+           Mar. 2009.
+      [11] K. Strunz and E. Carlson, “Nested fast and simultaneous solution for
+           time-domain simulation of integrative power-electric and electronic                                Rohitha. P. Jayasinghe (M’90) received the B.Sc.
+           systems,” IEEE Trans. Power Del., vol. 22, no. 1, pp. 277–287, Jan.                                (Eng.) degree from the University of Moratuwa, Sri
+           2007.                                                                                              Lanka, in 1987 and the Ph.D. degree from the Univer-
+      [12] A. Lesnicar and R. Marquardt, “A new modular voltage source inverter                               sity of Manitoba, Winnipeg, MB, Canada, in 1997.
+           topology,” presented at the Power Electronics and Applications (EPE),                                 Currently, he is with the Manitoba HVDC
+           Toulouse, France, Sep. 2003.                                                                       Research Center, Winnipeg. As a Development
+      [13] G. Coriolo, D. Retzmann, and K. Uecker, “Prospects of multilevel VSC                               Engineer, he plays a major role in the current
+           converter technologies,” presented at the HVDC Transmission Work-                                  developments of the PSCAD/EMTDC simulation
+           shop, Rome, Italy, Nov. 2008.                                                                      program. He is an Adjunct Professor at the Univer-
+      [14] G. Corazza, C. Someda, and G. Longo, “Generalized thevenin’s the-                                  sity of Manitoba.
+           orem for linear N-port networks,” IEEE Trans. Circuit Theory, vol. 16,                                Dr. Jayasinghe is a Registered Professional Engi-
+           no. 4, pp. 564–566, Nov. 1969.                                            neer in the Province of Manitoba.
+
