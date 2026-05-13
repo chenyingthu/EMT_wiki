@@ -1,0 +1,982 @@
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPEL.2020.3026721, IEEE
+                                                                                               Transactions on Power Electronics
+          IEEE TRANSACTIONS ON POWER ELECTRONICS , VOL. XX, NO. X, XXXXXX 202X                                                                                                                               1
+
+
+
+
+            An Inverter Model Simulating Accurate Harmonics
+                   with Low Computational Burden for
+                  Electromagnetic Transient Simulations
+                      Shuntaro Horiuchi, Student Member, IEEE, Kenichiro Sano, Member, IEEE and Taku Noda, Senior
+                                                            Member, IEEE,
+
+
+
+             Abstract—The electromagnetic transient (EMT) simulation of                                       devices. The model which is called a switching (SW) model
+          a power system involving power-electronics converters requires a                                    in this paper can accurately simulate the harmonics produced
+          fairly small time-step size to consider switching of the converters,                                by the switching operation. However, the SW model needs
+          thus leading to a heavy computational burden. To accelerate
+          such simulations, this paper generalizes the time average method                                    a fairly small simulation time step (around 1/100 of the
+          (TAM), originally developed for real-time simulations, so that                                      switching cycle). Even if a single inverter is connected to the
+          it becomes suitable to off-line EMT simulations. For obtaining                                      power system, all the system has to be calculated with the
+          accurate current waveforms with a large time step, the TAM and                                      same small time step. Thus, the simulation takes considerable
+          the proposed method represent each leg of an inverter by voltage                                    computation time. One of the technical challenges in applying
+          sources, and its output voltage is modiﬁed by interpolation at
+          an instance of switching. The original TAM was intended for                                         the EMT simulations to power system analysis is satisfying
+          the primitive backward Euler method. This paper contributes                                         both adequate simulation accuracy and acceptable computation
+          to generalize it for the trapezoidal integration method which                                       time.
+          is widely used in off-line simulation programs. In addition, the                                       Linear interpolation methods [4]–[11] and variable/multiple
+          proposed method uses a simple formula to identify the switching                                     time-step simulations [12]–[14] are typical methods for the
+          instance for the implementation on off-the-shelf PCs, rather than
+          a hardware counter in an FPGA as used in the TAM. This                                              SW model to simulate the dynamics of inverters accurately
+          paper shows that the proposed method enables to extend the                                          with a relatively large simulation time step. However, the linear
+          time step by a factor of ﬁve without deteriorating the accuracy.                                    interpolation methods require multiple interpolation processes
+          A case study demonstrates reduction of computational time by a                                      if the system includes multiple inverters. The variable/multiple
+          factor of three for the off-line simulation of a single-phase grid-                                 time-step simulations require a re-formulation of the admit-
+          connected inverter with reasonable reproduction of harmonics.
+                                                                                                              tance matrix each time the time step changes. These may
+                                                                                                              increase a computational burden when simulating a large-scale
+             Index Terms—Electromagnetic transient (EMT) simulation,
+                                                                                                              power system with multiple inverters. The averaging method
+          grid-connected inverter, harmonic analysis, voltage interpolation.
+                                                                                                              [15] was extended for the modeling of grid-connected inverters
+                                                                                                              so as to achieve fast EMT simulations [16]–[19], which is
+                                I. I NTRODUCTION                                                              called a circuit average model. Although the model is able to
+                                                                                                              operate with a large time-step (as large as the switching cycle),
+          T    HE-widespread use of photovoltaic and wind power gen-
+               eration has increased grid-connected inverters in power
+          systems. Such inverters interact with the power system and
+                                                                                                              it cannot reproduce the harmonics produced by switching
+                                                                                                              operations. This is because the model is based on averaged
+                                                                                                              values over one switching cycle.
+          sometimes cause power quality issues related to harmonics
+                                                                                                                 The time average method (TAM) [20], [21] was originally
+          [1]–[3]. Since the dynamic characteristics of inverters can be
+                                                                                                              developed for real-time simulations in order to reproduce
+          dealt with time-domain circuit simulations such as EMTP or
+                                                                                                              the behavior of inverters including harmonics with a large
+          EMTDC, they have been used as a major tool to investigate
+                                                                                                              simulation time step. The method represents each leg of an
+          such interactions involving harmonics. The circuit simulation
+                                                                                                              inverter by voltage sources which apply the PWM voltage
+          is also referred to as an electromagnetic transient (EMT)
+                                                                                                              waveform to the ac side. At an instance of switching, the
+          simulation to distinguish it from phasor domain simulations
+                                                                                                              voltage is modiﬁed by interpolation to reduce the error in
+          or electromagnetic ﬁeld simulations.
+                                                                                                              the ac current waveform. The original TAM was intended
+             In EMT simulations, the inverter is often modeled by
+                                                                                                              for the primitive backward Euler method of integration and
+          ideal switches replicating switching operations of its power
+                                                                                                              implemented on a ﬁeld programmable gate array (FPGA).
+            S. Horiuchi and K. Sano are with the Department of Electrical and                                    This paper generalizes the TAM so that it becomes suitable
+          Electronic Engineering, Tokyo Institute of Technology, Tokyo 152–8552,                              to off-line EMT simulations [22]. The proposed voltage in-
+          Japan (e-mail: horiuchi.s@pel.ee.e.titech.ac.jp; sano@ee.e.titech.ac.jp).
+            T. Noda is with Energy Innovation Center, Central Research Institute of                           terpolation method is applicable to the trapezoidal method of
+          Electric Power Industry (CRIEPI), 2-6-1 Nagasaka, Yokosuka, Kanagawa                                integration which is widely used in off-line EMT simulation
+          240–0196, Japan (e-mail: takunoda@ieee.org).                                                        programs. In addition, the proposed method uses a simple
+            A part of this paper was presented at the IEEE Applied Power Electronics
+          Conference and Exposition (APEC), New Orleans, LA, March 15-19, 2020.                               formula to identify the switching instance for the implemen-
+          [22]                                                                                                tation on off-the-shelf PCs, rather than hardware counters
+
+
+ 0885-8993 (c) 2020 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+             Authorized licensed use limited to: University of New South Wales. Downloaded on September 27,2020 at 03:00:57 UTC from IEEE Xplore. Restrictions apply.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPEL.2020.3026721, IEEE
+                                                                                               Transactions on Power Electronics
+          2                                                                                            IEEE TRANSACTIONS ON POWER ELECTRONICS , VOL. XX, NO. X, XXXXXX 202X
+
+
+
+
+                                        Reference             SW model              VI model                                     DC+                       DC+                          iac-
+                      Vdc
+                                                                                                                                                                                               +
+                                                                                                                                                                                               _
+                vac _                                                                                                                                                                              s-Vdc
+                    sVdc                                                   Interpolation voltage
+                                                                                                                  s+                                                        s-iac-
+                                                                                                                                                                                                     iac
+                                                                                                                                                           Vdc
+                                                                                                                  s-
+                                                                                                                                                                                     s+iac+
+                                                                                                                                                                                                     vac
+                                                                                                                                                                                               +
+                iac                                                                                                                                                                            _ +
+                                                                                                                                                                                                 s V   dc
+                                         Ts                                                                                      DC-
+                                                                                                                                                             DC-                     iac+
+                        0                                                                          t
+                               tn-1                 tn         trise   tn+1                tn+2                         (a) SW model                               (b) Equivalent circuit model
+
+                                                                                                              Fig. 2. Equivalent circuit model of an inverter leg used for the TAM and the
+          Fig. 1. AC voltage and current waveforms in the inverter.                                           voltage interpolation method.
+
+                                                                                                                                                  Sfall_ref
+          implemented on an FPGA as used in the TAM. As a result,                                                               Vdc
+
+
+
+
+                                                                                                                   reference
+          the proposed method realizes fast and accurate off-line EMT
+
+
+
+
+                                                                                                                     vac_ref
+          simulations on general PCs. This paper compares the simula-
+          tion results of a single-phase grid-connected inverter obtained                                                        0                                                                     t
+          by the conventional SW model and the proposed method.                                                                                           tfall             trise
+          The comparison veriﬁes that the proposed method enables to                                                            Vdc
+                                                                                                                   TAM
+                                                                                                                   vac_int
+          extend the time step by a factor of ﬁve without deteriorating                                                        _                           Sfall_int
+          the accuracy, resulting in reduction of computation time by a                                                        sVdc
+          factor of three with reasonable reproduction of harmonics.                                                             0                                                                     t
+                                                                                                                                                   tn-1                tn             tn+1
+              II. OVERVIEW OF THE T IME AVERAGE M ETHOD (TAM)                                                 Fig. 3. AC voltage waveforms in the TAM for the backward Euler integration
+          A. Error Caused by the SW Model                                                                     method.
+
+             Fig. 1 shows the waveforms of ac voltage vac and ac current
+          iac in a half-bridge inverter at a switching event. Ts is a                                         B. Equivalent Circuit Model of an Inverter Leg
+          simulation time step, and tn−1 , tn , tn+1 , tn+2 are calculation
+                                                                                                                 Fig. 2 shows the equivalent circuit model of an inverter leg
+          points. The reference shows a theoretical waveform when vac
+                                                                                                              for the TAM [21]. It consists of voltage controlled voltage
+          rises at trise . Because digital simulations can hold the values
+                                                                                                              sources s+ Vdc , s− Vdc , current controlled current sources
+          only at the calculation points, the transition is reﬂected at                                                  − −
+                                                                                                              s + i+
+                                                                                                                   ac , s iac , and two ideal diodes. s
+                                                                                                                                                        +
+                                                                                                                                                          and s− correspond
+          tn+1 immediately after the switching instant trise . Because
+                                                                                                              to the switching signals for the inverter leg. If a PWM signal
+          vac is applied to the ac inductor of the inverter, iac changes
+                                                                                                              (0 or 1) is fed to s+ and s− , the model outputs the same
+          according to the integral of vac . The numerical integration by
+                                                                                                              voltages and currents as the SW model at each terminal. If an
+          the backward Euler method is explained as calculating the area
+                                                                                                              interpolation signal between 0 and 1 is fed to s+ and s− , the
+          under the dotted line of vac . Even if the SW model outputs
+                                                                                                              model outputs intermediate voltage between 0 and Vdc at the
+          the same voltage as the reference at each time step, the dotted
+                                                                                                              ac terminal like the circuit average models. The ideal diodes
+          line differs from the reference. It means that the integral of
+                                                                                                              enable to simulate the appropriate ac voltage vac according to
+          vac in the SW model differs from that in the reference. The
+                                                                                                              the polarity of iac during deadtimes and a blocking state.
+          difference causes an error in iac [23], then it is accumulated in
+                                                                                                                 In the TAM and the voltage interpolation method described
+          the following calculation points. Because the error increases
+                                                                                                              later in the section III, 0 or 1 is fed to s+ and s− between
+          with increasing Ts , the SW model has to be used with a
+                                                                                                              the switching events, and the interpolation signal 0 < s < 1 is
+          small Ts (around 1/100 of the switching cycle) for accurate
+                                                                                                              fed to s+ and s− at the calculation point around the switching
+          simulations.
+                                                                                                              events.
+             The basic idea of the TAM [20] is depicted in Fig. 1 as
+                                                                                                                 The equivalent circuit model operates as an inverter leg.
+          the voltage interpolation (VI) model. It modiﬁes the voltage
+                                                                                                              Therefore, the method is applicable to any kinds of converters
+          at tn+1 from Vdc to sVdc , that is called “interpolation” of the
+                                                                                                              consisting of the inverter legs [21], [24]. For example, half-
+          voltage in this paper. Although the dashed line of vac differs
+                                                                                                              bridge, full-bridge, three-phase bridge, and boost converters.
+          from the reference, the area under the dashed line is equal to
+          that of the reference. It means that the integral of vac in the
+          VI model coincides with that in the reference. As a result, iac                                     C. Calculation of the Interpolation Value
+          can be simulated without error even if it is used with a larger                                       The TAM originally uses high-speed hardware counters
+          Ts . If the inverter’s current is simulated accurately, the voltage                                 implemented on an FPGA to generate the interpolation value s.
+          and current harmonics in the grid side also become accurate.                                        The modulated switching signal s is over-sampled at intervals
+
+
+ 0885-8993 (c) 2020 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+              Authorized licensed use limited to: University of New South Wales. Downloaded on September 27,2020 at 03:00:57 UTC from IEEE Xplore. Restrictions apply.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPEL.2020.3026721, IEEE
+                                                                                               Transactions on Power Electronics
+          HORIUCHI et al.                                                                                                                                                                                        3
+
+
+
+                          v                                                                                                                             Sfall_ref                  Srise_ref
+                                                           vcarrier                                                                   Vdc
+
+
+
+
+                                                                                                                      reference
+                                             1                         v*
+
+
+
+
+                                                                                                                        vac_ref
+                                         h                                                                                                                                  Ts/2
+                                                                       1                                                                0                                                                    t
+                                                                            -h                                                                                      tfall             trise
+                                                                                                                                        V
+
+
+
+
+                                                                                                                  interpolation
+                                                                                                                                   _ dc
+                                                                  Ts
+
+
+
+
+                                                                                                                     YROWDJH
+                                                                                                                                   sfallVdc                                   Srise_int
+
+
+
+
+                                                                                                                      vac_int
+                                                                                                                                   _        Sfall_int
+                                                                                        t                                          sriseVdc
+                               tn-1 tfall             tn     trise           tn+1                                                       0                                                                    t
+                                                                                                                                            tn-2            tn-1                tn             tn+1   tn+2
+          Fig. 4. Triangular carrier PWM with synchronous sampling: v ∗ is a sampled
+          voltage reference and vcarrier is a triangular carrier waveform.
+                                                                                                              Fig. 5. AC voltage waveforms in the proposed voltage interpolation method
+                                                                                                              for the trapezoidal integration method.
+          much smaller than the simulation time step. At the end of each
+          time step, the sampled switching signal is averaged over one
+                                                                                                              by amplitude and frequency of the carrier. According to these
+          simulation time step. Then, it is fed to the equivalent circuit
+                                                                                                              parameters, tfall and trise are obtained based on the following
+          model as an interpolation value s.
+                                                                                                              equations
+             Fig. 3 shows the relation between the reference voltage
+          vac ref and the discrete voltage obtained by the TAM. The                                                                 v ∗ − vcarrier
+                                                                                                                       tfall = tn−1 +                                     (1)
+          reference voltage vac ref falls at tfall and then it rises at trise .                                                           h
+          The area Sfall ref corresponds to the integral of vac ref from                                                        v ∗ − vcarrier
+          tn−1 to tn . The TAM outputs the averaged value sVdc to the                                              trise = tn −                ,                          (2)
+                                                                                                                                       h
+          ac voltage vac int at tn . The area Sfall int corresponds to the                                    where tn−1 and tn are the calculation points closest to tfall
+          integral of vac int from tn−1 to tn by the backward Euler                                           and trise , respectively.
+          method. To simulate the ac current accurately, Sfall int has to                                        From (1) and (2), the accurate switching times are obtained
+          be equal to Sfall ref in each time step. This is true only with                                     by the calculation regardless of the simulation time step. The
+          the backward Euler integration. Therefore, the TAM has to be                                        calculation can be implemented by the control system function
+          used with a solver applying the backward Euler integration                                          in the off-line EMT simulation program.
+          method for accurate simulations.
+             There are two difﬁculties to apply the TAM to off-line
+          EMT simulations. First, it is not compatible with the solver                                        B. Derivation of the Interpolation Value for the Trapezoidal
+          applying the trapezoidal method, which is applied in many                                           Integration Method
+          EMT simulation programs. Second, it uses hardware counters                                             Fig. 5 shows the relation between the reference voltage
+          for generating the interpolation value, whereas the off-line                                        vac ref and the discrete voltage obtained by the voltage inter-
+          simulations are executed on general PCs. Thus, the interpola-                                       polation method vac int for the trapezoidal integration method.
+          tion value should be calculated on the processor independently                                      The voltage interpolation method outputs the interpolation
+          of the hardware conﬁgurations.                                                                      voltages sfall Vdc and srise Vdc at tn−1 and tn , respectively. The
+                                                                                                              sfall Vdc and srise Vdc are determined to make the hatched areas
+              III. P ROPOSED VOLTAGE I NTERPOLATION M ETHOD                                                   in vac int to be equal to the hatched areas in vac ref in each
+             The proposed method generalizes the TAM in order to                                              calculation point. Then, the numerical integral of vac int by the
+          be suitable for the off-line EMT simulations. The proposed                                          trapezoidal method becomes equal to the integral of vac ref .
+          method has an originality in its calculation algorithm of the                                          The area Sfall ref corresponds to the integral of vac ref from
+          interpolation value. It calculates the interpolation value based                                    tn−1 − Ts /2 to tn−1 + Ts /2. It is represented by
+          on a simple formula instead of averaging the switching signal                                                              T                    
+                                                                                                                                        s
+          by hardware counters. Because the proposed method does not                                                 Sfall ref = Vdc      + (tfall − tn−1 ) ,                  (3)
+                                                                                                                                       2
+          include the “time averaging” process anymore, the proposed
+                                                                                                              where tfall is the switching time of the theoretical waveform,
+          method is called as the voltage interpolation method. Note
+                                                                                                              and tn−1 is the closest calculation point to tfall . In the same
+          that it has no relevance of algorithm to the linear interpolation
+                                                                                                              way, the area Srise ref is represented by
+          methods [4]–[6].
+                                                                                                                                     T                  
+                                                                                                                                        s
+                                                                                                                     Srise ref = Vdc      − (trise − tn ) ,                    (4)
+          A. Derivation of the Switching Time                                                                                          2
+             To calculate the interpolation values, we ﬁrst derives the                                       where trise is the switching time of the theoretical waveform,
+          switching times of the theoretical waveform tfall and trise .                                       and tn is the closest calculation point to trise . On the other
+          Fig. 4 shows the triangular carrier PWM with synchronous                                            hand, Sfall int and Srise int , which represent the hatched areas
+          sampling, which is commonly used in digital control. Voltage                                        in vac int are given by the following equations.
+          reference v ∗ is updated either asymmetrically (top and bottom)                                              Sfall int = sfall Vdc Ts                                                              (5)
+          or symmetrically (only top) being synchronized with the trian-
+          gular carrier vcarrier . The slope of the carrier h is determined                                            Srise int = srise Vdc Ts                                                              (6)
+
+
+ 0885-8993 (c) 2020 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+             Authorized licensed use limited to: University of New South Wales. Downloaded on September 27,2020 at 03:00:57 UTC from IEEE Xplore. Restrictions apply.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPEL.2020.3026721, IEEE
+                                                                                               Transactions on Power Electronics
+          4                                                                                            IEEE TRANSACTIONS ON POWER ELECTRONICS , VOL. XX, NO. X, XXXXXX 202X
+
+
+
+          The interpolation values sfall at tn−1 and srise at tn are derived                                                                                                   L
+          to satisfy Sfall ref = Sfall int and Srise ref = Srise int from (3)–
+          (6) as follows:
+
+
+
+
+                                                                                                                                                 Inv. leg
+
+
+                                                                                                                                                             Inv. leg
+                                                                                                                                                                               iL
+                                                                                                                               Vdc                                      vout               R
+                        1 tfall − tn−1
+                 sfall = +                                                                           (7)
+                        2       Ts
+                             1 trise − tn
+                 srise =       −                                                                     (8)
+                             2     Ts
+                                                                                                              Fig. 6. Simulation circuit of a full-bridge inverter with open-loop control.
+          Substituting (1) for (7), and (2) for (8), the interpolation values
+          sfall and srise are given by the following equations.                                                                            TABLE I
+                        1 v ∗ − vcarrier                                                                       C IRCUIT PARAMETERS OF THE FULL - BRIDGE INVERTER WITH OPEN - LOOP
+                 sfall = +                                                                           (9)                                   CONTROL .
+                        2      hTs
+                             1 v ∗ − vcarrier                                                                                         Input voltage                     Vdc     300 V
+                 srise =       +              ,                                                    (10)                                                                 fac     50 Hz
+                             2      hTs                                                                                               Output frequency
+                                                                                                                                      AC inductor                        L      1 mH
+          which are represented by the same formula for both the voltage                                                              Resistor                           R       10 Ω
+          fall and rise. In the voltage interpolation method, sfall and                                                               Switching frequency               fsw     20 kHz
+                                                                                                                                      Dead time                         Td       1 μs
+          srise are calculated in the processor according to the formula
+                                                                                                                                      Modulation index                  M         0.9
+          shown in (9) and (10). Thus, this method does not require
+          any hardware counters. The obtained interpolation values are
+          handed over to the equivalent circuit model shown in Fig. 2.
+                                                                                                              amplitude and frequency is given as a voltage reference.
+          C. Restriction of the Proposed Method                                                               Bipolar modulation is adopted to reduce the common mode
+                                                                                                              voltage, which is often used in photovoltaic (PV) generation
+             The interpolation voltage was derived under the assumption                                       systems [25], [26]. However, the voltage interpolation method
+          that the voltage reference v ∗ and the slope of the carrier h                                       is applicable to not only the bipolar modulation but also the
+          are constant during a half switching cycle. Because of this                                         unipolar modulation. The dead time of Td = 1 μs is inserted
+          assumption, this method enables to calculate the interpolation                                      to conﬁrm the distortion caused by the dead time. Because
+          voltage at the calculation point before the switching event.                                        the main purpose is veriﬁcation of the voltage interpolation
+          This assumption is satisﬁed in case of the triangular carrier                                       method, the inverter is operated with simple open-loop control.
+          PWM with synchronous sampling, which is commonly used                                               The inverter is equipped with no current controls and other
+          in digital controllers. However, the proposed method cannot                                         upper-level controls. Under these conditions, the output current
+          be applied to the simulation of the converters with analog                                          iout and the output voltage vout are evaluated in the waveforms
+          controllers which process the continuous signal. This is be-                                        and frequency spectra at the steady state. The reference value
+          cause the voltage reference v ∗ continuously changes during                                         for comparison was obtained by the SW model with the
+          a half switching cycle. The over modulation condition is not                                        sufﬁciently small simulation time step Ts = 0.1 μs. The
+          investigated in this paper because we focus on grid-connected                                       evaluated output currents were obtained by the SW model and
+          converters. This would be a subject for future investigation                                        the VI model with Ts = 5 μs. The accuracy of the current
+          especially for simulating motor drive applications.                                                 waveforms is evaluated by comparing them to the reference
+                                                                                                              value. XTAP [27], which is an EMT simulation program
+          IV. E VALUATION OF THE S IMULATED I NVERTER C URRENT                                                developed by the CRIEPI, was used for the simulations.
+             This section evaluates the accuracy of the simulated inverter
+          current including harmonics. An inverter is modeled using                                           B. Accuracy of the Inverter Current
+          the proposed voltage interpolation method (referred to as the
+          VI model hereafter). The evaluation is carried out on a full-                                          Fig. 7 shows the simulated waveforms of the output current
+          bridge inverter with simple open-loop control because the main                                      of the inverter iout . Fig. 8 shows the frequency spectra of
+          purpose is veriﬁcation of the voltage interpolation method.                                         iout . (a) is the reference value, (b) and (c) are the simulation
+                                                                                                              results by the SW model and the VI model, respectively. The
+                                                                                                              reference value shown in (a) contained not only the third, ﬁfth,
+          A. Simulation Conditions                                                                            and seventh harmonic components caused by the dead time
+             Fig. 6 shows the circuit conﬁguration of the full-bridge                                         but also the switching frequency components fsw and 2fsw .
+          inverter used for the veriﬁcation, and Table I shows its circuit                                    Fig. 7 (b) obtained by the SW model shows a waveform that
+          parameters. The SW model and the VI model are implemented                                           changes steeply in steps. This is because the pulse width of the
+          on each inverter leg as shown in Fig. 2 (a) and (b), respectively,                                  output voltage can take only integer multiples of the simulation
+          and a full-bridge inverter is built with paralleling the two                                        time step, as explained with Fig. 1. As a result, the original
+          inverter legs. An ac inductor L and a resistor R are connected                                      sinusoidal waveform is changed to the stepwise waveform,
+          to the ac terminal. Switching signals are generated by the                                          which is an inaccurate result. The number of steps becomes
+          triangular carrier PWM, and a sinusoidal waveform of constant                                       1/2fsw Ts except the operation in the over-modulation range.
+
+
+ 0885-8993 (c) 2020 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+              Authorized licensed use limited to: University of New South Wales. Downloaded on September 27,2020 at 03:00:57 UTC from IEEE Xplore. Restrictions apply.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPEL.2020.3026721, IEEE
+                                                                                               Transactions on Power Electronics
+          HORIUCHI et al.                                                                                                                                                                                     5
+
+
+
+
+                        20                                                                                                              UG WK                                             IVZ    IVZ
+                                                                                                                            10 0
+             i out[A]
+
+
+
+
+                                                                                                                 i out[A]
+                         0                                                                                                  10 -2
+
+                        -20                                                                                                 10 -4
+
+                          0         5           10            15           20           25           30                              10 2                   10 3                    10 4
+                                                        Time [ms]                                                                                         Frequency [Hz]
+                                                 (a) Reference                                                                                        (a) Reference
+
+
+                        20
+                                                                                                                            10 0
+             i out[A]
+
+
+
+
+                                                                                                                 i out[A]
+                         0                                                                                                  10 -2
+
+                        -20                                                                                                 10 -4
+
+                          0         5           10            15           20           25           30                              10 2                   10 3                    10 4
+                                                        Time [ms]                                                                                         Frequency [Hz]
+                                        (b) SW model (Ts = 5 μs)                                                                             (b) SW model (Ts = 5 μs)
+
+
+                        20
+                                                                                                                            10 0
+             i out[A]
+
+
+
+
+                                                                                                                 i out[A]
+                         0                                                                                                  10 -2
+
+                        -20                                                                                                 10 -4
+
+                          0         5           10            15           20           25           30                              10 2                   10 3                    10 4
+                                                        Time [ms]                                                                                         Frequency [Hz]
+                                         (c) VI model (Ts = 5 μs)                                                                             (c) VI model (Ts = 5 μs)
+
+          Fig. 7. Simulated waveforms of the output current.                                                  Fig. 8. Frequency spectra of the output current.
+
+
+                                                                                                                                                    Reference               SW              VI
+          Thus, the larger time step reduces the available voltage steps,
+          resulting in degrading the simulation accuracy. It is limited to
+                                                                                                                            200
+          only ﬁve voltage steps in this simulation condition, and it was
+                                                                                                                 v out[V]
+
+
+
+
+          obviously observed in Fig. 7 (b). As a result, its frequency                                                        0
+          spectrum in Fig. 8 (b) contained higher harmonics than the                                                   -200
+          reference value in all harmonic regions. Fig. 7 (c) obtained by
+          the VI model accurately simulates both the current distortion                                                                             Reference               SW              VI
+
+          caused by the dead time and switching ripples. Fig. 8 (c) also
+                                                                                                                             20
+          demonstrates that the VI model simulates the almost same
+                                                                                                                 i out[A]
+
+
+
+
+          amount of harmonics to the reference value. It contained some                                                      15
+          amount of error in the switching frequency components fsw
+          and 2fsw , which were 10% smaller than that of the reference                                                       10
+          value. These results demonstrate that the voltage interpolation                                                     12.7          12.75                  12.8            12.85               12.9
+          method can simulate the harmonic components in the output                                                                                             Time [ms]
+          current even with a large simulation time step.
+             We discuss the reason why the error occurred at the switch-                                      Fig. 9. Enlarged current and voltage waveforms.
+          ing frequency component fsw in the VI model. Fig. 9 is an
+          enlarged waveform of the output voltage vout and the output
+          current iout . In the SW model, vout was either Vdc = 300 V or                                      frequency component became smaller than the reference value.
+          Vdc = −300 V. This resulted in causing the error in iout . In the                                   The error was less than 10% to the reference value in this
+          VI model, iout was accurately simulated by interpolating the                                        simulation condition. The error is a factor which determines
+          output voltage vout at the switching transitions. Nevertheless,                                     the upper limit of the simulation time step in the VI model.
+          the peaks of the ripple in iout was rounded as compared to
+          the reference value. This is because the number of calculation                                                      V. M ODEL C OMPARISON WHEN A PPLIED TO A
+          points in one switching cycle decreases as the simulation                                                                  G RID -C ONNECTED I NVERTER
+          time step becomes closer to the switching cycle. Then, the                                             This section compares computational times and simulation
+          simulated wave had no calculation points around the peaks                                           results among the SW model, the VI model, and the circuit
+          of the ripple. As a result, the harmonics of the switching                                          average model (CA model). The comparison is carried out by a
+
+
+ 0885-8993 (c) 2020 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+             Authorized licensed use limited to: University of New South Wales. Downloaded on September 27,2020 at 03:00:57 UTC from IEEE Xplore. Restrictions apply.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPEL.2020.3026721, IEEE
+                                                                                               Transactions on Power Electronics
+          6                                                                                                             IEEE TRANSACTIONS ON POWER ELECTRONICS , VOL. XX, NO. X, XXXXXX 202X
+
+
+
+                                                             Rline         Lline                     Lline                                                        TABLE II
+                                                                                                                                              C IRCUIT PARAMETERS OF THE PV GENERATION SYSTEM .
+
+                  PV                                         igrid
+                 array             Inverter          vPCC                                        Cline              Vgrid           Line voltage                           Vgrid                 200 V
+                 model                                       Rline         Lline                     Lline                          Line frequency                         fgrid                 50 Hz
+                                                                                                                                    Line inductance                        Lline                0.1 mH
+                                                                                                                                                                                           0 μF (in Fig.11-14)
+                                                                                                                                    Line capaciance                        Cline
+                                                                                                                                                                                         0.211 μF(in Fig.15,16)
+                                          (a) Overall conﬁguration                                                                  Line resistance                        Rline                0.05 Ω
+                                                                                                     Lfil                           Output voltage of PV array             Vpv                   235 V
+                                                                                                                                    DC-link voltage                        Vdc                   400 V
+                                  Ldc
+                                                                                                                                    DC ﬁlter capacitor                     Cpv                  0.5 mF
+                                                                                                             Cfil
+                                                                                                                                    DC inductor                            Ldc                   1 mH
+                                          Inv. leg
+
+
+
+
+                                                                           Inv. leg
+
+
+                                                                                      Inv. leg
+                                                            Cdc      Vdc
+                                  Cpv                                                                        Rfil
+                                                                                                                                    DC-link capacitor                      Cdc                   5 mF
+                  Vpv                                                                                Lfil
+                                                                                                                                    AC ﬁlter inductor                      Lﬁl                  0.4 mH
+                                                                                                                                    AC ﬁlter capacitor                     Cﬁl                    5 μF
+                                                                                                                                    AC ﬁlter resistance                    Rﬁl                  12.8 Ω
+                                 (b) Circuit conﬁguration of the inverter                                                           Switching frequency                    fsw                  20 kHz
+                                                                                                                                    Dead time                               Td                    1 μs
+          Fig. 10. Simulation circuit of a PV generation system.
+
+
+                                                                                                                                        10
+          grid-connected inverter for PV generation systems considering                                                                                      SW
+
+
+
+
+                                                                                                                             06( [A]
+                                                                                                                                                             VI
+          a practical use case.                                                                                                          1
+
+          A. Simulation Conditions                                                                                                      0.1
+
+             Fig. 10 shows the conﬁguration of the PV generation system                                                                   0              1             2             3             4             5
+          used for the comparison. Table II shows its circuit parameters.                                                                                              Time step [ s]
+          The conﬁguration is based on the standard model of the
+          Institute of Electrical Engineers of Japan (IEEJ) [28] with                                                       Fig. 11. Relation of simulation time steps and errors.
+          modifying some of its parameters and controls. Fig. 10 (a) is
+          the overall conﬁguration. A PV array model is connected to the                                                                200                                        200
+          dc side of the inverter. The ac side of the inverter is connected
+                                                                                                                             MSE [mA]
+
+
+
+
+          to a single-phase ac grid modeled by Lline , Rline , Cline , and
+          a voltage source Vgrid . Cline is connected only in the section                                                               100                                        100
+          D, and the sections A to C are carried out without Cline . Fig.
+          10 (b) is the circuit conﬁguration of the inverter. It consists of                                                              0                                         0
+                                                                                                                                                   0.2       0.5   1                          1        2.5   5
+          a boost converter, a full-bridge inverter, and switching ripple
+                                                                                                                                                  Time Step T s [ s]                        Time Step T s [ s]
+          ﬁlters. Switching signals are generated by the triangular carrier
+          PWM with bipolar modulation.                                                                                                           (a) SW model                                 (b) VI model
+             The inverter legs are implemented by the SW model, the                                                         Fig. 12. Comparison of the errors between SW model and VI model.
+          VI model, and the CA model. The difference among the three
+          models is only the inverter legs, and the other circuits and
+          control systems have the same conﬁguration among them.                                                            the same time. The reference value is obtained by the SW
+                                                                                                                            model with the sufﬁciently small simulation time step Ts = 0.1
+          B. Simulation Time Steps and Errors                                                                               μs. The error of the VI model is not inﬂuenced whether
+             For comparing the computational time, it is necessary to set                                                   its simulation time step is synchronous or asynchronous to
+          appropriate simulation time steps for each model. Therefore,                                                      the switching cycle. However, the error of the SW model
+          we ﬁrst clarify the relation between simulation time steps and                                                    randomly ﬂuctuates if its simulation time step is asynchronous
+          errors in simulated waveforms. The mean square error (MSE)                                                        to the switching cycle. This makes the quantitative comparison
+          is used to quantify the error in a simulated waveform. The                                                        difﬁcult. Therefore, all the simulated values are obtained with
+          MSE is obtained by taking the root mean square of the errors                                                      the simulation time steps which are equal to the switching
+          in the N calculation points over one cycle of the ac grid, which                                                  cycle divided by integers in order to prevent the effect in the
+          is expressed as follows:                                                                                          SW model.
+                                                                                                                               Fig. 11 shows the relation between simulation time steps Ts
+                                                                                                                           and the MSEs in the simulated waveforms by the SW model
+                            
+                            1  N
+                                                                                                                            and the VI model. The MSE increases as Ts increases in both
+              MSE(igrid ) =        {igrid sim (n) − igrid ref (n)}2 , (11)                                                 models. Compared with the same Ts , the MSE of the SW
+                              N n=1
+                                                                                                                            model is larger than that of the VI model.
+          where igrid sim (n) is the simulated value of igrid at the n-                                                        Fig. 12 extracts a part of the values shown in Fig. 11 to
+          th calculation point and igrid ref (n) is the reference value at                                                  compare (a) the SW model and (b) the VI model. The MSEs
+
+
+ 0885-8993 (c) 2020 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+              Authorized licensed use limited to: University of New South Wales. Downloaded on September 27,2020 at 03:00:57 UTC from IEEE Xplore. Restrictions apply.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPEL.2020.3026721, IEEE
+                                                                                               Transactions on Power Electronics
+          HORIUCHI et al.                                                                                                                                                                                      7
+
+
+
+                                           TABLE III                                                                              40
+                              C OMPUTATIONAL TIMES OF EACH MODEL .
+
+
+
+
+                                                                                                                     i grid[A]
+                                                                                                                                  20
+                                                                                                                                   0
+                                                                                                                                 -20
+                            Models                             Computational time                                                -40
+                            SW model (Ts = 1 μs)                     86 s
+                                                                                                                                200
+
+
+
+
+                                                                                                                   v PCC [V]
+                            VI model (Ts = 5 μs)                     33 s
+                            CA model (Ts = 25 μs)                     7s                                                          0
+                                                                                                                               -200
+                                                                                                                                   0       5           10          15           20           25           30
+                                                                                                                                                              Time [ms]
+          when the VI model is used with Ts = 1 μs, 2.5 μs, 5 μs are
+          smaller than the MSEs when the SW model is used with Ts =                                                                                   (a) Reference
+          0.2 μs, 0.5 μs, 1 μs, respectively. Therefore, even if the VI
+          model is used with a simulation time step which is ﬁve times                                                            40
+
+
+
+
+                                                                                                                     i grid[A]
+                                                                                                                                  20
+          larger than that of the SW model, the VI model can obtain                                                                0
+          more accurate simulation results. The following comparisons                                                            -20
+          are carried out by setting the simulation time step to 1 μs for                                                        -40
+          the SW model and 5 μs for the VI model.                                                                               200
+
+
+
+
+                                                                                                                   v PCC [V]
+             Similarly, the simulated waveforms by the CA model are                                                               0
+          also evaluated by the MSE. The simulation time step of the                                                           -200
+          CA model is generally set to match the sampling period of                                                                0       5           10          15           20           25           30
+          voltages and currents in order to simulate the inﬂuence of                                                                                          Time [ms]
+          a time delay in digital control. The sampling period is 25 μs
+                                                                                                                                               (b) SW model (Ts = 1 μs)
+          since the values are sampled at both the upper and lower peaks
+          of the 20 kHz carrier waves. Thus, the simulation time step of                                                          40
+          the CA model is set to 25 μs. In that case, The MSE of the
+                                                                                                                     i grid[A]
+                                                                                                                                  20
+          CA model is 839 mA.                                                                                                      0
+                                                                                                                                 -20
+                                                                                                                                 -40
+          C. Simulated Waveforms without Resonance                                                                              200
+                                                                                                                   v PCC [V]
+
+
+
+
+             In accordance with the previous section, the simulations                                                             0
+                                                                                                                               -200
+          were performed with 1 μs (MSE = 197 mA) for the SW model,
+          5 μs (MSE = 144 mA) for the VI model, and 25 μs (MSE                                                                     0       5           10          15           20           25           30
+          = 839 mA) for the CA model. Fig. 13 shows the simulated                                                                                             Time [ms]
+          waveforms of the ac current igrid and the ac voltage vPCC                                                                            (c) VI model (Ts = 5 μs)
+          at the point of common coupling (PCC). (a) is the reference
+                                                                                                                                  40
+          value, and (b), (c), and (d) are the waveforms obtained by the
+                                                                                                                     i grid[A]
+
+
+
+
+                                                                                                                                  20
+          SW model, the VI model, and the CA model, respectively. All                                                              0
+          the models simulated the sinusoidal current waveform very                                                              -20
+                                                                                                                                 -40
+          well. The switching ripple in the voltage waveform is also
+                                                                                                                                200
+                                                                                                                   v PCC [V]
+
+
+
+
+          reproduced by the SW model and the VI model. Fig. 14 shows
+          the enlarged waveforms. The SW model and the VI model                                                                   0
+                                                                                                                               -200
+          reproduce the ripple of the switching frequency, whereas the
+          CA model cannot deal with this ripple. The envelope of                                                                   0       5           10          15           20           25           30
+          the vPCC in the VI model seems slightly smaller than the                                                                                            Time [ms]
+          reference. This results from the fewer calculation points by                                                                         (d) CA model (Ts = 25 μs)
+          using the large simulation time step, which is not caused by
+          the algorithm of the VI model.                                                                      Fig. 13. Simulated waveforms without resonance (Cline = 0).
+
+
+          D. Comparison of the Computational Times                                                            the computational time if the simulation does not have to deal
+            Table III shows the computational times required to execute                                       with the harmonics such as switching ripples.
+          the EMT simulation of ﬁve seconds in each model. The VI
+          model (Ts = 5 μs) reduced the computational time by a factor                                        E. Simulated Waveforms with Resonance
+          of three comparing to the SW model (Ts = 1 μs). The CA                                                 Simulations were carried out with inserting the line capaci-
+          model reduced the computational time by a factor of twelve,                                         tance Cline = 0.211 μF as shown in Fig. 10. It corresponds to
+          whereas it was not able to deal with the switching ripple.                                          the parasitic capacitance of the cable to ground, and it causes
+             This result demonstrates that the VI model can reduce                                            resonance with the line inductance.
+          the computational time than the SW model with reasonable                                               Fig. 15 shows the simulated waveforms of the ac current
+          reproduction of harmonics. The CA model can further reduce                                          igrid and the ac voltage vPCC at the PCC under the res-
+
+
+ 0885-8993 (c) 2020 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+             Authorized licensed use limited to: University of New South Wales. Downloaded on September 27,2020 at 03:00:57 UTC from IEEE Xplore. Restrictions apply.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPEL.2020.3026721, IEEE
+                                                                                               Transactions on Power Electronics
+          8                                                                                              IEEE TRANSACTIONS ON POWER ELECTRONICS , VOL. XX, NO. X, XXXXXX 202X
+
+
+
+
+                                                                                                                                  40
+                                      Reference              SW                VI              CA
+
+
+
+
+                                                                                                                     i grid[A]
+                            33                                                                                                    20
+                i grid[A]
+                                                                                                                                   0
+                            32                                                                                                   -20
+                                                                                                                                 -40
+                            31                                                                                                  200
+
+
+
+
+                                                                                                                   v PCC [V]
+                          250                                                                                                     0
+              v PCC [V]
+
+
+
+
+                                                                                                                               -200
+                          200
+                                                                                                                                   0       5           10          15           20           25           30
+                          150                                                                                                                                 Time [ms]
+                            12.2       12.25               12.3               12.35               12.4                                                (a) Reference
+                                                       Time [ms]
+                                                                                                                                  40
+
+
+
+
+                                                                                                                     i grid[A]
+                                                                                                                                  20
+          Fig. 14. Enlarged waveforms without resonance (Cline = 0).                                                               0
+                                                                                                                                 -20
+                                                                                                                                 -40
+                                                                                                                                200
+
+
+
+
+                                                                                                                   v PCC [V]
+          onance condition. Fig. 16 shows the enlarged waveforms.
+          The SW model and the VI model reproduced the increase                                                                   0
+          of the harmonic current and the voltage ﬂuctuation due to                                                            -200
+          resonance, whereas the CA model was not able to simulate the                                                             0       5           10          15           20           25           30
+          phenomenons. It has been reported that such kind of resonance                                                                                       Time [ms]
+          in the high-frequency region causes an overheat of equipment                                                                         (b) SW model (Ts = 1 μs)
+          or malfunctions of power line carrier communications. Thus,
+          the resonance caused by inverters is one of the important                                                               40
+                                                                                                                     i grid[A]    20
+          phenomena to be dealt with in the EMT analysis of power                                                                  0
+          systems. The CA model may overlook the failures caused by                                                              -20
+          the harmonics in the high frequency region although the model                                                          -40
+                                                                                                                                200
+                                                                                                                   v PCC [V]
+
+
+
+
+          enables to enlarge the simulation time step and reduces the
+          computational time.                                                                                                     0
+                                                                                                                               -200
+                                           VI. C ONCLUSION                                                                         0       5           10          15           20           25           30
+                                                                                                                                                              Time [ms]
+             One of the technical challenges in applying the EMT sim-
+          ulations to power system analysis is satisfying both adequate                                                                        (c) VI model (Ts = 5 μs)
+          simulation accuracy and acceptable computational time. The
+                                                                                                                                  40
+          simulation involving power-electronics converters especially
+                                                                                                                     i grid[A]
+
+
+
+
+                                                                                                                                  20
+          requires a fairly small time-step size to consider switching                                                             0
+          of the converters, thus leading to a heavy computational                                                               -20
+                                                                                                                                 -40
+          burden. To solve the trade-off, this paper generalized the
+                                                                                                                                200
+                                                                                                                   v PCC [V]
+
+
+
+
+          time average method (TAM), originally developed for real-
+                                                                                                                                  0
+          time simulations, so that it becomes suitable to off-line EMT
+                                                                                                                               -200
+          simulations. The proposed voltage interpolation method is
+          applicable to the trapezoidal method of integration which is                                                             0       5           10          15           20           25           30
+                                                                                                                                                              Time [ms]
+          widely used in off-line EMT simulation programs. In addition,
+          the proposed method uses a simple formula to identify the                                                                            (d) CA model (Ts = 25 μs)
+          switching instance for the implementation on off-the-shelf
+                                                                                                              Fig. 15. Simulated waveforms with resonance (Cline = 0.211 μF).
+          PCs, rather than a hardware counter in an FPGA as used
+          in the TAM. The simulation results demonstrated that the
+          proposed method enables to extend the simulation time step
+                                                                                                              Power Co., Kyushu Electric Power Co., and Okinawa Electric
+          by a factor of ﬁve without deteriorating the accuracy, resulting
+                                                                                                              Power Co.
+          in reduction of computational time by a factor of three with
+          reasonable reproduction of harmonics.
+                                                                                                                                                    R EFERENCES
+                                         ACKNOWLEDGMENT
+                                                                                                                [1] J. H. R. Enslin, and P. J. M. Heskes, “Harmonic interaction between
+             The authors gratefully acknowledge the ﬁnancial support                                                a large number of distributed power inverters and the distribution
+          from Hokkaido Electric Power Co., Tohoku Electric Power                                                   network,” IEEE Trans. Power Electronics, vol. 19, no. 6, pp. 1586–1593
+          Co., Tokyo Electric Power Co. Holdings, Chubu Electric                                                    Nov. 2004.
+                                                                                                                [2] H. Hu, Q. Shi, Z. He, J. He, and S. Gao, “Potential harmonic resonance
+          Power Co., Hokuriku Electric Power Co., Kansai Electric                                                   impacts of PV inverter ﬁlters on distribution systems,” IEEE Trans.
+          Power Co. Chugoku Electric Power Co., Shikoku Electric                                                    Sustainable Energy, vol. 6, no. 1, pp. 151–161 Jan. 2015.
+
+
+ 0885-8993 (c) 2020 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+               Authorized licensed use limited to: University of New South Wales. Downloaded on September 27,2020 at 03:00:57 UTC from IEEE Xplore. Restrictions apply.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPEL.2020.3026721, IEEE
+                                                                                               Transactions on Power Electronics
+          HORIUCHI et al.                                                                                                                                                                                    9
+
+
+
+
+                           40                                                                                      of distribution systems,” Electrical Engineering in Japan, vol. 206, no.
+                                      Reference              SW                VI              CA                  4, pp. 11–21, Mar. 2019.
+               i grid[A]
+                           35                                                                                 [20] K. L. Lian, and P. W. Lehn, “Real-time simulation of voltage source
+                                                                                                                   converters based on time average method,” IEEE Trans. Power Systems,
+                                                                                                                   vol. 20, no. 1, pp. 110–118 Feb. 2005.
+                           30                                                                                 [21] J. Allmeling, and N. Felderer, “Sub-cycle average models with integrated
+                                                                                                                   diodes for real-time simulation of power converters,” 2017 IEEE SPEC,
+                         220                                                                                       pp. 1–6 Dec. 2017.
+             v PCC [V]
+
+
+
+
+                                                                                                              [22] S. Horiuchi, K. Sano, T. Noda, “A voltage interpolation method in
+                         200                                                                                       inverter modeling for fast electromagnetic transient simulations,” 2020
+                         180                                                                                       IEEE Apllied Power Electronics Conference and Exposition (APEC),
+                                                                                                                   New Orleans, LA, 2020, pp. 2841–2847.
+                         160                                                                                  [23] J. Tant and J. Driesen, “On the numerical accuracy of electromagnetic
+                           12.2        12.25               12.3               12.35               12.4             transient simulation with power electronics,” IEEE Trans. Power Deliv-
+                                                       Time [ms]                                                   ery, vol. 33, no. 5, pp. 2492–2501, Oct. 2018.
+                                                                                                              [24] J. Allmeling, N. Felderer, and M. Luo, “High ﬁdelity real-time sim-
+                                                                                                                   ulation of multi-level converters,” 2018 Int. Power Electronics Conf.
+          Fig. 16. Enlarged waveforms with resonance (Cline = 0.211 μF).                                           (IPEC-Niigata 2018, ECCE Asia), Niigata, pp. 2199–2203, 2018.
+                                                                                                              [25] L. Ma, F. Tang, F. Zhou, X. Jin, and Y. Tong, “Leakage current analysis
+                                                                                                                   of a single-phase transformer-less PV inverter connected to the grid,”
+                                                                                                                   2008 IEEE Int. Conf. on Sustainable Energy Technologies, Singapore,
+           [3] C. Yoon, H. Bai, R. N. Beres, X. Wang, C. L. Bak, and F. Blaabjerg,                                 pp. 285–289, 2008.
+               “Harmonic stability assessment for multiparalleled, grid-connected in-                         [26] J.-S. Lai, “Power conditioning circuit topologies,” IEEE Industrial
+               verters,” IEEE Trans. Sustainable Energy, vol. 7, no. 4, pp. 1388–1397                              Electronics Magazine, vol. 3, no. 2, pp. 24–34, Jun. 2009.
+               Oct. 2016.                                                                                     [27] T. Noda, “XTAP,” in Numerical Analysis of Power System Transients
+           [4] P. Kuffel, K. Kent, and G. Irwin, “The implementation and effectiveness                             and Dynamics, A. Ametani Ed., IET, pp. 169–208 2014.
+               of linear interpolation within digital simulation,” Proc. IPST’95 (Int. conf                   [28] Cooperative study group on generic model development for power
+               Power Syst. Transients), pp. 499–504, Lisbon, Portugal Sep. 1995.                                   electronics system simulations, “Generic models for the simulation of
+           [5] B. De Kelper, L. A. Dessaint, V. Q. Do, and J.-C. Soumagne, “An                                     power electronics systems : smart-grid, motor-drive and automotive
+               algorithm for accurate switching representation in ﬁxed-step simulation                             applications,” IEEJ Technical Report, no. 1382, pp. 1–82, Sep. 2016.
+               of power electronics,” IEEE Power Engineering Society Winter Meeting,
+               vol. 1, pp. 762–767, Jan. 2000.
+           [6] B. De Kelper, L. A. Dessaint, K. Al-Haddad, and H. Nakra, “A
+               comprehensive approach to ﬁxed-step simulation of switched circuits,”
+               IEEE Trans. Power Electronics, vol. 17, no. 2, pp. 216–224 Mar. 2002.
+           [7] G. Sybille and H. Le-Huy, “A comparative study on real-time simulation
+               methods for PWM power converters,” 2006 IEEE International Sympo-
+               sium on Industrial Electronics, Montreal, Que., 2006, pp. 2571–2578.
+           [8] M. O. Faruque, V. Dinavahi and Wilsun Xu, “Algorithms for the
+                                                                                                                                              Shuntaro Horiuchi (S’19) received the B.S. degree
+               accounting of multiple switching events in digital simulation of power-
+                                                                                                                                              in electrical and electronic engineering from the
+               electronic systems,” IEEE Trans. Power Delivery, vol. 20, no. 2, pp.
+                                                                                                                                              Tokyo Institute of Technology, Tokyo, Japan, in
+               1157–1167, Apr. 2005
+                                                                                                                                              2019, where he is currently working toward the
+           [9] V.-Q. Do, D. McCallum, P. Giroux and B. D. Kelper, “A backward-
+                                                                                                                                              M.S. degree in electrical and electronic engineering.
+               forward interpolation technique for a precise modeling of power elec-
+                                                                                                                                              His research interests include inverter modeling for
+               tronics in HYPERSIM”, Proc. Int. Conf. Power Systems Transients, pp.
+                                                                                                                                              electromagnetic transient simulations.
+               337–342, Jun. 2001.
+          [10] A.M. Gole et al., “Guidelines for modeling power electronics in electric
+               power engineering applications,” IEEE Trans. Power Delivery, vol. 12,
+               no. 1, pp. 505–514, Jan. 1997.
+          [11] A. M. Gole, I. T. Fernando, G. D. Irwin, O. B. Nayak, “Modeling of
+               power electronic apparatus: Additional interpolation issues”, Int. Conf.
+               on Power Systems Transients (IPST ’97), pp. 23–28, Seattle, Jun. 1997.
+          [12] A. Semlyen, and F. de Leon, “Computation of electromagnetic transients
+               using dual or multiple time steps,” IEEE Trans. Power Systems, vol. 8,
+               no. 3, pp. 1274–1281, Aug. 1993.
+          [13] J. J. Sanchez-Gasca, R. D’Aquila, W. W. Price, and J. J. Paserba,
+               “Variable time step, implicit integration for extended-term power system
+               dynamic simulation,” Proc. of Power Industry Computer Applications                                                       Kenichiro Sano (S’07, M’10) received the B.S.
+               Conf., Salt Lake City, UT, USA, 1995, pp. 183–189.                                                                       degree in international development engineering and
+          [14] W. Nzale, J. Mahseredjian, I. Kocar, X. Fu and C. Dufour, “Two variable                                                  the M.S. and Ph.D. degrees in electrical and elec-
+               time-step algorithms for simulation of transients,” 2019 IEEE Milan                                                      tronic engineering from the Tokyo Institute of Tech-
+               PowerTech, Milan, Italy, 2019, pp. 1–6.                                                                                  nology, Tokyo, Japan, in 2005, 2007, and 2010,
+          [15] S. R. Sanders, J. M. Noworolski, X. Z. Liu, and G. C. Verghese,                                                          respectively. From 2008 to 2010, he was a JSPS Re-
+               “Generalized averaging method for power conversion circuits,” IEEE                                                       search Fellow. In 2008, he was a Visiting Scholar at
+               Trans. Power Electronics, vol. 6, no. 2, pp. 251–259, Apr. 1991.                                                         the Virginia Polytechnic Institute and State Univer-
+          [16] D. Maksimovic, A. M. Stankovic, V. J. Thottuvelil, and G. C. Verghese,                                                   sity, Blacksburg, VA, USA. From 2010 to 2018, he
+               “Modeling and simulation of power electronic converters,” Proceedings                                                    was a Research Scientist at the Central Research In-
+               of the IEEE, vol. 89, no. 6, pp. 898–912, Jun. 2001.                                                                     stitute of Electric Power Industry, Yokosuka, Japan.
+          [17] H. Atighechi et al., “Dynamic average-value modeling of CIGRE HVDC                             In 2018, he joined the Tokyo Institute of Technology, where he is currently
+               benchmark system,” IEEE Trans. Power Delivery, vol. 29, no. 5, pp.                             an Assistant Professor with the Department of Electrical and Electronic
+               2046–2054, Oct. 2014.                                                                          Engineering. His current research interests include power electronics for utility
+                                                                                                              applications, high-voltage dc transmission systems, and power system quality.
+          [18] S. Chiniforoosh et al., “Deﬁnitions and applications of dynamic average
+               models for analysis of power systems,” IEEE Trans. Power Delivery,
+               vol. 25, no. 4, pp. 2655-2669, Oct. 2010.
+          [19] K. Sano, R. Yonezawa, and T. Noda, “An electromagnetic transient sim-
+               ulation model of grid-connected inverters for dynamic voltage analysis
+
+
+ 0885-8993 (c) 2020 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+              Authorized licensed use limited to: University of New South Wales. Downloaded on September 27,2020 at 03:00:57 UTC from IEEE Xplore. Restrictions apply.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPEL.2020.3026721, IEEE
+                                                                                               Transactions on Power Electronics
+          10                                                                                           IEEE TRANSACTIONS ON POWER ELECTRONICS , VOL. XX, NO. X, XXXXXX 202X
+
+
+
+                                  Taku Noda (M’97, SM’08) was born in Osaka,
+                                  Japan in 1969. He received his B. Eng., M. Eng. and
+                                  Ph. D. degrees from Doshisha University, Kyoto,
+                                  Japan in 1992, 1994 and 1997 respectively. In 1997,
+                                  he joined Central Research Institute of Electric
+                                  Power Industry (CRIEPI). He is currently Leader
+                                  of Simulation Frontier Group, Energy Innovation
+                                  Center in the same institute and also serves as Vice-
+                                  Chairperson of the IEEE Power & Energy Society
+                                Japan Joint Chapter. He held the following positions
+                                  in his carrier: Visiting Scientist, the University of
+          Toronto, Toronto, ON, Canada, 2001-2002; Adjunct Professor, Doshisha
+          University, 2005-2008; Editor, the IEEE Transactions on Power Delivery,
+          2008-2014; and Lecturer, Shibaura Institute of Technology, Tokyo, Japan,
+          2012-2015. He received the Best Paper Award in 2008 and the Progress Award
+          twice in 2009 and 2016 from the Institute of Electrical Engineers of Japan
+          (IEEJ) and also received the Electrical Science and Engineering Promotion
+          Award in 2016 from its foundation.
+
+
+
+
+ 0885-8993 (c) 2020 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+               Authorized licensed use limited to: University of New South Wales. Downloaded on September 27,2020 at 03:00:57 UTC from IEEE Xplore. Restrictions apply.
+

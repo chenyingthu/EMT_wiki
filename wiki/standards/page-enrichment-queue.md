@@ -28,7 +28,7 @@ updated: "2026-05-13"
 | 3 | n-port-network.md | methods | methods/network-solution/n-port-network.md | P0 | 136 | 672 | 3 | 9 | completed |
 | 4 | gan-hemt.md | methods | methods/power-electronics/gan-hemt.md | P0 | 134 | 786 | 1 | 9 | completed |
 | 5 | gis.md | methods | methods/protection-fault/gis.md | P0 | 134 | 793 | 1 | 9 | completed |
-| 6 | signal-processing.md | methods | methods/signal-processing/signal-processing.md | P0 | 129 | 666 | 4 | 8 | pending |
+| 6 | signal-processing.md | methods | methods/signal-processing/signal-processing.md | P0 | 129 | 3785 | 99 | 21 | completed |
 | 7 | ccvt.md | methods | methods/protection-fault/ccvt.md | P0 | 127 | 856 | 1 | 9 | pending |
 | 8 | current-trajectory-similarity.md | methods | methods/system-studies/current-trajectory-similarity.md | P0 | 126 | 873 | 1 | 9 | pending |
 | 9 | hardware-in-loop.md | topics | topics/simulation/hardware-in-loop.md | P0 | 122 | 940 | 4 | 18 | pending |
@@ -481,3 +481,4 @@ updated: "2026-05-13"
 ||| 3 | 1 | 1 | 0 | n-port-network页面完成 |
 |||| 4 | 1 | 1 | 0 | gan-hemt页面完成（3215字，116公式，10wikilink，1SVG） |
 |||| 5 | 1 | 1 | 0 | gis页面完成（3493字，41公式，9wikilink，2SVG） |
+|||| 6 | 1 | 1 | 0 | signal-processing页面完成（3785字，99公式，21wikilink，1SVG） |

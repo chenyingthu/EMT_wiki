@@ -1,0 +1,512 @@
+                                                               Electric Power Systems Research 213 (2022) 108408
+
+
+                                                                     Contents lists available at ScienceDirect
+
+
+                                                         Electric Power Systems Research
+                                                            journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Efficient steady state analysis of the grid using electromagnetic
+transient models✰
+Aayushya Agarwal *, Larry Pileggi
+Electrical and Computer Engineering Department, Carnegie Mellon University, Pittsburgh, United States of America
+
+
+
+
+A R T I C L E I N F O                                      A B S T R A C T
+
+Keywords:                                                  Modern grids contain an increasing number of non-linear grid devices that are accurately modeled only in the
+Electromagnetic transient analysis                         time domain. Performing an accurate steady-state analysis with such models requires a transient simulation to
+Harmonic balance                                           infinite (sufficiently long) time, which can be computationally prohibitive. Power flow provides an efficient, but
+Steady state
+                                                           approximate steady state analysis using models based on a single nominal frequency, which fails to represent the
+Ordinary differential equation
+Waveform
+                                                           true steady-state. We present a new method for efficiently analyzing the steady state response using traditional
+                                                           transient models that is inspired by harmonic balance methods. Rather than solving the underlying ODE by
+                                                           discretizing time, our method iterates on the entire waveform to find an accurate time domain waveform that
+                                                           captures the steady-state dynamics for all three phases. This presents a novel, efficient methodology for accu­
+                                                           rately studying the steady-state of the power grid. We introduce the concept by studying the steady state of a 14-
+                                                           bus system under various scenarios and highlight the difference between the steady-states achieved through
+                                                           power-flow and our method that uses EMT models.
+
+
+
+
+1. Introduction                                                                                  new control schemes such as frequency-based control and inverter-
+                                                                                                 based devices, we see discrepancies between power flow solutions and
+    Steady-state analysis is the backbone of operating and planning the                          the true steady-state. Additionally, control systems based on frequency
+power grid. It mainly offers an insight into the state the grid settles into                     or balancing the three-phases are often ignored in power-flow due to the
+after an event in the network. Determining the true steady-state is often                        shortcomings in the analysis. Previous works have developed realistic
+computationally difficult since it involves taking the electromagnetic                           power flow models by either incorporating frequency as a variable [1],
+transient (EMT) response to infinite time in theory, which is until steady-                      defining all three-phases [2], or creating high-level models to capture
+state convergence in practice. Most steady state analyses of the grid are                        control schemes [3,4]. However, there remains an underlying incon­
+based on an approximate frequency-domain based method known as                                   sistency with reality.
+power flow. However, with the addition of newer nonlinear devices that                               It’s generally regarded that for a more accurate analysis, power
+are accurately modeled in the time domain and capable of injecting                               systems engineers turn to electromagnetic transient simulations (EMT)
+harmonics, the assumptions made in power-flow cannot be justified and                            [5]. EMT uses dynamic models to accurately determine behavior
+that solution is diverging from reality.                                                         incurred from the nonlinear devices and, unlike power flow, captures
+    One of the biggest discrepancies in modern power system analysis is                          the effect of all control schemes. However, EMT uses a multistep inte­
+the inconsistency between power flow and transient models. Power flow                            gration method that is inefficient in larger systems where a wide range of
+was intended to represent the steady-state at the nominal frequency;                             time-constants constricts the simulation to take small time-steps for
+however, device models in power flow are incompatible with their                                 many iterations [5]. This becomes especially computationally prohibi­
+transient counterpart. Many complex devices with numerous controls                               tive in simulating the steady-state when required to take small
+are distilled into two valued models in power flow (often PQ or PV                               time-steps.
+models) and taken only at the single nominal frequency. While the as­                                For this reason, power flow is more often used to simulate the steady-
+sumptions are justifiable for simple devices, today, with the advent of                          state since it can be efficiently solved within operational time limits.
+
+
+
+ ✰
+    {aayushya, pileggi} @andrew.cmu.edu
+ * Corresponding author.
+   E-mail address: aayushya@andrew.cmu.edu (A. Agarwal).
+
+https://doi.org/10.1016/j.epsr.2022.108408
+Received 3 October 2021; Received in revised form 16 April 2022; Accepted 2 July 2022
+Available online 5 August 2022
+0378-7796/© 2022 Published by Elsevier B.V.
+A. Agarwal and L. Pileggi                                                                                           Electric Power Systems Research 213 (2022) 108408
+
+
+There has been a lot of effort in improving EMT simulation speed by              network, represented now as a linear N-port model, is a collection of
+creating adaptive time-steps [6], using dedicated hardware systems with          transmission lines and transformers that are modeled either using lum­
+RTDS [7], or decoupling the system to facilitate solving in parallel [8].        ped parameter models (such as pi model) [5], or distributed models [5].
+While these methods have improved transient analysis, they have not                  For example, we can consider a 2-bus network with a generator on
+shown significant enough improvement to replace power-flow. As a                 bus 1 and load on bus 2 as shown in Fig. 2. We can visualize the network
+compromise, engineers have developed transient stability analysis tools          as the linear transmission elements in the blue box and each non-linear
+(or dynamic analysis) that simulate transient effects while making               device in a red box as shown. Importantly, we have not modified the
+similar assumptions to power-flow, such as assuming a balanced, con­             network, but are just visualizing it in this way.
+stant impedance transmission network [9].
+    In this work, we develop a new methodology for time domain steady
+state (TDSS) to efficiently solve for the steady-state using EMT models.         2.1. Traditional EMT analysis
+The time-domain steady-state method solves for an accurate steady-state
+consistent with EMT (as it uses EMT device models) using an efficient               The network in Fig. 1 can be mathematically represented using a stiff
+decoupling methodology that is shown to be faster at reaching the                ordinary differential equation (ODE) with a state vector, x(t), multiplied
+steady-state. This allows for operation engineers to accurately study the        by an impedance matrix, C(x(t), t), along with a non-linear function,
+steady-state behavior of the grid in operational time. In this work, we          f(x(t), t) as shown below:
+introduce a new time-domain analysis, inspired by harmonic balance
+                                                                                 C(x(t), t)ẋ(t) = f (x(t), t)                                                   (1)
+[10] and waveform relaxation [11], that iterates on a complete
+time-domain waveform and can enable a time-domain decoupling of the              x(0) = x0                                                                       (2)
+linear transmission system from the non-linear sources. This decoupling
+allows us to avoid any large non-linear analysis or any matrix inversion,            To solve the stiff ODE above, EMT marches through discrete time
+which further provides a straightforward path to parallelization to              intervals, Δt, to determine the state at each time point. This process first
+further improve simulation efficiency. Rather than solving the ODE               converts the non-linear differential equations into non-linear algebraic
+using discrete time-steps, we achieve fast convergence to steady-state by        equations using a numerical integration method (e.g. Runge Kutta) to
+progressing the entire waveform through time until convergence.                  approximate the integration of capacitor currents and inductor voltages
+Compared to traditional EMT, we efficiently converge to the steady-state         from the previous time point, t to the current t + Δt. The result is a non-
+while being unhindered by the size of the system. Compared to power              linear algebraic equation to determine the state, x(t + Δt):
+flow, we are able to reach the true steady-state using EMT models and            g(x(t + Δt), x(t), t) = 0                                                       (3)
+illustrate a wide difference in steady-state solutions due to power-flow’s
+inherent assumptions. We demonstrate the efficacy of our approach on a               Traditional EMT solves this non-linear problem at each time-step
+14-bus system and provide a theoretical analysis of its scalability rela­        using an iterative Newton-Raphson (NR) method. At each iteration of
+tive to a traditional transient simulation approach.                             NR, the algorithm solves a linear equation with a Jacobian matrix, J and
+                                                                                 a right-hand side vector, b and solves for the state at each iteration, xk (t +
+2. System decoupling                                                             Δt):
+
+                                                                                 J⋅xk (t + Δt) = b                                                               (4)
+   The efficacy of the new method arises from the conceptualization
+that a network can be represented as a linear transmission network with              Solving Newton-Raphson (NR) at each iteration is a bottleneck for
+ports that are connected to the non-linear elements, as shown in Fig. 1.         simulating large systems, where the computational cost for constructing
+These non-linear sources can represent devices with non-linear differ­           the Jacobian as well as repeatedly solving the linearized set of equations
+ential equations such as synchronous condensers or devices represented           in (4) can be prohibitive. Constructing the Jacobian requires linearizing
+by algebraic equations such as non-linear loads. The linear transmission         each non-linear device instance, which is computationally expensive for
+
+
+
+
+                                          Fig. 1. Power grid abstracted as linear network and non-linear sources.
+
+                                                                             2
+A. Agarwal and L. Pileggi                                                                                                      Electric Power Systems Research 213 (2022) 108408
+
+
+
+
+                 Fig. 2. A 2-bus Network grouped into the linear transmission elements (shown in blue) and the non-linear devices (shown in red).
+
+
+large systems. In addition, the complexity for solving (4) is at an order of         coupled to the linear transmission network by a voltage source equal to
+O(n1.8 ) [12], where n is the number of buses, which also becomes a                  the voltage at the port of the linear transmission network. In this
+bottleneck for larger systems. These issues are further exacerbated when             coupling, the voltage at the ports of the linear transmission network are
+simulating for the steady-state of a power grid, since many time-steps               denoted by Vp while the port currents from the non-linear devices are
+are needed to reach a time that represents an approximate steady state               described by Ip . Importantly, we have not modified the circuit response
+condition.                                                                           or its behavior. Although the figure does not explicitly show all three
+                                                                                     phases, it is assumed that all phases are expressed, thereby removing any
+2.2. Isolating the system with substitution theorem                                  restrictions of the network having to be balanced.
+                                                                                         This conceptualization can be applied to any non-linear device
+    Alternatively, there is a class of iterative timing methods developed            including non-linear transformers or generator. In the case of shunt
+for circuit simulation [11] that exploits certain circuit couplings to avoid         devices such as generators, one of the port connections is assumed to be
+solving large Newton-Raphson problems for the entire circuit. In a                   ground. If the device is in a series connection, then both port connections
+similar manner, the iterative timing method we propose next relies on                will have associated states. Importantly, we notice that many grid con­
+isolating the coupling between the linear transmission network and                   nected devices are local and only contribute to either one or two ports at
+non-linear devices to solve them separately, then combine them in a                  a time. This sparsity will be exploited in our method. Mathematically,
+subsequent step. This facilitates solution of large-scale systems and                we can describe this isolation in the form of two ODEs:
+provides parallelism that can exploit modern computer hardware for
+                                                                                     Clin (x(t), t)ẋlin = Ylin xlin + Jlin + Ip                                            (5)
+speedup. Our approach starts with use of the substitution theorem [12]:
+                                                                                                   (           )
+Theorem 1. If an element in a circuit is replaced by a voltage source (or            ẋnlin = fnlin xnlin , Vp                                                              (6)
+current source) whose voltage equals the voltage across the element (or
+current equals the current flowing through the element), then the state of the       where Ylin and Jlin are the constant Jacobian and constant current source
+system is unaffected.                                                                vector corresponding to the linear transmission network, and fnlin is the
+                                                                                     function describing the response of non-linear devices due to a voltage at
+    In the context of power grids, we utilize this theorem by first                  the port, Vp as shown in Fig. 3. Also Clin (x(t), t) is the impedance matrix
+isolating the non-linear sources from the linear transmission network.               for the linear transmission network, which includes capacitances and
+According to the theorem, we can replace the non-linear devices at the               inductances. These two ODEs are coupled using the port currents, Ip and
+ports of the linear transmission with current sources with current values
+                                                                                     port voltages, Vp . We will need to solve the ODE for a large simulation
+equal to the non-linear device currents, as shown in Fig. 3. Similarly, the
+                                                                                     period to solve for a steady-state, making the traditional EMT approach
+non-linear devices are isolated from the linear transmission network and
+
+
+
+
+                                  Fig. 3. Decoupled network with linear transmission network and decoupled non-linear sources.
+
+                                                                                 3
+A. Agarwal and L. Pileggi                                                                                                  Electric Power Systems Research 213 (2022) 108408
+
+
+inefficient.                                                                         Algorithm 1
+    As an example, we isolate the 2-bus network in Fig. 2 into the linear            Time domain steady-state.
+transmission network and separate non-linear device networks                          Input: Initial voltage waveform:x0 = {x(t)∀t[t0 , tf ]}
+following the substitution theorem, resulting in Fig. 4. Importantly, this            Minimum time-step: Δtmin
+circuit is no different than the original 2 bus network in Fig. 1 and would           1 Initialize xk = x0
+result in the same set of nonlinear equations if we considered them in                1 while (not reached steadystate) :
+                                                                                      1 Simulate non-linear decoupled circuits using xk as port voltage
+aggregate. This depiction does, however, allow us to better conceptu­
+                                                                                      1 Extract port currents, Ip = {Ip (t), ∀t ∈ [t0 , tf ]}
+alize the separated nonlinear analyses that we describe next.                         1 Solve for linear transmission network stages and port voltages, Vp = {Vp (t)∀t ∈ [t0 ,
+                                                                                        tf ]}
+3. Time-domain steady-state (TDSS)                                                    1 Increase t0 and tf by one period
+                                                                                      1 end while
+    With this isolation, we now introduce a new iterative timing method,
+called Time-Domain Steady-State (TDSS), that leverages the coupled                   we address convergence to steady-state. Nonetheless, the waveform
+networks by decoupling the sub-networks to solve for the steady-state.               differs from the traditional EMT state vector, as it includes the state for
+The linear network and each single non-linear device are decoupled                   the entire time-period. Importantly, unlike frequency-domain methods,
+and simulated independently without knowledge of any of the in­                      this steady-state waveform will reflect all possible harmonics of the
+teractions. The values of the port-voltages and port currents for each               fundamental frequency without knowledge of dominant harmonics or
+network are fixed from a previous iteration. After each iteration of TDSS,           any additional work.
+we update the port-voltages and port-currents for the following iteration                Our goal in this steady-state analysis is to find the steady-state
+and repeat the process of independently solving the circuit, which
+                                                                                     waveform-vector, ̃  x with a period of [t0 , t0 + T], where T is the period
+implicitly merges the updated port values until we reach a consistent
+                                                                                     corresponding to the fundamental frequency.
+solution among all ports. By decoupling the grid into smaller device                                    [              ]
+networks and a fixed linear transmission network, we avoid any large                 x=̃
+                                                                                     ̃    x(t) ∈ Rn ∀t ∈ t0 , tf 0 + T                                       (8)
+Newton-Raphson problems, since each device network is reasonably
+                                                                                         To begin the Time-Domain Steady-State method, we require an
+small while the linear transmission network has a fixed Jacobian that
+                                                                                     initial waveform, similar to how power flow requires an initial condi­
+can be precomputed. This feature avoids one of the bottlenecks for
+                                                                                     tion. As we will discuss later, an initial waveform that better resembles
+scaling EMT to larger systems. Iterating between the decoupled the
+                                                                                     the final steady-state will achieve faster convergence. In practice, we can
+linear transmission network and the non-linear devices is commonly
+                                                                                     use the previous dispatch or previously known steady-state as an initial
+used in harmonic-balance [10], which has provably scaled well to large
+                                                                                     waveform to initiate the TDSS method. This also exploits nodes that do
+systems. Algorithm 1, below, describes the steps in each iteration of the
+                                                                                     not change from their initial condition, as they remain dormant and can
+TDSS method.
+                                                                                     avoid parts of simulation. The waveform must include all capacitor
+                                                                                     instantaneous voltages and inductor instantaneous currents in the linear
+3.1. Initializing the waveform vector                                                transmission network for at least a single period (of the fundamental
+                                                                                     frequency). In step 2 of Algorithm 1, this initial waveform is denoted as
+   Our TDSS method further deviates from traditional EMT approaches                  our current iteration waveform for the linear transmission, xklin .
+by introduction of a waveform state vector. The waveform vector defines
+the state of the grid over a period of time t ∈ [t0 , tf ], as shown below:
+                   [       ]                                                         3.2. Simulating non-linear device response
+x = x(t) ∈ Rn ∀t ∈ t0 , tf                                                (7)
+
+    For our purposes, the time-period, [t0 , tf ] will be discussed later when          Using the current iteration of the linear network waveform, xklin , we
+
+
+
+
+Fig. 4. Decoupled 2-bus network with linear transmission network circuit and two non-linear device circuits. The port connections are replaced with current sources
+(shown in blue) at the transmission side, and with voltage sources (shown in red) on the device side.
+
+                                                                                 4
+A. Agarwal and L. Pileggi                                                                                                               Electric Power Systems Research 213 (2022) 108408
+
+
+extract the voltage waveforms at the ports of the non-linear devices, Vp .                   Algorithm 2
+The port voltage waveforms are now used to simulate the response due                         Simulating non-linear device response.
+to each non-linear device. Essentially, we are simulating multiple small                       Input: Port voltage waveform, Vpk
+single-bus, single-device network as shown in Fig. 5. In this network, we                      Previous port voltage waveform, Vpk− 1
+connect the non-linear device with a 3-phase voltage source (as shown in                       Previous port current waveform, Ipk− 1
+the blue box in Fig. 5), with the voltage equal to the port-voltage                            Non-linear device list. D
+waveform from the previous iteration. We can simulate each of these                            Output: Port current waveform, Ipk
+non-linear sources using traditional EMT solvers such as Simulink [13].                        1 parallel for each (device d in D ) :
+Importantly, since we have decoupled every non-linear device, we are                           1 if Vpk (d) ! = Vpk− 1 (d) :
+able to take specific time-steps to capture each device’s natural                              1 Ipk (d) = simulate(d)
+response. This time-step value can be obtained from each manufac­
+                                                                                               1 else : Ipk (d) = Ipk− 1 (d)
+turer’s device models, such as PSCAD libraries [14]. This proves to be an
+advantage over traditional EMT analysis, where simulation time-steps                           1 end for
+
+are often limited by the fastest device.
+    Since each device can be simulated independently, given the port                         3.3. Solving linear transmission network
+voltages, we are able to easily parallelize the simulation across multiple
+cores. Programs such as Simulink can batch simulate multiple instances                           After calculating the response of each non-linear device, we can solve
+in parallel [13], essentially making this simulation step independent of                     for the state of the linear transmission network knowing the port current
+the size of the system. As the number of non-linear devices grows, we                        waveforms. This takes advantage of the substitution theorem by
+can concurrently increase the parallelism to avoid scalability issues. In                    replacing the non-linear device response with a current source as shown
+addition, since each device is simulated independently, the time-step                        by Fig. 3. Simulating the linear transmission network over the time-
+can be chosen independently as well. However, to synchronize all the                         period [t0 , tf ] now becomes a linear network simulation with known
+port current waveform, which are the response of each non-linear de­                         current source values as described by (5). To solve the linear ODE (5),
+vice, we interpolate between time-steps to get a continuous curve using                      we integrate over a single time-step, Δtmin , and define a constant com­
+a linear interpolation scheme as defined by [10]. In this scheme, the                        panion matrix for the entire time-period [12] using a choice of numer­
+voltage value at a time-point between two predefined time-points                             ical integration (usually an implicit discretization such as trapezoidal or
+(t ∈ [ta , tb ]) is solved as V(t) = V(tbtb)−− V(t
+                                               ta
+                                                  a)
+                                                     (t − ta ).                              Runge-Kutta):
+    We can further improve simulation efficiency at this step by realizing                                                            − 1                                    − 1
+                                                                                             xlin (t + Δtmin ) = xlin (t) + k1 Δtmin Clin Ylin xlin (t + Δtmin ) + k2 Δtmin Clin Ylin xlin (t)
+that if the port voltage does not change from the previous iteration, we                                                        (                               )
+can avoid re-simulating the non-linear device response at that port and
+                                                                                                                            − 1
+                                                                                                                 + Δtmin Clin k1 Ip (t + Δtmin ) + k2 Ip (t)
+simply use the previous port current waveform. This becomes beneficial                                                                                                                      (9)
+in larger systems where many nodes are unaffected by changes
+                                                                                                   k1 , k2 are constants determined by the choice of discretization (e.g.,
+happening at other parts of the grid. These methods to efficiently
+                                                                                             trapezoidal integration uses k1 = k2 = 0.5). Since the equation is linear,
+simulate the non-linear device response is shown in Algorithm 2.
+                                                                                             we can solve for the state at t + Δt:
+    Importantly, the complexity of simulating the EMT response of a
+                                                                                                                 (                      )− 1
+single device is far less than solving the complete grid response. We                                                           − 1
+                                                                                             xlin (t + Δtmin ) = 1 − k1 Δtmin Clin                             − 1
+                                                                                                                                    Ylin (xlin (t) + k2 Δtmin Clin Ylin xlin (t)
+leverage this fact by parallelizing each decoupled system to avoid the                                                        (                              )
+                                                                                                                          − 1
+                                                                                                                 + Δtmin Clin k1 Ip (t + Δtmin ) + k2 Ip (t)                     (10)
+large NR solve done in EMT.
+    Since TDSS iterates over the grid waveform, the initial values for the                      Importantly, we can see that for a constant time-step, determining
+device model are updated at the end of each iteration of TDSS in Algo­                       the state of the linear transmission network at each time-step corre­
+rithm 1. Specifically, the initial values of the device model are updated                    sponds to a constant matrix (1 − k1 Δtmin Ylin )− 1 multiplied by the sum of
+to equal the final values of the device at t = tf from the previous                          the historical component plus the port-current value at the respected
+iteration.                                                                                   time. As a note, 1 in (10) is a diagonal identity matrix. Now, since we
+                                                                                             have already solved for the port-current waveform over the entire time-
+
+
+
+
+                                                                  Fig. 5. Decoupled non-linear source port model.
+
+                                                                                         5
+A. Agarwal and L. Pileggi                                                                                                   Electric Power Systems Research 213 (2022) 108408
+
+
+period, the value for Ip (t + Δtmin ) and Ip (t) are known from step 4 of               mapping, Λ : xk →xk+1 , that describes the state after each iteration of
+Algorithm 1, and unlike EMT, we do not need to compute the Jacobian.                    Time-Domain Steady-State method. At a steady-state solution, we notice
+    To further reduce computation, we can pre-compute the LU factor of
+                                                                                        x = Λ(̃x)
+                                                                                        ̃                                                                              (11)
+constant matrix (1 − k1 Δtmin Ylin ) before starting the TDSS method and
+use a forward-backward substation to solve (10) [12]. This becomes                          This is because when inserting the steady-state waveform for the
+very efficient, especially for large systems since we only need to compute              linear transmission network into the non-linear devices, we will receive
+the LU factor once, unlike traditional EMT analyses. This means, by                     the non-linear device response, ̃
+                                                                                                                        xnlin . Then, solving for the linear trans­
+decoupling the linear transmission network from the non-linear sources,                 mission waveform given the non-linear device waveform, Ĩp , we will
+we are able to avoid any large matrix computation to solve for the state                recover the steady-state linear transmission waveform, ̃
+                                                                                                                                               xlin .
+of the system.
+    The time-step, Δtmin , however, should ideally follow the minimum                   1) Calculating the Fundamental Frequency
+non-linear device time-step to capture all harmonics.
+                                                                                            Calculating the fundamental frequency is crucial to determine the
+3.4. Convergence to steady-state                                                        period required to progress time at each iteration. We use similar
+                                                                                        methods used in shooting methods [12], where they look at the
+    It is important to note that a single iteration of TDSS method will                 zero-crossings to determine the steady-state period. The figure below
+likely not determine an accurate transient solution. To properly deter­                 shows the voltage waveform at bus 2 in the IEEE 14 bus testcase.
+mine the transient response during the time-period, [t0 , tf ], we would                    As shown by the markers, we can use a linear interpolation between
+need to repeatedly iterate on the linear transmission and non-linear                    the data points to estimate the time at the zero-crossings. By counting 4
+device waveforms. However, our intention is to determine the steady-                    sequential zero-crossings, we take the time difference between the first
+state rather than determining transient response. As a result, we can                   and last (t1 and t4 in Fig. 6) as an estimate of the fundamental period.
+avoid iterating on the solution between [t0 , tf ] and instead progress                 This exploits the nature of the grid which has a single fundamental
+through time until we converge to a steady-state solution.                              frequency and harmonics that are multiples of the fundamentals. To
+    After completing a single iteration of Algorithm 1 for the time-period              determine if we have reached steady-state, we can compare the wave­
+of [t0 ,tf ], we progress through the next period of time, [tf ,tf + T], where T        form from the prior fundamental period, T. If the two waveforms for all
+is an approximation of the fundamental period. Unlike in power flow,                    the states are identical within tolerance, then this indicates that we have
+we do not assume the grid is at its nominal frequency (or 50 Hz or 60 Hz)               reached steady-state.
+but instead approximate the fundamental frequency by looking at the                     xk = xk− 1 ≡ ̃
+                                                                                                     x ∀t ∈ [ti , ti + T]                                              (12)
+zero-crossings. We then use the voltage waveform from the previous
+time-period, [t0 , tf ] to initiate the current iteration of TDSS method in
+order to solve for the response during [tf , tf + T]. By repeating this                 1) Convergence Analysis
+process, we are progressing through time towards a steady-state
+solution.                                                                                  A convergence analysis for TDSS method follows the convergence
+    After reaching a steady-state waveform, ̃        xlin and ̃ xnlin , the Time-       proof for waveform relaxation [11], with the decoupling at the trans­
+Domain Steady-State procedure in Algorithm 1 will reach a stationary                    mission and non-linear device boundary. The successive displacement at
+                      k     k− 1         k        k− 1                                  the ports in TDSS is similar to a Gauss-Seidel approach. Waveform
+point at which ̃
+               xlin = ̃
+                      xlin         and ̃
+                                       xnlin = ̃
+                                               xnlin . This is illustrated by a
+
+
+
+
+                                   Fig. 6. Steady-state waveform at bus 2 of modified IEEE-14 testcase with markers at zero-crossings.
+
+                                                                                    6
+A. Agarwal and L. Pileggi                                                                                                 Electric Power Systems Research 213 (2022) 108408
+
+
+relaxation methods in circuits [11] and power systems [15] uses similar                 in its stable region to be able to ensure diagonal dominance of the
+Gauss-Seidel decoupling for weakly coupled regions of the network and                   impedance matrix. Previous work has shown that power grid devices
+is shown to converge super-linearly for any initial waveform given one                  that are in a stable operating region are able to ensure convergence for
+of the following criteria:                                                                                                                         df
+                                                                                        waveform relaxation by providing a stable Jacobian matrix, dx     dg
+                                                                                                                                                      and dx
+                                                                                        [15].
+1) We must have a diagonally dominant matrix, C(x(t), t). Physically,
+   this means we must have a shunt capacitor at each node or inductor                   4. Results and comparisons
+   current [11].
+2) A less strict criteria is that each node must have a path to ground                      After demonstrating that the Time-Domain Steady-State method
+   through a sequence of capacitors [11]                                                converges super-linearly given necessary conditions described in Sec­
+3) If each sub-system is represented by the ODE shown in (6) with non-                  tion 3, we demonstrate the improvements of determining a steady state
+                                            df
+    linear function, f(x(t), t) the matrix, dx is diagonally dominant with              compared to power flow and EMT. This approach efficiently solves for
+    negative diagonal entries, i.e. be a stable system. [15]                            the steady-state of the grid while retaining the accuracy of EMT analysis.
+                                                                                            We study the steady-state of a low-inertia 14-bus network, shown in
+    The proof of convergence relies on defining a contraction mapping                   Fig. 8, modified from [16] by removing generators at bus 3 and bus 8
+where the difference between two initial waveforms decay exponen­                       and include a solar PV array (developed by [17]) at bus 8. We run the
+tially over the number of iterations, thus settling to the true transient               EMT using Simulink [13], and the power flow using MatPower [18]. The
+response [11]. Similar to waveform relaxation, TDSS decouples a                         TDSS method is developed using Matlab and Simulink to simulate each
+network and passes current and voltage waveforms between the                            the non-linear device sub-network.
+decoupled ports. We attempt to satisfy the criteria above to prove
+convergence for TDSS.
+                                                                                        4.1. Comparison with EMT
+    We notice that the linear transmission network for the grid is
+composed of transmission lines and transformers. Using a distributed pi
+                                                                                            To validate that TDSS converges to the true steady-state, we simulate
+model to model the transmission line, as shown in Fig. 7, we notice that
+                                                                                        the network using EMT to steady-state. The EMT solver in Simulink uses
+each node has a capacitor on each phase connected to another capacitor
+                                                                                        a multistep integration (ode45 [13]) with a small time-step of 5 ∗ 10− 6 s
+to ground. In addition, the inductor in the transmission line will now
+                                                                                        for an accurate state of the grid. This requires at least a single iteration of
+introduce the inductor current, Il into the state variables, and the
+                                                                                        NR at each time-step, which becomes computationally expensive as we
+inductance on the diagonal of the impedance matrix, C(x(t),t). Assuming
+                                                                                        scale the system size or simulation time. The EMT simulation converged
+each bus is connected to at least one transmission line, this property
+                                                                                        to a steady-state at t = 0.1, and required 20,000 time-steps, each with a
+ensures that the impedance matrix is diagonally dominant, and each
+                                                                                        NR step. Importantly, we notice that low-inertia system has a funda­
+node has a path of capacitors to ground, which therefore satisfies cri­
+                                                                                        mental frequency of 58 Hz.
+terion 1 and 2.
+                                                                                            The TDSS method is developed in Matlab to simulate the decoupled
+    For each non-linear device need to ensure that it remains operating
+                                                                                        linear transmission network and avoid repetitive matrix inversion
+
+
+
+
+                            Fig. 7. Transmission line Pi model with capacitances and inductors ensure diagonal dominance of impedance matrix.
+
+                                                                                    7
+A. Agarwal and L. Pileggi                                                                                           Electric Power Systems Research 213 (2022) 108408
+
+
+
+
+                                Fig. 8. Modified IEEE 14-bus network with PV array at bus 8 and no generators at bus 3 and bus 8.
+
+
+
+
+                            Fig. 9. Steady-state voltage of bus 8 in modified 14-bus system using TDSS (above) and power flow (bottom)
+
+                                                                                8
+A. Agarwal and L. Pileggi                                                                                               Electric Power Systems Research 213 (2022) 108408
+
+
+(described in Section II.C), as well as Simulink to simulate the non-linear        CRediT authorship contribution statement
+devices response in parallel. TDSS converges to the steady-state in 3
+epochs, shown in Fig. 9, at which each epoch requires simulation of the               Aayushya Agarwal: Conceptualization, Methodology, Software,
+non-linear devices as well as the linear transmission network. Since each          Writing – original draft. Larry Pileggi: Conceptualization, Supervision.
+non-linear device is independently simulated in parallel, we avoid
+having to invert any large matrices. The linear network is simulated
+using a time step of 5 ∗ 10− 6 s. TDSS takes a total of 10,000 iterations          Declaration of Competing Interest
+(number of epochs multiplied by the simulation period in each epoch) .
+While this is comparable to the number of iterations performed in EMT,                 The authors declare that they have no known competing financial
+it is worth noting that we only had to do matrix multiplications, rather           interests or personal relationships that could have appeared to influence
+than performing multiple iterations of Newton-Raphson at each time                 the work reported in this paper.
+step. This greatly improves scalability as we can now simulate larger
+networks without the bottleneck of Newton-Raphson.                                 References
+
+4.2. Comparison with power flow                                                     [1] A. Agarwal, A. Pandey, M. Jereminov, L. Pileggi, Implicitly modeling frequency
+                                                                                        control within power flow. 2019 IEEE PES Innovative Smart Grid Technologies
+                                                                                        Europe, ISGT-Europe, 2019, pp. 1–5, https://doi.org/10.1109/
+    The power flow simulation efficiently solves for the steady-state                   ISGTEurope.2019.8905490.
+assuming a balanced network at the nominal frequency (60 Hz). By                    [2] A. Khodaei, N.M. Abdullah, A. Paaso, S. Bahramirad, Performance analysis of
+replacing the PV array with a PQ model (with P and Q values determined                  unbalanced three-phase linear distribution power flow model, in: 2020 IEEE/PES
+                                                                                        Transmission and Distribution Conference and Exposition (T&D), 2020, pp. 1–5.
+by Simulink’s load flow tool), we converge to a power flow solution in 4            [3] J. Hu, J. Wang, X. Xiong, J. Chen, A post-contingency power flow control strategy
+iterations, which highlights the efficiency of the methodology. The                     for AC/DC hybrid power grid considering the dynamic electrothermal effects of
+runtime for solving for the steady-state using the power-flow tools in                  transmission lines, IEEE Access 7 (2019) 65288–65302.
+                                                                                    [4] X. Dong, et al., Power flow analysis considering automatic generation control for
+MatPower was 0.28 s. While the runtime for power-flow was shorter                       multi-area interconnection power networks. IEEE Transactions on Industry
+than TDSS, it uses approximate models for loads as well as the PV array.                Applications, 2017.
+    Importantly, this solution does not capture the low-inertia state of            [5] Hermann W. Dommel, EMTP Theory Book, Microtran Power System Analysis
+                                                                                        Corporation, 1996.
+the system since power flow does not simulate frequency responses.                  [6] J.C.G. de Siqueira, B.D. Bonatto, J.R. Martí, J.A. Hollman, H.W. Dommel, Optimum
+Instead, power flow assumes an infinite slack generator on bus 1 that                   time step size and maximum simulation time in EMTP-based programs. 2014
+fixes the voltage at the bus and absorbs any mismatch due to frequency                  Power Systems Computation Conference, 2014, pp. 1–7, https://doi.org/10.1109/
+                                                                                        PSCC.2014.7038485.
+change. However, real generators do not abide by these assumptions and              [7] C. Yang, Y. Xue, X.-P. Zhang, Y. Zhang, Y. Chen, Real-time FPGA-RTDS co-
+consequently, the magnitudes and phases of the states from the power                    simulator for power systems, IEEE Access 6 (2018) 44917–44926, https://doi.org/
+flow solution are different from true EMT steady-state. This is evident                 10.1109/ACCESS.2018.2862893.
+                                                                                    [8] Z. Zhou, V. Dinavahi, Parallel massive-thread electromagnetic transient simulation
+from using TDSS which converges to a true steady-state solution, set at
+                                                                                        on GPU, in: 2015 IEEE Power & Energy Society General Meeting, 2015, https://
+58.8 Hz. We see this in Fig. 9, where the steady state voltage at bus 8 is              doi.org/10.1109/PESGM.2015.7285591, 1-1.
+solved using TDSS method and power flow. Not only do the frequencies                [9] Q. Tao, Y. Xue, C. Li, Transient stability analysis of AC/DC system considering
+differ, but the magnitude of the bus voltage is drastically different                   electromagnetic transient model. 2019 IEEE Innovative Smart Grid Technologies -
+                                                                                        Asia (ISGT Asia), 2019.
+(130.4 kV using TDSS and 106.8 kV using power-flow).                               [10] Kenneth S. Kundert, Jacob K. White, Alberto L. Sangiovanni-Vincentelli, Steady-
+                                                                                        State Methods for Simulating Analog and Microwave Circuits, 94, Springer Science
+5. Conclusion                                                                           & Business Media, 2013.
+                                                                                   [11] J.K. White, A. Sangiovanni-Vincentelli, Relaxation Techniques for the Simulation
+                                                                                        of VLSI Circuits, Kluwer Academic Publishers, USA, 1987.
+    In this paper, we introduce a new methodology to simulate an ac­               [12] (Pileggi) L. Pillage, R. Rohrer, C. Visweswariah, Electronic Circuit & System
+curate steady-state of the power grid using EMT device models. Our                      Simulation Methods, McGraw-Hill, Inc., New York, NY, USA, 1995.
+                                                                                   [13] Documentation, S., Simulation and model-based design, MathWorks (2020).
+methodology, called Time-Domain Steady-State, efficiently solves for                    Available at: https://www.mathworks.com/products/simulink.html.
+the steady state by decoupling the network into a linear transmission              [14] Manitoba HVDC Center, “PSCAD/EMTDC user’s manual,” Manitoba HVDC Center,
+network and several non-linear device circuits, and solves them inde­                   Winnipeg, Canada, 1998.
+                                                                                   [15] M.L. Crow, M.D. Ilic, J.K. White, Convergence properties of the waveform
+pendently. This procedure avoids solving large Newton-Raphson prob­                     relaxation method as applied to electric power systems, in: IEEE International
+lems, which is a bottleneck for large-scale EMT. We discuss the                         Symposium on Circuits and Systems, 1989.
+efficiency improvements compared to EMT, and also the improvements                 [16] Bharath Yk (2021). IEEE 14 bus system simulink model (https://www.mathworks.
+                                                                                        com/matlabcentral/fileexchange/46067-ieee-14-bus-system-simulink-model),
+in steady-state accuracy over traditional steady-state analysis, power
+                                                                                        MATLAB Central File Exchange. Retrieved October 1, 2021.
+flow. While our method is shown for a 14-bus system, it is designed to be          [17] Niranjan Bhujel (2021). Grid connected PV inverter (https://www.mathworks.co
+scalable to larger systems. We believe this method is crucial as the grid is            m/matlabcentral/fileexchange/66600-grid-connected-pv-inverter), MATLAB
+rapidly integrating renewable sources and new inverter-based devices,                   Central File Exchange. Retrieved October 1, 2021.
+                                                                                   [18] R.D. Zimmerman, C.E. Murillo-Sanchez, R.J. Thomas, MATPOWER: steady-state
+which have steady-states that cannot be fully captured using traditional                operations, planning and analysis tools for power systems research and education,
+methods.                                                                                IEEE Trans. Power Syst. 26 (1) (2011) 12–19. Feb.
+
+
+
+
+                                                                               9
+

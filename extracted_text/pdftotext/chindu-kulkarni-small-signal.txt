@@ -1,0 +1,853 @@
+IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 38, NO. 4, AUGUST 2023                                                                                         2879
+
+
+
+
+An Automatable Approach for Small-Signal Stability
+Analysis of Power Electronic-Based Power Systems
+         Using EMT Companion Circuits
+                                     Vinay Chindu            and A. M. Kulkarni , Senior Member, IEEE
+
+
+   Abstract—The increasing presence of power electronic (PE) con-                 transients cannot be studied using the conventional fundamental
+trolled devices in power systems has widened the bandwidth of                     frequency positive sequence phasor models as these models
+transients to be studied for grid stability. While these transients               assume the electric network to be in a quasi-sinusoidal steady
+are normally studied using time-domain simulation (TDS), wide
+bandwidth linear time-invariant (LTI) state-space models are a                    state. Stability studies of PE-based power systems using time
+useful complement to TDS for diagnostics, controller design and                   domain simulation (TDS) programs is a widely used approach
+parametric analysis. A general automatable method to compute an                   as it can easily include wide-bandwidth models with detailed
+LTI sampled-data model of a PE-based circuit is presented in this                 nonlinearities and perform large-signal disturbance studies. The
+paper. The proposed method is based on the techniques employed
+                                                                                  inferences drawn from a TDS study, however, are largely specific
+in electro-magnetic-transient (EMT) programs to perform TDS of
+PE-based circuits. The method uses the building blocks of EMT                     to the case simulated and thus a large number of disturbance
+nodal formulation such as conductance matrix of companion circuit                 cases have to be simulated to assess small-signal stability. In the
+and its LU factors computed during TDS, interpolation and chatter                 small-signal linear time-invariant (LTI) state-space modelling
+elimination corrections, and EMT model of the firing angle control                approach, handling detailed models is generally cumbersome
+system. The method yields a small-signal LTI sampled-data model
+                                                                                  but the stability inferences are more nuanced with information
+which is amenable to eigenanalysis and is illustrated using simple
+PE-based circuits such as a buck converter and a grid-connected                   such as eigenvalues, participation factors, observability and
+STATCOM with closed-loop control.                                                 controllability of modes. This information is very useful for
+                                                                                  diagnostics, parametric analysis, and an informed design and
+  Index Terms—Electro-magnetic-transient (EMT) program,
+small-signal analysis, state-space model, sampled-data model.                     tuning of controls. Hence small-signal LTI models can be a
+                                                                                  useful complement to TDS studies.
+                           I. INTRODUCTION
+      NERGY sources in traditional power grids were predomi-
+E     nantly synchronous machine based. Grid stability analyses
+were primarily concerned with low frequency rotor swings (0.1–
+                                                                                  A. Stability Analysis of Time-Periodic Systems
+                                                                                     The wide-band models of PE-based power systems are period-
+2 Hz). With the increasing penetration of power electronic (PE)                   ically time varying and nonlinear. This is due to the presence of
+converter interfaced renewable energy sources and numerous                        periodic switching in PE modules, and nonlinear mathematical
+installations of FACTS and HVDC devices, power systems                            modules such as phase-locked-loops (PLLs) in control system.
+have become hybrid dynamical systems with both continuous-                        Hence, the steady state of PE-based power systems is not a fixed
+time and switching dynamics. The PE converter controls are                        fundamental frequency phasor but is periodic and non-sinusoidal
+of multiple time-scales with fast inner control loops and slow                    in nature. The small-signal models of PE-based power systems
+outer control loops. Hence they can interact with slow elec-                      in phase variables are linear time-periodic (LTP) and not LTI.
+tromechanical oscillations as well as with fast electromagnetic                   This is because they are obtained by linearizing the dynamical
+transients. As a result, phenomena of wider bandwidth (tens                       equations along a periodic steady state and not about a fixed
+of Hz to hundreds of Hz) such as sub-synchronous torsional                        equilibrium point.
+and control interactions (SSTI, SSCI) and harmonic instabilities                     The techniques developed for stability analysis of LTI models
+such as second harmonic instability in LCC-HVDC systems are                       are not directly applicable to LTP models. Many of the popular
+increasingly of concern for grid stability. A detailed literature                 methods for stability analysis of LTP models are based on trans-
+survey and summary of various dynamic phenomena in PE-                            forming the model variables. For example, in balanced three-
+based power systems is provided in [1], [2]. The wider bandwidth                  phase systems with negligible lower order harmonics, Park’s
+                                                                                  transformation can be applied to obtain an approximate LTI
+   Manuscript received 7 July 2022; revised 2 January 2023; accepted 10 March
+2023. Date of publication 4 April 2023; date of current version 25 July 2023.     model in dq0 variables; however this approach may be inaccurate
+Paper no. TPWRD-01016-2022. (Corresponding author: Vinay Chindu.)                 for systems with phase imbalance and low pulse PE modules
+   The authors are with the Department of Electrical Engineering, In-             like TCSCs [3]. Several other methods to obtain an accurate
+dian Institute of Technology Bombay, Mumbai 400076, India (e-mail:
+vinaychindu@gmail.com; anil@ee.iitb.ac.in).                                       LTI model of LTP systems have been studied in literature such
+   Digital Object Identifier 10.1109/TPWRD.2023.3264296                           as dynamic phasors [4], generalised switching functions [5],
+                         0885-8977 © 2023 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                                       See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:54:06 UTC from IEEE Xplore. Restrictions apply.
+2880                                                                                  IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 38, NO. 4, AUGUST 2023
+
+
+
+                                                                                         the availability of the periodic steady state for the given
+                                                                                         circuit.
+                                                                                      2) The method is general enough and uses many of the com-
+                                                                                         putations performed by EMT programs during TDS such
+                                                                                         as LU factorisation of conductance matrix and therefore
+                                                                                         is amenable for automation.
+                                                                                      3) A subset of the eigenvalues of the computed sampled-data
+                                                                                         model are not related to the dynamics of the actual circuit
+                                                                                         and are purely an artefact of simulation methods of EMT
+                                                                                         programs. The criteria for recognising such eigenvalues
+                                                                                         which have no physical significance among the computed
+Fig. 1.   EMT Companion Circuit based stability analysis.                                ones are brought out.
+
+
+harmonic state spaces [6], and sampled-data models or Poincarè                    C. Literature Related to Presented Work
+maps [7].                                                                            A method to compute eigenvalues of an LTI RLC circuit from
+   Among these methods, the sampled-data modelling is com-                        its EMT Companion Circuit is given in [10]. It does not explore
+putationally more involved and non-intuitive for control de-                      using the computations performed by EMT program during TDS
+sign. However, it is a straight-forward approach applicable                       for obtaining the state-space matrix of the Companion Circuit.
+to any general circuit topology. Most of the computational                        Choosing state variables of EMT Companion Circuit in the
+steps in sampled-data modelling are similar to those in a                         presence of inductor cut-sets or capacitor loops in the original
+TDS and hence it is amenable to automation alongside a                            circuit is not discussed. Moreover, stability analysis of time-
+TDS program. Other methods such as dynamic phasors, al-                           varying systems has been carried out by computing eigenvalues
+though more sophisticated and intuitive, generally involve pru-                   at every simulation time step. However, this approach does not
+dent simplifying approximations [4]. These approximations                         necessarily give meaningful results with regard to stability of
+are based on a prior deep understanding of the working of                         time-varying systems [11].
+the given circuit. Moreover, the computations involved in                            Algorithms which are general and automatable for small-
+these sophisticated methods are significantly different from                      signal stability analysis of PE circuits are presented in [12], [13].
+those in TDS and therefore do not easily lend themselves for                      However, these algorithms require formulation of continuous-
+automation.                                                                       time domain state-space models for each switching interval
+                                                                                  which in turn requires selecting a set of linearly independent
+                                                                                  state variables. This is a computationally involved task as it
+B. Contributions of This Paper
+                                                                                  requires (i) topological analysis involving searching for cutsets
+   Electro-Magnetic-Transient (EMT) programs such as ATP                          consisting of only inductors and current sources and searching
+and PSCAD/EMTDC are widely used for TDS of PE-based                               for loops consisting of only capacitors and voltage sources [14]
+power systems. Based on the input circuit data, they derive                       or (ii) matrix reduction operations to get a row echelon form [15].
+a resistive circuit representation (Companion Circuit) of the                     It is shown in [16] that selection of a set of independent state
+discretised equations of each component [8]. EMT techniques                       variables is not of concern while formulating state space model
+for handling PE switches, nonlinear components, and interfacing                   of discretised circuit equations. However, the method proposed
+control block solver with the electric circuit solver have been                   in [16] uses history terms of node voltages as state variables
+developed for a fast and efficient TDS of power systems [9].                      and hence, is not compatible with the EMT method. Also, [16]
+Using these techniques, an EMT program obtains nodal for-                         does not consider circuits with time-varying models. The method
+mulation of the Companion Circuit model at each time step.                        presented in this paper is not limited by the aforementioned
+The building blocks of the EMT model are the conductance                          issues and is based on well established TDS techniques of EMT
+matrix of the Companion Circuit, node-branch incidence data,                      programs.
+history term current sources and discretised models of control                       The rest of the paper is organized as follows: Section II
+blocks.                                                                           discusses using EMT computations to extract LTI models of
+   The aim of the work presented in this paper, as shown in                       RLC circuits along with interpreting the computed eigenvalues.
+Fig. 1, is to explore the feasibility of an add-on program to EMT                 Sampled-data modeling is introduced in Section III and mod-
+programs which numerically computes the small-signal stability                    eling of control systems in EMT programs is briefly discussed.
+information based on the computations carried out by EMT                          The method to obtain sampled-data model using EMT computa-
+programs during TDS. In this regard, the main contributions                       tions and interpreting the computed eigenvalues is detailed. The
+of this paper are:                                                                proposed method in an algorithmic form along with illustrative
+   1) Using the building blocks of EMT nodal formulation, a                       case studies is given in Section IV. Some of the limitations to
+       methodology to compute an LTI state-space model of                         the proposed method from becoming a full-fledged automatable
+       an RLC circuit and an LTI sampled-data model of a                          one are discussed in Section V. Future work and conclusions
+       PE-based circuit is detailed. The methodology assumes                      drawn are given in Section VI.
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:54:06 UTC from IEEE Xplore. Restrictions apply.
+CHINDU AND KULKARNI: AUTOMATABLE APPROACH FOR SMALL-SIGNAL STABILITY ANALYSIS OF PE-BASED POWER SYSTEMS                                                2881
+
+
+
+II. STABILITY ANALYSIS OF LTI RLC NETWORKS USING EMT
+              NODAL ANALYSIS FORMULATION
+A. Nodal Analysis Formulation in EMT Programs
+   The approach employed in EMT programs is based on the
+Dommel’s Companion Circuits method [8]. In this approach,
+difference equations for each individual component of the circuit
+are obtained using trapezoidal method and subsequently the                      Fig. 2.   EMT companion circuit representation.
+simulation model of the entire circuit is obtained by linking
+the difference equations of circuit components through nodal
+analysis. A Companion Circuit is an equivalent resistive circuit                B. Formulation of Discrete-Time State-Space Model of EMT
+representation of the set of difference equations obtained for a                Companion Circuits
+given circuit. The voltages and currents of the previous discrete                   A state-variable vector of a system is the minimum informa-
+time instant, also referred to as history terms, are represented as             tion required to know at a time instant in order to completely
+current sources in the Companion Circuit model for the current                  determine the future behaviour of the system in the absence
+discrete time instant. The Companion Circuit models of R, L,                    of external excitation. In continuous-time domain models, a lin-
+and C branches are detailed in [8], [9] and are not explained here              early independent set of capacitor voltages and inductor currents
+for brevity.                                                                    forms the state vector of RLC circuits. For EMT Companion Cir-
+   Consider an LTI, lumped, RLC circuit with n nodes, nL                        cuits, based on the EMT nodal formulation discussed previously,
+inductors, and nC capacitors. Let [L] and [C] of sizes nL × nL                  it is apparent that the history term current sources are the state
+and nC × nC be diagonal matrices with inductance and capac-                     variables. Defining the state vector as xTk = [iThist,L,k iThist,C,k ]
+itance values respectively, and AL and AC of sizes n × nL and                   and using the equations (1)–(4), a discrete-time state-space
+n × nC be the node-branch incidence matrices of inductor and                    model of the EMT Companion Circuit is obtained and is of
+capacitor branches respectively. It is straightforward to obtain                the form given in (5).
+the conductance matrix (G) of the Companion Circuit and is
+given by (1), where YR is the conductance matrix of the actual                                            xk+1 = Axk + Buk                             (5)
+circuit considering only the resistor branches and h is simulation              The matrices A and B can be computed using (6) and (7)
+step size.                                                                      respectively. These matrices can be computed as a by-product
+                                            −1                              of TDS performed in an EMT program as explained here. The
+                                2C    T       2L                                information such as node-branch incidence matrices can be
+         G = YR + AC                 AC + AL       ATL                   (1)
+                                 h             h                                easily obtained from circuit netlist and are already used directly
+                                                                                or indirectly during TDS by EMT programs. Moreover, the
+By carrying out nodal analysis, the EMT nodal formulation for                   computation of A and B using (6) and (7) does not require
+the kth step as given in (2) is obtained where ihist,L and ihist,C              a fresh computation of inverse of G. The LU factors of G
+are the vectors of history term current sources of inductors and                already computed while solving (2) during TDS can be reused.
+capacitors respectively, v is the vector of node voltages and u                 Therefore, the state space model of the EMT Companion Circuit
+is the vector of external current source injections at each node.               can be obtained from the TDS computations without significant
+                                                                                additional computational burden.
+                                                                                                                             
+            Gvk = uk − AL ihist,L,k − AC ihist,C,k                       (2)               InL×nL         0           hL−1 ATL
+                                                                                   A=                             −           T
+                                                                                                                                  G−1 [AL AC ]
+                                                                                              0       −InC×nC          − 4C
+                                                                                                                          h A C
+For a given circuit, EMT programs derive the nodal analysis
+                                                                                                                                               (6)
+formulation and solve it at each time step for the node voltages.
+                                                                                                   
+The history term current sources are then updated for the next                             hL−1 ATL
+time step as given in (3) and (4).                                                 B=             T
+                                                                                                      G−1                                      (7)
+                                                                                           − 4C
+                                                                                              h AC
+                                      −1
+                                       L                                        A convenient feature of state-space modelling of EMT Compan-
+            ihist,L,k+1 = ihist,L,k +        ATL vk                      (3)    ion Circuits is that the need to check for linear independence of
+                                       h
+                                                                              state variables is not required. This avoids a significant computa-
+                                         4C                                     tional burden which is present in continuous-time domain state
+            ihist,C,k+1 = −ihist,C,k −        ATC vk                     (4)
+                                          h                                     space modelling. This can be explained as follows: Consider
+                                                                                the circuit shown in Fig. 2. It has two inductors in series and
+Remarks: Only current sources have been considered as input ex-                 hence only one of the inductor currents can be a state variable
+citation in (2) for brevity. In the presence of ideal voltage sources,          due to linear dependency. Therefore, the original circuit has only
+modified nodal analysis is performed instead of conventional                    one dynamic mode of time constant L1 +L    R
+                                                                                                                               2
+                                                                                                                                 . On inspecting the
+nodal analysis and followed by simple algebraic simplifications,                corresponding Companion Circuit shown in Fig. 2, it is clear that
+an equation of the form (2) can be obtained.                                    each history term current source has a shunt resistance across
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:54:06 UTC from IEEE Xplore. Restrictions apply.
+2882                                                                                IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 38, NO. 4, AUGUST 2023
+
+
+
+it and therefore, it is possible to give different initial values
+to the two history term current sources. Thus, the Companion
+Circuit has two dynamic modes. This can be generalised as: a
+discrete-time state-space model of an EMT Companion Circuit
+can always be obtained using the set of all the history term
+current sources as the state variables.
+   Based on the preceding discussion, the conductance matrix G
+and the state matrix A of the EMT Companion Circuit model in
+Fig. 2 are given in (8) and (9). The eigenvalues of A are given                 Fig. 3.   Perturbed periodic steady state of a system.
+in (10) and the way to interpret these computed eigenvalues is
+discussed in the following subsection.
+                                                                                        such cases, using (11), the corresponding eigenvalue (Ω)
+                                 
+           1
+              +  h
+                         −  h                                                           of EMT Companion Circuit will satisfy Ω ≈ −1.
+   G = R h2L1           h
+                           2L1
+                               h
+                                                              (8)                  iii) If Ω = −1 then, from (11), the corresponding λ will be of
+             − 2L1     2L1 + 2L2                                                        infinite magnitude. As circuits do not have eigenvalues of
+                                                          
+                        1           2L2 + hR      −2L2                                  infinite magnitude, the Ω = −1 mode is purely an artefact
+   A = I2×2 −                                                 (9)                       of the EMT method.
+                 L1 + L2 + hR 2
+                                      −2L1     2L1 + hR                            iv) The presence of Ω = −1 eigenvalues indicates linear
+         L1 + L2 − hR                                                                   dependencies among inductor currents and/or capacitor
+                    2
+  Ω1 =                     , Ω2 = −1                                   (10)             voltages of the RLC circuit. The number of repeated
+         L1 + L2 + hR
+                    2                                                                   −1 eigenvalues indicates the number of inductors-only
+                                                                                        cutsets and capacitors-only loops in the actual circuit.
+C. Relation Between Eigenvalues of an RLC Circuit and Its                               This is because the dimension of state vector of a Compan-
+EMT Companion Circuit Model                                                             ion Circuit is exactly (nL + nC ), whereas the dimension
+   As discussed previously, the EMT Companion Circuit model                             of state vector in continuous-time domain model is the
+is obtained by trapezoidal method based discretization of the dif-                      number of linearly independent inductor currents and
+ferential equations of each circuit component. As a consequence                         capacitor voltages.
+of discretization using trapezoidal method, the eigenvalues (λ)
+of continuous-time domain state-space model of the circuit                                III. STABILITY ANALYSIS OF PE-BASED CIRCUITS
+are related to the eigenvalues (Ω) of the discrete-time domain
+                                                                                   The RLC circuit considered in the previous section is an LTI
+state-space model of the EMT Companion Circuit by the bilinear
+                                                                                system and hence the conductance matrix (G) of its Compan-
+transformation [10] given in (11).
+                                                                                ion Circuit does not change with time. On the other hand, a
+                                      
+                      1 + λh2          2 Ω−1                                    PE-based circuit is a time-varying system with its conductance
+                 Ω=        λh
+                              , λ=                           (11)               matrix changing with switching events. PE-based circuits are
+                      1− 2             h  Ω+1
+                                                                                also known as piecewise linear (PWL) systems as their dynamic
+Using (11) and the eigenvalues of the EMT Companion Circuit                     models are LTI between any two successive switching instants
+obtained in (10), the continuous-time domain eigenvalues of the                 and change into different LTI models only after a switching
+circuit in Fig. 2 are obtained and are given in (12).                           event. The switching events can be categorised as:
+                                                                                    i) internally controlled events such as turn on/off of diodes
+                                 R
+                    λ1 = −            , λ2 = ∞                         (12)            and turn off of thyristors since these events are completely
+                              L1 + L2                                                  determined by the circuit variables only.
+It is evident that one of the eigenvalues (λ1 ) obtained by bilinear               ii) externally controlled events such as turn on of thyristors
+transformation matches exactly with the eigenvalue of the actual                       and turn on/off of IGBTs since these events are determined
+circuit. Moreover, if the Companion Circuit model has a −1                             by external firing circuit controllers. The externally con-
+eigenvalue then, the bilinear transformation yields a correspond-                      trolled switching instants are indirectly influenced by the
+ing eigenvalue of infinite magnitude. While a detailed discussion                      circuit variables in the presence of a feedback from circuit
+on the eigenvalues of EMT Companion Circuit models is given                            outputs to the firing angle generation circuits.
+in [17], a few important remarks are given here.                                   The small-signal stability analysis of a PE-based circuit at
+     i) The finite-valued continuous-time domain eigenval-                      steady state by sampled-data modelling approach involves de-
+        ues (λ) obtained from EMT state-space model using (11)                  scribing the evolution of a perturbation to its periodic steady state
+        match precisely with the actual eigenvalues of LTI RLC                  over time-intervals which are integer multiples of the system
+        circuits. This property is not affected by simulation step              period T as shown in Fig. 3. The model is of the form given
+        size h.                                                                 in (13), where x and φT are the state vector and small-signal
+    ii) When a PE switch in open (closed) state is modelled                     state transition matrix (STM) over one period respectively. At
+        as a very large (small) resistance, it may introduce a                  periodic steady state, φT is independent of index k and hence the
+        continuous-time domain eigenvalue (λ) of such a large                   sampled-data model is an LTI model in discrete-time domain.
+        magnitude that |λh|  1 for even small values of h. In                  Therefore, the conventional LTI analysis techniques can be
+
+         Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:54:06 UTC from IEEE Xplore. Restrictions apply.
+CHINDU AND KULKARNI: AUTOMATABLE APPROACH FOR SMALL-SIGNAL STABILITY ANALYSIS OF PE-BASED POWER SYSTEMS                                                2883
+
+
+
+applied and the system is said to be small-signal stable if the                 ẋ(τ − ) = ẋ(τ + ) at a switching event. It is shown in [19] that
+magnitudes of all the eigenvalues of φT are less than unity.                    perturbation of internally controlled switching instants can be
+                                                                                ignored in the computation of STM. A general set of criteria
+             Δx(t0 + T ) = φT Δx(t0 )
+                                                                                for determining whether a perturbation to a switching instant
+            Δx(t0 + kT ) = φT Δx(t0 + (k − 1)T )                       (13)     has no effect on STM has been derived in [18]. It is applicable
+                                                                                to both internally and externally controlled switching instants.
+It is pertinent to note that the sampled-data model given by (13)
+                                                                                These criteria under which there is no discontinuous jump in
+is a stability model of the autonomous system, i.e., the input
+                                                                                rate vector and thereby the effect of Δτ on STM can be ignored
+excitation to the circuit is assumed to be unperturbed.
+                                                                                are:
+                                                                                    i) The perturbation in turn off instant can be neglected if the
+A. Computation of STM Using Analytical Approach
+                                                                                        switch current reaches zero smoothly at turn off and not
+   Consider a PWL circuit at periodic steady state of period T .                        with a discontinuous jump.
+Let [t1 , t2 ] be a time interval such that only one switching event               ii) The perturbation in turn on instant can be neglected if the
+occurs within it. Let this switching instant be τ , where t1 <                          switch voltage reaches zero smoothly at turn on and not
+τ < t2 . The continuous-time domain state-space models of the                           with a discontinuous jump.
+system before and after the switching event are given by (14)                      These criteria are always satisfied during internally controlled
+and (15) respectively. The state-space vectors of the two models                switching events [19] and hence the effect of Δτ during such
+are related at τ by (16) since state variables are continuous in                a switching event is ignored. However, externally controlled
+nature.                                                                         switching events generally do not satisfy the aforementioned
+                                                                                conditions. Hence, the effect of corresponding Δτ has to be
+              ẋ(t) = A1 x(t) + B1 u(t), t1 ≤ t < τ                    (14)
+                                                                                considered.
+              ẋ(t) = A2 x(t) + B2 u(t), τ < t ≤ t2                    (15)        Remarks: The result that perturbation of internally controlled
+                                                                                switching events can be ignored is derived using continuous-
+            x(τ + ) = x(τ − )                                          (16)     time domain models. This result need not be valid for compu-
+Integrating (14) and (15) and then linearising using first-order                tations based on discretised models such as EMT Companion
+Taylor series approximation, it can be shown that the relation                  Circuits. The state variables of EMT models are history term
+between Δx(t2 ) and Δx(t1 ) is given by (17), where Δτ is the                   current sources and not inductor currents and capacitor voltages.
+perturbation in switching instant and ẋ(τ − ) and ẋ(τ + ) are rates           Nevertheless, it has been assumed in this work that ignoring
+of change of state vector at τ − and τ + respectively. A detailed               perturbation to internally controlled switching instants is suffi-
+derivation of (17) is given in [18].                                            ciently accurate for EMT Companion Circuit based computation
+                                                                                of STM. Moreover, it is shown in Section IV, using the buck
+         Δx(t2 ) = eA2 (t2 −τ ) eA1 (τ −t1 ) Δx(t1 )                            converter example, that the error due to this assumption is not
+                                                                               significant.
+                   + eA2 (t2 −τ ) ẋ(τ − ) − ẋ(τ + ) Δτ               (17)
+   Note that in (14) and (15), it has been assumed that the                     B. Computation of STM Using EMT Formulations
+dimension of state vector does not change due to the switching
+                                                                                   Consider a PWL circuit at steady state of period T with its
+event. However, the dimension of state vector may change due to
+                                                                                EMT model at ith simulation step in discrete-time state-space
+a switching event if the switches are modelled as open and short
+                                                                                form given by (18), where h is the simulation step size. Note that
+circuits during on and off states respectively. For example, in a
+                                                                                the input excitation, ui , is considered unperturbed since only the
+TCSC circuit, the inductor current ceases to be a state variable
+                                                                                stability of the autonomous system is of interest.
+when the thyristor is turned off. However, such situations are not
+of concern here as the switches in EMT programs are modelled                               xi+1 = Ai xi + Bi ui , xi = x(ih), T = N h                  (18)
+by a finite valued resistance during off state and by a non-zero
+                                                                                The computation of the STM of the linearised system model is
+resistance during on state.
+                                                                                straightforward if the following assumptions are made: i) the
+   Effect of Perturbation in Switching Instant on STM: Consider
+                                                                                switching instants are fixed, i.e., they are unperturbed due to
+a special case where a PE-based circuit has no internally con-
+                                                                                a small-signal perturbation to the initial circuit state and ii) the
+trolled switching events and is operating in open loop so that the
+                                                                                switching instants are at integral multiples of h, i.e, the switching
+externally controlled switching instants remain fixed. In such a
+                                                                                events occur exactly on the discretised time axis. Under such
+case, the computation of STM gets simplified and can be seen
+                                                                                assumptions, the STM, φT , satisfying the sampled-data model
+by substituting Δτ = 0 in (17). In reality, the switching instants
+                                                                                (19) can be computed using the relation (20).
+are not fixed and are dependent on the circuit variables. The
+relationship of switching instant with the initial circuit state                                    ΔxN = φT Δx0                                       (19)
+at t1 is usually highly nonlinear and consequently makes the
+                                                                                                       φT = AN −1 AN −2 · · · A1 A0                    (20)
+circuit model nonlinear. This necessitates small-signal lineariza-
+tion despite being described by piecewise linear models. It is                  However, such assumptions are usually not satisfied in a cred-
+evident from (17) that Δτ plays a role in the computation of                    ible scenario and therefore, perturbations to switching instants
+STM whenever there is a discontinuous jump in rate vector i.e.                  and EMT techniques for handling switching events occurring
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:54:06 UTC from IEEE Xplore. Restrictions apply.
+2884                                                                                  IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 38, NO. 4, AUGUST 2023
+
+
+
+
+                                                                                  Fig. 5. Interface between network and control solvers in EMT programs (a)
+                                                                                  ATP-EMTP (b) PSCAD/EMTDC.
+Fig. 4.   Switching instant determination by linear interpolation.
+
+                                                                                  The two popularly used chatter suppression algorithms in EMT
+in-between two simulation steps need to be considered in the                      programs are (i) Critical Damping Adjustment Scheme [20]
+computation of STM. These are discussed in the following                          used in NETOMAC, and (ii) Half Time-Step Interpolation
+subsection.                                                                       Scheme [21] used in PSCAD/EMTDC. In the newer versions of
+   1) Incorporating Interpolation and Chatter Suppression Al-                     PSCAD/EMTDC, an improved method based on instantaneous
+gorithms in STM Computation: EMT programs are based on a                          solution has been implemented to avoid fictitious switching
+fixed time-step algorithm and hence the exact switching instants                  losses [22]. Each of these approaches consists of a cascaded
+are generally found in-between simulation instants. Moreover,                     sequence of operations with x3 and τ as starting inputs. Per-
+following a switching event there is a possibility of undamped                    forming small-signal linearisation followed by elimination of
+numerical chatter in simulation output. Hence, EMT programs                       intermediate computations, Δx4 can be expressed as a linear
+use interpolation and chatter suppression algorithms at switch-                   function of Δx3 and Δτ and is briefly explained in appendix.
+ing events. Let an externally controlled switching event occur                    Further, in order to obtain the relation between Δτ and Δx3 , the
+whenever the reference signal xref becomes lesser than the con-                   modelling of firing angle control system needs to be considered
+trol signal xc as shown in Fig. 4. Assuming the switching instant                 which is briefly discussed in the following subsection.
+(tsw ) lies between successive instants t3 and t4 , EMT programs                     2) Modelling of Control Systems in EMT Programs: Control
+compute the switching instant tsw by linear interpolation as                      blocks such as integrators, gains, first-order lag transfer func-
+expressed in (21), where τ = tsw − t3 . The notation xref [3]                     tions are commonly used in EMT simulations to model firing
+refers to the value of xref at t3 .                                               angle generation control blocks such as PIDs and PLLs. Unlike
+                                                                                  the electrical network equations, the control system equations in
+   τ                 τ               τ              τ                             matrix form are not symmetric. Hence to avoid the increase in
+     xref [4] + 1 −     xref [3] = xc [4] + 1 −        xc [3]                     computational burden, EMT programs do not solve the control
+   h                 h               h              h
+                                                           (21)                   system equations simultaneously with the network equations.
+  On applying first-order linearisation, Δτ can be expressed as                   Instead a time-step delay is introduced between them as shown
+(22).                                                                             in Fig. 5. It is observed that this delay is introduced while
+                                                                                  transferring the output of the network solution to the control
+         τ (Δxc [4]−Δxref [4])+(h−τ ) (Δxc [3]−Δxref [3])
+  Δτ =                                                                            equations solver in PSCAD/EMTDC whereas in ATP-EMTP,
+                      xref [4]−xc [4]+xc [3]−xref [3]
+                                                                                  the delay is introduced while transferring the output of control
+                                                            (22)
+                                                                                  system solution to the network solver. For a control system made
+Using the methodology discussed in Section II-B, discrete-time
+                                                                                  up of only transfer function and summing blocks, EMT programs
+LTI models can be obtained describing the Companion Circuits
+                                                                                  obtain the input-output relationship of the entire control system
+for the two switching configurations and let they be as given in
+                                                                                  in the form (26).
+(23) and (24), where xk is the state vector of the Companion
+Circuit at k th step.                                                                                Y (s)   N0 + N 1 s · · · + N m s m
+                                                                                                           =                                            (26)
+                                                                                                     U (s)   D0 + D1 s · · · + Dn s n
+                   xk+1 = A1 xk + B1 uk , k = 1, 2                       (23)
+                                                                                  Subsequently, the input-output relation in discrete-time domain
+                   xk+1 = A2 xk + B2 uk , k = 4                          (24)     of the form given in (27) is computed [9]. The steps performed
+The small-signal relations assuming the excitation sources are                    to update the vector of history terms can be put in a state-space
+unperturbed are as given in (25). However, it is not as straight-                 form as given in (28).
+forward to obtain the relation between Δx4 and Δx3 as it                                                  y[k] = cT xhist [k] + du[k]                   (27)
+depends upon the chatter suppression algorithm used at the
+switching instant tsw .                                                                         xhist [k + 1] = Acon xhist [k] + Bcon u[k]              (28)
+
+            Δx2 = A1 Δx1 , Δx3 = A1 Δx2 = A21 Δx1                                 If the control system is nonlinear due to the presence of math-
+                                                                                  ematical operations such as abc to dq0 transformation in PLLs,
+            Δx5 = A2 Δx4                                                 (25)     then EMT programs introduce one time-step delays which
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:54:06 UTC from IEEE Xplore. Restrictions apply.
+CHINDU AND KULKARNI: AUTOMATABLE APPROACH FOR SMALL-SIGNAL STABILITY ANALYSIS OF PE-BASED POWER SYSTEMS                                                2885
+
+
+
+transform the implicit nonlinear relations into explicit nonlinear                     linear dependency. As a result, the STM, which is the
+relations. It is straightforward to handle the explicit nonlinear                      product of all Ai s, will have an eigenvalue exactly equal
+relations during TDS. In the presence of nonlinear blocks, the                         to zero corresponding to each linear dependency.
+linearised state-space model of the control system may not be                      Remarks: In the case of LTI systems, it is known that the state
+LTI, i.e., the matrices Acon and Bcon in (28) may be sample-                    matrix is not unique and depends on the state variables chosen.
+variant. It is to be noted that formulation of control equations in             However, the eigenvalues of state matrix remain unchanged
+state-space form does not involve matrix inversion because of                   irrespective of the choice of state variables. Similarly in LTP
+the explicit nature of the relations. Finally, the state-space model            models, the entries of STM depend on the state variables chosen
+of the control system is combined with that of the Companion                    and, in addition, on the chosen starting point (t0 in Fig. 3) on the
+Circuit using the one time-step delay interface to obtain the                   periodic steady state. However, irrespective of that, the non-zero
+small-signal state-space model of the entire system at that time                eigenvalues of STM remain unchanged. This is based on a result
+step.                                                                           from matrix theory that non-zero eigenvalues of a matrix product
+   3) Relating the Eigenvalues of the Computed STM With the                     do not change with a cyclic permutation of matrix sequence.
+Actual Circuit Dynamics: The discrete-time domain eigenval-
+ues (Ω) of the STM computed using EMT Companion Circuit                              IV. IMPLEMENTATION ALGORITHM AND CASE STUDIES
+based method can be transformed into equivalent eigenvalues in
+                                                                                   The various steps involved in the computation of STM of
+continuous-time domain by (29), where T is the period of steady
+                                                                                PE-based circuits using the TDS computations performed during
+state.
+                                                                                EMT simulation have been detailed in previous sections. These
+                              Ωi = eλi T                               (29)     major steps in the proposed methodology are consolidated in an
+                                                                                algorithmic form here. It is then illustrated by using simple PE
+It is to be noted that this relation is different from the bilinear
+                                                                                circuit examples and computing their STM and eigenvalues.
+transformation given in (11) which is applicable only to LTI
+circuits. Moreover, the accuracy of eigenvalues of PE-based
+                                                                                A. Algorithm for Implementation of Proposed Method
+circuits obtained using the proposed method depends upon
+simulation step size (h), with a smaller h giving a more accurate                  Step 1: In addition to circuit netlist data and access to the
+set of eigenvalues. This is in contrast to the case of LTI circuits             building blocks of EMT nodal formulation, the periodic steady
+where exact eigenvalues are obtained using the proposed method                  state of the circuit over a time interval of one period is also
+irrespective of h. The set of eigenvalues obtained using the                    required for computing STM.
+proposed EMT based method usually has a subset of eigenvalues                      Step 2: Using the periodic steady state, the chronological
+which have no physical significance, i.e., they do not correlate                sequence of various switching configurations and their time
+with any of the dynamics of the original circuit. This subset of                intervals are then obtained. Furthermore, using the criteria given
+eigenvalues is purely an artefact of EMT simulation model and                   in Section III-A, the switching instants whose perturbations need
+arise due to the following reasons:                                             not be considered are determined.
+     i) Each one time-step delay used in EMT programs either                       Step 3: Any one of the switching configurations is chosen from
+        for interfacing the network solver with control system                  the obtained sequence in Step 2 and within its corresponding
+        solver or for transforming an implicit nonlinear rela-                  time interval, an arbitrary time instant t0 is chosen as the starting
+        tionship into an explicit one gives rise to an additional               point. The STM (φT ) and the running index i are initialised to
+        state variable. The corresponding eigenvalue will be of                 identity matrix and 0 respectively.
+        negligible magnitude due to small values of simulation                     Step 4: If there is a switching event between simulation steps
+        step size.                                                              i − 1 and i, then go to Step 6 else go to Step 5.
+    ii) As shown in (20), the computation of STM of a PE-based                     Step 5: Obtain the small-signal discrete-time state-space mod-
+        circuit using discrete-time state-space models involves                 els of the Companion Circuit and the control system. The two
+        multiplication of matrices Ai in chronological order,                   models are then combined by considering the one time-step
+        where Ai is the state matrix of the EMT model at ith                    delay interface to obtain the state matrix Ai of the entire system.
+        simulation step. As explained in Section II-C, state matrix             Note that the state-space model of control system needs to
+        of an EMT model, Ai , will have an eigenvalue −1 for each               be freshly computed at each step in the presence of nonlinear
+        linear dependency among inductor currents or capacitor                  mathematical functions such as root-mean-square (RMS). Go to
+        voltages. This is applicable for every Ai , except those at             Step 8.
+        switching events.                                                          Step 6: Obtain the interpolated switching instant computed
+   iii) At a switching event, the computation of corresponding                  by the EMT program during TDS. The state-space model of
+        Ai involves linear interpolation and chatter suppression                the Companion Circuit is then computed by incorporating the
+        steps as explained in Section III-B1. Also, it is known that            interpolation and chatter elimination techniques. Note that the
+        each mode of EMT model corresponding to −1 eigen-                       chatter elimination technique should always be considered while
+        value results in chatter oscillations in simulation output              computing STM even when chatter elimination has not been
+        when excited [17]. Therefore, on performing the chatter                 performed during TDS of that switching event. This is necessary
+        suppression procedure, the state matrix Ai at a switching               so that the eigenvalues corresponding to any linear dependencies
+        event will have a zero eigenvalue corresponding to each                 become zero.
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:54:06 UTC from IEEE Xplore. Restrictions apply.
+2886                                                                                  IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 38, NO. 4, AUGUST 2023
+
+
+
+                                                                                                                 TABLE II
+                                                                                               EIGENVALUES OF STM OF BUCK CONVERTER IN DCM
+
+
+
+
+                                                                                          This is due to the one time-step delay used to interface the
+                                                                                          network and control system in EMT programs and this can
+Fig. 6.   Buck converter circuit with closed-loop control.
+                                                                                          be verified from the corresponding participation factors.
+                                                                                          The magnitude of this eigenvalue is very small and hence
+                              TABLE I                                                     has been tabulated as ≈ 0.
+            EIGENVALUES OF STM OF BUCK CONVERTER IN CCM                              ii) The eigenvalues obtained from the proposed method
+                                                                                          match very well with those from analytical method and
+                                                                                          also are only slightly affected by variation in h. The
+                                                                                          main reason is that the linear interpolation approximation
+                                                                                          used by EMT programs is sufficiently accurate for a high
+                                                                                          switching frequency buck converter in CCM.
+                                                                                     With load resistance and inductance changed to R = 12 Ω
+                                                                                  and L = 0.5 mH, the buck converter is in discontinuous current
+                                                                                  mode (DCM) at steady state. The eigenvalues of the STM for
+                                                                                  this operating condition are computed for different values of h
+                                                                                  and are tabulated in Table II. The following observations are
+                                                                                  relevant:
+   Step 7: There is no change in the procedure for computing                           i) The zero eigenvalue from the analytical method is due
+state-space model of control system at switching events as the                             to the inductor current variable being not a state variable
+interpolation and chatter elimination corrections are applied only                         when both the diode and switch are in off state. The corre-
+to network solution and not to control system solution. Similar                            sponding eigenvalue from the proposed method is close
+to the procedure given in Step 5, the models of control system                             to but not exactly zero since the switches are modelled
+and Companion Circuit are combined to get the state matrix, Ai ,                           by finite Rof f resistances and not as open circuits during
+of the entire system.                                                                      turned off state.
+   Step 8: Update φT and i as follows: φT ← Ai φT , i ← i + 1.                        ii) Similar to the CCM case, the eigenvalue due to the one
+If ti = t0 + T , then end the program else go to step 4.                                   time-step delay interface between network and control is
+                                                                                           of very small magnitude and is tabulated as ≈ 0.
+                                                                                     iii) Unlike in CCM case, there is a noticeable variation with
+B. Illustrative Case Studies
+                                                                                           simulation step size in the eigenvalues computed using the
+   1) Buck Converter with Closed-Loop Voltage Control: A                                   proposed method. The reason is that the linear interpola-
+buck converter circuit with output voltage control implemented                             tion used by EMT programs to find diode turn off instant
+by an integral-only controller as shown in Fig. 6 is considered.                           is not a very accurate approximation when the inductor
+The circuit data is: vin = 12 V, Rin = 0.01 Ω, vref = 3 V,                                 current value is near zero.
+R = 3 Ω, L = 1.5 mH, C = 250 μF, and integral gain Ki = 2.                           iv) In DCM, diode turn off is an internally controlled switch-
+The switches are modelled by Ron = 1 mΩ and Rof f = 1 MΩ.                                  ing event and small-signal perturbation of its turn off
+The frequency of switching (ramp signal) is f = 5 kHz. The turn                            instant (τ ) should not affect the STM. However, as previ-
+off instant of the switch is varied by the feedback control loop                           ously discussed, this assumption is not strictly valid for
+whereas the turn on instant is fixed. The circuit steady state has a                       EMT program based STM computation. The proposed
+period of T = f1 = 200 μs. For the given values of parameters,                             method is modified to consider the perturbation of diode
+the buck converter circuit is in continuous current mode (CCM)                             turn off instant and the resulting eigenvalues are also tabu-
+of operation at steady state. The STM of the circuit is computed                           lated in Table II. It is observed that the error introduced in
+using the proposed method for different values of simulation step                          the computed eigenvalues due to ignoring the perturbation
+sizes (h) and also by the exact analytical method. The computed                            in τ is not significant.
+eigenvalues are given in Table I. Based on the tabulated results,                    2) STATCOM With Reactive Power Injection Control: A
+the following observations are relevant:                                          STATCOM consisting of a 6-pulse voltage source inverter (VSI)
+    i) The proposed method gives an additional eigenvalue in                      and a capacitor (C = 300 μF) is connected to a 3-phase voltage
+       comparison with those obtained by the analytical method.                   source through a transformer as shown in Fig. 7. The voltage
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:54:06 UTC from IEEE Xplore. Restrictions apply.
+CHINDU AND KULKARNI: AUTOMATABLE APPROACH FOR SMALL-SIGNAL STABILITY ANALYSIS OF PE-BASED POWER SYSTEMS                                                 2887
+
+
+
+                                                                                                              TABLE III
+                                                                                            EIGENVALUES OF STM OF 6-PULSE STATCOM CIRCUIT
+
+
+
+
+Fig. 7. 6-pulse STATCOM circuit with closed-loop reactive power injection
+control.
+                                                                                 be sufficiently reasonable for this operating case. It is to be noted
+                                                                                 that as SRF-PLL is not modeled in the approximate analytical
+source (vs ) has a line-to-line voltage of 100 kV. The ungrounded                method, the number of state variables reduces by two and hence,
+Y-Y transformer has a unity transformation ratio with a leakage                  only five eigenvalues are obtained. STM is computed for four
+impedance of 10% pu on a base of 100 kV and 50 MVA. In                           cases by choosing simulation step-sizes (h) of 50 μs and 100 μs
+order to control the reactive power injected into the source by                  and proportional gains (Kp ) of SRF-PLL of 0.5 Hz/kV and
+the STATCOM, a control system is designed whose details are                      0.05 Hz/kV. The corresponding eigenvalues are tabulated in
+as follows:                                                                      Table III. Based on the results tabulated, the following observa-
+   The desired reactive power is Qref = 20 MVA and the PI con-                   tions are relevant:
+troller used for firing angle (α) control has Kp = 0.5 rad/MVA                        i) The eigenvalues of the STM computed using the proposed
+and Ki = 10 rad/(MVA s). The reference angle (θ) is generated                            method are thirteen in number of which six eigenvalues
+using a synchronous reference frame (SRF) PLL whose inputs                               are of negligible magnitude and have not been shown
+are the three-phase voltages at the terminals of the voltage                             in Table III. The presence of six eigenvalues of negligi-
+source. The inner blocks of the SRF-PLL are also shown in                                ble magnitude is due to: a) three one time-step delays
+Fig. 7. The parameters of the PI controller used within the                              for interfacing the three phase voltages with SRF-PLL
+SRF-PLL are Kp = 0.5 Hz/kV and Ki = 0.2 Hz2 /kV. The                                     control block, b) one time-step delay to interface the
+switches are modeled in the EMT program by Ron = 5 mΩ and                                reactive power with PI control block, c) one time-step
+Rof f = 1 MΩ. The instantaneous reactive power (Q) is com-                               delay introduced within the SRF-PLL in order to handle
+puted using (30). It is then smoothed by a filter of time-constant                       the nonlinearity of the abc-dq0 transformation block, and
+Tc = 20 ms to get measured reactive power QM as shown in                                 d) one linear dependency among the three line currents
+Fig. 7.                                                                                  as they sum to zero due to ungrounded Y-Y transformer.
+                                                                                     ii) It can be observed that five of the eigenvalues obtained
+        1
+   Q = √ ((vb − vc )ia + (vc − va )ib + (va − vb )ic )                  (30)             from the proposed method for a given value of h are not
+         3                                                                               affected by a change in value of Kp of SRF-PLL. This
+   For comparison purpose, an approximate analytical model of                            is expected as purely sinusoidal voltages are input into
+this circuit has been derived based on the methodology referred                          SRF-PLL even during transient conditions as Zs = 0. The
+to as Inverter Type II control in [23]. In this method, the voltage                      other two eigenvalues which are affected by a change in
+at the STATCOM terminals is assumed to be perfectly sinusoidal                           Kp correspond to the two integrators present within the
+and therefore, the dynamics of SRF-PLL are not modelled. The                             SRF-PLL.
+step-by-step procedure for deriving an approximate small-signal                     iii) The results from approximate analytical method for
+state-space model of STATCOM is given in [23] and is not revis-                          Zs = 0 show a good match with those obtained from the
+ited here for brevity. For comparing the eigenvalues computed                            proposed method with the discrepancies reducing with
+using the proposed method with those from this approximate an-                           step size.
+alytical model, an operating case with source impedance Zs = 0                      iv) Another operating condition is considered where Zs =
+is considered. The reason is that with zero source impedance,                            5∠80◦ Ω. The approximate analytical method for this case
+the input voltages to SRF-PLL will be purely sinusoidal during                           is modified to incorporate the SRF-PLL. This has been
+transient conditions too. Therefore, the dynamics of PLL will                            done by approximating the PLL with a first-order lag
+not have any effect on the other dynamic modes of the circuit.                           transfer function of time-constant 0.035 s. It can be seen
+Hence, the approximations made in the analytical method will                             from the tabulated values that the discrepancies in the
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:54:06 UTC from IEEE Xplore. Restrictions apply.
+2888                                                                                IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 38, NO. 4, AUGUST 2023
+
+
+
+                           TABLE IV
+  STABILITY MARGIN OF STATCOM CIRCUIT IN TERMS OF Ki PARAMETER
+
+
+
+
+                                                                                Fig. 8.   DC-side capacitor voltage for the unstable case.
+        results from the two methods has relatively increased in
+        comparison to the case with Zs = 0. This is expected
+        since the voltages at input source terminals contain har-
+        monics as Zs is non-zero whereas the analytical model
+        ignores any harmonics.
+   3) Estimation of Stability Margin by Eigenvalue Sensitivity:
+The parametric sensitivities of eigenvalues of STM are computed
+here for the STATCOM circuit shown in Fig. 7. The parameter
+considered here is the integral gain, Ki , of the PI controller
+corresponding to reactive power control. The eigenvalue sen-
+sitivity is computed using the finite difference approximation
+given by (31), where ΔKi is a small change in Ki .
+                                                                                Fig. 9.   Expanded view of DC-side capacitor voltage.
+                               ∂Ω    ΔΩ
+                        SK i =     ≈                                   (31)
+                               ∂Ki   ΔKi
+                                                                                disturbance is shown in Fig. 8. An expanded view of this
+It is to be noted that the periodic steady state of the system
+                                                                                waveform immediately following the disturbance is shown in
+for the perturbed value of Ki need not be computed afresh.
+                                                                                Fig. 9. The period of the oscillation that is observed to be going
+The previously computed periodic steady state for the initial
+                                                                                unstable is approximately measured from the waveform and is
+value of Ki can be reused as ΔKi considered is of very small
+                                                                                around 0.057 s. The corresponding frequency is around 17.5 Hz
+magnitude. This has been verified by performing fresh TDS of
+                                                                                which is comparable with the value computed previously using
+the system for the perturbed value of Ki and comparing the
+                                                                                the proposed method. The stability margin computed from the
+eigenvalue sensitivities obtained from the two approaches. The
+                                                                                proposed method shows a good match even for Case I with
+eigenvalue sensitivities, SKi , are computed for two operating
+                                                                                Ki = 10 which is significantly away from Ki,max . However, this
+cases: (a) Case I where Ki = 10 rad/(MVA s) and (b) Case II
+                                                                                may not always be valid in general. Nevertheless, it is observed
+where Ki = 20 rad/(MVA s) and are tabulated in Table IV.
+                                                                                that for operating conditions not significantly away from the
+   Using the sensitivity values, the maximum values of Ki for
+                                                                                critically stable condition, the stability margins obtained using
+which the corresponding discrete-time eigenvalues cross the unit
+                                                                                linear extrapolation show appreciable match with the exact
+circle are computed using linear extrapolation. This is based
+                                                                                values obtained from TDS.
+on the assumption that if the operating case is in the vicinity
+of critically stable case, then linear extrapolation will give a
+sufficiently good estimate of Ki,max . The values of Ki,max                                                   V. DISCUSSION
+corresponding to the two complex-conjugate eigenvalue pairs                        An EMT Companion Circuit based approach to study stability
+only are given as the values obtained for other eigenvalues are                 of periodic steady state of PE-based power systems has been
+either too large or not meaningful. From Table IV, it is seen                   proposed in the previous sections. Some of the challenges to
+that the maximum value of Ki for which the system is stable is                  making the proposed method a full-fledged automatable one are
+around 22 rad/(MVA s). Further, among the system eigenvalues                    discussed here.
+computed for Case II, the eigenvalue tending towards the unit                      1) Requirement of Existence of Stable Periodic Steady State:
+circle is −0.4931 ± j0.8414. This discrete-time eigenvalue is                   Computation of STM requires linearising the system equations
+converted to continuous-time domain eigenvalue using (29)                       along the periodic steady state of the system. In the proposed
+and is around −1.25 ± j105.1. The frequency of this critical                    method, the required periodic steady state information is ob-
+oscillatory mode is around 16.7 Hz.                                             tained by running the TDS of the circuit on an EMT program for
+   The value of Ki,max is also determined by performing re-                     a sufficiently long time. As the TDS output will reach a periodic
+peated TDS for varying Ki until instability and is around                       steady state if and only if the system is small-signal stable, the
+Ki = 23.5 rad/(MVA s). For this critical value of Ki , the dc-                  proposed method requires the system to have a stable periodic
+side capacitor voltage waveform after a temporary small-signal                  steady state. Moreover, if a system is small-signal stable but has
+
+         Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:54:06 UTC from IEEE Xplore. Restrictions apply.
+CHINDU AND KULKARNI: AUTOMATABLE APPROACH FOR SMALL-SIGNAL STABILITY ANALYSIS OF PE-BASED POWER SYSTEMS                                                2889
+
+
+
+one or more dynamic modes which are very lightly damped,                        The variables are defined as follows: x̄k =xN k , ūTk =[uN k
+then TDS has to be run for a long duration to obtain steady                     uN k+1 · · · uN k+N −1 ], and ȳkT = [yN k yN k+1 · · · yN k+N −1 ].
+state. Therefore, for PE systems having unstable or marginally                  It can be seen that the dimensions of input and output variables
+stable steady state, approaches for direct computation of peri-                 has been increased or lifted while transforming the LTP model
+odic steady state are required. However, this capability is not                 into an LTI model. As the matrices B̄ and D̄ of the lifted models
+currently present in EMT programs. Also, it is to be noted that                 are much larger in size, simpler approximate models have been
+the requirement of a stable periodic steady state is also present               derived in literature by making assumptions such as the perturba-
+in frequency scanning approach [24], which is a widely used                     tion to input signal remains constant over the sampling interval.
+method to numerically compute the small-signal stability of                     Such assumptions reduce the bandwidth of the model which can
+PE-based systems.                                                               then be increased to some extent by transforming variables to dq0
+   The workarounds used in literature for direct computation of                 co-ordinates and exploiting symmetry in operation by assuming
+periodic steady state are as follows:                                           the system to be balanced [7]. Based on these discussions,
+   a) In [7], periodic steady state of a TCSC circuit has                       we believe that the proposed method can be extended in a
+       been computed by firstly performing a load flow solution                 straight-forward manner to compute non-autonomous models
+       considering only the fundamental frequency model of                      of PE-based circuits and is part of our ongoing work.
+       TCSC. The dominant harmonics computed from known                            3) Linearisation of Mathematical Functions: The common
+       expressions for harmonic waveforms in TCSCs are then                     nonlinear operations found in power system TDS are (a) multi-
+       superimposed on to the load flow solution.                               plicative nonlinearities such as the one in reactive power equa-
+   b) In [12], the iterative approach of shooting technique is                  tion (30), (b) RMS computations of voltages and currents and
+       used. It is a more generalisable and accurate approach to                (c) trigonometric functions present in abc to dq0 coordinate
+       compute periodic steady state of general PE circuits [25].               transformation. The small-signal linearisation of such common
+       The shooting technique involves computation of the Ja-                   nonlinearities can be automated by creating look-up tables. For
+       cobian of the system equations at each iteration. Interest-              linearisation of any general nonlinear operation, techniques such
+       ingly, as explained in [25] and [12], many of the steps in               as Automatic Differentiation have been used in literature [27].
+       computation of Jacobian are same as those in computation                 For the proposed method to be completely automatable, it is es-
+       of STM. With this as the motivation, we are working on                   sential to incorporate the functionality of automatic linearisation
+       extending the proposed method to include the function-                   of mathematical functions and is part of our ongoing work.
+       ality of direct computation of periodic steady state using
+       shooting technique.                                                                     VI. FUTURE WORK AND CONCLUSIONS
+   c) An unstable stand-alone system can be split into sub-
+                                                                                   This paper presents an automatable numerical approach to
+       systems such that each subsystem has a stable periodic
+                                                                                compute LTI discrete-time autonomous models of PE-based
+       steady state on its own and the instability arises only
+                                                                                power systems. The proposed method is based on the TDS
+       after interfacing them. However, this approach requires
+                                                                                techniques of EMT programs. The main advantages of this
+       the subsystem models to be in a non-autonomous or
+                                                                                approach are that it does not require checking for linear de-
+       input-output variables form as given in (32). Moreover,
+                                                                                pendencies among state variables and it reuses many of the
+       non-autonomous models are essential for transfer function
+                                                                                computations performed during TDS such as LU factorisation
+       analysis which is a useful tool for grid interaction studies
+                                                                                of matrices. The computed state transition matrix can then be
+       and informed design and tuning of controllers.
+                                                                                used to derive information such as eigenvalues and parametric
+                           xk+1 = Axk + Buk                                     sensitivity of eigenvalues which are useful for system stability
+                                                                                diagnostics. Although techniques which are computationally
+                              yk = Cxk + Duk                           (32)     simpler and more intuitive than sampled-data modelling exist,
+                                                                                they are limited by the need to have a prior deep understanding of
+      However, the proposed method has so far been restricted                   the working of a given circuit and hence are difficult to automate.
+      to computing only autonomous models of the form given                     The proposed approach provides a practically viable means to
+      in (13). The challenges involved in extending the proposed                extend EMT simulation packages to include the functionality of
+      method to compute non-autonomous models are discussed                     eigenanalysis.
+      next.                                                                        Our future objective is to extend the proposed method by
+   2) Non-Autonomous Sampled-Data Model: A general ap-                          incorporating functionalities such as non-autonomous sampled-
+proach for obtaining high-bandwidth LTI non-autonomous                          data model computation and direct computation of periodic
+model of a periodically varying system is by lifting tech-                      steady state.
+nique [26]. In lifting technique, the discrete-time LTP system
+defined in (18) is represented by an LTI model of the form given                                                APPENDIX
+in (33).
+                                                                                   The first two computation steps in the Half Time-Step Interpo-
+                       x̄k+1 = φT x̄k + B̄ ūk                                  lation method used by PSCAD/EMTDC for chatter suppression
+                                                                                are briefly explained here. Refer to Section III-B1 and Fig. 4 for
+                          ȳk = C̄ x̄k + D̄ūk                         (33)     definitions of symbols used here.
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:54:06 UTC from IEEE Xplore. Restrictions apply.
+2890                                                                                  IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 38, NO. 4, AUGUST 2023
+
+
+
+   r An intermediate circuit solution is obtained by solving                        [8] H. W. Dommel, “Digital computer solution of electromagnetic transients
+       the nodal formulation at t4 assuming no switching has                            in single-and multiphase networks,” IEEE Trans. Power App. Syst., vol.
+                                                                                        PAS-88, no. 4, pp. 388–399, Apr. 1969.
+       occurred. This intermediate circuit solution is then used to                 [9] H. W. Dommel and S. Bhattacharya, EMTP Theory Book. Vancouver, BC,
+       obtain the circuit solution just before the switching instant                    Canada: Microtran Power System Analysis Corporation, 1992.
+       using linear interpolation. The state vectors corresponding                 [10] J. A. Hollman and J. R. Marti, “Step-by-step eigenvalue analysis with
+                                                                                        EMTP discrete-time solutions,” IEEE Trans. Power Syst., vol. 25, no. 3,
+       to these two computation steps, Γ1 and Γ2 , can be expressed                     pp. 1220–1231, Aug. 2010.
+       as follows.                                                                 [11] S. Ray and J. Zhu, “A case study of frozen-time eigenvalues in the stability
+                                                                                        analysis for periodic linear systems,” in Proc. 23rd Southeastern Symp.
+                         Γ1 = A1 x[3] + B1 u[3]                           (34)          Syst. Theory, 1991, pp. 450–453.
+                                                                                   [12] G. C. Verghese, M. E. Elbuluk, and J. G. Kassakian, “A general approach to
+                             τ              τ
+                         Γ2 =  Γ1 + 1 −         x[3]           (35)                     sampled-data modeling for power electronic circuits,” IEEE Trans. Power
+                             h              h                                           Electron., vol. PE-1, no. 2, pp. 76–89, Apr. 1986.
+   r Using the circuit solution obtained at the switching instant,                 [13] S. C. Eng, R. Oruganti, and Y. C. Liang, “An automated algorithm for
+                                                                                        small signal analysis of DC-DC power converters,” IEEE Trans. Power
+     the nodal formulation for the new switching configuration                          Electron., vol. 11, no. 1, pp. 132–141, Jan. 1996.
+     is obtained and is solved for one time-step ahead. A half                     [14] S. Seshu and N. Balabanian, Linear Network Analysis. Hoboken, NJ, USA:
+                                                                                        Wiley, 1959.
+     time-step interpolation is performed using this circuit solu-                 [15] O. Wasynczuk and S. D. Sudhoff, “Automated state model generation
+     tion and the circuit solution at just before switching instant.                    algorithm for power circuits and systems,” IEEE Trans. Power Syst.,
+     The corresponding state vectors are as follows.                                    vol. 11, no. 4, pp. 1951–1956, Nov. 1996.
+                                                                                   [16] M. Poller, “Discrete time state space analysis of electrical networks,” in
+                                τ                τ                                      Proc. Int. Conf. Power Syst. Transients, 2001, pp. 305–310.
+          Γ3 = A2 Γ2 + B2         u[4] + 1 −         u[3]      (36)                [17] V. Chindu, A. M. Kulkarni, and S. V. Singh, “Chatter elimination in EMTP
+                                h                h
+                                                                                        simulations using state-space models of companion circuits,” in Proc.
+                Γ3 + Γ 2                                                                IEEE Power Energy Soc. Gen. Meeting, 2022, pp. 01–05.
+          Γ4 =                                                 (37)                [18] V. Chindu T. S. and A. M. Kulkarni, “Effect of perturbation of switching in-
+                     2
+   r Performing first-order linearisation of (34)—(37) gives                            stants on state transition matrices of power systems with power-electronic
+                                                                                        controllers,” in Proc. IEEE Int. Conf. Power Syst. Technol., 2020, pp. 1–6.
+                                                                                   [19] I. Dobson, “Stability of ideal thyristor and diode switching circuits,”
+          ΔΓ1 = A1 Δx[3]                                                                IEEE Trans. Circuits Syst. I: Fundamental Theory Appl., vol. 42, no. 9,
+                                                                                        pp. 517–529, Sep. 1995.
+                  τ               τ             Γ1 − x[3]                          [20] J. R. Marti and J. Lin, “Suppression of numerical oscillations in the EMTP
+          ΔΓ2 =     ΔΓ1 + 1 −         Δx[3] +               Δτ                          power systems,” IEEE Trans. Power Syst., vol. 4, no. 2, pp. 739–747,
+                  h               h                  h
+                                                                                        May 1989.
+                             B2                                                    [21] A. M. Gole, “Modeling of power electronic apparatus: Additional interpo-
+         ΔΓ3 = A2 ΔΓ2 +         (u[4] − u[3])Δτ                                         lation issues,” in Proc. Int. Conf. Power Syst. Transients, 1997, pp. 23–28.
+                              h
+                                                                                   [22] G. D. Irwin, D. A. Woodford, and A. M. Gole, “Precision simulation of
+                  ΔΓ3 + ΔΓ2                                                             PWM controllers,” in Proc. IPST (Int. Conf. Power Syst. Transients), 2001,
+         ΔΓ4 =                                                (38)                      pp. 161–165.
+                       2
+   r It can be seen from the relations given in (38) that elimina-                 [23] C. Schauder and H. Mehta, “Vector analysis and control of advanced static
+                                                                                        VAR compensators,” IEE Proc.-C, vol. 140, no. 4, pp. 299–306, 1993.
+     tion of intermediate computations (Γs) is straight-forward.                   [24] X. Jiang and A. M. Gole, “A frequency scanning method for the identi-
+                                                                                        fication of harmonic instabilities in HVDC systems,” IEEE Trans. Power
+     On performing similar analysis on the remaining steps of                           Del., vol. 10, no. 4, pp. 1875–1881, Oct. 1995.
+     the chatter suppression algorithm, a relation of the form                     [25] T. J. Aprille and T. N. Trick, “Steady-state analysis of nonlinear circuits
+     (39) can be obtained.                                                              with periodic inputs,” Proc. IEEE, vol. 60, no. 1, pp. 108–114, Jan. 1972.
+                                                                                   [26] T. Chen and B. Francis, Optimal Sampled-Data Control Systems. London,
+                         Δx[4] = K1 Δx[3] + k2 Δτ                         (39)          U.K.: Springer-Verlag, 1995.
+                                                                                   [27] A. Ibsais and V. Ajjarapu, “The role of automatic differentiation in power
+                                                                                        system analysis,” IEEE Trans. Power Syst., vol. 12, no. 2, pp. 592–597,
+                                  REFERENCES                                            May 1997.
+ [1] N. Hatziargyriou et al., “Definition and classification of power system
+     stability – revisited & extended,” IEEE Trans. Power Syst., vol. 36, no. 4,
+     pp. 3271–3281, Jul. 2021.
+ [2] B. Badrzadeh et al., “The need for enhanced power system modelling            Vinay Chindu (STM’22) received the B.Tech degree from the National Institute
+     techniques and simulation tools,” CIGRE Sci. Eng., vol. 17, pp. 30–46,        of Technology Karnataka, Mangaluru, India, in 2009, and the M.E. degree in
+     Feb. 2020.                                                                    electrical engineering from the Indian Institute of Science, Bangalore, India, in
+ [3] J. Kwon, X. Wang, F. Blaabjerg, C. L. Bak, A. R. Wood, and N. R. Watson,      2012. He is currently working toward the Ph.D. degree in electrical engineering
+     “Linearized modeling methods of AC–DC converters for an accurate              with the Indian Institute of Technology, Bombay, Mumbai, India. His research
+     frequency response,” in IEEE Trans. Emerg. Sel. Topics Power Electron.,       interests include power system dynamics and power system simulation in EMT
+     vol. 5, no. 4, pp. 1526–1541, Dec. 2017.                                      programs.
+ [4] P. Mattavelli, G. C. Verghese, and A. M. Stankovic, “Phasor dynamics of
+     thyristor-controlled series capacitor systems,” IEEE Trans. Power Syst.,
+     vol. 12, no. 3, pp. 1259–1267, Aug. 1997.
+ [5] L. A. S. Pilotto, J. E. R. Alves, and E. H. Watanabe, “High frequency
+     eigenanalysis of HVDC and FACTS assisted power systems,” in Proc.             A. M. Kulkarni (Senior Member, IEEE) received the B.E. degree in electrical
+     Power Eng. Soc. Summer Meeting, 2000, vol. 2, pp. 823–829.                    engineering from the University of Roorkee, Roorkee, India, in 1992, and the
+ [6] M. S. -P. Hwang and A. R. Wood, “A new modelling framework for power          M.E. and Ph.D. degrees in electrical engineering from the Indian Institute of
+     supply networks with converter based loads and generators - the harmonic      Science, Bangalore, India, in 1994 and 1998, respectively. He is currently a
+     state-space,” in Proc. IEEE Int. Conf. Power Syst. Technol., 2012, pp. 1–6.   Professor with the Indian Institute of Technology, Bombay, Mumbai, India. His
+ [7] S. R. Joshi and A. M. Kulkarni, “Analysis of SSR performance of TCSC          research interests include power system dynamics, HVDC, FACTS, and wide
+     control schemes using a modular high bandwidth discrete-time dynamic          area measurement systems.
+     model,” IEEE Trans. Power Syst., vol. 24, no. 2, pp. 840–848, May 2009.
+
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:54:06 UTC from IEEE Xplore. Restrictions apply.
+

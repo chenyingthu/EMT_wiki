@@ -1,0 +1,586 @@
+                                                         Electric Power Systems Research 197 (2021) 107342
+
+
+                                                              Contents lists available at ScienceDirect
+
+
+                                                    Electric Power Systems Research
+                                                       journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Laplace transform inversion through the theta algorithm for power-system
+EMT analysis
+L.J. Castañón a, *, J.L. Naredo a, J.R. Zuluaga a, E. Bañuelos-Cabral b, Pablo Gómez c
+a
+  Cinvestav Guadalajara, Mexico
+b
+  Universidad de Guadalajara, CUCEI, Mexico
+c
+  Western Michigan University, United States
+
+
+
+
+A R T I C L E I N F O                                 A B S T R A C T
+
+Keywords:                                             Laplace transform analysis of electromagnetic power system transients generally is based on a technique in which
+Electromagnetic transients                            the Laplace inversion integral is truncated with a suitable data window. This technique, being referred to as
+Frequency-domain                                      WNLT, is appropriate for most practical cases. Nevertheless, it results inadequate for certain R&D tasks. This
+Laplace transform
+                                                      paper presents a new technique for numerical Laplace inversion that does not require truncation with a data
+Padé approximants
+Shanks transformation
+                                                      window; it instead uses Brezinski’s theta algorithm to account for the infinite range of the Laplace inversion
+Epsilon algorithm                                     integral. As opposed to the WNLT, the new technique guarantees consistent and high accuracy levels at low
+Theta algorithm                                       computational costs. Finally, the new technique is applied to the transient analysis of a power-system network.
+                                                      Its results compare favorably well with those from the PSCAD/EMTDC program.
+
+
+
+
+1. Introduction                                                                       WNLT. Although the new method is primarily intended as an R&D tool,
+                                                                                      the general community of PS-EMT specialists may also benefit from its
+    The analysis and simulation of electromagnetic transients (EMTs) are              use.
+essential for the design and the safe and reliable operation of electric                  One limitation of the WNLT is that its accuracy is not fixed; that is, if
+power systems (PS). These activities are usually carried out using time               any parameter of a signal to be inverted is modified, the resulting pre­
+domain (TD) methods based on EMTP methodologies (ATP, PSCAD/                          cision changes. Another limitation is that the maximum precision
+EMTDC, EMTP-RV, etc.) [1,2]. Nevertheless, for many years, progress in                offered by the WNLT is 10− 9 and this is attained at a very high
+EMT analysis has been driven by advances in frequency-domain (FD)                     computational cost; that is, it requires a high number of spectral sam­
+analysis. At this respect, a key player among power-system specialists                ples, in the order of 220 (1048,576). An application of the WNLT
+has been the Windowed Numerical Laplace Transform (WNLT) [6,7].                       requiring a guaranteed accuracy of 10− 9 or better is the delay identifi­
+The WNLT has been adopted both, as an R&D tool and as a reference                     cation and extraction from a frequency-domain function prior to
+method to assess time-domain methods, models, and results [3, 4, 5]                   applying a rational fit [11,23]. A poor delay extraction can result in
+    The WNLT discretizes the Laplace inversion integral converting it to              rational fits of an unnecessary high order and with increased possibil­
+an infinite sum that is then truncated for numerical evaluation. [2,6].               ities of being non-passive.
+The errors due to this truncation are decreased by applying a suitable                    Other methods to invert numerically the Laplace transform do not
+data window [2,6,7,8,9,10]. Typical accuracies delivered by the WNLT                  truncate the integration range; instead, these methods use extrapolation
+are within the range of 10− 3 and 10− 6., which is appropriate for most               techniques to approximate sums of infinite series; these are referred to as
+practical situations. Until recently, the WNLT had responded well to the              sum-acceleration methods and offer high and fixed accuracies with a
+needs of PS-EMT specialists. However, sustained progress in this field is             moderate number of samples and, in consequence, with moderate
+pushing the WNLT beyond its limits. Therefore, new and more advanced                  computational cost. These methods have not been extensively applied to
+tools are needed to support progress in EMT analysis. This paper dem­                 PS-EMT analysis. If anything, only to small networks with single-phase
+onstrates the limitations of the WNLT and has as its main objective the               lines with constant parameters [12]. Previously, the authors of this
+introduction of a new FD tool that is more accurate and reliable than the             paper have presented one of these methods, the QD algorithm [13].
+
+
+
+    * Corresponding author.
+      E-mail address: lorenzo.castanon@cinvestav.mx (L.J. Castañón).
+
+https://doi.org/10.1016/j.epsr.2021.107342
+Received 30 November 2020; Received in revised form 1 March 2021; Accepted 28 April 2021
+Available online 18 May 2021
+0378-7796/© 2021 Elsevier B.V. All rights reserved.
+L.J. Castañón et al.                                                                                                      Electric Power Systems Research 197 (2021) 107342
+
+
+    This paper presents a new numerical inversion technique for the                                                 {                          }
+Laplace transform that is based on Brezinski’s Theta algorithm [14,15]                                     2ecnΔt     1 ∑∞
+                                                                                      f (nΔt) + ∈al =             Re        F(c + jkΔω)ej2πnk/N ,                        (9)
+to accelerate the convergence of infinite sums. To the best of these au­                                    Δt        N k=0
+thors’ knowledge, this is the first application of Brezinski’s Theta algo­
+rithm in the inversion of the Laplace transform, as well as in the analysis           with n = 0, 1, 2, …, N − 1.
+of power-system EMTs. This paper shows that the Theta algorithm far                      For the sake of clarity, the following notation is now adopted:
+exceeds the limitations of the WNLT at a moderate computational cost
+                                                                                      fn = f (nΔt)
+
+2. Numerical treatment of the Laplace transform                                       and Fk = F(c + jkΔω).
+                                                                                          The evaluation of (9) requires truncating the summation at its right-
+   Let f(t) represent a time-domain signal and F(s) its corresponding                 hand-side to a finite number of terms M:
+Laplace transform, both are related by the Laplace inversion integral:                                    {                      }
+                                                                                                 2ecnΔt     1 ∑
+                                                                                                              M− 1
+               c+j∞
+               ∫                                                                      fn + ∈al =        Re         Fk e j2π nk/N
+                                                                                                                                   + ∈tr ,                 (10)
+        1                                                                                         Δt       N k=0
+f (t) =               F(s)est ds,                                          (1)
+        πj
+              c− j∞
+                                                                                      with ∈tr being the truncation error:
+                                                                                                      {                  }
+where s = c + jω is the Laplace variable with c representing a damping                      2ecnΔt      1 ∑
+                                                                                                          ∞
+
+constant and ω the angular frequency. If f(t) is real and causal, a                   ∈tr =        Re        Fk ej2πnk/N                                               (11)
+                                                                                             Δt        N k=M
+convenient form for (1) is:
+           ⎧ ∞
+             ∫
+                               ⎫                                                          The term ej2πnk/N in (9) is periodic with respect to running index k and
+       ect ⎨                   ⎬
+                                                                                      N is its period; (9) can thus be restated as follows:
+f (t) = Re                jωt
+                F(c + jω)e dω .                                    (2)
+        π ⎩                    ⎭                                                                          {                   }
+                      0
+                                                                                                 2ecnΔt      ∑
+                                                                                                             N− 1
+                                                                                      fn + ∈al =        Re        ̃ k ej2πnk/N ,
+                                                                                                                  F                                           (12)
+                                                                                                  ΔtN        k=0
+
+2.1. Discretization
+                                                                                      with
+     In practice, F(s) usually is given either as a collection of samples or as              ∑
+                                                                                             ∞
+
+an analytic function, with the latter being often intractable. These are              ̃k =
+                                                                                      F            Fk+lN
+the two main reasons for the numerical treatment of (1). This is per­                        l=0
+
+formed substituting ω in (2) by kΔω, where Δω is the frequency step.                      Note that ̃Fk is the aliased version of Fk . This is a consequence of
+Hence:                                                                                discretizing the time in (9) [19].
+                         {                         }
+                ect Δω     ∑∞
+         ̃
+f (t) ≅ f (t) =        Re       F(c + jkΔω)e jkΔωt
+                                                     ,                      (3)       2.2. Windowed numerical Laplace transform (WNLT)
+                          π         k=0
+
+                                                                                          For the WNLT, sum truncation in (10) is taken at M = N and trun­
+where ̃f(t) is an approximation to f(t). It follows from (3) that e− ct̃f(t) is       cation error is mitigated by applying a data window σk [7,9,10]:
+periodic [7]; moreover:                                                                              {                       }
+                                                                                            2ecnΔt     1 ∑
+                                                                                                         N− 1
+                                                                                                                                                       (13)
+                                                                                                                      j2π nk
+̃f (t) = f (t) + ∈al                                                       (4)        fn ≅
+                                                                                             Δt
+                                                                                                   Re
+                                                                                                       N k=0
+                                                                                                              Fk σ k e N .
+
+with                                                                                      The Von Hann (or Hanning) data window has been found simple and
+        ∑
+        ∞                                                                             effective [3,5]:
+∈al =         f (t + mT)e− cmT                                             (5)             {
+                                                                                              [1 + cos(π k/N)]/2 0 ≤ k ≤ N
+        m=1                                                                           σk =                                 .                         (14)
+                                                                                                       0         k〈0 , k〉N
+and
+                                                                                          One advantage of truncating at M = N is that the summation inside
+T = 2π / Δω .                                                              (6)        braces in (13) corresponds to the Discrete Fourier Transform (DFT)
+                                                                                      which is evaluated with high computational efficiency with the Fast
+   ∈al is the aliasing error produced by the discretization of F(s) in (3)
+                                                                                      Fourier Transform (FFT) algorithm [8]. For further simplicity and
+and T is the repetition period for ̃f(t). T also is the maximum time span at          computational efficiency, N is often taken as an integer power of 2 (2m).
+which a non-periodic f(t) can be effectively approximated by ̃f(t). T is                  The selection of damping constant c at the WNLT method is based on
+therefore referred to as the observation time. Aliasing error ∈al and                 (7). ∈rel depends at some point on the number of signal samples N [10]. A
+Laplace damping constant c are related through the following expression               value of ∈rel = 10− 5 has been established empirically for an N between
+[10]:                                                                                 29 (512) and 211 (2048) samples [3,5,10].
+c = − loge (∈rel )/T,                                                      (7)
+                                                                                      3. Infinite-series acceleration methods
+where ∈rel = ∈al /fmax and fmax is the maximum expected value for f(t)
+[10]. The aliasing error can thus be controlled by a proper choice of                     Instead of truncating the summation range of (9) with a data win­
+constant c.                                                                           dow, other methods resort to extrapolation techniques to accelerate the
+    Full numerical treatment of (2) requires the discretization also of t in          convergence of the infinite sum of (9). Two of these are the QD algo­
+(3); that is, the substitution of t by nΔt. For convenience, Δt is selected as        rithm [12,13], and the Epsilon algorithm [16]. The latter is the pre­
+a multiple of T:                                                                      cursor of the one being proposed here and, for this reason, it is described
+                                                                                      next.
+Δt = T / N .                                                               (8)
+    On replacing t by nΔt in (3) and on applying (4) and (6):
+
+                                                                                  2
+L.J. Castañón et al.                                                                                                      Electric Power Systems Research 197 (2021) 107342
+
+
+3.1. Epsilon algorithm
+                                                                                                    1
+                                                                                     εn2k+1 =            ,                                                             (23)
+                                                                                                ek (ΔSn )
+    The infinite sum in (9) is expressed as follows:
+                ∑
+                ∞                                                                    one obtains:
+f (z) = S =            ck zk                                             (15)
+                                                                                                             1
+                                                                                                                                                                       (24)
+                 k=0
+                                                                                     εnk+1 = εn−k− 11 + n+1     .
+                                                                                                       εk − εnk
+where ck = Fk y z = e2πjn/N . The definition of Sn is introduced here as the
+partial sum of the first n + 1 terms in S:                                              Note in this last expression the index change, from “2k” to “k”, that
+                                                                                     has been made to merge both subseries, (22) and (23), into (24). Ac­
+       ∑                                                                             cording to (22) and (23), when the subscript "k + 1′′ is even, (24) pro­
+       n
+Sn =         ck zk .                                                     (16)
+       k=0                                                                           vides an approximation to S and, when this subscript is odd, (24)
+                                                                                     provides an intermediate value.
+    Now S in (15) is approximated by the following rational function, so                Expression (24) is the basis for the Epsilon algorithm, which was
+that the division of Pn (z) by Qk (z) generates a series with positive powers        applied for the first time in the calculation of the inverse Laplace
+of z whose first n + k + 1 coefficients coincide with their corresponding            transform by Crump in 1972 [21]. More recently, Brančík [12] has
+ones in (15).                                                                        improved the algorithm by initializing it with the IFFT. He has also
+          Pn (z)   a0 + a1 z + ⋯ + an zn                                             applied it to the analysis of circuits with distributed-parameter elements.
+f (z) ≅          =                       ;                               (17)
+          Qk (z) 1 + b1 z + +⋯ + bk zk
+                                                                                     3.2. Theta algorithm
+then, Pn (z)/Qk (z) corresponds to the Padé approximant of S (or of f(z))
+and is denoted by [n, k] [18]. The approximant provides a value closer                  To further accelerate the convergence of εnk in the Epsilon algorithm,
+than Sn to the infinite series S in (15); additionally, [n, k] tends to extend       Brezinski derives from (24) the following two expressions [15]:
+its validity as a representation of S far beyond that of the partial sums
+Sn+k+1 . Nevertheless, its convergence is still slow as for an iterative             θm2k+1 = θm+1      m
+                                                                                               2k− 1 + D2k                                                             (25)
+approach [16].
+    Shanks transformation performs the change of Sn by another series                θm2k+2 = θm+1      m
+                                                                                               2k + wk D2k+1                                                           (26)
+denoted by ek (Sn ) whose convergence is faster than that of the Padé                         [           ]− 1
+approximants. This transformation can be expressed as a relationship                 with Dmk = θm+1
+                                                                                                 k   − θmk      .                                                      (27)
+between Hankel determinants [16]:                                                                                                       m
+                                                                                         Note the notation change from ε          k to θk . Also note the introduction of
+                                                                                                                                  n
+
+          H n (Sn )                                                                  the factor wk in (26) for accelerating the convergence. It is required that
+ek (Sn ) = nk+1 2                                                        (18)
+          Hk (Δ Sn )                                                                 θm                             m+1
+                                                                                      2k+2 converges faster than θ2k ; i.e., [15]:
+
+                                                                                        θm
+where Hkn (Sn ) represents the Hankel determinant of order k × k, whose              lim 2k+2 = 0.                                                                     (28)
+                                                                                     m→∞ θm+1
+first row is a simple sequence of partial sums begining with Sn and                       2k
+
+ending with Sn+k− 1 . Each successive row consists of a circular rotation of               To determine wk , first apply the operator ∆ on both sides of (26):
+one step to the right of the elements of the previous one. Here ∆ rep­
+resents the forward difference operator on the index “n”, and:                       Δθm2k+2 = Δθm+1       m
+                                                                                                 2k + wk ΔD2k+1 ;
+
+
+Δ2 Sn = Δ(ΔSn ) = Δ(Sn+1 − Sn )               = Sn+2 − 2Sn+1 + Sn .                  then divide by θm+1
+                                                                                                     2k :
+    A problem with (18) is that it involves the calculation of de­                   Δθm2k+2         ΔDm2k+1
+terminants, so it is impractical for an iterative estimation of S. Wynn’s                    = 1 + wk m+1    ;                                                         (29)
+                                                                                     Δθm+1           Δθ2k
+Epsilon algorithm (ε-A) substantially improves the Shanks trans­
+                                                                                        2k
+
+formation by accelerating its convergence, with-out requiring the                    next, take the limit as m→∞ and consider relation (28) to obtain:
+calculation of determinants and providing the successive values of ek (Sn )
+recursively [16,17].                                                                      ΔDm2k+1
+                                                                                     wk lim       = − 1;
+    From Sylvester’s identity for determinants, the following relation is              m→∞ Δθm+1
+                                                                                             2k
+first obtained [15]:
+                                                                                     or,
+                                  [ n+1                         ]− 1
+Hkn (Δ3 Sn ) Hk−n+11 (Δ3 Sn+1 )     Hk+1 (Sn+1 )       n
+                                                     Hk+1 (Sn )
+            −                   =                  −                 ;   (19)                      Δθm+1
+ n
+Hk+1 (ΔSn ) Hkn+1 (ΔSn+1 )         Hkn+1 (Δ2 Sn+1 ) Hkn (Δ2 Sn )                     wk = − lim      2k
+                                                                                                          .                                                            (30)
+                                                                                                m→∞ΔDm
+                                                                                                     2k+1
+
+then, on replacing Sn by ΔSn in (18):                                                    Given the difficulty of evaluating this limit algorithmically, Brezinski
+             H n (ΔSn )                                                              replaces wk by the following factor in (26):
+  ek (ΔSn ) = k+1         ;                                              (20)                              [ m+2        ]
+             Hkn (Δ3 Sn )                                                                    Δθm+1          θ2k − θm+1
+                                                                                     wmk = −    2k
+                                                                                                     = − [          2k
+                                                                                                                         ];                                  (31)
+                                                                                             ΔDm2k+1      Dm+1       m
+                                                                                                            2k+1 − D2k+1
+next, on applying (18) and (20) in (19), along with the corresponding
+index changes, the following expression is obtained:                                 so,
+    1            1                   1                                                                   [ m+2         ][ m+2          ]
+         =               +                      ;                        (21)                             θ2k − θm+1     θ2k+1 − θm+1
+ek (ΔSn ) ek− 1 (ΔSn+1 )   ek (Sn+1 ) − ek (Sn )                                     θm2k+2 = θm+1
+                                                                                               2k +
+                                                                                                                    2k            2k+1
+                                                                                                                                         .                             (32)
+                                                                                                             θm+2       m+1     m
+                                                                                                              2k+1 − 2θ2k+1 + θ2k+1
+
+finally, as the following definitions are introduced in (21):                            Expressions (25) and (32) form the basis of the Theta algorithm
+εn2k = ek (Sn )                                                          (22)        (θ-A). These expressions are applied alternately in the recursive update
+                                                                                     of θm
+                                                                                         i ; (25) when “i ” is odd (i = 2k + 1) and (32) when it is even (i = 2k +
+                                                                                     2).
+
+                                                                                 3
+L.J. Castañón et al.                                                                                                   Electric Power Systems Research 197 (2021) 107342
+
+
+
+
+Fig. 1. a) Theta algorithm diagram. b) Diagram for Eq. (25). c) Diagram for
+Eq. (32).
+
+                                                                                    Fig. 2. a) Plots of f(t) being obtained with the WNLT. b) Plots of errors for the
+    Fig. 1a illustrates the structure of the Theta algorithm, both for the
+                                                                                    obtained f(t) with three different oscillation frequencies.
+estimation of S in (15) and for the inversion of the Laplace transform.
+This figure consists of a two-dimensional arrangement of the terms θm    i
+whose subscripts “i” and “m” indicate its column and its diagonal,                        ( )
+                                                                                           2        {      }
+respectively. For the numerical inversion of the Laplace transform, the             f=        × C∘ℜe θ02J+2 ,                                                       (33)
+                                                                                           T
+terms θmi are vectors of dimension “N”; i.e., the number of time samples
+time to be obtained. The terms in the first column are initialized with             where f is the vector of N samples for the signal being obtained in the
+zero vectors:                                                                       time domain; C is the vector of order N whose elements Cn are of the
+                                                                                    form
+θm− 1 = 0; m = 1, 2, …, 3J + 3,
+                                                                                    Cn = ecnΔt ,    n = 0, 1, 2, …, N − 1;
+where J is the number of iterations (or refinements) of the algorithm.
+Fig. 1 illustrates, for example, the case J = 2. The first term of the second       finally, the operator "∘" represents the Hadamard product of two vectors
+column θ00 is initialized with the vector of partial sums SN which is ob­           resulting in another vector formed with the multiplication between
+tained in a highly convenient way with the inverse fast Fourier trans­              corresponding elements. In the experience of these authors, the theta
+form of N samples (ifftN ):                                                         algorithm often converges at the first iteration; i.e., at J = 0.
+
+θ00 = Sn = N × ifftN (F),
+                                                                                    4. Validation
+where F is the vector of N samples of the function F(s) that is to be
+                                                                                       One way to evaluate the precision and performance of the method
+inverted:
+                                                                                    proposed here is to apply it to s-domain functions whose inverse trans­
+F = [F0 /2 , F1 , …, FN− 1 ]T .                                                     forms are already analytically determined. The numerical analysis
+                                                                                    community has already established a set of 35 test functions to evaluate
+    The additional terms in the second column of Fig. 1a are obtained               numerical methods for inverting Laplace transforms [18,20]. The pro­
+iteratively as follows:                                                             posed Theta algorithm has been tested with all these functions and,
+θm+1 = θm0 + Em × FN+m ; m = 0, 1, …, 3J + 2                                        except for one case that is addressed below, this algorithm shows
+                                                                                    practically the same satisfactory performance. For the sake of
+ 0
+
+
+where E is the vector with the N samples of the complex exponential:                paper-space economy, only one representative case is presented below
+   [                                     ]T                                         in which the WNLT, Epsilon, and Theta algorithms are tested and
+E = 1, e2πj/N , e4πj/N , …, e2πj(N− 1)/N                                            compared.
+                                                                                       Consider the following function of s, along with its inverse transform:
+   Once θm          m
+           − 1 and θ0 have been initialized (i.e., the first two columns of                [ /                          ]
+the diagram in Fig. 1a), the elements θmi at the other columns on the right
+                                                                                                         s + 0.5
+                                                                                    F(s) = 1 s +                          e− 0.2s                         (34)
+are obtained with (25) when “i” is odd and with (32) when "i" is even.                                      2
+                                                                                                   (s + 0.5) + (2πf ) 2
+
+Note that Fig. 1b shows the dependence of odd-column element θm      2k+1 to
+be updated with those elements of the previously available columns 2k               and
+and 2k− 1. Note also that Fig. 1c shows the dependence of even-column                      [                                    ]
+                                                                                    f (t) = 1 + cos(2πf (t − 0.2))e− 0.5(t− 0.2) u(t − 0.2),                        (35)
+element θm 2k+2 to be updated with those elements of the previously
+available columns 2k+1 and 2k.
+                                                                                    where u(t) is the unit step (Heaviside function). The three above­
+   At Fig. 1a, the columns with an odd index are marked in blue and                 mentioned methods are now applied in the numerical inversion of (34)
+those with an even index in black. The elements θ02k of even index on the           for three different values of the oscillation frequency: f = 2 Hz, f = 10 Hz
+upper diagonal of the diagram are the ones providing the estimates for S            and f = 20 Hz. The observation time for the inverted function is T = 1.2 s
+and, the higher their subscript is, the better approximation these are to           and N = 1024 samples are used. According to subsection II.B, the Lap­
+the expression between braces in (9).                                               lace damping constant c is determined by means of (7) with a relative
+   From all the above, the inverse d Laplace transform is as follows:               error ∈rel = 10− 5 for the WNLT, while ∈rel = 10− 9 is used for deter­
+                                                                                    mining c in the Epsilon and the Theta algorithms.
+
+
+                                                                                4
+L.J. Castañón et al.                                                                                                              Electric Power Systems Research 197 (2021) 107342
+
+
+                                                                                         Table 2
+                                                                                         Load data.
+                                                                                           Load            Z1                  Z2             Z3              Z4                C1
+
+                                                                                           R               250Ω                350Ω           250Ω            420Ω
+                                                                                           L               25mH                60mH           25mH            30mH
+                                                                                           C               –                   –              –               –                 20uF
+
+
+
+
+Fig. 3. a) Plots of errors for the f(t) being obtained with the Epsilon algorithm.
+b) Plots of errors for the f(t) being obtained with the Theta algorithm.
+
+
+
+
+                             Fig. 4. Network one-line diagram.
+                                                                                                         Fig. 5. Line transversal geometry and material data.
+     Fig. 2a shows the plots of f(t) as obtained with the WNLT for the
+three values of frequency being considered. All the differences between
+the algorithmically obtained plots and their corresponding ones from                     Table 3
+(35) cannot be differentiated by eye. For this reason, the plots of the base             Line lengths.
+10 logarithm of the relative errors for the WNLT are provided in Fig. 2b.                  Line                 TL1      TL2        TL3     TL4         TL5   TL6     TL7        TL8
+Relative errors are calculated as follows:                                                 Length (km)          220      35         10      35          65    133     42         375
+           ⃒              ⃒
+           ⃒              ⃒
+           ⃒f (nΔt) − ̃f ⃒
+           ⃒             n⃒
+∈rel (n) =                  ,  n = 0, 1, 2, …, 1 023.                                        Out of the previously mentioned 35 test functions, for function 34 as
+              max{f (t)}                                                                 listed in [18] the accuracy of both algorithms, the Epsilon and the Theta,
+                                                                                         falls to levels like those of the WNLT. This function is given as follows
+where f(n∆t) is the corresponding value of the analytic function in (35),
+                                                                                         and corresponds to a square wave:
+fn is the n-th value being obtained numerically and max{f (t)} is the
+maximum value of |f(t)| in (35). Note that the precision level of 10− 5 is                           2es/2        (s)
+                                                                                         f34 (s) =         cosech    .
+obtained only for the case with f = 2 Hz. By modifying f in (34) the                                   s           2
+precision does not remain fixed; in fact, it is degraded.                                    It is apparent from this case that the three methods being tested here
+    Figs. 3a and 3b show the respective relative errors of the results with              (WNLT, Epsilon, and Theta) cannot satisfactorily handle signals and
+the Epsilon and Theta algorithms when applied to (34). It can be                         functions that include multiple discontinuities. This could well be a topic
+observed that the precisions of both methods are similar and remain                      for future research.
+fixed despite the changes in f. In terms of computational speed, the Theta
+algorithm is two times faster than the Epsilon one and 4.2 times slower
+                                                                                         5. Power system EMT test case
+than the WLNT. On a personal computer with processor Core i9, 2.3 Ghz,
+16 GB RAM and running in MatLab, the test case function (35) was
+                                                                                            Fig. 4 shows the one-line diagram of an electrical power network
+executed with the WNLT in 0.04 ms, with the Theta algorithm in 0.17 ms
+                                                                                         consisting of three generators, three transformers, eight overhead
+and with the Epsilon algorithm in 0.32 ms. From all the above, it follows
+                                                                                         transmission lines, four R-XL loads and one capacitive load. Table 1
+that the accuracies of the Theta and Epsilon algorithms are practically
+                                                                                         provides the data for the generators and transformers, while Table 2
+the same, Nevertheless, the Theta algorithm is preferred for its higher
+                                                                                         provides the values for the loads. The base voltage is 200 kV. All the lines
+computational efficiency.
+                                                                                         have the same transversal geometry and electrical properties of
+
+Table 1
+Generator and transformer data.
+                                        Generator                                                                     Transformer
+                                        G1                       G2                      G3                           T1                           T2                      T3
+
+  Vpu                                   1.03<20.2◦               1.01<10.5◦              1.01–17◦                     –                            –                       –
+  Z                      R              1.2Ω                     1.1Ω                    0.8Ω                         1.5Ω                         0.8Ω                    0.6Ω
+                         L              38.98mH                  45.52mH                 35.23mH                      23.4mH                       29.5mH                  35.23mH
+
+
+                                                                                     5
+L.J. Castañón et al.                                                                                            Electric Power Systems Research 197 (2021) 107342
+
+
+                                                                                   are incorporated into this representation by their Norton equivalents,
+                                                                                   transformers are represented by series R-L branches. The transmission
+                                                                                   lines are included through their three-phase nodal representations with
+                                                                                   full frequency-dependent AB parameters [1,2,22].
+                                                                                       The simultaneous energization of the entire network is now simu­
+                                                                                   lated. To do this, the following relationship is used:
+
+                                                                                   V(s) = Y(s)− 1 I(s)                                                       (36)
+
+                                                                                   where V(s) is the vector of nodal voltages of the network, I(s) is the
+                                                                                   vector of currents injected into the nodes and Y(s) is the nodal matrix of
+                                                                                   the network. Once (36) is solved, the waveforms of nodal voltages are
+                                                                                   determined with the inverse Laplace transform:
+
+                                                                                   v(t) = L − 1 (V(s))
+                                                                                       For the Laplace numerical inversion, the Epsilon and Theta algo­
+                                                                                   rithms are used with 1024 samples and the observation time is set at T =
+                                                                                   40 ms. Figs. 6a and 6b show the respective voltage responses for nodes 6
+                                                                                   and 9. These figures also include the simulations being obtained with the
+                                                                                   PSCAD / EMTDC program with the same number of time steps N = 1
+                                                                                   024. Note that the results with the three methods apparently are in good
+                                                                                   agreement. Fig. 7a provides plots of the logarithm base 10 of absolute
+                                                                                   differences for the voltage waveforms of phase a at node 6. In blue color
+                                                                                   is the plot of differences between PSCAD/EMTDC and the Theta algo­
+  Fig. 6. a) Voltage waveforms at node 6. b) Voltage waveforms at node 9.          rithm, both with N = 1 024 time steps. The plot in red color corresponds
+                                                                                   to the differences as the number of time steps in the PSCA/EMTDC is
+                                                                                   increased to N = 8 192, and the Theta algorithm remains with N = 1 024
+                                                                                   steps. Note that one segment of the differences in blue color is above 1%.
+                                                                                   Also note that, at higher resolutions, the results from PSCAD/EMTDC
+                                                                                   approach those of the Theta algorithm.
+                                                                                       Fig. 7b shows in blue color the base 10 logarithms of the differences
+                                                                                   between the results of the WNLT and those from the Theta algorithm
+                                                                                   both using the same number of frequency steps N = 1 024. The red color
+                                                                                   plot corresponds to the differences between the WNLT with N = 8 192
+                                                                                   frequency steps and the Theta algorithm remaining with N = 1 024. Also
+                                                                                   note that as the number of samples is increased in the WNLT its results
+                                                                                   become closer to those of the Theta algorithm.
+
+                                                                                   6. Conclusions
+
+                                                                                       The windowed numerical Laplace transform (WNLT) is commonly
+                                                                                   used for frequency domain analysis of electromagnetic transients in
+                                                                                   power systems [3,5, 6, 7, 8, 9, 10]. This technique is appropriate for
+                                                                                   many practical applications and often is adopted as reference to assess
+                                                                                   newly developed time-domain methods. However, the authors of this
+                                                                                   article have found that it presents serious limitations as reference
+                                                                                   method, as well as for research and development tasks. One of its limi­
+                                                                                   tations is that the WNLT does not guarantee a fixed precision. This has
+                                                                                   been shown with an example in this paper. Another limitation is that its
+                                                                                   accuracy is limited to values between 10− 5 and 10− 6 and, in addition, an
+                                                                                   accuracy up to 10− 9 can be attained at an excessive computational cost.
+                                                                                   For these reasons, the authors of this paper have dedicated themselves to
+                                                                                   the search for other methods of numerical inversion of the Laplace
+                                                                                   transform that can achieve high accuracies at a moderate computational
+                                                                                   cost, and that their precision levels are fixed.
+                                                                                       In this article, a new method of numerical inversion of the Laplace
+Fig. 7. a) Comparing PSCAD with the Theta algorithm. b) Comparing the
+                                                                                   transform based on Brezinski’s Theta algorithm [14,15,17] has been
+WNLT with the Theta algorithm.                                                     proposed and described. Apparently, this is the first time that this al­
+                                                                                   gorithm has been used for the numerical inversion of the Laplace
+                                                                                   transform and for the analysis of EMTs in power systems. Along with the
+materials. Fig. 5 shows the line geometry and provides its material data.
+                                                                                   theta algorithm, the description of Wynn’s Epsilon algorithm [12,16]
+Table 3 provides the lengths of the lines. Fig. 4 network is based on a test
+                                                                                   has also been included, since this is a precursor to the first one. The
+case provided in references [24,25] and has been adapted for the pur­
+                                                                                   proposed algorithm has been evaluated first by its application to a set of
+poses of this paper.
+                                                                                   35 test functions that has been established by the Numerical Analysis
+   For the calculation of transient responses (overvoltages), the
+                                                                                   community [18, 20]. Except for one function which corresponds to a
+network is represented in nodal form in the Laplace domain. Generators
+                                                                                   square wave with several discontinuities, this algorithm shows a high
+
+
+                                                                               6
+L.J. Castañón et al.                                                                                                              Electric Power Systems Research 197 (2021) 107342
+
+
+performance. The Theta algorithm has been then applied to a transient                          [7] N. Mullineux, J.R. Reed, Developments in obtaining transient response using
+                                                                                                   fourier transforms: part IV-survey of the theory, Int. J. Elect. Engng. Educ. 10
+study in a 10-node electric network with three generators, three trans­
+                                                                                                   (1973) 259–265.
+formers, eight overhead lines and five loads. The results of this study                        [8] A. Ametani, The application of the fast fourier transform to electrical transient
+have been compared satisfactorily with those obtained with the PSCA­                               phenomena, Int. J. Elect. Engng. Educ. 10 (4) (1973) 277–287. October.
+D/EMTDC program.                                                                               [9] D.J. Wilcox, Numerical laplace transformation and inversion, Int. J. Elect. Enging.
+                                                                                                   Educ. 15 (1978) 247–265.
+     Finally, it has been demonstrated that the proposed method offers a                      [10] L.M. Wedepohl, Power system transients: errors incurred in the numerical
+guaranteed high precision at a moderate computational cost; therefore,                             inversion of the laplace transform. Proc. of The IEEE Twenty-Sixth Midwest
+it is recommended both, as reference method and as a tool for research                             Symposium on Circuits and Systems, Puebla, Mexico, 1983. August.
+                                                                                              [11] Martin G. Vega, J.L. Naredo, O. Ramos-Leaños, “Minimum delay systems for the
+and development activities in the field of EMT analysis.                                           modeling of transmission lines at EMT power system studies”, in Proc. of The 12th
+                                                                                                   International Conference on Power Systems Transients, IPST’2017, Seoul, Korea,
+CRediT authorship contribution statement                                                           June 2017.
+                                                                                              [12] Brančík, L., “Programs for fast numerical inversion of Laplace transforms in Matlab
+                                                                                                   language environment.” Proceedings of 7th Conference MATLAB’99, pp. 27–39,
+    L.J. Castañón: Investigation, Formal analysis, Methodology. J.L.                             ISBN 80-7080-354-1, Prague, Czech Republic, November 3, 1999.
+Naredo: Investigation, Formal analysis, Methodology, Writing - original                       [13] L.J. Castañón, J.L. Naredo, J.R. Zuluaga, M.G. Vega-Grijalva, “Electromagnetic-
+                                                                                                   transient analysis in the laplace-domain through the QD algorithm”, in Proc. of the
+draft. J.R. Zuluaga: . E. Bañuelos-Cabral: Validation, Methodology,                               13th International Conference on Power Systems Transients, IPST’2019, ISSN
+Writing – review & editing. Pablo Gómez: Conceptualization, Visuali­                              2434-9739, Perpignan, France, June 2019.
+zation, Writing – review & editing.                                                           [14] Claude Brezinski, Convergence acceleration during the 20th century, J. Comput.
+                                                                                                   Appl. Math. 122 (1) (2000) 1–21.
+                                                                                              [15] Claude Brezinski, Accélération De La Convergence En Analyse Numérique,
+Declaration of Competing Interest                                                                  Springer, 2006. Vol. 584.
+                                                                                              [16] P. Wynn, On a Device for Computing the em(Sn) Transformation, Math. Tables.
+    The authors declare that they have no known competing financial                                Other Aids Comput. 10 (54) (1956) 91–96. Apr.
+                                                                                              [17] Claude Brezinski, Yi He, Xing Biao Hu, Michela Redivo-Zaglia, Jian-Quing Sun,
+interests or personal relationships that could have appeared to influence                          Multistep ∈–algorithm, Shanks’ transformation, and the Lotka–Volterra system by
+the work reported in this paper.                                                                   Hirota’s method, Math. Comput. 81.279 (2012) 1527–1549.
+                                                                                              [18] A.M. Cohen, Numerical Methods for Laplace Transform Inversion, Springer
+                                                                                                   Science, New York, U.S.A., 2007.
+References                                                                                    [19] G. John, Dimitris G.Manolakis Proakis, Digital Signal Processin, 4th Ed, Prentice
+                                                                                                   Hall, 2007.
+ [1] W.Dommel Hermann, EMTP-Theory Book, Bonneville Power Administration,                     [20] Brian Davies, Brian Martin, Numerical inversion of the Laplace transform: a survey
+     Portland, OR, USA, 1996.                                                                      and comparison of methods, J. Comput. Phys. 33 (1) (1979) 1–32.
+ [2] Juan A. Martinez-Velasco, Transient Analysis of Power Systems: Solution                  [21] Kenny S. Crump, Numerical inversion of Laplace transforms using a Fourier series
+     Techniques, Tools and Applications, John Wiley & Sons, 2014.                                  approximation, J. ACM (JACM) 23 (1) (1976) 89–96.
+ [3] F.A. Uribe, J.L. Naredo, P. Moreno, L. Guardado, Electromagnetic transients in           [22] J.A. Martinez-Velasco, Power System Transients: Parameter Determination, CRC
+     underground transmission systems through the numerical laplace transform, Int. J.             Press, Boca Raton FL, 2009.
+     Electric. Power Energy Syst. 24/3 (2002) 215–221. March.                                 [23] B. Gustavsen, Optimal Time Delay Extraction for Transmission Line Modeling, IEEE
+ [4] B. Gustavsen, Validation of frequency-dependent transmission line models, IEEE                Trans. Power Del. 32 (1) (2017) 45–54. Feb.
+     Trans. Power Del. 20 (2) (2005) 925–933. April.                                          [24] Prabha Kundur, Power System Stability and Control, MacGraw-Hill, 1994.
+ [5] Pablo Moreno, Pablo Gómez, José L. Naredo, J.L. Guardado, Frequency domain             [25] M. Matar, R. Iravani, The reconfigurable-hardware real-time and faster-than-real-
+     transient analysis of electrical networks including non-linear conditions, Int. J.            time simulator for the analysis of electromagnetic transients in power systems,
+     Electric. Power Energy Syst. 27 (2) (2005) 139–146. Feb.                                      IEEE Trans. Power Del. 28 (2) (2013) 619–627. April.
+ [6] P. Moreno, A. Ramirez, Implementation of the numerical laplace transform: a
+     review, IEEE Trans. on Power Delivery 23 (4) (2008) 2599–2609. Oct.
+
+
+
+
+                                                                                          7
+
