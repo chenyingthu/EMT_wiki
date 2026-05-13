@@ -1,0 +1,529 @@
+3218                                                                                IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 38, NO. 5, OCTOBER 2023
+
+
+
+
+ Multi-Conductor Cable Modeling With Inclusion of
+ Measured Coaxial Wave Propagation Characteristics
+                                                        Bjørn Gustavsen , Fellow, IEEE
+
+
+   Abstract—The prediction of voltage stresses in transformer and                leading to a lumped-parameter terminal equivalent for the cable
+machine windings requires the ability to calculate pulse propaga-                [7]. The approach requires access to both cable ends, usually
+tion effects on the feeding cable with sufficient accuracy. The use              implying on-drum measurements. In the case of cables with
+of commonly available cable models in electromagnetic transient
+(EMT) programs can lead to voltage wave fronts with too weak                     certain geometry symmetries, the parameters for a traveling
+damping at very high frequencies. This work shows a method                       wave model can be calculated [8].
+for improving the accuracy of such models by usage of measured                      High-voltage cables are normally designed with a separate
+coaxial mode propagation characteristics. The information is in-                 metallic sheath for each phase (core) that is grounded at both
+troduced into a wide-band multi-conductor cable model at high                    cable ends. High-frequency transients will in such case prop-
+frequencies by a merging procedure, with only a minor impact
+on the non-coaxial modes of propagation. The application of the                  agate mainly as uncoupled, coaxial waves through the cable
+developed model is demonstrated for cases where the metallic                     system. An alternative measurement approach was introduced
+sheaths are grounded at one end only, or are cross-bonded.                       in [6] where one-sided voltage transfer measurements were
+  Index Terms—Cable, modeling, pulse propagation, simulation,
+                                                                                 performed on a single core cable, leading to a single-conductor
+very fast transients.                                                            representation of coaxial wave propagation. Following a similar
+                                                                                 approach as in [7], the p.u.l. parameters of series impedance
+                                                                                 zcoax and shunt admittance ycoax were extracted, enabling the
+                           I. INTRODUCTION
+                                                                                 calculation of parameters of a traveling wave model defined by
+      OMMONLY applied electromagnetic transient (EMT)
+C     programs have the capability of simulating wave prop-
+agation effects on cable systems by use of multi-conductor,
+                                                                                 propagation function hcoax and characteristic admittance yC coax .
+                                                                                 The resulting model is suitable for EMT simulation of fast-front
+                                                                                 wave propagation on cables. The accuracy will, however, deteri-
+frequency-dependent traveling wave models [1], [2]. The in-                      orate towards lower frequencies because the magnetic field pene-
+put parameters are the per-unit-length (p.u.l.) series impedance                 trates the sheaths, thereby violating the assumption of uncoupled
+Z(ω) and shunt admittance Y(ω). These parameters can be                          coaxial propagation. The proposed model in [6] is therefore not
+calculated for systems of coaxially arranged, tubular conductors                 suitable when slow frequency phenomena must be accurately
+with inclusion of skin effect in conductors and earth [3], [4],                  represented in the simulation, in addition to high-frequency
+while proximity effects are normally ignored. The insulation                     phenomena. It is also not suitable if other modes of propagation
+layers are assumed to be lossless. Using Z and Y as input                        exist, e.g., when the cable sheaths are cross-bonded or grounded
+parameters, the matrices of propagation H and characteristic                     at one end only.
+admittance YC are calculated as a function of frequency [5]                         This paper proposes a method for alleviating the limitations
+and fitted with low-order, delayed rational functions [1], [2].                  of the measurement-based single-conductor model [6] by com-
+The resulting model is usually considered adequate for general                   bining it with a multi-conductor traveling wave model of the
+transient simulation studies, but it can sometimes be unsatisfac-                complete cable system. The parameters of the multi-conductor
+tory for steep-fronted voltage pulses, e.g., as shown in [6]. The                model are in this work calculated by the classical procedure
+inaccuracies can be a result of additional losses in conductors and              [3], [4] which includes skin effect. Section III gives an intro-
+sheaths by e.g., stranding effects, or be a result of high-frequency             duction to transmission line modeling, defining phase domain
+losses in insulating layers and semiconductive screens.                          traveling wave parameters by matrices H (propagation) and
+   The accuracy limitation can be overcome by a measurement-                     YC (characteristic admittance), and the decomposition of waves
+based approach where the cable multi-port behavior is char-                      into modes of propagation. Section IV shows a procedure for
+acterized using S-parameter frequency sweep measurements,                        introducing the measured hcoax and yC coax in H and YC , re-
+                                                                                 spectively. An optional filtering method is used such that the
+   Manuscript received 14 February 2023; accepted 12 April 2023. Date of         modification takes place at high frequencies only. The modified
+publication 21 April 2023; date of current version 25 September 2023. This       matrices H̃ and ỸC are fitted with rational functions by a
+work was supported by the consortium participants of the SINTEF-led Project
+FastTrans under Project294508/E20. Paper no. TPWRD-00170-2023.                   standard method to give parameters for the Universal Line Model
+   The author is with the SINTEF Energy Research, N-7465 Trondheim, Norway       (ULM) [2]. Section VII demonstrates the ability of the model to
+(e-mail: bjorn.gustavsen@sintef.no).                                             produce accurate results at both low and high frequencies, with
+   Color versions of one or more figures in this article are available at
+https://doi.org/10.1109/TPWRD.2023.3269143.                                      the classical model as reference for low-frequency behavior and
+   Digital Object Identifier 10.1109/TPWRD.2023.3269143                          the measured coaxial behavior as reference for high-frequency
+
+                        0885-8977 © 2023 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                                      See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 14:21:40 UTC from IEEE Xplore. Restrictions apply.
+GUSTAVSEN: MULTI-CONDUCTOR CABLE MODELING WITH INCLUSION OF MEASURED COAXIAL WAVE PROPAGATION CHARACTERISTICS                                          3219
+
+
+
+behavior. Sections VIII and IX show simulation examples in                      times the incident current wave [9].
+EMTP where the cable model is applied in fast front transient
+                                                                                                   i1 − YC v1 = −H(i2 + YC v2 )                        (3a)
+studies with alternative grounding schemes for the sheaths;
+open or grounded far end, and use of cross-bonding. Section X                                      i2 − YC v2 = −H(i1 + YC v1 )                        (3b)
+discusses various aspects of the modeling, including choice of
+                                                                                   H and YC are the n × n matrices of propagation and charac-
+filter parameter, modal behavior, and accuracy.
+                                                                                teristic admittance. For a cable with length l, these parameters
+                                                                                are related to Z and Y by (4a) and (4b).
+                     II. PROBLEM STATEMENT                                                                  √
+                                                                                                  H = e− YZ l                                          (4a)
+   Consider a system of parallel cables where each cable core has
+                                                                                                          √                 
+its own metallic sheath. This will typically be a set of single-core
+                                                                                                  YC = Z−1 ZY =                 (YZ)−1 Y               (4b)
+cables, or the cores within a three-core cable. The following
+information is assumed to be available.
+                                                                                B. Modal Decomposition
+   1) The parameters for coaxial wave propagation between
+      conductor and sheath, hcoax (ω) and yC coax (ω), obtained                   The matrix product YZ can be diagonalized by a frequency-
+      by measurements on a cable core.                                          dependent eigenvector matrix TI [5],
+   2) The calculated matrices of series impedance Zn×n (ω)                                                    2                 
+                                                                                 YZ = TI Γ2 T−1I = TI diag γ1        γ22 · · · γn2 T−1  (5)
+      and shunt admittance Yn×n (ω) of the complete cable                                                                            I
+
+      system with n conductors, obtained by calculations from                   where γ12 , γ22 . . . γn2 are the matrix eigenvalues. From these
+      geometry information.                                                     eigenvalues, H can be expressed as
+   The two data sets are to be combined into a single set from                                                                    
+                                                                                      H = TI diag e−γ1 l e−γ2 l · · · e−γn l T−1        I    (6)
+which a multi-conductor frequency-dependent traveling wave
+model can be extracted, for use in general EMT simulation                          It is assumed that the system consists of cable cores where
+programs. The combination is to be done in such way that the                    each core has one conductor and one sheath. In such cases, the
+final model inherits the high-frequency accuracy of hcoax (ω)                   modal decomposition (5) will at high frequencies have as many
+and yC coax (ω), without corrupting the overall model accuracy                  coaxial modes as there are cables, with identical eigenvalues if
+defined by Zn×n (ω) and Yn×n (ω).                                               the cores are identical. The coaxial modes involve currents in
+                                                                                conductors that return in the associated sheaths. These (coaxial)
+                      III. TRAVELING WAVES                                      modes are observable in the eigen-decompositions of YZ and
+                                                                                of H (5) by corresponding eigenvectors and eigenvalues.
+   The following gives an introduction to transmission line mod-                   Eigenvector decomposition {TYC , ΛYC }of YC does not re-
+eling. For detailed information, see e.g., [3], [4] and [5].                    sult in pure coaxial modes at high frequencies, unlike H. The
+                                                                                coaxial wave information can, however, be directly related to a
+A. Telegrapher’s Equation                                                       sub-set of elements of YC , as shown in the Section below.
+   Consider an n-conductor homogenous system of parallel con-
+ductors buried in a lossy earth. The change to voltage and current              IV. INTRODUCING MEASURED COAXIAL BEHAVIOR IN SYSTEM
+along an infinitesimal short length dx is given by (1a) and (1b)                 PROPAGATION FUNCTION AND CHARACTERISTIC ADMITTANCE
+where v and i are voltage and current vectors of length n. Z and                   The performed measurements giving zcoax and ycoax are for
+Y are the per-unit-length series impedance and shunt admit-                     one single core cable where the conductor current at high fre-
+tance, which are n × n complex-valued, symmetrical matrices.                    quencies returns in the associated sheath. The product ycoax zcoax
+                                                                                is therefore equal to the coaxial mode eigenvalues of YZ at
+                         dv(ω)                                                  high frequencies. This implies that the coaxial eigenvalues of
+                       −       = Z(ω)i(ω)                              (1a)     the system propagation function H can at high frequencies be
+                           dx
+                                                                                replaced with
+                         di(ω)                                                                                          √
+                       −       = Y(ω)v(ω)                              (1b)                                hcoax = e− ycoax zcoax l                     (7)
+                          dx
+   From (1a) and (1b) are derived the Telegrapher’s wave equa-                    In the case of YC , the sub-matrix associated with a conductor
+tions for voltage and current,                                                  and associated sheath will at high frequencies approximately
+                                                                                have the structure (8)
+                             d2 v                                                                                          
+                                  = ZYv                                (2a)                           yc−s       −yc−s
+                             dx2                                                                      −yc−s yc−s + ys−ext
+                                                                                                                                             (8)
+                             d2 i
+                                  = YZi                                (2b)     where element (1,1) represents the conductor and element (2,2)
+                             dx2                                                the associated sheath. The contribution yc−s can be viewed as the
+  The solving of (2a) and (2b) is achieved by application of                    characteristic admittance of a coaxial wave propagating between
+suitable boundary conditions. At line ends 1 and 2, the terminal                the conductor with return in sheath, while ys−ext is that of a wave
+behavior is defined by (3a) and (3b) where the right side is two                propagating between the sheath and conductors/earth externally
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 14:21:40 UTC from IEEE Xplore. Restrictions apply.
+3220                                                                               IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 38, NO. 5, OCTOBER 2023
+
+
+
+to the cable. It follows that the measurement can be introduced in
+(8) by replacing the four elements by (9a) where yC coax is given
+by (9b). Such replacement must be done for all conductor-sheath
+submatrices of YC .
+                                                               
+   yc−s           −yc−s               yC coax      −yC coax
+                                ≈
+  −yc−s (yc−s + ys−ext )             −yC coax (yC coax + ys−ext )
+                                                              (9a)
+                                                                                Fig. 1.   System of three underground coaxial cables. (Not to scale).
+                                        ycoax
+                        yC coax =                                      (9b)
+                                        zcoax                                                                  TABLE I
+                                                                                               SINGLE-CORE CABLE DATA IN CLASSICAL MODEL
+             V. FREQUENCY-DEPENDENT MERGING
+  The following shows a procedure for introducing the mea-
+sured propagation characteristics at high frequencies only.
+
+A. Converting Measurement Data to New Frequency Base
+   The measurements in [6] were performed at frequency sam-
+ples that were mostly linearly spaced. Traveling wave models
+usually require logarithmically spaced samples. The data repre-
+senting hcoax and yC coax are therefore fitted by low-order rational
+                                                                                The elements of hcoax and the sub-blocks (13) are identical if
+function approximations (10a) and (10b) [10], [11] from which
+                                                                                the cable cores are identical.
+logarithmically spaced samples are calculated.                                                                           
+                                                                                     ỸC,11 ỸC,12              Y     YC,12
+                               Nh
+                                      rih                                                            = LP · C,11              + HP
+                    hcoax ≈                   e−jωτ                   (10a)          ỸC,21 ỸC,22              YC,21 YC,22
+                               i=1
+                                   jω  −  a i                                                                                           
+                                                                                                            yC coax       −yC coax
+                                                                                                        ·                                  (13)
+                                       NYC                                                                  −yC coax (yC coax + ys−ext )
+                                              riYC
+                  yC coax ≈ r0YC +                                    (10b)
+                                        i=1
+                                            jω − ai                             C. Traveling Wave Modeling by Universal Line Model
+
+B. Merging by Low-Pass and High-Pass Filters                                       The above merging using rational functions allows the result-
+                                                                                ing frequency responses H̃ and ỸC to be fitted with rational
+   The correction to H and YC by the coaxial data (10a) and                     functions. The approximations (14a) and (14b) are calculated
+(10b) is achieved by a merging procedure using first-order low-                 for use with ULM [2].
+pass and high-pass filters (11a) and (11b). The filter frequency                                       ⎛                ⎞
+                                                                                                    G    Ng
+ω0 is selected at an intermediate frequency so that the low-
+                                                                                                       ⎝        Rg,i ⎠ −jωτg
+frequency behaviors of the original data H and YC are preserved                               H̃ ≈                         e              (14a)
+                                                                                                   g=1   i=1
+                                                                                                              jω − ag,i
+while at the same time the high-frequency behaviors of hcoax
+and yC coax are included in the final model. More about this in                                                   NYC
+Section X-B.                                                                                                            Ri
+                                                                                                 ỸC ≈ R0 +                                             (14b)
+                             ω0                                                                                   i=1
+                                                                                                                      jω − ai
+               LP (ω) =                                    (11a)
+                          jω + ω0
+                                                  jω                                VI. EXAMPLE: MODELING THREE PARALLEL SC CABLES
+               HP (ω) = 1 − LP (ω) =                                  (11b)
+                                                jω + ω0                         A. Cable System
+   The merging is performed for the coaxial modes of H by                          Measurement-based p.u.l. parameters zcoax (ω) and ycoax (ω)
+(12). The elements of vector hcoax are equal to hcoax (ω) from                  have been extracted for a 6 kV 150 mm2 SC cable of 252 m length
+the measurements, while h contains the non-coaxial eigenvalues                  [6] from which the propagation characteristics hcoax and yC coax
+of H. TI (ω) and h(ω) are calculated as smooth functions of                     have been calculated. The following considers that three cables
+frequency, which requires to remove any “artificial” switchovers                are buried underground as shown in Fig. 1. The two sheaths
+among the eigenvectors when moving from one frequency sam-                      are bundled into an equivalent conductor, reducing the 9×9
+ple to the next. The removal of switchovers is achieved by a                    matrices of Z(ω) and Y(ω) to 6×6 matrices, before calculating
+procedure described in Section VI in [12].                                      H and YC by (4a) and (4b). The cable parameters used in the
+                                                                            calculation are defined in Fig. 1 and Table I. The insulation
+     H̃ = LP · H + HP · TI diag hTcoax hT T−1         I     (12)
+                                                                                thickness includes that of the inner- and outer semiconductive
+  For each phase conductor with associated sheath, a modifi-                    layer, and the permittivity is chosen such that the (coaxial) time
+cation is made to the four associated elements in YC by (13).                   delay agrees well with that observed in the measurement in [6].
+
+         Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 14:21:40 UTC from IEEE Xplore. Restrictions apply.
+GUSTAVSEN: MULTI-CONDUCTOR CABLE MODELING WITH INCLUSION OF MEASURED COAXIAL WAVE PROPAGATION CHARACTERISTICS                                            3221
+
+
+
+
+Fig. 2.   Eigenvalues h and hcoax .                                               Fig. 4.   Elements of 2×2 sub-block of YC , and yC coax .
+
+
+
+
+Fig. 3.   Elements of H, before and after merging.                                Fig. 5.   Elements of YC , before and after merging.
+
+
+B. Data Samples                                                                   in Fig. 1. The plot also shows the element yC coax obtained via
+                                                                                  measurements, and the effect of merging yC coax with the sub-
+   The p.u.l. parameters of the 6×6 Z and Y are calculated
+                                                                                  block using (13). It is observed that the high-frequency behavior
+using a combination of 201 logarithmically spaced and 201
+                                                                                  of the submatrix becomes modified.
+linearly spaced frequency samples, between 1 Hz and 100 MHz.
+                                                                                     Fig. 5 shows the effect of substituting the three 2×2 subma-
+From these 402 samples are calculated the 6×6 matrices H and
+                                                                                  trices of the 6×6 YC . The resulting ỸC gets 3·4 = 12 of its
+YC , along with the eigen-decomposition (5) with a frequency-
+                                                                                  elements modified at high frequencies.
+dependent TI . Sample values for hcoax and yC coax are calculated
+at the same frequencies, using the rational function approxima-
+tions (10a) and (10b).                                                            E. Traveling Wave Modeling By ULM
+                                                                                     From the matrices of merged propagation H̃ and characteristic
+C. Propagation Function                                                           admittance ỸC , parameters for ULM are calculated by rational
+                                                                                  function approximations (14a) and (14b). The model parameters
+   Fig. 2 shows the six eigenvalues of H along with hcoax . It is
+                                                                                  are exported to file for use with EMTP.
+observed that hcoax is much more damped than the three coaxial
+                                                                                     Figs. 6 and 7 show the rational approximations of H̃ and ỸC
+eigenvalues of H.
+                                                                                  along with the data used for the fitting process. The accuracy
+   The three coaxial mode eigenvalues are merged with hcoax
+                                                                                  is considered satisfactory. The fitting used 8–10 poles for the
+using (12) with filter pole ω0 = 2π · 3 · 104 , giving a modified
+                                                                                  modes of H̃ and 20 poles for the fitting of ỸC .
+propagation function H̃. Fig. 3 shows the impact of the merging
+on the elements of H̃. It is observed that several elements of the
+modified matrix H̃ are more damped at high frequencies than                                              VII. MODEL VALIDATION
+the ditto elements of H.                                                          A. High Frequencies
+                                                                                     Validating measurements were presented in [6] where a steep-
+D. Characteristic Admittance
+                                                                                  fronted voltage Umeas was applied between conductor and sheath
+   Fig. 4 shows the elements of the 2×2 submatrix of YC that                      for the 252-m cable on drum (Table I). The far end voltage
+is associated with the conductor and sheath of the left SC cable                  response was measured and used for validation of the coaxial
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 14:21:40 UTC from IEEE Xplore. Restrictions apply.
+3222                                                                                 IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 38, NO. 5, OCTOBER 2023
+
+
+
+
+Fig. 6.   Rational approximation of H̃.                                           Fig. 9.    Voltage wave front arrival at far end.
+
+
+
+
+Fig. 7.   Rational approximation of ỸC .
+                                                                                  Fig. 10.    Short-circuit impedance.
+
+
+                                                                                  these frequencies, it will be assumed that the classical model is
+                                                                                  accurate. The positive and zero sequence behavior derived from
+                                                                                  the measurement-based model alone is here incorrect because
+                                                                                  there exists a coupling between phases which is not taken into
+                                                                                  account.
+                                                                                     Fig. 10 shows the positive and zero sequence components
+                                                                                  of the short-circuit impedance, from 50 Hz to 10 kHz. “Data”
+Fig. 8.   Applying measured voltage to cable near end.
+                                                                                  denotes the result by three single-conductor (1×1) ULM models
+                                                                                  in parallel, represented by the rational functions of hcoax and
+mode modeling. The same applied voltage Umeas is now used                         yC coax via (10a) and (10b). “Classical” and “Merged” denote
+for the six-conductor system as shown in Fig. 8. The voltage                      the result calculated from the two alternative 6×6 ULM models,
+excitation produces a wave which at very high frequencies                         with all cable sheaths grounded at both ends. It can be observed
+propagates between the conductor and the associated sheath.                       that the merged model closely reproduces the behavior of the
+   Fig. 9 compares the measured voltage response V1 on the                        classical model in the entire frequency range. The result by the
+(single) cable with the simulation result by the two alterna-                     “Data” model deviates significantly from that by the “Classical”
+tive 6×6 models: with and without the merging approach. It                        and “Merged” models.
+is observed that the merged model is capable of representing                         Fig. 11 shows the same comparison for the open circuit
+the high-frequency coaxial-mode behavior of the measurement                       impedance. The merging is seen to give a substantial improve-
+with high accuracy, including the wave front damping. The                         ment in accuracy, also in this case.
+classical (unmerged) model gives much too weak damping of
+the wavefront.                                                                     VIII. EXAMPLE: CABLE WITH GROUNDED OR OPEN SHEATHS
+                                                                                     Sometimes, the cable sheaths are grounded at only one end
+B. Low Frequencies
+                                                                                  to block the flow of induced sheath currents. Fig. 12 shows an
+  It is important that the merged model behaves correctly also                    example where the cable system is connected to a transformer
+with operation at 50/60 Hz and at harmonic frequencies. At                        at the far (right) end. The transformer is represented by a
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 14:21:40 UTC from IEEE Xplore. Restrictions apply.
+GUSTAVSEN: MULTI-CONDUCTOR CABLE MODELING WITH INCLUSION OF MEASURED COAXIAL WAVE PROPAGATION CHARACTERISTICS                                            3223
+
+
+
+
+                                                                                  Fig. 14.    Extended view of Fig. 13.
+Fig. 11.   Open-circuit impedance.
+
+
+
+
+Fig. 12.   Cable connected to a transformer.
+                                                                                  Fig. 15.    Cross-bonded cable system.
+
+
+
+
+Fig. 13. Far end voltage response on energized cable. Sheaths open or             Fig. 16.    Voltage pulse response along energized conductor.
+grounded at far end.
+
+
+wide-band, measurement-based model of a 300 kVA distribution                                 IX. EXAMPLE: CROSS-BONDED CABLE SHEATHS
+transformer, developed in [14]. A unit step voltage is applied at                    Another way of reducing sheath currents is by cross-bonding
+the sending (left) end. The voltage response at the far end is                    the cable sheaths. A coaxial wave which meets a cross-bonding
+calculated when the sheaths are either grounded or open at that                   point will generate new waves that propagate externally to the
+end.                                                                              sheaths (inter-sheath waves, ground wave), in addition to the
+   Fig. 13 shows the initial response on the energized cable. It is               coaxial wave. It follows that a simulation of such case requires
+observed that the initial wave front on the transformer terminal                  the use of a model with explicit representation of the cable
+(C1) is reduced from about 1.3 Volt to 1 Volt when the sheath                     sheaths.
+groundings are removed. Therefore, the sheaths must in such                          Fig. 15 shows a calculation example of one major section, with
+case be included as an additional conductor to obtain the correct                 cross-bonding of the sheaths. Each minor section is represented
+voltage on the transformer terminals. It is also seen that the                    by the 6×6 cable model used in the preceding sections. One of
+merged model gives a stronger attenuation of the wavefront than                   the phase conductors is energized with a square voltage pulse of
+the classical model, consistent with the coaxial mode result in                   1 µs duration.
+Fig. 9. Fig. 14 shows the result for an expanded (10 µs) time                        Fig. 16 shows the voltage along the energized conductor at
+span.                                                                             points A, B, C and D. It is observed that the cross-bonding
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 14:21:40 UTC from IEEE Xplore. Restrictions apply.
+3224                                                                                 IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 38, NO. 5, OCTOBER 2023
+
+
+
+
+Fig. 17.   Far end voltage on energized conductor.                                Fig. 18.   Sum of current pairs in coaxial mode eigenvector.
+
+
+                               TABLE II
+              ELEMENTS IN COAXIAL MODE EIGENVECTOR, tI,1
+
+
+
+
+causes a strong reduction in the peak value at D, compared to the
+expected 2 Volt response for a cable without cross-bonding. It is
+                                                                                  Fig. 19.   Far end step voltage response. Parameter: Filter frequency f0 .
+further seen that the merged model gives a substantial reduction
+in the front steepness at D, compared to the classical model.
+This is more clearly seen in the zoomed view in Fig. 17. It                       B. Choice of Filter Parameter
+follows that simulation of fast front pulse propagation on such
+                                                                                      The proposed method includes filtering to retain the accu-
+cable system requires correct representation of the coaxial mode
+                                                                                  racy of the classical model at lower frequencies. The filtering
+high-frequency behavior, in addition to explicit representation
+                                                                                  is performed by a first order low-pass filter and a high-pass
+of the sheath conductors.
+                                                                                  filter, which are defined by a common filter frequency value
+                                                                                  ω0 in (11a) and (11b). The magnitude contribution from the
+                             X. DISCUSSION                                        HP filter is 9.95% at ω = 0.1ω0 while the magnitude contribu-
+                                                                                  tion from the LP filter is 9.95% at ω = 10ω0 . Therefore, the
+A. Modal Behavior at Low Frequencies
+                                                                                  coaxial mode behavior of the resulting model will (in the range
+   Each eigenvector tI of TI defines the current distribution                     ω ∈ [0.1 ω0 10 ω0 ]) be a mix of both data sets ({Zn×n (ω),
+of modes on individual conductors. At lower frequencies, the                      Yn×n (ω)} and {zcoax (ω) ,ycoax (ω)}). The filter value ω0 =
+eigenvector decomposition degenerates into mixed modes. To                        2πf0 was in the example chosen with f0 = 3 · 104 Hz, implying
+see this, consider the eigenvector tI that is associated with                     that the coaxial behavior of the merged model obeys that of
+the first coaxial mode. Table II lists the eigenvector elements                   the initial data set at frequencies well below 3 kHz, and that
+at 50 Hz and 100 kHz, with labels C and S denoting phase                          of the measured data set at frequencies well above 300 kHz.
+conductor and sheath, respectively. Clearly, the current in a given               At intermediate frequencies, the response will be a mix of two
+phase conductor does not completely return in the associated                      contributions and the resulting accuracy can suffer if transient
+sheath at lower frequencies (50 Hz). Therefore, the measured                      waveform involves frequency components in this range.
+coaxial modes are not compliant with the coaxial modes of                             Fig. 19 demonstrates the significance of choosing an appro-
+the full 6×6 system, and the use of a merging procedure is                        priate f0 . A unit step voltage is applied between the conductor
+justified. Fig. 18 shows sums of element pairs in tI,1 , with each                and sheath on the sending end with the far cable end open
+pair associated with one cable, Itot = Ic + Is . Clearly, the three               (Fig. 8). The figure shows the far end voltage response with
+sums approach zero as the frequency is increased. A similar                       five alternative filter frequencies. Usage of a low value for f0
+result is found for the other two coaxial eigenvectors.                           (10 Hz, 1 kHz, 10 kHz) gives a voltage response which is similar
+
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 14:21:40 UTC from IEEE Xplore. Restrictions apply.
+GUSTAVSEN: MULTI-CONDUCTOR CABLE MODELING WITH INCLUSION OF MEASURED COAXIAL WAVE PROPAGATION CHARACTERISTICS                                              3225
+
+
+
+                                                                                  coaxially symmetrical fields, and Pollaczek’s earth (or some
+                                                                                  simplification thereof) is used for ground representation. These
+                                                                                  methods are systematically combined as shown in [3] and [4] for
+                                                                                  establishing full matrices for Z and Y. The resulting approach
+                                                                                  is generally considered suitable for the modeling of transient
+                                                                                  waveforms of high-voltage cables up to at least 100 kHz, in
+                                                                                  particular when proximity effects are included using FEM [15]
+                                                                                  or MoM-SO [16]. Recent works [17], [18], [19] have extended
+                                                                                  the earth-return impedance and admittance formulae to be valid
+                                                                                  up to much higher frequencies, and these results should be
+                                                                                  adopted in the modeling for analyses that involve high-frequency
+                                                                                  inter-sheath and ground mode propagation. Such modifications
+                                                                                  will be inconsequential for the method proposed in this work.
+Fig. 20.   Extended view of Fig. 20.
+                                                                                  E. Accuracy Improvements in Computational Modeling
+to the measured one, while usage of a very high value for f0                         If measurements on the full-length cable are not available,
+(1000 MHz) gives a voltage response close to that by the classical                one may still be able to improve the accuracy of the model’s
+model. Usage of 10 MHz results in a mixed frequency response                      high-frequency coaxial mode propagation characteristics. Using
+for the coaxial propagation (see Fig. 2), giving a distorted wave                 a sample of the considered cable with polished cross-section
+front with an overshoot.                                                          surface, one can measure the thickness of the various layers in
+   Fig. 20 shows the same response in a 50 µs time window.                        the cable quite accurately. Such cross-sectional information also
+The dominating oscillation component has a frequency of about                     permits to represent the conductor surface in more detail using a
+136 kHz. The use of 100 kHz filtering now gives a mixed                           FEM model for impedance calculation, thereby more accurately
+response that has too small damping. Clearly, it is a requirement                 representing the actual current distribution on the conductor and
+that the frequency components of interest are sufficiently far                    sheath surface at very high frequencies [20]. The effect of the
+away from the filter frequency f0 . Otherwise, incorrect transient                semiconducting layers can also be included as shown in [21],
+responses may result.                                                             provided that its electric parameters are known. The insulation
+   The potential errors caused by the filtering in Figs. 19 and                   material may also lead to attenuation and dispersion of the wave
+20 suggests that the filtering procedure should be used only                      front due to relaxation phenomena [22]. Such effect can be
+when necessary, i.e., when high accuracy is required also at                      included in the model by representing a measurement of the
+low frequencies. Otherwise, the merging should be applied at                      permittivity frequency dependency by a rational function [23].
+all frequencies with LP (ω) = 0, HP (ω) = 1.
+                                                                                                              XI. CONCLUSION
+C. Scope of Application
+                                                                                     A method is presented for replacing the high-frequency
+   The combination of measured coaxial mode behavior with a                       coaxial mode behavior of a classical wide-band cable model
+classical model permits the model to be applied in cases where                    with a measured coaxial behavior. The replacement is shown
+the sheaths cannot be assumed to be ideally grounded. The case                    to increase the accuracy of the high-frequency coaxial mode
+studies in Section VIII (cable with far end sheaths open) and                     propagation, without affecting the non-coaxial modes of propa-
+Section IX (cross-bonded cables) showed that the fast front                       gation. Assuming that the non-coaxial modes of propagation are
+voltage response is strongly affected by the sheath grounding                     represented with sufficient accuracy in the classical model, the
+condition. These examples demonstrate the usefulness of the                       proposed model can be applied in simulations with alternative
+modeling extension proposed in this work. Further calculations                    grounding conditions for the sheaths, including open ends and
+(not shown) have demonstrated that the combined model retains                     cross-bondings. The model should be suitable for simulations
+with only small deviations the behavior of the classical model                    involving repetitive fast pulses from power electronic converters,
+for the non-coaxial modes, i.e., ground mode and inter-sheath                     as well as switching transients emerging from vacuum circuit
+modes.                                                                            breakers and switching in gas-insulated substations (GIS). Such
+                                                                                  applications are topics for future work.
+D. Accuracy of Classical Modeling
+   It is in this work assumed that the “Classical” method can                                                       REFERENCES
+represent the non-coaxial modes of propagation with sufficient
+                                                                                   [1] L. Marti, “Simulation of transients in underground cables with frequency-
+accuracy, also at very high frequencies. This is not always the                        dependent modal transformation matrices,” IEEE Trans. Power Del., vol. 3,
+case, and improvements are necessary. The classical method is                          no. 3, pp. 1099–1110, Jul. 1988.
+the one that has traditionally been used in EMT programs since                     [2] A. Morched, B. Gustavsen, and M. Tartibi, “A universal model for accurate
+                                                                                       calculation of electromagnetic transients on overhead lines and under-
+early 1980s. Z and Y are calculated based on Schelkunoff’s                             ground cables,” IEEE Trans. Power Del., vol. 14, no. 3, pp. 1032–1038,
+surface and transfer impedances for tubular conductors with                            Jul. 1999.
+
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 14:21:40 UTC from IEEE Xplore. Restrictions apply.
+3226                                                                                IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 38, NO. 5, OCTOBER 2023
+
+
+
+ [3] A. Ametani, “A general formulation of impedance and admittance of           [16] U. R. Patel and P. Triverio, “Accurate impedance calculation for under-
+     cables,” IEEE Trans. Power App. Syst., vol. PAS-99, no. 3, pp. 902–910,          ground and submarine power cables using MoM-SO and a multilayer
+     May 1980.                                                                        ground model,” IEEE Trans. Power Del., vol. 31, no. 3, pp. 1233–1241,
+ [4] L. M. Wedepohl and D. J. Wilcox, “Transient analysis of underground              Jun. 2016.
+     power-transmission systems. System-model and wave-propagation char-         [17] T. A. Papadopoulos, D. A. Tsiamitros, and G. K. Papagiannis, “Impedances
+     acteristics,” Proc. IEEE, vol. 120, no. 2, pp. 253–260, Feb. 1973.               and admittance of underground cables for the homogeneous earth case,”
+ [5] H. W. Dommel, Electromagnetic Transients Program Reference Man-                  IEEE Trans. Power Del., vol. 25, no. 2, pp. 961–969, Apr. 2010.
+     ual:(EMTP) Theory Book. Portland, OR, USA: Bonneville Power Ad-             [18] A. P. C. Magalhães, M. T. C. de Barros, and A. C. S. Lima, “Earth return
+     ministration, 1986.                                                              admittance effect on underground cable system modeling,” IEEE Trans.
+ [6] B. Gustavsen, “Cable modeling for very fast transient simulation studies         Power Del., vol. 33, no. 2, pp. 662–670, Apr. 2018.
+     using one-sided voltage transfer function measurements,” IEEE Trans.        [19] H. Xue, A. Ametani, J. Mahseredjian, and I. Kocar, “Generalized formu-
+     Power Del., vol. 38, no. 2, pp. 1129–1137, Apr. 2023.                            lation of earth-return impedance/admittance and surge analysis on under-
+ [7] I. Stevanović, B. Wunsch, G. L. Madonna, and S. Skibin, “High-frequency         ground cables,” IEEE Trans. Power Del., vol. 33, no. 6, pp. 2654–2663,
+     behavioral multiconductor cable modeling for EMI simulations in power            Dec. 2018.
+     electronics,” IEEE Trans. Ind. Inform., vol. 10, no. 2, pp. 1392–1400,      [20] R. Papazyan, P. Pettersson, and D. Pommerenke, “Wave propagation on
+     May 2014.                                                                        power cables with special regard to metallic screen design,” IEEE Trans.
+ [8] B. Wunsch, I. Stevanović, and S. Skibin, “Length-scalable multiconductor        Dielectrics Elect. Insul., vol. 14, no. 2, pp. 409–416, Apr. 2007.
+     cable modeling for EMI simulations in power electronics,” IEEE Trans.       [21] A. Ametani, Y. Miyamoto, and N. Nagaoka, “Semiconducting layer
+     Power Electron., vol. 32, no. 3, pp. 1908–1916, Mar. 2017.                       impedance and its effect on cable wave-propagation and transient Char-
+ [9] A. Semlyen and B. Gustavsen, “Phase domain transmission line mod-                acteristics,” IEEE Trans. Power Del., vol. 19, no. 4, pp. 1523–1531,
+     eling with enforcement of symmetry via the propagated characteristic             Oct. 2004.
+     admittance matrix,” IEEE Trans. Power Del., vol. 27, no. 2, pp. 626–631,    [22] L.-M. Zhou and S. Boggs, “Effect of shielded distribution cable on very fast
+     Apr. 2012.                                                                       transients,” IEEE Trans. Power Del., vol. 15, no. 3, pp. 857–863, Jul. 2000.
+[10] B. Gustavsen and A. Semlyen, “Rational approximation of frequency           [23] B. Gustavsen, H. K. Høidalen, and T. Ohnstad, “Field measurement and
+     domain responses by vector fitting,” IEEE Trans. Power Del., vol. 14,            simulation of electromagnetic transients on 132 kV oil-filled submarine
+     no. 3, pp. 1052–1061, Jul. 1999.                                                 cables,” Electric Power Syst. Res., vol. 115, pp. 43–49, 2014.
+[11] B. Gustavsen, “Optimal time delay extraction for transmission line mod-
+     eling,” IEEE Trans. Power Del., vol. 32, no. 1, pp. 45–54, Feb. 2017.
+[12] L. M. Wedepohl, H. V. Nguyen, and G. D. Irwin, “Frequency-
+     dependent transformation matrices for untransposed transmission lines
+     using Newton-Raphson method,” IEEE Trans. Power Syst., vol. 11, no. 3,      Bjørn Gustavsen (Fellow, IEEE) was born in Norway in 1965. He received the
+     pp. 1538–1546, Aug. 1996.                                                   M.Sc. and Dr. Ing. degrees in electrical engineering from the Norwegian Institute
+[13] CIGRE Technical Brochure 577A, “Electrical transient interaction be-        of Technology, Trondheim, Norway, in 1989 and 1993, respectively. Since 1994,
+     tween transformers and the power system. Part 1 – Expertise,” CIGRE         he has been with SINTEF Energy Research, and is currently as a Chief Research
+     JWG A2/C4.39, Apr. 2014.                                                    Scientist. Since 2020, he has been an Adjunct Professor with NTNU. His
+[14] B. Gustavsen, “Inclusion of neutral points in measurement-based             research interests include simulation of electromagnetic transients and modeling
+     frequency-dependent transformer model,” IEEE Trans. Power Del.,             of frequency dependent effects. He spent 1996 as a Visiting Researcher with the
+     vol. 37, no. 3, pp. 1785–1794, Jun. 2022.                                   University of Toronto, Toronto, ON, Canada, and the summer of 1998 with
+[15] Y. Yin and H. W. Dommel, “Calculation of frequency-dependent                the Manitoba HVDC Research Centre, Winnipeg, AB, Canada. During August
+     impedances of underground power cables with finite element method,”         2001–August 2002, he was a Marie Curie Fellow with the University of Stuttgart,
+     IEEE Trans. Magn., vol. 25, no. 4, pp. 3025–3027, Jul. 1989.                Stuttgart, Germany.
+
+
+
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 14:21:40 UTC from IEEE Xplore. Restrictions apply.
+
