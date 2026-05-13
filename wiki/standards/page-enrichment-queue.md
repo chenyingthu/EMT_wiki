@@ -41,7 +41,7 @@ updated: "2026-05-13"
 | 16 | variable-time-step-solver.md | methods | methods/numerical-methods/variable-time-step-solver.md | P0 | 110 | 801 | 8 | 15 | completed |
 | 17 | ould-bachir-2019-unified-avm.md | methods | methods/power-electronics/ould-bachir-2019-unified-avm.md | P0 | 107 | 893 | 4 | 8 | completed |
 | 18 | parallel-in-time.md | methods | methods/simulation-technology/parallel-in-time.md | P0 | 101 | 3135 | 95 | 15 | completed |
-| 19 | declarative-modeling.md | methods | methods/simulation-technology/declarative-modeling.md | P0 | 100 | 855 | 8 | 13 | pending |
+| 19 | declarative-modeling.md | methods | methods/simulation-technology/declarative-modeling.md | P0 | 100 | 3562 | 49 | 13 | completed |
 | 20 | power-system.md | topics | topics/tools-software/power-system.md | P0 | 100 | 1185 | 5 | 22 | pending |
 | 21 | coherency-clustering.md | methods | methods/simulation-technology/coherency-clustering.md | P0 | 100 | 819 | 8 | 11 | pending |
 | 22 | mbsm.md | methods | methods/power-electronics/mbsm.md | P1 | 99 | 943 | 5 | 9 | pending |
@@ -494,3 +494,4 @@ updated: "2026-05-13"
 || 16 | 1 | 1 | 0 | variable-time-step-solver页面完成（9081字，113公式，14wikilink，1SVG，5种积分方法详解） |
 ||| 17 | 1 | 1 | 0 | ould-bachir-2019-unified-avm页面完成（2862字，62公式，17wikilink，1SVG，3种AVM方法详解） |
 ||| 18 | 1 | 1 | 0 | parallel-in-time页面完成（3135字，95公式，15wikilink，3种时间并行方法：Parareal/MGRIT、矩阵对角化、PEGR，含MMC-HVDC/IEEE-118/VFTO等量化结果） |
+||| 19 | 1 | 1 | 0 | declarative-modeling页面完成（3562字，49公式，13wikilink，6种核心机制：无因果建模/DAE索引降阶/FMI标准/Dynaωo架构/传输线建模/组件示例，6篇来源论文） |
