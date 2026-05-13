@@ -23,9 +23,9 @@ updated: "2026-05-13"
 
 | 序号 | 页面 | 类型 | 优先级 | hollow_score | 字数 | 公式 | wikilinks | 状态 |
 |------|------|------|--------|-------------|------|------|-----------|------|
-| 1 | model-predictive-control.md | models | P0 | 160 | 3412 | 58 | 7 | completed |
-| 2 | tsc.md | methods | P0 | 146 | 690 | 1 | 10 | pending |
-| 3 | distribution-network.md | methods | P0 | 143 | 663 | 5 | 17 | pending |
+|| 1 | model-predictive-control.md | models | P0 | 160 | 3412 | 58 | 7 | completed |
+|| 2 | tsc.md | methods | P0 | 146 | 690 | 1 | 10 | completed |
+|| 3 | distribution-network.md | methods | P0 | 143 | 663 | 5 | 17 | pending |
 | 4 | tbs.md | methods | P0 | 140 | 746 | 1 | 10 | pending |
 | 5 | n-port-network.md | methods | P0 | 136 | 672 | 3 | 9 | pending |
 | 6 | gan-hemt.md | methods | P0 | 134 | 786 | 1 | 9 | pending |
@@ -478,4 +478,4 @@ updated: "2026-05-13"
 
 | 轮次 | 处理页面数 | 完成数 | 跳过数 | 备注 |
 |------|-----------|--------|--------|------|
-| 440 | - | - | - | 尚未开始 |
+|| 441 | 1 | 1 | 0 | tsc.md completed: 690→4800字, 1→64公式, 10→9链接, 1 SVG |
