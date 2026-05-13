@@ -47,7 +47,7 @@ updated: "2026-05-13"
 | 22 | mbsm.md | methods | methods/power-electronics/mbsm.md | P1 | 99 | 943 | 5 | 9 | completed |
 | 23 | large-scale-system-simulation.md | topics | topics/simulation/large-scale-system-simulation.md | P1 | 96 | 2666 | 53 | 25 | completed |
 | 24 | load-modeling.md | topics | topics/component-modeling/load-modeling.md | P1 | 94 | 1289 | 5 | 24 | completed |
-| 25 | low-rank-solver.md | methods | methods/network-solution/low-rank-solver.md | P1 | 91 | 1186 | 4 | 15 | pending |
+| 25 | low-rank-solver.md | methods | methods/network-solution/low-rank-solver.md | P1 | 91 | 1186 | 4 | 15 | completed |
 | 26 | high-performance-computing.md | methods | methods/simulation-technology/high-performance-computing.md | P1 | 91 | 1270 | 4 | 19 | pending |
 | 27 | renewable-energy-units.md | topics | topics/renewable-storage/renewable-energy-units.md | P1 | 91 | 1271 | 4 | 19 | pending |
 | 28 | haileselassie-2012-mtdc-control.md | methods | methods/system-studies/haileselassie-2012-mtdc-control.md | P1 | 90 | 856 | 8 | 8 | pending |
@@ -500,4 +500,5 @@ updated: "2026-05-13"
 || 22 | 1 | 1 | 0 | mbsm页面完成（3703字，146公式，7wikilink，9章节，4种核心方法：拓扑参数化统一/舒尔补递归诺顿等效/动态平均化统一模型/GSFB-AVM与DEM组合模型，7篇来源论文）
 ||| 23 | 1 | 1 | 0 | large-scale-system-simulation页面完成（2666字，53公式，25wikilink，17章节，12篇来源论文，覆盖分网并行/BBD矩阵法/多速率仿真/混合仿真/GPU加速/ML加速六大方向，ParaEMT 36x/Nelson River/IEEE 118等量化案例）
 
-|| 24 | 1 | 1 | 0 | load-modeling页面完成（~604字正文，72公式（10块级+62行内），10wikilink（全部验证有效），9章节，6种负荷建模方法：ZIP静态/指数型V-f相关/元件级综合/fdLoad频率相关/恒功率RMS递推/感应电动机，4篇来源论文，含负荷建模分类矩阵、场景-方法推荐表、决策树）
+||| 24 | 1 | 1 | 0 | load-modeling页面完成（~604字正文，72公式（10块级+62行内），10wikilink（全部验证有效），9章节，6种负荷建模方法：ZIP静态/指数型V-f相关/元件级综合/fdLoad频率相关/恒功率RMS递推/感应电动机，4篇来源论文，含负荷建模分类矩阵、场景-方法推荐表、决策树）
+||| 25 | 1 | 1 | 0 | low-rank-solver页面完成（2305字，129公式（22块级+107行内），16wikilink（全部验证有效），11章节，4种核心方法：分层低秩近似/Zhang 2021、分裂状态空间/Fu 2025、LDE分解/Duan 2020、FDNE压缩/Hu 2015，4篇来源论文，含方法对比表、场景-方法推荐表、量化性能边界表，公式密集型页面跳过SVG）
