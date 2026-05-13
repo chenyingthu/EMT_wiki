@@ -39,7 +39,7 @@ updated: "2026-05-13"
 | 14 | ieee-118-bus-system.md | topics | topics/test-system/ieee-118-bus-system.md | P0 | 113 | 1114 | 6 | 27 | completed |
 | 15 | hbsm.md | methods | methods/power-electronics/hbsm.md | P0 | 111 | 4013 | 22 | 13 | completed |
 | 16 | variable-time-step-solver.md | methods | methods/numerical-methods/variable-time-step-solver.md | P0 | 110 | 801 | 8 | 15 | completed |
-| 17 | ould-bachir-2019-unified-avm.md | methods | methods/power-electronics/ould-bachir-2019-unified-avm.md | P0 | 107 | 893 | 4 | 8 | pending |
+| 17 | ould-bachir-2019-unified-avm.md | methods | methods/power-electronics/ould-bachir-2019-unified-avm.md | P0 | 107 | 893 | 4 | 8 | completed |
 | 18 | parallel-in-time.md | methods | methods/simulation-technology/parallel-in-time.md | P0 | 101 | 1201 | 1 | 13 | pending |
 | 19 | declarative-modeling.md | methods | methods/simulation-technology/declarative-modeling.md | P0 | 100 | 855 | 8 | 13 | pending |
 | 20 | power-system.md | topics | topics/tools-software/power-system.md | P0 | 100 | 1185 | 5 | 22 | pending |
@@ -492,3 +492,4 @@ updated: "2026-05-13"
 ||| 14 | 1 | 1 | 0 | ieee-118-bus-system页面完成（700字，41公式，16wikilink，1SVG，6篇来源论文） |
 ||| 15 | 1 | 1 | 0 | hbsm页面完成（4013字，22公式，13wikilink，1SVG，4种建模层级详解） |
 || 16 | 1 | 1 | 0 | variable-time-step-solver页面完成（9081字，113公式，14wikilink，1SVG，5种积分方法详解） |
+|| 17 | 1 | 1 | 0 | ould-bachir-2019-unified-avm页面完成（2862字，62公式，17wikilink，1SVG，3种AVM方法详解） |
