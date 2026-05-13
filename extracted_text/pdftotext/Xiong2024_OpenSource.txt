@@ -1,0 +1,478 @@
+                                                             Electric Power Systems Research 235 (2024) 110734
+
+
+                                                                    Contents lists available at ScienceDirect
+
+
+                                                       Electric Power Systems Research
+                                                          journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+An open-source parallel EMT simulation framework
+Min Xiong a, b , Bin Wang c , Deepthi Vaidhynathan a , Jonathan Maack a , Matthew J. Reynolds a ,
+Andy Hoke a , Kai Sun b , Deepak Ramasubramanian d , Vishal Verma d , Jin Tan a, *
+a
+  National Renewable Energy Laboratory, Golden, CO, 80401, USA
+b
+  University of Tennessee, Knoxville, TN, 37996, USA
+c
+  University of Texas at San Antonio, San Antonio, TX, 78249, USA
+d
+  Electric Power Research Institute, Knoxville, TN, 37932, USA
+
+
+
+
+A R T I C L E I N F O                                    A B S T R A C T
+
+Keywords:                                                As the integration level of inverter-based resources (IBRs) increases, ensuring the reliable operation of the bulk
+EMT                                                      power systems requires the use of electromagnetic transient (EMT) simulation tools to identify and mitigate
+Electromagnetic transient simulation                     system-wide stability risks. Conducting EMT studies for large-scale, IBR-rich grids, however, is challenging due to
+Inverter-based resource
+                                                         the inherent computational bottleneck caused by the underlying high-fidelity models and required small time
+ParaEMT
+Parallel computation
+                                                         steps. This paper introduces ParaEMT: an open-source, generic EMT simulation framework designed to accelerate
+Power system dynamics                                    simulations by leveraging advanced parallel computational technologies, such as high-performance computers.
+                                                         This paper presents a comprehensive exposition of ParaEMT, covering its modeling library, simulation strategy,
+                                                         framework structure, operational procedures, and auxiliary features, alongside its extensible parallel computa­
+                                                         tional architecture. Notably, ParaEMT is a publicly accessible and modularized framework written in Python,
+                                                         thereby facilitating future development and the integration of new models and algorithms. The accuracy and
+                                                         efficiency of ParaEMT are demonstrated by rigorous validations via multiple case studies.
+
+
+
+
+1. Introduction                                                                               At present, researchers and practitioners in the field heavily rely on
+                                                                                          commercial, offline EMT simulation tools, such as PSCAD and EMTP-RV,
+    With the increasing integration of inverter-based resources (IBRs)                    which are typically well-tested and computationally efficient. Those
+toward a 100% renewable energy future, the induced fast dynamics,                         tools, however, are not flexible for users to experiment with new tech­
+such as sub/super synchronous resonances, have emerged as significant                     nical approaches [12,13] or integrate innovative algorithms [9,14,15]
+threats to the reliability and stability of power systems [1–6]. To tackle                by modifying the source code.
+this challenge, power system electromagnetic transient (EMT) simula­                          This reasoning motivates the development of an open-source EMT
+tion stands out as a powerful tool due to its capability to accurately                    simulation framework capable of parallel computation. This framework
+capture intricate system-wide dynamics spanning a wide frequency                          caters to the needs of both industrial and academic entities engaged in
+range, e.g., from DC to hundreds of hertz, owing to its detailed system                   power systems development and research. Additionally, it aims to pro­
+and IBR modeling. Therefore, EMT simulation is playing a progressively                    vide a transparent platform for students to acquire hands-on experience
+more pivotal role in crucial aspects for renewable integration in­                        with fundamental EMT simulation techniques. In pursuit of this objec­
+vestigations in modern power grids, such as control design, stability                     tive, the authors have successfully developed a Python-based EMT
+analysis, and protection coordination [5–8].                                              simulation framework, named “ParaEMT,” to serve as a flexible and
+    Nevertheless, small time steps, typically 50–100 μs, are needed for                   extensible platform for both educational and research purposes.
+the numerical accuracy and stability of EMT simulations, resulting in                         During the past decade, Python, a dynamic and versatile program­
+substantial computational overhead, particularly on large-scale systems                   ming language, has gained immense popularity in various fields, such as
+[9]. Consequently, the demand to accelerate EMT simulations has                           machine learning and data science [16,17]. As a high-level interpreted
+garnered significance for facilitating efficient dynamic security assess­                 language, Python offers a multitude of advantages: it is easy to code and
+ments of large-scale, IBR-rich power grids [10,11].                                       read; it is free and open source; and it has a comprehensive standard
+
+
+
+    * Corresponding author.
+      E-mail address: jin.tan@nrel.gov (J. Tan).
+
+https://doi.org/10.1016/j.epsr.2024.110734
+Received 24 September 2023; Received in revised form 15 March 2024; Accepted 17 June 2024
+Available online 1 July 2024
+0378-7796/Published by Elsevier B.V.
+M. Xiong et al.                                                                                                   Electric Power Systems Research 235 (2024) 110734
+
+
+library, strong community support, platform independence, and more               constraints in exploiting the potential of HPCs (which typically have a
+[18]. These attributes make Python particularly well-suited for devel­           Linux system) or GPUs to accelerate the simulation from user end, unless
+oping open-source tools with rapid prototyping. For example, a                   vendor support is provided to deploy it in the Linux system or restruc­
+Python-based power system phasor domain simulator, ANDES [19], has               ture the CPU code to be compatible with GPU execution mode [33].
+amassed an impressive 399,000 downloads. Hence, the authors chose                    Conversely, commercial software, like PSCAD, has a well-written
+Python as the language for the EMT simulation framework ParaEMT in               user’s manual and help documentation, well-developed GUIs, excel­
+this work.                                                                       lent help-desk support, extensive device libraries, and advanced func­
+    Till now, there have been several previous attempts at developing            tions, such as switching interpolation. ParaEMT is still under continuous
+open-source simulators considering EMT dynamics, such as the DPsim in            development and currently lacks these features.
+[20] based on the dynamic phasor approach, the developing PyTHTA
+EMT circuit program [21], and the MSEMT developed in Modelica                    3. Models and algorithms utilized in ParaEMT
+environment [22]. To the best of the authors’ knowledge, ParaEMT is
+the first free and open-source Python-based EMT simulator for large                  This section introduces the network, dynamic, and fault modeling
+scale systems that is easily compatible with the distributed memory              employed in ParaEMT, along with elucidations of the algorithms utilized
+paradigm, such as multiple computers on a transmission control proto­            in the process.
+col (TCP) network and high-performance computing (HPC) protocols,
+through utilization of the Message Passing Interface (MPI) technology            3.1. Network equation modeling
+[23].
+    In light of the need of EMT simulations for large-scale systems [24]             Approaches for formulating the EMT network equation are primarily
+and the swift evolution of heterogeneous computing architectures, we             classified as nodal formulation [34,35], state-space formulation [36],
+believe ParaEMT emerges as a valuable and substantial contribution. It           and state-space nodal formulation [37]. Given the time-consuming na­
+provides a flexible and transparent framework for exploring advanced             ture of state-space equation formulation, especially for large-scale sys­
+efficient EMT simulations techniques and fosters innovative research             tems considering topology changes [31,38], the nodal formulation
+endeavors in the domain of EMT simulations.                                      proposed in [34] is utilized in ParaEMT.
+    The rest of the paper is organized as follows. Section II outlines the           To obtain the network nodal equation through discretizing the dif­
+main features of the open-source EMT simulation framework, ParaEMT.              ferential equations, various algorithms can be employed, such as the 2-
+Section III elucidates the implemented models and algorithms in Para­            stage singly diagonally implicit Runge-Kutta (2S-DIRK) method, the
+EMT. Section IV presents a comprehensive overview of the framework’s             trapezoidal-rule method, polynomial Gear methods, the backward Euler
+structure. To assess the accuracy and efficacy of the developed frame­           method, the backward differentiation formula, the matrix exponential-
+work, four case studies are elaborated in Section V and Section VI.              based method, and so on [31,39]. In most cases, the classical trape­
+Conclusions and future work are drawn up in Section VII.                         zoidal method still retains higher efficiency in achieving comparable
+                                                                                 precision with alternative methods [31], and thus it is utilized in Para­
+2. ParaEMT features                                                              EMT to derive the network companion circuits and to establish the
+                                                                                 network conductance matrix G. Finally, the discretized network nodal
+    The initial motivation for developing this framework is to provide a         equation is formulated as [34,36]:
+flexible environment for conducting EMT simulations of large-scale bulk
+                                                                                 Gv(t) = i(t) + ihist (t − Δt)                                                 (1)
+power systems. To achieve this target, the framework of ParaEMT was
+developed with the following main features:                                      where v(t) is a vector of the nodal voltages, i(t) is a vector of the external
+                                                                                 current sources, and ihist is a vector of the currents determined by history
+1) Fully open source and transparent: Allows unrestricted access and             terms related to conditions in the previous time step. In addition, to
+   modifications to the underlying source code.                                  suppress spurious numerical oscillations, artificial resistors Rp≈40L/
+2) Cross-platform compatibility: Able to operate on most prevalent               (3Δt) and Rs≈3Δt/(40C) are added in parallel/series with L/C, respec­
+   operating systems, including Unix, Linux, Windows, and macOS X.               tively [40].
+3) Automated parallel computation: Provides fully automated parallel
+   computation for solving network equations.                                    3.2. BBD technique for parallelizing the network solution
+4) IEEE/Cigre power system dynamic-link library (DLL) compatibility:
+   Seamlessly incorporates black-box component dynamic models                       To enable parallel computations for solving the network equation, a
+   developed by third parties [25].                                              task that typically dominates the total simulation time cost [9], the
+5) Harnessing the just-in-time (JIT) compiler, Numba, in Python:                 bordered-block-diagonal (BBD) matrix-based approach [14] is
+   Drastically speeds up the computational loops [26].                           employed and automated in ParaEMT to decompose the sparse network
+6) Results down-sampling capability and snapshot functionality.                  conductance matrix G into multiple partitions, as shown in (2).
+7) Test systems library: Includes common test systems, such as the                    ⎡                         ⎤
+   Kundur two-area system [27], IEEE 9-bus system [28], IEEE 39-bus                     G11                 G1n
+   system [28], Western Electricity Coordinating Council (WECC)
+                                                                                      ⎢
+                                                                                      ⎢      G22            G2n ⎥
+                                                                                                                ⎥
+   179-bus system [29], and WECC 240-bus system [30].                            G=⎢  ⎢            ⋯          ⋮ ⎥
+                                                                                                                ⎥                                   (2)
+                                                                                      ⎣                Gmm Gmn ⎦
+8) Intelligent initialization: Automatically builds and initializes EMT
+                                                                                        Gn1 Gn2 ⋯ Gnm Gnn
+   cases from predefined PSSE power flow files to avoid reaching
+   abnormal operating modes [31].                                                    Subsequently, all but one of the backward and forward substitutions
+9) Empowers advanced applications: Allows proficient users to develop            for solving the network solution are parallelized for speedup. Interested
+   additional models and functions, facilitating rapid prototyping,              readers may refer to [14] for details.
+   modeling, and testing of novel research ideas leveraging heteroge­                Besides, due to the flexibility of this framework, other potential
+   neous computing architectures, such as HPC [12] and graphics                  techniques and algorithms can also be developed or explored to improve
+   processing units (GPUs) [13].                                                 simulation efficiency in the future.
+
+   In comparison, the widely used commercial software PSCAD oper­
+ates exclusively on the Windows platform [32], which poses certain
+
+                                                                             2
+M. Xiong et al.                                                                                                     Electric Power Systems Research 235 (2024) 110734
+
+
+3.3. System component modeling                                                         Further, the main functions are supported by multiple subfunctions
+                                                                                   sourced from three distinct libraries. Notably, lib_numba incorporates
+    At present, the implemented models in ParaEMT are concisely                    time domain simulation functions compiled through Numba. Addition­
+summarized in Fig. 1, which includes several dynamic models and a                  ally, psutils predominantly encompasses functions related to system
+network model formulated by the nodal approach [41–43].                            initialization, whereas other functions are in Lib_BW. Four numerical
+    ParaEMT offers a Euler integration routine and includes all relevant           arrays, pfd, dyd, ini, and emt, are designated to hold power flow data,
+limits for computation regarding synchronous machines, machine con­                dynamic data, initial state data, and EMT simulation data, respectively.
+trols, and IBRs. Meanwhile, ParaEMT is currently undergoing contin­
+uous development to incorporate more models, such as other types of                4.3. Simulation initialization
+machines [44], distributed transmission lines [45], dynamic loads,
+transformers with saturation, and new EMT-type grid-­                                 Proper initialization plays an important role in attaining a normal
+following/forming inverters, thus enhancing its versatility and                    operation condition before executing the time domain simulation [31].
+applicability.                                                                     To achieve this, ParaEMT starts the initialization from a converged
+                                                                                   power flow and then initializes the rest of the variables for dynamic
+3.4. Fault modeling                                                                routines following an automatic process, as illustrated in Fig. 3.
+
+   In its current state, ParaEMT supports control reference step changes           4.4. Time domain simulation
+and generator trips through embedded functions while allowing step
+perturbations of any parameters or variables. Development efforts are                 As the crux of the EMT simulation, the time domain simulation in­
+currently underway to include balanced and unbalanced line faults.                 volves mainly updating the dynamic states, updating the currents, and
+                                                                                   solving the network nodal equation. The time loop framework in Para­
+4. Framework structure of ParaEMT                                                  EMT that considers reinitialization following any disturbances is
+                                                                                   detailed in Fig. 4. Meanwhile, the down-sampling function allows for
+    Fig. 2 on the next page illustrates the main structure of the simulation       saving the results at every customized DS time steps.
+framework, along with the corresponding files or code snippets for users
+to better comprehend the detailed implementations. Further elabora­                4.5. Run from a snapshot
+tions and additional details are provided next.
+                                                                                      To run ParaEMT from a simulation snapshot, typically a well-
+4.1. File formats                                                                  converged steady state, the first step is to simulate and save a snap­
+                                                                                   shot when setting SimMod=0 in main_step1_sim.
+    As presented in Fig. 2, ParaEMT loads system power flow from a pre-               After that, by setting SimMod=1, the simulations thereafter con­
+established PSSE raw file and then converts it into a three-phase network          cerning different contingencies start directly and automatically from the
+representation, along with the three-phase instantaneous voltages and              saved       snapshot,      facilitated       by      the     subfunction
+currents, during the initialization process. The dynamic data are im­              initialize_from_snp.
+ported from a predefined XLS file that has a straightforward data layout.
+Such a manner facilitates the efficient establishment of EMT models of             4.6. Parallel computation for solving the network equation
+systems, especially for large-scale cases.
+                                                                                      ParaEMT supports three different network solvers, which are based
+4.2. Main functions and subfunction libraries                                      on the direct inverse, LU decomposition, and BBD decomposition.
+                                                                                   Among them, the BBD technique supported by the function library
+    As displayed in Fig. 2, the ParaEMT framework comprises three main             bbd_matrix.py is used for parallel computing of the network solution.
+functions.    Among        them,     the   first  function,    main_­
+step0_CreateLargeCases, serves the dual purpose of executing and                   5. Case studies for accuracy validation
+storing the power flow solution and, optionally, generating synthetic
+large-scale systems. The second function, main_step1_sim, is                          In this section, two case studies are conducted to validate the accu­
+responsible for initializing and simulating the system dynamics. The               racy of ParaEMT on capturing system transient dynamics, along with its
+third function, main_step2_save, saves the simulation results.                     compatibility with DLL models.
+
+                                                                                   5.1. Case study on a modified Kundur two-area system
+
+                                                                                       A validation of ParaEMT against PSSE on slow dynamics is per­
+                                                                                   formed on a modified Kundur two-area system, shown in Fig. 5 [27]. The
+                                                                                   modifications encompass an intentionally crafted ensemble of compo­
+                                                                                   nents, including one WECC generic IBR, three synchronous generators,
+                                                                                   four transformers, eight lumped transmission lines, two loads, and two
+                                                                                   fixed shunts. Additionally, the SEXS exciter is added to all generators;
+                                                                                   generators G2, G3, and G4 are equipped with TGOV1, HYDRO, and
+                                                                                   GAST governors, respectively; generator G4 is equipped with an IEEEST
+                                                                                   stabilizer. The simulation starts from a steady state, and a + 0.05-p.u.
+                                                                                   voltage reference step change is added to G3 at t = 1 s and then elimi­
+                                                                                   nated at t = 5 s.
+                                                                                       Figs. 6-8 depict the simulation results of ParaEMT compared to PSSE.
+                                                                                   Evidently, ParaEMT yields results that closely align with those from
+                                                                                   PSSE, and the minor errors are acceptable and reasonable due to un­
+                                                                                   disclosed implementation specifics of models and numerical solvers in
+                    Fig. 1. Developed models in ParaEMT.                           commercial tools.
+
+                                                                               3
+M. Xiong et al.                                                                                                 Electric Power Systems Research 235 (2024) 110734
+
+
+
+
+                                                        Fig. 2. EMT simulation framework in ParaEMT.
+
+
+                                                                                    The successful validation of ParaEMT using this modified Kundur
+                                                                                 two-area system confirms the correct implementation of all the devel­
+                                                                                 oped models within ParaEMT, as shown in Fig. 1, along with the
+                                                                                 framework shown in Fig. 2.
+
+                                                                                 5.2. Case study of a DLL-supported IBR model
+
+                                                                                    In this case, the framework in ParaEMT is extended to incorporate a
+                                                                                 C-compiled DLL file containing a grid-following IBR model from the
+                                                                                 Electric Power Research Institute (EPRI) [46]. The analysis is conducted
+                                                                                 on a small three-bus test case containing an infinite bus and an IBR bus.
+                                                                                    After initialization, two disturbances are added at t = 4.0 s and t =
+                                                                                 8.0 s, by increasing Pref and Qref of the IBR by 5 MW and 5 Mvar,
+                                                                                 respectively. The dynamic results of ParaEMT, in red, are well aligned
+                                                                                 with those provided by PSCAD, in black, as shown in Fig. 9.
+                                                                                    This case study stands as an exemplary validation of ParaEMT’s
+                                                                                 ability to precisely simulate fast dynamics and its compatibility with IBR
+                                                                                 models in DLL files, thus allowing users to efficiently incorporate user-
+                                                                                 defined models.
+
+          Fig. 3. Framework for simulation initialization in ParaEMT.
+                                                                                 6. Case studies on parallel simulation
+
+                                                                                    This section presents two case studies to demonstrate the efficiency
+
+                                                                             4
+M. Xiong et al.                                                                                               Electric Power Systems Research 235 (2024) 110734
+
+
+
+
+                                                                                 Fig. 8. Voltage comparison on a modified Kundur two-area system.
+
+
+
+
+        Fig. 4. Framework for the time domain simulation in ParaEMT.
+
+
+
+                                                                              Fig. 9. Results comparison for the EPRI IBR model on a three-bus system.
+
+
+                                                                             of ParaEMT on medium and large-scale systems using the BBD-based
+                                                                             parallel computation.
+
+                                                                             6.1. Time performance on the WECC 240-bus system
+
+                                                                                 To evaluate ParaEMT’s time performance on a medium-sized system,
+                                                                             the average time cost of ParaEMT for a 1 s simulation using a 50 μs time
+                                                                             step is compared with that of PSCAD [30]. Because the developed
+                  Fig. 5. A modified Kundur two-area system.
+                                                                             PSCAD model is evenly divided into eight zones [47], the tests are
+                                                                             conducted using 1 or 8 processor cores, i.e., with or without parallel
+                                                                             computation, for fair comparisons. The simulations are carried out on a
+                                                                             Windows machine equipped with two Intel Xeon(R) Platinum 8280 2.7
+                                                                             GHz CPUs and 512GB RAM. Also, Python 3.7.13, SciPy 1.7.0, NumPy
+                                                                             1.21.0, and Numba 0.57.1 are employed. The final time cost results are
+                                                                             summarized in Table 1.
+                                                                                 As presented in Table 1, ParaEMT can simulate this medium-size
+                                                                             240-bus system with a superior time performance than that of PSCAD
+                                                                             under series simulation using 1 core, primarily attributed to imple­
+                                                                             mentation of the JIT Numba compiler within ParaEMT. However, Par­
+                                                                             aEMT does not show speedup for parallel simulation on this 240-bus
+                                                                             system, mainly because the utilized BBD technique cannot fully
+    Fig. 6. Frequency comparison on a modified Kundur two-area system.
+                                                                             decouple the network, and the system size is not sufficiently large to
+                                                                             exploit the advantages of the BBD technique, and the required syn­
+                                                                             chronization process slows down the simulation, especially when more
+                                                                             than 8 partitions are utilized. Instead, PSCAD uses time delay induced by
+                                                                             distributed model-based long transmission lines to fully decouple the
+                                                                             network and greatly reduce the time cost through parallel simulations
+                                                                             [30]. Thus, in our future work, the authors are also interested in
+                                                                             incorporating the distributed line model and developing corresponding
+
+                                                                             Table 1
+                                                                             Time cost on the WECC 240-bus system for a 1-second simulation.
+                                                                              Simulator                1 processor core                     8 processor cores
+      Fig. 7. Power comparison on a modified Kundur two-area system.                                   No parallelization                   Parallelization
+
+                                                                              PSCAD                    90 s                                 15 s
+                                                                              ParaEMT                  29 s                                 28 s
+
+
+                                                                         5
+M. Xiong et al.                                                                                                     Electric Power Systems Research 235 (2024) 110734
+
+
+parallel simulation capabilities, especially for medium size systems. To
+notice, including a distributed line model that considers frequency de­
+pendency [48] will certainly increase the computation burden for
+formulating the network G matrix and updating historical currents,
+determined by the number of long-distance lines in the system. Never­
+theless, the time cost for simulating large-scale systems is still dominated
+by solving the network nodal equation, which is not straightforward to
+parallelize.
+    Notice that the distributed line-based parallel simulation technique
+used in PSCAD requires a manual process to decouple the system. In
+comparison, although the BBD-based parallelization does not speed up
+simulation on the 240-bus system, it is fully automatic and does not               Fig. 10. Speedup performance when leveraging HPC parallelization relative to
+require any manual process, making it well-suitable for large-scale                a serial (single-core) simulation.
+systems.
+
+6.2. Parallel simulation on a synthetic 10,024-bus system
+
+    To substantiate ParaEMT’s capability and high efficiency of simu­
+lating large-scale systems with the BBD-based parallel simulation, a test
+is conducted on a synthetic 10,024-bus system constructed by inter­
+linking 7 × 8 replications of the WECC 179-bus system using the
+LargeSysGenerator function [9,14]. Leveraging parallelization on
+the HPC Eagle at the National Renewable Energy Laboratory (NREL)
+[49], the performance is depicted in Figs. 10 and 11.
+    As shown in Fig. 10, with the number of HPC Message Passing
+Interface (MPI) ranks [23,50] and network BBD partitions both varying
+from 1 to 84, the simulation achieves a peak speedup of approximately
+15–18 times, with a corresponding minimum time cost of 90–110 s for a
+1 s simulation using a 50 μs time step, as shown in Fig. 11.                           Fig. 11. Time cost for a 1-second simulation using a 50-μs time step.
+    In addition, as the number of partitions increases, the size of the BBD
+corner block and the number of nonzero elements in the LU submatrices              Code availability
+increases, which results in reducing the amount of work that benefits
+from parallelization. As per Amdahl’s law [51], this limits the maximum               The open-source parallel EMT simulation framework, ParaEMT, is
+speed up of the BBD Schur complement solve. As a result, increasing the            available in: http://github.com/NREL/ParaEMT_public
+number of partitions increases the execution time on the 240-bus sys­
+tem. In contrast, this problem is less apparent on the 10,024-bus system,          CRediT authorship contribution statement
+mainly because the network G matrix can be partitioned into more
+pieces before the corner size and number of nonzeros become                           Min Xiong: Data curation, Investigation, Software, Validation,
+problematic.                                                                       Visualization, Writing – original draft, Writing – review & editing. Bin
+    Importantly, the scalability presented here is not limited to HPC              Wang: Data curation, Investigation, Methodology, Resources, Software,
+systems. ParaEMT uses MPI, which is a distributed memory paralleli­                Validation, Visualization, Writing – original draft. Deepthi Vaidhyna­
+zation paradigm, and can run on many network communication pro­                    than: Software, Visualization, Writing – review & editing. Jonathan
+tocols; thus, it can be deployed on multiple compute nodes of an HPC               Maack: Software, Validation, Writing – review & editing. Matthew J.
+system, multiple computers on a TCP network, or simply a multi-core                Reynolds: Funding acquisition. Andy Hoke: Funding acquisition,
+machine.                                                                           Writing – review & editing. Kai Sun: Writing – original draft, Writing –
+                                                                                   review & editing. Deepak Ramasubramanian: Resources. Vishal
+7. Conclusions and future work                                                     Verma: Resources. Jin Tan: Funding acquisition, Methodology, Project
+                                                                                   administration, Supervision, Writing – original draft, Conceptualization.
+    This paper introduces an open-source EMT simulation framework,
+ParaEMT, for efficient simulations of large-scale, IBR-rich grids
+leveraging parallel computations. The structure of the framework is                Declaration of competing interest
+presented in detail with code snippets. The accuracy, extension, and
+efficiency of ParaEMT are validated with case studies. The simulation                  The authors declare that they have no known competing financial
+framework is extensible to add user-defined models, different numerical            interests or personal relationships that could have appeared to influence
+approaches, and different modeling techniques. The framework can be                the work reported in this paper.
+further extended for simulating ultra-large-scale systems, acceleration
+via heterogeneous computing architectures, and EMT-phasor hybrid                   Data availability
+simulations.
+    Meanwhile, to improve the capability and flexibility of ParaEMT, the              Data will be made available on request.
+authors are working on developing power flow and result plotting
+functions in Python within the framework, and future efforts will be
+directed toward developing a user manual, a help document, additional              Acknowledgments
+dynamic models, interfaces with commercial tools, and compatibility
+with systems described in various data formats.                                        This work was authored in part by the National Renewable Energy
+                                                                                   Laboratory (NREL), operated by Alliance for Sustainable Energy, LLC,
+                                                                                   for the U.S. Department of Energy (DOE) under Contract No. DE-AC36-
+
+                                                                               6
+M. Xiong et al.                                                                                                                        Electric Power Systems Research 235 (2024) 110734
+
+
+08GO28308. This work was supported by the Laboratory Directed                                    [19] H. Cui, F. Li, K. Tomsovic, Hybrid symbolic-numeric framework for power system
+                                                                                                      modeling and analysis, IEEE Trans. Power Syst. 36 (2) (2020) 1373–1384.
+Research and Development (LDRD) Program at NREL and the U.S.
+                                                                                                 [20] M. Mirz, S. Vogel, G. Reinke, A. Monti, DPsim—A dynamic phasor real-time
+Department of Energy Office of Energy Efficiency and Renewable En­                                    simulator for power systems, SoftwareX 10 (100253) (2019). Art. no.
+ergy Solar Energy Technologies Office Award Number 38457. The U.S.                               [21] H.C.A. Tavante, B.D. Bonatto, M. P.Coutinho, Open source implementations of
+Government retains and the publisher, by accepting the article for                                    electromagnetic transient algorithms, in: IEEE International Conference on
+                                                                                                      Industry Applications, 2018.
+publication, acknowledges that the U.S. Government retains a nonex­                              [22] A. Masoom, J. Mahseredjian, T. Ould-Bachir, A. Guironnet, MSEMT: an advanced
+clusive, paid-up, irrevocable, worldwide license to publish or reproduce                              Modelica library for power system electromagnetic transient studies, IEEE Trans.
+the published form of this work, or allow others to do so, for U.S. Gov­                              Power Del. 37 (4) (Sep. 2021) 2453–2463.
+                                                                                                 [23] Open MPIv5.0.x, Accessed: Feb. 20, 2024. [Online]. Available: https://docs.open
+ernment purposes. The views expressed herein do not necessarily                                       -mpi.org/en/v5.0.x/index.html.
+represent the views of the U.S. Department of Energy or the United                               [24] P. Le-Huy, M. Woodacre, S. Guérette, É. Lemieux, Massively parallel real-time
+States Government.                                                                                    simulation of very-large-scale power systems, IPST 17 (2017).
+                                                                                                 [25] IEEE/Cigre Power System DLL Models/Standard, 2019. [Online]. Available: http
+    A portion of the research was performed using computational re­                                   ://www.electranix.com/ieee-pes-tass-realcodewg/.
+sources sponsored by the Department of Energy’s Office of Energy Ef­                             [26] S.K. Lam, A. Pitrou, S. Seibert, Numba: a llvm-based python jit compiler, in:
+ficiency and Renewable Energy and located at the National Renewable                                   Proceedings of the Second Workshop on the LLVM Compiler Infrastructure in HPC,
+                                                                                                      2015, pp. 1–6.
+Energy Laboratory.                                                                               [27] P. Kundur, Power System Stability and Control, McGraw-Hill, New York, NY, USA,
+    The authors would like to thank Dr. Rodrigo Henriquez-Auba from                                   1994.
+NREL for his helpful discussions on power system dynamics and                                    [28] S. Peyghami, P. Davari, M. Fotuhi-Firuzabad, F. Blaabjerg, Standard test systems
+                                                                                                      for modern power system analysis: an overview, IEEE Ind. Electron. Mag. 13 (4)
+simulations.
+                                                                                                      (2019) 86–105.
+                                                                                                 [29] S. Maslennikov, B. Wang, Q. Zhang, et al., A test cases library for methods locating
+References                                                                                            the sources of sustained oscillations, in: IEEE PES General Meeting, 2016. Boston,
+                                                                                                      MA.
+ [1] S. Dong, et al., "Analysis of November 21, 2021, Kauai Island power system 18-20            [30] B. Wang, R.W. Kenyon, J. Tan, Developing a PSCAD Model of the Reduced 240-bus
+     Hz oscillations," arXiv preprint, arXiv:2301.05781 (2023).                                       WECC Test System, National Renewable Energy Lab. (NREL), Golden, CO, 2022.
+ [2] L. Fan, Z. Miao, et al., Real-world 20-Hz IBR subsynchronous oscillations:                       Tech. Rep. NREL/CP-6A40-82287.
+     signatures and mechanism analysis, IEEE Trans. Energy Convers. 37 (4) (2022)                [31] J. Mahseredjian, V. Dinavahi, J.A. Martinez, Simulation tools for electromagnetic
+     2863–2873.                                                                                       transients in power systems: overview and challenges, IEEE Trans. Power Del. 24
+ [3] Y. Cheng, et al., Real-world subsynchronous oscillation events in power grids with               (3) (2009) 1657–1669.
+     high penetrations of inverter-based resources, IEEE Trans. Power Syst. 38 (1)               [32] Supported operating system of PSCAD. Accessed: 2023. [Online]. Available:
+     (2022) 316–330.                                                                                  https://www.pscad.com/knowledge-base/article/816.
+ [4] T. Xia, K. Sun, Time-variant nonlinear participation factors considering resonances         [33] J.D. Owens, et al., GPU computing, Proc. IEEE 96 (5) (2008) 879–899.
+     in power systems, in: IEEE PES General Meeting, 2022. Denver, CO.                           [34] H.W. Dommel, EMTP Theory Book, Bonneville Power Admin., Portland, OR, 1986.
+ [5] NERC, Reliability guideline: Electromagnetic transient Modeling For BPS-                    [35] C.W. Ho, A. Ruehli, P. Brennan, The modified nodal approach to network analysis,
+     connected Inverter-Based Resources—Recommended Model Requirements and                            IEEE Trans. Circuits Syst. 22 (6) (1975) 504–509.
+     Verification Practices, NERC, Atlanta, Mar. 2023.                                           [36] N. Watson, J. Arrillaga, Power Systems Electromagnetic Transients Simulation,
+ [6] J.D. Lara, R. Henriquez-Auba, D. Ramasubramanian, S. Dhople, D.S. Callaway,                      IET, Stevenage, U.K., 2003.
+     S. Sanders, Revisiting power systems time-domain simulation methods and models,             [37] C. Dufour, J. Mahseredjian, J. Bélanger, A combined state-space nodal method for
+     IEEE Trans. Power Syst. (2023) early access.                                                     the simulation of power system transients, IEEE Trans. Power Del. 26 (2) (2010)
+ [7] K. Sidwall, F. Paul, A review of recent best practices in the development of real-               928–935.
+     time power system simulators from a simulator manufacturer’s perspective,                   [38] A. Sinkar, H. Zhao, B. Qu, A.M. Gole, A comparative study of electromagnetic
+     Energies 15 (3) (2022).                                                                          transient simulations using companion circuits, and descriptor state-space
+ [8] M. Sajjadi, T. Xia, M. Xiong, et al., Estimation of participation factors using the              equations, Electr. Power Syst. Res. 198 (2021) 107360.
+     synchrosqueezed wavelet transform, in: IEEE PES General Meeting, 2023. Orlando,             [39] X. Fu, S.M. Seye, J. Mahseredjian, M. Cai, C. Dufour, A comparison of numerical
+     FL.                                                                                              integration methods and discontinuity treatment for EMT simulations, in: Proc.
+ [9] L. Zhang, B. Wang, X. Zheng, et al., A hierarchical low-rank approximation based                 Power Syst. Comput. Conf (PSCC), 2018. Dublin, Ireland.
+     network solver for EMT simulation, IEEE Trans. Power Del. 36 (1) (Feb. 2021)                [40] F. Alvarado, Eliminating numerical oscillations in trapezoidal integration, EMTP
+     280–288.                                                                                         Newsletter 2 (3) (1982) 20–32.
+[10] S. Subedi, M. Rauniyar, S. Ishaq, et al., Review of methods to accelerate                   [41] SIEMENS, PSSE 34.4 Model Library, 2018.
+     electromagnetic transient simulation of power systems, IEEE Access 9 (Jun. 2021)            [42] P. Pourbeik, Model user guide for generic renewable energy system models, Electr.
+     89714–89731.                                                                                     Power Res. Inst., Palo Alto, CA, USA (2015). Tech. Rep. EPRI 3002006525.
+[11] K. Huang, M. Xiong, Y. Liu, K. Sun, F. Qiu, A heterogeneous multiscale method for           [43] Z. Hu, M. Xiong, H. Shang, A. Deng, Anti-interference measurement methods of the
+     power system simulation considering electromagnetic transients, in: IEEE PES                     coupled transmission-line capacitance parameters based on the harmonic
+     General Meeting, 2023. Orlando, FL.                                                              components, IEEE Trans. Power Del. 31 (6) (2016) 2464–2472.
+[12] R.C. Green, L. Wang, M. Alam, Applications and trends of high performance                   [44] U. Karaagac, J. Mahseredjian, O. Saad, An efficient synchronous machine model for
+     computing for electric power systems: focusing on smart grid, IEEE Trans. Smart                  electromagnetic transients, IEEE Trans. Power Del. 26 (4) (2011) 2456–2465.
+     Grid 4 (2) (2013) 922–931.                                                                  [45] Z. Hu, M. Xiong, C. Li, P. Tang, New approach for precisely measuring the zero-
+[13] J.K. Debnath, A.M. Gole, W.K. Fung, Graphics-processing-unit-based acceleration                  sequence parameters of long-distance double-circuit transmission lines, IEEE
+     of electromagnetic transients simulation, IEEE Trans. Power Del. 31 (5) (2016)                   Trans. Power Del. 31 (4) (2015) 1627–1635.
+     2036–2044.                                                                                  [46] W. Baker, D. Ramasubramanian. Generic photovoltaic inverter model in an
+[14] S. Fan, H. Ding, A. Kariyamasam, A.M. Gole, Parallel electromagnetic transients                  electromagnetic transients simulator for transmission connected plants. 2022.
+     simulation with shared memory architecture computers, IEEE Trans. Power Del. 33                  [Online]. Available: https://www.epri.com/research/products/000000003
+     (1) (2018) 239–247.                                                                              002025889.
+[15] T. Noda, K. Takenaka, T. Inoue, Numerical integration by the 2-stage diagonally             [47] Parallel and high performance computing of PSCAD. Accessed: 2023. [Online].
+     implicit Runge-Kutta method for electromagnetic transient simulations, IEEE                      Available: https://www.pscad.com/webhelp/PSCAD/Features_and_Operations
+     Trans. Power Del. 24 (1) (2009) 390–399.                                                         /Parallel_and_High_Performance_Computing.htm.
+[16] S. Raschka, J. Patterson, C. Nolet, Machine learning in python: main developments           [48] A. Masoom, T. Ould-Bachir, J. Mahseredjian, A. Guironnet, N. Ding, Simulation of
+     and technology trends in data science, machine learning, and artificial intelligence,            electromagnetic transients with Modelica, accuracy and performance assessment
+     Information 11 (4) (2020).                                                                       for transmission line models, Electr. Power Syst. Res. 189 (2020). Art. no. 106799.
+[17] A.C. Müller, S. Guido, Introduction to Machine Learning With Python: a Guide For            [49] Eagle computing system. Accessed: Aug. 8, 2023. [Online]. Available: http
+     Data Scientists, O’Reilly Media, Inc., 2016.                                                     s://www.nrel.gov/hpc/eagle-system.html.
+[18] C. Ozgur, T. Colliau, G. Rogers, Z. Hughes, MatLab vs. Python vs. R, Journal of Data        [50] F. Nielsen, Introduction to HPC With MPI For Data Science, Springer, 2016.
+     Science 15 (3) (2017) 355–371.                                                              [51] J.L. Gustafson, Reevaluating Amdahl’s law, Commun. ACM 31 (5) (1988) 532–533.
+
+
+
+
+                                                                                             7
+

@@ -1,0 +1,381 @@
+                                                            Electric Power Systems Research 197 (2021) 107294
+
+
+                                                                  Contents lists available at ScienceDirect
+
+
+                                                       Electric Power Systems Research
+                                                          journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Large-scale hybrid real time simulation modeling and benchmark for nelson
+river multi-infeed HVdc system
+Chenghong Zhou a, *, Chun Fang a, Miodrag Kandic a, Pei Wang a, Kelvin Kent b, Donald Menzies c
+a
+  Grid Infrastructure Planning Department, Manitoba Hydro, Canada
+b
+  Kelvin Kent is with the System Performance Department, Manitoba Hydro, Canada
+c
+  Manitoba Hydro International, Canada
+
+
+
+
+A R T I C L E I N F O                                    A B S T R A C T
+
+Keywords:                                                Nelson River Bipole I/II Line Commutated Converter (LCC) HVdc system has been in operation for more than 40
+Electromagnetic Transient for Direct Current             years and carries about 70% of total Manitoba Hydro power. The recent addition of Bipole III has formed a multi-
+(EMTDC)                                                  infeed HVdc system with tightly coupled converter stations at both ends. Due to the complexity of the three
+Real Time Digital Simulator (RTDS)
+                                                         Bipoles in a multi-infeed system, a large-scale hybrid real time hardware-in-the-loop (HIL) simulation model was
+Line Commutated Converter (LCC)
+Hardware-in-the-Loop (HIL)
+                                                         developed with a combination of software models in Real Time Digital Simulator (RTDS) for Bipole I/II and the
+Northern Collector System (NCS)                          hardware replicas for Bipole III controls to support Bipole III commissioning and the future three-bipole plan­
+Hybrid                                                   ning, operation and maintenance efforts. In the paper, a RTDS modeling approach of Bipole I/II AC/DC system is
+                                                         introduced and discussed. This modeling approach includes the strategic design to fully utilize the library
+                                                         components in the page modules for AC/DC controls and the modeling structure of dividing a large HVdc system
+                                                         into many standalone modular systems. The paper also describes the use of a large-scale hybrid simulation model
+                                                         during on-site commissioning of Bipole III system. Such engineering practice has significantly reduced the
+                                                         technical risks, financial cost and secured the success of the Bipole III commissioning.
+
+
+
+
+Introduction                                                                             and Bipole II, which also enhances overall HVdc system reliability. Fig. 1
+                                                                                         shows the Manitoba Hydro HVdc system with the existing Bipole I and
+    Manitoba Hydro Nelson River Bipole I/II system has been operating                    Bipole II and the new addition of Bipole III.
+for more than 40 years providing about 70 percent of electrical power to                     The two Nelson River Bipole systems have been modeled in different
+domestic customers and export services. Bipole I is rated at 1854 MW,                    off-line simulation platforms such as load flow, transient stability and
++/- 463.5 kV and Bipole II has a rating of 2000 MW, +/- 500 kV with                      PSCAD/EMTDC simulation, for various planning and operational studies
+Line Commutated Converter (LCC) technology [1]. These two overhead                       [5-8]. Digital real time simulation used in power systems could repro­
+DC transmission lines run from North to South of the province with a                     duce the behavior of the real power system being modeled with the
+distance of approximately 900 km. The rectifier stations of Bipole I and                 desired accuracy. It has become an increasingly common practice that
+Bipole II are located at Radisson and Henday, respectively, in the                       utilities and manufacturers utilize real time simulation for design and
+Northern Collector System (NCS), and both inverter stations are termi­                   testing of protection devices and AC/DC controls as well as HVdc con­
+nated at Dorsey station. Three generation stations in the NCS supply the                 trollers [9-15]. With the complexity of the multi-infeed system, Man­
+power to the DC system. A total of nine synchronous condensers are                       itoba Hydro has identified the need of developing a real time simulation
+placed at Dorsey station to provide reactive power support, voltage                      model for the planning, operation and maintenance of the three-bipole
+regulation and system inertia. For system reliability, Manitoba Hydro                    system, including Bipole III study, commissioning, Bipole I/II refur­
+has developed the third Bipole, namely Bipole III, which was put in                      bishment, etc.
+service in July 2018, forming a multi-infeed, multi-egress HVDC system                       A full RTDS Bipole I/II system modeling was the first stage of
+topology with the existing Bipole I and Bipole II system [2-4]. Bipole III               developing the large-scale real time hardware-in-the-loop (HIL) simu­
+has a separate inverter location and transmission corridor from Bipole I                 lation model. The Bipole I/II RTDS control model was planned to have
+
+
+ * Corresponding author.
+   E-mail addresses: czhou@hydro.mb.ca, zhou.hong4@gmail.com (C. Zhou), cfang@hydro.mb.ca (C. Fang), mkandic@hydro.mb.ca (M. Kandic), pwang@hydro.
+mb.ca (P. Wang), kkent@hydro.mb.ca (K. Kent), dmenzies@hydro.mb.ca (D. Menzies).
+
+https://doi.org/10.1016/j.epsr.2021.107294
+Received 21 October 2020; Received in revised form 12 April 2021; Accepted 15 April 2021
+Available online 30 April 2021
+0378-7796/© 2021 Elsevier B.V. All rights reserved.
+C. Zhou et al.                                                                                                    Electric Power Systems Research 197 (2021) 107294
+
+
+                                                                                    1 The differences of the two bipoles in controls and AC connections:
+                                                                                      a) Controls: Bipole I valve group controls are different between its
+                                                                                          negative (Pole 1) and positive (Pole 2) poles, such as firing angle
+                                                                                          tracking functions. Bipole II has its own unique controls, such as
+                                                                                          AC under voltage protection and detection.
+                                                                                      b) Valve group configuration: Bipole I has three valve groups per
+                                                                                          pole and each valve group has six-pulse operation while Bipole II
+                                                                                          has two valve groups per pole and each valve group has 12-pulse
+                                                                                          operation.
+                                                                                      c) Converter transformers: at Dorsey inverter station, Bipole I con­
+                                                                                          verter transformers are single phase three winding transformers
+                                                                                          and Bipole II converter transformers are three phase two winding
+                                                                                          transformers.
+                                                                                      d) Synchronous condensers: at the inverter station, Bipole I has
+                                                                                          synchronous condensers connected to the tertiary of the converter
+                                                                                          transformers while additional synchronous condensers are con­
+                                                                                          nected to its converter bus through step-up transformers for
+                                                                                          Bipole II.
+                                                                                    2 The RTDS model was designed to be visually easier for users to better
+                                                                                      understand control logics and convenient to deliver the case to
+                                                                                      stakeholders/customers. Therefore, all RTDS Bipole I/II AC/DC
+                                                                                      control modules are built utilizing only RTDS standard library
+                                                                                      components in logic block circuit page modules. It includes the
+                                                                                      control circuits which represent more than one hundred custom built
+                                                                                      modules in the PSCAD/EMTDC model. Also, the interface signals of
+                                                                                      each control circuit in the RTDS module are converted to per unit
+                                                                                      rather than actual voltage signals from the original circuit board,
+                                                                                      which provides more intuitive understanding of the HVDC control
+                                                                                      concepts and easier handling of the modules for users. The approach
+                                                                                      of fully utilizing RTDS standard library components for AC/DC
+                                                                                      controls would consume more processor loadings with such large
+                                                                                      HVdc system modeling. Therefore, it is required to manually assign
+                                                                                      the processors to optimize the computation loading in the racks.
+Fig. 1. Manitoba Hydro Bipole I/II HVdc Link in Black and Newly Developed           3 The modeling hierarchy is formed so as to divide the entire system
+Bipole III System in Red.                                                             into modular standalone systems based on the structures of the AC/
+                                                                                      DC controls and AC network connections. Each standalone case
+the same structure and concept as the in-house developed PSCAD/                       consists of detailed DC controls and system equivalents at both
+EMTDC model which was based on the original analog circuit boards                     rectifier and inverter stations for benchmark tests as shown in Fig. 2.
+[7]. The Bipole I/II PSCAD/EMTDC model has been used for many                         Standalone Pole 1 and Pole 2 cases are constructed so that they
+planning and operational studies [7-8].                                               consist of a single valve group rated at pole level. The standalone
+    To make the RTDS model user-friendly and to facilitate its mainte­                Pole 1/2 models are combined to form a standalone Bipole I model,
+nance, all Bipole I/II controls were constructed with a modular design to             which also involves expanding the single valve group to model all
+fully utilize standard library components in page modules. The modeling               three series valve groups. The standalone Bipole I model includes all
+structure of dividing the large system into many modular standalone                   six valve groups while the standalone Bipole II model includes a
+systems is introduced. The paper will present the benchmark of the                    single double rated 12 pulse valve group per pole rather than
+RTDS simulation with the field Transient Fault Records (TFR) during the               modeling two valve groups individually. Then, the standalone Bipole
+RTDS modeling. The Bipole I di/dt circuit was thoroughly analyzed to                  I and Bipole II models are combined to form a system model with the
+show the impact on system dynamic responses. In addition, Bipole III                  two bipole systems.
+overhead transmission line modeling and benchmark will be covered.
+    The large-scale HIL RTDS model was utilized for on-site commis­                    Dividing the large-scale system into many modular systems made it
+sioning of Bipole III system. The benchmark results including staged AC            easier for constructing, testing and analysis as well as scheduling. This
+faults at Bipole III inverter is discussed in the paper.                           practice has been proven to be effective and efficient for developing
+                                                                                   RTDS models of a large-scale AC/DC system. Each standalone bipolar
+Development of a large-scale hybrid RTDS model                                     system model could be expanded in more details to study its additional
+                                                                                   performance such as start-up or stop sequence which are not critical to
+Methodology of Bipole I/II controls                                                the overall Bipole I/II performance.
+
+
+    The Bipole I/II system has the original vintage analog controls and it         Large-scale hybrid Nelson River RTDS model
+is very challenging, if even possible, to have a full-scale hardware replica
+manufactured. It was decided to model the Bipole I/II control system in                A large-scale real time HIL simulation model was developed with a
+the software RTDS with the details tuned to meet the study re­                     hybrid approach which consists of three key components: the ac/dc
+quirements. The simulation methodology was designed to minimize the                power system modelled on the RTDS, RTDS models for Bipole I/II con­
+complexity of the two bipole controls and to overcome the technical                trols (in gray color and RTDS label in the right top corner), and the
+challenges as listed below.                                                        hardware replica for Bipole III controls and protections (in red color) to
+                                                                                   support Bipole III commissioning as shown in Fig. 3. The power system
+                                                                                   model in RTDS includes below:
+
+                                                                               2
+C. Zhou et al.                                                                                            Electric Power Systems Research 197 (2021) 107294
+
+
+                                                                            - Detailed NCS generation and the AC network
+                                                                            - Frequency dependent AC transmission lines of the NCS system
+                                                                            - Three frequency dependent Bipole HVDC transmission lines
+                                                                            - Bipole I/II DC system including converter transformers, converters
+                                                                              and AC filter banks as well as HVdc controls
+                                                                            - Bipole III DC system including converter transformers and converters
+                                                                              as well as AC filter banks
+                                                                            - Six synchronous condensers connected to Bipole I and three syn­
+                                                                              chronous condensers for Bipole II connected to the same Dorsey bus
+                                                                              through step-up transformers
+                                                                            - Four synchronous condensers for Bipole III.
+                                                                            - Dynamic equivalents of southern ac system including reduced MH
+                                                                              Southern AC network and equivalent generators and ac network of
+                                                                              the interconnected systems.
+
+                                                                               Dorsey station includes both Bipole I/II inverters with a total of 14
+                                                                           valve groups connected to the common commutation AC bus and nine
+                                                                           synchronous condensers. Modeling the detailed Dorsey converter station
+                                                                           has reached the existing computational limitation of the RTDS platform
+                                                                           used at Manitoba Hydro. There are two options considered to model
+                                                                           Dorsey station with reasonable simulation time steps. Option 1 is to
+                                                                           separate Dorsey into two groups using interface transformers. However,
+                                                                           this will introduce a one-time step delay and other uncertainty which
+                                                                           may lead to simulation accuracy issues. Option 2 is to reduce valve
+                                                                           group and synchronous condenser numbers to model all Dorsey com­
+                                                                           ponents in one group and this option was chosen in the modeling since it
+                                                                           provides the similar simulation accuracy as the full system model. Fig. 4
+                                                                           illustrates the Dorsey configuration modelled. Bipole I valve groups are
+                                                                           reduced to two six-pulse valve groups per pole from the actual three
+                                                                           valve groups per pole. Two six-pulse valve groups with same configu­
+                                                                           ration (Delta or Wye) in a pole are combined into one six-pulse valve
+                                                                           group with double capacity. Bipole II 12-pulse valve groups are reduced
+            Fig. 2. Bipole I/II RTDS Model Development Flow Chart.         to one valve group per pole with double capacities.
+
+
+
+
+                 Fig. 3. Large-scale Hybrid Nelson River RTDS Model.
+
+
+
+                                                                                        Fig. 4. Dorsey Station Modeling Configurations.
+
+                                                                       3
+C. Zhou et al.                                                                                                       Electric Power Systems Research 197 (2021) 107294
+
+
+   The performance of the reduced valve group model has been
+benchmarked with that of the full-scale valve group configuration in
+standalone models of Bipole I and Bipole II. The benchmark results show
+a very good agreement.
+
+Model validation
+
+   The benchmark was first conducted between the newly developed
+RTDS model and the PSCAD/EMTDC simulation. Because RTDS and
+PSCAD/EMTDC models were both developed based on real system
+hardware, a general agreement of results from both models is expected.
+   The benchmark tests include step responses (current order, firing
+angle and extinction angle) and system recoveries under various ac
+faults. It is intended to examine HVdc control functionality and dynamic
+transient performance. The benchmark was first performed on the
+standalone models, followed by the large integrated HVdc system
+model. The revisions of the RTDS models were made if necessary based
+on the evaluation, such as firing angle feedback in the pole control,
+control mode selection circuit in the valve group control and control
+parameter settings, etc.
+   The developed RTDS model is also benchmarked with field results for
+known disturbances.                                                                             Fig. 6. The Effects of the Gains of the di/dt Circuit.
+
+
+                                                                                     - The application of the di/dt circuit will eliminate the oscillation and
+Investigation of Bipole I di/dt circuit                                                the system response is dependent on the gain selected. Increasing
+                                                                                       gain will make system stable but will slow system response.
+    Bipole I pole current control is a type of Proportional Integral De­
+rivative (PID) controller, where the “D” part is obtained by measuring                  In the field, the di/dt signal is produced by a Current Transducer (CT)
+the voltage across a small inductance inserted in the direct current path           with derivative current implemented in the Bipole I neutral end circuit.
+for the rate of change of DC currents (di/dt). The di/dt signal with its            Because the device was installed in the middle of last century with old
+gain (Gain), measured current (Id), current order (Iord) and Force Retard           technology, many attempts and efforts to measure the gains of the device
+indicator (FR) as well as the controller feedback signal are fed to PI              failed to get satisfactory results related to system stability and recovery
+controller to form alpha order (αord) as shown in Fig. 5.                           time, etc. The benchmark with field results provides an opportunity to
+    PID controller has been commonly used in industries. A well-                    determine the gain of the circuit. The gains of the di/dt circuit in RTDS
+calibrated derivative part of PID is known to increase damping in sys­              model were adjusted based on DC performance (firing angle, DC voltage
+tem steady state and to minimize the swings during disturbances [16].               and current) from the field results. Fig. 7 displays the benchmark of Pole
+Therefore, Bipole I di/dt circuit is a critical part of the Bipole I DC             1 performance of RTDS model and the TFR traces for a single phase to
+controls and plays an important role for system stability and transient             ground inverter fault occurred on July 21st, 2017. It shows that the
+responses. Past studies showed that without the di/dt circuit, there will           adjusted gain at 0.4 produces satisfactory results, especially with respect
+be oscillation around 8.5 Hz in steady state and the oscillation frequency          to the fault recovery time.
+may shift a bit depending on the system configurations [17][18],. The
+studies also found that the gains of the di/dt circuit impact HVdc dy­
+namic performance including recovery time and potential 60 Hz oscil­                Bipole III HVdc overhead line model benchmark
+lation on the DC side during AC faults.
+    The impact of Bipole I di/dt circuit on the system responses was                    Due to its long length of about 1400 km, Bipole III HVdc overhead
+demonstrated in the PSCAD/EMTDC simulation with a 10% step change                   line model is critical for the coupling effect between the poles. To
+of power order. Fig. 6 shows the pole 1 rectifier firing angle and the pole         confirm the accuracy of RTDS line model, a specific field test, “spill
+measured current with the selected gains of the di/dt circuit. The                  current mode”, was conducted. Pole 5 converter was taken out of ser­
+simulation results reveal:                                                          vice, but Pole 5 line conductor was configured to be in-service and in
+                                                                                    parallel the ground return. A DC line fault was applied at the rectifier
+  - If the di/dt circuit is out of service (trace in black), sustained oscil­       terminal of Pole 6 in operation. The measured DC voltages and DC
+    lation will appear.                                                             currents of individual pole at each end, the DC powers and firing angles
+                                                                                    of the running pole at each end were compared between the RTDS
+                                                                                    simulation in green and the field records in blue as shown in Fig. 8. The
+                                                                                    RTDS simulation shows less system damping during faults but good
+                                                                                    overall agreement with the field data.
+
+                                                                                    Bipole III commissioning
+
+                                                                                        The developed large-scale hybrid RTDS model as shown in Fig. 3 was
+                                                                                    utilized for Bipole III commissioning. Out of about 250 commissioning
+                                                                                    tests, 21 critical tests were selected and pre-run with the developed
+                                                                                    large-scale simulation model to evaluate the system performance under
+                                                                                    different contingencies and potential system risks. During Bipole III
+                                                                                    commissioning, the system configuration and settings were pre-
+                    Fig. 5. Radisson Pole Current Control.                          determined and adjusted by the System Control Center (SCC) to
+
+                                                                                4
+C. Zhou et al.                                                                                                    Electric Power Systems Research 197 (2021) 107294
+
+
+
+
+                                                                                   Fig. 8. Comparison of DC line model in RTDS Simulation and Field Records
+                                                                                   (Green: RTDS, Blue: Field).
+
+    Fig. 7. Benchmark of Field Results in Green and RTDS Model in Blue.            were adjusted to match the converter station voltage traces.
+                                                                                       Figs. 9-10 shows the comparison of Bipole II DC performance be­
+maintain reliable operation. The system posturing information was fed              tween the field traces in green color and the RTDS results in blue color
+to the RTDS model to establish various load flow scenarios. A custom               including the DC voltage, DC current, firing angle and pole power. The
+program was developed to automatically convert the load flow data                  overall responses between the field and the RTDS model showed good
+from power flow simulation platform to the RTDS model. The above                   agreement. The recovery after the fault seems to be a bit slower in the
+approach significantly reduced the simulation initialization time and              RTDS simulation, which is attributed to the special ac undervoltage
+accommodated various system conditions under study. The results ob­                protection scheme in Bipole II and the model refinement is being
+tained through the RTDS pre-run simulation was then feedback to the                investigated.
+SCC for any system adjustment.                                                         Fig. 11 shows the comparison of Bipole III DC performance between
+    The Bipole III commissioning provided an excellent opportunity to              the field results (in blue color) and the results from RTDS simulation (in
+verify the Bipole I/II control RTDS model. The model modifications such            red color), for ac bus voltage, the valve current, DC voltage, DC current,
+as Bipole II current makeup circuit, Bipole II rectifier pole control and          firing angle and DC power, sequentially from top to bottom in each
+Bipole I di/dt circuit settings, had been conducted and effectively                graph. The simulation results with the developed large-scale hybrid
+mitigated 60 Hz oscillation, commutation failures and enhanced the                 RTDS model shows excellent agreement with the commissioning results
+fault recovery speed during AC fault recovery.                                     for the key signals monitored except the extinction angle during a short
+    The benchmarking of commissioning results and RTDS simulation                  period of commutation failures. In the Bipole III replica, the Valve Based
+for the staged ac fault at the inverter is displayed in Fig. 9-11. The fault       Electronics (VBE) is not installed and emulated in simplified simulation
+application time, fault resistance and duration in the RTDS simulation             model. The difference of extinction angle during commutation failure is
+
+
+                                                                               5
+C. Zhou et al.                                                                                                              Electric Power Systems Research 197 (2021) 107294
+
+
+
+
+Fig. 9. Bipole II rectifier P3 DC performance for the Staged AC Fault (Field:
+green; RTDS: blue). (For interpretation of the references to colour in this figure
+legend, the reader is referred to the web version of this article.)
+
+
+
+
+                                                                                         Fig. 11. Benchmark of Bipole III AC/DC Performance for the Inverter Staged
+                                                                                         AC Fault (Field: blue; RTDS: red). (For interpretation of the references to colour
+                                                                                         in this figure legend, the reader is referred to the web version of this article.)
+
+
+                                                                                         expected with the lack of physical VBE in BPIII replica but it does not
+                                                                                         affect the overall system responses as shown in Fig. 11.The Bipole III
+                                                                                         commissioning also provided an excellent opportunity to verify the
+                                                                                         Bipole I/II control RTDS model and further proves that the Bipole I/II
+                                                                                         RTDS model is reliable and could be used to fully represent the real
+                                                                                         system.
+
+                                                                                         Conclusion
+
+                                                                                             This paper provides detailed discussions of the strategy and structure
+                                                                                         of RTDS simulation for Manitoba Hydro’s multi-infeed, multi-egress
+                                                                                         HVDC system. It introduces a large-scale hybrid RTDS simulation model
+                                                                                         for Nelson River HVdc system utilizing both software HVdc control
+                                                                                         models in RTDS platform and hardware HVdc replicas, and the chal­
+                                                                                         lenges during model development. The benchmark test results between
+                                                                                         the RTDS and off-line PSCAD/EMTDC model as well as field traces were
+                                                                                         discussed. RTDS modeling of the LCC HVdc transmission system with
+                                                                                         complete DC controls in detail is a unique experience and would be
+                                                                                         valuable information to the power industry. Utilizing a large-scale
+                                                                                         hybrid RTDS simulation for Bipole III commissioning is invaluable and
+                                                                                         has significantly reduced the technical risks, financial cost and secured
+Fig. 10. Bipole II P3 inverter DC performance for the Staged AC Fault (Field:            the success of the Bipole III project.
+green; RTDS: blue). (For interpretation of the references to colour in this figure
+legend, the reader is referred to the web version of this article.)
+
+
+                                                                                     6
+C. Zhou et al.                                                                                                                        Electric Power Systems Research 197 (2021) 107294
+
+
+Declaration of Competing Interest                                                                    simulations, in: Third HVDC System Operating Conference, Winnipeg, Manitoba,
+                                                                                                     Canada, May 12-15, 1992.
+                                                                                                 [9] T. Strasser, Real-time simulation technologies for power systems design, testing,
+    The authors declare that they have no known competing financial                                  and analysis, IEEE PES Task Force on Real-Time Simul. Power Energy Syst. (June
+interests or personal relationships that could have appeared to influence                            29th, 2015). Publication on.
+the work reported in this paper.                                                                [10] K. Strunz, Real time high precision simulation of the HVDC extinction advance
+                                                                                                     angle, in: 2000 International Conference on Power System Technology, August 6th,
+                                                                                                     2002. Publication on.
+Reference                                                                                       [11] D. Brandt, R. Wachal, R. Valiquette, R. Wierckx, Closed loop testing of a joint var
+                                                                                                     controller using a digital real-time simulator, Trans. Power Syst. 6 (3) (August
+ [1] C.V. Thio, Nelson river HVDC Bipole-two part I-system aspects, IEEE Trans. Power                1991).
+     Apparatus Syst. PAS-98 (1) (Jan/Feb. 1979) 165–173.                                        [12] Yong-Beum Yoon, Tae-Kynn Kim, Seun-Tae Cha, etc, HVDC control and protection
+ [2] CIGRÉ Working Group B4.41, Systems with multiple DC infeed, CIGRÉ Tech.                       testing using the RTDS simulator, in: Proc. 4th International HVDC Transmission
+     Brochure No. 364 (December 2008).                                                               Operating Conference, Yichang PRC, September 2001, pp. 101–106. Paper No. 17.
+ [3] I.T. Fernando, P. Wang, R.W. Mazur, Limitations to loading the manitoba hydro              [13] Yong Cui, Zenghui Yang, Yinghui Yu, Qiang Guo, Tugang Shen, RTD-based
+     future three-Bipole, multi-egress, multi-infeed HVDC system and mitigation                      modeling for full-process simulation of two types of HVDC systems, in: 2016 IEEE
+     strategies, in: The 10th International Conference on AC and DC Power                            PES Asia-Pacific Power and Energy Engineering Conference (APPEEC), December
+     Transmission, UK, 2012.                                                                         12th, 2016. Publication on.
+ [4] C. Bartzsch, J. Hofses, V. Hussennether, Y. Long, N. Dhaliwal, P. Wang, I. Fernando,       [14] Yulong Ma, Yong Yang, Yu Tao, Luojiang Qian, Qidi Zhong, Model development of
+     D.A. Jacobson, K. Kent, M.A. Weekes, B. Archer, Manitoba Hydro’s Bipole III                     HVDC control system for real time digital simulation, in: 2009 Asia-Pacific Power
+     transmission project - design aspects and major technical features, in: 2017 CIGRÉ             and Energy Engineering Conference, May 12th, 2009. Publication on.
+     Canada Conference, Winnipeg, 2017.                                                         [15] Luojiang Qian, Qidi Zhong, Yulong Ma, Yu Tao, ZhenCao, Build and validation of
+ [5] C.V. Thio, J.B. Davies, K.L. Kent, Commutation failures in HVDC transmission                    RTDS model for control and protection system testing of lingbao BTB DC station,
+     systems, IEEE Trans. Power Del. 11 (2) (Apr. 1996) 946–958.                                     in: IEEE Conference on Electrical Machine and System, February 2nd, 2008.
+ [6] D.A.N. Jacobson, P. Wang, C. Karawita, R. Ostash, M. Mohaddes, B. Jacobson,                     Publication on.
+     Planning the next nelson river HVDC Development phase considering LCC vs. VSC              [16] Ang Kiam Heong, etc., PID control system analysis, design, and technology, IEEE
+     technology, in: CIGRÉ, Paris, 2012. Paper B4-103.                                              TRANSACTIONS ON CONTROL SYSTEMS TECHNOLOGY 13 (4) (July 2005).
+ [7] P. Kuffel, K.L. Kent, et al., Development and validation of detailed controls models       [17] English Electric, Main amplifier sub-unit DC 135, Bipole I file No. J83/JLH/
+     of the nelson river Bipole 1 HVDC system, IEEE Trans. On Power Delivery (1)                     DC135/F04 (1971). January 20.
+     (January 1993) 351–358. Vol. &. No.                                                        [18] TransGrid Solutions Inc. “Sub-synchronous frequency interaction study”, Internal
+ [8] K.L. Kent, P. Kuffel, D. Tang, Investigation of selected system disturbances on the             report to Manitoba Hydro, Nov. 29, 2012.
+     nelson River Bipole 1 HVDC system using detailed control model digital
+
+
+
+
+                                                                                            7
+

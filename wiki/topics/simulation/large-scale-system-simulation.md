@@ -1,230 +1,418 @@
 ---
 title: "大规模系统仿真 (Large-scale System Simulation)"
 type: topic
-tags: [large-scale, simulation, parallel-computing, high-performance, emt]
+tags: [large-scale, simulation, parallel-computing, high-performance, emt, gpu, hpc, co-simulation]
 created: "2026-05-02"
+updated: "2026-05-14"
 ---
 
 # 大规模系统仿真 (Large-scale System Simulation)
 
+## 定义
 
-```mermaid
-graph TD
-    subgraph Ncmp[大规模系统仿真 (Large-scale System …]
-        N0[万节点级系统仿真: ★★★★★]
-        N1[并行算法验证: ★★★★★]
-        N2[实时仿真研究: ★★★★☆]
-        N3[模型降阶验证: ★★★★★]
-        N4[多速率仿真: ★★★★★]
-        N5[HIL测试: ★★★☆☆]
-    end
-```
+大规模系统仿真是指在电磁暂态（EMT）层面，对包含数千至数万节点、数十万开关器件的复杂电力系统进行高保真数值仿真的技术集合。其核心挑战在于：EMT仿真需要50–100 μs甚至更小的时间步长来捕捉电力电子设备的开关动态，而系统规模的扩大使得网络方程的维数呈指数级增长，导致串行仿真在计算时间上变得不可接受。
 
+EMT仿真的基本数值框架基于伴随电路（companion circuit）离散化。任一R-L-C支路经梯形积分法离散后，可等效为电阻与历史电流源的并联组合：
 
-## 概述
+$$i(t) = \frac{v(t)}{R_{\text{eq}}} + i_{\text{hist}}(t-\Delta t)$$
 
-大规模系统仿真是指对包含数千甚至数万个节点的电力系统进行电磁暂态(EMT)仿真的技术。随着电网规模扩大和复杂程度增加，传统串行仿真方法面临计算效率挑战，需要采用并行计算、模型降阶和高效算法等技术来实现可接受的仿真速度。
+其中历史电流项为：
 
-## 挑战与需求
+$$i_{\text{hist}}(t-\Delta t) = a \cdot i(t-\Delta t) + b \cdot v(t-\Delta t) \tag{1}$$
 
-### 规模挑战
-- **节点数**: 万节点级系统
-- **开关器件**: 数十万开关状态
-- **仿真时长**: 秒级甚至分钟级
-- **计算量**: 指数级增长
+整个网络通过基尔霍夫电流定律形成节点导纳方程：
 
-### 精度要求
-- **详细程度**: 保持元件级精度
-- **稳定性**: 数值稳定性
-- [[numerical-stability]] - 数值稳定性
-- **误差控制**: 累积误差控制
+$$G \cdot v(t) = i(t) + i_{\text{hist}}(t-\Delta t) \tag{2}$$
 
-### 实时性需求
-- [[real-time-simulation]] - 实时仿真
-- **HIL测试**: 硬件在环需求
-- [[hil-simulation]] - 硬件在环
-- **交互仿真**: 人-机交互
+式中 $G$ 为网络电导矩阵（维度为 $3n \times 3n$，$n$ 为节点数），$v(t)$ 为节点三相电压向量。当 $n$ 达到数千至数万量级时，方程 (2) 的求解成为计算瓶颈——传统LU分解的串行求解复杂度为 $O(n^2 \sim n^3)$，在大规模系统中消耗80%–97%的仿真时间 [Xiong2024_ParaEMT]。
 
-## 并行计算技术
+因此，大规模系统仿真的本质是通过**并行计算**、**模型降阶**、**多速率仿真**和**异构硬件加速**等技术，在保持元件级精度的前提下，使仿真时间从"天级"压缩到可接受的范围。
 
-### 空间并行
-- **网络分区**: 将系统划分为子网络
-- [[network-partitioning]] - 网络分区
-- **接口处理**: 子网络间耦合
-- [[interface-technique]] - 接口技术
+## EMT中的角色
 
-### 时间并行
-- **波形松弛**: 迭代波形并行
-- `waveform-relaxation` - 波形松弛
-- **多速率**: 不同部分不同步长
-- [[multirate-method]] - 多速率方法
+### 为什么需要大规模EMT仿真
 
-### 硬件加速
-- [[gpu-parallel-acceleration]] - GPU并行加速
-- **CUDA编程**: 大规模并行
-- [[gpu-accelerated-simulation]] - GPU编程
-- **性能**: 10-100倍加速
+随着"双碳"战略推进，电力系统呈现"双高"特征——高比例新能源并网、高比例电力电子设备接入 [Jiang2024]。这带来了新的仿真需求：
 
-## 高效算法
+1. **逆变器基源（IBR）的宽频动态**：IBR开关频率在千赫兹量级，其控制环路（PLL、电流环、电压环）在0.1–500 Hz范围内产生复杂动态，传统机电暂态仿真（<5 Hz）无法捕捉 [Filizadeh2025]。
+2. **系统级振荡事件**：如2021年夏威夷18–20 Hz振荡、加州5.7 Hz IBR振荡等，需要在大规模系统中精确复现 [Xiong2024_ParaEMT]。
+3. **极端的故障场景**：直流故障、换相失败、保护误动等事件在大规模交直流混联系统中的传播需要全系统EMT级建模。
 
-### 稀疏技术
-- **稀疏矩阵**: 导纳矩阵稀疏存储
-- [[sparse-matrix-techniques]] - 稀疏矩阵技术
-- **最优排序**: Tinney排序
-- **快速求解**: 稀疏LU分解
+### 核心挑战
 
-### 模型降阶
-- [[model-order-reduction]] - 模型降阶
-- **模态降阶**: 保留主要模态
-- [[modal-analysis]] - 模态降阶
-- **Krylov子空间**: 投影方法
+| 挑战 | 描述 | 影响 |
+|------|------|------|
+| **计算维度爆炸** | 单个MMC包含数百个开关器件，大规模新能源场站包含数千个IBR | 网络方程维数从千级跃升至百万级 |
+| **时间步长约束** | 50–100 μs步长是保证数值稳定性的下限 | 1秒仿真需要10000–20000个时间步 |
+| **通信同步开销** | 并行分区间的状态同步通信延迟 | 超过42个分区后加速比反而下降 [Xiong2024_ParaEMT] |
+| **内存带宽限制** | 大规模稀疏矩阵的LU分解受限于内存带宽 | GPU加速在超大系统上受HBM带宽制约 |
 
-### 多速率仿真
-- [[shifted-frequency-analysis-emtp-multirate-simulation-of-power-systems]] - 多速率仿真
-- **分区**: 按时间常数分区
-- **接口**: 插值/外推
-- [[interpolation-method]] - 插值方法
+## 并行仿真方法体系
 
-## 分层建模
+大规模EMT仿真的并行方法可归纳为三大类：**分网并行（空间并行）**、**时间并行**和**硬件并行**。
 
-### 详细-简化混合
-- **关注区域**: 详细EMT模型
-- **外部系统**: 简化等值模型
-- [[network-equivalent]] - 动态等值
+### 1. 分网并行（Network Partitioning / Spatial Parallelism）
 
-### 多时间尺度
-- **EMT**: 电磁暂态(μs-ms)
-- **TS**: 机电暂态(10ms-10s)
-- **长期**: 长期动态(>10s)
-- [[electromechanical-electromagnetic-hybrid-simulation]] - 混合仿真
+分网并行的核心思想是将大规模网络划分为若干子网络，在各子网络内部独立求解，通过边界变量的交换实现全局耦合求解。
 
-## 高性能计算
+#### 1.1 传输线自然解耦法
 
-### 计算集群
-- [[high-performance-computing]] - 高性能计算
-- **MPI**: 分布式内存并行
-- **OpenMP**: 共享内存并行
-- **混合**: MPI+OpenMP
+利用长距离输电线的传播延迟特性，在分布式参数线路模型中，线路两端的电气量存在天然的时间延迟解耦：
 
-### 异构计算
-- [[heterogeneous-computing]] - 异构计算
-- **CPU+GPU**: 协同计算
-- **FPGA**: 可重构计算
-- [[fpga-real-time-simulation]] - FPGA实时仿真
+$$v_2(t) = f(v_1(t-\tau), i_1(t-\tau))$$
 
-### 云计算
-- [[cloudpss]] - 云计算
-- **弹性资源**: 按需扩展
-- **容器化**: Docker/Kubernetes
-- [[cloudpss]] - 容器技术
+其中 $\tau = l/v$ 为波的传播时间（$l$ 为线路长度，$v$ 为波速）。当 $\tau > \Delta t$ 时，线路两端可在不同时间步独立计算，无需同步。
+
+**优势**：子网络间通信量最小，不增加额外计算负担 [Jiang2024]。
+
+**局限**：要求系统中存在足够长的输电线路。在城域网、电缆网络或短距离连接系统中，$\tau < \Delta t$，自然解耦失效 [Filizadeh2025]。
+
+#### 1.2 BBD（Border Block Diagonal）矩阵法
+
+当自然解耦不适用时，BBD方法通过图划分算法（如METIS）自动将网络电导矩阵 $G$ 重新排列为边界块对角形式 [Xiong2024_ParaEMT]：
+
+$$G = \begin{bmatrix}
+G_{11} & & & G_{1n} \\
+& G_{22} & & G_{2n} \\
+& & \ddots & \vdots \\
+G_{n1} & G_{n2} & \cdots & G_{nn}
+\end{bmatrix} \tag{3}$$
+
+其中对角块 $G_{ii}$ 对应各分区内部节点，边界块 $G_{in}$ 对应分区间耦合节点。通过Schur补分解和块矩阵LU分解，可以在并行求解各分区后，仅对边界节点进行串行同步。
+
+**关键步骤**：
+1. **图划分**：使用METIS将网络划分为 $m$ 个分区
+2. **嵌套离散重排序**：在每个分区内部使用nested dissection减少LU分解中的非零元数量
+3. **并行LU分解**：各分区的对角块并行进行LU分解
+4. **前代/回代**：通过Schur补进行边界节点求解，然后回代到各分区内部
+
+**性能特点** [Xiong2024_ParaEMT]：
+- 在NREL Eagle超算上，10080总线（30240节点）系统达到**36倍加速**（42个分区，84个MPI进程）
+- 最佳分区数通常在25–45之间，超过后边界矩阵非零元增多，同步开销超过并行收益
+- 网络求解占总计算时间的60%以上，是加速比的主要瓶颈
+
+#### 1.3 精确等值分网方法
+
+基于电气元件机理精确推导联络变量的等值表达式，包括：
+
+| 方法 | 联络变量 | 精度 | 适用场景 |
+|------|----------|------|----------|
+| 支路切割法 | 切割支路电流 | 精确 | 分网数较少 |
+| 节点分裂法 | 分裂点电压 | 精确 | 分网数较少 |
+| MATE（多区域戴维南等效） | 戴维南等效参数 | 精确 | 交直流混合网络 |
+| SSN（状态空间节点法） | 状态变量 | 精确 | 含非线性元件 |
+
+这些方法的联络变量求解复杂度为 $O(n^3)$，随着分区数增加急剧增长 [Jiang2024]。
+
+#### 1.4 补偿法（Compensation Method）
+
+补偿法通过迭代修正边界误差，在非线性元件存在时仍保持精度 [Bruned2021]。其核心思想是将边界不连续视为补偿电流源，通过迭代求解使边界条件收敛。
+
+### 2. 时间并行（Parallel-in-Time）
+
+时间并行方法（如Parareal、MGRIT）在不同时间步之间并行计算，而非在同一时间步内并行。适用于长时段仿真场景。
+
+**基本思想**：使用粗步长迭代器快速获得粗略解，再用细步长迭代器修正，两者在时间维度上并行 [Xiong2024_ParaEMT]。
+
+### 3. 硬件并行（Hardware Parallelism）
+
+#### GPU加速
+
+GPU通过SIMT（单指令多线程）架构实现大规模线程级并行 [Zhou2014_GPU]。在EMT仿真中，GPU主要加速以下任务：
+
+- **节点电压求解**：大规模稀疏矩阵LU分解
+- **设备状态更新**：各逆变器/发电机模型并行更新
+- **伴随电路计算**：GLC（电导-电感-电容）支路并行计算
+
+**性能数据** [Zhou2014_GPU]：
+- MT-EMTP在2458总线系统上实现40倍加速
+- 节点映射结构将导纳矩阵转换为块节点对角稀疏格式以充分利用GPU架构
+
+#### FPGA实时仿真
+
+FPGA通过硬件级并行和流水线架构实现亚微秒级实时仿真 [Chen2009_FPGA]。在HIL（硬件在环）场景中，FPGA能够以1–5 μs步长运行完整系统模型。
+
+#### CPU多核并行
+
+基于共享内存的CPU多核并行是最基础的并行方式 [Abusalah2018_CPU]。通过OpenMP或pthread实现线程级并行，适合中等规模系统（<1000节点）。
+
+## 多速率仿真（Multi-Rate Simulation）
+
+多速率仿真是进一步提升大规模系统仿真效率的关键技术。其核心思想是：**不同区域使用不同的时间步长**。
+
+### 基本原理
+
+将系统按动态特性分区：
+- **快速动态区**（电力电子设备、逆变器）：使用50–100 μs步长
+- **慢速动态区**（同步发电机、输电线路机电暂态）：使用1–10 ms步长
+
+$$\Delta t_{\text{fast}} = m \cdot \Delta t_{\text{slow}} \tag{4}$$
+
+其中 $m$ 为多速率比。
+
+### 实现方式
+
+1. **细粒度多速率** [Wang2024_FineGrained]：在GPU上实现不同模型的独立时间步长，快速模型和慢速模型在各自的时钟域运行，通过插值/外推在同步时刻交换数据。
+
+2. **粗粒度多速率**：将整个网络划分为EMT子系统和相量域子系统（PDT），各子系统使用独立的求解器 [Filizadeh2025]。
+
+3. **动态相量桥接**：在EMT和PDT之间使用动态相量（DP）模型作为桥接区域，DP模型的时间步长介于两者之间 [Filizadeh2025]。
+
+### 性能提升
+
+多速率仿真可将有效计算量降低10–100倍，具体取决于系统中快速动态和慢速动态的比例 [Jiang2024]。
+
+## 混合仿真（Co-simulation / Hybrid Simulation）
+
+混合仿真是将EMT模型与相量域（PDT）或动态相量（DP）模型耦合的仿真策略。
+
+### EMT-PDT混合
+
+将系统划分为EMT子系统和PDT子系统，通过边界接口交换数据 [Filizadeh2025]：
+
+- **EMT子系统**：包含电力电子设备、故障区域等高频动态部分
+- **PDT子系统**：包含远距离输电网络、机电暂态部分
+
+**接口条件**：
+- 收敛的必要条件：子系统间不存在代数环（即边界处存在固有延迟）
+- 长传输线自然解耦是最理想的接口方式
+- 短距离接口需要使用迭代或补偿方法
+
+### EMT-DP混合
+
+动态相量模型保留波形包络动态，频率范围覆盖0.1–1000 Hz，可作为EMT和PDT之间的桥接区域 [Filizadeh2025]。
+
+### 多求解器混合
+
+大型系统可划分为多个段，每段使用特定求解器 [Filizadeh2025]：
+- EMT1：高频动态区域，使用50 μs步长
+- EMT2：中频动态区域，使用100 μs步长
+- DP：桥接区域，使用1 ms步长
+- PDT：系统级动态，使用10 ms步长
+
+## 高性能计算平台
+
+### ParaEMT：开源HPC兼容EMT仿真器
+
+ParaEMT是由NREL开发的开源Python EMT仿真器 [Xiong2024_ParaEMT]，核心特性：
+
+1. **BBD矩阵并行**：自动将网络电导矩阵分解为边界块对角形式
+2. **MPI分布式计算**：通过mpi4py实现跨节点并行
+3. **JIT编译加速**：使用Numba对Python代码进行JIT编译，串行性能超越PSCAD
+4. **非零元剪枝**：对BBD角矩阵中幅值低于阈值的小非零元进行剪枝，减少同步计算量
+
+**量化性能** [Xiong2024_ParaEMT]：
+
+| 系统规模 | 总线数 | 节点数 | 加速比 | 硬件平台 |
+|----------|--------|--------|--------|----------|
+| 240-bus WECC | 240 | 720 | 1x（串行） | 双Xeon Platinum 8280 |
+| 240-bus WECC | 240 | 720 | 1x（8核并行） | 双Xeon Platinum 8280 |
+| 10080-bus合成系统 | 10080 | 30240 | 25–36x | NREL Eagle超算（84 MPI rank） |
+
+在10080总线系统上，1秒仿真（50 μs步长）从串行5200秒降至130–200秒。
+
+### CloudPSS：云计算EMT仿真平台
+
+CloudPSS基于云计算和异构并行计算技术 [Song2020]，利用云平台弹性资源实现大规模EMT仿真。
+
+### 商业软件
+
+| 软件 | 并行策略 | 最大规模 |
+|------|----------|----------|
+| PSCAD | 传输线自然解耦分区并行 | ~5000节点 |
+| RTDS/RT-LAB | FPGA实时并行 | ~2000节点（实时） |
+| Hypersim | GPU并行 | 超大规模 |
+| ADPSS | 分网并行 | 万节点级 |
+
+## 机器学习加速（ML-Accelerated Simulation）
+
+新兴的机器学习方法通过数据驱动建模替代传统数值迭代，在大规模系统中实现数量级的加速。
+
+### 原理
+
+使用人工神经网络（ANN）学习电力电子设备的非线性输入-输出映射，替代Newton-Raphson迭代求解 [Cheng2025]：
+
+- **MLP（多层感知机）**：建模PV阵列、逆变器稳态和准稳态特性
+- **GRU（门控循环单元）**：建模DFIG风电场、电池储能的时间序列动态
+
+### 性能数据 [Cheng2025]
+
+- MLP PV模型在GPU上实现**400倍加速**（相比CPU串行Newton-Raphson）
+- 在IEEE 118总线系统上，256万个MLP建模的PV面板在双GPU上完成仿真
+- 相对误差：额定工况0.2%，部分遮光工况4%
+
+### CPU-GPU异构架构
+
+采用数据导向的ECS（Entity Component System）架构 [Cheng2025]：
+- **CPU**：模型初始化、系数矩阵预存储、拓扑数据管理
+- **GPU**：ANN推理、矩阵乘法/加法、节点电压求解
+- **GPU Instancing**：相同ModelRef的实体在单次GPU调用中批量处理，减少驱动调用开销
+
+## 量化性能边界
+
+### 加速比与系统规模的关系
+
+| 技术 | 精度损失 | 适用规模 | 典型加速比 |
+|------|----------|----------|------------|
+| BBD矩阵并行 | < 4×10⁻¹² pu | 千节点级以上 | 20–36x |
+| GPU加速 | < 0.1% | 计算密集型求解 | 10–400x |
+| 多速率仿真 | 1–5% | 多时间尺度系统 | 10–100x |
+| 模型降阶 | 5–10% | 外部系统等值 | 5–20x |
+| 机器学习加速 | 0.2–4% | 新能源场站 | 100–400x |
+| FPGA实时 | < 0.01% | HIL场景 | 实时（10⁶x） |
+
+### 各规模系统的仿真时间估算
+
+| 系统规模 | 串行时间（1秒仿真） | 并行加速（最佳） | 实时可行性 |
+|----------|---------------------|------------------|------------|
+| 100节点 | ~60秒 | 2–4x | 是 |
+| 1000节点 | ~10分钟 | 10–20x | 可能 |
+| 10000节点 | ~86小时 | 25–36x | 离线仿真 |
+| 100000节点 | ~957年 | ~36x | 需模型降阶 |
+
+注：以上基于ParaEMT在NREL Eagle超算上的测试结果外推 [Xiong2024_ParaEMT]。
+
+## 分网算法选择指南
+
+| 应用场景 | 推荐方法 | 理由 |
+|----------|----------|------|
+| 含长距离输电线的互联电网 | 传输线自然解耦 | 天然解耦，通信量最小 |
+| 城域网/电缆网络 | BBD矩阵法 | 不依赖线路长度，自动分区 |
+| 交直流混联系统 | MATE + 双层并行 | 直流拓扑变化不影响交流分区 [Jiang2024] |
+| 含非线性元件的网络 | 补偿法 | 非线性元件下的精度保证 |
+| 大规模新能源场站 | 细粒度多速率 + GPU | 不同设备使用不同步长，GPU加速 [Wang2024_FineGrained] |
+| 全系统宽频动态分析 | EMT-PDT混合仿真 | EMT聚焦故障区，PDT覆盖远距离网络 [Filizadeh2025] |
+| 实时HIL测试 | FPGA并行 | 亚微秒级实时求解 |
+| 大规模参数扫描 | 机器学习加速 | 训练后推理速度提升400倍 [Cheng2025] |
+
+## 关键技术挑战
+
+### 1. 边界矩阵非零元增长
+
+BBD方法的角矩阵非零元数量随分区数增加而增长 [Xiong2024_ParaEMT]。当分区数超过最佳值（约42个）时，同步开销超过并行收益，加速比下降。解决方向包括：
+- 改进图划分算法，最小化分区间耦合边
+- 低秩近似减少角矩阵维度 [Zhang2021_LowRank]
+- 非零元剪枝策略
+
+### 2. 大规模数据I/O瓶颈
+
+大规模仿真产生TB级数据，传统单进程文件写入成为性能瓶颈 [Xiong2024_ParaEMT]。解决方案：
+- HDF5 + MPI并行I/O
+- 检查点机制支持长时间仿真恢复
+
+### 3. 自动初始化
+
+大规模系统的稳态初始化是EMT仿真的前置关键步骤 [Filizadeh2025]。ParaEMT采用正序潮流 + 三相波形转换策略 [Xiong2024_ParaEMT]：
+
+$$v_a = V_{\text{mag}} \cos(\angle V), \quad v_b = V_{\text{mag}} \cos(\angle V - 2\pi/3), \quad v_c = V_{\text{mag}} \cos(\angle V + 2\pi/3) \tag{5}$$
+
+对于含电力电子设备的系统，需要基于控制框图方程的逆向变量传播进行初始化。
+
+### 4. 算法-硬件深度融合
+
+未来方向是实现仿真算法与硬件架构的深度协同设计 [Jiang2024]。包括：
+- 针对GPU架构的专用稀疏矩阵求解器
+- CPU-GPU异构调度优化
+- FPGA可重构计算单元
 
 ## 应用案例
 
-### 大电网仿真
-- **国家电网**: 万节点级
-- **欧洲电网**: ENTSO-E联网
-- **北美电网**: 北美互联
+### 案例1：NREL 10080总线合成系统 [Xiong2024_ParaEMT]
 
-### 新能源并网
-- [[renewable-energy-integration]] - 可再生能源并网
-- **风电场**: 大型海上风电
-- [[wind-farm-modeling]] - 风电场建模
-- **光伏**: 大型光伏电站
-- [[pv-power-plant]] - 光伏电站
+由6×7个240-bus WECC系统通过新增输电线路连接而成的合成大规模系统。在NREL Eagle超算（2618个计算节点，100 Gb/s EDR InfiniBand互连）上：
+- 42个分区、84个MPI进程：36倍加速
+- 1秒仿真时间从5200秒降至130–200秒
+- 捕获了5.7 Hz的IBR控制器诱导振荡
 
-### 城市电网
-- **配电网**: 复杂配网
-- [[an-fpga-based-electromagnetic-transient-analysis-of-power-distribution-network]] - 配电网
-- **微网**: 多微网互联
-- [[microgrid-distribution-network]] - 微电网
+### 案例2： Nelson River HVDC多入端系统实时仿真 [Zhou2021_NelsonRiver]
 
-## 效率优化
+基于Nelson River多入端HVDC系统的超大规模混合实时仿真建模与基准测试，验证了EMT-TS混合仿真在大型HVDC系统中的适用性。
 
-### 预处理
-- **稀疏模式**: 固定稀疏结构
-- **符号分解**: 一次符号分析
-- **重排序**: 最小填充
+### 案例3：IEEE 118总线机器学习加速仿真 [Cheng2025]
 
-### 计算优化
-- **向量化**: SIMD指令
-- **缓存优化**: 数据局部性
-- **流水线**: 指令流水线
+在IEEE 118总线系统上部署256万个MLP建模的PV面板，双GPU（NVIDIA Tesla V100）实现400倍加速，部分遮光工况下相对误差4%。
 
-### 通信优化
-- **负载均衡**: 均匀分配
-- **通信最小化**: 减少数据交换
-- **异步通信**: 隐藏延迟
+### 案例4：中国新型电力系统并行仿真 [Jiang2024]
 
-## 验证与评估
+面向"西电东送、南北互供、全国联网"电网结构，梳理了分网并行算法（自然解耦、BBD、MATE、SSN）、多速率仿真和CPU/GPU/FPGA硬件加速方案，指出算法-硬件深度融合是未来方向。
 
-### 精度验证
-- **与串行对比**: 基准验证
-- **物理合理性**: 结果检查
-- [[emt-simulation-verification]] - 物理验证
+## 相关方法
 
-### 性能评估
-- **加速比**: $S = T_1/T_p$
-- **效率**: $E = S/p$
-- **可扩展性**: 弱/强可扩展
-
-## 商业软件
-
-### RT-LAB
-- [[rtds]] - RT-LAB/RTDS
-- **大规模**: 支持大系统
-- **实时**: 实时仿真能力
-
-### Hypersim
-- `hypersim` - Hypersim
-- **超大规模**: 超大规模系统
-- **并行**: 高度并行
-
-### 自定义开发
-- **PETSc**: 科学计算库
-- **Trilinos**: 求解器包
-- **自定义**: 专用求解器
-
-## 发展趋势
-- **AI加速**: 机器学习辅助
-- `machine-learning` - 机器学习加速
-- **量子计算**: 未来可能
-- `quantum-computing` - 量子计算
-- **边缘计算**: 分布式仿真
-
-## 相关主题
-- [[parallel-computing]] - 并行计算
+### 并行计算相关
+- [[parallel-computing]] - 并行计算基础
+- [[gpu-parallel-acceleration]] - GPU并行加速
+- [[gpu-accelerated-simulation]] - GPU加速仿真
+- [[multithreaded-parallel-computing]] - 多线程并行
+- [[heterogeneous-computing]] - 异构计算
 - [[high-performance-computing]] - 高性能计算
 - [[computational-acceleration]] - 计算加速
-- [[multithreaded-parallel-computing]] - 多线程并行
+
+### 分网与接口
+- [[network-partitioning]] - 网络分区
+- [[interface-technique]] - 接口技术
+- [[compensation-method]] - 补偿法
+- [[frequency-dependent-network-equivalent]] - 频变网络等值
+
+### 多速率与混合仿真
+- [[multirate-method]] - 多速率方法
+- [[co-simulation]] - 混合仿真
+- [[electromechanical-electromagnetic-hybrid-simulation]] - 机电-电磁混合仿真
+- [[shifted-frequency-analysis]] - 频移分析
+
+### 模型降阶与等值
+- [[model-order-reduction]] - 模型降阶
+- [[network-equivalent]] - 网络等值
+- [[coherency-clustering]] - 同调聚类
+
+### 数值方法
+- [[numerical-stability]] - 数值稳定性
+- [[sparse-matrix-techniques]] - 稀疏矩阵技术
+- [[low-rank-solver]] - 低秩求解器
 
 ## 来源论文
 
-参见 [[index]] 获取更多大规模系统仿真相关文献。
+- **Xiong 2024 (ParaEMT)** — 开发了开源HPC兼容EMT仿真器ParaEMT，实现了BBD矩阵并行和MPI分布式计算，在10080总线系统上实现36倍加速。IEEE Trans. Power Del., 2024.
+- **Filizadeh 2025** — 综述了大型电力系统EMT仿真的前沿技术，包括并行计算、自动初始化、混合仿真（EMT-PDT-DP）、动态相量等。IEEE Electrification Magazine, 2025.
+- **Jiang 2024** — 系统梳理了新型电力系统电磁暂态并行仿真关键技术，包括分网并行算法、多速率仿真、CPU/GPU/FPGA硬件加速方案。高电压技术, 2024.
+- **Cheng 2025** — 提出了机器学习增强的大规模新能源系统并行瞬态仿真方法，使用MLP/GRU神经网络替代传统迭代求解，在GPU上实现400倍加速。IEEE Trans. Power Syst., 2025.
+- **Zhou & Dinavahi 2014 (GPU)** — 提出了MT-EMTP（大规模线程EMT程序），在GPU上实现节点映射优化和大规模并行求解，在2458总线系统上实现40倍加速。IEEE Trans. Power Del., 2014.
+- **Abusalah 2018 (CPU)** — 实现了基于CPU多核的EMT并行稀疏矩阵求解器，基于传输线自然解耦，无需用户干预。Electric Power Systems Research, 2018.
+- **Xiong 2024 (OpenSource Framework)** — 提出了开源并行EMT仿真框架，支持灵活的网络分区和并行策略。
+- **Wang 2024 (Fine-Grained)** — 提出了细粒度并行与多速率EMT仿真方法，在GPU上实现不同模型的独立时间步长。
+- **Zhou 2021 (Nelson River)** — Nelson River多入端HVDC系统的大规模混合实时仿真建模与基准测试。
+- **Le-Huy 2023** — 将大规模电力系统仿真从离线移植到实时的经验总结，涉及HIL测试和实时仿真挑战。
+- **田芳 & 周孝信 2011** — 提出了交直流电力系统分割并行电磁暂态数字仿真方法。电网技术, 2011.
+- **崔晓丹 等 2023** — 提出了新能源高占比电力系统电磁暂态并行仿真的优化分网方法。
 
 ---
 
 ## EMT中的作用
 
-大规模系统仿真 (Large-scale System Simulation) 在EMT仿真中的核心作用：
+大规模系统仿真在EMT仿真中的核心作用体现在三个维度：
 
-- **研究范围**：界定大规模系统仿真 (Large-scale System Simulation)在EMT仿真中的研究边界和应用场景
-- **分析方法**：提供大规模系统仿真 (Large-scale System Simulation)相关的EMT分析方法和工具
-- **系统影响**：分析大规模系统仿真 (Large-scale System Simulation)对电力系统电磁暂态特性的影响
-- **仿真验证**：为大规模系统仿真 (Large-scale System Simulation)相关研究提供仿真验证框架
+1. **规模维度**：从百节点到万节点级系统的可扩展性，决定了EMT仿真能否从"研究工具"走向"工程工具"。
+2. **精度维度**：并行和降阶技术需要在加速比和精度之间取得平衡，精度损失通常控制在1–10%以内。
+3. **时间维度**：从离线仿真到实时仿真的跨越，FPGA和GPU技术使亚微秒级实时仿真成为可能。
+
 ## 形式化表达
 
-从EMT仿真角度，大规模系统仿真 (Large-scale System Simulation)可形式化表达为：
+从EMT仿真角度，大规模系统仿真可形式化表达为以下优化问题：
 
-$$
-\text{待补充：大规模系统仿真 (Large-scale System Simulation)的数学形式化描述}
-$$
-## 适用边界 (Applicable Boundaries)
+$$\min_{\text{partition}, \Delta t_i, \text{hardware}} \quad T_{\text{total}} = \sum_{i=1}^{m} T_i^{\text{compute}} + \sum_{j=1}^{k} T_j^{\text{comm}}$$
+
+$$\text{s.t.} \quad \|v_{\text{parallel}} - v_{\text{serial}}\|_\infty \leq \epsilon_{\text{tol}}$$
+
+$$T_{\text{real-time}} \leq T_{\text{simulation}}$$
+
+其中 $m$ 为分区数，$T_i^{\text{compute}}$ 为第 $i$ 个分区的计算时间，$T_j^{\text{comm}}$ 为第 $j$ 次通信同步时间，$\epsilon_{\text{tol}}$ 为精度容差。
+
+## 适用边界与选择指南
 
 ### 适用场景
 
 | 应用场景 | 适用性 | 说明 |
 |---------|-------|------|
-| 万节点级系统仿真 | ★★★★★ | 超大规模电网EMT仿真 |
+| 万节点级系统仿真 | ★★★★★ | 超大规模电网EMT仿真，必须使用并行技术 |
 | 并行算法验证 | ★★★★★ | 分区、并行求解方法测试 |
 | 实时仿真研究 | ★★★★☆ | 大规模系统实时性挑战 |
 | 模型降阶验证 | ★★★★★ | 降阶模型精度对比 |
@@ -233,34 +421,35 @@ $$
 
 ### 不适用场景
 
-- **小规模系统**: 节点数<100时，并行开销可能超过收益
-- **快速原型验证**: 需要快速迭代的初期研究
-- **单设备详细分析**: 关注单一设备时无需大规模仿真
-- **教学演示**: 复杂度过高，不适合教学
+- **小规模系统**：节点数<100时，并行开销可能超过收益
+- **快速原型验证**：需要快速迭代的初期研究
+- **单设备详细分析**：关注单一设备时无需大规模仿真
+- **教学演示**：复杂度过高，不适合教学
 
 ### 关键假设
 
-1. **计算资源充足**: 需要高性能计算集群或GPU资源
-2. **网络可分区**: 系统可合理划分为子网络
-3. **通信延迟可控**: 并行节点间通信延迟不影响收敛
-4. **模型一致性**: 各分区模型在接口处兼容
+1. **计算资源充足**：需要高性能计算集群或GPU资源
+2. **网络可分区**：系统可合理划分为子网络
+3. **通信延迟可控**：并行节点间通信延迟不影响收敛
+4. **模型一致性**：各分区模型在接口处兼容
 
 ### 精度边界
 
 | 技术 | 精度损失 | 适用规模 |
 |---------|---------|---------|
-| 空间并行 | <1% | 千节点级以上 |
-| 多速率 | 1-5% | 多时间尺度系统 |
-| 模型降阶 | 5-10% | 外部系统等值 |
-| GPU加速 | <0.1% | 计算密集型求解 |
+| 空间并行（BBD） | < 4×10⁻¹² pu | 千节点级以上 |
+| 多速率 | 1–5% | 多时间尺度系统 |
+| 模型降阶 | 5–10% | 外部系统等值 |
+| GPU加速 | < 0.1% | 计算密集型求解 |
+| 机器学习加速 | 0.2–4% | 新能源场站 |
 
 ### 性能边界
 
 | 系统规模 | 串行时间 | 并行加速 | 实时可行性 |
 |---------|---------|---------|-----------|
-| 100节点 | 分钟级 | 2-4x | 是 |
-| 1000节点 | 小时级 | 10-20x | 可能 |
-| 10000节点 | 天级 | 50-100x | 否 |
+| 100节点 | 分钟级 | 2–4x | 是 |
+| 1000节点 | 小时级 | 10–20x | 可能 |
+| 10000节点 | 天级 | 25–36x | 离线仿真 |
 
 ---
 
@@ -270,8 +459,12 @@ $$
 
 | 文献 | 年份 | 核心贡献 |
 |------|------|---------|
-| IEEE Task Force on EMT Simulation | 2020s | 大规模EMT仿真技术综述 |
-| CIGRE WG C4.50 | 2019 | 大规模系统EMT建模导则 |
+| Xiong et al. - ParaEMT | 2024 | 开源HPC兼容EMT仿真器，BBD并行，10080总线36x加速 |
+| Filizadeh et al. - EMT Simulators for the Future | 2025 | EMT仿真器未来技术综述，并行/混合仿真/自动初始化 |
+| Jiang et al. - 新型电力系统电磁暂态并行仿真 | 2024 | 分网并行算法、多速率、CPU/GPU/FPGA硬件加速综述 |
+| Cheng et al. - ML-Reinforced Parallel Transient Simulation | 2025 | 机器学习加速大规模新能源系统仿真，GPU 400x加速 |
+| Zhou & Dinavahi - MT-EMTP on GPU | 2014 | GPU大规模线程EMT仿真，2458总线40x加速 |
+| Abusalah et al. - CPU Parallel EMT | 2018 | CPU多核并行EMT仿真，自然解耦方法 |
 
 ### 相关方法
 
@@ -279,50 +472,12 @@ $$
 - [[model-order-reduction]] - 模型降阶技术
 - [[multirate-method]] - 多速率仿真
 - [[gpu-accelerated-simulation]] - GPU加速技术
+- [[heterogeneous-computing]] - 异构计算
+- [[co-simulation]] - 混合仿真
 
 ### 软件平台
 
-- [[pscad-emtdc]] - 支持大规模仿真
-- [[rtds]] - RT-LAB实时仿真
-- [[cloudpss]] - 云端大规模仿真
-
-参见 [[index]] 获取更多相关文献。
-
-## 来源论文
-
-| 论文 | 年份 |
-|------|------|
-| [[efcient-modeling-of-modular-multilevel-hvdc-15|Efﬁcient Modeling of Modular Multilevel HVDC]] | 2010 |
-| [[dynamic-averaged-and-simplified-models-for|Dynamic Averaged and Simplified Models for]] | 2013 |
-| [[ahmed-等-a-computationally-efficient-continuous-model-for-the-modular-multilevel-|Ahmed 等 | A Computationally Efficient Continuous Model for t]] | 2014 |
-| [[dynamic-average-value-modeling-of-13&14|Dynamic Average-Value Modeling of]] | 2014 |
-| [[on-fixed-point-iterations-for-the-solution-of-control-equations-in-power-systems|On fixed-point iterations for the solution of control equati]] | 2014 |
-| [[29tpwrd20162590569-2|29/TPWRD.2016.2590569]] | 2016 |
-| [[31tpwrd20162529662-2|31/tpwrd.2016.2529662]] | 2016 |
-| [[improved-accuracy-average-value-models-of-modular-multilevel-converters|Improved Accuracy Average Value Models of Modular Multilevel]] | 2016 |
-| [[30tpwrd20172714639-2|30/TPWRD.2017.2714639]] | 2017 |
-| [[a-dynamic-phasor-model-of-an-mmc-with-extended-frequency-range-for-emt-simulatio|A Dynamic Phasor Model of an MMC with Extended Frequency Ran]] | 2018 |
-| [[advanced-emt-and-phasor-domain-hybrid-simulation-with-simulation-mode-switching-|Advanced EMT and Phasor-Domain Hybrid Simulation With Simula]] | 2018 |
-| [[38tpwrd20182794887|Time-Window Based Discrete-Time Fourier Series for Electroma]] | 2018 |
-| [[an-efficient-phase-domain-synchronous-machine-model-with-constant-equivalent-adm|An Efficient Phase Domain Synchronous Machine Model With Con]] | 2019 |
-| [[dual-band-reduced-order-model-of-an-hvdc-link-embedded-into-a-power-network-for-|Dual-Band Reduced-Order Model of an HVDC Link Embedded into ]] | 2019 |
-| [[modeling-a-voltage-source-converter-assisted-resonant-current-dc-breaker-for-rea|Modeling a voltage source converter assisted resonant curren]] | 2019 |
-| [[modeling-of-a-modular-multilevel-converter-with-embedded-energy-storage-for-elec|Modeling of a Modular Multilevel Converter With Embedded Ene]] | 2019 |
-| [[average-value-model-for-a-modular-multilevel-converter-with-embedded-storage|Average-Value Model for a Modular Multilevel Converter With ]] | 2021 |
-| [[comparison-and-selection-of-grid-tied-inverter-models-for-accurate-and-efficient|Comparison and Selection of Grid-Tied Inverter Models for Ac]] | 2021 |
-| [[modelica-based-simulation-of-electromagnetic-transients-using-dynao-current-stat|Modelica-based simulation of electromagnetic transients usin]] | 2021 |
-| [[accelerated-electromagnetic-transient-emt-equivalent-model-of-solid-state-transf|Accelerated Electromagnetic Transient (EMT) Equivalent Model]] | 2022 |
-| [[average-value-modeling-of-line-commutated-inverter-systems-with-commutation-fail|Average-Value Modeling of Line-Commutated Inverter Systems W]] | 2022 |
-| [[co-simulation-applied-to-power-systems-with-high-penetration-of-distributed-ener|Co-simulation applied to power systems with high penetration]] | 2022 |
-| [[2728modeling|Modeling_of_LCC_HVDC_Systems_Using_Dynam]] | 2022 |
-| [[electromagnetic-transient-emt-simulation-algorithms-for-evaluation-of-large-scal|Electromagnetic Transient (EMT) Simulation Algorithms for Ev]] | 2023 |
-| [[equivalent-modeling-method-of-parallel-elements-for-fast-electromagnetic-transie|Equivalent Modeling Method of Parallel Elements for Fast Ele]] | 2023 |
-| [[equivalent-grid-following-inverter-based-generator-model-for-atpatpdraw-simulati|Equivalent grid-following inverter-based generator model for]] | 2023 |
-| [[fast-electromagnetic-transient-simulation-method-for-mmc-hvdc-system|Fast electromagnetic transient simulation method for MMC-HVD]] | 2023 |
-| [[efficient-electromagnetic-transient-simulation-for-dfig-based-wind-farms-using-f|Efficient electromagnetic transient simulation for DFIG-base]] | 2024 |
-| [[electromagnetic-transient-analysis-using-a-frequency-dependent-network-equivalen|Electromagnetic Transient Analysis Using a Frequency Depende]] | 2024 |
-| [[a-topology-based-simplified-dynamic-model-and-solving-algorithm-for-lcc-hvdc-con|A topology-based simplified dynamic model and solving algori]] | 2025 |
-| [[discretized-impedance-based-modeling-of-converter-interfaced-energy-resources-fo|Discretized Impedance-Based Modeling of Converter-Interfaced]] | 2025 |
-| [[improving-emt-simulations-using-frequency-shifted-rational-approximations|Improving EMT simulations using frequency-shifted rational a]] | 2025 |
-| [[harmonic-preserved-average-value-model-for-converters-in-electromagnetic-transie|Harmonic-Preserved Average-Value Model for Converters in Ele]] | 2026 |
-| [[harmonic-preserved-average-value-model-for-converters-in-electromagnetic-transie|Harmonic-Preserved Average-Value Model for Converters in Ele]] | 2026 |
+- [[pscad-emtdc]] - PSCAD，支持传输线自然解耦并行
+- [[rtds]] - RTDS/RT-LAB，FPGA实时仿真
+- [[cloudpss]] - CloudPSS，云端大规模仿真
+- [[adpss]] - ADPSS，国产EMT仿真平台

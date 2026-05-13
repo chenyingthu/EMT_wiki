@@ -1,0 +1,697 @@
+IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 40, NO. 1, JANUARY 2025                                                                                        983
+
+
+
+
+      Machine-Learning-Reinforced Massively Parallel
+           Transient Simulation for Large-Scale
+       Renewable-Energy-Integrated Power Systems
+                Tianshi Cheng , Member, IEEE, Ruogu Chen , Graduate Student Member, IEEE,
+       Ning Lin , Senior Member, IEEE, Tian Liang , Member, IEEE, and Venkata Dinavahi , Fellow, IEEE
+
+
+   Abstract—Renewable energy systems (RESs) are pivotal in the                   ECS       Entity-component-system.
+transition to eco-friendly smart grids. The complexity and uncer-                EMT       Electromagnetic transient.
+tainty of RESs, driven by uncontrollable natural forces like sun-                GPU       Graphical processing unit.
+light and wind, bring challenges to integrating RESs into modern
+power systems. Electromagnetic transient (EMT) simulation is an                  GRU       Gated recurrent unit.
+effective method for studying the integration of RESs. Currently,                GSC       Grid side converter.
+the EMT simulation of RESs is limited to small-scale and lumped                  MLP       Multi-layer perceptron.
+RES models due to the model complexity and nonlinearity, which                   MSE       Mean squared error.
+cannot reflect the detailed characteristics of large-scale RESs in               PV        Photovoltaic.
+practice. This paper introduces a data-oriented, machine learning-
+enhanced approach to achieve massively parallel EMT simulation                   RES       Renewable energy system.
+on CPU-GPU, designed to efficiently model and simulate large-                    RNN       Recurrent neural network.
+scale, detailed RES. It incorporates data-driven machine learning                RSC       Rotor side converter.
+modeling of RES via artificial neural networks and integrates these
+models using a data-oriented entity-component-system framework.
+The model training was based on reliable model data produced by                                              I. INTRODUCTION
+traditional physical EMT models and the results were validated
+                                                                                        ENEWABLE energy systems (RESs) are pivotal in the
+with MATLAB/Simulink. The RES components are grouped into
+a microgrid connected to a synthetic AC/DC system based on the
+IEEE 118-Bus system, achieving an acceleration performance of
+                                                                                 R      transition to eco-friendly smart grids. Yet, the inherent
+                                                                                 complexity and uncertainty of these systems, arising from the
+400 times faster than traditional CPU nonlinear iterative compu-                 unpredictability of natural forces such as sunlight and wind,
+tations with 2 million RES entities.
+                                                                                 present significant challenges in power system control and oper-
+   Index Terms—Artificial neural networks, data-oriented                         ation [1]. Detailed electromagnetic transient (EMT) simulation
+programming, entity-component-system, energy storage, electrom-                  plays an important role in the analysis of control and operation
+agnetic transients, gated recurrent units, graphical processors,                 for RES integrating power systems [2], [3]. However, there
+solar farms, wind farms, machine learning, renewable energy
+systems, parallel processing.                                                    are more than 300,000 PV panels in a 100MW solar power
+                                                                                 farm [4], while each module may have an impact on the entire
+                                                                                 solar farm performance in partial shading scenarios [5], [6]. The
+                    NOMENCLATURE                                                 same problem also exists for battery groups where the battery
+ANN Artificial neural network.                                                   management system needs to take care of inconsistencies within
+CPU Central processing unit.                                                     the series battery array to maintain the optimal performance [7].
+DFIG Doubly-fed induction generator.                                             The traditional approach of detailed EMT simulations to address
+                                                                                 these challenges faces scalability issues due to the computational
+   Manuscript received 8 December 2023; revised 5 March 2024 and 25 April        burden of modeling extensive RES components. For example,
+2024; accepted 1 June 2024. Date of publication 5 June 2024; date of current     the nonlinearity of the PV model requires the Newton-Raphson
+version 27 December 2024. This work was supported in part by the Natural
+Science and Engineering Research Council of Canada (NSREC), in part by           method to assemble a huge global Jacobian matrix in each
+Mitacs, and in part by RTDS Technologies Inc. Paper no. TPWRS-01920-2023.        iteration, adding prohibitive computational complexity for large-
+(Corresponding author: Tianshi Cheng.)                                           scale power systems with many PV arrays.
+   Tianshi Cheng, Ruogu Chen, and Venkata Dinavahi are with the Department
+of Electrical and Computer Engineering, University of Alberta, Edmonton,            A common solution is to utilize massively parallel hardware:
+AB T6G 2V4, Canada (e-mail: tcheng1@ualberta.ca; ruogu@ualberta.ca; di-          Graphical Processing Unit (GPU) to solve large groups of RES
+navahi@ualberta.ca).                                                             components concurrently [8], [9]. However, the nonlinearity
+   Ning Lin is with Powertech Labs Inc., Surrey, BC V3W 7R7, Canada (e-mail:
+ning3@ualberta.ca).                                                              of these models limited the solution methods and parallel ef-
+   Tian Liang is with RTDS Technologies Inc., Winnipeg, MB R3T 2E1, Canada       ficiency as GPUs are not good at complex logics such as branch
+(e-mail: tian.liang@ualberta.ca).                                                predictions; nonlinear methods such as the Newton-Raphson
+   Color versions of one or more figures in this article are available at
+https://doi.org/10.1109/TPWRS.2024.3409729.                                      method are iterative and needs frequent data exchange between
+   Digital Object Identifier 10.1109/TPWRS.2024.3409729                          host and device memory, which brings significant overheads.
+                        0885-8950 © 2024 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                                      See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:12:47 UTC from IEEE Xplore. Restrictions apply.
+984                                                                                 IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 40, NO. 1, JANUARY 2025
+
+
+
+Furthermore, it is challenging to adapt and reimplement complex                     r This paper employs data-oriented entity-component-
+RES EMT models to highly efficient and scalable GPU codes,                            system (ECS) architecture and GPU instancing strategies
+making it difficult to keep pace with rapidly evolving new energy                     to incorporate the ANN model of RES into the EMT power
+and power storage technologies.                                                       grid simulation program, achieving a highly pragmatic and
+   Therefore, this paper proposed to utilize ANN technologies to                      scalable CPU-GPU massively parallel computing solution.
+increase the efficiency of EMT simulation of large-scale systems                      The importance of efficient implementation and integration
+with RES. ANN is a machine learning technology that can be                            of machine learning models is often underestimated. This
+conceptualized as a mathematical approach to multivariate non-                        oversight may obstruct the full realization of the models’
+linear regression [10], which is suitable to reflect the nonlinear                    potential impact on both theoretical advancements and
+RES behaviors including partial shading of a PV array and bat-                        practical applications. Compared to previous research, the
+tery charging/discharging behaviors. The recent breakthroughs                         proposed design not only establishes a complex multi-
+and significant successes of artificial intelligence and machine                      variate ANN model for photovoltaic panel arrays but also
+learning in many areas such as weather forecasting [11], where                        elevates the application of the model to a practical level.
+the ANN-based model provides more accurate predictions and                            The integration of ANN models via ECS and plugin-based
+significantly accelerates the forecast process compared to the                        architectures enables seamless substitution for traditional
+traditional numerical solutions. These machine-learning tech-                         RES models.
+nologies have attracted significant attention from power system                   The model training was based on reliable model data pro-
+researchers as well. The deep-learning methods are popular                      duced by traditional physical EMT models and the results were
+for long-term and steady-state power system analysis such as                    validated with MATLAB/Simulink. The RES components are
+power output forecast, stability assessments, and control [12],                 grouped into a microgrid connected to a synthetic AC/DC system
+[13], [14]. The ANN technologies are also popular for transient                 based on the IEEE 118-Bus system, achieving an acceleration
+stability analysis: [15] proposed an ANN-based method to ap-                    performance of 400 times faster than traditional CPU parallel
+proximate the nonlinear Lyapunov function which can simplify                    nonlinear iterative computations with more than 2 million RES
+the control design for complex power systems; [16] proposed                     entities.
+novel graph neural network structures with data-driven frame-
+works for transient stability assessments. However, the adop-                   II. RENEWABLE ENERGY SYSTEMS NEURAL-NETWORK-BASED
+tion of machine learning technologies in power system EMT                                            MODELING
+simulation is still in its early stages. Some research works such
+                                                                                   Traditional EMT models of RESs are mostly nonlinear and
+as [17], [18], [19] have demonstrated the benefits of using ANN
+                                                                                require Newton-Raphson’s nonlinear iterative method to solve a
+and RNN technologies to accelerate real-time EMT models on
+                                                                                nonlinear differential-algebraic equation system. Such nonlinear
+FPGAs. However these works are early explorations aimed to
+                                                                                characteristics not only bring heavy computational burden and
+deal with traditional components in small-scale power systems
+                                                                                convergence problems but also limit the efficiency of parallel
+for specific scenarios, and such research hasn’t been extended
+                                                                                computing. Machine-learning techniques such as neural net-
+to RES modeling. Moreover, the integration of the ANN models
+                                                                                works can effectively capture the nonlinearity of the physics
+into conventional EMT solvers is important for practical large-
+                                                                                in RESs and provide an accurate approximation to reduce the
+scale simulation applications but it was not comprehensively
+                                                                                complexity. It is a fully data-driven process without many hu-
+explained in previous research works.
+                                                                                man decisions. Moreover, compared to hand-crafted nonlinear
+   To apply machine learning ANN techniques in accelerating
+                                                                                or linearized equivalent models, which have various internal
+the simulation of large-scale renewable energy models and to
+                                                                                structures and complex computational processes, models trained
+extend the previous machine learning EMT model research
+                                                                                using neural networks present a consistent matrix computation
+towards a broader and more practical vision, this paper primarily
+                                                                                structure. This uniformity is particularly suited for GPU parallel
+elucidates two key propositions:
+   r The development and training strategies for neural net-                    computations. Thus, machine-learning reinforced RES models
+                                                                                can efficiently leverage optimized GPU-accelerated linear alge-
+      work modeling of renewable energy generation and energy
+                                                                                bra libraries such as CUBLAS and CUDNN, without concern
+      storage systems. Nonlinear time-variant components are
+                                                                                for their varying types or internal structures. In addition, the
+      modeled with the gated-recurrent unit (GRU) and time-
+                                                                                ANN models use Float32 numbers which is faster than Float64
+      invariant components such as PV arrays are modeled with
+                                                                                required by the Newton-Raphson method on GPUs. The fol-
+      the feed-forward network which is also called multi-layer
+                                                                                lowing subsections introduced the basic concept of MLP and
+      perceptron (MLP). The main focus is on modeling a PV
+                                                                                GRU neural networks used to model RESs and the training
+      array with multiple independent solar irradiance input vari-
+                                                                                strategies of PV arrays, doubly-fed induction generator (DFIG)
+      ables since solar farms contain a lot of PV panels and
+                                                                                wind farms, and batteries.
+      each input irradiance may cause significant performance
+      differences under partial shading scenarios. A Monte-Carlo
+      method is proposed to serve as an effective and practical                 A. Multi-Layer Perceptron
+      solution to generate sufficient data for training an accurate                The MLP is one of the simplest forms of feed-forward ANNs.
+      machine-learning model for these multivariate nonlinear                   It serves as a foundational technique in modern neural network
+      components under simulation environments.                                 machine learning, yet is sufficiently powerful to address many
+
+         Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:12:47 UTC from IEEE Xplore. Restrictions apply.
+CHENG et al.: MACHINE-LEARNING-REINFORCED MASSIVELY PARALLEL TRANSIENT SIMULATION FOR LARGE-SCALE                                                       985
+
+
+
+                                                                                 B. Gated Recurrent Unit
+                                                                                   GRU networks are based on MLP but have a more complex
+                                                                                 and specific structure for time-series inputs and outputs. As
+                                                                                 shown in Fig. 1(b), the typical GRU is expressed by
+                                                                                                   z t = σ(Wxz xt + Uhz ht−1 )                          (6)
+                                                                                                   r t = σ(Wxr xt + Uhr ht−1 )                          (7)
+
+                                                                                                  h̃t = tanh(W xt + U (r t  ht−1 ))                    (8)
+
+Fig. 1. Neural network structures: (a) MLP neural network structure; (b) GRU
+                                                                                                  ht = (1 − z t )  ht−1 + z t  h̃t                    (9)
+neural network structure.
+                                                                                 where z t is the update gate output; r t is the reset gate output;
+                                                                                 h̃t is the output candidate hidden; ht is the GRU unit out-
+                                                                                 put; Wxz , Wxr , W are the input weights which are considered;
+real-world nonlinear fitting problems. As shown in Fig. 1(a), it                 Uhz , Uhr , U are the recurrent weights and σ is the sigmoid
+contains one input layer, multiple hidden layers, and one output                 function. The update gate controls the degree to which the hidden
+layer. The state variables between hidden layers are connected                   state from the previous time step, ht−1 , should be updated with
+by activation functions which must be nonlinear functions such                   the new candidate hidden state, h̃t . It is computed using the
+as tanh, sigmod, or ReLU . MLP can be expressed by                               sigmoid function, which scales the output between 0 and 1.
+                           z = f (W x + b)                                (1)    The reset gate is responsible for determining the amount of
+                                                                                 information from the previous hidden state, ht−1 , that should
+where x is the input state vector, b is the bias vector, W is                    be retained when computing the output candidate, h̃t . Similar
+the weight matrix, f is an activation function and z is the                      to the update gate, it also employs the sigmoid function. The
+output vector of each layer. Although the structure is simple,                   output candidate represents a new hidden state based on the
+it is enough to approximate many nonlinear functions of EMT                      input xt and the previous hidden state ht−1 . The reset gate, r t ,
+models. Training an MLP model is to solve an optimization                        is used to control the influence of ht−1 on the output candidate.
+problem defined by                                                               The output candidate is computed using the hyperbolic tangent
+                              min L(y, ŷ)                                (2)    function. The final output, ht , is computed by combining the
+                              W,b                                                previous hidden state, ht−1 , and the output candidate, h̃t , with
+where y is the output from training or validation dataset, ŷ is                 the help of the update gate, z t . GRU networks are suitable for
+the prediction data from trained model, and L is a loss function                 stateful time-variant components and can reflect more complex
+to compute the error between ŷ and y, which can be a mean                       behaviors with the price of additional computing steps.
+squared error (MSE) function as the following:
+                                                                                 C. Machine-Learning MLP Modeling for Photovoltaic Array
+                                     n
+                            1
+                     M SE =            i 2
+                                 y − y                                   (3)       As shown in Fig. 2(a), a PV array is constituted by a series-
+                            n i=1 i                                              parallel connection of multiple photovoltaic panels. The major
+where n is the total number of samples in the dataset and                        electrical characteristic of a PV array is its I − V characteristic
+||y i − ŷ i | is the L2 normalization for y i − ŷ i . The MSE                 under various conditions.
+loss function squares the prediction errors, emphasizing larger                     The PV array has 16 independent solar irradiance Irr for each
+deviations more significantly. This is particularly meaningful for               PV panel and a port voltage input Vt . The output is chosen to Iout
+training nonlinear models due to their complex and inconsistent                  so that the model can be represented by a current source in EMT
+output characteristics for different data inputs. By penalizing                  simulations. Unlike traditional PV panel performance rating
+larger deviations more heavily, MSE helps ensure that the model                  and modeling that require ideal experimental data collected
+does not overlook outliers, thereby enhancing its generalizability               from laboratories, machine-learning methods can analyze any
+across varied data points.                                                       relevant data to capture and model PV array characteristics un-
+   Gradient descent is often used to solve this minimization                     der various conditions, including partial shading. However, the
+problem, which is given by                                                       data collected from real-world power grid operations are often
+                                                                                 insufficient for EMT simulations, as the current granularity of
+                       Wnew = Wold − α∇W L                                (4)    sampling is typically only suitable for steady-state and medium
+                                                                                 to long-term forecast purposes. In this case, previous machine-
+                        bnew = bold − α∇b L,                              (5)
+                                                                                 learning EMT research efforts often relied on traditional sim-
+where the gradients ∇W L and ∇b L are computed by back-                          ulation systems to generate training data, which is a reliable
+propagation, and α is a factor called learning rate which controls               data source and can help researchers achieve the purpose of
+how large the old value change in the gradient direction. The                    accelerating traditional models. However, these systems usually
+principle of this MLP training process is also valid for other                   involved fewer model inputs and scenarios, leading to a lack of
+types of neural networks.                                                        emphasis on the data generation process itself. For multivariate
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:12:47 UTC from IEEE Xplore. Restrictions apply.
+986                                                                                  IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 40, NO. 1, JANUARY 2025
+
+
+
+
+Fig. 2. MLP modeling of a 4 × 4 PV array: (a) traditional model of nonlinear PV panel and the 4 × 4 PV array circuit; (b) Monte Carlo test setup for generating
+training data; (c) the data preprocessing and training processes of ANN machine learning; (d) model verification on validation dataset; (e) final PV model deploy
+as a voltage-controlled current source in EMT simulation.
+
+
+
+
+                                                                                  In practical scenarios, electrical equipment typically operates
+                                                                                  within its rated design conditions, only entering extreme op-
+                                                                                  erational states under exceptional conditions. Thus, employing
+                                                                                  a normal distribution to generate the data effectively reflects
+                                                                                  the real system’s general sampling characteristics, which may
+                                                                                  provide useful information for machine-learning EMT modeling
+                                                                                  research with real-world data in the future. In this imbalanced
+                                                                                  dataset, it is expected that, with the current use of the MSE
+Fig. 3. PV MLP model training results: (a) output current validation results      loss function and associated training strategies, good model
+on the validation data set; (b) MSE loss vs. training epochs.                     generalizability and accuracy can still be achieved. However,
+                                                                                  the prediction errors in areas with lower sampling probabilities
+                                                                                  might be greater than those in the densely sampled central
+nonlinear models such as the PV arrays, the first challenge is                    regions. This results in the training dataset shown in Fig. 2(c),
+generating sufficient training data to cover the vast data space                  which covers the full range of operational voltage and a wide
+introduced by more and more variables.                                            range of I − V characteristics under various irradiance combi-
+   As shown in Fig. 2(b), the Monte Carlo method is applied                       nations.
+to effectively cover the vast state space of the PV array. Fur-                      A training dataset with 20 million samples was obtained
+thermore, the ability of Monte Carlo simulations to be easily                     from the testing network. Because the model depends on many
+parallelized enables the full exploitation of modern computing                    independent inputs, it is vital to use dynamic learning rates to
+resources, greatly improving the efficiency of data generation.                   achieve good fitting results. Meanwhile, the dropout strategy
+The training data are produced by traditional EMT simulation                      is used to improve the model’s generalization capability and
+of the nonlinear PV model based on the methods and model                          with a dropout rate of 0.25, the error on the validation set
+parameters in [8]. Although the data are derived from simulated                   was reduced by approximately 20% after using the dropout
+circuits, the accuracy of the physical model was verified with                    strategy.
+real-world experimental data [20] and can produce ideal data                         After verifying the accuracy of the trained model with the val-
+for training. The irradiance data for each PV array is generated                  idation dataset as shown in Fig. 2(d), the model can be deployed
+randomly from a normal distribution with a mean of 1000 W/m2                      into the EMT simulation program to represent the original PV
+and a standard deviation of 300 W/m2 . Meanwhile, the port volt-                  array. As shown in Fig. 2(e), the PV array is represented by a
+age is uniformly sampled from zero to the maximum operational                     controlled current source for EMT circuit simulation. The output
+voltage. Usually, using uniform distributions simplifies the data                 current is predicted by the MLP network comprising four hidden
+generation process as it ensures a consistent and even spread of                  layers, and each layer has 64 cells.
+data points, which are easier to manage and process. However                         With the proposed training data setup and machine-learning
+normal distributions can better reflect real data sampling and                    strategies, the trained MLP model yields satisfactory results as
+help explore imbalanced dataset impacts on machine learning.                      shown in Fig. 3(a) and (b). The MSE of the training dataset is
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:12:47 UTC from IEEE Xplore. Restrictions apply.
+CHENG et al.: MACHINE-LEARNING-REINFORCED MASSIVELY PARALLEL TRANSIENT SIMULATION FOR LARGE-SCALE                                                      987
+
+
+
+
+Fig. 4. GRU-based equivalent circuit models for DFIG wind farms and
+Lithium-ion battery groups.
+
+
+
+
+about 1e-5 while on the validation dataset, the MSE is around 7e-               Fig. 5. Model Results: (a) Phase-A current triggered by a three-phase-to-
+                                                                                ground short circuit in the validation dataset. (b) Wind farm GRU Model MSE
+5, proving the feasibility of the data-driven machine-learning-                 loss vs. epochs for varied input lengths. (c) Discharge curve validation of
+reinforced modeling for large-scale RESs.                                       Lithium-ion battery GRU model. (d) Battery GRU Model MSE loss vs. epochs.
+
+
+D. Machine-Learning GRU Modeling for Wind Farm and
+                                                                                 The inputs and outputs for the wind farm and battery group
+Energy Storage
+                                                                                model are shown in Figs. 4 and 6(b) and (c).
+   The GRU models were trained using data from a DFIG wind
+farm and a Lithium-ion battery group simulation as shown in                      III. DATA-ORIENTED CPU-GPU HETEROGENEOUS PARALLEL
+Fig. 4. The wind farm test circuit is from [21] and the battery                       SIMULATION FOR MACHINE-LEARNING RES MODELS
+is based on the model used in [9]. The models only use a single
+layer of GRUs to avoid error accumulations between neural                          The model parameters of proposed machine-learning-
+networks. The general machine-learning procedure is similar                     reinforced RES models for PV arrays, wind farms, and battery
+to the PV array model.                                                          groups are summarized in Fig. 6. The following subsections
+   The GRU models use uniformly distributed input variables for                 will introduce a data-oriented approach for integrating these
+convenience. The major difference for GRU is that the GRU uses                  ANN models into power system transient simulations, aiming
+a sequence of time-series data as inputs so the continuous nature               to achieve high performance through CPU-GPU heterogeneous
+of input signals cannot be violated when generating the data. In                acceleration.
+this case, each set of parameters should produce a contiguous
+data series within a single Monte Carlo test execution, rather                  A. Data-Oriented EMT Simulation
+than adjusting parameters mid-run. To simulate fault scenarios,                    Power system EMT simulation is based on circuit nodal
+the faulty waveforms can be generated from pre-defined user                     analysis. The circuit nodal-voltage equation system is a distinct
+cases. In this model training, an external three-phase-to-ground                algebraic equation system derived from Kirchhoff’s Current
+fault is added to the datasets used for training the wind farm’s                Law. In the case of linear circuits composed of RLC components
+GRU model, which takes up 5% of the total data samples.                         and sources, this equation system can be represented by
+   Fig. 5 shows the MSE and validation results of the wind farm                 
+and Lithium-ion battery GRU models. Due to the uniform dis-                          i = iL + i C + i R
+tributed datasets and the complexity of GRU, the training process                             
+                                                                                                             dv
+is much shorter. It takes only 100 epochs to obtain accurate                           = GL vdt + GC            + GR v = i s ,
+results for both models. Fig. 5(a) shows the comparison between                                              dt
+                                                                                                                                    
+current waveforms of a three-phase-to-ground short circuit fault,                           T   1                  T               T    1
+                                                                                  GL = BL          BL , GC = BC [C]BC , GR = BR             BR ,
+where the short circuit resistance is 0.01 Ω and the fault duration                             L                                      R
+is 60 milliseconds. The short-circuit fault was applied at the                                                                              (10)
+grid connection port of the wind farm. It shows that the GRU                    where B is the oriented incidence matrix whose rows correspond
+model for wind farms successfully captured the fault event even                 to the physical components and columns correspond to nodes,
+though the fault waveform rarely appears in the dataset. The                    v is the nodal voltage vector, L is the inductance, C is the
+wind farm model needs a longer GRU input sequence to obtain                     capacitance and R is the resistance, is is the vector of current
+an accurate GRU model as shown in Fig. 5(b). This is mainly                     injections by sources and GR,L,C are called admittance matrix.
+caused by the coupled and time-varied three-phase AC electrical                    If the continuous-domain integrals and differential terms in
+inputs.                                                                         (10) are subjected to Laplace transform, the frequency-domain
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:12:47 UTC from IEEE Xplore. Restrictions apply.
+988                                                                                  IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 40, NO. 1, JANUARY 2025
+
+
+
+
+Fig. 6. Proposed machine-learning-reinforced RES models parameters: (a) MLP model for PV arrays; (b) GRU model for DFIG wind farms; (c) GRU model for
+Lithium-ion battery groups.
+
+
+
+
+equations required for power system steady-state and transient
+stability analysis are obtained. On the other hand, if discretiza-
+tion methods such as the Trapezoidal Rule are applied, the
+discrete equations for EMT simulations are derived, which can
+be expressed as
+  Y v n+1 = I n+1
+              eq ,                                                      (11)
+              Δt         2
+         Y =      GL +      GC + GR ,                                   (12)
+                2        Δt
+                                    
+                      2        Δt
+      I n+1
+        eq  = i s +      G C −    GL   v n − i Ln + i C n               (13)
+                      Δt       2
+where Y and I n+1eq   are admittance matrix and the equivalent
+current sources generated from Trapezoidal Rule discretization,
+respectively; Δt is the time-step of simulation and n denotes
+the nth step of the simulation and all states at n = 1 should
+be known. Once the voltage vector v n+1 is obtained through
+linear equation-solving methods such as LU Decomposition
+or Gaussian Elimination, the system can proceed to the next
+iteration using the recursive formula (13). This allows the dis-
+cretized equation system to continue iterating for further time                  Fig. 7. (a) Entities of basic circuit components. (b) Basic simulation loop and
+steps. More details about power system transient can be found                    plugins for proposed data-oriented EMT simulation program.
+in [22].
+   Based on (11)–(13), the power system EMT simulation pro-
+gram and solver are built using the Rust language and the Bevy                   backward; rather, it provides unparalleled flexibility and per-
+ECS framework [23]. The adoption of the ECS architecture                         formance, making it a preferred approach in modern C-style
+for EMT simulation was first proposed in [24]. ECS serves as                     GPU programming.
+a data-oriented architecture, emphasizing the efficient layout,                     As shown in Fig. 7(a), in the Bevy ECS framework, each elec-
+storage, and retrieval of data.                                                  trical component and renewable energy source is abstracted as a
+   Within the data-oriented ECS framework, data and meth-                        unique entity, described by a set of distinct data components. For
+ods are distinctly separate, reflecting the procedural style of                  example, a “resistor” entity includes components like resistance
+C programming. However, this design choice is not a step                         value, admittance for circuit matrix solving, and circuit position.
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:12:47 UTC from IEEE Xplore. Restrictions apply.
+CHENG et al.: MACHINE-LEARNING-REINFORCED MASSIVELY PARALLEL TRANSIENT SIMULATION FOR LARGE-SCALE                                                        989
+
+
+
+                                                                                  and battery plugins for convenience. In these model entities,
+                                                                                  essential environmental inputs like solar irradiance, wind speed,
+                                                                                  and ambient temperatures are managed by discrete components.
+                                                                                  These components are capable of interfacing with user-defined
+                                                                                  systems to acquire the relevant environmental data. For example,
+                                                                                  real weather data from a specific region can be integrated into a
+                                                                                  plugin that can generate these data components without caring
+                                                                                  about any detail in EMT simulation. Consequently, our proposed
+Fig. 8.   The entity variants for PV array, wind farm, and battery groups.        design ensures a smooth integration of geographical and weather
+                                                                                  information with electrical engineering simulation data.
+
+In contrast, a “capacitor” entity would have additional compo-                    C. Heterogeneous Massively Parallel CPU-GPU Computing
+nents like an equivalent current source, besides its capacitance
+value, equivalent admittance, and circuit position. Importantly,                     The ECS framework stores homogeneous data components in
+to unify the treatment in the solver for both three-phase and                     cache-friendly contiguous arrays, making it optimal for parallel
+single-phase circuit elements, an entity with a three-phase topol-                computing. However, a challenge arises since ECS component
+ogy component will automatically spawn three single-phase                         data reside on the CPU, and the GPU has its distinct memory
+child entities to generate three-phase resistors, capacitors, induc-              management. Efficient data exchange between CPU and GPU
+tors, and power sources. For some coupled three-phase compo-                      is pivotal for achieving optimal performance. Executing ANN
+nents such as transformers and transmission lines, there is a spe-                model units individually is not feasible in practice. To address
+cial computing system that performs specialized computations                      this, a common strategy known as GPU instancing is employed,
+on their three-phase components, while they still spawn single-                   substantially enhancing performance. This concept of GPU in-
+phase child entities for interfacing with the solver. This avoids                 stancing originates from graphical engine development. Initially,
+the need for special three-phase treatments, thereby maintaining                  it was designed to render multiple 3D objects with identical
+solver consistency for single-line DC and three-phase AC power                    mesh data in a single batched GPU call, such as rendering
+systems.                                                                          a forest composed of the same trees but with varied scales
+   As shown in Fig. 7(b), the simulation loop consists of three                   and positions. Analogously, in ANN models, the tree meshes
+stages, which is the same compared to traditional simulation                      are analogous to matrix weights, and the variations in scale
+tools such as PSCAD/EMTDC or other circuit simulators. How-                       and position correspond to different inputs, outputs, and scalar
+ever, the three stages are generic containers for systems and they                factors.
+serve as schedulers that can generate directed acyclic graphs                        A GPUBatchManager is built as a singleton in this context,
+for parallel executions of systems. All systems are grouped                       which manages all ANN model and IO tensor memories. At the
+into plugins and users can choose the plugins they need at                        initial stage, all ANN models will be scanned and registered
+the runtime. This architecture highlights the ECS framework’s                     in GPUBatchManager; then, Entities with the same ModelRef
+flexibility, promoting maximal data components and system                         are grouped and allocate a global contiguous tensor memory
+reuse. Consequently, this makes integrating new algorithms and                    space in GPUBatchManager to fit the inputs and outputs; all
+models more adaptable and efficient. The entity composition and                   TensorIO components register their data to a specific memory
+the flexible plugin features in Bevy ECS will play a significant                  address in these contiguous GPU memory space according to the
+role in realizing massively parallel computing elegantly in the                   type of ModelRef. Notice that all tensors must use CPU memory
+later subsections.                                                                to communicate efficiently with the CPU EMT solver.
+                                                                                     As shown in Fig. 9(a), in the PreUpdate stage, the CPU will
+                                                                                  process all ANN inputs and write input data to TensorIO which
+B. ANN Model Integrations
+                                                                                  is a local memory pointer mapped to global tensor in GPUBatch-
+   Fig. 8 shows the entities of RES ANN building blocks for                       Manager. For GRU, due to the input being a time series, there is
+EMT simulation. Renewable sources like PV arrays also con-                        an additional input shift system set to store necessary data in the
+tain common components such as equivalent conductance and                         input tensors. Then, instead of processing TensorIO components
+topological data. However, the computation of their equivalent                    on the entities one-by-one, the GPUBatchManager singleton
+current sources is determined by specialized components. For                      will copy the global tensor to GPU and perform GPU scaling
+entities with conventional nonlinear model parameters, standard                   and inference by model type. Therefore, no matter how many
+algorithms are auto-invoked to compute the PV output. Con-                        ANN model entities are there, there is only one inter-device
+versely, entities with artificial neural network model parameters                 copy for all input and output tensors of each model type, which
+are processed via a specialized GPU compute system, facilitated                   is the reason why tensors should be on host CPU memory to
+by a specific neural network plugin: GPUBatchPlugin.                              avoid expensive inter-device memory copy overhead. With the
+   Although the model inference is the same process for all                       managed global tensors, batched model computation is achieved
+ANN-modeled RES, inputs, and outputs cannot be the same due                       for each model type. Even when dealing with a few hundred
+to different physical structures. Therefore, the preprocessing and                ANN model entities, this approach provides a speed-up of more
+postprocessing systems are implemented in specific wind, solar,                   than 100 times compared to executing them individually.
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:12:47 UTC from IEEE Xplore. Restrictions apply.
+990                                                                                   IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 40, NO. 1, JANUARY 2025
+
+
+
+
+Fig. 9. Implementation of GPUBatchPlugin: (a) Bevy system directed acyclic graph of ANN RES model computation in PreUpdate stage; (b) Parallel computing
+configuration for scaling to multiple circuits and GPUs.
+
+
+
+
+Fig. 10.   Test system: Synthetic IEEE 118-Bus-based large-scale AC-DC networks with machine-learning RES building blocks.
+
+
+
+   As shown in Fig. 9(b), it’s worth noting that the GPUB-                        systems, with a RES microgrid connected at Bus-44 as shown in
+atchManager possesses the capability to associate models with                     Fig. 10(a). As shown in Fig. 10(b), the microgrid contains 100
+multiple GPUs or streams. Furthermore, the GPUBatchPlugin                         PV farms, one wind farm, and one battery energy storage station.
+can have an upgraded version to use an upper-level GPUBatch-                      Each PV farm contains 400 MLP-modelled 4 × 4 PV arrays and
+Manager constructed above multiple ECS objects to manage                          is 6400 × 100 = 640, 000 PV panels in total. The microgrid is
+multiple EMT simulation systems, further amplifying the scala-                    connected at Bus-13 with the 25 kV/138 kV transformer, which
+bility for GPU instancing. Meanwhile, the intrinsic parallel DAG                  is typical in the transmission grid.
+scheduler of Bevy ECS allows the GPU computations for the                            As shown in Fig. 10(c), due to the highly optimized EMT
+ANN models to be executed in parallel with other traditional                      simulation program, the computing of AC/DC components,
+EMT components whenever feasible. With the power of the                           matrix equations solving, and thread synchronization processes
+ECS framework and GPU instancing techniques, an elegant,                          only take 20% of overall computation time. The systems in
+adaptable, and highly scalable approach emerges for machine-                      GPUBatchSet take a minimal 300 μs regardless of the neural
+learning enhanced heterogeneous CPU-GPU massively parallel                        network type. This is not only due to heavy computing loads
+EMT simulation.                                                                   but also caused by much higher overhead to call GPU drivers
+                                                                                  and move data between CPU and GPU. Therefore, with fine-
+                                                                                  grained parallel scheduling, the final computing performance is
+                   IV. STUDY CASE AND RESULTS                                     determined by this GPU ANN computing process. This is why
+  The study case is based on a synthetic AC-DC network                            tensor components must be on CPU and batch computing must
+based on the IEEE 118-Bus and CIGRE B4 DCS-1 MMC                                  be applied to minimize the overhead.
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:12:47 UTC from IEEE Xplore. Restrictions apply.
+CHENG et al.: MACHINE-LEARNING-REINFORCED MASSIVELY PARALLEL TRANSIENT SIMULATION FOR LARGE-SCALE                                                          991
+
+
+
+
+Fig. 11. Simulation results of test scenarios: Scenario 1: (a) Active power output comparison between MLP and original PV model; (b) DC bus voltage of PV
+array inverter; (c) AC bus voltages of inverter. Scenario 2: (d) Rotor speed comparison between GRU and original DFIG wind farm model; (e) Active power output.
+(f) Phase-A AC bus current output.
+
+
+   To extend the scale and complexity of the simulation study                     steps between 20 to 50 μs, linear interpolation was used to reflect
+case, four IEEE-118 systems are connected together with MMCs                      this gradual change, indirectly verifying the model’s smoothness
+as shown in Fig. 10. This extends the scale to 2,560,000 machine-                 and robustness during this dynamic process. Due to the 4x4 PV
+learning modeled PV panels and can demonstrate the full power                     arrays being serial-connected and S1 and S16 being in separated
+of CPU-GPU massively parallel computing performance under                         columns, the power output should be approximately 50% of the
+the proposed data-oriented architecture. However, this is only                    rated power due to the output of serial-connected PV panels
+used to extend the system scale and evaluate the parallel perfor-                 being determined by the panel with the lowest output current.
+mance and the test results will be focused on the RES-related                        Results are shown in Fig. 11(a)–(c), which are measured
+scenarios.                                                                        from the inverter AC side of one PV farm. The PV array
+   As shown in Fig. 10(d), 8 CPU threads and 2 GPUs are                           achieved very high accuracy with rated irradiance inputs, which
+allocated to execute the test system cluster, which can be handled                only has a relative error of 0.2%. Under the partial shading
+solely by a computing node in the ComputeCanada Cedar clus-                       scenario, the active power of the MLP PV array model drops
+ter. Due to the advanced data-oriented design, this heterogeneous                 from 1.25 MW to 0.69 MW, which has a 4% relative error
+complex computational resource allocation and scheduling are                      compared to the original model output. The errors are acceptable
+achieved without difficulty.                                                      for simulation and they highlight the effects of the imbalanced
+   The test scenarios are mainly related to RES which is a                        dataset with a normal distribution and the MSE loss function.
+partial shading scenario for PV farms and a wind speed change                     In the dataset of 20 million training samples, the probability
+scenario for wind farms. The results will focus on RES model                      of sampling within the central rated area is 0.682716 ≈ 0.002,
+performance and related system voltage or current changes.                        resulting in approximately 40,000 samples, whereas the partial
+                                                                                  shading data point in the region has an approximate sampling
+A. Scenario 1: Partial Shading                                                    probability of 0.0212 ∗ 0.682714 ≈ 2e − 6, yielding only ap-
+   This scenario sets the rated irradiance of 1000 W/m2 for all PV                proximately 40 samples. Consequently, the relatively higher
+panels at the beginning of the simulation. At the 1 s of simulation               error in the latter case is expected and aligns with previous
+time, irradiance of PV panels S1 and S16 to 100 W/m2 and                          theoretical analyses in Section II-C. Despite increased errors in
+200 W/m2 , respectively. This data point is selected in a very                    the peripheral regions, the output waveform of the trained MLP
+sparsely sampled region and is not presented in the training data                 model shows no significant deviation and aligns well with the
+set, which is used to verify the generalizability of the ANN model                characteristics of the PV model during both transient and steady
+deployed in EMT simulation environments. The solar irradiance                     states. This demonstrates the model’s robust generalization
+decreased over 0.02 s, not instantaneously. With EMT simulation                   ability.
+
+
+
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:12:47 UTC from IEEE Xplore. Restrictions apply.
+992                                                                                  IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 40, NO. 1, JANUARY 2025
+
+
+
+                                                                                 Newton-Raphson approach by an order of magnitude. Notably,
+                                                                                 a speed up exceeding 100 is observed when the system scales
+                                                                                 beyond 1000k PV panels, equating to approximately 62.5k MLP
+                                                                                 PV array entities.
+                                                                                    For the extensive simulation involving 2560k PV panels, the
+                                                                                 serial CPU computation paradigm failed to deliver results within
+                                                                                 an acceptable timescale. In contrast, the machine learning-driven
+                                                                                 GPU methodology sustained its efficiency, culminating in an
+                                                                                 impressive 400x speed-up. This test was accomplished using a
+                                                                                 dual-GPU setup, as a single GPU is inadequate for managing
+                                                                                 such an expansive system.
+                                                                                    In the evaluated test system, the limited quantity of wind
+                                                                                 farms and energy storage obscured the potential benefits of GPU
+Fig. 12. (a) Execution time per simulation step vs. number of PV panels of
+traditional serial CPU nonlinear model and GPU accelerated model; (b) GPU        acceleration. The performance of GRU models was assessed in-
+speedup vs. number of PV panels; (c) Wind farm GRU model GPU speed up vs.        dependently, as shown in Fig. 12(c) and (d). Despite the inherent
+number of wind farms; (d) Battery array GRU model GPU speed up vs. number        nonlinearity in the physical models of wind farms and batteries,
+of battery arrays.
+                                                                                 they were implemented via decoupled, non-iterative approaches,
+                                                                                 resulting in a proportional increase in speed up. However, it is
+                                                                                 noteworthy that the GRU models required approximately two to
+   Given these findings, it is clear that merely using the dropout               three times the execution time compared to MLPs of equivalent
+strategies and the choice of loss function are insufficient to deal              system scale. This disparity led to a relatively lower speed-up in
+with complex modeling problems and more complex real-world                       Fig. 12(c) and (d).
+data sets. Future research should consider employing broader
+data science techniques, such as feature engineering, to pre-
+process datasets before training. This approach may be better                                                 V. CONCLUSION
+to enhance the efficiency and precision of the models used for                      This paper explores machine-learning-based ANN models
+simulation and inference.                                                        for RES components such as PV arrays, DFIG wind farms,
+                                                                                 and Lithium-ion battery groups, highlighting the significant ad-
+B. Scenario 2: Wind Speed Step Change                                            vancements in machine-learning research and their applications
+   This scenario sets the rated wind speed of 15 m/s for a wind                  in power system EMT simulations. An effective Monte Carlo
+farm at the beginning of the simulation. At the 5 s of simulation                simulation method based on traditional nonlinear EMT mod-
+time, the wind speed changes from 15 m/s to 10 m/s. The results,                 els has been proposed to address the challenges of generating
+as shown in Fig. 11(d)–(f), all exhibit low relative errors, each                training data for multivariate RES machine learning models.
+below 1%. This accuracy mainly comes from the wide range of                      A data-oriented, heterogeneous CPU-GPU ECS architecture is
+data used to train the model. The more complex GRU structure                     proposed to realize flexible and fast massively parallel process-
+also helps to increase the model accuracy for lumped DFIG                        ing of these RES models in large-scale AC/DC power grid sim-
+wind farm systems. Although the GRU models do have better                        ulation. The proposed method has shown promising results for
+accuracy for time-series data, the current GRU models use fixed                  large-scale simulation, achieving high computational accuracy,
+time steps due to the nature of the GRU structure, which limits                  decent GPU performance, and scalability across various system
+its usage compared to the MLP PV array model.                                    sizes.
+                                                                                    Despite its promising results, there is considerable scope
+                                                                                 for enhancement in the model’s complexity and computational
+C. Performance Evaluation                                                        optimization. To derive machine-learning-reinforced digital-
+   The performance is measured from a node in the Cedar cluster                  twin models for real-world RES stations, training data can be
+of ComputeCanada, which has two NVIDIA Tesla V100 GPUs.                          swapped with real-world measurements, which requires collab-
+Each Tesla V100 GPU has 5120 CUDA units.                                         oration with power generation enterprises for comprehensive
+   The performance evaluation of the MLP PV model is per-                        on-site research. Moreover, although the model maintains the
+formed on the test synthetic system. In Fig. 12(a) and (b), the                  generalizability, the test results on imbalanced datasets indi-
+performance metrics between the CPU-based Newton-Raphson                         cate that there is substantial room for improvement in both
+PV array simulation and the GPU-accelerated machine learn-                       the efficiency and accuracy of the machine learning process.
+ing alternative are compared. A spectrum of PV panel counts                      This can be improved with state aggregation techniques, dictio-
+was evaluated to show the distinction between the traditional                    nary learning, and other advanced feature extraction methods
+serial computing approach and the massively parallel GPU-                        which might be also useful to process real-world data sets
+based methodology. The conventional CPU-bound implemen-                          more efficiently. Future work will focus on incorporating real-
+tation retains its advantage up to the 16k PV panel threshold.                   world measurements and enhancing the efficiency of large-scale
+Beyond this point, the GPU-facilitated solution demonstrates a                   RES model training with more sophisticated machine learning
+consistently low execution time, outperforming the CPU-based                     technologies.
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:12:47 UTC from IEEE Xplore. Restrictions apply.
+CHENG et al.: MACHINE-LEARNING-REINFORCED MASSIVELY PARALLEL TRANSIENT SIMULATION FOR LARGE-SCALE                                                                   993
+
+
+
+   The potential for practical application of this research is sub-                   [19] S. Cao, V. Dinavahi, and N. Lin, “Machine learning based transient
+stantial. The RES machine learning models and the data-oriented                            stability emulation and dynamic system equivalencing of large-scale AC-
+                                                                                           DC grids for faster-than-real-time digital twin,” IEEE Access, vol. 10,
+architecture are not only applicable for EMT simulations but                               pp. 112975–112988, 2022.
+also useful for transient stability simulations. It is hoped that                     [20] M. Eduard, M. Singh, and V. Gevorgian, “PSCAD modules represent-
+this work will serve as a foundation for future studies, con-                              ing PV generator,” Nat. Renewable Energy Lab. (NREL) Tech. Rep.
+                                                                                           NREL/TP-5500-58189, 2013. [Online]. Available: https://www.nrel.gov/
+tinuing to push the boundaries of power system simulation                                  docs/fy13osti/58189.pdf
+methods.                                                                              [21] N. Lin and V. Dinavahi, “Exact nonlinear micromodeling for fine-grained
+                                                                                           parallel EMT simulation of MTDC grid interaction with wind farm,” IEEE
+                                                                                           Trans. Ind. Electron., vol. 66, no. 8, pp. 6427–6436, Aug. 2019.
+                                    REFERENCES                                        [22] V. Dinavahi and N. Lin, Parallel Dynamic and Transient Simulation of
+                                                                                           Large-Scale Power Systems. Berlin, Germany: Springer Nature, 2022.
+ [1] X. Liang, “Emerging power quality challenges due to integration of renew-        [23] Bevy Engine Contributors, “Bevy: A refreshingly simple data-driven game
+     able energy sources,” IEEE Trans. Ind. Appl., vol. 53, no. 2, pp. 855–866,            engine built in Rust,” 2023. Accessed: Nov. 20, 2023. [Online]. Available:
+     Mar./Apr. 2017.                                                                       https://bevyengine.org/
+ [2] S.-K. Kim, J.-H. Jeon, C.-H. Cho, E.-S. Kim, and J.-B. Ahn, “Modeling and        [24] T. Cheng, T. Duan, and V. Dinavahi, “ECS-Grid: Data-oriented real-time
+     simulation of a grid-connected PV generation system for electromagnetic               simulation platform for cyber-physical power systems,” IEEE Trans. Ind.
+     transient analysis,” Sol. Energy, vol. 83, no. 5, pp. 664–678, 2009.                  Informat., vol. 19, no. 11, pp. 11128–11138, Nov. 2023.
+ [3] J. Marchand, A. Shetgaonkar, J. L. Rueda Torres, A. Lekic, and P. Palen-
+     sky, “EMT real-time simulation model of a 2 GW offshore renewable
+     energy hub integrating electrolysers,” Energies, vol. 14, no. 24, 2021,
+     Art. no. 8547. [Online]. Available: https://www.mdpi.com/1996-1073/14/
+     24/8547
+ [4] UN Climate Change Conference, “100MW solar PV power plant at
+     quaid-e-azam solar park, lal sohanra, cholistan, bahawalpur, Pakistan,”                                    Tianshi Cheng ( Member, IEEE) received the B.Eng.
+     2018. Accessed: Jun. 11, 2023. [Online]. Available: https://cdm.unfccc.                                    degree in electrical engineering and automation from
+     int/Projects/DB/RWTUV1493361547.6/view                                                                     Southeast University, Nanjing, China, in 2017. He is
+ [5] H. Oufettoul, N. Lamdihine, S. Motahhir, N. Lamrini, I. A. Abdelmoula,                                     currently working toward the Ph.D. degree in elec-
+     and G. Aniba, “Comparative performance analysis of PV module positions                                     trical and computer engineering with the University
+     in a solar pv array under partial shading conditions,” IEEE Access, vol. 11,                               of Alberta, Edmonton, AB, Canada. From 2017 to
+     pp. 12176–12194, 2023.                                                                                     2018, he was a Substation Automation Engineer with
+ [6] A. Djalab, N. Bessous, M. M. Rezaoui, and I. Merzouk, “Study of the                                        NARI Group Corporation (State Grid Electric Power
+     effects of partial shading on PV array,” in Proc. Int. Conf. Commun. Elect.                                Research Institute), China. His research interests
+     Eng., 2018, pp. 1–5.                                                                                       include electromagnetic transient simulation, tran-
+ [7] A. T. Elsayed, C. R. Lashway, and O. A. Mohammed, “Advanced battery                                        sient stability analysis, real-time simulation, parallel
+     management and diagnostic system for smart grid infrastructure,” IEEE                                      processing, microgrids, and power electronics.
+     Tran. Smart Grid, vol. 7, no. 2, pp. 897–905, Mar. 2016.
+ [8] N. Lin, S. Cao, and V. Dinavahi, “Comprehensive modeling of large
+     photovoltaic systems for heterogeneous parallel transient simulation of
+     integrated AC/DC grid,” IEEE Trans. Energy Convers., vol. 35, no. 2,
+     pp. 917–927, Jun. 2020.
+ [9] N. Lin, S. Cao, and V. Dinavahi, “Massively parallel modeling of battery
+     energy storage systems for AC/DC grid high-performance transient simu-
+     lation,” IEEE Trans. Power Syst., vol. 38, no. 3, pp. 2736–2747, May 2023.                                 Ruogu Chen (Graduate Student Member, IEEE) re-
+[10] A. Burkov, The Hundred-page Machine Learning Book. Quebec City, QC,                                        ceived the B.Eng. degree in electrical engineering
+     Canada: Andriy Burkov, 2019.                                                                               from the City University of Hong Kong, Hong Kong,
+[11] K. Bi et al., “Accurate medium-range global weather forecasting with 3D                                    in 2022. He is currently working toward the Ph.D.
+     neural networks,” Nature, vol. 619, pp. 533–538, 2023.                                                     degree in electrical and computer engineering with
+[12] H. Long, R. Geng, W. Sheng, H. Hui, R. Li, and W. Gu, “Small-sample                                        the University of Alberta, Edmonton, AB, Canada.
+     solar power interval prediction based on instance-based transfer learning,”                                His research interests include real-time simulation,
+     IEEE Trans. Ind. Appl., vol. 59, no. 5, pp. 5283–5292, Sep./Oct. 2023.                                     machine learning, digital circuit design, and field
+[13] M. Cui, F. Li, H. Cui, S. Bu, and D. Shi, “Data-driven joint voltage stability                             programmable gate arrays.
+     assessment considering load uncertainty: A variational bayes inference
+     integrated with multi-CNNs,” IEEE Trans. Power Syst., vol. 37, no. 3,
+     pp. 1904–1915, May 2022.
+[14] Z. Yi et al., “An improved two-stage deep reinforcement learning approach
+     for regulation service disaggregation in a virtual power plant,” IEEE Trans.
+     Smart Grid, vol. 13, no. 4, pp. 2844–2858, Jul. 2022.
+[15] T. Zhao, J. Wang, X. Lu, and Y. Du, “Neural lyapunov control for power
+     system transient stability: A deep learning-based approach,” IEEE Trans.                                   Ning Lin (Senior Member, IEEE) received the B.Sc.
+     Power Syst., vol. 37, no. 2, pp. 955–966, Mar. 2022.                                                       degree in applied electronics engineering and the
+[16] T. Zhao, M. Yue, and J. Wang, “Structure-informed graph learning of                                        M.Sc. degree in electrical engineering from Zhejiang
+     networked dependencies for online prediction of power system transient                                     University, Hangzhou, China, in 2008 and 2011,
+     dynamics,” IEEE Trans. Power Syst., vol. 37, no. 6, pp. 4885–4895,                                         respectively, and the Ph.D. degree in energy sys-
+     Nov. 2022.                                                                                                 tems from the University of Alberta, Edmonton, AB,
+[17] S. Zhang, T. Liang, T. Cheng, and V. Dinavahi, “Machine learning based                                     Canada, in 2018. From 2011 to 2014, he was an En-
+     modeling for real-time inferencer-in-the-loop hardware emulation of high-                                  gineer in substation automation, FACTS, and HVdc
+     speed rail microgrid,” IEEE Trans. Emerg. Sel. Topics Power Electron.,                                     control and protection. He is currently a Senior Power
+     vol. 3, no. 4, pp. 920–932, Oct. 2022.                                                                     Systems Consultant with Powertech Labs Inc. His re-
+[18] S. Zhang, T. Liang, and V. Dinavahi, “Hybrid ML-EMT-based digital                                          search interests include ac/dc grids, electromagnetic
+     twin for device-level HIL real-time emulation of ship-board microgrid            transient simulation, hardware emulation, power system stability analysis, and
+     on FPGA,” IEEE J. Emerg. Sel. Top. Ind. Electron., vol. 4, no. 4,                heterogeneous high-performance computing of power electronics, and power
+     pp. 1265–1277, Oct. 2023.                                                        systems on GPU.
+
+
+
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:12:47 UTC from IEEE Xplore. Restrictions apply.
+994                                                                              IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 40, NO. 1, JANUARY 2025
+
+
+
+                     Tian Liang (Member, IEEE) received the B.Eng.                                        Venkata Dinavahi (Fellow, IEEE) received the
+                     degree in electrical engineering from Nanjing Nor-                                   B.Eng. degree in electrical engineering from the
+                     mal University, Nanjing, China, in 2011, the M.Eng.                                  Visvesvaraya National Institute of Technology,
+                     degree from Tsinghua University, Beijing, China, in                                  Nagpur, India, the M.Tech. degree in electrical engi-
+                     2014, and the Ph.D. degree in energy systems from                                    neering from Indian Institute of Technology Kanpur,
+                     the University of Alberta, Edmonton, AB, Canada, in                                  Kanpur, India, and the Ph.D. degree in electrical and
+                     2020. He was with RTDS Technologies Inc., Win-                                       computer engineering from the University of Toronto,
+                     nipeg, MB, Canada. His research interests include                                    ON, Canada. He is currently a Professor with the
+                     real-time simulation of power systems, power elec-                                   Department of Electrical and Computer Engineer-
+                     tronics, artificial intelligence, field-programmable                                 ing, University of Alberta, Edmonton, AB, Canada.
+                     gate arrays, and system on chip.                                                     His research interests include real-time simulation of
+                                                                             power systems and power electronic systems, electromagnetic transients, device-
+                                                                             level modeling, artificial intelligence, machine learning, large-scale systems, and
+                                                                             parallel and distributed computing. He is a Fellow of the Engineering Institute
+                                                                             of Canada and the Asia-Pacific Artificial Intelligence Association.
+
+
+
+
+      Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:12:47 UTC from IEEE Xplore. Restrictions apply.
+
