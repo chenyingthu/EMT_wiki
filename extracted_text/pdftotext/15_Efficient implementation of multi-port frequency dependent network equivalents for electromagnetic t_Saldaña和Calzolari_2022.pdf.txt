@@ -1,0 +1,552 @@
+                                                     Electric Power Systems Research 212 (2022) 108432
+
+
+                                                         Contents lists available at ScienceDirect
+
+
+                                                Electric Power Systems Research
+                                                  journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Efficient Implementation of Multi-Port Frequency Dependent Network
+Equivalents for Electromagnetic Transient Studies using Norton
+Equivalent Circuits
+Claudio Saldaña *, Graciela Calzolari
+Consulting Engineer, Montevideo, Uruguay
+
+
+
+
+A R T I C L E I N F O                            A B S T R A C T
+
+Keywords:                                        Power system electromagnetic transient studies require that a small part of the electrical network be modelled in
+EMT                                              detail. The rest of the system is represented by a network equivalent taking into account the frequency depen­
+FDNE                                             dence of the system components (FDNE). With the purpose of getting a FDNE, this paper presents a procedure for
+Norton equivalent
+                                                 including high-order rational models in EMTP-type simulation programs based on Norton equivalent circuits.
+Rational models
+                                                 This approach has the advantage of using few conductance branches compared to those obtained by fitting any
+                                                 particular circuit structure.
+                                                    In relation to the work carried out, this paper presents the following issues: a) a procedure for calculating the
+                                                 admittance matrix of the rest of the system as a function of frequency b) this matrix is synthesized in the form of
+                                                 multi-terminal π-equivalent circuits, whose branches are fitted by rational functions in the pole-residue form c)
+                                                 each partial fraction is converted into a differential equation in time domain. The trapezoidal rule of integration
+                                                 is applied to that differential equation, resulting in a conductance in parallel with a history term current source.
+                                                 Considering all the partial fractions corresponding to a branch, a Norton equivalent circuit is obtained for that
+                                                 branch.
+                                                    This paper also shows how the procedure is implemented in three different ways in an EMTP-type program,
+                                                 along with the validation of such approach through simulations in an electric utility 500 kV transmission system.
+
+
+
+
+1. Introduction                                                                         With the purpose of getting a multi-port FDNE, this paper presents a
+                                                                                   procedure for including high-order rational models in EMTP-type
+    The size and complexity of current power systems continue to grow              simulation programs based on Norton equivalent circuits. This
+due to the deployment of renewable energy sources and the increased                approach has the advantage of using few conductance branches
+interconnections using high voltage direct current (HVDC) links.                   compared to those based on the fitting of any particular circuit structure.
+Because of this, Electromagnetic Transient (EMT) simulation studies                It is important to note that the procedure followed does not involve the
+demand a large amount of data and require long computer processing                 special handling of complex poles.
+times.                                                                                  To validate the procedure, a few switching transient events are
+    In order to save time and effort, it is common practice in EMT studies         simulated in an electric utility 500 kV transmission system. The results
+to model in detail a selected small area of the power system under study,          obtained with a complete power system representation, along with the
+denominated “study area”. The representation of the rest of the system,            FDNE implementations, are compared.
+termed “external area”, is performed using a frequency dependent                        The processing times of the different implementations are also
+network equivalent (FDNE).                                                         compared.
+    The FDNE should be able to replicate the responses of the external
+area to the changes in the study area with reasonable accuracy, but
+demanding much less computation.
+
+
+
+ Submitted to the 22nd Power Systems Computation Conference (PSCC 2022).
+ * Corresponding author.
+   E-mail addresses: claugra07@gmail.com (C. Saldaña), gracielacc99@gmail.com (G. Calzolari).
+
+https://doi.org/10.1016/j.epsr.2022.108432
+Received 1 October 2021; Received in revised form 7 April 2022; Accepted 2 July 2022
+Available online 18 July 2022
+0378-7796/© 2022 Elsevier B.V. All rights reserved.
+C. Saldaña and G. Calzolari                                                                                     Electric Power Systems Research 212 (2022) 108432
+
+
+2. External Area Admittance Matrix                                               a) an input data file for the JMARTI SETUP routine should be created.
+                                                                                    This file contains the geometry of the line and conductor data, three
+    The first step for getting the FDNE is to calculate the frequency               lines of frequency data and one line specifying the output file name.
+dependent admittance matrix Y(ω) of the external area, as seen from its
+boundary. In the case of a three-phase bus bar, the admittance matrix Y              The first line of the frequency data that bears parameter FREQTRAN,
+(ω) is a 3 × 3 complex matrix whose elements are functions of frequency.         should be replaced by the following line: $INSERT, LINE1.INS. The
+In this work, the frequency domain characteristic of the external area is        $INSERT is an EMTP-ATP command that inserts the LINE1.INS file into
+obtained by frequency scans.                                                     the input data file. The LINE1.INS file contains the value of the
+    The Harmonic Frequency Scan (HFS) routine of the EMTP-ATP                    parameter FREQTRAN as required by the frequency scan.
+program [1,2] is utilized. This routine performs a sequence of phasor                The line specifying the output file name should be replaced by the
+solutions for sinusoidal voltage/current sources of various frequencies,         following line: $INSERT, LINE2.INS, where LINE2.INS is an ASCII file
+amplitudes and angles specified by the user.                                     that bears the name of the output file. In this way the name of the output
+    As it is well known EMTP-ATP is a free licensed program widely used          file is changed for each frequency of the frequency sweep.
+by the researches who investigate in the electromagnetic transient area.
+    To perform frequency scans, it is necessary to have the frequency            a) A Fortran 2003 program was written with the purpose of generating
+dependent model of each component of the external area. The models                  LINE1.INS and LINE2.INS files and calling the JMARTI SETUP
+used are presented below.                                                           routine for each frequency. The program execution produces a set of
+                                                                                    output files, which will be used by the HFS routine.
+2.1. Generator, Transformer and Load                                             b) The program execution produces a set of output files, which will be
+                                                                                    used by the HFS routine.
+    Generator and transformer resistances have a significant frequency
+dependence. The variation of their time constants (L/R) with frequency           2.3. Non-linearities in the external area
+is depicted in [3]. For the subtransient impedance of the generator, this
+variation is fitted by the electrical circuit shown in Fig. 1.                      If the behavior of a nonlinear component of the external area must be
+    The leakage impedance variation of typical transformers is fitted in         taken into account, it should not be included in the FDNE.
+the same way as for generators. As an example, Fig. 2 shows the fre­
+quency dependent models for a generator and its step-up transformer.             2.4. Frequency sweep of the external area
+    The load model significantly affects Y(ω) matrix. In order to reduce
+its influence, Cigre Technical Brochure [4] advises that the load be                 The admittance matrix Y(ω) of the external area is calculated column
+modelled one or two voltage levels downstream with respect to the                by column in phase coordinates due to the asymmetries of the trans­
+boundary bus voltage level.                                                      mission lines. This is carried out executing the HFS routine as many
+    The loads are modelled by constant series R-L circuits per phase,            times as there are columns.
+IEEE Model 1.                                                                        In the HFS input data file the user should model all the sections of
+                                                                                 each transmission line. This is done by including the names of the
+2.2. Transmission Line Procedure                                                 JMARTI SETUP routine output files corresponding to all the sections and
+                                                                                 to the frequency at which the phasor solution is being executed as well.
+    Uruguay’s 500 kV transmission system is radial and has long trans­           Each output file is included using the $INSERT command of the EMTP-
+mission lines, which are transposed. It is important to remark that while        ATP.
+a line may be reasonably balanced at power frequency, there may be                   Also, in the HFS input data file the user should include single-phase
+enough unbalance at higher frequencies [2].                                      voltage sources of 1 V amplitude whose frequencies varies according to
+    Each section of a transposition cycle is modeled using the JMARTI            the values of the frequency sweep. For each frequency, the voltage
+frequency-dependent line model. The JMARTI SETUP routine of the                  source is applied to one phase of the boundary bus and the remaining
+EMTP-ATP program generates the JMARTI model. The HFS routine                     phases are shorted to ground. This is repeated for the remaining phases
+converts the JMARTI model into an equivalent π circuit for the succes­           of the boundary bus. In this way, each column of the Y(ω) is obtained as
+sive phasor solutions.                                                           a function of frequency.
+    It is important to point out that the JMARTI model utilizes a real and           A Fortran 2003 program was written with the objective of generating
+constant modal transformation matrix calculated at a particular fre­             the ASCII files with the voltage sources mentioned above. These files
+quency. This particular frequency is specified as the parameter FREQ­            should be included in the HFS input data file with the $INCLUDE
+TRAN of the JMARTI SETUP routine. Indeed, the modal matrix elements              command of the EMTP-ATP.
+are complex and frequency-dependent, therefore, this approximation
+will introduce a few errors.                                                     3. Admittance Matrix Fitting
+    In order to avoid the errors mentioned above, an approach was
+developed by the authors, based on the following idea: to vary the                   Each element of Y(ω) is approximated by a rational function in a
+parameter FREQTRAN in such a way that it takes all the frequency                 pole-residue form using the Matrix Fitting Toolbox package [5–9]. The
+values corresponding to the frequency sweep. For each value of the               routines VFdriver.m and RPdriver.m were used to obtain the rational
+parameter FREQTRAN the JMARTI SETUP routine generates a JMARTI                   approximations and to guarantee the passivity of the fitted matrix
+model with a modal transformation matrix calculated at that frequency.           Yfit(ω). The admittance matrix of the external area is symmetric, thus it
+    The approach mentioned above consists of two steps:                          can be realized in the form of multi-terminal π-equivalent circuits, as
+                                                                                 shown in Fig. 3 for the case of a three-phase boundary bus.
+                                                                                     The admittances of Fig. 3 are derived using (1).
+                                                                                           ∑
+                                                                                           N
+                                                                                 yii,π =         Yij,fit             yij,π = − Yij,fit                        (1)
+                                                                                           j=1
+
+
+                                                                                 where N is the number of phases of the boundary bus. Since Yij,fit is in the
+                  Fig. 1. Subtransient impedance representation                  pole-residue form then (1) also leads to rational functions in the pole-
+
+                                                                             2
+C. Saldaña and G. Calzolari                                                                                                    Electric Power Systems Research 212 (2022) 108432
+
+
+
+
+                                                           Fig. 2. Generator and transformer representation
+
+
+                                                                                                    ai
+                                                                                      Ii (s) =          V(s)                                                                 (3)
+                                                                                                 s − ci
+
+                                                                                      dIi (t)
+                                                                                              = ci Ii (t) + ai V(t)                                                          (4)
+                                                                                        dt
+                                                                                          Applying the trapezoidal rule in (4) results:
+                                                                                       Ii (t) = histi (t − Δt) + Gi V(t)                                                     (5)
+
+                                                                                      where histi (t-Δt) is the history term current source and Gi is the asso­
+                                                                                      ciated parallel conductance, which are calculated as:
+
+                    Fig. 3. Multi-terminal π-equivalent circuits                           Δt                                  (1 + hci )Ii (t − Δt) + hai V(t − Δt)
+                                                                                      h=      ;            histi (t − Δt) =
+                                                                                           2                                                    1 − hci
+residue form for yii,π and yij,π.                                                              hai
+    Matrix Fitting Toolbox creates a SER structure with the information               Gi =
+                                                                                             1 − hci
+of the fitted matrix Yfit(ω). A routine which uses the SER structure was
+written to obtain the rational functions of the branches of the π circuits.                For the case of a pair of complex conjugate poles, the two partial
+This routine generates as many output files as there are branches, each               fractions can be arranged as follows:
+file containing the total real and complex poles as well as the corre­                         (                  )      (           )
+                                                                                                   aj       a∗j              Ms + N
+sponding residues.                                                                    Ij (s) =         +        ∗
+                                                                                                                   V(s) = 2            V(s)              (6)
+                                                                                                s − cj   s − cj            s + Ps + Q
+4. Norton Equivalent Circuits
+                                                                                      where: aj = m + jn and cj = p +jq; *denotes conjugate; M=2m; N=-2mp-
+    Reference [10] presents a procedure that converts each partial                    2nq; P=-2p; Q= p2+q2
+fraction of the rational approximation of any branch of the π circuits in                In the time domain (6) becomes:
+Laplace domain into a differential equation in time domain. The trape­                d2 Ij (t)    dIj (t)               dV(t)
+zoidal rule of integration is applied to that differential equation, leading            dt2
+                                                                                                +P
+                                                                                                     dt
+                                                                                                           + QIj (t) = M
+                                                                                                                          dt
+                                                                                                                               + NV(t)
+to a conductance in parallel with a history term current source.
+Considering all the partial fractions corresponding to a branch, a Norton                This second order differential equation can be converted to a first-
+equivalent circuit is obtained for that branch. This procedure has the                order system by introducing new variables:
+following advantages: a) no special handling of complex poles is                                                         dIj (t)
+necessary, therefore avoiding a more complicated implementation and                   Ij (t) = Ij (t);        Xj (t) =           − MV(t)                                     (7)
+                                                                                                                           dt
+some loss of accuracy b) a single equivalent conductance for each branch
+of the π circuits is computed. This means less processing time when                   dIj (t)
+                                                                                              = Xj (t) + MV(t)                                                               (8)
+compared to those approaches based on the fitting of any particular                     dt
+circuit structure with many parallel branches.
+                                                                                      dXj (t)
+    The main results presented in [10] are reproduced below. The rela­                        = − QIj (t) − PXj (t) + (N − MP)V(t)                                           (9)
+tionship between current I(s) and voltage V(s) of any branch of the π                   dt
+circuits can be written in Laplace domain as:                                             Applying the trapezoidal rule of integration in (8) and (9) results:
+       (             )
+          ∑ ak                                                                        Ij (t) = histj (t − Δt) + Gj V(t)                                                    (10)
+I(s) =                 V(s)                                              (2)
+            k
+              s − ck
+                                                                                      Xj (t) = β1 Xj (t − Δt)
+where: ak is the residue and ck is its associated pole, which are either real                     + β2 Ij (t − Δt)
+quantities or come in complex conjugate pairs.                                                    + β3 V(t − Δt) + β2 Ij (t)
+   For the case of a real pole, (3) and (4) are the i-th partial fraction in
+                                                                                                  + β3 V(t)
+the frequency and time domain.
+                                                                                                                                                                           (11)
+
+
+                                                                                  3
+C. Saldaña and G. Calzolari                                                                                               Electric Power Systems Research 212 (2022) 108432
+
+
+where histj (t-Δt) is the history term current source and Gj is the asso­                      Two procedures should be defined for each model: a) the initializa­
+ciated parallel conductance, which are calculated as:                                      tion procedure (INIT) which determines the initial conditions of the
+                                                                                           model. This procedure is executed only once. b) the execution procedure
+histj (t − Δt) =
+                    (1 + hβ2 )Ij (t − Δt) + h(1 + β1 )Xj (t − Δt)                          (EXEC) which contains the programming of the model. This procedure is
+                                       1 − hβ2                                             executed at every time step.
+                      h(M + β3 )V(t − Δt)                                                      A generic model of any branch of the π circuits is written in MODELS
+                   +
+                             1 − hβ2                                                       for the calculation of the history term current source based on the
+                                                                                           equations of Section 4.
+        h(M + β3 )                                                                             The input data of the generic model are the total number of real and
+Gj =
+         1 − hβ2                                                                           complex poles and the values of the corresponding poles and residues.
+                                                                                           The output of the generic model is the history term current source,
+β1 =
+       1 − hP
+             ;           β2 =
+                                 − hQ
+                                       ;       β3 =
+                                                      h(N − MP)                            modelled as a type-60 source in the data case of the EMTP-ATP.
+       1 + hP                   1 + hP                  1 + hP                                 For each branch of the π circuits, an instance of the generic model is
+    The Norton equivalent circuit for any branch of the π circuits is ob­                  created using the USE statement of the MODELS language. This state­
+tained adding all equations (5) for all real poles on the one hand and all                 ment supplies the input data to the INIT procedure. After this initiali­
+eqs. (10) and (11) for all complex poles on the other hand. As a result, an                zation, the EXEC procedure is run at each time step in order to update
+equivalent equation to (2) in time domain is obtained:                                     the history term current source.
+                                                                                               Due to the high number of poles arising from the fitting process, a
+I(t) = histT (t − Δt) + GT V(t)                                                 (12)       Fortran 2003 program was written in order to generate an ASCII file
+                                                                                           containing the programming of the generic model and its multiple in­
+where:                                                                                     stances, written in MODELS language.
+                   ∑                 ∑
+histT (t − Δt) =    histi (t − Δt) +  histj (t − Δt)                                           The program also calculates the conductance of each branch of the π
+                     i                     j                                               circuits and writes them to another ASCII file that fullfils the EMTP-ATP
+                                                                                           formats.
+       (          )
+        ∑     ∑                                                                                Both files are included in the data case of the EMTP-ATP using the
+GT =     Gi +  Gj                                                                          $INCLUDE command.
+           i             j
+
+
+   It is important to remark that this procedure requires a fixed time                     5.2. Type-69 device in TACS
+step length.
+   For the case of a three-phase boundary bus the FDNE is shown in                             TACS is a part of the EMTP-ATP program, designed for transient
+Fig. 4. The power frequency Norton current sources                                         analysis of control systems. TACS has the Type-69 device that calls the
+   IAN, IBN, ICN represent the steady state operation of the external area.                DEVT69.f routine in which the user can write his own model in Fortran
+                                                                                           or C Language. After the user has finished the programming of his own
+5. Norton Equivalent Implementation                                                        Type-69 device he must compile it with the EMTP-ATP, to create a new
+                                                                                           executable version of the program. Reference [12] describes the
+   There is no built-in model of a frequency-dependent network                             different steps that must be followed in order to compile the EMTP-ATP
+equivalent in the EMTP-ATP program. So, the procedure described in                         program.
+Section 4 is implemented using three options of the EMTP-ATP program,                          The procedure of Section 4 for each branch of the π circuits is
+in order to create “user models”. These options are: Local model and                       implemented utilizing the Type-69 device.
+Foreign submodel of the MODELS, Type-69 Device of the TACS.                                    Due to the high number of poles arising from the fitting process, a
+                                                                                           Fortran 2003 program was written with the aim of generating an ASCII
+5.1. Local model in MODELS                                                                 file. This file contains the values of the real and complex poles, and their
+                                                                                           residues for each branch of the π circuits. This file is included in the
+    MODELS of the EMTP-ATP program is a general technical descrip­                         DEVT69.f routine. The program also calculates the conductance of each
+tion language targeted to time domain simulations [11]. MODELS allows                      branch of the π circuits and writes them to another ASCII file which is
+the user to develop two kinds of models: control-type components and                       included in the data case of the EMTP-ATP with the $INCLUDE
+circuit-type components.                                                                   command.
+
+
+
+
+                                                                    Fig. 4. Three-phase boundary bus - FDNE
+
+                                                                                       4
+C. Saldaña and G. Calzolari                                                                                      Electric Power Systems Research 212 (2022) 108432
+
+
+    The calculation of all history term current sources corresponding to          execution routine.
+all branches of the π circuits is programmed in Fortran 77 and is per­                Fig. 6 shows a part of the “calling model” in the MODELS section of
+formed in the DEVT69.f routine. These current sources are the outputs to          the data case with the declaration of a foreign submodel.
+TACS and are modelled as a type-60 source in the data case of the EMTP-               The USE statement of the "calling model" provides the values of the
+ATP.                                                                              "ixdata" and the values of the "ixin".
+    The Type-69 device works as a Fortran Function, therefore it returns              In the EXEC procedure of the "calling model", the foreign submodel is
+only one current source to TACS at each time step. However, the                   executed and its output variables are stored in "ixout". The "ixout" values
+implementation must give all the current sources to TACS. In order to             are loaded as output variables of the “calling model”. Therefore, these
+overcome this difficulty, the programming includes an additional input            output variables are the current source outputs to MODELS. These cur­
+argument to the Type-69 device that allows it to be called, in the same           rent sources are modelled as a type-60 source in the data case of the
+time step, as many times as there are outputs.                                    EMTP-ATP.
+    For a more efficient implementation, the programming is done in
+such a way that in the first call to the device 69 all the history term           6. Case Studies
+current sources are calculated, and their values are stored for the
+remaining calls to the device in the same time step.                                   The procedure described in Section 4 is applied to a part of the 500
+    Figure 5 shows a part of the TACS section in the data case with one           kV network of Uruguay shown in Fig. 7. The network behind BUS5 bus is
+call to the Type-69 device for the case of three-phase boundary bus. The          considered as an external area, this constitutes the most severe test for
+name of the device is XILIN1 followed by its input arguments: time-step,          the FDNE implementation. where: (1) Thevenin equivalent (2) bank of
+simulation time, names of the nodal voltages of the bus, and finally the          three single-phase transformers, 150/150/60 MVA and 500/150/31.5
+additional input argument named CLAVEK. The user´s name of one of the             kV (3) hydroelectric power plant with three generators, 111 MVA each
+output current sources is I11.                                                    and three step-up transformers, 111 MVA and 15/500 kV each (4) bank
+                                                                                  of three single-phase autotransformers, 200/200/60 MVA and 500/
+5.3. Foreign submodel in MODELS                                                   150/31.5 kV (5) thermal power plant with six aeroderivative gas turbine
+                                                                                  units, 63.5 MVA and 11.5 kV each, six step-up transformers, 64 MVA and
+    In order to implement the procedure of Section 4 for each branch of           11.5/150 kV each (6) two banks of three single-phase autotransformers,
+the π circuits, a foreign submodel option of the MODELS is used.                  300/300/100 MVA and 500/150/31.5 kV each (7) two banks of three
+    A foreign submodel is a separate program written in Fortran or C              single-phase transformers, 425/425/140 MVA and 500/150/31.5 kV
+language and accessed through the programming interface FGNMOD.f                  each, two banks of three single-phase autotransformers, 250/250/90
+of MODELS. The declaration of the foreign submodel must be included               MVA and 500/150/31.5 kV each.
+in another model (the “calling model”) into the MODELS section.                        The Vector Fitting process is applied to the admittance matrix Y(ω) of
+    In the FGNMOD.f interface the user must program his model by                  the external area, seen from BUS5 bus. All the elements of the rational
+fulfilling the following requirements: a) the calling arguments are four          approximation Yfit(ω) have 4 real poles and 102 complex poles in the
+vectors: ixdata, ixin, ixout, ixvar, which contain the user model’s pa­           frequency range [5.0, 5000.] Hz.
+rameters, inputs, outputs and stored variables b) the user model must                  The matrix fitting process gives a very accurate approximation of the
+have two separate routines, one for the initialization and one for the            Y(ω). As an example, Fig. 8 shows the magnitudes of the Y11(ω) and Y11
+execution of the model. The initialization routine is executed only once          fit(ω) elements. In this case, the maximum absolute error is equal to
+and the execution routine is run at every time step.                              8.805 × 10− 5 mho.
+    After the user has finished the programming of his own foreign                     This section also shows how the admittance matrix depends on the
+submodel, he must compile it with the EMTP-ATP, in order to create a              transmission line model used. A few simulations of electromagnetic
+new executable version of the program [12].                                       transients due to line and transformer energization are presented as
+    Due to the high number of poles arising from the fitting process, a           well. The EMT simulations are carried out considering a detailed
+Fortran 2003 program was written with the aim of generating an ASCII              modelling of the entire sys-tem of Fig. 7 and the three different imple­
+file. This file contains the values of the real and complex poles and their       mentations of Section 5.
+residues for each branch of the π circuits. Such file is included in the
+initialization routine of the foreign submodel. The program also calcu­           6.1. Admittance Matrix Comparison
+lates the conductance of each branch of the π circuits and writes them to
+another ASCII file which is included in the data case of the EMTP-ATP                 The transmission lines have a predominant effect in the frequency
+with the $INCLUDE command.                                                        response of the admittance matrix. As a result, a comparison of the ef­
+    The calculation of all history term current sources corresponding to          fects on it due to the modelling of the transmission lines as continuously
+all branches of the π circuits is programmed in Fortran 77 in the                 transposed and discretely transposed is done. Figs. 9 and 10 show the
+
+
+
+
+                                                         Fig. 5. A call in TACS to Type-69 device
+
+                                                                              5
+C. Saldaña and G. Calzolari                                                                                     Electric Power Systems Research 212 (2022) 108432
+
+
+
+
+                                                Fig. 6. Declaration of a foreign submodel in MODELS section
+
+
+
+
+                                                                Fig. 7. System under study
+
+
+
+
+                                                           Fig. 8. Comparison of Y11 and Y11 fit
+
+
+magnitudes of one diagonal element and one off diagonal element of Y              symetrical components.
+(ω) for both types of line modelling, in red color - discretely transposed,
+and in blue color - continuously transposed. Based on the results pre­            6.2. Transmission Line Energization
+sented, the conclusion is that full symmetry between the phases leads to
+an inaccurate frequency response.                                                     In this case, the “network equipment” of Fig. 7 is a transmission line
+    Fig. 11 and 12 show the magnitudes of all diagonal elements and all           of 500 kV voltage rating, discretely transposed, length equal to 123.9 km
+off diagonal elements of Y(ω) for the discretely transposed case. From            and it has a shunt reactor bank of 50 MVAr at the receiving end.
+these results, it can be concluded that the admittance matrix should be               The energization of this line is simulated with the receiving end
+calculated column by column in phase coordinates instead of using                 open. The closing times of the circuit breaker poles correspond to the
+
+                                                                              6
+C. Saldaña and G. Calzolari                                                                                    Electric Power Systems Research 212 (2022) 108432
+
+
+                                                                                    The energization of this transformer is simulated by considering the
+                                                                                simultaneous closing of the circuit breaker poles at the instant of time
+                                                                                when the voltage of phase A passes through zero. Fig. 14 shows the
+                                                                                inrush currents of phase A resulting from the three FDNE implementa­
+                                                                                tions and a full system representation. A coincidence can be observed
+                                                                                among the results of the three different FDNE implementations.
+                                                                                    It should be pointed out that the inrush currents obtained with the
+                                                                                FDNE implementations are attenuated more than that obtained with the
+                                                                                full system representation. This is due to the fact that the FDNE takes
+                                                                                into account the frequency dependence of the modal matrix of the
+               Fig. 9. Magnitudes of one diagonal element of Y(ω)
+                                                                                transmission line model. However, the full external area representation
+                                                                                uses the JMARTI transmission line model, which works with a real and
+                                                                                constant modal matrix.
+                                                                                    It is important to note in relation to the nonlinear Type-96 element
+                                                                                that: a) it is explicitly modeled in the “study area”. b) its performance is
+                                                                                not affected by the fact of representing the external network with a
+                                                                                FDNE.
+
+                                                                                6.4. Execution Times
+
+                                                                                    The case studies are run on a notebook with Intel i5-8th generation
+                                                                                processor, 8 GB of RAM. For the energization of the transmission line the
+                                                                                time step is 1.0 μs and the simulation time is 300 ms. For the energi­
+                                                                                zation of the power transformer the time step is 1.0 μs and the simulation
+            Fig. 10. Magnitudes of one off diagonal element of Y(ω)
+                                                                                time is 1.0 s.
+                                                                                    From the CPU runtime point of view, Table 1 shows the CPU times
+                                                                                required for the transmission line and power transformer energizations
+                                                                                for each FDNE implementation and a full system representation.
+                                                                                    For the transmission line energization it can be observed that: a)
+                                                                                Local Model in MODELS consumes the most CPU time, about 56 times
+                                                                                the CPU time consumed by the Full System Representation (FSR) b)
+                                                                                Type-69 device consumes the least CPU time, about 38% of the CPU time
+                                                                                consumed by the FSR c) Foreign submodel consumes 45.7% of the CPU
+                                                                                time consumed by the FSR.
+                                                                                    For the power transformer energization it can be observed that: a)
+                                                                                Local Model in MODELS consumes the most CPU time, about 54 times
+                                                                                the CPU time consumed by the FSR b) Type-69 device consumes the least
+              Fig. 11. Magnitudes of all diagonal elements of Y(ω)
+                                                                                CPU time, about 29% of the CPU time consumed by the FSR c) Foreign
+                                                                                submodel consumes 35.4% of the CPU time consumed by the FSR.
+                                                                                    An important finding is that the Type-69 device and the Foreign
+                                                                                submodel are the most efficient ways to implement Norton Equivalent
+                                                                                Circuits in the EMTP-ATP program.
+
+                                                                                7. Conclusions
+
+                                                                                   This paper presents a methodology based on Norton equivalent cir­
+                                                                                cuits to obtain a frequency-dependent network equivalents.
+                                                                                   This procedure consists of the following steps:
+
+                                                                                1) Calculation of the frequency dependent admittance matrix Y(ω) of
+            Fig. 12. Magnitudes of all off diagonal elements of Y(ω)               the external area. The frequency domain characteristics are obtained
+                                                                                   by frequency scans using the Harmonic Frequency Scan (HFS)
+voltage peaks of the respective phase-to-ground voltages. Fig. 13 shows            routine of the EMTP-ATP program.
+the voltage of phase C at the receiving end resulting from the three FDNE       2) Each element of Y(ω) is approximated by a rational function in a
+implementations and a full system representation. The results obtained             pole-residue form using the Matrix Fitting Toolbox package.
+with the three different FDNE implementations show an excellent                 3) Matrix Y(ω) is symmetric, thus it can be realized in the form of multi-
+coincidence among them. These results also present a good agreement                terminal π-equivalent circuits. From the rational functions afore­
+with those achieved through the detailed representation of the network.            mentioned in item 2), other rational functions corresponding to each
+                                                                                   of the branches of the π circuits are calculated.
+6.3. Power Transformer Energization                                             4) A mathematical procedure for converting each partial fraction in
+                                                                                   Laplace domain into a differential equation in time domain is
+   In this case the “network equipment” of Fig. 7 is a bank of three               described. The application of the trapezoidal rule of integration to
+single-phase transformers, 425/425/140 MVA and 500/150/31.5 kV.                    that differential equation leads to a conductance in parallel with a
+The hysteretic behavior of the magnetic core is taken into account by the          history term current source. Considering all the partial fractions
+nonlinear Type-96 element. Also, residual fluxes of +100%, 0%, -100%               corresponding to a branch, a Norton equivalent circuit is obtained for
+are considered.                                                                    that branch.
+
+                                                                            7
+C. Saldaña and G. Calzolari                                                                                               Electric Power Systems Research 212 (2022) 108432
+
+
+
+
+                                                        Fig. 13. Comparison of phase C voltage transients
+
+
+                                                                                         three-phase boundary bus bars leading to a 6 × 6 admmitance
+                                                                                         matrix.
+
+                                                                                          It would be very useful to have a built-in model of a frequency-
+                                                                                      dependent network equivalent in the EMTP-ATP program. In relation
+                                                                                      to this point some lines of future work are suggested:
+
+                                                                                      a) The elaboration of a FDNE built-in model based on some of the
+                                                                                         implementations presented in this work. This model will have as
+                                                                                         input data the poles and residues of each of the branches of the PI
+                                                                                         circuits. Currently, this input data is obtained with the Matrix Fitting
+                 Fig. 14. Comparison of phase A inrush currents
+                                                                                         Toolbox package developed in MATLAB.
+                                                                                      b) To create a program equivalent to the Matrix Fitting Toolbox in
+                                                                                         Fortran or C language to be incorporated as a built-in model in
+Table 1
+Comparison of CPU Runtimes                                                               EMTP-ATP. The input data will be the frequency dependent admit­
+                                                                                         tance matrix Y(ω). The output of the model will be the poles and
+  Implementation                     CPU runtime in seconds
+                                                                                         residues of the rational approximations.
+                                     Transmission Line        Power Transformer
+
+  Full System Representation         8.31                     28.27
+  Local Model in MODELS              468.56                   1583.58                 CRediT authorship contribution statement
+  Type-69 Device in TACS             3.17                     8.20
+  Foreign Submodel in MODELS         3.80                     10.00                      Claudio Saldaña: Conceptualization, Methodology, Software,
+                                                                                      Writing – original draft, Writing – review & editing. Graciela Calzolari:
+                                                                                      Conceptualization, Methodology, Software, Writing – original draft,
+    In addition, the paper presents three different implementations of
+                                                                                      Writing – review & editing.
+this methodology in the EMTP-ATP program.
+    To validate the procedure, some switching transient events are
+simulated in an electric utility 500 kV transmission system, considering
+                                                                                      Declaration of Competing Interest
+a full system representation and the different FDNE implementations.
+The waveforms of the voltages and currents obtained from the simula­
+                                                                                          The authors declare that they have no known competing financial
+tions exhibit a very good agreement. The CPU times resulting from the
+                                                                                      interests or personal relationships that could have appeared to influence
+simulations show significant savings in processing times when FDNE
+                                                                                      the work reported in this paper.
+implementations B and C are used.
+    The following findings can be drawn from the work presented:
+                                                                                      References
+a) Frequency Dependent Network Equivalent is a powerful technique in
+                                                                                      [1] Alternative Transients Program (ATP)-Rule Book, Canadian /American EMTP User
+   order to save time and effort in EMT studies.                                          Group, 1987-92.
+b) The Matrix Fitting Toolbox Package is a robust and efficient method                [2] H.W. Dommel, EMTP Theory Book, Microtran Power System Analysis Corporation,
+   to approximate by rational functions a frequency-dependent admit­                      Vancouver, Canada, 1992.
+                                                                                      [3] CIGRE WG 13.05, The Calculation of Switching Surges, ELECTRA N◦ 32 (1974)
+   tance matrix.                                                                          17–42.
+c) The procedure presented in [10] has the advantage of using few                     [4] CIGRE Technical Brochure N◦ 766, “Network Modelling for Harmonic Studies”,
+   conductance branches compared to those based on the fitting of any                     April 2019.
+                                                                                      [5] B. Gustavsen, A. Semlyen, Rational Approximation of Frequency Domain
+   particular circuit structure. Also, the procedure does not involve the                 Responses by Vector Fitting, IEEE Trans. Power Delivery 14 (July 1999)
+   special handling of complex poles.                                                     1052–1061.
+d) The Type-69 device and the Foreign submodel are the most efficient                 [6] B. Gustavsen, Improving the Pole Relocating Properties of Vector Fitting, IEEE
+                                                                                          Trans. Power Delivery 21 (July 2006) 1587–1592.
+   ways to implement Norton Equivalent Circuits in the EMTP-ATP                       [7] D. Deschrijver, M. Mrozowski, T. Dhaene, D. De Zutter, Macromodeling of
+   program.                                                                               Multiport Systems Using a Fast Implementation of the Vector Fitting Method, IEEE
+e) The procedure described in this paper can be applied to any number                     Microwave and Wireless Components Letters 18 (June 2008) 383–385.
+                                                                                      [8] A. Semlyen, B. Gustavsen, A Half-Size Singularity Test Matrix for Fast and Reliable
+   of boundary bus bars. For example, for a ring system there are two
+                                                                                          Passivity Assessment of Rational Models, IEEE Trans. Power Delivery 24 (January
+                                                                                          2009) 345–351.
+
+
+                                                                                  8
+C. Saldaña and G. Calzolari                                                                                                     Electric Power Systems Research 212 (2022) 108432
+
+ [9] B. Gustavsen, Fast Passivity Enforcement for Pole-Residue Models by Perturbation        Further reading
+     of Residue Matrix Eigenvalues, IEEE Trans. Power Delivery 23 (October 2008)
+     2278–2285.
+                                                                                             [1] B. Gustavsen, H.M. Jeewantha De Silva, Inclusion of Rational Models in an
+[10] X. Lin, System Equivalent for Real Time Digital Simulator, Dept. Electr. and
+                                                                                                 Electromagnetic Transients Program: Y-Parameters, Z-Parameters, S-Parameters,
+     Comput. Eng., Univ. of Manitoba, Winnipeg, Canada, 2010. Ph.D. dissertation.
+                                                                                                 Transfer Functions, IEEE Trans. Power Delivery 28 (April 2013) 1164–1174.
+[11] L. Dubé, "Users Guide to MODELS in ATP", April 1996.
+                                                                                             [2] T. Moreira Campello, S.L. Varricchio, G. Taranto, Representation of multiport
+[12] O.P. Hevia, "Compilación del ATP al alcance del usuario", Revista Iberoamericana
+                                                                                                 rational models in the ATP – Lumped network results, in: Proceedings of Simposio,
+     del ATP, No 2, 2002.
+                                                                                                 Brasileiro de Sistemas Eletricos, IEEE, 2018.
+                                                                                             [3] S. Grivet – Talocia, B. Gustavsen, Black-Box Macromodeling and its EMC
+                                                                                                 Applications, IEEE Electromagnetic Compatibility Magazine 5 (2016).
+
+
+
+
+                                                                                         9
+

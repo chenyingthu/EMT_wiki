@@ -1,0 +1,569 @@
+                                                          Electric Power Systems Research 125 (2015) 116–123
+
+
+
+                                                             Contents lists available at ScienceDirect
+
+
+                                                  Electric Power Systems Research
+                                                journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Loewner matrix approach for modelling FDNEs of power systems
+Gurunath Gurrala ∗
+Department of Electrical and Computer Engineering, Texas A&M University, USA
+
+
+
+
+a r t i c l e        i n f o                           a b s t r a c t
+
+Article history:                                      This paper proposes a new approach for modelling frequency dependent power system network equiv-
+Received 11 October 2014                              alents (FDNE) using tangential interpolation framework based on Loewner matrix (LM) pencil. The
+Received in revised form 19 March 2015                Loewner matrix based tangential interpolation technique has been recently proposed for modelling
+Accepted 21 March 2015
+                                                      of large multi-port VLSI circuits. The LM approach ﬁts accurate state space descriptor system models
+                                                      from the frequency response measurements. Singular value decomposition based LM approach has been
+Keywords:
+                                                      investigated in this paper for modelling of FDNEs. The proposed method’s performance is compared to
+Frequency dependent network equivalents
+                                                      the widely used vector ﬁtting approach using four power system examples. A simple matrix implemen-
+Tangential interpolation
+Loewner matrix
+                                                      tation for LM formation and a MATLAB based stable model extraction approach is proposed. It has been
+Electromagnetic transients (EMT)                      shown that the data splitting step of the LM approach has signiﬁcant impact on the accuracy of the ﬁtting.
+Vector ﬁtting                                         The LM method is shown to be comparable to vector ﬁtting in terms of accuracy, stability and passivity.
+                                                      It does not require any starting poles and has no convergence issues because it is a non-iterative method.
+                                                      It also gives an indication of the system order which is a unique advantage.
+                                                                                                                        © 2015 Elsevier B.V. All rights reserved.
+
+
+
+
+1. Introduction                                                                          There are several frequency dependent network equivalent
+                                                                                     (FDNE) modelling techniques available and good surveys of the
+   The quest for efﬁcient frequency dependent models in power                        techniques are presented in [1,3,4]. Rational approximations using
+system electromagnetic transient (EMT) simulations is a never                        iterative methods [5] became popular in recent years. Vector ﬁtting
+ending journey. Early electromagnetic transient programs (EMTP)                      and several variations of it are widely used for FDNE’s [6,7]. A multi-
+used frequency dependent models mostly for switching transient                       port time domain-vector ﬁtting method is proposed in [8]. Vector
+studies and lightning studies for planning and design of high volt-                  ﬁtting requires a good guess of the starting poles for successful pole-
+age equipment such as switchgear, insulators and high voltage DC                     relocation and sometimes needs separate passivity enforcement.
+systems (HVDC) [1]. The need for accurate and reliable electromag-                   There is no proof of when and how fast Vector ﬁtting converges [9].
+netic transient equivalents have been growing signiﬁcantly across                    Frequency partitioning approach has been proposed in [10–12] to
+the industry with the introduction of fast switching devices (power                  avoid ill-conditioning in FDNEs. The trial and error based frequency
+electronic circuit breakers), complex generation sources (wind,                      partitioning approaches are time consuming for networks involv-
+solar and other power electronic based sources) and complex trans-                   ing large number of ports. A genetic algorithm based approach that
+mission controls such as voltage source converter based DC systems                   preserves the passivity of the FDNE model is proposed in [13]. In
+(VSC-HVDC), ﬂexible AC transmission controls (FACTS), etc. This                      [2,14] the need for large scale FDNEs is identiﬁed and a sparse time
+need exists because their frequency responses closely overlap with                   domain network equivalent method is proposed.
+the natural frequency responses of various power system compo-                           Methods for constructing a controllable and observable state
+nents like distributed transmission lines, transformers, etc. [2]. In                space model, called generalized realization problem, from a data
+the near future EMT programs will become a necessity even for                        set obtained by sampling a transfer matrix are proposed in [15].
+day to day operations because of the growing interconnections and                    These methods use data sampled directionally, called tangential
+complex control interactions.                                                        interpolation data. Recently, an accurate multi-port modelling
+                                                                                     technique for systems with large number of terminals has been
+                                                                                     proposed in [9,16]. This method uses the Loewner matrix (LM)
+                                                                                     pencil constructed from frequency response data in the framework
+ ∗ Corresponding author. Current address: Power and Energy Systems Group, Oak
+                                                                                     of tangential interpolation. Performance of the Loewner method
+Ridge National Lab, USA. Tel.: +1 9796760147.
+                                                                                     in the presence of noisy measurements has been studied in [17].
+    E-mail address: gurunath gurrala@yahoo.co.in                                     Application of Loewner matrix approach for distributed parameter
+
+http://dx.doi.org/10.1016/j.epsr.2015.03.016
+0378-7796/© 2015 Elsevier B.V. All rights reserved.
+                                                 G. Gurrala / Electric Power Systems Research 125 (2015) 116–123                                                                                117
+
+                                                                                   and the left interpolation data:
+models of micro electronic circuits is presented in [18]. All the
+above references claim that the LM approach is superior to vector
+ﬁtting as this is a non-iterative approach that accurately ﬁts models              M = diag[1 , ......, h ] ∈ Ch×h
+for large multi-port systems [16] without any convergence issues. It                    ⎡l ⎤                                 ⎡v ⎤
+                                                                                             1                                        1
+doesn’t need any starting poles. The LM approach usually preserves
+                                                                                       ⎢. ⎥             ⎢. ⎥                                                                                    (4)
+passivity [16,18], but can not guarantee this in all cases. The order of               ⎢ ⎥              ⎢ ⎥
+                                                                                   L = ⎢ ⎥ ∈ Ch×p ; V = ⎢ ⎥ ∈ Ch×m
+the models can be easily identiﬁed and the ﬁtted models are stable                     ⎣. ⎦             ⎣. ⎦
+after the extraction of the irregular part of the state-space model.                         lh                                  vh
+Because of these compelling advantages, application of Loewner
+matrix approach for frequency dependent network equivalents of
+power systems is investigated in this paper. Singular value decom-                 ri ∈ R are called right tangential directions and lj ∈ L are called left
+position (SVD) based Loewner matrix approach proposed in [16] is                   tangential directions. The interpolation method ﬁnds a minimal
+presented in MATLAB style syntax for easy implementation. A new                    realization [E, A, B, C, D] for tangential data, such that the associated
+matrix implementation for LM formation and a MATLAB based                          transfer function satisﬁes the following right and left constraints
+stable model extraction approach is proposed. The performance
+of the LM approach is tested on several FDNE power system cases.                   H(i )ri = wi
+Results of four representative test systems are discussed in this                                                                                                                               (5)
+                                                                                   lj H(j ) = vj
+paper. Passivity is veriﬁed using step response and eigenvalues of
+the real part of Y-matrix over the entire frequency range.
+                                                                                   The right tools for studying this problem are the Loewner matrix and
+2. Loewner matrix approach                                                         the shifted Loewner matrix because these matrices have a system
+                                                                                   theoretically signiﬁcant factorization. Loewner matrix of H(s) can
+    This section gives a brief overview of the Loewner matrix                      be built as follows using the directions ri and lj
+approach. The theoretical basis of Loewner matrix approach is well                       ⎡                                                                    ⎤
+described in [15,16]. Let the frequency response is denoted by Y(s)                          v1 r1 − l1 w1                        v1 rk − l1 wk
+                                                                                                                   ···
+for a frequency range of {smin , smax }. The goal is to ﬁt a generalized               ⎢ 1 − 1                                           ⎥
+                                                                                                                                          1 − k
+                                                                                       ⎢                                                   ⎥
+descriptor system state space model of the form                                        ⎢                                                   ⎥
+                                                                                   L = ⎢ ..                         ..           ..        ⎥                                                    (6)
+                                                                                      ⎢.                                .        .        ⎥
+         E ẋ(t) = Ax(t) + Bu(t)                                                       ⎣ v r −l w                                 v r −l w
+                                                                                                                                           ⎦
+:                                                                       (1)                      h 1    h    1                       h k            h    k
+         y(t) = Cx(t) + Du(t) + Y ∞ u̇(t)                                                                          ···
+                                                                                                  h − 1                                 h − k
+ is a linear time invariant (LTI) system with m-inputs, p-outputs
+                                                                                   Similarly shifted Loewner matrix of sH(s) can be built as follows
+and n-internal variables in descriptor form representation where
+x(t) is an internal variable (the state, if E is invertible), u(t) is the                  ⎡  v r − l w                                           1 v1 rk − k l1 wk
+                                                                                                                                                                               ⎤
+                                                                                                    1 1 1         1 1        1
+input, y(t) is the corresponding output, while E, A ∈ Rn×n , B ∈ Rn×m ,                                                               ···
+                                                                                        ⎢               1 − 1                                         1 − k         ⎥
+C ∈ Rp×n , D, Y∞ ∈ Rn×n are constants with E possibly singular. The                     ⎢                                                                                      ⎥
+transfer function of  is given by                                                 L = ⎢  .
+                                                                                        ⎢ ..
+                                                                                                                                          ..        ..                    ⎥
+                                                                                                                                                                          ⎥                     (7)
+                                                                                                                                               .     .
+                                                                                        ⎣                                                                                 ⎦
+H(s) = C(sE − A)−1 B + D + sY ∞                                          (2)                      h vh r1 − 1 lh w1                                 h vh rk − k lh wk
+                                                                                                                              ···
+                                Irregular Part
+                                                                                                      h − 1                                             h − k
+             Regular Part
+
+The Loewner matrix approach ﬁts a state space model {E, A, B, C}                   The generalized observability matrix O and generalized controlla-
+with embedded D and Y∞ matrices. The embedded irregular part, D                    bility matrix R of a realization [E ; A ; B ; C ; D] are deﬁned as:
+and Y∞ matrices, sometimes result in an unstable model and they                          ⎡                         ⎤
+need to be extracted to obtain a stable model [16,18].                                       C(1 E − A)−1
+                                                                                         ⎢                         ⎥
+                                                                                   O = ⎢ ..                        ⎥
+2.1. Tangential interpolation                                                          ⎣.                          ⎦                                                                            (8)
+                                                                                         C(h E − A)−1
+   Consider a set of points S = {s1 , . . ., sP } in the complex plane and                        −1                  −1
+                                                                                   R = [(1 E − A) Br1 · · ·(k E − A) Brk ]
+the evaluations {H(s1 ), . . ., H(sP )} of the rational matrix function
+H(s) at those points. S can be partitioned as
+                                                                                   Each entry in the Loewner matrix can be expressed in a product
+                                                                                   form as shown below:
+S = {1 , . . ., k } ∪ {1 , . . ., h }
+
+The rational interpolation method constructs a controllable and                            vj ri − lj wi
+                                                                                   Lij =                     substituting for vj , wi from (9)
+observable state space model from sampled data of the system                                  j − i
+                                                                                                                                                                         −1
+transfer matrix H(s). The sampled data can be of scalar data, matrix                              lj (C(j E − A)−1 B + D)ri − lj (C(i E − A)                                 B + D)ri
+data or tangential data (matrix data sampled directionally on the                  ⇒ Lij =
+                                                                                                                                               j − i
+left and on the right) [15]. The interpolation method uses the fol-
+                                                                                                                                                                                    −1
+lowing right interpolation data:                                                                  lj C(j E − A)−1 [(i E − A) − (j E − A)](i E − A)                                    Bri
+                                                                                   ⇒ Lij =
+                                                                                                                                                   j − i
+ = diag[1 , ......., k ] ∈ Ck×k                                                                                                                                  −1
+                                                                                                  lj C(j E − A)−1 [(i − j )E](i E − A)                               Bri
+R = [r1 , ........., rk ] ∈ Cm×k                                                   ⇒ Lij =
+                                                                         (3)                                                     j − i
+                                                                                                                                                         −1
+W = [w1 , ....., wk ] ∈ Cp×k                                                       ⇒ Lij = −lj C(j E − A)−1 E(i E − A)                                      Bri
+118                                                            G. Gurrala / Electric Power Systems Research 125 (2015) 116–123
+Thus the Loewner matrix can be formulated as
+           ⎡                         ⎤                                                           3.1. Fitting state space model
+               l1 C(1 E − A)−1
+           ⎢                         ⎥
+L = −⎢ ..                            ⎥                                                               The Y-parameter frequency response of a p-port system is given
+     ⎣.                              ⎦                                                           by H(s). In MATLAB format H(s) is a p × p × Ns matrix, where Ns is the
+               lh C(h E − A)−1                                                                  number of samples. Ns is considered as even without loss of gener-
+                                                                                   (9)       ality. The sampling frequencies are denoted by S = {s1 , s2 , . . ., sNs }
+                        Y
+                       −1                         −1                                             where s = jω; To obtain a real system, the condition H(s) = H(s̄)
+      E[(1 E − A)          Br1 · · ·(k E − A)        Brk ]
+                                                                                             needs to be satisﬁed. Therefore, the Y-parameters at the complex
+                                X                                                                conjugate values of the sample points −jωi should be equal to the
+L = −YEX                                                                                         complex conjugates of the measurements at jωi , namely Ȳ (i) .
+                                                                                                     Step1: Partitioning the data
+Y and X are called tangential generalized observability and control-                                 There are several ways one can partition the data. It is observed
+lability matrices respectively. These are formed by multiplying (8)                              that the way of partitioning has signiﬁcant impact on the accu-
+with respective tangential directions. Similarly one can factorize                               racy of ﬁtting. The following are the most common partitioning
+shifted Loewner matrix as [19]                                                                   approaches
+
+L = −YAX + LDR                                                                       (10)
+                                                                                                 1 Partitioning data into two halves [16,18]
+From the above derivation one can observe that the Loewner matrix
+                                                                                                                                                                            
+can be factored as a product of the tangential generalized controlla-
+                                                                                                    S=        s1 , s2 · · ·, s Ns       ∪   s Ns +1 , s Ns +2 , · · ·, sNs       (15)
+bility and tangential generalized observability matrices. The pairs
+                                                                                                                            2
+                                                                                                                                            2         2
+                                                                                                                                                                           
+(E, A, B) and (C, E, A) are controllable and observable, respectively,                                                                                     
+so if the sampling directions ri and lj are chosen appropriately, the
+rank of the Loewner matrix is precisely the rank of the underly-                                 2 Partitioning data into odd and even samples (alternate Samples)
+ing E matrix, while the rank of the shifted Loewner matrix is +p                                   [19]
+more than the rank of the underlying A matrix [15,16]. The Loewner
+matrix, constructed using any partition of S, encodes the degree of                                 S = {s1 , s3 · · ·, s2k−1 } ∪ {s2 , s4 , · · ·, s2k }                        (16)
+the minimal interpolant of the data [15]. For strictly proper systems,                                                                                   
+size(E) = rank(E) = n for E ∈ Cn×n and the singular value decomposi-                                                                             
+
+tion (SVD) can be used to factor L [15,16] as shown below
+                                                                                                 Deﬁne:
+∀x ∈ S
+rank(xL − L) = rank() = r;
+                                                                                      (11)
+SVD(xL − L) = Y1 X1∗ ;                                                                         H (s) = H();
+Y1 , X1    ∈ C P×r ;                                                                             H (s) = H();
+
+Using the singular vectors as projectors [16], the realization [E, A,                            p = number of ports;
+B, C, D] can be obtained as follows:                                                             M(1 : 2 : n, 1) = ;
+                                                                                                 M(2 : 2 : n, 1) = conj();
+E = Y1∗ LX1 ,
+                                                                                                 (1 : 2 : n, 1) = ;
+A = Y1∗ LX1                                                                                     (2 : 2 : n, 1) = conj();
+B = Y1∗ V ;                                                                           (12)
+                                                                                                 Step2: Formation of Tangential directions
+C = WX1 ;
+
+D = 0;                                                                                           Define :    I = eye(p, p);
+                                                                                                             Ns
+The choice of x is not an issue since the pencil (L, L) loses rank                              for k = 1 :
+                                                                                                              2
+only when x is one of its eigenvalues [16]. Real-world measure-
+                                                                                                    if mod(k, p) == 0
+ments are noisy, so the zero singular values of the singular pencil
+are corrupted by noise. Consequently, one can identify the order of                                    m = p;
+the underlying system based on a large drop in the singular values                                  else
+of (xL − L). The Loewner and shifted Loewner matrices satisfy the                                     m = mod(k, p)
+following Sylvester equations.                                                                      end
+
+L − ML = LW − VR                                                                     (13)        R(:, 2k − 1) = I(:, m);
+                                                                                                  R(:, 2k) = I(:, m);
+L − ML = LW − MVR                                                                 (14)       end
+                                                                                                 L = R ;
+These equations can be solved for the formation of Loewner matri-
+ces in the implementation instead of nested for-loops.
+                                                                                                    Step3: Formation of Loewner and shifted Loewner matrices:
+                                                                                                    Column indexing is used to improve speed in for-loop. New
+3. Implementation of Loewner matrix approach                                                     matrices M1 and 1 are deﬁned for the formation of Loewner
+                                                                                                 and shifted Loewner matrices eliminating the nested for-loops or
+  Implementation details of the Loewner Matrix approach using                                    Sylvester equation solution. This is a new matrix implementation
+MATLAB syntax are presented in this section.                                                     proposed in this paper for the formation of Loewner and shifted
+                                                 G. Gurrala / Electric Power Systems Research 125 (2015) 116–123                                               119
+
+
+Loewner matrices compared to [16,18]. This simple matrix formu-                    two stages involved in this process. The ﬁtted state space model can
+lation of L, L improves the speed of LM approach signiﬁcantly.                    be decomposed into sum of stable and unstable models as shown
+                                                                                   below.
+Define : i = 1;
+fork = 1 : Ns /2                                                                   C(sE − A)−1 B = CR (sER − AR )−1 BR + CU (sEU − AU )−1 BU                  (17)
+                                                                                                                                                   
+ F(:, i) = squeeze(H (:, :, k)). ∗ R(:, i);                                                                       Stable                     Unstable
+
+                                                                                   First stage obtains a stable reduced order model corresponding to
+     F(:, i + 1) = conj(F(:, i));
+                                                                                   the left half plane eigenvalues of the matrix pencil (A, E). In this
+ (:, i) = squeeze(H (:, :, k)) ∗ R(:, i);                                        paper MATLAB’s model reduction function stabsep [20] is used for
+ (:, i + 1) = conj((:, i));                                                      separating the stable and unstable parts. The second stage com-
+                                                                                   putes the D and Y∞ matrices by matching the unstable response to
+i = i + 2;
+                                                                                   D + sY∞ as shown below
+end
+                                                                                   D + sY ∞ = CU (sEU − AU )−1 BU                                             (18)
+                                                                                                                           
+     = F. ;                                                                                              Unstable
+
+
+W = ;                                                                             The D + sY∞ is basically a ﬁrst order polynomial in s-domain. So in
+                                                                                   this paper simple polynomial ﬁtting, polyﬁt command in MATLAB, is
+M1 = repmat(M, 1, Ns );
+                                                                                   used for each matrix element to obtain D and Y∞ . The steps involved
+1 = repmat(, 1, Ns ). ;                                                         in each of these two stages are described below in MATLAB syntax.
+                                                                                   Step 1: Obtains Stable Reduced Order Model
+% OnecanalsouseMATLAB s bsxfun insteadof repmat.
+                                                                                    sys = dss(A, B, C, 0, E);
+L=(        ∗ R − L ∗ )./(M1 − 1);                                                                             
+                                                                                    sys = ss(sys, explicit );
+L = [M1. ∗ (         ∗ R) − 1. ∗ (L ∗ )]./(M1 − 1);
+                                                                                    [sys1 sys2] = stabsep(sys);
+Step4: Conversion to real matrices                                                  [AR BR CR DR1 ] = ssdata(sys1);
+                                   
+                           1 −1i                                                   ER = eye(size(AR , 1), size(AR , 1));
+             1
+Define : g = √
+              2
+                  1 1i                                                             Step 2: D and Y∞ extraction using polyﬁt
+             Ns
+G = kron(eye( ), g);                                                                  This step subtracts the response of reduced order model from the
+             2                                                                     actual response and uses 1st order polynomial ﬁt for each element.
+Lr = G LG;
+                                                                                   for k = 1 : length(S)
+Lr = G LG;                                                                      s = S(k);
+Fr   = G F;                                                                       HU (:, :, k) = H(:, :, k) − CR (sER − AR )−1 BR ;
+
+Wr = WG;                                                                           end
+                                                                                   for k = 1 : p
+Step5: Selecting the order of the model                                             for i = 1 : p
+Define : k1 = any value beween 1 to Ns ;                                              Pfit = polyfit(S T , squeze(HU (k, i, :)), 1);
+
+x = imag((k1, 1));                                                                   Y ∞ (k, i) = Pfit(1);
+[Y, , X] = svd(xLr − sLr );                                                          D(k, i) = Pfit(2);
+SV = diag()/(1, 1);                                                                end
+semi log y(SV );                                                                   end
+select an order k where largest drop insingular values occurs
+
+Step6: Formation of State Space Model                                              4. Application of Loewner matrix approach for FDNEs
+
+Yk = Y (:, 1 : k);                                                                    This section demonstrates the performance of Loewner matrix
+                                                                                   approach for modelling FDNE’s using four widely used power sys-
+Xk = X(:, 1 : k);
+                                                                                   tem test cases. The accuracy of the ﬁtted model is measured using
+E = − Yk  Lr Xk ;                                                                 two error measures [16]: The normalized H∞ − norm which evalu-
+                                                                                   ates the maximum deviation in the singular values given by
+A = − Yk  Lr Xk ;
+                                                                                                  maxi=1,...,Ns 1 (Y (i) − Hfit (j2 fi ))
+B = Yk  Fr ;                                                                      H∞ error =                                                                 (19)
+                                                                                                           maxi=1,...,Ns 1 (Y (i) )
+C = Wr Xk ;
+                                                                                   and the normalized H2 − norm which evaluates the error in the
+                                                                                   magnitude of all entries, a good estimate of the overall performance,
+                                                                                   given by
+3.2. Obtaining stable model                                                                      
+                                                                                                          Ns                               2
+                                                                                                          i=1
+                                                                                                                Y (i) − Hfit (j2 fi ) F
+      Embedded D and Y∞ matrices from the ﬁtted state space model                  H2 error =                   Ns                    2
+                                                                                                                                                              (20)
+need to be extracted for obtaining a stable system [18]. There are                                                   i=1
+                                                                                                                             Y (i) F
+120                                                 G. Gurrala / Electric Power Systems Research 125 (2015) 116–123
+
+
+
+
+              Fig. 1. Test system 1, singular values of xL − L.
+
+                                                                                                       Fig. 2. Test system 2, singular values of xL − L.
+The LM approach using half samples data splitting and alternate
+sample data splitting, as discussed in Section 3.1 Step 1, are denoted                    The singular values of xL − L are shown in Fig. 2(b). The order
+by LM-Half and LM-Alternate respectively. The accuracy of the                         of the system can be read from the plot corresponding to largest
+Loewner approach is also compared with the vector ﬁtting. The                         singular value drop. The circled area is where largest drop occurs.
+matrix ﬁtting toolbox1 from the vector ﬁtting web site [21] is                        For distributed parameter models sometimes the singular value
+used in this study [22,23]. The developed Y-parameter state space                     drop is not distinguishable [18]. However there will be a grad-
+models can be easily incorporated into EMTP programs using the                        ual slope change that can be observed over a range. In the case of
+techniques presented in [24]. Frequency response data can be                          LM-Half, around 45, 50 and 70 a change in slope can be observed.
+obtained from detailed circuit models using frequency scanning                        LM-Alternate shows clear drops at orders 55, 60 and 70. This gives
+techniques [25] or from actual measurements in the ﬁeld.                              an indication of probable order of the system.
+                                                                                          The order of ﬁt is selected as 55 for both the approaches and
+4.1. Test system 1: measured zero sequence admittance of                              then D and Y∞ are extracted. After extraction the model order is 50
+transformer                                                                           for both the cases. The results of the LM ﬁtting along with the vec-
+                                                                                      tor ﬁtting of order 50 are shown in Fig. 3(a) for elements Y(1,1) and
+    Measured zero sequence admittance seen from the low voltage                       Y(3,1). It can be observed that the LM-Half failed to ﬁt accurately
+terminals with a resistive network connected to the high voltage                      in the high frequency region. However, the ﬁts of LM-Alternate are
+terminals of a 11 kV/230 V distribution transformer is considered                     accurate and comparable to vector ﬁtting. This shows the inﬂuence
+here. This example is used in [6] for the validation of vector ﬁtting.                of data splitting on the accuracy of the model. The alternate samp-
+The singular values of xL − L are shown in Fig. 1(a). The order of                   ling gives accurate models because tangential data is distributed
+the system can be read from the plot corresponding to largest singu-                  over the entire frequency range rather than only at the beginning.
+lar value drop. This is one of the unique advantages of LM approach.                  For vector ﬁtting mix of linearly spaced and logarithmically spaced
+However, this may not be the true order because of the embedded D                     poles are used. It takes seven iterations for calculating improved
+and Y∞ matrices. The circled area is where largest drop occurs. The                   poles and four iterations for column ﬁtting.
+LM-Alternate method shows a very clear drop at order 6 but LM-                            Passivity is tested using the condition eig(Re{Y(s)}) > 0 over the
+half shows a very slight change in the slope. The order of the ﬁtting                 entire frequency range [26]. The plots are shown in Fig. 3(b). It can
+is selected as 6 for all the three methods. The ﬁtted responses using                 be observed that the LM-Half shows signiﬁcant passivity violations.
+LM-Half, LM-Alternate and vector ﬁtting are shown in Fig. 1(b). It                    However, both the LM-Alternate and Vector ﬁtting show no viola-
+can be observed that LM-Half failed to ﬁt an accurate model. How-                     tions indicating passivity of the model. Passivity is also checked
+ever, LM-Alternate produced an accurate ﬁtting comparable to the                      using time domain simulations, for a unit step voltage excitation at
+Vector ﬁtting.                                                                        port-1 through a 5 resistor with other ports open [24] as shown
+                                                                                      in Fig. 4(a). The discretization approach proposed in [24] is used
+4.2. Test system 2: Y-matrix of a overhead line                                       to simulate the responses. Simulation time step of 1␮s is used.
+                                                                                      The current response through port 1 is shown in Fig. 4(b). The
+    This test system corresponds to a 132 kV three-conductor over-                    LM-Half responses are not shown as they are unstable. It can be
+head line of length 12 km. This example is also used in [6]. The                      observed that both vector ﬁtting and LM-Alternate have identical
+3 × 3 admittance matrix Y(s) is computed with respect to one line                     stable responses.
+end with other line end open circuited. The conﬁguration of the line                      Table 1(a) summarizes the performance of LM approach for Test
+is shown in Fig. 2(a).                                                                system 2. The error measures are comparable to vector ﬁtting.
+                                                       G. Gurrala / Electric Power Systems Research 125 (2015) 116–123                                                  121
+
+                                                                                         Table 1
+                                                                                         Comparison of LM and vector ﬁtting, test systems 2–4.
+
+                                                                                           Method                H2 error          H∞ error         Order         Passive
+
+                                                                                           (a) Test System 2
+                                                                                           LM-Half               0.78275           1.3024            50           No
+
+                                                                                           LM-Alternate          0.02375           0.019             50           Yes
+                                                                                           Vector Fitting        0.0377            0.079             50           Yes
+
+                                                                                           (b) Test System 3
+                                                                                           LM-Half               0.0079            0.0254            52           Yes
+                                                                                           LM-Alternate          0.0037            0.0084            55           Yes
+                                                                                           Vector Fitting        0.0002            0.0022            50           Yes
+
+                                                                                           (c) Test System 4
+                                                                                           LM-Half               1.5167            7.79             132           No
+                                                                                           LM-Alternate          0.0301            0.0805           150           Yes
+                                                                                           Vector Fitting        0.0003            0.0028           150           Yes
+
+
+
+
+Fig. 3. Test system 2, frequency response of Y(1,1), Y(3,1) and eigenvalues of Re{Y}.
+
+
+
+
+4.3. Test system 3: FDNE of a power distribution system
+                                                                                                        Fig. 5. Test system 3, power distribution network [5].
+
+   This test system corresponds to a power system distribution
+system shown in Fig. 5. The distribution system has two 3-phase                             The singular values of xL − L are shown in Fig. 6(a). It can be
+buses as terminals (A, B). This example is analyzed in [5]. The                          observed from the ﬁgure that the singular values of LM-Half and
+6 × 6 admittance matrix Y(s) with respect to these terminals has                         LM-Alternate show noticeable slope change between 60 and 70.
+been calculated in the frequency range 10 Hz–100 kHz. The termi-                            The LM approach is applied to this system with orders 65 and
+nal admittance matrix Y(s) of the system is ﬁtted with LM and vector                     70 for LM-Half and LM-Alternate respectively. The ﬁt orders after
+ﬁtting approaches.                                                                       the D and Yinf extraction are 52 and 55. The results of the ﬁt for Y(1,
+                                                                                         1) and Y(5, 1) elements are shown in Fig. 6(b). The ﬁgure also con-
+                                                                                         tains response of the 50th order model using vector ﬁtting which
+
+
+
+
+                                                                                         Fig. 6. Test system 3, singular values of xL − L and Frequency response of Y(1,1),
+      Fig. 4. Test system 2, time domain simulation using voltage excitation.            Y(5,1).
+122                                                   G. Gurrala / Electric Power Systems Research 125 (2015) 116–123
+
+
+
+
+      Fig. 7. Test system 3, eigenvalues of Re{Y} and current through port 1.                           Fig. 8. Test system 4, 500 kV transmission network.
+
+
+                                                                                           Real part of the eigenvalues of the ﬁtted models are shown in
+took 7 iterations for improved poles and 4 iterations for column                        Fig. 10(a). LM-Half has signiﬁcant passivity violations. No passivity
+ﬁtting. It can be observed that the LM-Half has better ﬁt compared                      violations are observed in LM-Alternate and Vector ﬁtting models.
+to previous example. LM-Alternate and Vector ﬁtting ﬁts are very                           Time domain simulations for a unit step excitation at port 1 with
+accurate.                                                                               other ports open are also provided in Fig. 10(b). Voltage responses
+    The Fig. 7(a) shows the eigenvalues of the real part of the ﬁt-                     at port 2 are shown. The unstable response of LM-Half is omit-
+ted Y-parameter models over the entire frequency range. It can be                       ted. It can be observed that the responses are stable and similar
+observed that the LM-Half shows negligible passivity violations at                      to each other. The performance of the methods is summarized in
+both ends of the spectrum. LM-Alternate and Vector ﬁtting show                          Table 1(c). LM-Half has high error measures. The error measures of
+no violations.                                                                          LM-Alternate are comparable to vector ﬁtting. It can be observed
+    The time domain responses of current through port 1 is shown                        that for the LM-Half, the model orders after the D and Y∞ extraction
+in Fig. 7(b) for a unit step excitation at port 1 with other ports open.
+It can be observed that all the responses are stable. Table 1(b) sum-
+marizes the performance of various approaches. The LM approach
+with alternate sample data ﬁtting has H∞ and H2 errors comparable
+to vector ﬁtting. All the models obtained are passive and stable.
+
+
+4.4. Test system 4: 500 kV transmission network
+
+    A 500kV test system shown in Fig. 8 is used to study the switch-
+ing transient on TL4 when closing CB1. The lower part seen from
+Bus A is the study zone that is represented in detail. The remaining
+upper part is considered to be the external zone, which will be
+replaced by an equivalent. The admittance matrix Y of the test
+networks external zone is calculated at equidistant 2000 frequency
+points between 0 Hz and 10 kHz. This example is studied in [10].
+    The singular values of the Loewner approaches are shown in
+Fig. 9(a). Signiﬁcant change in the singular values can be observed
+in the circled area between 100 and 200. This indicates the proba-
+ble range for system order. LM approaches are ﬁtted with order 155
+and then the D, Y∞ are extracted. The model orders after extraction
+for LM-Half is 132 and LM-Alternate is 150. Vector ﬁtting produced
+an accurate ﬁt with order 150. Here also, Vector ﬁtting takes 7
+iterations for poles and 4 iterations for column ﬁtting.
+    The results of the LM and vector ﬁtting for elements Y(1,1) and
+Y(2,1) are shown in Fig. 9(b). It can be observed that the LM-Half
+failed to ﬁt a good model. However, both LM-Alternate and Vector                        Fig. 9. Test system 4, singular values of xL − L and frequency response of
+ﬁtting methods ﬁtted accurate models.                                                   Y(1,1),Y(2,1).
+                                                    G. Gurrala / Electric Power Systems Research 125 (2015) 116–123                                                     123
+
+
+                                                                                      suitable for transient analysis of (e.g. line energization, switching
+                                                                                      transients, fault analysis etc.) large power systems involving FDNEs.
+
+                                                                                      References
+
+                                                                                       [1] U. Annakkage, N. Nair, Y. Liang, A. Gole, V. Dinavahi, B. Gustavsen, T. Noda, H.
+                                                                                           Ghasemi, A. Monti, M. Matar, R. Iravani, J. Martinez, Dynamic system equiva-
+                                                                                           lents: A survey of available techniques, IEEE Trans. Power Deliv. 27 (1) (2012)
+                                                                                           411–420.
+                                                                                       [2] W. do Couto Boaventura, A. Semlyen, M. Reza Iravani, A. Lopes, Robust sparse
+                                                                                           network equivalent for large systems: Part I methodology, IEEE. Trans. Power
+                                                                                           Syst. 19 (1) (2004) 157–163.
+                                                                                       [3] R. Pintelon, P. Guillaume, Y. Rolain, J. Schoukens, H.V. hamme, Parametric iden-
+                                                                                           tiﬁcation of transfer functions in the frequency domain – a survey, IEEE Trans.
+                                                                                           Autom. Control 39 (11) (1994) 2245–2260.
+                                                                                       [4] A. Ibrahim, Frequency dependent network equivalents for electromagnetic
+                                                                                           transients studies: a bibliographical survey, Electr. Power Energy Syst. 25
+                                                                                           (2003) 193–199.
+                                                                                       [5] D. Deschrijver, B. Gustavsen, T. Dhaene, Advancements in iterative methods for
+                                                                                           rational approximation in the frequency domain, IEEE Trans. Power Deliv. 22
+                                                                                           (3) (2007) 1633–1642.
+                                                                                       [6] B. Gustavsen, A. Semlyen, Rational approximation of frequency domain
+                                                                                           responses by vector ﬂltlng, IEEE Trans. Power Deliv. 14 (3) (1999) 1052–1061.
+                                                                                       [7] A. Ubolli, B. Gustavsen, Comparison of methods for rational approximation of
+                                                                                           simulated time-domain responses: ARMA ZD-VF and TD-VF, IEEE Trans. Power
+                                                                                           Deliv. 26 (1) (2011) 279–288.
+                                                                                       [8] A. Ubolli, B. Gustavsen, Multiport frequency-dependent network equivalencing
+                                                                                           based on simulated time-domain responses, IEEE Trans. Power Deliv. 2 (27)
+                                                                                           (2012) 648–656.
+                                                                                       [9] S. Lefteriu, Modeling systems from measurements of their frequency response,
+                                                                                           Ph. D. thesis, Rice University, 2011.
+                                                                                      [10] T. Noda, Identiﬁcation of a multiphase network equivalent for electromagnetic
+      Fig. 10. Test system 4, eigenvalues of Re{Y} and voltage at port 2.                  transient calculations using partitioned frequency response, IEEE Trans. Power
+                                                                                           Deliv. 20 (2) (2005) 1134–1142.
+                                                                                      [11] T. Noda, A binary frequency-region partitioning algorithm for the identiﬁcation
+                                                                                           of a multiphase network equivalent for EMT studies, IEEE Trans. Power Deliv.
+                                                                                           22 (2) (2007) 1257–1258.
+are much less than 150. So the accuracy of LM-Half can be improved                    [12] A. Ramirez, Vector ﬁtting-based calculation of frequency-dependent network
+by increasing the ﬁt order.                                                                equivalents by frequency partitioning and model-order reduction, IEEE Trans.
+    The above examples show the ability of the LM-Alternate                                Power Deliv. 24 (1) (2009) 410–415.
+                                                                                      [13] I.R. Pordanjani, C.Y. Chung, H.E. Mazin, W. Xu, A method to construct equivalent
+method in ﬁtting accurate and stable FDNE models. The non-
+                                                                                           circuit model from frequency responses with guaranteed passivity, IEEE Trans.
+iterative nature of the method allows simple implementation                                Power Deliv. 26 (1) (2011) 400–409.
+without any convergence issues and doesn’t require starting poles.                    [14] W. do Couto Boaventura, A. Semlyen, M.R. Iravani, A. Lopes, Robust sparse net-
+It provides information about system order. Although only few                              work equivalent for large systems: Part ii performance evaluation, IEEE. Trans.
+                                                                                           Power Syst. 19 (1) (2004) 293–299.
+representative cases are provided, on several FDNE examples                           [15] A. Mayo, A. Antoulas, A framework for the solution of the generalized realization
+LM-Alternate approach has shown consistently accurate results                              problem, Linear Algebra Appl. 425 (2007) 634–662.
+comparable to vector ﬁtting. The order of the system is accurately                    [16] S. Lefteriu, A.C. Antoulas, A new approach to modeling multiport systems from
+                                                                                           frequency-domain data, IEEE Trans. Comput.-Aided Des. Integr. Circuits Syst.
+determined for lumped parameter models whose examples are not                              29 (1) (2010) 14–27.
+shown here. This paper has shown the applicability of Loewner                         [17] S. Lefteriu, A.C. Ionita, A.C. Antoulas, Modeling Systems Based on Noisy Fre-
+Matrix approach for FDNE modelling of power systems.                                       quency and Time Domain Measurements, Perspectives in Mathematics System
+                                                                                           Theory, Control & Signiﬁcant Process, Springer-Verlag, 2010, pp. 365–378.
+                                                                                      [18] M. Kabir, R. Khazaka, Macromodeling of distributed networks from frequency-
+5. Conclusions                                                                             domain data using the Loewner matrix approach, IEEE Trans. Microw. Theory
+                                                                                           Tech. 60 (12) (2012) 3927–3938.
+                                                                                      [19] S. Lefteriu, A.C. Antoulas, Model Reduction for Circuit Simulation, Lecture Notes
+    This paper proposed a new technique for FDNE modelling based                           in Electrical Engineering, Chapter 4. Topics in Model Order Reduction with
+on tangential interpolation framework using Loewner Matrix pen-                            Applications to Circuit Simulation, Springer, 2011, pp. 85–107.
+cil. This is a non-iterative approach and has system theoretic                        [20] Mathworks, MATLAB Control system tool box, R2012b.
+                                                                                      [21] Matrix ﬁtting toolbox1, http://www.sintef.no/vectﬁt
+interpretation. A matrix implementation is proposed for the for-                      [22] B. Gustavsen, A. Semlyen, Rational approximation of frequency domain
+mation of Loewner and shifted Loewner matrices which eliminates                            responses by vector ﬁtting, IEEE Trans. Power Deliv. 14 (3) (1999) 1052–1061.
+nested for-loops and solution of Sylvester equations. A MATLAB                        [23] B. Gustavsen, Improving the pole relocating properties of vector ﬁtting, IEEE
+                                                                                           Trans. Power Deliv. 21 (3) (2006) 1587–1592.
+based stable state space model extraction is also proposed. The
+                                                                                      [24] B. Gustavsen, H.M.J.D. Silva, Inclusion of rational models in an electromag-
+proposed method is compared with widely used vector ﬁtting. It                             netic transients program: Y-parameters, z-parameters, s-parameters, transfer
+is found that the data partitioning approach signiﬁcantly impacts                          functions, IEEE Trans. Power Deliv. 28 (2) (2013) 1164–1174.
+the accuracy of the LM approach. Splitting the data into odd and                      [25] W. Neville, A. Jos, Power systems electromagnetic transients simulation, IEE
+                                                                                           Power Energy Ser. 39 (2003).
+even samples (alternate samples) is shown to be accurate. The LM                      [26] B. Gustavsen, A. Semlyen, Enforcing passivity for admittance matrices
+method is comparable to vector ﬁtting in terms of accuracy, sta-                           approximated by rational functions, IEEE Trans. Power Syst. 16 (1) (2001)
+bility and passivity. The indication of probable system order, no                          97–104.
+
+convergence issues and no starting poles are the unique advan-
+tages of the Loewner Matrix approach. The proposed approach is
+

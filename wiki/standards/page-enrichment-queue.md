@@ -25,7 +25,7 @@ updated: "2026-05-13"
 |------|------|------|------|--------|-------------|------|------|-----------|------|
 || 1 | distribution-network.md | methods | methods/system-studies/distribution-network.md | P0 | 143 | 663 | 5 | 17 | completed |
 | 2 | tbs.md | methods | methods/power-electronics/tbs.md | P0 | 140 | 746 | 1 | 10 | pending |
-| 3 | n-port-network.md | methods | methods/network-solution/n-port-network.md | P0 | 136 | 672 | 3 | 9 | pending |
+| 3 | n-port-network.md | methods | methods/network-solution/n-port-network.md | P0 | 136 | 672 | 3 | 9 | completed |
 | 4 | gan-hemt.md | methods | methods/power-electronics/gan-hemt.md | P0 | 134 | 786 | 1 | 9 | pending |
 | 5 | gis.md | methods | methods/protection-fault/gis.md | P0 | 134 | 793 | 1 | 9 | pending |
 | 6 | signal-processing.md | methods | methods/signal-processing/signal-processing.md | P0 | 129 | 666 | 4 | 8 | pending |
@@ -478,3 +478,4 @@ updated: "2026-05-13"
 |------|-----------|--------|--------|------|
 || 1 | 2 | 2 | 0 | MPC和TSC页面完成 |
 || 2 | 1 | 1 | 0 | distribution-network页面完成 |
+|| 3 | 1 | 1 | 0 | n-port-network页面完成 |
