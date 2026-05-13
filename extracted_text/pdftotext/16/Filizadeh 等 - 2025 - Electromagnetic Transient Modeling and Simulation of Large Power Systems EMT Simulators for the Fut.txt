@@ -1,0 +1,753 @@
+FEATURE
+
+
+ELECTROMAGNETIC TRANSIENT
+MODELING AND SIMULATION
+OF LARGE POWER SYSTEMS
+EMT Simulators for the Future Grid
+Shaahin Filizadeh , Jean Belanger, Flavio Fernandez , Paul Forsyth ,
+Jean Mahseredjian , Jesus Morales , and Genevieve Lietz
+
+
+
+
+                                                                                                                                                                ©SHUTTERSTOCK.COM/YAALAN
+
+
+
+
+WHILE SIMPLIFIED PHASOR MODELING                                                        kilohertz range, which calls for detailed models and
+has pro­ved adequate for the assessment of the tran-                                    advanced solution methods, and in part due to the
+sient stability of large-scale conventional power                                       diminishing system inertia that allows widespread
+systems (i.e., those dominated by large synchronous                                     impact from local dynamic events. Therefore, it has
+machines), extensive research and practical experi-                                     become necessary to conduct electromagnetic tran-
+ence have shown that doing so for large grids heavily                                   sient (EMT) simulations of more sophisticated and
+reliant on inverter-based resources (IBRs) is not ad-                                   increasingly larger networks, reaching unprecedent-
+equate. This is in part because IBRs use power elec-                                    ed numbers of nodes. There is a need for research,
+tronic converters with switching frequencies in the                                     development, and innovation in terms of both so-
+                                                                                        lution algorithms and computational platforms to
+                                                                                        modernize EMT simulators so that they can meet
+Digital Object Identifier 10.1109/MPE.2024.3515921
+Date of current version: 23 June 2025                                                   the modeling demands of modern networks.
+
+JULY/AUGUST       2025 use limited to: Tsinghua University. Downloaded on
+    Authorized licensed                                                    April 13,2026
+                                                                         1540-7977 © 2025atIEEE.
+                                                                                             02:10:41    UTC
+                                                                                                 All rights     fromincluding
+                                                                                                            reserved, IEEE Xplore.
+                                                                                                                              rights forRestrictions
+                                                                                                                                         text and    apply.53
+                                                                              data mining, and training of artificial intelligence and similar technologies.
+   This article presents a number of such innova-                          can be achieved perfectly from a power-flow solu-
+tions that are being pursued by researchers, prac-                         tion. This also includes automatic initialization of
+ticing engineers, and simulation software and                              synchronous generator controls. Difficulties arise
+hardware manufacturers. It also addresses future                           in the presence of power electronic components
+challenges and potential solutions as EMT simula-                          or renewable energy resources (wind or photovol-
+tors continue to evolve.                                                   taic power plants, for example). Special techniques
+                                                                           must be used to accommodate converter circuits
+Parallel and Fast Computation                                              and force initial conditions found from power-flow
+Methods in EMT Simulations                                                 ­solutions.
+The basic principle of parallel computations in
+EMT-type solvers is based on the modeling of                               Cosimulation of Power System Dynamics
+transmission lines (or cables). Instead of the classic                     Cosimulation is a modular simulation approach that
+pi-section model, it is possible to use the more accu-                     has been widely used in many engineering fields.
+rate propagation delay-based model. Such a model                           It consists of decomposing a complex problem into
+creates a natural decoupling between the ends of the                       various subsystems that are solved individually. To
+line and allows the formulation of a block-diagonal                        compute the overall solution, the subsystems are
+solution matrix. Each block (or subcircuit) can be                         then coupled via the exchange of simulation results
+solved on a separate processor and in parallel. Dif-                       at discrete time intervals. In general, the subsys-
+ficulties arise when the transmission line needed                          tems may have drastically different physical charac-
+to split the network is short, thus forcing a small                        teristics and may require various types of modeling
+numerical integration time step smaller than the                           methods or modeling in different domains.
+propagation delay. Another issue is the potential ab-                          The advantages of cosimulation arise from the
+sence of delay-based transmission lines for network                        individual solution of each subsystem and are pri-
+splitting. Other techniques, such as bordered block-                       marily twofold. First, cosimulation allows for par-
+diagonal matrices, can be used in such cases. It has                       allel computation of the subsystems and, therefore,
+been recently demonstrated that the compensation                           could offer better overall computational perfor-
+method can be applied successfully, even in the                            mance in large-scale EMT simulation. Second, in-
+presence of nonlinear models. Another approach is                          dependent solvers with different degrees of model-
+that of the combined nodal and state-space analysis                        ing detail and different simulation step sizes can be
+methods, which enables the splitting of networks                           used for each subsystem. The latter allows custom-
+at arbitrary locations. Further research is required                       ization of modeling and solution methods for each
+to fully automate such methods and optimize the                            subsystem to achieve an optimal balance between
+blocks for efficient utilization of processors, thus                       accuracy and computational intensity.
+achieving the fastest computations possible with                               For instance, Figure 1 shows the combination of
+sparse matrix solvers.                                                     a detailed vendor-specific EMT model of a high-
+   Another crucial aspect of accelerating compu-                           voltage direct current (HVdc) system, typically ac-
+tations is the automatic initialization of network                         counting for internal dynamics ranging from a few
+models for starting the time-domain computations.                          microseconds to a few milliseconds, coupled with
+The objective is to reach steady-state conditions as                       a phasor-domain-type (PDT) model of the trans-
+soon as possible to avoid unnecessary computation-                         mission networks, which accounts for the system-
+al overhead. Lack of initialization may also lead to                       wide dynamics in the time range from a few mil-
+inappropriate operating modes or disconnection of                          liseconds to several seconds. PDT-type models in
+renewable energy resources due to protection sys-                          the context of this article are those in which the
+tem trips caused by start-up transients. The initial-                      dynamics of the network are ignored by using con-
+ization of networks with conventional generators                           ventional phasor representation. Such models are
+
+  54
+   Authorized
+             licensed use limited to: Tsinghua University. Downloaded on April 13,2026 at 02:10:41 UTCIEEE
+                                                                                                        from POWER    & ENERGY
+                                                                                                             IEEE Xplore.           MAGAZINE
+                                                                                                                          Restrictions apply.
+                                                                    Subsystem 1 (EMT)
+
+
+
+
+                                                                                               Boundary
+                       Boundary
+
+
+
+
+                                                 Boundary
+
+
+
+
+                                                                                                                      Boundary
+                                                                                                Values
+                        Values
+
+
+
+
+                                                  Values
+
+
+
+
+                                                                                                                       Values
+     Subsystem                                                                                                                   Subsystem
+         3                        Interface                 ac/dc                  dc/ac                  Interface                  2
+       (PDT)                                                                                                                       (PDT)
+
+
+
+
+Figure 1. Application case of hybrid cosimulation of a power system. PDT: phasor-domain type.
+
+
+adequately accurate when the dynamic phenom-                    large portions of the grid where EMT-type model-
+ena under investigation do not cause large devia-               ing is not necessary, yet the frequency content of
+tions from the nominal frequency of the network,                the transients is such that PDT models fall short.
+and as such, modeling the network using quasi-                      The usage of DP models for large systems is
+static phasors leads to negligible discrepancies.               not without its challenges. While DP models of
+   Dynamic phasors (DPs) are mathematical arti-                 conventional circuit elements may be readily ob-
+facts that offer a highly flexible alternative to PDT-          tained, the development of high-fidelity DP models
+type models. DP models retain the dynamics of the               for machines and transmission lines, including
+network elements and thus provide accuracy over                 their nonlinear behavior (e.g., due to magnetic
+a much wider range of frequencies than PDT-type                 saturation) and the frequency dependence of pa-
+models. Their computational efficiency and hence                rameters (in the case of transmission lines) is chal-
+their appeal for modeling very large systems stem               lenging and requires extensive work. Fortunately,
+from the fact that DPs represent the variations of              research and model development work in this area is
+the envelope of waveforms and allow for the use of              abundant, giving a positive outlook for the increased
+much larger time steps than an EMT model. Com-                  usage of DP-based models in large system studies.
+pared to EMT models, DP models offer consider-                      Generic DP models are also available for sev-
+able computational gains when used for modeling                 eral high-power converter topologies, including
+                                                                                      line-commutated       converters
+                                                                                      and modular multilevel con-
+                                                                                      verters for both normal and
+                                                                                      abnormal operating conditions.
+         PDT
+                                                                                      In general, DP representation
+                                                                                      of systems such as converters
+                                                    EMT2
+                                                                                      and frequency-dependent trans-
+                                                                                      mission lines is mathemati-
+                       DP
+                                                              EMT1                    cally intensive and may require
+                                                                                      separate provisions for special
+                                                                                      modes of operation, e.g., when
+                                                                                      the converters are blocked.
+                                                                                         Figure 2 shows another ex-
+                                                                                      ample of cosimulation wherein
+                                              Frequency-Adaptive Solver               the system is split into several
+                                                                                      segments, each modeled with
+                                                                                      a specific solver. EMT1 and
+                                                                                      EMT2 include subsystems mod-
+Figure 2. Hybrid cosimulation of a large network with different solvers.              eled in EMT with different time
+
+JULY/AUGUST       2025 use limited to: Tsinghua University. Downloaded on April 13,2026 at 02:10:41 UTC from IEEE Xplore. Restrictions apply.55
+    Authorized licensed
+steps. These are subsystems where high-frequency                           making their widespread use as replacements for
+dynamics/events are prevalent, e.g., in the vicinity of                    EMT models limited. Currently, EMT–EMT cosimu-
+power electronic converters. DP and PDT are sub-                           lation using the latency of long transmission lines to
+systems modeled using DP and PDT methods, re-                              segment a network is a widely popular approach.
+spectively. The DP subsystem may act as a bridging
+zone between the EMT and PDT areas because of its                          Coupling Methods
+frequency range. The subsystem labeled “frequency-               Figure 3 depicts the cosimulation of two subsys-
+adaptive solver” uses a specialized solver that switches         tems, illustratively of EMT and PDT types, with
+between EMT and DP solutions, depending on the                   the simulation step size in the EMT subsystem be-
+frequency contents of the waveforms. The decision                ing one fifth of that used in the PDT subsystem.
+to segment a large network into these subsystems is              The same applies in the case of two EMT sub-
+not unique and depends on several factors, including             systems being cosimulated simultaneously with
+the location of high-frequency components, the loca-             different time steps to enhance simulation perfor-
+tions where the study of interest is to be conducted,            mance. To compute the global solution, the inputs
+and the type(s) or disturbances to be studied. As the            and outputs of both systems are synchronized at
+subsystems in Figures 1 and 2 use different modeling             the discrete times of the PDT-type simulation, as
+domains, they are referred to as hybrid cosimulation.            indicated by the gray arrows in the figure.
+Hybrid cosimulation can play an important role in                   A necessary condition for the convergence of
+cases where an EMT model of the full network is not              the solution is the nonexistence of algebraic loops
+available, EMT-level modeling is not necessary for the           between both subsystems, i.e., in the coupling
+entire network, or as an interim solution toward pure            equations. In this case, the accuracy of the co-
+large-scale EMT simulation. Hybrid cosimulations                 simulation is equal to that obtained via the solu-
+need to be considered carefully as currently they allow          tion of the individual subsystems. This is the case
+an enhanced allotment of computational resources to              if the system is split at boundaries with inherent
+the subsystems of the network that require EMT-type              time delays, such as long transmission lines. If the
+modeling, while other parts of the network that do not           wave traveling time between the ends of the line
+require such detailed representation are modeled us-             belonging to different subsystems is longer than
+ing less computationally expensive methods, e.g., DPs.           the cosimulation synchronization time, there is no
+It must, however, be noted that pockets within a large           algebraic coupling equation because of the dead
+network may have to be represented using EMT mod-                time, and convergence of the solution is guaran-
+els as DP models are either unavailable or limited in            teed. Another example of an inherent system split
+terms of accuracy. For example, DP models for power              is that of digital controllers, where the synchro-
+electronic converters are cumbersome to develop and              nization time is smaller than the internal clock
+are often restricted to certain operating conditions,            of the controller, typically in the range of a few
+                                                                                      microseconds. While inher-
+                                                                                      ent system delays between the
+                       Δt
+                                                                                      subsystems impose an upper
+    EMT
+                                                                                      bound on the synchroniza-
+                                                                                      tion time of the cosimulation
+                 Synchronization
+                                                                                      and force the reduction of the
+                                                                                      simulation step size to a few
+    PDT
+                                                                                      microseconds, they allow for
+                                                     kΔT                (k+1)ΔT
+            (k–2)ΔT            (k–1)ΔT                                                a highly parallelized cosimu-
+Figure 3. Timeline for cosimulation of two subsystems: EMT simulations with a         lation of the system without
+smaller time step are synchronized with PDT at larger intervals.                      loss of accuracy.
+
+  56
+   Authorized
+             licensed use limited to: Tsinghua University. Downloaded on April 13,2026 at 02:10:41 UTCIEEE
+                                                                                                        from POWER    & ENERGY
+                                                                                                             IEEE Xplore.           MAGAZINE
+                                                                                                                          Restrictions apply.
+EMT–EMT Cosimulation                                                           be extracted from EMT data. This is usually based
+EMT–EMT cosimulation can be used to accelerate                                 on frequency analysis methods, such as the fast
+computations. A parallel cosimulation can be cre-                              Fourier transform, although several other methods
+ated using methods such as the functional mockup                               are available that produce similar, but not identi-
+interface (FMI) standard. It is noted that, accord-                            cal, results. Conversely, the data transferred from
+ing to this standard, it is possible to interface two                          the PDT domain to the EMT domain must be time
+or more simulation software packages from differ-                              interpolated. To reduce the volume of transferred
+ent domains in a cosimulation environment using a                              data and to make the exchange between different
+master–slave communication method. Any software                                subsystems more efficient, data conversion is typi-
+that is FMI compliant can be set to interface with                             cally performed in the EMT domain.
+other FMI-compliant software. This means that
+a cosimulation setup can be created using different                            Model Exchange for Cosimulation
+EMT software vendors.                                                        Cosimulation is not yet widely used in the electric
+   The EMT–EMT cosimulation can also be per-                                 power industry. This is partly due to a lack of stan-
+formed in parallel. The network instances solved                             dardization in the communication and simulation
+in parallel can be separated by transmission lines                           control protocols, causing cosimulation to require
+(or cables) with propagation delays. Different time                          a nonnegligible effort to configure, as opposed to
+steps might be used in subnetworks with sufficient                           a “plug-and-play” solution. Lack of standardiza-
+accuracy due to the transmission line history in-                            tion is also a major challenge for the development
+terpolation process. A multiple time-step setup is                           and maintenance of large-scale simulation models
+presented in Figure 4 using the master–slave (sub-                           as the models of cosimulated subsystems typically
+networks) concept of the FMI. Significant computa-                           come from different sources (white- or black-box
+tional gains can be achieved using the parallel FMI                          vendor models, real firmware code, different pro-
+cosimulation approach.                                                       gramming languages, etc.).
+                                                                                 Consistent model exchange and simulation
+Data Conversion                                                              can be achieved either by a standard cosimulation
+Hybrid cosimulation requires conversion of data                              protocol or by a common modeling language. An
+exchanged between different subsystems. For ex-                              example of a dedicated, high-performance proto-
+ample, in EMT–PDT cosimulation, phasors must                                 col is the C-interface specified in the FMI for co-
+                                                                                                  simulation in Modelica. For
+                                                                                                  the integration of “real code,”
+                                                                               CPU3
+                                                                                                  interfaces are under develop-
+                                                CPU1                       EMT IBR Model
+                                                                                                  ment to support the integration
+              CPU2                                                          Subnetwork            of digital controllers to exist-
+                                              t1                               t3
+        EMT IBR Model                    EMT Master Grid                                          ing dynamical models. Further
+           Subnetwork                                                          CPU4               standardization effort is ex-
+              t2                                                                                 pected to address the increas-
+                                                                           EMT IBR Model
+                               Transmission                                                       ing demand for cross-platform
+                               Line Delay                                   Subnetwork
+                                                                                t4               cosimulation, not least to sup-
+                                                     CPU5
+                                                                                                  port cosimulation between in-
+                                          EMT IBR Model
+                                                                                                  terdisciplinary tools.
+                                            Subnetwork
+                                               t5
+                                                                                                          Network Equivalents
+Figure 4. Multiple time-step setup with cosimulation setup of EMT software                                An alternative to alleviate the
+instances.                                                                                                CPU burden is the application
+
+JULY/AUGUST       2025 use limited to: Tsinghua University. Downloaded on April 13,2026 at 02:10:41 UTC from IEEE Xplore. Restrictions apply.57
+    Authorized licensed
+   of network equivalents. Since EMT-type simula-                          lower model order is preferred for computational ef-
+   tions are aimed at capturing time-domain responses                      ficiency. Therefore, an acceptable tradeoff between
+   with a broad frequency range, frequency-dependent                       model order and fitting accuracy must be found.
+   network equivalent (FDNE) models are required.                             Passivity is a crucial requirement of a rational
+   Normally, FDNE modeling is applied to a zone of                         model (i.e., it should only absorb energy). A rational
+   the network that is interfaced with the main zone of                    model with passivity violations is very likely to be
+   interest (where the disturbances are studied). Split-                   numerically unstable in transient simulations. The
+   ting of the network is achieved arbitrarily, leading                    condition for a rational model to be passive is to be
+   to a multiterminal connection between the zone of                       positive definite at all frequencies, or equivalently,
+   main interest (containing detailed models) and the                      all its eigenvalues must be positive at all frequen-
+   FDNE model, as illustrated in Figure 5.                                 cies. Passivity violations can be due to a lack of ac-
+      To calculate an FDNE model, a frequency scan                         curacy in the fitting or due to an overdetermined
+of the network is required to obtain the frequency-                        model order. In either case, an inaccurate frequency
+dependent parameters to be synthesized. These                              response that violates the passivity condition is in-
+­parameters can be impedance, admittance, scat-                            volved. To avoid passivity violations, the model or-
+tered parameters, or transfer functions. Admittance                        der and fitting tolerance can be tuned until a passive
+parameters are used for convenience since they can                         model is obtained. Unfortunately, this can be chal-
+be easily incorporated in the modified augmented                           lenging at times, and for such cases, the application
+nodal analysis solution. In a general case, a mul-                         of a passivity enforcement technique can be helpful.
+tiport frequency scan results in an N × N matrix                              Alternative mathematical representations, such
+ ­signature of the network with discrete frequency                         as a state-space model or RLC branches, also exist.
+  samples. Each entry of the matrix is a complex-­                         The choice is usually made depending on the sim-
+  valued quantity with a magnitude and a phase                             ulation software platform and available resources.
+  ­angle, both of which vary with frequency.                               The state-space model is efficient when based
+      Strictly speaking, the FDNE modeling technique                       on sparse-matrix representation and remains a
+   is only valid for linear systems, although a frequen-                   straightforward process. The FDNE a­pproach
+   cy scan of a network with nonlinear components                          also offers the possibility to model the active
+   around a nearly linear operating point can provide a                    sources contained in the zone modeled by an
+   fair approximation. The key stage in FDNE model-                        FDNE. This is done by including a Norton-type
+   ing consists of finding the parameters (coefficients)                   equivalent current source connected at the ter-
+   of a synthetic mathematical representation that                         minals of the FDNE model. This current source
+   matches (within an error tolerance) the network fre-                    is calculated to match the required simulation
+   quency. The process of finding those parameters is                      steady state (initial conditions).
+   also known as fitting. The vector fitting method is
+   a popular fitting technique that can be successfully                    Real-Time Simulation of Large
+   used in the context of FDNE. One of the challenges                      Power Systems
+   in the fitting stage is to find an appropriate model                    Real-time EMT simulations generally face a strin-
+   order. Note that increasing the model order leads to                    gent limitation in that the simulator must complete
+   a refined match (and hence a lower error); however, a                   all necessary calculations and service all input–
+                                                                           output (I/O) functions required within a real-world
+                                                                           time interval equal to the simulation time step. This
+     Zone of Main           Port 1      Zone Represented                   poses significant hurdles to the simulation of power
+        Interest                          With an FDNE
+   (Detailed Models)                         Model                         systems of even moderate size. Naturally, real-time
+                           Port N
+                                                                           simulation of large systems faces more signifi-
+Figure 5. Network splitting for FDNE modeling.                             cant challenges.
+
+  58
+   Authorized
+             licensed use limited to: Tsinghua University. Downloaded on April 13,2026 at 02:10:41 UTCIEEE
+                                                                                                        from POWER    & ENERGY
+                                                                                                             IEEE Xplore.           MAGAZINE
+                                                                                                                          Restrictions apply.
+   To provide a scalable solution, all commercial                              Increasing the model order
+real-time simulators employ some form of parallel
+processing on one or multiple levels. A common
+                                                                               leads to a refined match
+technique used by real-time simulators to facilitate                           (and hence a lower error);
+parallel processing is to break networks into subsys-                          however, a lower model order
+tems whereby each subsystem is solved using sepa-
+rate computing elements (e.g., separate processor
+                                                                               is preferred for computational
+cores, separate processors entirely, separate field-                           efficiency.
+programmable gate arrays, etc.). Some real-time
+simulators are also able to use a second level of par-                         nicate with each other and be synchronized with
+allel processing by dividing the computational tasks                           one another. The synchronization must be global
+required to solve a subsystem across multiple com-                             (i.e., all hardware modules must be synchronized
+puting elements. Generally speaking, the advantage                             to the same time reference), and the communica-
+of allowing a second level of parallelization is the                           tion between hardware modules should be fully
+realization of larger subsystems (i.e., allowing larger                        interconnected (such that any hardware module
+networks or portions thereof to be modeled without                             can communicate directly with any other hardware
+decoupling).                                                                   module). It is possible to use a simulator structure
+   Another challenge for real-time simulation is                               where the modules are not fully interconnected,
+the modeling of switching components or events                                 but it makes network modeling more difficult and
+such as breakers and faults in the network. When                               restrictive. The usability and efficiency of the real-
+a switch in the network is operated, the network’s                             time simulator’s user interface is also important for
+admittance matrix changes, which must be re-                                   large-scale EMT simulations. The user interface
+flected in the simulation. The simulator must ei-                              must be designed such that it remains responsive
+ther precalculate and store all possible matrices                              even when handling large-scale networks. This in-
+or be able to invert the network matrix on the fly.                            cludes the user experience when navigating through
+Precalculating and storing all possible matrices is                            the simulation model, modifying the circuit and/or
+limiting since 2 n matrices, where n is the number                             circuit data, and also when compiling the network
+of single-phase switches to be represented, must                               for the real-time simulator.
+be stored, which clearly restricts the number of                                   Fundamentally, hard real-time simulation was
+switches that can be included in the network/sub-                              developed to allow testing of external equipment,
+system. Inverting the system matrix on the fly al-                             which in turn requires real-time simulators to pro-
+lows more switches to be included in the network                               vide various I/O capabilities. Real-time simulators
+and offers other advantages, such as the ability to                            must offer the ability to connect to external devices
+embed components and nonlinearities in the net-                                using conventional analog and digital I/O as well
+work as variable admittance elements rather than                               as Ethernet-based protocols, such as IEC 61850,
+as interfaced current injections.                                              DNP3, etc. When large amounts of I/O are re-
+   When considering large-scale EMT simula-                                    quired, it is critical that the real-time simulator has
+tion, expandability is also a challenge that must                              sufficient communication bandwidth and channels
+be addressed by real-time simulators. In theory,                               to provide the required I/O without creating signifi-
+real-time simulations can be infinitely expanded;                              cant communication delays (i.e., servicing of the
+however, in practice there are hard limits based on                            I/O must not cause the simulation time step and ex-
+the simulator design. As discussed previously, net-                            ecution time to increase beyond acceptable limits).
+works are typically broken into subsystems that are                                For many years now, vendors have supplied
+assigned to different hardware modules. The dif-                               black-box versions of their schemes and controls
+ferent hardware modules must be able to commu-                                 for inclusion in EMT simulations. Typically, the
+
+JULY/AUGUST       2025 use limited to: Tsinghua University. Downloaded on April 13,2026 at 02:10:41 UTC from IEEE Xplore. Restrictions apply.59
+    Authorized licensed
+black-box controls were provided using dynamic                             protection system emulators or a mix of black-box
+linked libraries (DLLs) or shared objects (.os) for                        emulators and validated generic models. Black-
+Linux files. Unfortunately, the DLL-based models                           box controllers are normally validated using repli-
+are not conducive to or compatible with real-time                          cas but with a small grid equivalent. In most cases,
+simulation since Windows is not a real-time op-                            such tests are performed by the original equip-
+erating system. Additionally, these are typically                          ment manufacturer (OEM) during factory accep-
+tailored for specific simulation tools and lack                            tance tests using modest-sized network models.
+any standard for interoperability or unified inter-                        However, the need to perform EMT simulation of
+faces. Recently, the CIGRE-IEEE standard team                              large-scale power systems, normally performed by
+(the Joint IEEE Transient Analysis and Simula-                             transmission system operators, calls for fast and
+tions Subcommittee Task Force and CIGRE B4.82                              powerful computing capabilities to quickly assess
+Working Group for “Use of real-code in EMT                                 the system stability as well as controller and pro-
+models for power system analysis”) has proposed                            tection system performance under different oper-
+a standardized DLL interface with initialization                           ating conditions and multiple contingencies.
+option that should be used by manufacturers. Real-                            Table 1 presents a summary for both real-time
+time simulators can also be interfaced with manu-                          with hardware in the loop (HIL) and offline simula-
+facturer control replicas for conducting various                           tors. It is noted that offline simulation can in theory
+tests and emulating controllers.                                           also be performed in real time or even faster than
+   Real-time simulator vendors have also devel-                            real time, but without HIL. It must be noted that
+oped alternate options for manufacturers to provide                        many of the items listed under offline simulations
+black-box models suitable for real-time simulation,                        can be done, in essence, using real-time platforms
+which is typically denoted as software in the loop                         as well. Issues such as cost may affect the choice of
+(SIL). It is also possible to use SIL codes with of-                       offline or real-time simulation.
+fline simulators running on Linux, but the DLL
+remains the preferred straightforward method. It is                        Examples of EMT Simulations of Large
+expected that complexities will continue to persist,                       Power Systems
+in particular for studies involving power electronic
+equipment supplied by several vendors who cannot                           FDNE Case Study
+share their respective controller details to protect                       The large grid benchmark shown in Figure 6 is used
+their intellectual property.                                               to demonstrate the application of an FDNE model.
+   Apart from conventional real-time simulations,                          In this network, a fault is applied to the transmis-
+utilities may decide to perform control and pro-                           sion line between buses HALKA and OSMAN. The
+tection system parameter optimization and perfor-                          boundaries that define the zone of interest and the
+mance testing using only black-box controller and                          network for calculating the FDNE are circled in red.
+
+                                   Table 1. An overview of simulation and study types.
+
+Type of Simulation     Offline Accelerated/Parallel EMT                      Real Time With HIL
+
+Model type             With generic controls                                 Control replicas
+                       Manufacturer models (DLL or SIL), real code           Digital twin
+                       Digital twin                                          Manufacturer models (SIL), real code
+
+Type of study          OEM controller model validation                       OEM controller validation with SIL and/or control replicas
+                       EMT planning studies                                  CHIL and PHIL
+                       Performance evaluation                                Control system testing with control replicas
+                       Control system performance testing, validation        Protection system studies
+                       Protection system studies                             Precommissioning tests
+                       Large grid integration studies for IBRs
+
+CHIL: controller hardware in loop; PHIL: power hardware in loop.
+
+
+
+  60
+   Authorized
+             licensed use limited to: Tsinghua University. Downloaded on April 13,2026 at 02:10:41 UTCIEEE
+                                                                                                        from POWER    & ENERGY
+                                                                                                             IEEE Xplore.           MAGAZINE
+                                                                                                                          Restrictions apply.
+Figure 6. Large grid benchmark model.
+
+
+
+                                                                                         MAN are shown in Figure 8.
+                        100
+                                                                       Original          The transient responses of
+                                                                       Fitted
+                                                                       Deviation         the reduced network with an
+        10–2
+                                                                                         FDNE show a high accuracy
+     Magnitude (p.u.)
+
+
+
+
+        10–4
+                                                                                         compared to the original net-
+                                                                                         work. For the test case in Fig-
+        10 –6                                                                            ure 6 (without the FDNE), it is
+                                                                                         possible to integrate 10 wind
+        10–8                                                                             plants using detailed model-
+                                                                                         ing. The overall network com-
+       10–10
+                  200    300    400    500     600      700     800     900              prises 10 aggregated type III
+                                      Frequency (Hz)                                     wind plants (generic models)
+Figure 7. Final admittance parameters fitting for the four-port FDNE.
+                                                                                         with detailed converter mod-
+                                                                                        els using detailed nonlinear
+                                                                                        insulated-gate bipolar transis-
+A four-port FDNE is calculated for this case with                 tors (IGBTs), 58 three-phase lines using the con-
+a frequency band set from 1 Hz to 1 kHz. A plot                   stant-parameter model, 72 synchronous generators
+of the fitting (admittance parameters) is shown in                with controls, 202 three-phase transformers with
+Figure 7. The resultant FDNE model has 77 poles.                  magnetization branches, and 15,136 control diagram
+A time-domain simulation is performed with a                      blocks. A fully iterative solver is used because of the
+time step of 50 μs for a simulation time of 10 s. The             presence of the nonlinear IGBT models. When us-
+CPU simulation times using the original network                   ing 12 CPUs, the computing time for 1 s drops to
+and the reduced model with the FDNE are 26 s and                  54 s despite all of the complexities. This is a clear
+12 s, respectively. An acceleration factor of 2.16 is             demonstration of performance with parallel compu-
+obtained in this basic example. The reduced simu-                 tations. The gain is 14.4 when compared to single-
+lation results for the voltage measured at bus OS-                CPU usage.
+
+JULY/AUGUST       2025 use limited to: Tsinghua University. Downloaded on April 13,2026 at 02:10:41 UTC from IEEE Xplore. Restrictions apply.61
+    Authorized licensed
+                             400
+                             300
+                             200
+             Voltage (kV)
+
+
+
+
+                             100
+                               0
+                            –100
+                            –200
+                            –300
+                            –400
+                               0.96    0.98        1       1.02        1.04          1.06      1.08          1.1     1.12     1.14    1.16    1.18
+                                                                                        Time (s)
+                                                                                          (a)
+
+                             400
+                             300
+                             200
+             Voltage (kV)
+
+
+
+
+                             100
+                               0
+                            –100
+                            –200
+                            –300
+                            –400
+                               0.99    0.995           1     1.005            1.01      1.015         1.02         1.025    1.03     1.035    1.04
+                                                                                       Time (s)
+                                                                                          (b)
+
+                                        V_OSMAN_FDNE_a [EMT1]                     V_OSMAN_FDNE_b [EMT1]               V_OSMAN_FDNE_c [EMT1]
+
+                                         V_OSMAN_a [MEM1]                         V_OSMAN_b [MEM1]                    V_OSMAN_c [MEM1]
+
+
+Figure 8. Transient response comparison for voltages: (a) Shows the waveforms from both solvers and (b) is a zoomed
+version of the transient portion of the waveforms in (a).
+
+                                                                                                photovoltaic plants using average-value modeling
+  Active Power (MW)
+
+
+
+
+                  100
+                                                                  Reference                     and a numerical integration time step of 50 µs, it
+                                                                  Parallel
+                                                                                                is possible to achieve 120 s of computing time on a
+                      80
+                                                                                                single CPU. However, cosimulation allows the re-
+                      60
+                                                                                                duction of computing times by using several CPUs
+                      40
+                                   1    1.5         2        2.5              3
+                                                                                                in parallel. With 60 CPUs, the computing time for
+                                               Time (s)                                         1 s drops to 13 s. Significant computational gains
+                                                                                                are achieved from the fast initialization of all IBRs.
+Figure 9. The active power of a wind park for paral-
+                                                                                                The sample results shown in Figure 9 demonstrate
+lel computations and reference on one CPU.
+                                                                                                perfect initialization below 100 ms of simulation.
+Parallel Simulation of Large Grids                                                              A fault is applied at 1 s and initiates the transient
+Several test cases utilizing parallel simulation of                                             response of the system.
+large grids are a­ vailable in the existing literature.                                            If several synchronous generators in the system
+These simulations are based on the EMT–EMT                                                      of Figure 6 are replaced by 10 aggregated type III
+cosimulation approach. For example, it is shown                                                 wind power plants, a new benchmark is created
+that, for a large grid with 27 wind plants and 32                                               with 72 synchronous generators (with governor and
+
+       62
+        Authorized
+                  licensed use limited to: Tsinghua University. Downloaded on April 13,2026 at 02:10:41 UTCIEEE
+                                                                                                             from POWER    & ENERGY
+                                                                                                                  IEEE Xplore.           MAGAZINE
+                                                                                                                               Restrictions apply.
+e­ xciter controls) and 202 three-phase transformers.                            the electrical circuit and controllers. Local and
+ Both the generators and transformers are modeled                                point-of-common-coupling (PCC) measurements
+ with magnetization curves. The wind plants include                              are sampled and sent to the controllers. The plant
+ controllers, and the converters are modeled with de-                            controller determines the power set points, and
+ tailed IGBT nonlinear models and generic controls.                              the converter controller implements primary
+ The total number of nonlinear models (functions) is                             control functions. The converter duty cycles, or
+ 834. The total number of nodes is 3,611. There is a                             gating pulses, are fed back to the electric circuit,
+ total of 15,136 control diagram blocks. Each wind                               depending on whether an average or detailed con-
+ turbine is simulated on separate CPUs in parallel.                              verter model is selected. A switching function
+ Parallelization is also achieved in the network equa-                           converter model is recommended to be used since
+ tions through transmission line decoupling. A 10-                               it presents a reasonable compromise between the
+ µs time step must be used because of the nonlinear                              real-time performance of an average model and
+ IGBT models. The computing time for 1 s is 20 s                                 the accuracy of using detailed switches.
+ when using 24 cores. This timing includes a full
+ nonlinear solver for accurate simultaneous solution                             Interfacing Manufacturer Controller Code
+ with all nonlinear models. The average number of                                With the Real-Time Simulator
+ iterations per time point is six. These simulation re-                          In rare cases, the OEM controllers are simple func-
+ sults are based on the computer CPU AMD Ryzen                                   tions and can be replaced automatically directly by
+ Threadripper Pro 5995WX.                                                        existing real-time simulator library components to
+                                                                                 improve the simulation speed and documentation.
+Large-Scale EMT Simulation of IBRs                                               However, in most cases, the controller is precom-
+With OEM Controllers                                                             piled black-box code. The controller code commu-
+Figure 10 shows a typical IBR model architec-                                    nicates with the electric system model simulated in
+ture with OEM controller models in a real-time                                   real time at its own time step, and a cosimulation
+simulator. The model represents an inverter-                                     scheme orchestrates the data transmission and the
+based wind turbine generator and consists of                                     execution of the controller and the model.
+
+
+
+                                                                                                                  690 V
+                      33 kV/690 V PG                                                                              30 Hz
+                                                                                                            PM
+                         50 Hz    QG                                     Vdc                                     5.2 MVA
+                                                                                                            QM
+                       5.5 MVA                     LGSC                                           LMSC                    TL
+                                 CB                                                                                               11.3 m/s
+                                                                                                                   GS
+                                                                           Cdc
+                    PCC
+                    33 kV         CGSC                       GSC                    MSC                          CMSC
+                    50 Hz
+                                                                                                                         Gating
+                                              FGSC                  Chopper
+                                                                                                     FMSC                Pulses
+                        V,l                                                                 V,l
+                                                               Converter                                     Duty
+                                                               Set Points                                    Cycles
+                                     Plant Controller                          Converter Controller
+      PCC                                                                      • Primary Control                        PWM Generator
+                                     • Protection
+      Measurements                                                             • dc Circuit Protection
+                                     • Secondary Control
+
+
+                                                     User
+                                                     Set Points
+
+
+Figure 10. Typical IBR model architecture with OEM controller models. PCC: point of common coupling; GSC: grid-
+side converter; MSC: machine-side converter; PWM: pulsewidth modulation.
+
+
+JULY/AUGUST       2025 use limited to: Tsinghua University. Downloaded on April 13,2026 at 02:10:41 UTC from IEEE Xplore. Restrictions apply.63
+    Authorized licensed
+   Because of the lack of a standardized interface,                        and CIGRE WG B4.82), a dedicated interface is pro-
+significant effort is required to adapt the control-                       vided to easily integrate the OEM controller codes.
+ler code using a semiautomatic translation tool and                        The controller codes can be executed in “close to
+execute it in real time or using an offline simulation                     real-time conditions” under the Windows operating
+tool. Two methods are proposed here to automati-                           system and distributed on parallel processors on the
+cally import the controller code. Both methods al-                         same or a separate simulator.
+low the execution of as many as hundreds of con-
+trollers on a single standard simulator.                                   Hardware Configuration
+                                                                           Once the OEM controller codes are imported, the
+Method 1: Automatic Import of OEM Controller                               complete simulation is performed by distributing
+Code From Offline EMT Simulator                                            the simulation process to parallel processors.
+In the case where the OEM controller code is pre-                          Figure 11 presents a typical hardware setup of the
+compiled for an offline EMT simulator as a DLL,                            proposed solution. The electrical circuit of each
+an automatic import function is developed to add                           IBR plant is run on different cores of the grid
+an interface wrapper around the DLL. The gener-                            simulator, while the OEM controllers are run in
+ated controller block for the model has the same I/                        parallel on a cluster of high-performance simu-
+Os and parameters as in the offline EMT simulator.                         lators. Fast communication links are deployed
+An automatic open-loop validation is performed us-                         among the simulators. Automatic task mapping
+ing the recorded signals during the import process.                        optimizes the assignment of different processes
+                                                                           to achieve the fastest simulation speed. Such a
+Method 2: Automatic Import of OEM Controller                               cosimulation architecture is highly scalable since
+Code – CIGRE Standards/Industry Guidelines                                 processors can be added as needed to maintain the
+If the OEM controller code follows standards/in-                           simulation speed “close to real time” as the ­number
+dustry guidelines (e.g., IEEE Joint IEEE Transient                         of IBR plants increases. The same architecture can
+Analysis and Simulations Subcommittee Task Force                           be implemented on a high-performance computer
+
+
+
+
+                                                                                 Several Computers for Simulation of Plant
+                                                                                 Models With Real Code Supplied OEMs
+
+                                                                                 20 × 18-Core AMD PCs
+                                                                                                                 Controller Code
+                                                                                                                  Measurement
+                                                                                                                   With PMU
+                                                                                      Processor 1
+
+                                                                                                                 Controller Code
+                                                                                                                    High-Level
+                                                                                      Processor 2                P and Q Control
+                  Processor                           Cosimulation
+                                                       Interface
+                                                                                                                      Local
+                                                                                                                 Controller Code
+                                                                                      Processor 3
+             128-Core Windows
+           Computer for Main Grid                                                                                    Code for
+           Parallel EMT Simulation                                                                                   Converter
+                                                                                      Processor 4                     Control
+
+
+
+
+Figure 11. System configuration for simulation of IBR system with OEM controllers. PMU: processor management unit.
+
+
+  64
+   Authorized
+             licensed use limited to: Tsinghua University. Downloaded on April 13,2026 at 02:10:41 UTCIEEE
+                                                                                                        from POWER    & ENERGY
+                                                                                                             IEEE Xplore.           MAGAZINE
+                                                                                                                          Restrictions apply.
+or a cloud computer using Windows or Linux                                     Electr. Power Syst. Res., vol. 223, Oct. 2023, Art. no.
+operating systems and the high-speed low-                                      109641, doi: 10.1016/j.epsr.2023.109641.
+latency communication fabric supplied by the                                      J. Matevosyan et al., “Electromagnetic transient
+cloud provider.                                                                modeling for connection studies: High-fidelity
+                                                                               models are key,” IEEE Power Energy Mag., vol.
+Conclusions                                                                    23, no. 4, pp. 54–66, Jul./Aug. 2025, doi: 10.1109/
+It is clear that EMT simulation of large systems,                              MPE.2025.3525596.
+whether using an offline or real-time simulator, is                               J. Rupasinghe, S. Filizadeh, and R. Parvari, “A
+a growing trend within the power and energy in-                                multi-solver framework for co-simulation of tran-
+dustry. Large-scale EMT simulations need to pro-                               sients in modern power systems,” Electr. Power
+vide a complete picture of network performance,                                Syst. Res., vol. 223, Oct. 2023, Art. no. 109659, doi:
+including the dynamics of power electronic con-                                10.1016/j.epsr.2023.109659.
+verters associated with renewables, HVdc, flex-                                   C. Zhou, C. Fang, M. Kandic, P. Wang, K. Kent,
+ible alternating current transmission systems, and                             and D. Menzies, “Large-scale hybrid real time
+energy storage devices. While traditional offline                              simulation modeling and benchmark for nelson
+EMT algorithms may suffer from long simula-                                    river multi-infeed HVdc system,” Electr. Power
+tion times for large-scale network models, new                                 Syst. Res., vol. 197, Aug. 2021, Art. no. 107294, doi:
+methods that use improved techniques (e.g., im-                                10.1016/j.epsr.2021.107294.
+proved network solution algorithms, cosimulation,                                 I. K. Park, J. Lee, J. Song, Y. Kim, and T. Kim,
+­automated methods for system segmentation and                                 “Large-scale AC/DC EMT level system simulations
+ batch simulation, and multidomain simulation)                                 by a real time digital simulator (RTDS) in KEPRI-
+ and take advantage of modern parallel comput-                                 KEPCO,” KEPCO J. Electr. Power Energy, vol. 3,
+ ing platforms (e.g., parallel processors, multicore                           no. 1, pp. 17–21, Jan. 2017.
+ computers, and specialized hardware) offer prom-
+ ising outlooks for significant gains that enable not                          Acknowledgment
+ only faster computations but also the simulation of                           Shaahin Filizadeh is the corresponding author for
+ much larger networks. Achieving success in this                               the article. All other contributors are listed alpha-
+ area is only possible through collaborative work                              betically.
+ among EMT simulation tool developers, vendors,
+ and other stakeholders to come up with stream-                                Biographies
+ lined and standardized methods that allow rapid                               Shaahin Filizadeh is with the University of Mani-
+ and seamless model interconnections and multi-                                toba, Winnipeg, MB R3T 5V6, Canada.
+ platform operability.                                                            Jean Belanger is with Opal-RT, Montreal, QC
+                                                                               H3K1G6, Canada.
+For Further Reading                                                               Flavio Fernandez is with DIgSILENT, 72810 Go-
+J. Morales, J. Mahseredjian, K. Sheshyekani, A.                                maringen, Germany.
+Ramirez, E. Medina, and I. Kocar, “Pole-selective                                 Paul Forsyth is with RTDS Technologies, Winni-
+residue perturbation technique for passivity enforce-                          peg, MB R3T 2E1, Canada.
+ment of FDNEs,” IEEE Trans. Power Del., vol. 33,                                  Jean Mahseredjian is with Polytechnique de Mon-
+no. 6, pp. 2746–2754, Dec. 2018, doi: 10.1109/TP-                              treal, Montreal, QC H3C 3A7, Canada.
+WRD.2018.2810706.                                                                 Jesus Morales is with PGSTech, Montreal, QC
+   M. Ouafi, J. Mahseredjian, J. Peralta, H. Gras, S.                          H2A2N2, Canada.
+Dennetiere, and B. Bruned, “Parallelization of EMT                                Genevieve Lietz is with the Australian Energy
+simulations for integration of inverter-based resources,”                      Market Operator, Melbourne 3000, Australia.   p&e
+
+
+
+
+JULY/AUGUST       2025 use limited to: Tsinghua University. Downloaded on April 13,2026 at 02:10:41 UTC from IEEE Xplore. Restrictions apply.65
+    Authorized licensed
+

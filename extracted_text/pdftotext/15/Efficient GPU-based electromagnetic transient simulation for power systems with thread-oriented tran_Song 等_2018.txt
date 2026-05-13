@@ -1,0 +1,1203 @@
+      This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI
+                                                                             10.1109/ACCESS.2018.2833506, IEEE Access
+
+
+
+
+ Date of publication xxxx 00, 0000, date of current version xxxx 00, 0000.
+ Digital Object Identifier 10.1109/ACCESS.2017.DOI
+
+
+
+
+ Efficient GPU-based Electromagnetic
+ Transient Simulation for Power Systems
+ with Thread-oriented Transformation and
+ Automatic Code Generation
+ YANKAN SONG1 , YING CHEN1 ,(Member, IEEE), SHAOWEI HUANG1 ,(Member, IEEE), YIN
+ XU2 ,(Member, IEEE), ZHITONG YU3 , AND WEI XUE4 ,(Member, IEEE)
+ 1
+   Dept. of Electrical Engineering, Tsinghua University, Beijing, 100084, China. (e-mail: huangsw@mail.tsinghua.edu.cn)
+ 2
+   School of Electrical Engineering, Beijing Jiaotong University, Beijing, 100044, China. (e-mail: xuyin@bjtu.edu.cn)
+ 3
+   Energy Internet Research Institute, Tsinghua University, Chengdu, 610213, China. (e-mail: yuzhitong@cloudpss.net)
+ 4
+   Dept. of Computer Science and Technology, Tsinghua University, Beijing, 100084, China. (e-mail: xuewei@tsinghua.edu.cn)
+ Corresponding author: Shaowei Huang (e-mail: e-mail: huangsw@mail.tsinghua.edu.cn).
+ This work was supported in part by the National Natural Science Foundation of China under Grant No. 51607100, No. 91530323, and
+ SGCC Research Project WBS. 5455HJ180004.
+
+
+
+
+     ABSTRACT Electromagnetic transients (EMT) simulation is the most accurate and intensive computation
+     for power systems. Past research has shown the potential of accelerating such simulations using graphics
+     processing units (GPUs). In this paper, an efficient GPU-based parallel EMT simulator is designed. Thread-
+     oriented model transformations are first proposed for the electrical and control systems. Following the
+     transformations, the electrical system is represented by connected networks of massive primitive electrical
+     elements, the computations of which can be constructed as massive fused multiply-add operations and
+     solutions to a linear equation. The control systems are represented by a layered directed acyclic graph with
+     primitive control elements that can be dealt with using SIMT groups. Finally, code automation tools are
+     designed to form the GPU kernels. Compared with past work, the proposed model transformations improve
+     the degree of parallelism. Most importantly, the code automation tools improve computational efficiency by
+     substantially reducing addressing and memory access, and render the implementation of the algorithm more
+     general and convenient. Test systems of different sizes were created by connecting multiple IEEE 33-bus
+     distribution systems and adding distributed generators. Simulations were performed on NVIDIA’s K20x
+     and P100 cards. The results indicate that the proposed method significantly accelerates EMT simulations
+     compared with a CPU-based program. Real-time performance was also achieved under certain conditions.
+
+
+     INDEX TERMS Electromagnetic Transients Simulation, EMTP, GPU, Parallel Computing, Power System
+
+
+
+ I. INTRODUCTION                                                                                      Consequently, EMT simulations for such systems are time
+       LECTROMAGNETIC transients (EMT) simulation [1]                                                 consuming. This restricts fast simulation-based applications,
+ E     is the most accurate tool to describe the fast dynamics of
+ power systems. The widely used EMT simulation algorithm,
+                                                                                                      such as real-time control strategy validations and closed-loop
+                                                                                                      simulations. A considerable amount of research has been
+ also known as the EMTP-type program, has been rapidly                                                invested in building parallel computing-based EMTP-type
+ developed in last few decades, and has been applied to several                                       programs using state-of-the-art multi-core processors [4], PC
+ simulation software, e.g., ATP-EMTP [2] and PSCAD [3].                                               clusters [5], and other heterogeneous platforms. These paral-
+ However, with the rapid development of smart grid technolo-                                          lel simulations are implemented mainly by network partition-
+ gies, complicated devices such as power electronic converters                                        ings [6], [7], and [8] that simulate different subsystems on
+ (PECs) and distributed energy resources (DERs), advanced                                             computing devices. However, the above parallel techniques
+ controls are integrated into power systems. Such integration                                         are coarse-grained ones, with limited degrees of parallelism
+ converts the grid into a large-scale, strongly coupled system.                                       inside each partition.
+
+ VOLUME 4, 2016                                                                                                                                                                                   1
+
+2169-3536 (c) 2018 IEEE. Translations and content mining are permitted for academic research only. Personal use is also permitted, but republication/redistribution requires IEEE permission. See
+                                               http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+      This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI
+                                                                             10.1109/ACCESS.2018.2833506, IEEE Access
+
+
+
+
+    In recent years, owing to the insurmountable conflicts                                                •A thread-oriented normalized transformation is pro-
+ between increase in clock speed and heat removal [9], it                                                  posed to represent the electrical system as composed
+ has become challenging to maintain enhancements in the                                                    of a network with only primitive electrical elements,
+ performance of CPUs at pace with that predicted by Moore’s                                                the calculations of which are basic fused multiply-add
+ law. Growth in computing capability relies on many-core                                                   (FMA) operations, with the same instructions and equal
+ heterogeneous devices, such as graphics processing units                                                  amounts of computation for each threads. Therefore,
+ (GPUs). The GPU was originally designed for image pro-                                                    such transformation can further improve the degree
+ cessing. Since NVIDIA developed the Compute Unified De-                                                   of parallelism (DOP) of the electrical system without
+ vice Architecture (CUDA) [10], [11], and [12], GPUs have                                                  increasing computations.
+ been used for general-purpose scientific computing in many                                              • Code automation tools are designed to generate the
+ areas, such as biology, geology, and deep learning [13] [14].                                             kernels for both the electrical system and the control
+    In the area of power system simulations, the GPU was first                                             system according to a case study at runtime. Such tools
+ used to accelerate multi-scenario power flow-based contin-                                                reduce addressing and memory access significantly, and
+ gency analysis [15]. Since then, GPUs have been used to im-                                               obtain higher kernel efficiency.
+ prove the performance of many power system applications,                                                The proposed simulator was verified to induce significant
+ such as the parallel power flow solver [16], parallel transient                                      accelerations in both traditional power systems and AC-
+ stability analysis [17], and parallel EMTP-type simulators                                           DC hybrid grid simulations, and can be used as a real-time
+ [18] [19].                                                                                           simulator for power systems at certain scales.
+    Earlier GPU-based parallel EMTP-type simulators simply                                               The remainder of this paper is organized as follows: In
+ regarded the GPU as an efficient linear algebra equation                                             Section II, the challenges of designing a high-performance
+ solver for use during the network solution process while                                             GPU-based EMTP-type simulator are discussed. The pro-
+ the rest of the computations were still performed on the                                             posed thread-oriented parallel EMTP-type simulator is de-
+ CPU. However, frequent communication between the CPU                                                 scribed in Section III. A case study is presented and discussed
+ and the GPU is required, which limits overall performance.                                           in Section IV, and the conclusions of this work are given in
+ Researchers thus began developing full GPU-based EMTP-                                               Section V.
+ type simulators where all computations are performed on the
+ GPU, with minimal data exchange between it and the CPU.                                              II. CHALLENGES OF FULL GPU-BASED EMTP-TYPE
+ In [18], different GPU kernels were designed for various                                             SIMULATOR
+ electrical components, such as linear passive elements, the                                          A. GENERAL-PURPOSE COMPUTING ON GPUS
+ universal transmission line model, and the universal machine                                         A CUDA-enabled GPU is a many-core processor composed
+ model. A general offline EMTP-type program on a GPU                                                  of arithmetic logic units (ALUs), shared memory, and control
+ has been developed and verified as highly efficient without                                          units [10]. A parallel program executed on a GPU is referred
+ compromising accuracy, but there is still a lack of GPU-                                             to as a kernel, and usually launches a large number of threads.
+ based control system simulations. In our preliminary work                                            To better use computing resources on a GPU, a multi-level
+ [20], a full GPU-based EMTP-type simulator was designed                                              execution model has been widely used to schedule computa-
+ by considering the simulation of both electrical and large-                                          tional tasks on it, as shown in Fig. 1.
+ scale control systems. A layered directed acyclic graph based                                           A thread grid launched by a kernel is divided into thread
+ computational model was applied to process simulations for                                           blocks, each containing no more than 1,024 threads. Blocks
+ control systems. The algorithm in [20] has been applied to                                           are distributed to different streaming multiprocessors (SMs).
+ wind farm simulations and yielded considerable improve-                                              It should be noted that only threads within a block can
+ ment in computational speed [21].                                                                    exchange data through the shared memory. Blocks on an SM
+    The above work has made significant contributions to the                                          are split into thread warps, and each warp contains no more
+ design of a full GPU-based EMTP-type simulator. How-                                                 than 32 threads. Warp schedulers inside an SM allocate each
+ ever, two major drawbacks persist. First, past work has not                                          thread warp to a core array. Threads inside a warp execute
+ improved approaches to modeling power systems to render                                              in single-instruction-multiple-threads (SIMT) pattern. If the
+ them more compatible with GPU computing, which may lead                                              instruction diverges inside a warp, threads corresponding to
+ to load imbalance and thread heterogeneity while solving                                             different instructions are executed serially.
+ for electrical systems. Second, previously designed kernels                                             As a result of the above, the GPU is designed for data-
+ on GPUs [20] are inadequate as they are not applicable                                               intensive, fine-grained parallel computing tasks. The princi-
+ to all kinds of complex control systems. Moreover, multi-                                            ples of designing high-performance parallel algorithms on
+ layer addressing and a large number of memory accesses                                               GPUs can be found in [10] and [11]. The following are some
+ are introduced, and computational efficiency is thus severely                                        important principles that we followed in the design of the
+ limited by memory bandwidth.                                                                         full GPU-based EMTP-type simulator: 1) eliminating diver-
+    In this paper, a full GPU-based thread-oriented parallel                                          gences inside a warp to minimize latency; 2) avoiding condi-
+ EMTP-type simulator is designed, and makes two main con-                                             tional statements and memory access conflicts to maximize
+ tributions:                                                                                          instruction and memory throughputs; and 3) transforming
+ 2                                                                                                                                                                                VOLUME 4, 2016
+
+
+2169-3536 (c) 2018 IEEE. Translations and content mining are permitted for academic research only. Personal use is also permitted, but republication/redistribution requires IEEE permission. See
+                                               http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+      This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI
+                                                                             10.1109/ACCESS.2018.2833506, IEEE Access
+
+
+
+
+                                                                                                                                           Start
+                  Device                                        Kernel
+                                                                                                                                    Initialization, T = 0
+                   GPU                                          Grid
+                   SM 1                                        Block 1                                                                   t < Tend ?     No        End
+          Core Array 1                                           Warp 1                                                                  Yes
+                                                                                                                                   Increase Time t by Δt
+                                  S1
+                                                               Block 1
+                 …
+
+
+
+
+                                                                                                                                                                Step 1. Solve control system to obtain
+                                                                                                                                  Solve Control System
+                                                                                                                                                                the inputs C(t) for electrical devices.
+
+
+
+
+                                                                    …
+                 …
+
+
+
+                                  …
+
+
+
+
+                                                                                                         One Integration Step
+                                                                                                                                    Update the Norton           Step 2. Update the status of electrical
+          Core Array n            Sk                             Warp w                                                          Equivalent Current Ine for     components.
+                                                                                                                                  Electrical Components             Step 2.1 Calculate Eq. (1) and (2)
+            Shared Memory
+                                                                    …                                                             Form Nodal Injecting              Step 2.2 Sum all the currents Ine
+                      …
+
+
+
+
+                                                                                                                                       Current I                    injecting to the same node to form I
+                                                               Block b
+                   SM s                                                                                                            Solve Nodal Voltage          Step 3. Solve YU = I using linear
+                                                                                                                                     Equation YU = I            algebraic solvers.
+                 Warp Scheduler                                     Thread
+                 CUDA Core
+                                                                                                                                FIGURE 2: Simulation of EMTP-type program.
+             FIGURE 1: Multi-level parallelism on GPU.
+                                                                                                      differential equations of an electrical component, discrete
+ computations into FMA operations, i.e., z = ax + y, which                                            Norton equivalent circuits are obtained [22]. Typically, an m-
+ is the most efficient operation on the GPU.                                                          port electrical component is modeled by
+                                                                                                                                              I (t) = GU (t) + Ine (t) ,                                 (1)
+ B. CHALLENGES OF DESIGNING GPU-BASED                                                                                                                           m
+                                                                                                      where t is time, I, U ∈ R represent the port’s current
+ EMTP-TYPE PROGRAM
+                                                                                                      and voltage vectors, respectively, G ∈ Rm×m represents
+ In power system simulations, the EMT simulation model for
+                                                                                                      the Norton equivalent conductance matrix, and Ine ∈ Rm
+ electrical components and controls can be represented as a
+                                                                                                      represents the Norton equivalent current vector, which is
+ set of differential equations. Therefore, the EMT simulation
+                                                                                                      calculated by
+ performs numerical integration on the differential equations.
+ In general commercial software, there are two kinds of EMT                                                                     Ine (t) = PI (t − ∆t) + QU (t − ∆t) + C (t) ,                            (2)
+ modeling and simulation frameworks, i.e., state space analy-                                                                                   m×m
+                                                                                                      where P, Q ∈ R          denote the coefficient matrices, and
+ sis and nodal analysis. In general, the nodal analysis frame-
+                                                                                                      C ∈ Rm reflects the effect of control inputs on the electrical
+ work is more efficient as the topology of the power system
+                                                                                                      component.
+ does not change frequently and the factorization process of
+                                                                                                         A straightforward way to parallelize (1) and (2) on a GPU
+ the nodal matrix can be eliminated in many cases [20].
+                                                                                                      is to launch m threads, each of which performs the following
+    The widely used nodal analysis framework for power
+                                                                                                      computation for one element:
+ system transient simulations, also known as the EMTP-type
+                                                                                                                                                      m
+ program, carries out the numerical integration of all models                                                                                         X
+                                                                                                                                       ik (t) =             gkj uj (t) + ine,k (t)
+ in the power system. As shown in Fig. 2, such simulations
+                                                                                                                                                      j=1
+ consist of three serial steps [22] in each integration step: 1)                                                                          m                              m
+ Solve the control systems to obtain inputs for the electrical
+                                                                                                                                          X                              X
+                                                                                                             ine,k (t) =                        pkj ij (t − ∆t) +              qkj uj (t − ∆t)           (3)
+ components. 2) Update the status of the electrical compo-                                                                                j=1                            j=1
+ nents using numerical integration rules. 3) Solve network
+                                                                                                                                                         +ck (t)
+ voltage equations. Typically, step 3) can be implemented
+ using various algebraic solvers on the GPU, such as the                                                                                              k = 1, · · · , m
+ GLU [23] and cuSOLVER [10]. Therefore, it is not the main                                            where ine,k and ik are the k th elements of Ine and I,
+ issue examined in this paper. In summary, to develop a full                                          respectively.
+ GPU-based EMTP-type simulator, parallel implementations                                                 This approach was used in our prior work [20]. A similar
+ of steps 1) and 2) should be carefully discussed.                                                    approach has been reported in [18], where specific kernels
+                                                                                                      were designed for different electrical components.
+ 1) Reducing Thread Heterogeneity in Electrical System                                                   Driven by (3), the computation task assigned to each thread
+ In EMTP-type programs, step 2) calculates the electrical                                             changes with the number of ports and type of correspond-
+ components. By applying numerical integration rules to the                                           ing component. Thus, heterogeneous threads are required
+ VOLUME 4, 2016                                                                                                                                                                                            3
+
+
+2169-3536 (c) 2018 IEEE. Translations and content mining are permitted for academic research only. Personal use is also permitted, but republication/redistribution requires IEEE permission. See
+                                               http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+      This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI
+                                                                             10.1109/ACCESS.2018.2833506, IEEE Access
+
+
+
+
+                                                    2           3            1     2    3    4       n
+                                                                                                                                             Layer Loop
+                                      1                                                                                        While (                  )
+                                                                                                                                              Control
+                       Layer 1                              5                                                                                                   Layer table
+                                                                 Layer 2                                                                              addressing L1:1 2 3
+                                            4                                                                                                                        L2:4 5
+                                                                                                          Atomic                 i1     i2         im
+                                                `                                                …                                                      Memory       L3:7 8 9
+                                                                                                         Functions                           …                       L4:10
+                                                                                                                                                         access
+                                  7         8                   Layer 3                                                                                              L5:11
+                                                        9
+                                                                                                                                    Thread
+                                                                                                                                Synchronization
+                           Layer 4         10
+                                                                Layer 5          Thread Synchronization                               Layer++
+                                                        11
+                                                                                  b) Competition-based                     c) Loop-based Unified Kernel
+                                          a) LDAG Model
+                                                                                     Implementation
+
+                                          FIGURE 3: Computational model and implementations of control system.
+
+
+ and launched on the GPU. If threads within a warp need                                                  In [20], we subsequently proposed the LDAG computa-
+ to execute different instructions, they are executed serially,                                       tional model for GPU-based control system simulation. The
+ resulting in a reduction in the DOP. This can be partially                                           model represents the complex control system as a layered
+ fixed by distributing threads associated with different compo-                                       directed acyclic graph (LDAG) that can be handled by lay-
+ nents to different warps. However, loading imbalance among                                           ered and grouped SIMT groups on the GPU. The LDAG
+ threads within distinct warps still exists: 1) the undesirable                                       model removes the random competition mechanism among
+ wait time owing to unbalanced loading can be considerable;                                           threads, using a while loop to control the layer iterator.
+ and 2) thread-core mapping depends on the number of each                                             However, such a kernel design has two drawbacks that restrict
+ type of component, which varies by case. As a result, the                                            its utilization.
+ performance of the GPU-based simulation also varies with                                                 • If new primitive control elements (e.g., user-defined
+ case.                                                                                                      models) are used, the kernel should be redesigned to
+    Thus, mitigating the heterogeneity of threads is key to                                                 include new instructions. Similarly, the kernel design for
+ high-performance electrical networks simulations on GPUs.                                                  electrical system faces such challenges.
+                                                                                                          • As the layer is controlled by the while loop, layer
+ 2) Efficient Kernel Design for Complicated Control System                                                  information can only be regarded as input data, which
+ In general, a control system can be represented by a block                                                 significantly increases addressing and memory access
+ diagram where transfer functions and nonlinear blocks are                                                  time.
+ connected in certain topologies. To derive the final control
+                                                                                                        Therefore, efficient kernel design for the EMT simulation
+ signals, a separate thread on the GPU can be assigned to
+                                                                                                      should avoid thread competition, excessive addressing and
+ process each control component. Each thread calculates the
+                                                                                                      memory access.
+ outputs of the corresponding control component according
+ to its inputs. However, for control components connected
+ in series, the outputs of upstream components are used as                                            III. THREAD-ORIENTED PARALLEL EMTP-TYPE
+ inputs for immediately downstream ones. As a result, threads                                         SIMULATOR ON GPU
+ associated with the downstream components cannot perform
+ calculations until the upstream component is solved. As                                                                                                 EMT simulation
+ shown in Fig. 3 (a), operations 4 and 5 cannot be processed
+                                                                                                                                        Electrical System                   Control System
+ until they receive the results of operations 1, 2, and 3. This                                        Thread-Oriented                     Simulation                         Simulation
+ results in undesirable wait times and communication among                                             Transformation
+ threads on the GPU [20].                                                                                                          Primitive Electrical elements     Primitive Control elements
+                                                                                                                                   Fused Multiply-Add (FMA)          Layered Directed Acyclic
+    Thus, in our previous study, a competition mechanism                                                                             Operations                          Graph (LDAG)
+                                                                                                        Computational
+ was designed to manage communication and synchronization                                              Model Formation
+ among threads [19], as shown in Fig. 3 (b). However, com-                                                                         SIMT group for FMA                     SIMT groups with
+                                                                                                                                     operations                               synchronizations
+ petition among threads relies on frequent memory read oper-                                                                       Linear Equations Solver                  between layers
+ ations and conditional judgments through atomic functions,                                              Automatic Code
+                                                                                                           Generation
+ which lead to inefficient memory access and reduced DOP.                                                                             Electrical System Kernel            Control System Kernel
+ For a power system with thousands of control components,
+ such as a wind farm, this causes bottlenecks that degrade the                                        FIGURE 4: Framework of the thread-oriented parallel
+ efficiency and scalability of GPU-based simulations.                                                 EMTP-type simulator.
+
+ 4                                                                                                                                                                                  VOLUME 4, 2016
+
+
+2169-3536 (c) 2018 IEEE. Translations and content mining are permitted for academic research only. Personal use is also permitted, but republication/redistribution requires IEEE permission. See
+                                               http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+      This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI
+                                                                             10.1109/ACCESS.2018.2833506, IEEE Access
+
+
+
+
+    As shown in Fig. 4, the framework of the thread-oriented                                          element. 2) Matrix N contains only 0, 1, and -1. 3) p and q
+ parallel EMTP-type simulator features the following three                                            should be minimized under constraints 1) and 2). The benefit
+ steps:                                                                                               of the above computational model transformation is twofold.
+    • To obtain GPU-friendly computational models, thread-                                              (i) It uniformly represents the electrical components by
+      oriented transformations are performed on the electrical                                              primitive elements.
+      and control systems. Specifically, the electrical com-                                             As only one nonzero element exists in each row of K, and
+      ponents are represented by a set of primitive electrical                                        the dynamic of a state variable zi depends only on an input
+      elements and the control system is modeled as a layered                                         variable vj . There are several types of primitive electrical
+      DAG of primitive control instructions, as in [20].                                              elements, as listed in Table I, whose dynamics can also
+    • Thread structures for both the electrical and the control                                       be described by a one-dimension differential equation with
+      computational models are determined. For the electrical                                         one input variable. Thus, following the transformation, the
+      system simulation, all computations can be dealt with                                           original model of an m-port electrical component is reshaped
+      by an SIMT group for FMA operations and a linear                                                into a composition of models of primitive electrical elements.
+      equations solver. For the control system, computations
+      of the LDAG model can be processed by SIMT groups                                                  In Table 1, branch current ib and Norton equivalent current
+      with synchronization between layers.                                                            ine are calculated as ib (t) = Gb ub (t) + ine (t − ∆t) and
+    • To build efficient simulation kernels on the GPU, auto-                                         ine (t + ∆t) = Aub (t) + Bib (t), respectively.
+      matic code generation tools are designed for both the                                            (ii) Homogeneous threads are created for primitive electri-
+      electrical system and the control system. For a specific                                               cal elements.
+      power system, the kernel code is automatically gener-
+                                                                                                         Using the computational model in (6), an m-port electrical
+      ated and compiled once before the simulation.
+                                                                                                      component is represented by p primitive electrical elements.
+                                                                                                      For each electrical element, a thread on the GPU can be
+ A. ELECTRICAL SYSTEM SIMULATION
+                                                                                                      created to execute a two-step computation task repetitively.
+ 1) Thread-Oriented normalized transformation and
+                                                                                                         • Step2.1: The Norton equivalent current of a primitive
+ computing for electrical components
+                                                                                                            electrical element is calculated. Using the trapezoidal
+ As mentioned in Section 2.2, before applying numerical
+                                                                                                            rule, the integration of the state equation of a primitive
+ integration rules to form the Norton equivalent circuit in (1),
+                                                                                                            element can be transformed into a Norton equivalent
+ the m-port electrical component was originally modeled by a
+                                                                                                            equation. Then, the Norton equivalent current for the
+ set of differential equations, i.e.,
+                                                                                                            electrical elements is derived as given at the bottom of
+                                   ẋ = Ax + Bu                                                             Table 1. With the given node voltages from the previous
+                                                                                          (4)               step, the Norton equivalent current of the different elec-
+                                   y = Cx + Du
+                                                                                                            trical element can be calculated independently by the
+ where x ∈ Rn is the state vector, u ∈ Rm represents                                                        thread.
+ the input vector, y ∈ Rm represents the output vector, and                                              • Step2.2: The node-injected currents are updated by all
+ A ∈ Rn×n , B ∈ Rn×m , C ∈ Rm×n , and D ∈ Rm×m are                                                          threads together. As N only contains 1, 0, and -1, the
+ coefficient matrices.                                                                                      matrix vector products for computing y, which is the
+   To generate homogeneous threads for the parallel comput-                                                 node-injected current vector, requires only accumulative
+ ing of (4), an expansion of the state space is adopted, and can                                            instructions of z. Such an operation can also be per-
+ be described by a linear transformation:                                                                   formed by a thread for an electrical element with atomic
+                               x = Mz                                                                       functions.
+                               MKv = Ax + Bu                                              (5)            The thread structure is shown in Fig. 5. For calculating
+                                                                                                      branch currents and Norton equivalent currents, p threads
+                               N = CM
+                                                                                                      perform FMA operations in the SIMT pattern, and these
+ where z ∈ Rp , (p ⩾ n) is the expanded state vector,                                                 are one of the most efficient operations on the GPU. Then,
+ v ∈ Rq , (q ⩾ m) represents a vector of expanded input                                               each thread adds its result zi (Norton equivalent current) to
+ variables, and M ∈ Rn×p , K ∈ Rp×q and N ∈ Rm×p are                                                  the corresponding y ∈ y (node-injected current) in shared
+ linear transformation matrices. Then, the differential equa-                                         memory using atomic functions. Following synchronization
+ tion model of the electrical component in (4) is transferred to                                      that ensures all node-injected currents are available, the nodal
+ the expanded one given by (6):                                                                       voltage equations can be solved to obtain the system status of
+                                   ż = Kv                                                            the given time step.
+                                                                                          (6)
+                                   y = Nz + Du                                                        2) Illustrative Case: Thread-Oriented Transformation for A
+    Then, threads can be created for the integration of zi ∈                                          Single-Phase Transformer
+ z (i = 1, · · · , p). The coefficient matrices have the following                                    As an example, the proposed computational model transfor-
+ features: 1) Each row of matrix K contains only one nonzero                                          mation was applied to a basic single-phase transformer, the
+ VOLUME 4, 2016                                                                                                                                                                                   5
+
+
+2169-3536 (c) 2018 IEEE. Translations and content mining are permitted for academic research only. Personal use is also permitted, but republication/redistribution requires IEEE permission. See
+                                               http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+         This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI
+                                                                                10.1109/ACCESS.2018.2833506, IEEE Access
+
+
+
+
+                                                       TABLE 1: Unified computation formula for primitive electrical elements
+                                                               Name                                          Equation                 Gb                A         B
+                                                               Resistor                                      Rib = ub                 1/R               0         0
+                                                               Inductor                                      Lpib = ub                ∆t(2L)−1          Gb        1
+                                                               Capacitor                                     Cub = ib                 2C∆t−1            −Gb       -1
+                                                               Half-Mutual mutual Induct.                    M12 pib1 = ub2           ∆t(2M12 )−1       Gb        1
+                                                               Controlled Sources                            (ic + ib )r = ub         1/r               —         —
+
+
+                                       Calculation of z                                          Calculation of y
+                                                                                                                                                                  mutual
+                Branch Current
+                 Calculation
+                                                Norton Equivalent Current
+                                                        Calculation
+                                                                                                   Form Node
+                                                                                                 injected current
+                                                                                                                                  u1 R1 v1                       inductor                  v2 R2 u2
+     1  ib1  t   Gb1ub1  t   ine1  t  ine1  t  t   Ab1ub1  t   Bb1ib1  t                                                       i11      i12                i21     i22
+
+
+
+
+                                                                                                              Synchronization
+                                                                                                 Shared                               i1                                                      i2
+        b2         b2 b2        ne 2     ne 2         b2 b2   b2 b2  
+     2 i t  G u t  i t i t  t  A u t  B i t
+                                                                                                 Memory                                           l11      l12              l21     l22
+     …
+
+
+
+
+                                                                                                Array
+     p
+       ibp  t   Gbp ubp  t   inep  t  inep  t  t   Abp ubp  t   B bp ibp  t       y
+                                                           or ine  t   ic                                                              di11         di                  di21         di
+                                                                                                                                      l11         v1 l12 12  v2      l21         v1 l22 22  v2
+     FIGURE 5: Thread structure of electrical system kernel.                                                                                 dt           dt                  dt           dt
+                                                                                                                                 FIGURE 6: Transformation of a single-phase transformer.
+
+ conventional computational model of which is shown in (7).
+                                                                                                                      3) Code automation tool for electrical system kernel
+    L1 L12           d i1               R1             i1        u1
+                                  +                         =                                                                   Benefiting from the normalized transformation of all elec-
+    L12 L2           dt i2                    R2       i2        u2
+                                                                                                                            trical components, a unified electrical system kernel can be
+         1             i1                                                                                                       formed automatically to update the status of all electrical
+ y=
+             1         i2                                                                                                       components and solve the nodal voltage equations for the
+                                                                   (7)
+                                                                                                                                entire electrical system. The GPU code for the electrical
+ where i1 and i2 are port currents; u1 and u2 represent port
+                                                                                                                                system kernel is generated according to Algorithm 1.
+ voltages; R1 and R2 , and L1 and L2 represent the leakage
+ resistances and inductances of two windings, and L12 repre-                                                                    Algorithm 1 Code automation tool for the electrical system
+ sents mutual inductance between windings.                                                                                      kernel
+    By properly selecting M, N, and K given in (8), state                                                                        1: Initialize an empty thread grid with 0 threads (T h = 0);
+ variables of the basic transformer are redefined as four branch                                                                 2: for Component (Ci ) in ComponentList do
+ currents i11 , i12 , i21 , and i22 , which form state variable vector                                                           3:     Find transformation (mi , pi , Mi , Ni and Ki ) for Ci ;
+ z. The related input variables are selected as branch voltages                                                                  4:     Obtain Norton equivalences (Gbi , Ai and Bi ) of (6);
+ v1 and v2 .                                                                                                                     5:     Save Gbi , Ai and Bi → Gb , A, and B;
+                                                      T                                                                        6:     T h + pi → T h;
+                           z = i11 i12 i21 i22                                                                                   7: end for
+                                                         T                                                                     8: Generate the SIMT group with T h threads as in Fig. 5;
+                         v = u1 − R1 i1 u2 − R2 i2
+                                  −1                   T                                                                       9: Generate codes for solving YU = I (Step 3 in Fig. 2);
+                                                    −1
+                                     l11           l21                                                                          10: Compile
+                          K=
+                                         l−1 l22
+                                               −1
+                                                                                                                         (8)
+                                         12            
+                                            1 1                                                                                    From steps 2 to 7, the normalized transformation of
+                            M=N=
+                                                  1 1                                                                           all electrical components are completed. As a result, each
+                          −1 −1                      −1                                                                     component Ci is represented by pi primitive elements with
+                           l11 l12            L1 L12
+                            −1       −1  =                                                                                      Norton equivalent conductance Gbi , and coefficients Ai and
+                           l21      l22       L21 L2
+                                                                                                                                Bi to calculate historical current. Correspondingly, the com-
+    Then, the computation model of the basic transformer can                                                                    putations of Ci are processed by pi concurrent threads in the
+ also be illustrated as the equivalent circuit shown in Fig. 6. It                                                              SIMT pattern as in Fig. 5. The parameters of all primitive
+ is evident that M in (8) is the node–branch incident matrix                                                                    elements are saved in three arrays Gb , A, and B in global
+ of the derived circuit, which makes the proposed model                                                                         memory on the GPU.
+ transformation physically meaningful.                                                                                             Then, in step 8, the GPU kernel code to process Fig. 5
+    By carefully choosing a matrix for model transformations,                                                                   is automatically generated. All T h primitive elements are
+ electrical components such as machines and transmission                                                                        handled by an equal number of concurrent threads in the
+ lines can be described as compositions of primitive electrical                                                                 SIMT executing pattern according to the following steps:
+ elements in Table 1. Then, they can be processed by grouped                                                                      1) Calculate branch voltage Vb with nodal voltages in Vn ,
+ homogeneous threads on the GPU.                                                                                                      which stores the latest node voltages in global memory.
+ 6                                                                                                                                                                                         VOLUME 4, 2016
+
+
+2169-3536 (c) 2018 IEEE. Translations and content mining are permitted for academic research only. Personal use is also permitted, but republication/redistribution requires IEEE permission. See
+                                               http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+      This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI
+                                                                             10.1109/ACCESS.2018.2833506, IEEE Access
+
+
+
+
+   2) Calculate branch current Ib with Gb and Ine,b , where                                           primitive control instructions need to be calculated in the
+      Ine,b stores the latest Norton equivalent currents in                                           correct sequence. The corresponding threads for each in-
+      global memory.                                                                                  struction are thus causally related, and need to be scheduled
+   3) Update Norton equivalent currents Ine,b with parame-                                            carefully to enhance DOP. The topology of the control system
+      ters A and B. In particular, the output of control system                                       is layered to determine the workflow of the grouped threads.
+      Ic is assigned to the corresponding control sources as
+      their Ine,b directly.                                                                                                          1   is one time step delay of 1
+
+   4) Once Ine,b is updated, node-injected currents In are as-                                                                                                 1                                1
+      sembled by atomic functions (atomicAdd) on shared
+      memory, after which _syncthreads() is invoked to                                                                                                                 Layer 1
+                                                                                                                                                                                                 Layer 2
+      synchronize the previous thread-based operations.                                                                                                                              `
+
+    Finally, in step 9, the code for solving nodal voltage                                                                                                                                      Layer 3
+ equations is assembled into the GPU kernel after the thread
+                                                                                                                                                                          Layer 4
+ synchronization command. In this work, the nodal voltage                                                                                                                                       Layer 5
+                                                                                                                         1                               1                                  1
+                                                                                                                                               Break
+ equations required for the EMTP-type program are solved                                                      Directed
+                                                                                                                                               Algebraic                         Layering
+                                                                                                              Graph
+ using flexible approaches according to system scale. By                                                                                       Loop
+
+ choosing proper models of the electrical components, the                                                      FIGURE 7: Layered topology of control system.
+ nodal conductance matrix can be kept constant when the
+ topology of the electrical system is consistent. Thus, for                                              The longest path-searching algorithm proposed in [24]
+ small-scale networks, the inverse of the nodal conductance                                           [25] is used to generate layers for the control system DAG,
+ matrix can be calculated and stored before the simulation,                                           which discovers the layer set L = {L1 , L2 , · · · , Lh } at
+ and only efficient dense matrix–vector productions (gemv)                                            minimum height h.
+ are performed in each step of the integration to obtain the                                             Then, threads for instructions in the same layer can
+ nodal voltages. However, for larger systems, massive areas of                                        be launched simultaneously without data exchanges among
+ area and amounts of computation are required for such dense                                          them. Following synchronization to guarantee the availability
+ matrices, which reduces efficiency. An alternative is to use                                         of all inputs, unoccupied threads pick up instructions for the
+ the sparse direct solver with the right-looking LU factoriza-                                        next layer and process them concurrently.
+ tion method [23] for such large-scale power systems. In this
+                                                                                                       (ii) Grouped threads working in SIMT pattern
+ approach, sparse factorization can be processed before the
+ simulation, and only sparse forward/backward substitutions                                              For a large power system, control system simulations on a
+ are performed in each step of the integration to obtain the                                          GPU need to handle a large number of controls for different
+ nodal voltages.                                                                                      electrical components in one time step. These variant control
+                                                                                                      systems can be uniformly described by a layered DAG,
+ B. TRANSIENT SIMULATION OF CONTROL SYSTEM                                                            where primitive control instructions are considered nodes.
+                                                                                                      According to their types and content, control instructions
+ 1) LDAG transformation for layered control topology
+                                                                                                      in layer Li can be divided into ni groups. Then, threads
+ To implement the control system simulation on the GPU
+                                                                                                      processing instructions in a group share the same operations
+ efficiently, the tasks of the threads should be carefully defined
+                                                                                                      and work in the SIMT pattern. By allocating grouped threads
+ and scheduled to avoid conflicts, and to optimize the threads
+                                                                                                      to different core arrays, cross-group parallel computing can
+ and shared memory utilization. In this study, after being
+                                                                                                      be achieved, which makes the control system simulation
+ decoupled and ordered, computational instructions related to
+                                                                                                      fully parallelized on the GPU. The workflow of the grouped
+ control functions are linked by a layered topology. Grouped
+                                                                                                      threads is illustrated in Fig. 8.
+ threads then execute instructions within the same layer in
+                                                                                                         As shown in Fig. 8, synchronization is required between
+ SIMT pattern.
+                                                                                                      the layers to make sure all inputs for the next layer are ready.
+   (i) Layered transformation of control system                                                       Grouped threads are reusable to compute all layers, which
+    As in primitive electrical elements, a primitive control in-                                      can reduce the number of threads used in a block. Moreover,
+ struction is defined, the computations of which are challeng-                                        shared memory is used to cache data transferred between
+ ing or unnecessary to decompose further. In the case study                                           layers. As the number of inputs of each layer is much smaller
+ used in this paper, primitive control instructions included                                          than their summation, excessive use of shared memory is
+ comparators, PI controllers, and basic math functions.                                               effectively avoided. Moreover, shared memory allocated to
+    In general, a control system can be modeled by a directed                                         a block can be reused for data caching between layers, which
+ graph as shown in Fig. 7, where V (node) stands for primitive                                        makes optimal use of computational resources and enhances
+ control instructions and E (edge) represents control signal                                          the scalability of control system simulations on GPUs.
+ flows. To avoid algebraic iterations in particular, algebraic                                           It should be noted that grouped threads working for dif-
+ feedback loops are unlocked by inserting a time-step delay.                                          ferent control systems can process the same instructions in
+ Thus, a control system is described as a DAG. Consequently,                                          SIMT pattern, which increases the use of shared memory. If
+ VOLUME 4, 2016                                                                                                                                                                                           7
+
+
+2169-3536 (c) 2018 IEEE. Translations and content mining are permitted for academic research only. Personal use is also permitted, but republication/redistribution requires IEEE permission. See
+                                               http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+           This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI
+                                                                                  10.1109/ACCESS.2018.2833506, IEEE Access
+
+
+
+
+                                                                                                                                                                                                   Algorithm 2 Code generation for control system kernel
+            Group for Primitive                                            Group for Primitive                                                     Group for Primitive
+               Instruction a                                                 Instruction m                                                            Instruction p
+                                                                                                                                                                                                    1: Initialize an empty thread grid with 0 threads (T h = 0);
+
+                                                  Layer Synchronization
+
+
+
+
+                                                                                                                Layer Synchronization
+
+
+
+
+                                                                                                                                                                           Layer Synchronization
+                                                                                                                                                                                                    2: Control system model → DAG computational model G;
+                             …
+
+
+
+
+                                                                                           …
+
+
+
+
+                                                                                                                                                                 …
+                                                                                                                                                                                                    3: Split G into m independent DAGs;
+                                                                                                                                                                                                    4: Form n DAG groups Gi , (i = 1, · · · , n) by DAG iso-
+            Group for Primitive                                            Group for Primitive                                           …         Group for Primitive
+                                                                                                                                                                                                         morphism judgment;
+               Instruction b                                                  Instruction n                                                           Instruction q
+                                                                                                                                        More
+                                                                                                                                        Layers                                                      5: Set n thread blocks for the control system kernel.
+                                                                                                                                                                                                    6: while i < n do
+                            … …
+
+
+
+
+                                                                                       … …
+
+
+
+
+                                                                                                                                                                … …
+                                                                                                                                                                                                    7:    Set blockIdx = i − 1;
+                More Groups for                                             More Groups for                                                         More Groups for                                 8:    Layer the elements of Gi into hi layers;
+                More Instructions                                           More Instructions                                                       More Instructions
+                                                                                                                                                                                                    9:    while j < h do
+                             Layer 1                                                       Layer 2                                                          Final Layer
+                                                                                                                                                                                                   10:        Group elements in layer Li,j into ki,j groups;
+         FIGURE 8: Thread structure for control system kernel.                                                                                                                                     11:        Generate ki,j SIMT groups for layer Li,j ;
+                                                                                                                                                                                                   12:        Generate synchronization codes for layer Li,j ;
+                                                                                                                                                                                                   13:        j + 1 → j;
+ the shared memory is not sufficient in size for data exchanges
+                                                                                                                                                                                                   14:    end while
+ required by the control system simulation, the global memory
+                                                                                                                                                                                                   15:    i + 1 → i;
+ can be used to enable communication between layers. This
+                                                                                                                                                                                                   16: end while
+ supplemental solution eliminates the scale limit of the control
+                                                                                                                                                                                                   17: Generate synchronization codes for all threads;
+ systems simulated on the GPU.
+                                                                                                                                                                                                   18: Compile
+
+ 2) Illustrative Case: LDAG Transformation for A V-Q
+ Controller
+                                                                                                                                                                                                   In this way, different DAG groups (Gi ) can be processed in
+                + udc                                                                            vd               QQref                    udc udc , ref        id    iq
+  udc , ref -              k p1 
+                                     1        +
+                                                                          k p2 
+                                                                                    1        +        +                                                                                            different thread blocks to achieve coarse-grained parallelism.
+                                                                                                          vmd
+                                    sTi1 id ref                   -                sTi 2     -                                                                             Layer 1                 Moreover, DAGs inside a group are isomorphic, and thus can
+                                         id                                X                                                                                               Layer 2                 benefit from the fine-grained SIMT parallelism.
+                                        iq                                 X                                                                                               Layer 3                    From steps 5 to 16, the GPU kernel code to process
+           +                       1 iq ref -                                     1         +     +                                                                        Layer 4                 Fig. 8 is automatically generated by interpreting the DAG
+       Q                   k p1                                          k p2                           vmq
+                -                 sTi1    +                                      sTi 2            +
+                                                                                                 vq                                         vd             vq                                      computational model according to the following steps:
+                    Qref                                                                                                                                                   Layer 5
+
+                                                                                                                                                                                                    1) Create n thread blocks to handle n DAG groups.
+ FIGURE 9: Example: V-Q controller topology. Note that                                                                                                                                              2) Allocate a shared memory area for each thread block to
+ different shapes indicate different instruction types or corre-                                                                                                                                       cache all node results of each DAG group Gi .
+ sponding SIMT groups.                                                                                                                                                                              3) Layer the elements (control instructions) in a DAG
+                                                                                                                                                                                                       group Gi into hi layers. Then, inside each thread block,
+    In the left part of Fig. 9, part of the basic V-Q controller for                                                                                                                                   classify the control instructions and process them on dif-
+ power converters is illustrated in a block diagram containing                                                                                                                                         ferent SIMT thread groups from layer 1 to hi . It should
+ six types of primitive control instructions. After transference                                                                                                                                       be noted that the number of threads for each SIMT
+ to a DAG, the instructions associated are redistributed to five                                                                                                                                       group should be specified according to the computing
+ layers, which can be processed by grouped threads. Only four                                                                                                                                          resource allocation principle in [20] to obtain optimal
+ threads are involved in such solutions. In layer 1, two groups                                                                                                                                        efficiency.
+ of threads work together for two types of instructions. Then,                                                                                                                                      4) Synchronization is required between layers. Once the
+ two threads are reused to handle instructions in the following                                                                                                                                        synchronization for layer hi is complete, outputs of the
+ layers, which contain only one type of instruction in each                                                                                                                                            control system are copied back to global memory Ic ,
+ layer.                                                                                                                                                                                                which updates the Norton equivalent currents of the
+                                                                                                                                                                                                       controlled sources.
+ 3) Code automation tool for the control system kernel
+ As with the electrical system, an automatic GPU code gener-                                                                                                                                          Finally, in step 17, to ensure that the final results are ready,
+ ator is designed to form the control system simulation kernel                                                                                                                                     code for synchronizing all thread blocks is assembled into
+ according to the LDAG computational model.                                                                                                                                                        the control system kernel. The results can be used to solve
+    The code generation procedure is as shown in Algorithm                                                                                                                                         electrical systems in the electrical system kernel.
+ 2.                                                                                                                                                                                                   Once codes for the electrical system and the control sys-
+    In step 2, the control system simulation model is trans-                                                                                                                                       tem kernel have been created, the NVCC compiler [10] is
+ formed into several DAG-based computational models. Steps                                                                                                                                         called to compile the final GPU program to form the binary
+ 3 and 4 further decompose the DAG into independent sub-                                                                                                                                           execution file.
+ graphs and cluster them into n groups according to structure.
+ 8                                                                                                                                                                                                                                                       VOLUME 4, 2016
+
+
+2169-3536 (c) 2018 IEEE. Translations and content mining are permitted for academic research only. Personal use is also permitted, but republication/redistribution requires IEEE permission. See
+                                               http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+         This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI
+                                                                                10.1109/ACCESS.2018.2833506, IEEE Access
+
+
+
+
+                                                                      1    2    3                        B. TEST CASES
+                                        Loop Unrolling
+                                                                                                         In the following tests, the IEEE 33-bus distribution network
+          While ( Layer Loop )                                                                           was selected as the basic case. Constant RLC loads were con-
+                   Control
+                                                              Thread Synchronization
+                                                                                                         nected through three-phase transformers. Large-scale cases
+                     i1    i2         im                            4 5
+                                                                                                         are formed by connecting basic cases as in Fig. 11.
+                                …                                                                           Moreover, PV cells were connected to different buses
+                                                              Thread Synchronization
+                                                                                                         through inverters and a three-phase transformer, as shown in
+                       Thread                                         7     8    9
+                   Synchronization
+                                                                                                         Fig. 12. Without loss of generality, a PV cell was modeled
+                                                              Thread Synchronization                     as a source of controlled current while the grid side inverter
+                          Layer++                                                                        operated in Q-V control mode. The reference voltage on
+
+
+
+                                                                           …
+                                                                                                         the DC side was determined by MPPT control based on
+     a) Loop-based Unified Kernel                        b) Automatic Generated Kernel
+                                                                                                         a perturbation and observation method proposed in [27].
+                          FIGURE 10: Kernel comparison.                                                  To maintain the system’s conductance matrix constant, an
+                                                                                                         average value model (AVM) of the converter was adopted in
+                                                                                                         this work, the details of which can be found in [28].
+ 4) Merits of the Auto-Generated GPU codes
+ In Fig. 10, two kernel structures are provided for comparison.                                                        Basic               18 19 20 21
+                                                                                                                                                                     Basic Case
+                                                                                                                       Case
+ Compared with the loop-based unified kernel in [20] (Fig.
+                                                                                                                       Basic           1     2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17
+ 10(a)), the automatically generated kernel in this paper (Fig.                                                        Case
+ 10(b)) has the following three advantages:                                                                                                                                                           …             …
+
+
+
+                                                                                                                         …
+                                                                                                                                                                                          3-Phase
+                                                                                                                                                                                        Transformer
+     • The operation for each thread in (Fig. 10(b)) is fixed,                                                         Basic                 22 23 24
+                                                                                                                                                        25 26 27 28 29 30 31 32                             RLC Load
+                                                                                                                       Case
+       where addressing and memory access for instructions
+       are eliminated.                                                                                       FIGURE 11: Case topology part 1: Electrical network.
+     • The previously proposed kernel needs to maintain a
+       general framework to make it compatible with all prim-
+       itive instructions within all layers. As a result, only                                                         PV BUS                                                                              u,i
+                                                                                                                                                                Grid Side
+       a part of the threads can be used for each layer, as                                                             1 No.                                   Inverter
+                                                                                                                                                              (AVM Model)                                  MPPT
+       additional thread groups should be reserved for other                                                           PV                         ua,ub,uc                                  PV Cell
+                                                                                                                                                                                                           Control
+                                                                                                            Basic                                  ia,ib,ic                     DC-link
+                                                                                                                                                                                Capacitor
+       primitive instructions. On the contrary, all threads and                                             Case        2                                            da,db,dc                         udc
+                                                                                                                         …
+
+
+
+
+       more computing resources are available in each layer                                                                                         abc               abc                   V-Q                 udc,ref
+                                                                                                                                            PLL         dq                dq                Control
+                                                                                                                       PV                                                                                        iq,ref =0
+       in (Fig. 10(b)), which enhances the efficiency and the                                                           n
+                                                                                                                                                                                                      iq
+
+       scalability of the simulation kernel.
+     • The automatically generated kernel unrolls the while                                              FIGURE 12: Case topology part 2: PV module with control
+       loop in (Fig. 10(a)) by writing layered data into a binary                                        system.
+       execution file, which reduces the number of condi-
+       tional statements and instruction scheduling time. Such                                             After transforming models of the electrical and control
+       a space-âĂŞtime trade-off optimizes execution speed.                                            systems into thread-oriented form, the computational scales
+                                                                                                         of the test cases can be estimated as in Table 3 (Ne is the
+ IV. TESTS AND DISCUSSION                                                                                number of basic cases and Nc the number of PV cells).
+ A. TESTING ENVIRONMENT
+                                                                                                         C. ACCURACY VALIDATION
+ The results of the performance of the thread-oriented EMTP-
+                                                                                                         We set Ne = Nc = 1 and connected PV cells to bus 17.
+ type simulator on a GPU (denoted by P4) were compared
+                                                                                                         Transients of test system were simulated with the following
+ with those using PSCAD/EMTDC (a commercial EMTP-
+                                                                                                         conditions.
+ type simulator) and other EMTP-type programs denoted by
+ P1 P3.                                                                                                    1) t ∈ [2, 2.5), voltage drop to 20% at phase A of bus 1;
+                                                                                                              and
+    1) EMTP-type program on a multi-core CPU (P1) that uses                                                2) t ∈ [3, inf), radiation changes from 1000 to 600 W/m2 .
+       the Intel Math Kernel Library (MKL) [26] to solve nodal
+                                                                                                            Voltages and currents on the low-voltage-side of bus 17 are
+       voltage equations;
+                                                                                                         depicted in the left column of Fig. 13. In the right column,
+    2) Hybrid CPU–GPU EMTP-type program (P2), which
+                                                                                                         transient curves of the PV cells are given.
+       only solves nodal voltage equations on GPU; and
+                                                                                                            The results in Fig. 13 reveal consistency between the
+    3) Fine-grained EMTP-type program (P3) fully imple-
+                                                                                                         commercial EMTP-type program and the parallel EMTP-
+       mented on a GPU with loop-based control system kernel
+                                                                                                         type program, which verifies the correctness of the proposed
+       [20].
+                                                                                                         thread-oriented modeling as well as the accuracy of parallel
+                                                                                                         simulations using GPU kernels.
+ VOLUME 4, 2016                                                                                                                                                                                                              9
+
+
+2169-3536 (c) 2018 IEEE. Translations and content mining are permitted for academic research only. Personal use is also permitted, but republication/redistribution requires IEEE permission. See
+                                               http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+                   This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI
+                                                                                          10.1109/ACCESS.2018.2833506, IEEE Access
+
+
+
+
+                                                                                      TABLE 2: Comparison of testing environments
+                                                                                                      CPU                             GPU 1                    GPU 2
+                                         Processor                                                    Intel Xeon E5-2620              NVIDIA K20x              NVIDIA P100
+                                         Operating System                                             Linux                           Linux                    Linux
+                                         Core Numbers                                                 12                              2688 CUDA Cores          3584 CUDA Cores
+                                         Core Frequency                                               2.0 GHz                         732 MHz                  1.3 GHz
+                                         Memory Size/ Memory Frequency                                32 GB / 1.6 GHz                 5 GB / 5.2 GHz (GDDR5)   12 GB / 1.4 GHz (HBM2)
+
+
+                          TABLE 3: Computational scale of testing cases                                                                  As the electrical system was scaled up, the acceleration
+                           Item                                                  Value                                                ratios of P2, P3, and P4 continued to grow compared those
+                           Electrical system nodes                               3 + 192Ne + 11Nc                                     in P1. The CPU–GPU program (P2) showed very limited
+                           Primitive electrical elements                         3 + 480Ne + 17Nc
+                           Primitive control elements                            78Nc
+                                                                                                                                      speedups as the linear algebraic solvers on the GPU did not
+                           Number of layers                                      34                                                   exhibit superiority for such small system scales. However,
+                                                                                                                                      the full GPU-based programs (P3 and P4) accelerated the
+                400
+                              Voltage of Phase A at PCC                  900
+                                                                                            DC Voltage of PV                          simulations for all test cases.
+                300                                                      890                                                             Moreover, compared with the parallel EMTP-type pro-
+                200                                                      880
+                                                                                                                                      gram (P3) proposed in [20], the newly designed thread-
+  Voltage / V
+
+
+
+
+                100
+                                                                         870
+                  0
+                -100
+                                                                         860                                                          oriented EMTP-type simulator (P4) gained more speedups
+                -200                                                     850
+                                                                                                                                      for all test cases owing to the saved time in T2. Such
+                -300                                                     840
+                -400                                                     830
+                                                                                                                                      speedups benefit from transforming the electrical system
+                   1.95             2              2.05           2.1          2.9   2.95       3          3.05      3.1       3.15
+
+                150
+                              Current of Phase A at PCC                   70
+                                                                                            DC Current of PV                          into combinations of primitive electrical elements. As shown
+                100                                                       60                                                          in Table 4, program P4 created more threads for electrical
+                                                                                                                                      component simulations than P3. Moreover, as only one SIMT
+  Current / A
+
+
+
+
+                 50
+                                                                          50
+                  0
+                                                                          40                                                          group was required, P4 had a higher DOP than P3 when
+                 -50
+
+                -100
+                                                                          30
+                                                                                                                                      calculating electrical components (T2 period). By contrast,
+                -150
+                   1.95             2              2.05            2.1
+                                                                          20
+                                                                               2.9   2.95       3          3.05      3.1       3.15
+                                                                                                                                      in P3, different electrical components were processed in
+                                        Time / s                                                    Time / s                          different SIMT groups, the number of instructions of which
+                          PSCAD                    P2: CPU-GPU Hybrid                       P4: Fully GPU-based (This paper)
+                          P1: CPU                  P3: Fully GPU-based                                                                varied. It is evident as thread homogeneity for electrical
+ FIGURE 13: Accuracy results of selected algorithm and                                                                                components increased, computing resources could be evenly
+ platforms.                                                                                                                           utilized, which remarkably enhanced the performance of the
+                                                                                                                                      parallel EMT simulation.
+                                                                                                                                         Furthermore, two types of GPU devices were used in
+ D. EFFICIENCY TESTS                                                                                                                  efficiency tests in this paper, i.e., the K20x (Kepler archi-
+ To test the efficiency of the thread-oriented parallel simu-                                                                         tecture) and P100 (Pascal architecture). As new architecture
+ lation on a GPU, detailed time costs of the electrical and                                                                           was enabled and increased bandwidth, frequency, and the
+ control system simulations were measured separately by                                                                               number of cores, the proposed kernels performed better on
+ the NVIDIA Profiler. Similar time costs were measured for                                                                            the P100 platform according to the test results. As shown in
+ P1 P3. Then, the acceleration performance of the proposed                                                                            Table IV, all time costs recorded on the P100 were smaller
+ method (P4) was evaluated thoroughly.                                                                                                than the corresponding ones on the K20x for the electrical
+                                                                                                                                      system simulation. During the network solution process (T1),
+ 1) Time costs of electrical system simulation                                                                                        the P100 platform showed a smaller speedup (1.1x) than the
+ We set Nc = 0 and let Ne increase from one to 30. The                                                                                K20x platform for large-scale systems, as the DOP for the
+ electrical systems were scaled up from 195 single-phase                                                                              traditional direct solver was relatively poor. For the well-
+ nodes with 33 three-phase transformers to 5,763 single-phase                                                                         designed electrical system kernel used to calculate the elec-
+ nodes with 990 three-phase transformers.                                                                                             trical components, the P100 platform recorded a speedup of
+    The maximum time cost per integration step for the EMT                                                                            more than 1.8x compared with the K20x.
+ simulation was measured for the test systems using P1~P4,
+ and was used to solve the nodal voltage equations (T1) and                                                                           2) Time costs of control system simulation
+ form node-injecting currents of the electrical components                                                                            We created test cases where Ne = 1 and let Nc increase
+ (T2). When Ne < 10, dense matrix–vector multiplication                                                                               from one to 300. For the case with the largest number of
+ was used to calculate node voltage; otherwise, sparse back-                                                                          PV cells, 23,400 (78 x 300) primitive control instructions
+ ward/forward substitutions were applied. As all factoriza-                                                                           needed to be processed in each time step. As in tests for
+ tions were had been completed and stored before the sim-                                                                             the electrical systems, the maximum time cost of the control
+ ulation started, factorization time was not included in T1.                                                                          system simulation per step was measured for P1 P4 both on
+ Comparisons of time costs per time step between simulation                                                                           the CPU and the GPU, as shown in Table 5.
+ programs are given in Table 4.                                                                                                          Table 5 shows that for cases with large-scale control
+ 10                                                                                                                                                                                            VOLUME 4, 2016
+
+
+2169-3536 (c) 2018 IEEE. Translations and content mining are permitted for academic research only. Personal use is also permitted, but republication/redistribution requires IEEE permission. See
+                                               http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+      This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI
+                                                                             10.1109/ACCESS.2018.2833506, IEEE Access
+
+
+
+
+                                                          TABLE 4: Efficiency results of the electrical system
+                       P1 - CPU        P2 - CPU - GPU 1                P3 - GPU 1                     P4 - GPU 1                                             P4 - GPU 2
+                    Time -cost (µs)      Time -cost (µs)       Time -cost (µs)     Thread      Time -cost (µs)   Thread                               Time -cost (µs)   Thread
+             Ne      T1         T2       T1          T2          T1       T2      Number         T1       T2    Number                                  T1       T2    Number
+              1     14.3       63.7     17.1        63.7        10.5     38.6         97        10.5    21.5      483                                  7.3     11.2       483
+              3     34.6      181.8     39.2       181.8        25.8      53         289        25.8    26.3      1443                                 17.9    11.3      1443
+              5     52.7       372      64.6        372         49.2     68.6        481        49.2    31.3      2403                                 38.5    11.9      2403
+              6     83.2      421.1     83.8       421.1        70.0     76.9        577        70.0      33      2883                                 50.1    12.2      2883
+             10     224.6     745.3    205.3       745.3       191.5     96.6       961        191.5    40.2      4803                                136.6    17.3      4803
+             15     375.9     1081     261.0        1081       245.2    159.3       1441       245.2    48.4      7203                                215.2    22.5      7203
+             20     422.5     1431     319.9        1431       301.4    194.3       1921       301.4    57.1      9603                                279.2    28.8      9603
+             25     451.1     1851     402.2        1851       381.9    225.8       2401       381.9    66.1     12003                                352.1    37.4     12003
+             30     512.2     2167     442.4        2167       414.6    272.9       2881       414.6    77.2     14403                                378.6    41.2     14403
+             a T1 represents the time cost of solving node voltage equations.
+             b T2 represents the time cost of calculating electrical components (electrical system kernel)
+             c Thread number is the total number of non-empty threads launched in the electrical system kernel.
+             d For P2, data communication time between CPU and GPU is included in T1.
+
+
+
+
+         TABLE 5: Efficiency results of the control system                                            device could handle more parallel independent control sys-
+              P1/P2         P3 - GPU 1             P4 - GPU 1            P4 - GPU 2                   tems than the K20x platform. The above advantages make the
+     Nc       T(µs)       T(µs) GPB              T(µs)    GPB          T(µs)    GPB                   P100 device feasible in real-time simulations, as discussed in
+      1        25.5        69.3                   53.1                  22.8                          4.5.
+      3        71.3        69.5                    53                   22.8
+      6        147         69.5                    53                   22.8
+      9       215.9        70.4                   53.3                   23                           E. SCALABILITY AND REAL-TIME PERFORMANCE
+      20      496.3        79.5                   56.9                  23.1                          1) Limits of Scalability
+      30      732.9       141.9                   57.5                  23.2
+                                                                                                      As shown in Sections 4.3 and 4.4, the proposed thread-
+      40      988.5       144.6      9            57.4     15           23.2     15
+      50      1235        151.3                   94.5                  23.5                          oriented EMTP-type program on a GPU is feasible for simu-
+      70      1796        153.3                   94.5                  49.6                          lating large-scale electrical and control systems.
+     100      2486        196.4                   94.7                  55.8                             For electrical system simulations, the available simulation
+     150      3911        245.3                  139.6                  84.9                          scale was limited only by the size of the global memory, most
+     200      5500        377.6                  189.9                 100.5
+     300      7315        428.1                  225.7                 117.6
+                                                                                                      of which was used to store the dense nodal resistance matrix
+                                                                                                      Z of a small system or the sparse LU factorization results of
+                                                                                                      a large-scale system.
+ systems, P3 and P4 on the GPU gained more significant                                                   For the control system, the maximum number of threads
+ accelerations than those using the P1 and P2 on a CPU.                                               in one block limited the scale of the system simulated. As
+    Moreover, P4 achieved an almost 1.5x to 2x speedup                                                computations in a layer should be processed in a thread block,
+ compared with P3. As shown in Section III-B-3), by using                                             for a control system with more than 1,024 primitive control
+ the code automation tool, the while loop in P3 was un-                                               elements in each layer, the proposed algorithm will fail. One
+ rolled, and excessive addressing and memory accesses were                                            possible solution is to split the large LDAG into small graphs
+ eliminated. Moreover, as observed in Table 5, 15 concurrent                                          and distribute computations to multiple thread blocks.
+ thread groups per block (GPB) were used for each PV control
+ system in P4. However, only nine concurrent thread groups                                            2) Total Speedups and Feasibility of Real-time Simulation
+ were available in P3 because the kernel in it was forced to                                          Real-time simulation is an important tool in studies on power
+ use an excessive number of threads to reserve other prim-                                            systems. A series of typical test cases used in real-time sim-
+ itive instructions within all layers. Therefore, the comput-                                         ulations were built by choosing Ne = 1 and Nc ∈ [1, 300].
+ ing resources for each layer were restricted, which limited                                          The total time costs of each integration step and speedups are
+ the performance enhancement of control system simulation                                             given in Fig. 14, with comparisons with the performance of
+ on the GPU. However, for P4, the above restrictions were                                             P1.
+ eliminated, which rendered the control system kernel more                                               In addition clear acceleration on the K20x and P100, the
+ efficient.                                                                                           real-time performance of the proposed algorithm can be
+    Moreover, for the control system simulation, the P100                                             viewed in Fig. 14. In general, the integration step used in the
+ platform (P4 - GPU2) was almost 2x faster than the K20x                                              real-time simulations should have been shorter than 200µs
+ platform (P4 - GPU1). As higher clock frequency and mem-                                             to guarantee accuracy and numerical stability. The real-time
+ ory bandwidth were enabled in the P100, the computation                                              simulations using integration steps of 100µs and 50µs were
+ and communication processes between layers in the control                                            chosen as benchmarks.
+ system simulation became more efficient. Moreover, more                                                 As observed in Fig. 14, for simulations with an integration
+ SMs with larger shared memory were integrated, so that the                                           step of 50µs, real-time simulations were implemented on the
+ VOLUME 4, 2016                                                                                                                                                                                   11
+
+
+2169-3536 (c) 2018 IEEE. Translations and content mining are permitted for academic research only. Personal use is also permitted, but republication/redistribution requires IEEE permission. See
+                                               http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+                        This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI
+                                                                                               10.1109/ACCESS.2018.2833506, IEEE Access
+
+
+
+
+                10000                                                                                       60              [3] A. M. Gole, O. B. Nayak, T. S. Sidhu, and M. S. Sachdev, “A graphical
+                                     Time-cost of P1                                                        55
+                                     Time-cost of P4-GPU1
+                                                                                                                                electromagnetic simulation laboratory for power systems engineering pro-
+                                     Time-cost of P4-GPU2                                                   50                  grams,” IEEE Trans. Power Syst., vol. 11, no. 2, pp. 599-606, May 1996.
+                                     Speedup of P4-GPU1
+                                     Speedup of P4-GPU2
+                                                                                                            45              [4] M. A. Tomim, J. R. Marti, T. De Rybel, L. Wang, and M. Yao, “MATE net-
+                    1000
+  Time-costs (us)
+
+
+
+
+                                                                                                            40                  work tearing techniques for multiprocessor solution of large power system
+
+
+
+
+                                                                                                                 Speedup
+                                                                                                            35                  networks,” in Proc. IEEE Power Energy Soc. Gen. Meeting, Minneapolis,
+                                                                                                            30                  MN, USA, 2010, pp. 1-6.
+                                                                                                            25              [5] J. A. Hollman and J. R. Marti, “Real time network simulation with PC
+                    100                                                                                     20                  -cluster,” IEEE Trans. Power Syst., vol. 18, no. 2, pp. 563-569, May. 2003.
+                        50                                                                                  15              [6] K. Strunz and E. Carlson, “Nested fast and simultaneous solution for time-
+                                                                                                            10                  domain simulation of integrative power -electric and electronic systems,”
+                                                                                                            5                   IEEE Trans. Power Del., vol. 22, no. 2, pp. 277-287, 2007.
+                        10                                                                                  0               [7] H. H. Happ, “Diakoptics and piecewise methods,” IEEE Trans. Power App.
+                                3         6     9       15 20    30 40 50    70   100   150 200   300
+                                                     Number of PV Systems (Nc)
+                                                                                                                                Syst., vol. PAS-89, no. 7, pp. 1373-1382, Sept. 1970.
+                                                                                                                            [8] J. R. Marti, L. R. Linares, J. Calvino, H. W. Dommel, and J. Lin, “OVNI:
+ FIGURE 14: Time costs and speedups of distribution system                                                                      an An object approach to real-time power system simulators,” in Proc. Int.
+                                                                                                                                Conf. Power System Technology, 1998, pp. 977-981 vol.2.
+ with integrated PV cells.                                                                                                  [9] S. Naffziger, J. Warnock, and H. Knapp, “SE2 when processors hit the
+                                                                                                                                power wall (or ‘when the CPU hits the fan’)”. in Solid-State state Circuits
+                                                                                                                                Conf. Digest of Technical Papers , Feb. 2005, pp. 16-17.
+                                                                                                                           [10] CUDA C Programming Guide Version 7.0, NVIDIA. [Online]. Available:
+ P100 with no more than 50 PV systems. If 100µs was used                                                                        http://docs.nvidia.com/cuda/cuda-c-programming-guide/.
+ as integration step, real-time simulation for 100 PV systems                                                              [11] J. Cheng, M. Grossman and T. McKercher, Professional CUDA C Pro-
+ could still be guaranteed.                                                                                                     gramming, 1st ed. Indianapolis, Indiana, USA: Wrox, 2014.
+                                                                                                                           [12] J. D. Owens, M. Houston, D. Luebke, S. Green, J. E. Stone, and J. C.
+                                                                                                                                Phillips, “GPU Computing” computing” Proc. IEEE, vol. 96, no. 5, pp.
+ V. CONCLUSION                                                                                                                  879-899, May 2008.
+ In this paper, a full GPU-based EMTP-type simulator was de-                                                               [13] Zhu, Feiwen, Peng Chen, Donglei Yang, Weihua Zhang, Haibo Chen, and
+                                                                                                                                Binyu Zang, “A GPU-based high-throughput image retrieval algorithm” In
+ signed using thread-oriented modeling, and an algorithm for                                                                    Proceedings of the 5th Annual Workshop on General Purpose Processing
+ both electrical and control systems as well as code automa-                                                                    with Graphics Processing Units, pp. 30-37. ACM, 2012.
+ tion tools. According to accuracy and efficiency tests, the                                                               [14] Lu, Yunping, Yi Li, Bo Song, Weihua Zhang, Haibo Chen, and Lu
+                                                                                                                                Peng,“Parallelizing image feature extraction algorithms on multi-core
+ proposed simulator showed significant speedups for large-                                                                      platforms,” Journal of Parallel and Distributed Computing, 92 (2016): 1-
+ scale power system simulations compared with past research.                                                                    14.
+ Moreover, the latest NVIDIA P100 device with Pascal ar-                                                                   [15] A. Gopal, D. Niebur and S. Venkatasubramanian, “DC power flow based
+                                                                                                                                contingency analysis using graphics processing units,” in Proc. IEEE
+ chitecture was shown to be feasible in real-time simulation                                                                    Power Tech., Lausanne, 2007, pp. 731-736.
+ applications, such as closed-loop control system validation.                                                              [16] X. Li and F. Li, “GPU-based power flow analysis with Chebyshev pre-
+    However, in practical EMT applications, the overall per-                                                                    conditioner and conjugate gradient method,” Electr. Power Syst. Res., vol.
+                                                                                                                                116, pp. 87-93, Nov. 2014.
+ formance of the proposed simulator might still be restricted                                                              [17] V. Jalili-Marandi and V. Dinavahi, “SIMD-based large-scale transient
+ and should be improved further with the following two con-                                                                     stability simulation on the graphics processing unit,” IEEE Trans. Power
+ cerns.                                                                                                                         Syst., vol. 25, no. 3, pp. 1589-1599, Aug. 2010.
+                                                                                                                           [18] Z. Zhou and V. Dinavahi, “Parallel massive-thread electromagnetic tran-
+                    • As only one GPU card has been used during the simu-                                                       sient simulation on GPU,” IEEE Trans. Power Del., vol. 29, no. 3, pp.
+                      lation, the speed-ups is mainly achieved by fine-grained                                                  1045-1053, Jun. 2014.
+                                                                                                                           [19] Y. Song, Y. Chen, Z. Yu, S. Huang, and L. Chen, “A fine-grained parallel
+                      parallel strategies on one GPU. However, for large-scale                                                  EMTP algorithm compatible to graphic processing units,” in Proc. IEEE
+                      cases, higher efficiency may be obtained with the help of                                                 Power Energy Soc. Gen. Meeting, National Harbor, MD, 2014, pp. 1-6.
+                      network partitioning technique and coarse-grained par-                                               [20] Y. Song, Y. Chen, S. Huang, Y. Xu, Z. Yu, and J. R. Marti, “Fully
+                                                                                                                                GPU-based electromagnetic transient simulation considering large-scale
+                      allelism using multiple GPUs. Therefore, more attention                                                   control systems for system-level studies,” IET Generation, Transmission
+                      needs to be devoted to parallel EMTP-type simulators                                                      & Distribution, vol. 11, no. 11, pp. 2840-2851. 2017.
+                      on multi-GPU based platforms.                                                                        [21] H. Gao, Y. Chen, Y. Xu, Z. Yu, and L. Chen, “A GPU-based parallel
+                                                                                                                                simulation platform for large-scale wind farm integration,” in Proc. 2014
+                    • The test environment in this paper is an ideal one,
+                                                                                                                                IEEE PES T&D Conf. and Expos., Chicago, IL, USA, 2014, pp. 1-5.
+                      as only one simulation task occupies all computing                                                   [22] N. Watson and J. Arrillaga, Power Systems Electromagnetic Transients
+                      resources during each test. Therefore, speed-ups might                                                    Simulation, United Kingdom: IET, 2003.
+                                                                                                                           [23] K. He, S. X.-D. Tan, H. Wang and G. Shi, “GPU-accelerated parallel sparse
+                      have been restricted when launching multiple simula-                                                      LU factorization method for fast circuit analysis, ” in IEEE Trans. on Very
+                      tion tasks concurrently. In future research, GPU-based                                                    Large Scale Integrated Systems (TVLSI), Vol. 24, No. 3, pp. 1140-1150,
+                      parallel-batched simulations for multiple tasks should                                                    2016.
+                                                                                                                           [24] Wang, Xin, Weihua Zhang, Zhaoguo Wang, Ziyun Wei, Haibo Chen,
+                      also be investigated to build advanced simulation appli-                                                  and Wenyun Zhao. “Eunomia: Scaling concurrent search trees under
+                      cations.                                                                                                  contention using HTM.” In Proceedings of the 22nd ACM SIGPLAN
+                                                                                                                                Symposium on Principles and Practice of Parallel Programming, pp. 385-
+                                                                                                                                399. ACM, 2017.
+ REFERENCES                                                                                                                [25] P. Eades and X. Lin, “How to draw a directed graph,” in Proc. 1989 IEEE
+     [1] H. W. Dommel, “Digital computer solution of electromagnetic transients                                                 Workshop on Visual Languages, Rome, 1989, pp. 13-17.
+         in single- -and multi-phase networks,” IEEE Trans. Power App. Syst., vol.                                         [26] Intel Math Kernel Library (Intel MKL), Intel. [Online]. Available:
+         PAS-88, no. 4, pp. 388-399, Apr. 1969.                                                                                 https://software.intel.com/en-us/intel-mkl.
+     [2] H. W. Dommel, “Electromagnetic Transients Program: Reference Manual:                                              [27] E. Koutroulis, K. Kalaitzakis and N. C. Voulgaris, “Development of a
+         (EMTP theory book),” Bonneville Power Administration, 1986.                                                            microcontroller-based, photovoltaic maximum power point tracking con-
+
+ 12                                                                                                                                                                                                 VOLUME 4, 2016
+
+
+2169-3536 (c) 2018 IEEE. Translations and content mining are permitted for academic research only. Personal use is also permitted, but republication/redistribution requires IEEE permission. See
+                                               http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+      This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI
+                                                                             10.1109/ACCESS.2018.2833506, IEEE Access
+
+
+
+
+      trol system,” IEEE Trans. Power Electron., vol. 16, no. 1, pp. 46-54, Jan.                                                      ZHITONG YU received his B.Sc. and M. E.
+      2001.                                                                                                                           from the Department of Electrical Engineering at
+ [28] S. Chiniforoosh, J. Jatskevich, A. Yazdani, V. Sood, V. Dinavahi, J.                                                            Tsinghua University in Beijing, China, in 2014
+      A. Martinez, and A. Ramirez, “Definitions and applications of dynamic                                                           and 2017, respectively. He is currently working
+      average models for analysis of power systems,” IEEE Trans. Power Del.,                                                          at the Research Center of Cloud Simulation and
+      vol. 25, no. 4, pp. 2655-2669, Oct. 2010.                                                                                       Intelligent Decision-making (RCCI) at the Energy
+                                                                                                                                      Internet Research Institute of Tsinghua Univer-
+                                                                                                                                      sity.
+                                                                                                                                         His research interests include electromagnetic
+                                                                                                                                      transients simulation, parallel computing, and
+                                                                                                      cloud computing.
+                                YANKAN SONG (S’14) received his B.Sc. in
+                                electrical engineering from Shandong University
+                                in Jinan, China, in 2013. He is currently working
+                                toward his Ph.D. in electrical engineering at Ts-
+                                inghua University in Beijing, China.
+                                   His research interests include power system
+                                modeling and electromagnetic transients simula-
+                                tion, parallel computing, and hybrid simulation of
+                                interconnected AC–DC systems.
+
+
+
+
+                                YING CHEN (M’07) received his B.E. and Ph.D.
+                                in electrical engineering from Tsinghua University
+                                in Beijing, China, in 2001 and 2006, respectively.
+                                   He is an associate professor at the Department
+                                of Electrical Engineering and Applied Electronic
+                                Technology, Tsinghua University. His research in-
+                                terests include parallel and distributed comput-
+                                ing, electromagnetic transient simulation, cyber-
+                                physical system modeling, and cybersecurity in
+                                smart grids.                                                                                     WEI XUE received his B.Sc. and Ph.D. from the
+                                                                                                                                 Department of Electrical Engineering at Tsinghua
+                                                                                                                                 University in Beijing, China, in July 1998 and July
+                                                                                                                                 2003, respectively.
+                                                                                                                                    After graduation, he became a lecturer in Au-
+                                                                                                                                 gust 2003 and an associate professor in December
+                                SHAOWEI HUANG (M’11) received his B.S.                                                           2007 at the Department of Computer Science and
+                                and Ph.D. in electrical engineering from Tsinghua                                                Technology at Tsinghua University. His research
+                                University in Beijing, China, in 2006 and 2011,                                                  interests include scientific computing, uncertainty
+                                respectively.                                                                                    quantification, power system analysis and simula-
+                                   He is an assistant professor at the Department                     tion, parallel algorithm design, cluster computing, and network storage.
+                                of Electrical Engineering and Applied Electronic                         Dr. Xue received the 2016 ACM Gordon Bell Prize and the Tsinghua-
+                                Technology, Tsinghua University. His research in-                     Inspur Computational Geosciences Youth Talent Award.
+                                terests include parallel and distributed computing
+                                and their applications to power systems.
+
+
+
+
+                           YIN XU (S’12-M’14) received his B.E. and Ph.D.
+                           in electrical engineering from Tsinghua University
+                           in Beijing, China, in 2008 and 2013, respectively.
+                              He is an associate professor at the School
+                           of Electrical Engineering, Beijing Jiaotong Uni-
+                           versity. His research interests include distribu-
+                           tion system service restoration, microgrids, power
+                           system resilience, power system electromagnetic
+                           transients simulation, and high-performance com-
+                           puting in power systems.
+    Dr. Xu is currently serving as secretary of the Distribution Test Feeder
+ Working Group under the IEEE Distribution System Analysis Subcommit-
+ tee.
+
+
+ VOLUME 4, 2016                                                                                                                                                                                   13
+
+
+2169-3536 (c) 2018 IEEE. Translations and content mining are permitted for academic research only. Personal use is also permitted, but republication/redistribution requires IEEE permission. See
+                                               http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+

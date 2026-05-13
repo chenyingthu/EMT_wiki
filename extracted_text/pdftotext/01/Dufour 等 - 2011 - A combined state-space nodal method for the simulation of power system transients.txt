@@ -1,0 +1,479 @@
+928                                                                                       IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 26, NO. 2, APRIL 2011
+
+
+
+
+        A Combined State-Space Nodal Method for the
+           Simulation of Power System Transients
+   Christian Dufour, Member, IEEE, Jean Mahseredjian, Senior Member, IEEE, and Jean Bélanger, Member, IEEE
+
+
+   Abstract—This paper presents a new solution method that com-                      large networks, and for large numbers of states in some model
+bines state-space and nodal analysis for the simulation of electrical                equations.
+systems. The presented flexible clustering of state-space-described                     Some variations of the nodal approach are based on the con-
+electrical subsystems into a nodal method offers several advantages
+for the efficient solution of switched networks, nonlinear functions,                cept of group separation for increasing efficiency and flexibility.
+and for interfacing with nodal model equations. This paper ex-                       In [9], the use of groups provides a technique for diminishing
+tends the concept of discrete companion branch equivalent of the                     the number of nodal points and, consequently, the size of the
+nodal approach to state-space described systems and enables nat-                     system matrix for real-time computations [10]. In [11], the com-
+ural coupling between them. The presented solution method is si-                     pensation method allows separating circuits and solving them
+multaneous and enables benefitting from the advantages of two dif-
+ferent modeling approaches normally exclusive from one another.                      independently. The compensation method is noniterative when
+                                                                                     the solved circuits are linear. A similar idea is used in [12]
+  Index Terms—Electromagnetic transients, nodal analysis, real
+                                                                                     for reducing the number of nodal connection points. In [13],
+time, state space.
+                                                                                     state-space equations are also used for this purpose.
+                                                                                        The inclusion of state-space equations into nodal equations
+                             I. INTRODUCTION                                         has been applied in [14] (see also [15]) for the purpose of model
+                                                                                     circuit synthesis from fitted measurements.
+
+T      HE computation of electromagnetic transients can be
+       based on various numerical methods for the formulation
+and solution of network equations. The most widely used
+                                                                                        This paper presents a general methodology for the simul-
+                                                                                     taneous interfacing of nodal equations with state-space equa-
+                                                                                     tions for arbitrary network topologies. This interfacing allows
+methods fall into two categories: 1) the state-space and 2)                          eliminating several modeling limitations in state-space-based
+nodal-analysis formulations. State-space equations are used,                         solvers. This interfacing allows creating state-space groups that
+for example, in [1] for inserting electrical circuit equations into                  can be maintained independently for efficient computation of
+the Simulink [2] solver. Nodal equations are widely used in                          switching events. In addition, each state-space group uses its
+Electromagnetic Transients (EMT)-type applications, such as                          own automatic formulation of state-space matrices which obvi-
+[3] and [4]. The modified-augmented-nodal analysis method is                         ously reduces the formulation time when compared to unique
+used in [5] and [6] for eliminating topological restrictions from                    state-space equations of the complete system without grouping.
+the nodal-analysis approach.                                                            The discrete state-space solvers are inefficient for handling
+   The nodal equations are assembled after discretizing all cir-                     switching events, especially in real-time applications, where
+cuit devices with a numerical integration rule, such as trape-                       precalculation methods must be used. The massive precalcu-
+zoidal integration. These equations are particularly powerful                        lation of state-space matrix sets for all switch combinations
+and efficient for simulating very large networks through sparse                      becomes problematic in terms of the required memory for large
+matrix methods. Some real-time simulator technologies are also                       numbers of coupled switches [16].
+based on the nodal formulation [7], [8].                                                The method proposed in this paper contributes to the im-
+   In the case of state-space equations, the numerical integration                   provement of state-space-based power system simulation
+technique can be selected after formulation, which simplifies                        solvers. It notably offers important advantages for real-time
+the programming of variable time-step integration techniques.                        applications.
+In addition, state-space representation can be particularly pow-                        This paper starts with a theoretical presentation and follows
+erful for controller design methods [1]. The main disadvantage                       with demonstration cases. The reference state-space and nodal
+is the computing time required for the automatic synthesis of                        analysis solvers used in this paper are those presented in [1] and
+state-space matrices. Other complications can arise for the si-                      [17], respectively.
+multaneous solution of nonlinear models, for the simulation of
+                                                                                                    II. STATE-SPACE NODAL METHOD
+   Manuscript received March 05, 2010; revised July 03, 2010 and September
+13, 2010; accepted October 25, 2010. Date of publication December 13, 2010;             The state-space nodal (SSN) method described in this sec-
+date of current version March 25, 2011. Paper no. TPWRD-00152-2010.
+   C. Dufour and J. Bélanger are with Opal-RT Technologies, Montréal, QC
+                                                                                     tion uses arbitrary size clusters (groups) of electrical elements
+H3K 1G6, Canada.                                                                     and combines them into a single nodal admittance matrix.
+   J. Mahseredjian is with the École Polytechnique de Montréal, Montréal, QC         The cluster equations are discretized state-space equations.
+H3T 1J4, Canada (e-mail: jeanm@polymtl.ca).                                          The trapezoidal integration rule is used in the discretization
+   Color versions of one or more of the figures in this paper are available online
+at http://ieeexplore.ieee.org.                                                       process. The clusters include implicitly unknown node voltages
+   Digital Object Identifier 10.1109/TPWRD.2010.2090364                              at their nodal connection points. These voltages are at common
+                                                                  0885-8977/$26.00 © 2010 IEEE
+DUFOUR et al.: COMBINED STATE-SPACE NODAL METHOD                                                                                        929
+
+
+
+connection points and must be solved simultaneously using             sources           and        is an admittance matrix. This is called
+nodal analysis.                                                       hereinafter a V-type SSN group and it is a Norton equivalent.
+   Finally, in the proposed SSN method, the cluster equations            When       represents voltages and       holds currents entering
+are not limited to state-space equations. The clusters can be         a group, then          represents history voltage sources           ,
+also derived from nodal analysis and combined with state-space        and        is an impedance matrix. This is referred to hereinafter
+clusters.                                                             as a I-type SSN group and it is a Thevenin equivalent.
+                                                                         In general, it is possible to have both types of groups (V-type
+A. State-Space Groups                                                 and I-type) by rewriting (6) as follows:
+  Any given group of circuit elements can be given the state-
+space equations                                                                                                                        (8)
+
+                                                                      where the superscripts I and V denote I-type and V-type rela-
+                                                               (1)    tions, respectively, and where the notation has been simplified
+                                                                      by dropping the subscripts and in             . This equation is
+where bold characters are used to denote vectors and matrices.        referred to as a mixed-type group. It can be straightforwardly
+The column vectors and are the state variable and input               transformed into a nodal representation by regrouping all cur-
+vectors, respectively. The state variables are capacitor voltages     rent vectors (        and      ) on the left-hand side
+and inductor currents. They are independent and found from the
+proper tree of the circuit. The column vector is the vector of                                                                         (9)
+outputs. The state-space matrices       ,   ,    , and     corre-
+spond to the th permutation of switches and piecewise linear
+device segments. Automatic formulation methods for (1) are of         The admittance matrix      derived from a group (of any type)
+out the scope of this paper and can be found in many references,      is mapped though its nodes and inserted into the global nodal
+such as [18] and [19].                                                admittance matrix     of
+  The discretization of state equations in (1) results in
+                                                                                                                                      (10)
+                                                               (2)
+                                                                      where the vector       contains known nodal injections, and the
+where       is the integration time step and the hatted matrices      vector      is the vector of all unknown node voltages. The
+result from the discretization process using trapezoidal integra-     matrix does not change if switch positions do not change and
+tion. This step is also known as the numerical integrator substi-     piecewise linear devices represented in (3) remain on previous
+tution [19] with the trapezoidal integrator. In this paper, (2) and   time-step segments. The negative of the first term after the
+the output equations in (1) are refined as follows:                   equality sign in (9) contributes to the vector .
+                                                                         If in the system of (1), the equation for is modified to in-
+                                                               (3)    clude the differential of , then
+
+                                                                                                                                      (11)
+                                                               (4)
+                                                                      and the I-type groups can be avoided. However, (11) with the
+The subscript character refers to internal sources (injections)       capability to use I-type groups, remains more generic since in
+and the subscript refers to external nodal injections. The com-       many state-space solvers, such as in [1], the matrix      is not
+bination of the lower row of (4) with (3) gives                       readily available.
+                                                                         It is noticed that if the modified-augmented-nodal analysis
+                                                                      (MANA) method [5] is used, the upper part of (8) can be inserted
+                                                                      directly, thus avoiding matrix inversions. In the MANA method,
+                                                               (5)
+                                                                      (10) is written as
+It is apparent that (5) has an independent term (known variables
+                                                                                                                                      (12)
+before solving for           ) and can be written as
+                                                                      where the subscript denotes MANA matrices (not state-space
+                                                               (6)
+                                                                      matrices) and vectors, the vector      can hold unknown voltages
+Here, the subscript       (“history”) has been used to denote         and currents, and        becomes a submatrix in        . In (8), the
+known variables for the solution of this equation and                 variables          and         can be regrouped on the right-hand
+                                                                      side and listed in     with coefficients inserted in equation rows
+                                                               (7)    of      . The history (or known) terms participate in       .
+                                                                         It is also noticed that it is not necessary to assume that all
+  Two different interpretations can be made from (7).                 groups are using state-space equations. In fact, any given group
+  When      represents current injections (entering a group) and      can also use nodal equations, in which case, these equations can
+   is for node voltages, then         represents history current      be included directly into (10) or in MANA equations. Moreover,
+930                                                                            IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 26, NO. 2, APRIL 2011
+
+
+
+these equations can contain nonlinear devices solved through an
+iterative process and independently from state-space equations.
+
+B. Solution Steps
+   The complete solution algorithm is defined through the fol-
+lowing steps:
+ Step 1) Find the steady-state solution.                                 Fig. 1. Three-phase system example.
+ Step 2) Advance to the next time-point.
+ Step 3) Determine all switch positions ( th permutation) and
+            formulate state-space (3) and (4).
+ Step 4) Determine all history terms and update (9).
+ Step 5) Update (if necessary) the global nodal admittance
+            matrix        that contains contributions from all
+            groups.
+ Step 6) Update        from group contributions.
+ Step 7) Solve the system of nodal (10) to determine all node
+                                                                         Fig. 2. Simple-switched RLC circuit.
+            voltages. This can be done using LU factorization
+            and a sparse matrix-based solver for efficiency in
+            larger systems.
+                                                                         the number of precalculated matrix sets for switching topolo-
+ Step 8) Use (3) and (4) to compute the state-space solutions
+                                                                         gies can become substantially reduced.
+            at the current time-point       .
+                                                                            In the three-phase example shown in Fig. 1, two arbitrary net-
+ Step 9) Go back to Step 2) if the simulation did not reach the
+                                                                         works, S1 and S2, are interconnected using two switches and
+            last time-point.
+                                                                         two pi-sections. If the state-space method is used for the entire
+Similar steps can be written for MANA. It also is noticed that
+                                                                         system, it will result into     state variables. If the state-space
+the individual state-space groups can be solved in parallel. It
+                                                                         solver precomputes (particularly useful for real-time applica-
+means that it is possible to program the parallel implementa-
+                                                                         tions) the matrix sets for all switch position permutations, it
+tion (on separate processor cores) of Steps 3)–6) and Step 8).
+                                                                         will require saving in memory           64 matrices for the entire
+Depending on the relative size of the groups, this can lead to re-
+                                                                         system.
+duced computational time.
+                                                                            The same system can be solved using SSN by separating into
+   The steady-state solution is found by replacing the differen-
+                                                                         two groups (Group 1 and Group 2 shown in Fig. 1). Since the
+tial operator by Laplace         , with being the complex op-
+                                                                         three-phase capacitors at the separation point will now count
+erator and as the steady-state solution frequency in radians
+                                                                         as separate states, the number of state variables in each group
+per second. Thus, the complex version of (1) for the solution of
+                                                                         becomes               . The size of        in (10) is 3 3. Also,
+state variables becomes
+                                                                         the number of precalculated matrix sets now reduces to
+                                                                                     from        64. The created groups are linked only
+                                                                 (13)
+                                                                         through the nodal interfacing equations. This allows a parallel
+                                                                         setup and calculations on two independent CPUs or CPU cores.
+                                                                 (14)    The computational burden of (10) is negligible when compared
+                                                                         to much larger group equations.
+
+                                                                 (15)
+                                                                                                   III. VALIDATION
+where tilde-uppercase vectors are used to denote phasors, is                The method proposed in this paper has been validated
+the identity matrix, and                      . Equation (15) is first   using simple and complex systems. In addition to independent
+inserted into the complex version of (10) (or (12) for MANA) for         programming, the new method has been also implemented
+finding the nodal solution. It is followed by the solution of (13)       in the SimPowerSystems [1] (SPS) tool for Simulink. The
+and (14). The solution of state variables at the time point              reference nodal analysis is the modified-augmented-nodal anal-
+0 is found by taking the real part of the corresponding phasors.         ysis (MANA) method of Electromagnetic Transients Program
+This solution is used to initialize history terms for the following      (EMTP)-RV [17].
+time-point solution with discretized (3) and (4).
+                                                                         A. Simple RLC Case
+C. Comparison With State-Space and Contributions to
+                                                                           The simulated circuit is the one shown in Fig. 2. It is based
+Real-Time Simulations
+                                                                         on an equivalent 500-kV ac system switched onto a mostly ca-
+   The proposed SSN method provides several advantages over              pacitive RLC branch. The SSN method is used with two groups.
+the state-space method. The clustering approach reduces the size         Group 1 is of I-type and Group 2 is of V-type. It is noticed that
+and complexity in the automatic generation of state-space equa-          the methodology proposed in this paper does not impose topo-
+tions for each group. The groups can be solved in parallel and           logical restrictions.
+DUFOUR et al.: COMBINED STATE-SPACE NODAL METHOD                                                                                         931
+
+
+
+                                                                        The inverter side is simulated using the state-space method
+                                                                        of [1].
+                                                                           The test consists of the energization of the dc link to the nom-
+                                                                        inal current with the 300-Mvars capacitor being switched on at
+                                                                        1.5 s of the simulation interval.
+                                                                           The simulation results are compared to SPS in Figs. 6–8 for a
+                                                                        fixed integration time step of 25 s. The match is very close and
+                                                                        validates the SSN method. Closer examination of the dc current
+                                                                        (see Fig. 7) will show small differences between the two sim-
+Fig. 3. Switch SW current for the circuit of Fig. 2.                    ulation methods. This is normal since any small discrepancy in
+                                                                        the thyristor switching methods will cause differences. In the
+                                                                        current SPS code, it is not possible to access details related to
+                                                                        thyristor turn-on/turn-off and reproduce them exactly. The im-
+                                                                        plementation based on the SSN method does not use specific
+                                                                        switching tricks, and the thyristor model is ideal. It is also no-
+                                                                        ticed that low-frequency jitter occurs in both methods. This jitter
+                                                                        is due to the 25- s sampling time step for thyristor switching.
+                                                                        A solution to this problem has been proposed in [21]–[23] (see
+                                                                        also the analysis in [19]) and will be also implemented in the
+                                                                        SSN method.
+
+Fig. 4. Switch SW current for the circuit of Fig. 2, zoomed version.
+                                                                        C. Breaker Test Setup
+
+                                                                           The objective of this example is to demonstrate that the pro-
+   The switch      is closed at 0.05 s. The circuit is automatically    posed SSN method can be advantageously used for performing
+initialized using phasors and is in steady state when the switch        repetitive studies in state-space solvers. The tested system is
+is closed.                                                              shown in Fig. 9. It has been trimmed to simplify the presen-
+   The simulation results for the switch current are shown in           tation. It is used for testing fault detection and breaker opening
+Fig. 3 for two integration time steps, namely                 s and     under various fault conditions. It is a 50-Hz and 225-kV system
+            s. Both SSN and MANA use halved time-step Back-             with short transmission lines modeled as balanced PI sections.
+ward Euler integration at discontinuity points. Fig. 4 shows the        The source impedances are decoupled with                        and
+zoomed version for both methods at the energization instant and               63.5 mH. The PI sections have a capacitance of
+confirms that both methods provide identical simulation results.        F/km (diagonal matrix). The positive-sequence resistance and
+                                                                        inductance are 60 m km and 1.27 mH/km, respectively, while
+B. HVDC System                                                          the zero-sequence counterpart is three times higher. The system
+                                                                        is lightly loaded with all loads having         50 MW and         0.
+   This system (Fig. 5) is composed of a 1000-MW HVDC                   The tested fault locations are identified as to . Various fault
+link used to transmit power from a 500-kV, 5000-MVA, and                types with fault resistance can be applied. The tested breakers
+60-Hz network to a 345-kV, 10 000-MVA, and 50-Hz network.               are BR1 and BR2.
+The ac networks are modeled by equivalents. The rectifier and              The system is decomposed into five SSN (SS1 to SS5) groups
+the inverter are 12-pulse converters interconnected through             as identified in Fig. 9. The SS1 group is a mixed type. There are a
+a 300-km distributed parameter line (including propagation              total of nine nodal points. The simulation results for CT1 (BR2)
+delay) and two 0.5-H smoothing reactors. Capacitor banks, har-          currents with a time step of 25 s for a phase-a to phase-b fault
+monic filters (11th and 13th), and high-pass filters for a total of     occurring at 100 ms at         are shown in Fig. 10. The breakers
+600 Mvars are used on each converter side. The three-winding            remain closed in this test, and the fault disappears at 150 ms.
+transformers are Y-grounded on the primary side and Y-Delta             The simulation results with SSN and SPS methods are identical.
+on the secondary side. The complete model and data are avail-              The system of Fig. 9 uses PI sections and it is not possible
+able in the software SimPowerSystems [1] (see also [20]). The           to decouple with propagation delay-based transmission-line
+only difference in this design is that the (300 Mvars) capacitor        models. This causes problems in real-time applications. There
+of the filter bank on the rectifier part is split into two parts, one   are two breakers and four fault devices. The breakers use three
+of which is switched.                                                   switches, and the fault devices require four switches for mod-
+   For the purpose of the test, the following groups are created        eling various types of faults. This requires the precalculation of
+on the rectifier side:                                                       sets of state-space solution matrices, which is not realizable.
+   • group #1: ac source and impedance, V-type SSN group;                  In the SSN approach, the switches are located in indepen-
+   • group #2: switched capacitor, I-type SSN group;                    dently formulated state-space equations. With the setup of five
+   • group #3: fixed filter bank, I-type SSN group;                     groups shown in Fig. 9, the maximum number of combinations
+   • group #4: transformer, thyristor-rectifier, and smoothing          now reduces to         with four fault switches and three breaker
+     reactor, V-type SSN group.                                         switches in the groups SS1 and SS5.
+932                                                                                    IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 26, NO. 2, APRIL 2011
+
+
+
+
+Fig. 5. Twelve-pulse HVDC system.
+
+
+
+
+Fig. 6. DC-link current.
+
+
+                                                                                 Fig. 9. Breaker test setup, single-line diagram.
+
+
+
+
+Fig. 7 DC-link current, zoomed interval.
+
+                                                                                 Fig. 10. CT1 current, SSN (solid line), and SPS (dashed line) methods.
+
+
+
+                                                                                 have been tested in real time on a target platform [24], com-
+                                                                                 prising a single 3.2-GHz Xeon i7 Quad-core PC running under
+                                                                                 the RedHat Linux kernel. Also, these tests are using the SPS im-
+                                                                                 plementation of the SSN algorithm.
+                                                                                    The HVDC system was simulated with three cores: one core
+                                                                                 for the rectifier side based on the SSN method, the second core
+                                                                                 for the inverter side based on the state-space approach, and the
+                                                                                 third core was used for simulating the HVDC controls. The
+Fig. 8 Rectifier ac currents as well as SSN (solid line) and SPS (dashed line)   worst-case time step reached 10 s with the groups identified in
+methods.
+                                                                                 Fig. 5. Alternatively, the separate grouping of the two 6-valves
+                                                                                 groups could have been made for reducing the number of precal-
+                                                                                 culated matrix sets, as the proposed SSN algorithm offers this
+D. Real-Time Simulation Results
+                                                                                 flexibility.
+ In addition to the offline simulations presented before, the                       The breaker test setup was simulated on a single core. The
+HVDC system of Fig. 5 and the breaker test setup of Fig. 9                       worst-case condition gives a time step of 21 s.
+DUFOUR et al.: COMBINED STATE-SPACE NODAL METHOD                                                                                          933
+
+
+
+                              TABLE I
+                       HARD REAL-TIME TIME STEP
+
+
+
+
+                                                                     Fig. 12. Nonlinear flux-current characteristic, transformer magnetization
+                                                                     branch model.
+
+
+
+
+Fig. 11. Test system with nonlinear models, single-line diagram.
+                                                                     Fig. 13. Phase currents, transformer CusTx1, SSN, and EMTP-RV.
+
+
+   Table I summarizes the aforementioned results. The
+                                                                     SS1 and SS2 into a single state-space representation. Here, the
+worst-case condition is suitable for “hard” real-time simu-
+                                                                     breaker BR and the fault switches are ideal and it is more effi-
+lation. It is the maximum calculation time of all time steps.
+                                                                     cient to represent them and update their status through (12). The
+The switching events maximize processor uncaching effects.
+                                                                     nonlinear flux-current equations are also represented and solved
+The measurements shown in the table were performed without
+                                                                     more efficiently through (12). In this case, each nonlinear func-
+input/output (I/O) devices.
+                                                                     tion is linearized through its piecewise linear representation, but
+   This simulation performance of the HVDC case is compa-
+                                                                     it is also possible to calculate the differential at each iteration.
+rable to other real-time simulators [7], [8]. A fair comparison of
+                                                                         For the aforementioned flux-current relation
+solver efficiency is difficult to perform based on timing values
+alone, since simulator technology, especially at the hardware
+                                                                                                                                         (16)
+level, differs significantly between existing simulators.
+                                                                     where         is the nonlinear inductance flux at the time point ,
+                      IV. NONLINEAR MODELS                                is the inductance current, is the iteration counter,        is
+   The SPS implementation of the presented SSN method                the segment slope at iteration , and         is the segment flux at
+naturally incorporates nonlinear device models available in          zero current. Since using voltage unknowns in nodal analysis is
+SPS. SPS uses current injections with time-step delay for            required, it can be demonstrated that (16) can be transformed
+representing nonlinearities. The current injection method has        into
+limitations, it may become less precise, and suffers from
+stability problems particularly when the integration time step                                                                           (17)
+increases. It is preferable to implement a simultaneous and
+iterative approach for best precision and robustness.                where       is the inductance voltage and       is the flux history
+   The test case presented in this section is used to demonstrate    derived from the trapezoidal rule of integration. During the iter-
+the capability to use the SSN method on its own for solving          ative process, updating the coefficient of     is required, which
+nonlinear models simultaneously. The tested circuit is the one       modifies the branch admittance in the matrix          of (12). The
+shown in Fig. 11. The complete system data can be made avail-        last term in (17) requires the iterative updating of       in (12).
+able on request. It is a 12.5-kV distribution system with the        This approach is identical to the one used in [5] and [17], and is
+representation of an equivalent at the main bus. The two trans-      applied here in the context of the SSN method. Due to lineariza-
+formers are modeled using a nonlinear inductance for the mag-        tion, the matrix      of (12) becomes the Jacobian matrix. Equa-
+netization branch. The flux-current function is shown in Fig. 12.    tion (12) is solved with iterative updating until convergence.
+A piecewise linear representation is used.                              The studied scenario is the occurrence of a phase-a-to-ground
+   This test case also demonstrates that the selection of state-     fault (4 ) on bus XFMR. The solution starts in linear steady-
+space and nodal regions is arbitrary. Here, the decision has been    state conditions. The fault occurs at 20 ms and clears at 133 ms.
+made to select three state-space sections (SS1, SS2, and SS3)        The breaker BR receives the opening signal at 133 ms and re-
+and the rest is kept in nodal (MANA) equations using (12). This      closes at 203 ms. The phase current waveforms on the high-
+selection is arbitrary. It is, for example, possible to combine      voltage side of the transformer CusTx1 are shown in Fig. 13.
+934                                                                                    IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 26, NO. 2, APRIL 2011
+
+
+
+                                                                                     [3] H. W. Dommel, “Digital computer solution of electromagnetic tran-
+                                                                                         sients in single- and multiphase networks,” IEEE Trans. Power App.
+                                                                                         Syst., vol. PAS-88, no. 4, pp. 734–741, Apr. 1969.
+                                                                                     [4] D. A. Woodford, A. M. Gole, and R. Z. Menzies, “Digital simulation of
+                                                                                         dc links and ac machines,” IEEE Trans. Power App. Syst., vol. PAS-102,
+                                                                                         no. 6, pp. 1616–1623, Jun. 1983.
+                                                                                     [5] J. Mahseredjian, “Simulation des transitoires électromagnétiques dans
+                                                                                         les réseaux électriques,” Édition ‘Les Techniques de l’Ingénieur’, 2008,
+                                                                                         Dossier no D4130.
+                                                                                     [6] J. Mahseredjian and F. Alvarado, “Creating an electromagnetic tran-
+                                                                                         sients program in MATLAB: MatEMTP,” IEEE Trans. Power Del., vol.
+                                                                                         12, no. 1, pp. 380–388, Jan. 1997.
+Fig. 14. Nonlinear flux-current plot, transformer CusTx1, overlaid simulation,       [7] P. Forsyth and R. Kuffel, “Utility applications of a RTDS Simulator,”
+and actual characteristic.                                                               in Proc. Int. Power Engineering Conf., 2007, pp. 112–117.
+                                                                                     [8] D. Pare, G. Turmel, and J.-C. Soumagne, “Validation of the hypersim
+                                                                                         digital real-time simulator with a large AC-DC network,” presented at
+The validation is performed using EMTP-RV since it uses a si-                            the Int. Power Systems Transients Conf., New Orleans, LA, 2003.
+                                                                                     [9] J. R. Martí, L. R. Linares, J. A. Hollman, and F. A. Moreira, “OVNI:
+multaneous iterative solver. Both methods provide identical re-                          Integrated software/hardware solution for real-time simulation of large
+sults. The integration time step is 50 s.                                                power systems,” presented at the PSCC, Sevilla, Spain, Jun. 2002.
+   The simultaneous solution qualification can be verified by                       [10] J. A. Hollman and J. R. Martí, “Real time network simulation with PC
+                                                                                         clusters,” IEEE Trans. Power Syst., vol. 18, no. 2, pp. 563–569, May
+demonstrating that all solution points remain on the nonlinear                           2003.
+characteristic segments for any integration time step. This is                      [11] J. Mahseredjian, S. Lefebvre, and D. Mukhedkar, “Power converter
+shown in Fig. 14. Zooming on the knee points will show jumps                             simulation module connected to the EMTP,” IEEE Trans. Power Syst.,
+                                                                                         vol. 6, no. 2, pp. 501–510, May 1991.
+between connecting segments, which is normal since a fixed                          [12] K. Strunz and E. Carlson, “Nested fast and simultaneous solution for
+time step is used. In addition to the fact that the nonlinear tra-                       time-domain simulation of integrative power-electric and electronic
+jectory segments of each device are not overrun, convergence                             systems,” IEEE Trans. Power Del., vol. 22, no. 1, pp. 277–287, Jan.
+                                                                                         2007.
+is achieved for all nonlinear devices (in this case, there are two                  [13] C. Dufour, “Deux contributions à la problématique de la simulation
+magnetization branches) at each solution time point and within                           numérique en temps réel des réseaux de transport d’énergie,” Ph.D.
+simultaneous electrical coupling.                                                        dissertation, Laval Univ., Québec City, QC, Canada, May 2000.
+                                                                                    [14] M. Tiberg, D. Bormann, B. Gustavsen, C. Heitz, O. Hoenecke, G.
+   It is observed here that the iterative process is applied to                          Muset, J. Mahseredjian, and P. Werle, “Generic and automated simu-
+(12). The size of this system is normally smaller compared to                            lation modeling based on measurements,” presented at the Int. Power
+the representation of the entire network in MANA equations.                              Systems Transients Conf., Lyon, France, Jun. 4–7, 2007.
+                                                                                    [15] J. Mahseredjian, “State-space equations,” Jul. 2005, EMTP-RV docu-
+It becomes much smaller when the number of nodes evacuated                               mentation.
+in linear state-space equations increases. The iterative process                    [16] C. Dufour, S. Abourida, J. Bélanger, and V. Lapointe, “Infini-
+requires repetitive refactoring of the matrix        and becomes                         Band-based real-time simulation of HVDC, STATCOM, and SVC
+                                                                                         devices with commercial-off-the-shelf PCs and FPGAs,” presented at
+significantly more efficient when the size of             reduces.                       the 32nd Annu. Conf. IEEE Industrial Electronics Soc., Paris, France,
+Thus, the presented SSN method has the potential to introduce                            Nov. 7–10, 2006.
+a nonlinear iterative solution methodology into its real-time                       [17] J. Mahseredjian, S. Dennetière, L. Dubé, B. Khodabakhchian, and L.
+                                                                                         Gérin-Lajoie, “On a new approach for the simulation of transients in
+implementation.                                                                          power systems,” Elect. Power Syst. Res., vol. 77, no. 11, pp. 1514–1520,
+                                                                                         Sep. 2007.
+                            V. CONCLUSION                                           [18] L. O. Chua and P. M. Lin, Computer Aided Analysis of Electronic Cir-
+                                                                                         cuits: Algorithms and Computational Techniques. Englewood Cliffs,
+   This paper presented a power system simulation solver based                           CA: Prentice-Hall, 1975.
+                                                                                    [19] N. R. Watson and J. Arrillaga, “Power systems electromagnetic tran-
+on the combination of state-space and nodal-analysis formula-                            sients simulation,” Inst. Eng. Technol. Power and Energy, ser. 39, 2007.
+tions of circuit equations. It is also compatible with modified-                    [20] S. Casoria, “Thyristor-based HVDC transmission system (detailed
+augmented-nodal analysis. The presented new method makes                                 model),” SimPowerSystems 5.0 Demo (Matlab R2008B) Math-
+                                                                                         Works. Natick, MA.
+use of internal grouping of electric elements to enable a mod-                      [21] C. Dufour, J. Bélanger, and S. Abourida, “Accurate simulation of a
+ulation of computational burden between state-space and nodal                            6-pulse inverter with real time event compensation in ARTEMIS,”
+equations. It offers several numerical advantages.                                       Math. Comput. Sim., vol. 63, no. 3–5, pp. 161–172, Nov. 2003.
+                                                                                    [22] B. Kulicke, E. Lerch, O. Ruhle, and W. Winter, “NETOMAC—Calcu-
+   The new method offers the capability of dramatic reduction                            lating, analyzing and optimizing the dynamic of electrical systems in
+in the number of saved matrix sets for switching permutations.                           time and frequency domain,” presented at the Int. Power Systems Tran-
+This is particularly useful for real-time applications as demon-                         sients Conf., Budapest, Hungary, Jun. 20–24, 1999.
+                                                                                    [23] G. D. Irwin, D. A. Woodford, and A. Gole, “Precision simulation of
+strated in this paper. Another advantage for state-space equa-                           PWM controllers,” presented at the Int. Power Systems Transients
+tions is the inheritance of an efficient and simultaneous non-                           Conf., Rio de Janeiro, Brazil, Jun. 24–28, 2001.
+linear solution capability from the combination with nodal equa-                    [24] RT-LAB ver. 10, Opal-RT Technologies, 2010.
+tions. Moreover, the iterative solver uses a reduced nodal matrix
+which increases efficiency and enables anticipating the intro-                   Christian Dufour (M’10) received the Ph.D. degree from Laval University,
+duction of iterative solvers in real-time applications.                          Quebec City, QC, Canada, in 2000.
+                                                                                    He joined Opal-RT Technologies in 1999, where he is the Lead Researcher
+                                                                                 in electric system simulation software for RT-LAB. Before joining Opal-RT, he
+                               REFERENCES                                        worked on the development teams of the Hydro-Quebec HYPERSIM real-time
+      [1] “SimPowerSystems, User’s Guide,” ver. 5, MathWorks, Natick, MA,        simulator, as well as the MathWorks SimPowerSystems blockset. His current
+          2009.                                                                  research interests are related to the algorithmic solutions for the real-time sim-
+      [2] “Simulink, User’s Guide,” ver. 7, MathWorks, Natick, MA, 2009.         ulation of power systems and motor drives.
+DUFOUR et al.: COMBINED STATE-SPACE NODAL METHOD                                                                                                                935
+
+
+
+Jean Mahseredjian (SM’08) received the Ph.D. degree from École Polytech-            Jean Bélanger (M’07) received the M.A.Sc. degree from École Polytechnique
+nique de Montréal, Montréal, QC, Canada, in 1991.                                   de Montréal, Montréal, QC, Canada.
+   From 1987 to 2004, he was with IREQ (Hydro-Québec), working on re-                  He is the President and Founder of Opal-RT Technologies, a manufacturer
+search-and-development activities related to the simulation and analysis of elec-   of real-time simulators. He is a specialist in power systems, with more than
+tromagnetic transients. In 2004, he joined the faculty of electrical engineering    25 years of experience in the field, including many years as part of the simula-
+at École Polytechnique de Montréal.                                                 tion division of Hydro-Quebec, where he helped develop the 765-kV James Bay
+                                                                                    transmission system.
+                                                                                       Mr. Bélanger has been a Fellow of the Canadian Academy of Engineering
+                                                                                    since 2001.
+

@@ -1,0 +1,473 @@
+                                                             Electric Power Systems Research 223 (2023) 109663
+
+
+                                                                  Contents lists available at ScienceDirect
+
+
+                                                       Electric Power Systems Research
+                                                          journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Lessons learned in porting offline large-scale power system simulation to
+real-time for wide-area monitoring, protection and control
+P. Le-Huy *, E. Lemieux , F. Guay
+Power System Simulation Group, IREQ, Hydro-Québec’s Research Center, 1800 boul. Lionel-Boulet, Varennes, Québec J3 × 1S1, Canada
+
+
+
+
+A R T I C L E I N F O                                    A B S T R A C T
+
+Keywords:                                                At Hydro-Québec, power system studies are mainly done with offline electromagnetic transient simulation tools
+Electromagnetic transient                                and real-time simulation is typically reserved for hardware-in-the-loop studies related to HVDC and compen­
+Offline                                                  sation system commissioning. However, there is a growing internal need to pursue large-scale power studies
+Real-time
+                                                         incorporating physical systems to explore wide-area monitoring, protection, and control strategies: large power
+Simulation
+User experience
+                                                         systems must then be ported from offline software to the real-time environment. The current paper presents
+Wide-area monitoring, protection and control             lessons learned over the years about the offline to real-time porting process. As Hydro-Québec is involved in
+                                                         simulation tool development, software-related issues and challenges are presented and discussed. Details are then
+                                                         provided regarding the porting process of a large-scale power system required for wide-area control explorations.
+                                                         Prior to waveform comparison and performance assessment, modeling details and required modifications on the
+                                                         original simulation schematic are presented. In closing, electromagnetic transient modeling best practices and
+                                                         tricks to facilitate porting offline simulations to real-time are reported here to help users increase the efficiency
+                                                         and performance of their offline simulations and prepare them for real-time operation.
+
+
+
+
+1. Introduction                                                                               done to verify proper behavior. Sometimes, certain offline components
+                                                                                              did not have direct RT equivalents and had to be built or synthesized
+    THE power system study group at Hydro-Québec (HQ) works mainly                           from basic blocks or hand coded in a user-code model (UCM). Further­
+with offline electromagnetic transient (EMT) simulation tools to execute                      more, additional steps had to be taken in certain situations to respect RT
+various types of analysis in order to identify, investigate, and solve                        constraints and simulators’ capabilities, all with minimal, if any, alter­
+challenges related to power system apparatus, control and protection.                         ation to the simulation results.
+Among the various investigations, some eventually require the use of                              For small- to medium-scale power systems without complex internal
+real-time (RT) hardware-in-the-loop (HIL) simulations to incorporate                          controls, this translation from offline to RT tools was tedious but still
+the behavior of real control or protection systems to get more realistic                      manageable. However, for large-scale power systems with several
+results. For example, control interaction studies with the actual control                     complex internal control systems, the task became herculean: it required
+systems in HIL simulations involve far fewer hypotheses, which in­                            a lot of time and a team of simulation experts to capture all the intricate
+creases confidence that results could be observed on the real power                           details of the offline simulation and reproduce them in the RT envi­
+system and that the study conclusions are meaningful.                                         ronment [3].
+    Historically, when porting such offline simulations (EMTP [1]) to                             Such porting activities were soon deemed as too expensive, yet they
+HQ’s RT simulation tool (HYPERSIM [2]), significant time and effort                           remained essential in several projects or studies. So development efforts
+were required as both environments were quite different, and no                               were deployed to facilitate and accelerate this activity. In the case pre­
+export/import capabilities with automatic place and route were avail­                         sented in this paper, the purpose of the conversion is to co-simulate the
+able. So, such offline to RT porting implied that all electrical and control                  EMT part with a telecommunication simulator and control and protec­
+components had to be instantiated in the RT tools, properly parame­                           tion equipment to further explore the link between these domains and
+trized, and connected. Signal checks and system validation were then                          the impact they have on each other’s performance [4].
+
+
+
+ Paper submitted to the International Conference on Power Systems Transients (IPST2023) in Thessaloniki, Greece, June 12-15, 2023
+ * Corresponding author.
+   E-mail address: le-huy.philippe@ireq.ca (P. Le-Huy).
+
+https://doi.org/10.1016/j.epsr.2023.109663
+Received 10 December 2022; Received in revised form 30 March 2023; Accepted 21 June 2023
+Available online 29 June 2023
+0378-7796/© 2023 The Author(s). Published by Elsevier B.V. This is an open access article under the CC BY-NC-ND license (http://creativecommons.org/licenses/by-
+nc-nd/4.0/).
+P. Le-Huy et al.                                                                                                   Electric Power Systems Research 223 (2023) 109663
+
+
+    This paper aims to share the lessons learned during the porting of             values in those cases can prove to be hazardous as it may impact
+large-scale power systems used for wide-area monitoring, protection,               simulation results significantly. For example, some simulation tools
+and control (WAMPAC) RT simulations with other entities to facilitate              have numerical dampers in certain models: default parameters could
+their own large-scale conversion endeavors. Hopefully, the information             potentially affect several scenarios by overdamping phenomena of in­
+provided in this paper will help users to enhance their in-house methods           terest or producing uncharacteristic leakages leading to erroneous cur­
+or optimize their conversion scripts when using commercial tools such              rent and power measurements.
+as the RTDS import tool [5]. Very little information concerning this tool              Model compatibility is typically addressed during the import process
+capabilities and limitations is publicly available and no large-scale              but here, it is slightly different. In HYPERSIM, upon opening a schematic
+power system conversions with this tool were found in the literature.              containing EMTP models, a compatibility layer is applied to interpret
+    Challenges, solutions, and pitfalls of the porting process are pre­            the models and map them to equivalent native models, pre-generated
+sented in Section II, as are general comments and experiences, while               equivalent UCMs, or equivalent subsystems containing power ele­
+Section III presents in more depth the ported large-scale power system             ments and/or control blocks to provide the same behavior. If a model is
+and the required modifications. An application example and its results             not supported, a warning is displayed, and an orange backdrop is
+and performance are also presented. Section IV outlines and explains the           applied on the culprit in the schematic. All previous information is
+major offline modeling habits that can facilitate and expedite porting an          retained and is accessible in the GUI. The translated equivalent can also
+offline EMT simulation to RT. Finally, Section V concludes with a                  be accessed. However, it is by default locked to prevent modification as
+summary and closing remarks.                                                       the original modeling information has priority. On a parameter basis,
+                                                                                   the equivalent can be unlocked to allow users to further tune the
+2. From offline to real-time simulation tools                                      equivalent.
+                                                                                       In summary, model compatibility is far from trivial and great care
+   The porting process is not always straightforward, and several                  must be taken to ensure the integrity of simulation results during the
+challenges can be encountered. This section describes the main diffi­              porting process. Ideally, the import process would take care of all
+culties that had to be tackled by the development team as well as the              compatibility issues; however, for the time being, manual intervention
+power system modeling experts.                                                     from simulation and modeling experts is still required. As for lessons
+                                                                                   learned, one of the most significant is that all EMT simulation tools, both
+2.1. Graphical user interface and import/export                                    offline and RT, give the same results when simulating exactly the same
+                                                                                   thing. If results are different, it means that the simulated system is
+    Previously, export and import capabilities of the EMT software used            different: a model, a parameter, an unconsidered decoupling or damping
+at HQ allowed us to export the netlist and the parameters from a sche­             adjustment, simulation setting, etc. Making the results of two software
+matic and the RT tools could then process the information. However,                match perfectly is a time-consuming process that requires in-depth
+automatic place and route was not available: the HQ RT simulation                  knowledge of both tools.
+import tool produced the correct netlist with the proper parameters, but
+everything had to be placed manually. Obviously, this approach rapidly             2.3. System initialization
+became impractical as the size of the power system increased.
+    Over the years, work was done to add place and route information in                A major difference between offline and RT EMT simulation is
+the export file and to increase import capabilities, but the imported              initialization. In offline simulation software, as execution time can be
+schematic still required manual modifications to improve usability and,            quite long, the simulation time frame tends to be as short as possible: a
+most importantly readability.                                                      few moments to see the system steady state, the disturbance, and re­
+    In the early 2010s, it was decided to upgrade the HQ RT simulation             covery. As little as possible simulation time should be used for system
+tool graphical user interface (GUI) and thus began the adaptation to the           stabilization prior to the disturbance of interest, which encourages
+DesignWorks GUI, the same used by EMTP. This solved the place and                  having “perfect steady state” initial conditions, with all the control
+route issue of the export/import process for the HQ EMT simulation                 systems properly initialized to the exact operating point required by the
+workflow.                                                                          study. This can be quite challenging when simulating user-code and
+    However, this solution is rather unique to HQ as HQ is involved in             imported black box models.
+both EMTP and HYPERSIM development, and it was a logical step in                       In RT, as the name implies, simulation time is on par with the real-
+HQ’s EMT technical agenda.                                                         world time, and thus electrical initialization is less critical as electric
+    On a more general note, the key idea here to keep in mind is that the          phenomena have a time constant in the μs/ms range. So, even if the
+tools’ GUI and import and export capabilities are important factors to             system is not initialized exactly in steady state, which would lead to a
+consider while planning an offline to RT port as it can greatly affect the         small transient at the start of the simulation, it would go unnoticed to
+readability and long-term usability of the port product. In that regard,           typical users. However, electromechanical phenomenon and others with
+the proper evaluation of commercial tools’ import and export capabil­              time constants in the tens of seconds and higher can lead to unwanted
+ities should be a selection criterion for any attempt to tackle both offline       wait times at the start of RT simulations.
+and RT studies.                                                                        As explained, system initialization is critical in offline simulations,
+                                                                                   and it may sometimes lead to implementing all sorts of tricks to accel­
+2.2. Model compatibility layer                                                     erate system stabilization: some are either irrelevant, incompatible, or
+                                                                                   both for RT simulations. During the porting process, attention to such
+    Once all the parts are properly placed and all connections and signals         initialization contrivances is essential to ensure that no long-term nu­
+go where they should in an orderly manner, model compatibility be­                 merical stability arises or builds up.
+comes the main focus. Ensuring that all the models work in the intended
+manner is not an easy task, as each simulation tool’s model library has            2.4. Control system modeling
+its own way of defining things with its own specificities.
+    Of course, basic power system elements and control blocks typically               Offline simulation tools have the luxury of time. This implies that
+have their counterparts in all simulation software, but nonetheless, great         sophisticated and time-consuming solvers can be implemented. At the
+care should be taken to provide adequate parameters. Some simulation               control system level, several offline tools can solve algebraic loops,
+packages might require additional information that is non-existent in the          which is not the case for typical RT control system solvers due to the
+source software or unavailable in the import file: relying on default              non-deterministic nature of that iterative process. Such algebraic loops
+
+                                                                               2
+P. Le-Huy et al.                                                                                                          Electric Power Systems Research 223 (2023) 109663
+
+
+are typically seen when modeling electrical phenomena with control                         Table 1
+blocks and a voltage or current source: current (or voltage) is read from                  High-level content        of     the   2023    HQ    power       system
+the power system, calculations are applied and an immediate change to                      representation.
+the value of the voltage (or current) source is made.                                        Complex components                                         Quantity
+   Adding a delay block to break the loop is trivial but making sure that                    Three-phase buses                                          1 666
+results are still valid is not so easy. If modifications to the control sys­                 Electrical machines                                        111
+tems are required during the port, it is wise, after proper validation, to                   Lines and cables                                           432
+implement those changes in both offline and RT schematics.                                   Three-phase transformers                                   338
+                                                                                             Governors                                                  86
+                                                                                             Excitation systems                                         81
+3. Large-Scale power system for WAMPAC                                                       Stabilizers                                                54
+                                                                                             Static compensators                                        10
+    At HQ, there is a growing need for wide-scale and detailed simula­                       Wind power plants                                          6
+tions as several wide-area control schemes are devised. To address this                      HVDC converters                                            6
+                                                                                             Dynamic loads                                              165
+need, a group of HQ modeling specialists periodically build an EMT
+equivalent of the complete HQ power system, taking into account the
+latest additions and modifications. From these offline representations,
+the first major port to RT was the HQ 2009 winter configuration power                     Table 2
+                                                                                          Basic content of the 2023 HQ power system representation.
+system that was presented in [3] and used in several case studies [6,7].
+The 2020 power system was the second major port to RT and it set the                        Basic components                                             Quantity
+stage for the current work, which presents the modeling for the 2023                        Single-phase electrical nodes                                6 180
+configuration.                                                                              Single-phase transformers                                    1 182
+                                                                                            RLCs                                                         13 626
+                                                                                            Current sources                                              2 784
+3.1. Hydro-Québec power system                                                             Voltage sources                                              66
+                                                                                            Non-linear elements                                          951
+    The backbone of the HQ power system is the 735-kV transmission                          Switches and breakers                                        502
+system illustrated in Fig. 1. The simulated power system follows the                        Control blocks                                               90 405
+
+same structure and lower voltage level (315, 230, 120 kV and generation
+level) components are placed in subsystems. Due to the sheer size and
+complexity of the simulation schematic, it is not presented here as even a         Table 3
+full-page illustration would not be legible.                                       Load flow solution: generation and load.
+    To further appreciate the size and complexity of the simulation                                     Total generation                       Total load
+schematic, the high-level component count is given in Table 1, while                Software            P (MW)              Q (Mvar)           P (MW)              Q (Mvar)
+Table 2 gives the basic component count. High-level components are                  EMTP                41 036              4 277              38 632              958
+both user-built super-models combining power and control basic ele­                 HYPERSIM            41 044              4 242              38 632              958
+ments or native components that are constructed from basic elements (e.
+g. a three-phase transformer is an assembly of single-phase components
+                                                                                   respectively.
+and internal nodes). Load centers are represented by complex dynamic
+load models that contribute generously to the control block count.
+    The load flow solutions from both offline and RT software are given            3.2. Modifications for Real-Time operation
+in Table 3, which shows production and load levels for that specific
+configuration. It also illustrates how the two simulations are closely                 As will be detailed in section D., this power system was first simu­
+matched: 8 MW and 35 Mvar represent differences of 0.02 and 0.83%                  lated offline as it was in both software environment. However, to reach
+                                                                                   RT performance, a few modifications were necessary: node reduction
+                                                                                   was required at a few substations and Π sections were combined and
+                                                                                   replaced by constant parameter lines with the necessary propagation
+                                                                                   delay to further partition the power system.
+                                                                                       Some substations had a very high number of electrical nodes (300 or
+                                                                                   more) due to the use of discrete R, L and C components. Since most of
+                                                                                   these nodes’ voltage was not required for the control systems and pre­
+                                                                                   sented little to no value for users, they were considered “useless” and
+                                                                                   only represented “unnecessary” computations. So, where possible, the
+                                                                                   discrete components were replaced by lumped equivalent RLC compo­
+                                                                                   nents or lumped filter components, effectively removing the “useless”
+                                                                                   nodes and the related computations. Furthermore, to minimize the node
+                                                                                   count, several current measurement shunts were removed, and current
+                                                                                   measurements were taken in nearby serial components instead.
+                                                                                       In this simulation, the transmission lines are modeled in great detail.
+                                                                                   For example, if the real-world transmission line has several physical
+                                                                                   configurations in one corridor due to various pylon designs, several line
+                                                                                   model instances with the corresponding parameters of each section are
+                                                                                   used in series to represent the corridor. For some corridors, this results in
+                                                                                   a complex assembly of Π sections due to the very short length of the
+                                                                                   various configurations. As Π sections do not represent propagation de­
+                                                                                   lays, they cannot be used to partition the simulation. This was prob­
+                                                                                   lematic as several simulation tasks were too long to calculate. To
+            Fig. 1. HQ 735-kV power system and 450-kV HVDC line.                   overcome this difficulty, such Π-section assemblies were reduced to
+
+                                                                               3
+P. Le-Huy et al.                                                                                                   Electric Power Systems Research 223 (2023) 109663
+
+
+equivalent constant parameter lines, thus enabling partitioning with
+transmission lines as described in [2].
+   Both modifications are discussed further in Section IV. .
+
+3.3. Application example and results
+
+    The simulated event consists of a three-phase fault on a line coming
+out of Némiscau substation, 250 km south of the La Grande generation
+complex. This fault effectively takes out the western corridor (3 parallel
+735-kV lines) at 1 s. The fault is then isolated 95 ms later, but the two
+parallel circuits are brought down as well at 1.1 s and 1.105 s. This then
+triggers a cascade of generation rejection at the La Grande complex and
+remote load shedding in order to stabilize the power system at a
+different operating point. The four following figures present results for
+this event for both offline (EMTP) and RT simulation (HYPERSIM). An
+overview of the system voltages is given in Fig. 2. The western corridor
+line currents and fault currents are illustrated in Fig. 3. Machine speed
+for the western (La Grande) and eastern (Churchill Falls) generation
+complex, the system slack bus at Bersimis-2 (geographically midway
+between the eastern generation complex and Québec City) and a gen­
+eration complex south of Montréal (Beauharnois) are illustrated in
+Fig. 4. Generated power for the same machine is shown in Fig. 5. The
+voltage and current waveforms from the offline and RT simulations
+present an extremely good match as do most machine-related wave­
+forms. The machines’ speed and the voltages present a maximum de­
+viation from the original offline case of 0.025 and 0.5% respectively
+while the currents and power have a maximum deviation during the
+transient of 1.7%. This higher value is explained by the transmission line
+modeling (Π-sections with no delay vs constant parameter lines with              Fig. 3. Line currents (measured in circuit breakers at each end of the lines) and
+propagation delays) and operating point differences.                             fault currents.
+    Waveforms for the slack bus machine are at a slightly different
+operating point (0.008 p.u.) due to slight differences in modeling and
+operating conditions: all differences are accumulated at the slack bus
+machine setpoints.
+    Despite these subtle differences, system response and dynamic match
+very well.
+
+
+
+
+                                                                                           Fig. 4. Machine speed during the fault-induced transient.
+
+
+                                                                                 3.4. Performance
+
+                                                                                     TABLE IV gives the required time to execute the 15 s simulation in
+Fig. 2. Phase A voltage of various bus bars in the power system during
+the event.                                                                       offline mode and in RT. All four simulations run with a time step of 40 μs
+
+
+                                                                             4
+P. Le-Huy et al.                                                                                                    Electric Power Systems Research 223 (2023) 109663
+
+
+                                                                                     system solver, results in a speed-up of 6.78 in single-core performance.
+                                                                                         As most personal computers now have at least four cores, it is
+                                                                                     interesting to share the computational burden of the 271 matrices across
+                                                                                     four cores: a speed-up of 3.26 is observed when compared to RT
+                                                                                     modeling single-core performance, which follows Amdahl’s law [9,10].
+                                                                                     Direct comparison and speed-up calculation can be made in this case
+                                                                                     because both single-core and 4-core simulations have access to the same
+                                                                                     L3 cache memory, and both suffer similar penalties for this specific
+                                                                                     workload. Better performance and greater speed-ups would be observed
+                                                                                     with sufficient L3 cache memory (e.g., more cache per CPU or by using
+                                                                                     more CPUs). Comparing the 4-core execution time to the original offline
+                                                                                     case yields a speed-up of 22.12.
+                                                                                         RT operation is achieved by spreading all these matrices over 56
+                                                                                     processing cores and by using HPE Superdome Flex communication
+                                                                                     fabric for communications and synchronization. Before concluding that
+                                                                                     this case exhibits a super-linear speed-up compared to the other cases in
+                                                                                     the table, it is important to note that the CPUs are different (Intel Core
+                                                                                     i9-10900X versus Intel Scalable Xeon Gold 6144) and that, most
+                                                                                     importantly, L3 cache is sufficient in the RT hardware, and execution is
+                                                                                     not hindered by memory-related issues. External equipment can then be
+                                                                                     connected in HIL to explore WAMPAC applications and the interaction
+                                                                                     between the power system and the telecommunication infrastructure.
+
+                                                                                     4. EMT best practices for RT
+
+                                                                                         Here are a few elements to take into consideration while building
+                                                                                     EMT schematics to increase offline performance and facilitate porting a
+                                                                                     power system in RT tools. Partitioning considerations are also discussed
+Fig. 5. Active power generated by La Grande-2, Churchill Falls, Bersimis-2 and
+                                                                                     in this section.
+Beauharnois generating stations.
+
+                                                                                     4.1. Nodes
+Table 4
+Simulation performances for a 15-second simulation.                                      Electrical nodes are computationally expensive. Each one increases
+                                                                                     the rank of the admittance matrices used in the nodal representation of
+  Type               Timestep      Number of           Execution time (s)
+                     (μs)          processors
+                                                                                     most EMT software. They are even more expensive if they are connected
+                                                                                     to non-linear elements. As such, to increase simulation speed both off­
+  Offline(EMTP)      40            1                   17,388 (289.8 min) w/
+                                                                                     line and in RT, it is highly recommended to actively reduce the number
+                                                       CDA
+                                                       14,340 (239 min) w/o          of nodes in the simulation, if possible, by using lumped or aggregated
+                                                       CDA                           models.
+  Offline            40            1                   2565 (42.75 min)                  Most software offers lumped series-connected RLC components or
+    (HYPERSIM)
+                                                                                     commonly used filter designs: using them instead of explicit resistors,
+  Offline            40            4                   786 (13.1 min)
+    (HYPERSIM)
+                                                                                     inductors and capacitors presents a significant advantage.
+  RT                 40            56                  15                                Attention must be paid to current measurements: typically, a very
+                                                                                     small resistive shunt is inserted to provide the current measurement. The
+                                                                                     additional node count can be quite significant if all current measure­
+and all offline simulations use processing cores from an Intel Core i9-              ments are done that way. Using the current measurements of existing
+10900X CPU (HP Z4 G4 workstation) while the RT simulation requires                   serial components is a more effective way as it involves no additional
+56 simulation cores (HPE Superdome Flex with eight Intel Xeon Scalable               component or node. One could argue that it is less explicit and visible in
+Gold 6144, 64 cores in total).                                                       the schematic view, but sometimes such small details are required for RT
+    The EMTP 4.1.1 offline simulation benefits from an iterative solver              operations.
+for both the power components and control systems as well as critical                    Another very important point to consider is the use of “super-
+damping adjustment (CDA) method (trapezoidal numerical integration                   models” (i.e., models available in each software component’s library
+for regular steps and backward Euler integration method following an                 that are in fact built from basic components). These super-models often
+admittance matrix modification) [8] for absolute maximum precision.                  contain several internal nodes that may significantly increase the node
+    The HYPERSIM 2021.3 offline simulation benefits from all the RT                  count. For example, transformer models can introduce a certain number
+partitioning and modifications in addition to an iterative power                     of internal electrical nodes depending on actual implementation.
+component solver. When operating offline, the RT clocking mechanism
+is disabled, and all simulation tasks are executed as fast as possible by a          4.2. Non-Linear device modeling
+certain number of processing cores (from one to the maximum number
+of cores in the computer). With such a huge workload, the simulation                     Offline EMT tools have a lot of freedom regarding how non-linear
+does not reside solely in cache memory for typical PCs and thus per­                 devices are handled and solved. Nonetheless, being overzealous in
+formance is greatly hindered for all offline cases.                                  that area can drastically hinder execution performance of offline simu­
+    The main difference between the two offline simulations (EMTP and                lations and make impossible RT operations. Non-linearity should be
+HYPERSIM) is that the first deals with a single admittance matrix for the            considered carefully: oversampling a non-linearity with a large number
+whole power system while the second handles 271 smaller matrices.                    of points for its piecewise linear representation when it could be
+This “small-matrix” approach, combined with a non-iterative control                  captured adequately with a reduced number of points is
+
+                                                                                 5
+P. Le-Huy et al.                                                                                                    Electric Power Systems Research 223 (2023) 109663
+
+
+counterproductive. Having too many segments results in admittance                  4.6. Partitioning: do not add; borrow
+matrix refactoring that contribute very little to the overall accuracy of
+the simulation and yet take a significant amount of time, which is not                 A common practice in RT EMT simulation is the use of “stublines”, a
+desirable in offline and even less in RT.                                          transmission line with exactly one timestep propagation delay. These
+    In some RT tools, all possible configurations are precomputed and              partitioning elements are used to partition parts of the power system
+stored in memory prior to the start of the simulation. Memory resources            that are too big for RT operations, even after regular transmission line
+being finite, the number of possible configurations is often limited. All          partitioning. They are strategically placed to break the simulation tasks
+the more reason to be judicious in the use of non-linear devices and in            into smaller chunks that can be computed in RT. However, they essen­
+their piecewise linear representations.                                            tially add an “artificial” line to the power system with a series reactor
+    In summary, capturing the essence of non-linearities with the mini­            Lstub and a shunt capacitor Cstub, whose values are related to the timestep
+mum number of linear pieces is always advantageous, offline and in RT.             ts of the simulation as shown by (1). Care must be taken when choosing
+                                                                                   these values as they can have a huge impact on the simulation: their
+                                                                                   impact on the reactive power in the power system may significantly shift
+4.3. Control system modeling considerations                                        the operating point of the whole system.
+                                                                                              1
+    Once again, this consideration is linked to fact that offline tools can        ts = √̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅                                                       (1)
+                                                                                         Lstub Cstub
+implement sophisticated iterative control system solvers that can tackle
+all imaginable control block schematics without a hiccup, although it                 As the title of this section implies, it is far better to “borrow” some
+comes at the cost of increased simulation time. If algebraic loops can be          inductance and capacitance from components already present in the
+eliminated and implicit methods replaced by explicit methods, solving              power system rather than just adding the stubline. For example,
+the control part of the EMT simulation becomes much easier, and more               inductance can easily be borrowed from transformer leakage or from a
+importantly, a lot faster. An RT simulator typically handles control               Π-section, which could also lend part of their shunt capacitance as well.
+blocks in a very straightforward manner that does not involve iteration.           That way, the impact of introducing a stubline into the power system can
+So, even if RT operation is not a remote possibility, it is advantageous           be greatly reduced and the simulation can operate in RT.
+timewise to build the simulated control systems without having to use
+iterative capabilities.                                                            4.7. Partitioning: strong state variables
+
+                                                                                       When further partitioning is required and a stubline would alter the
+4.4. Using simulation time                                                         power system operating point too much, it may be necessary to fall back
+                                                                                   on the delicate Ideal Transformer Method (ITM) or V-I partitioning [11].
+    A possible pitfall when building an EMT simulation in offline and              In ITM, current and voltage measurements are exchanged between the
+porting it to RT is using the simulation time in some parts of the control         simulation tasks and are applied on the following simulation timestep.
+blocks. In offline simulation, the simulation time always start at zero and        To increase the stability of this method, it helps tremendously to ex­
+increases to the end of the simulation, typically a few seconds or tens of         change strong state variables, that is, the current in a large inductor and
+seconds. In RT, it also starts from zero, but it keeps increasing until            the voltage in a large capacitor.
+someone stops the RT simulator. This can be several minutes, hours or
+even days or weeks. So, the simulation time value can get extremely                5. Conclusion
+large and create numerical difficulties, such as underflows and over­
+flows (e.g., directly computing sin(ωt)).                                              HQ’s RT simulation lab has been involved in EMT simulation since
+    Also, during the port, care should be taken to correctly reproduce in          the early 1990s and has participated in several offline to RT ports over
+the RT tools the event programming that uses absolute simulation time              the years. Meaningful lessons from these activities were shared in sec­
+to consider other triggers available in the RT environment.                        tion II regarding (1) place and route, (2) initialization, and (3) the
+                                                                                   compatibility layer and control system modeling:
+
+4.5. Partitioning: transmission lines                                                • The place and route capability of the simulation tools used should
+                                                                                       not be ignored as they have a huge impact on schematic readability
+    In RT, the propagation time of transmission lines is useful to partition           and, maintainability as well as on how the ported simulation can be
+the power system into smaller computational tasks that are independent                 used in the future.
+of each other’s current time step solution [2]. These smaller tasks can              • Close attention should be given to how the simulation initialization is
+thus be solved in parallel on different computational units. So, a good                ported to RT as several offline methods and tricks might unneces­
+practice is to use line modeling that implements such propagation delay.               sarily increase the computational burden, resulting in wasted RT
+However, the lines must be of a certain length to provide sufficient                   hardware resources, or introduce numerical issues for RT
+propagation time in order to partition the system: the required length is              simulations.
+actually a function of line geometry/parameters and simulation time                  • Great care should be taken in understanding the modeling differ­
+step. For example, typical overhead lines require a length of 15 km to                 ences and choice made during the porting process as very small
+provide a propagation delay of 50 μs.                                                  differences, such as the exact detail of basic power or control model
+    In some cases, several lines connected in series are individually                  implementations, could have a significant impact on the results.
+shorter than the required length: these can be combined to form a suf­
+ficiently long line to provide the required length. This also helps to                 Illustration of the points presented and further discussions were
+reduce the number of nodes, as seen previously.                                    brought forth through the presentation of an application case. It is based
+    Alternatively, a part of nearby reactive elements could be added to            on the RT port of a detailed representation of the HQ power system used
+the lines to artificially increase their series reactance and their shunt          in WAMPAC studies. Results matched exceptionally well and simulation
+admittance and thus increasing their effective length to provide the               execution time for different processing hardware were provided. Sig­
+correct propagation delay (see next subsection).                                   nificant speedups were observed with the RT modeling used offline: 6.78
+    Parallel offline simulations can also benefit from this partitioning, it       and 22.12 for single and 4-core simulations when compared to the
+is not limited to RT implementation.                                               original offline case. RT operation required 56 Intel Xeon Scalable Gold
+
+                                                                               6
+P. Le-Huy et al.                                                                                                       Electric Power Systems Research 223 (2023) 109663
+
+
+6144 processing cores.                                                          O. Tremblay for his load flow expertise and J. Lemay for his relentless
+   Finally, insights were offered on how to accelerate EMT simulations          testing.
+in general and prepare them for RT operation. Much of these best
+practices are simple to implement, but their impact is significant when         References
+simulating large-scale power systems.
+                                                                                 [1] J. Mahseredjian, S. Dennetiere, L. Dube, B. Khodabakhchian, L. Gerin-Lajoie, On a
+                                                                                     new approach for the simulation of transients in power systems, Electric Power
+CRediT authorship contribution statement                                             Syst. Res. 77 (11) (2007) 1514–1520. Sept.
+                                                                                 [2] V.Q. D.o, J.C. Soumagne, G. Sybille, G. Turmel, P. Giroux, G. Cloutier, S. Poulin,
+   P. Le-Huy: Conceptualization, Methodology, Validation, Formal                     Hypersim, an Integrated Real-Time Simulator for Power Networks and Control
+                                                                                     Systems, ICDS, Vasteras, Sweden, 1999, 99May 25-28.
+analysis, Investigation, Writing – original draft, Writing – review &            [3] D. Paré, G. Turmel, J.C. Soumagne, V.A. D.o, S. Casoria, M. Bissonnette,
+editing, Visualization. E. Lemieux: Conceptualization, Methodology,                  B. Marcoux, D. McNabb, Validation Tests of the Hypersim digital Real Time
+Software, Validation. F. Guay: Conceptualization, Methodology, Su­                   Simulator With a Large AC-DC Network, IPST, New Orleans, USA, 2003, 03Sept. 28
+                                                                                     - Oct. 2,.
+pervision, Project administration.                                               [4] C.F. M.ugombozi, R. Zgheib, T. Roudier, A. Kemmeugne, D. Rimorov, I. Kamwa,
+                                                                                     Collaborative Simulation of Heterogeneous Components As a Means Toward a
+Declaration of Competing Interest                                                    More Comprehensive Analysis of Smart Grids, MSCPES, Montréal, Canada, 2019,
+                                                                                     2019April 15,.
+                                                                                 [5] “PSCAD to RSCAD Conversion - Bring cases from PSCAD into RSCAD for real time
+    The authors declare that they have no known competing financial                  simulation with minimal intervention,” https://knowledge.rtds.com/hc/en-us
+interests or personal relationships that could have appeared to influence            /articles/360034825653-PSCAD-to-RSCAD-Conversion- (accessed March 7, 2023).
+the work reported in this paper.                                                 [6] P. Le-Huy, M. Woodacre, S. Guérette, É. Lemieux, Massively Parallel Real-Time
+                                                                                     Simulation of Very-Large-Scale Power Systems, IPST, Seoul, Republic of Korea,
+                                                                                     2017, 17June 26-29.
+Data availability                                                                [7] P. Le-Huy, P. Giroux, J.C. Soumagne, Real-Time Simulation of Large-Scale AC
+                                                                                     System With Offshore DC Grid, IPST, Vancouver, Canada, 2013, 13June 18-20.
+                                                                                 [8] J.R. Marti, J. Lin, Suppression of numerical oscillations in the EMTP power
+    The authors do not have permission to share data.                                systems, IEEE Trans. Power Systems 4 (2) (1989) 739–747. May.
+                                                                                 [9] G.M. Amdahl, Validity of the Single Processor Approach to Achieving Large-Scale
+                                                                                     Computing Capabilities, AFIPS, Atlantic City, USA, 1967, 67April 18-20.
+                                                                                [10] P. Le-Huy, J. Huang, F. Guay, I. Kamwa, Hybrid Simulation and Off-the-Shelf
+Acknowledgement                                                                      Hardware For Efficient Real-Time Simulation Studies, ENERGYCon, Gammarth,
+                                                                                     Tunisia, 2020, 20202020, Sept. 28 – Oct. 1.
+   The authors gratefully acknowledge the contributions of A. Nantel,           [11] W. Ren, et al., Interfacing issues in real-time digital simulators, IEEE Trans. Power
+                                                                                     Del. 26 (2) (2011) 1221–1230. Apr.
+M.-A. Légaré and L. Gérin-Lajoie for the EMTP schematics and support,
+
+
+
+
+                                                                            7
+
