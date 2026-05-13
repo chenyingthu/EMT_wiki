@@ -56,7 +56,7 @@ updated: "2026-05-13"
 || 31 | jiles-atherton-model.md | methods | methods/power-electronics/jiles-atherton-model.md | P1 | 89 | 1033 | 6 | 11 | completed |
 || 32 | simulation-practice-guide.md | topics | topics/tools-software/simulation-practice-guide.md | P1 | 85 | 4305 | 7 | 13 | completed |
 || 33 | csg.md | methods | methods/power-electronics/csg.md | P1 | 84 | 1641 | 7 | 10 | completed |
-|| 34 | large-scale-grid-simulation.md | topics | topics/simulation/large-scale-grid-simulation.md | P1 | 83 | 2053 | 6 | 59 | pending |
+|| 34 | large-scale-grid-simulation.md | topics | topics/simulation/large-scale-grid-simulation.md | P1 | 83 | 2053 | 6 | 59 | completed |
 || 35 | runge-kutta-in-emt.md | methods | methods/numerical-methods/runge-kutta-in-emt.md | P1 | 82 | 1290 | 3 | 13 | pending |
 || 36 | heterogeneous-computing.md | methods | methods/simulation-technology/heterogeneous-computing.md | P1 | 82 | 1380 | 2 | 15 | pending |
 || 37 | ibr.md | methods | methods/system-studies/ibr.md | P1 | 81 | 1177 | 5 | 12 | pending |
@@ -510,3 +510,4 @@ updated: "2026-05-13"
 ||| 30 | 1 | 1 | 0 | jiles-atherton-model页面完成（2682字，86公式（12块级+74行内），11wikilink（10有效+1修正），9章节，3篇来源论文：Sima 2018解析JA微分方程/Wu 2017数据驱动磁滞插值/Velásquez 2023现场直流测量，覆盖两种EMT实现路径、JA参数体系、动态损耗耦合、量化性能边界表）
 |||| 31 | 1 | 1 | 0 | simulation-practice-guide页面完成（4305字，48公式（9块级+39行内），15wikilink（14有效+1替换为mahseredjian），10章节，8篇来源论文综合，仿真工作流十步法，精度评估双方法推导，离线到实时移植经验，量化性能边界表）
 || 33 | 1 | 1 | 0 | csg.md页面完成（1641字，7公式（6块级+1行内），10wikilink全部验证有效，1SVG图，12章节，CSG消歧决策流程） |
+||| 34 | 1 | 1 | 0 | large-scale-grid-simulation页面完成（5448字，31公式（14块级+17行内），20wikilink（全部验证有效），13章节，12篇来源论文，覆盖网络分区并行/BBD矩阵/多速率仿真/GPU加速/ML加速/低维等效六大方向，ParaEMT 36x/Texas 2000节点39.5x/Cheng 400x等量化数据）
