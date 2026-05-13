@@ -58,7 +58,7 @@ updated: "2026-05-13"
 || 33 | csg.md | methods | methods/power-electronics/csg.md | P1 | 84 | 1641 | 7 | 10 | completed |
 || 34 | large-scale-grid-simulation.md | topics | topics/simulation/large-scale-grid-simulation.md | P1 | 83 | 2053 | 6 | 59 | completed |
 || 35 | runge-kutta-in-emt.md | methods | methods/numerical-methods/runge-kutta-in-emt.md | P1 | 82 | 1290 | 3 | 13 | completed |
-|| 36 | heterogeneous-computing.md | methods | methods/simulation-technology/heterogeneous-computing.md | P1 | 82 | 1380 | 2 | 15 | pending |
+||| 36 | heterogeneous-computing.md | methods | methods/simulation-technology/heterogeneous-computing.md | P1 | 82 | 1380 | 2 | 15 | completed |
 || 37 | ibr.md | methods | methods/system-studies/ibr.md | P1 | 81 | 1177 | 5 | 12 | pending |
 || 38 | computational-acceleration.md | methods | methods/simulation-technology/computational-acceleration.md | P1 | 78 | 1502 | 2 | 19 | pending |
 || 39 | phase-domain-modeling.md | topics | topics/modeling-methods/phase-domain-modeling.md | P1 | 78 | 1440 | 2 | 14 | pending |
@@ -512,3 +512,4 @@ updated: "2026-05-13"
 || 33 | 1 | 1 | 0 | csg.md页面完成（1641字，7公式（6块级+1行内），10wikilink全部验证有效，1SVG图，12章节，CSG消歧决策流程） |
 ||| 34 | 1 | 1 | 0 | large-scale-grid-simulation页面完成（5448字，31公式（14块级+17行内），20wikilink（全部验证有效），13章节，12篇来源论文，覆盖网络分区并行/BBD矩阵/多速率仿真/GPU加速/ML加速/低维等效六大方向，ParaEMT 36x/Texas 2000节点39.5x/Cheng 400x等量化数据）
 || 35 | 1 | 1 | 0 | runge-kutta-in-emt页面完成（2777字，91公式，9wikilink，9章节，5篇核心PDF：Noda 2014/叶小晖 2020/Tanaka 2023/Zhao-Gole 2019/Gao 2024，DIRK/Compact Scheme/混合积分三大方法体系）
+||| 36 | 1 | 1 | 0 | heterogeneous-computing页面完成（3982字，43公式，9wikilink，1SVG，8篇来源论文，5种硬件架构详解：CPU/GPU/FPGA/集群/DSP，含FGOAM最优分配算法、混合精度浮点方案、多尺度方法等核心机制）
