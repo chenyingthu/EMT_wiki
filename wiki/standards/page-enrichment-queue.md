@@ -75,7 +75,7 @@ updated: "2026-05-13"
 || 50 | emt-simulation.md | topics | topics/simulation/emt-simulation.md | P1 | 69 | 9771 | 16 | 463 | completed |
 ||| 51 | midc.md | methods | methods/power-electronics/midc.md | P1 | 68 | 1141 | 8 | 11 | completed |
 || 52 | balanced-three-phase-line.md | methods | methods/transmission-line/balanced-three-phase-line.md | P1 | 66 | 1282 | 6 | 12 | completed |
-|| 53 | large-scale-hybrid-acdc-simulation.md | topics | topics/simulation/large-scale-hybrid-acdc-simulation.md | P1 | 64 | 1378 | 8 | 21 | pending |
+|| 53 | large-scale-hybrid-acdc-simulation.md | topics | topics/simulation/large-scale-hybrid-acdc-simulation.md | P1 | 64 | 1378 | 8 | 21 | completed |
 || 54 | quasi-tem-approximation.md | methods | methods/transmission-line/quasi-tem-approximation.md | P1 | 64 | 814 | 17 | 15 | pending |
 || 55 | dispatch-operation.md | topics | topics/renewable-storage/dispatch-operation.md | P1 | 63 | 1558 | 7 | 27 | pending |
 || 56 | hybrid-acdc-system.md | topics | topics/hvdc-facts/hybrid-acdc-system.md | P1 | 62 | 1507 | 5 | 19 | pending |
@@ -528,3 +528,4 @@ updated: "2026-05-13"
 |||| 50 | equivalent-modeling.md | models/equivalent/equivalent-modeling.md | 完成 | 3388字/119公式/10wikilinks/11章节/4类等效方法/12篇来源论文/五模型精度效率映射 |
 |||| 51 | midc.md | methods/power-electronics/midc.md | 完成 | 3979字/116公式(22块级+94行内)/11wikilinks/9章节/5种MIDC方法(SAB过零点预计算/3p-DAB混合SSA-GSSA/级联DAB聚合/时滞稳定性分析)/4篇来源论文/7表格/方法选择指南 |
 |||| 52 | balanced-three-phase-line.md | methods/transmission-line/balanced-three-phase-line.md | 完成 | 3803字/94公式/9wikilinks/0SVG/11章节/9篇来源论文/4种建模方法详解/量化性能表 |
+||| 52 | large-scale-hybrid-acdc-simulation.md | topics/simulation/large-scale-hybrid-acdc-simulation.md | 完成 | 4175字/40公式/15wikilinks/7表格/9章节/6篇来源论文/四层次仿真方法体系+BBD并行+多速率接口 |
