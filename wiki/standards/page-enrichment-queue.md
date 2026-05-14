@@ -69,7 +69,7 @@ updated: "2026-05-13"
 || 44 | pv-power-plant.md | topics | topics/renewable-storage/pv-power-plant.md | P1 | 73 | 1699 | 5 | 34 | completed |
 || 45 | weak-grid-vsc.md | models | models/equivalent/weak-grid-vsc.md | P1 | 73 | 1291 | 4 | 11 | completed |
 || 46 | power-quality.md | topics | topics/renewable-storage/power-quality.md | P1 | 72 | 967 | 13 | 17 | completed |
-|| 47 | digital-simulator.md | topics | topics/simulation/digital-simulator.md | P1 | 72 | 1582 | 6 | 30 | completed |
+|| 47 | digital-simulator.md | topics | topics/simulation/digital-simulator.md | P1 | 72 | 5800 | 34 | 20 | completed |
 || 48 | exponential-integrator.md | methods | methods/numerical-methods/exponential-integrator.md | P1 | 71 | 1246 | 6 | 13 | pending |
 || 49 | equivalent-modeling.md | models | models/equivalent/equivalent-modeling.md | P1 | 70 | 1115 | 9 | 13 | pending |
 || 50 | emt-simulation.md | topics | topics/simulation/emt-simulation.md | P1 | 69 | 9771 | 16 | 463 | pending |
