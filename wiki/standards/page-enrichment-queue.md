@@ -61,7 +61,7 @@ updated: "2026-05-13"
 ||| 36 | heterogeneous-computing.md | methods | methods/simulation-technology/heterogeneous-computing.md | P1 | 82 | 1380 | 2 | 15 | completed |
 || 37 | ibr.md | methods | methods/system-studies/ibr.md | P1 | 81 | 1177 | 5 | 12 | completed |
 || 38 | computational-acceleration.md | methods | methods/simulation-technology/computational-acceleration.md | P1 | 78 | 1502 | 2 | 19 | completed |
-|| 39 | phase-domain-modeling.md | topics | topics/modeling-methods/phase-domain-modeling.md | P1 | 78 | 1440 | 2 | 14 | pending |
+|| 39 | phase-domain-modeling.md | topics | topics/modeling-methods/phase-domain-modeling.md | P1 | 78 | 1440 | 2 | 14 | completed |
 || 40 | earth-return-impedance.md | methods | methods/transmission-line/earth-return-impedance.md | P1 | 81 | 1290 | 2 | 12 | pending |
 || 41 | cable-model.md | models | models/transmission-line/cable-model.md | P1 | 76 | 2104 | 6 | 58 | pending |
 || 42 | hierarchical-control.md | methods | methods/control/hierarchical-control.md | P1 | 75 | 1257 | 5 | 13 | pending |
@@ -515,3 +515,4 @@ updated: "2026-05-13"
 || 35 | 1 | 1 | 0 | runge-kutta-in-emt页面完成（2777字，91公式，9wikilink，9章节，5篇核心PDF：Noda 2014/叶小晖 2020/Tanaka 2023/Zhao-Gole 2019/Gao 2024，DIRK/Compact Scheme/混合积分三大方法体系）
 ||| 36 | 1 | 1 | 0 | heterogeneous-computing页面完成（3982字，43公式，9wikilink，1SVG，8篇来源论文，5种硬件架构详解：CPU/GPU/FPGA/集群/DSP，含FGOAM最优分配算法、混合精度浮点方案、多尺度方法等核心机制）
 ||| 38 | computational-acceleration.md | methods/simulation-technology/computational-acceleration.md | 完成 | 3561字/41公式/13wikilinks/4表格 | 2026-05-14 |
+||| 39 | 1 | 1 | 0 | phase-domain-modeling页面完成（5189字，66公式，30wikilink，1SVG，9章节，五层架构SVG图，8篇来源论文，覆盖线路/电缆/电机/网络求解五大领域） | 2026-05-14 |
