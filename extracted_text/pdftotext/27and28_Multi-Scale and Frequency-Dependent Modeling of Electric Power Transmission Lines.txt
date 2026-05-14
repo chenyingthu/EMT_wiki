@@ -1,0 +1,884 @@
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRD.2016.2630338, IEEE
+                                                                                                  Transactions on Power Delivery
+
+
+
+
+              IEEE TRANSACTIONS ON POWER DELIVERY, MANUSCRIPT, NOVEMBER 2016                                                                                                                                    1
+
+
+
+
+                  Multi-scale and Frequency-dependent Modeling of
+                          Electric Power Transmission Lines
+                                                                                            Hua Ye and Kai Strunz
+
+
+
+                 Abstract—A frequency-dependent transmission line model for                                       size in tracking of waveforms with Fourier spectra closely
+              multi-scale simulation of diverse transients over a wide range                                      centered about fc is possible, making the simulation more
+              of frequencies is developed, implemented, and validated. It                                         efficient. The derivations of [5] demonstrate that the error
+              makes use of the concept of frequency-adaptive simulation of
+              transients in which the Fourier spectra are adaptively shifted in                                   made in approximating capacitances and inductances is even
+              the frequency domain to reduce the discretization time-steps in                                     equal to zero at the carrier frequency fc .
+              the time domain. The transients are modeled through dynamic
+              phasors comprising the real and imaginary parts of analytic                                            Multi-scale modeling combines the virtues of simulation
+              signals to facilitate the frequency-shifting. In the proposed line                                  in the time domain as in EMTP and dynamic phasor calcu-
+              model, all mathematical operations such as numerical recursive                                      lus [5], [6]. When high-frequency transients are of interest,
+              convolutions are therefore expressed in terms of analytic signals.                                  then the multi-scale simulation processes instantaneous signals
+              A modal decomposition is performed to attain decoupled modes
+              for the multi-phase case. The transition from the representation                                    just like EMTP. For low-frequency transients, however, the
+              of electromagnetic traveling waves with time-steps below the wave                                   multi-scale simulation processes dynamic phasors. It is this
+              propagation time to the tracking of slower electromechanical                                        flexibility that allows to cover diverse transients with just
+              transients at time-steps above the wave propagation time is                                         one set of models that makes multi-scale modeling relevant.
+              achieved by the automatic insertion of a π-segment to represent                                     The efficiency of the multi-scale modeling also makes it
+              the galvanic coupling within one time-step. Accurate and efficient
+              simulation of both electromagnetic and electromechanical tran-                                      an interesting candidate for real-time simulation [7]. Multi-
+              sients within a simulation run is so supported. The validation is                                   scale models of power system components covering lumped-
+              verified through comparison with a staged field test covering the                                   parameter elements, transformers, synchronous machinery, and
+              diverse transients of line energization, transient recovery voltage,                                transmission lines were developed in [8]–[10]. Recent research
+              and steady state.                                                                                   has turned to the development of advanced machine models
+                 Index Terms—Analytic signal, dynamic phasor, electromag-                                         [11], [12].
+              netic transients, electromagnetic transients program (EMTP),
+              electromechanical transients, frequency dependence, multi-scale                                        A transmission line model for multi-scale simulation was
+              modeling, power system modeling, power system simulation,                                           developed in [8], but the latter does not account for frequency
+              transmission line modeling.                                                                         dependence of parameters [13]. While the improvement of
+                                                                                                                  frequency-dependent line modeling for EMTP simulation is
+                                               I. I NTRODUCTION                                                   still an active topic of research [14]–[18], the work performed
+                                                                                                                  for this paper resulted in the first frequency-dependent line
+                   IMULATION algorithms of the electromagnetic transients
+              S    program (EMTP) [1] process instantaneous signals to
+              sample natural waveforms at small time-step sizes that are
+                                                                                                                  model for multi-scale simulation of an overhead transmission
+                                                                                                                  line. It supports the integrative simulation of diverse transients
+                                                                                                                  from the steady state to high frequencies with the potential
+              typically of the order of microseconds [2]. The theoretically                                       of varying discretization time step sizes over a wide range
+              possible maximum time step size is given by the Nyquist step                                        of frequencies. The contributions made in this context are
+              size τNy = 1/(2f ) with f giving the maximum frequency                                              threefold. Firstly, shiftable analytic signals are proposed for
+              of interest in the simulation. Taking into account the accu-                                        processing the numerical recursive calculations that are es-
+              racy of numerical integration, a maximum time step size of                                          sential for developing frequency-dependent line models in the
+              τmax = 1/(10f ) was recommended in [3], thus generally                                              time domain. Secondly, a multi-scale and frequency-dependent
+              f τ ≪ 1 is necessary to accurately compute electromagnetic                                          multi-phase line model is created to support accurate and
+              transients. The computational efficiency of the simulation can                                      efficient simulation of both electromagnetic and electrome-
+              be improved if the Fourier spectra of the natural waveforms are                                     chanical transients as well as seamless transitions between
+              concentrated around the carrier frequency fc of either 50 Hz                                        both. Thirdly, the developed line model was implemented and
+              or 60 Hz in power systems and if dynamic phasor calculus                                            validated.
+              is applied [4]. The carrier frequency component at fc is so
+              eliminated and the above condition for the time step size is                                           Section II provides relevant background information on the
+              modified to | f − fs | τ ≪ 1, where fs = fc is called the                                           frequency shifting and frequency-dependent line modeling. In
+              shift frequency in [5]. Thus, a significantly larger time step                                      Section III, a multi-scale and frequency-dependent model of a
+                                                                                                                  single-phase line is developed. Section IV extends the single-
+                H. Ye and Professor K. Strunz are with the SENSE Laboratory, Department                           phase line model to the multi-phase form. The new line model
+              of Electrical Engineering and Computer Sciences, Technische Universität
+              Berlin, Berlin, Germany. (e-mail: kai.strunz@tu-berlin.de).                                         is validated against a field test in Section V. Conclusions are
+                Manuscript received April 30, 2016; revised August 8, 2016.                                       drawn in Section VI.
+
+
+            0885-8977 (c) 2016 IEEE. Translations and content mining are permitted for academic research only. Personal use is also permitted, but republication/redistribution requires IEEE permission. See
+                                                           http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRD.2016.2630338, IEEE
+                                                                                                  Transactions on Power Delivery
+
+
+
+
+              IEEE TRANSACTIONS ON POWER DELIVERY, MANUSCRIPT, NOVEMBER 2016                                                                                                                                    2
+
+
+
+                                            II. S TATE OF THE A RT                                                        real signal                  analytic signal                  dynamic phasor
+                                                                                                                           |F [s(t)]|                     |F [s(t)]|                       |F [E[s(t)]]|
+              A. Frequency Shifting
+                                                                                                                                   s(t) = s(t)+jH[s(t)]                E[s(t)] = s(t)e−jωc t
+                 An ac signal s(t) with a Fourier spectrum that is narrowly
+              concentrated on the angular carrier frequency ωc = 2πfc is
+              depicted on the left of Fig. 1 [5]. In an ac electric power grid,
+              fc = 50 Hz or fc = 60 Hz. By adding the Hilbert transform                                                −ωc          ωc ω              −ωc             ωc ω               −ωc           ωc ω
+              of s(t) as imaginary part, an analytic signal s(t) is created as
+                                                                                                                  Fig. 1. Application of Hilbert transform and frequency shift.
+              follows [19]:
+                                  s(t) = s(t) + j H[s(t)].                 (1)                                                  I 1 (ω) = I(0 km, ω)             I(χ, ω)             I 2 (ω) = −I(ℓ, ω)
+                                                                                                                                       1                                                         2
+              The effect of the creation of the analytic signal is shown                                                                                    Z ′ (ω)        Y ′ (ω)
+                                                                                                                               V 1 (ω)                                                  V 2 (ω)
+              from the left to the center of Fig. 1. While the spectrum of                                              = V (0 km, ω)                      V (χ, ω)                  = V (ℓ, ω)
+              s(t) extends to negative frequencies, this is not the case for
+              the corresponding analytic signal s(t). Therefore, the analytic
+              signal can be shifted by the so-called shift angular frequency                                                        χ = 0 km                           χ                     χ=ℓ
+              ωs :
+                                  S[ s(t) ] = s(t) e−jωs t .              (2)                                     Fig. 2. Current and voltage conventions for single-phase line in frequency
+                                                                                                                  domain.
+              For ωs = ωc , the complex envelope E[ s(t) ] [20] is obtained.
+              Through this operation, the spectrum is shifted by the carrier where the lowercase variables represent the time-domain
+              frequency ωc as shown on the right of Fig. 1. The complex version of their uppercase counterparts, and the symbol ∗
+              envelope is a low-pass signal whose maximum frequency is indicates convolution.
+              lower than the one of the original bandpass signal. In accor-
+                                                                                      Direct calculation of the convolutions in (7) and (8) would
+              dance with Shannon’s sampling theory [20], a lower sampling
+                                                                                  be time-consuming. To overcome the limitation, it is common
+              rate can therefore be chosen for tracking the complex envelope,
+                                                                                  practice to approximate Y ch (ω) and H(ω) with partial fraction
+              which corresponds to a dynamic phasor. If ωs is set to zero,
+                                                                                  expansions (PFEs) based on the fitting technique in [22]. The
+              then the real part of the analytic signal allows for tracking
+                                                                                  fitting of Y ch (ω) gives the poles pyn and residues yn of the
+              natural waveforms as in EMTP-type simulation. For multi-
+                                                                                  PFEs as well as a constant y0 , while the fitting of H(ω)
+              scale simulation, the shift frequency is set adaptively through
+                                                                                  yields the poles phn and residues hn of the corresponding
+              Frequency Adaptive Simulation of Transients (FAST) [8].
+                                                                                  PFEs. Through application of the inverse Laplace transform,
+                                                                                  the PFEs of approximating Y ch (ω) and H(ω) are converted
+              B. Frequency-Dependent Transmission Line                            into the time domain as follows:
+                 Fig. 2 depicts the current and voltage conventions for a                                                 Ny
+              single-phase line that takes into account the frequency de-                            y   (t) =y   δ(t) +
+                                                                                                                         X
+                                                                                                                              yn epyn t        (9)
+                                                                                                       c        0
+              pendence of line parameters. The quantities Z ′ (ω) and Y ′ (ω)                                            n=1
+              are the per-unit-length series impedance and shunt admittance,                                   Nh
+                                                                                                              X
+              respectively, and both parameters are functions of the angular                          h(t) =        hn ephn (t−Twp )          (10)
+              frequency ω = 2πf . In the frequency domain, the relationship                                   n=1
+              of currents and voltages at both ends 1 and 2 of the line can
+              be expressed as follows [2], [21]:                                  where δ(t) is the Dirac delta function and Twp is the time the
+                                                                                 fastest traveling wave needs to proceed from one end to the
+                I 1 (ω) = Y ch (ω)V 1 (ω)−H(ω) Y ch (ω)V 2 (ω)+I 2 (ω) (3) other end of the line. Herein, h(t) = 0 when t ≤ Twp .
+                                                                            
+                I 2 (ω) = Y ch (ω)V 2 (ω)−H(ω) Y ch (ω)V 1 (ω)+I 1 (ω) (4)            In (9) and (10), yc (t) and h(t) are expressed in terms of
+                                                                                  a sum of exponential functions; their convolutions with the
+              with
+                                             s                                    currents and voltages can be calculated recursively [23]. Using
+                                                  ′
+                                                Y (ω)                             the recursive solution, an efficient and accurate frequency-
+                                  Y ch (ω) =      ′                           (5) dependent line model for electromagnetic transient studies was
+                                                Z (ω)
+                                                q                                 developed in [13]. For the case of Nc phases, the modal
+                                              − Y ′ (ω)Z ′ (ω)ℓ                   domain analysis allows for the formulation through decou-
+                                    H(ω) = e                                  (6)
+                                                                                  pled single-phase line models using a transformation matrix
+              where I and V are the current and voltage at the terminals, re- described in Appendix A [24].
+              spectively; Y ch (ω) and H(ω) are the characteristic admittance
+              and propagation function, respectively; and ℓ is the length of
+                                                                                        III. M ULTI -S CALE M ODELING FOR S INGLE -P HASE
+              the line.
+                                                                                     T RANSMISSION L INE WITH F REQUENCY D EPENDENCE
+                 Transforming (3) and (4) into the time domain gives
+                                                                                     The multi-scale modeling starts by extending (7) and (8) to
+                    i1 (t) = yc (t) ∗ v1 (t)−h(t) ∗ yc (t) ∗ v2 (t)+i2 (t)    (7)
+                                                                                 process analytic rather than real signals to allow for frequency
+                    i2 (t) = yc (t) ∗ v2 (t)−h(t) ∗ yc (t) ∗ v1 (t)+i1 (t)    (8) shifting as reviewed in Section II-A. The right-hand sides of
+
+
+            0885-8977 (c) 2016 IEEE. Translations and content mining are permitted for academic research only. Personal use is also permitted, but republication/redistribution requires IEEE permission. See
+                                                           http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRD.2016.2630338, IEEE
+                                                                                                  Transactions on Power Delivery
+
+
+
+
+              IEEE TRANSACTIONS ON POWER DELIVERY, MANUSCRIPT, NOVEMBER 2016                                                                                                                                    3
+
+
+
+              (7) and (8) are then decomposed into two terms, respectively:                                       Insertion of (22) into (21) yields
+
+                                              i1 (t) = is1 (t) − ir1 (t)                               (11)               φ1n (t) = epyn τ φ1n (t − τ )
+                                                                                                                                           Z τ
+                                              i2 (t) = is2 (t) − ir2 (t)                               (12)                       + ejωs t     e(pyn −jωs )u S[ v 1 (t − u) ]du .                          (23)
+                                                                                                                                                   0
+              with                                                                                                Performing the integration by parts, (23) is expanded and
+                                is1 (t) = yc (t) ∗ v 1 (t)                                             (13)       recast as follows:
+                                                                                                                                                    epyn τ v 1 (t − τ ) − v 1 (t)
+                                ir1 (t) = h(t) ∗ yc (t) ∗ v 2 (t) + i2 (t)                             (14)         φ1n (t) = epyn τ φ1n (t − τ ) +
+                                                                                                                                                              pyn − jωs
+                                is2 (t) = yc (t) ∗ v 2 (t)                                             (15)                        jωs t  Z τ
+                                                                                                                                 e                          dS[ v 1 (t − u) ]
+                                                                                                                            −                 e(pyn −jωs )u                    du . (24)
+                                                                          
+                                ir2 (t) = h(t) ∗ yc (t) ∗ v 1 (t) + i1 (t) .                           (16)
+                                                                                                                              pyn − jωs 0                           du
+              where is1 (t) and is2 (t) are defined as the surge currents,                                          By using the linear interpolation as given in Appendix B,
+              which are solely functions of the local terminal voltages; ir1 (t)                                  the shifted analytic signal S[ v 1 (t−u) ] in (24) becomes
+              and ir2 (t) can be considered as the return currents being                                                                   u                u
+                                                                                                                      S[ v 1 (t−u) ] = (1 − )S[ v 1 (t) ] + S[ v 1 (t−τ ) ]  (25)
+              functions of voltages and currents of the opposite line ends.                                                                τ                τ
+              The calculations of the surge and return currents are derived in                                    for τ ≥ u, κ = ceil (u/τ ) = 1 as defined in Appendix B.
+              Sections III-A and III-B, respectively. In Section III-C, a multi-                                  Differentiating (25) with respect to u gives a difference
+              scale model of a single-phase line with frequency dependence                                        equation
+              is then formulated.
+                                                                                                                      dS[ v 1 (t − u) ] S[ v 1 (t − τ ) ] − S[ v 1 (t) ]
+                                                                                                                                         =
+                                                                                                                             du                           τ
+              A. Calculation of Surge Current                                                                                               e−jωs t jωs τ                         
+                                                                                                                                         =            e     v 1 (t − τ ) − v 1 (t) . (26)
+                Equation (9) is used to calculate the surge current is1 (t)                                                                     τ
+              defined in (13). Inserting (9) into (13) yields                                                        The difference term in (26) is expressed in terms of the shift-
+                                                                                                                  ed analytic signal. Since the frequency shifting is performed
+                                                                   Ny
+                                                                   X                                              to reduce the maximum frequency in the Fourier spectrum,
+                                     is1 (t) = y0 v 1 (t) +                yn φ1n (t)                  (17)       the shifted signal changes at a lower rate compared with
+                                                                   n=1                                            the unshifted counterpart. Thus, for ωs > 0 rad/s, a larger
+              with                                                                                                time-step size can be used compared with the case where the
+                                                             Z t                                                  difference v1 (t − τ ) − v1 (t) is considered. This results in an
+                                      pyn t
+                     φ1n (t) = e              ∗ v 1 (t) =          epyn u v 1 (t − u)du .              (18)       increase of computational speed without sacrificing accuracy.
+                                                               0                                                  In a special case of ωs = 0 rad/s, the difference term performs
+              As opposed to the simulation of electromagnetic transients, the                                     as in EMTP-type simulation.
+              convolution integral involves analytic rather than real signals.                                       Substituting (26) in (24), rearrangement and simplification
+              In digital simulation at a time-step size τ , the convolution                                       lead to
+              result φ1n (t − τ ) from the preceding time-step is known as                                                                              epyn τ v 1 (t − τ ) − v 1 (t)
+                                                                                                                    φ1n (t) = epyn τ φ1n (t − τ ) +
+                                                   Z t−τ                                                                                                         pyn − jωs
+                                                                                                                                   ejωs τ v 1 (t − τ ) − v 1 (t) τ (pyn −jωs )u
+                                                                                                                                                                  Z
+                             φ1n (t − τ ) =                  epyn u v 1 (t − τ − u)du                                            −                                    e            du
+                                                     0
+                                                   Z t                                                                                   (pyn − jωs )τ              0
+
+                                               =         epyn (u−τ ) v 1 (t − u)du .                   (19)                 = epyn τ φ1n (t − τ ) + αsn v 1 (t) + β sn v 1 (t − τ ) (27)
+                                                     τ
+                                                                                                                  with
+              Furthermore, the integration in (18) may be decomposed into
+                                                                                                                                        e(pyn −jωs )τ − 1 − (pyn − jωs )τ
+              two parts                                                                                                          αsn =
+                                                                                                                                                   (pyn − jωs )2 τ
+                         Z τ                       Z t                                                                                    jωs τ
+                                                                                                                                        e       − epyn τ + epyn τ (pyn − jωs )τ
+               φ1n (t) =     epyn u v 1 (t− u)du +     epyn u v 1 (t− u)du . (20)                                                β sn =
+                                 0                                     τ                                                                             (pyn − jωs )2 τ
+              From (19) and (20) and in analogy to the procedure used for                                         where αsn and β sn are coefficients that now contain two
+              electromagnetic transients in [23], a recursive formulation is                                      simulation parameters ωs and τ .
+              obtained to calculate φ1n (t) from φ1n (t − τ ) as follows:                                            By introducing φ1n (t) of (27) into (17), the surge current
+                                                 Z τ                                                              is1 (t) is resolved. Defining conductance G and history source
+                 φ1n (t) = epyn τ φ1n (t − τ ) +     epyn u v 1 (t − u)du . (21)                                  η s1 , the solution of is1 (t) simplifies to (28). In a similar
+                                                                   0                                              manner as for is1 (t), the calculation of is2 (t) in (15) is given
+                                                                                                                  by (29). Therefore,
+                In accordance with (2), frequency shifting of the Fourier
+              spectrum of the voltage v 1 (t − u) in (21) is given by                                                                         is1 (t) = G v 1 (t) + η s1 (t)                               (28)
+
+                                 S[ v 1 (t − u) ] = v 1 (t − u)e−jωs (t−u) .                           (22)                                   is2 (t) = G v 2 (t) + η s2 (t)                               (29)
+
+
+            0885-8977 (c) 2016 IEEE. Translations and content mining are permitted for academic research only. Personal use is also permitted, but republication/redistribution requires IEEE permission. See
+                                                           http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRD.2016.2630338, IEEE
+                                                                                                  Transactions on Power Delivery
+
+
+
+
+              IEEE TRANSACTIONS ON POWER DELIVERY, MANUSCRIPT, NOVEMBER 2016                                                                                                                                    4
+
+
+
+              with                                                                                                where κ = ceil (Twp /τ ), and ρ and σ are calculated in
+                                                              Ny
+                                                              X                                                   accordance with the definition in Appendix B.
+                                              G = y0 +              yn αsn                             (30)          Inserting (36) into (32) allows for the formulation of (37),
+                                                              n=1
+                                                                                                                  where a history term η r1 is defined. The return current ir2 (t)
+              and                                                                                                 in (16) can be calculated with a similar derivation. Therefore,
+                                                
+                                   Ny                                 Ny
+                                                                                                                                       ir1 (t) = K 1 if2 (t−κτ +τ ) + η r1 (t)                             (37)
+                                   X                                  X
+                  η s1 (t) =            yn β sn v 1 (t−τ )+               yn epyn τ φ1n (t−τ )
+                                   n=1                                n=1                                                              ir2 (t) = K 1 if1 (t−κτ +τ ) + η r2 (t)                             (38)
+                                                
+                                   Ny                                  Ny
+                                   X                                  X                                           with
+                  η s2 (t) =            yn β sn v 2 (t−τ )+               yn epyn τ φ2n (t−τ ) .                                                              Nh
+                                                                                                                                                                X
+                                   n=1                                n=1                                                                          K1 = ρ             hn αrn
+                                                                                                                                                                n=1
+              B. Calculation of Return Current                                                                    and
+                To calculate the reflected current ir1 (t) in (14), it is possible
+              to use the definition of the forward function in [13], but                                            η r1 (t) = K 2 if2 (t−κτ ) +K 3 if2 (t−κτ −τ )+hr1 (t − τ ) (39)
+              defining it with the analytic signal                                                                  η r2 (t) = K 2 if1 (t−κτ ) +K 3 if1 (t−κτ −τ )+hr2 (t − τ ) (40)
+                       if2 (t) = yc (t) ∗ v 2 (t) + i2 (t) = is2 (t) + i2 (t) .                        (31)       where η r1 (t) and η r2 (t) represent history terms referring to
+              Insertion of (31) and (10) into (14) yields                                                         past time-steps. This is not the case for the first terms of the
+                                                                                                                  right hand sides in (37) and (38), which may represent current
+                                                                      Nh
+                                                                      X                                           terms when τ ≥ Twp , i.e. κ = 1. The definitions of K 2 , K 3 ,
+                                 ir1 (t) = h(t) ∗ if2 (t) =                 hn q 1n (t)                (32)
+                                                                                                                  hr1 , and hr2 are given in Appendix C.
+                                                                      n=1
+              with
+                                                                                                                  C. Synthesis of Single-phase Line Model
+                                q 1n (t) = ephn (t−Twp ) ∗ if2 (t)
+                                           Z t                                                                      The insertion of (28) and (37) into (11) yields (41) below.
+                                         =       ephn (u−Twp ) if2 (t − u)du                           (33)       Likewise, inserting (29) and (38) into (12) leads to (42). There-
+                                                Twp                                                               fore, the following single-phase line equations are obtained in
+              where the lower limit of the convolution integral is equal                                          the continuous time domain:
+              to Twp because h(t) = 0 for t ≤ Twp as mentioned in                                                      i1 (t) = G v 1 (t)−K 1 if2 (t−κτ +τ )+ηs1 (t)−η r1 (t)                              (41)
+              Section II-B. Eq. (33) may be solved recursively in a manner
+              done in (21) and becomes                                                                                 i2 (t) = G v 2 (t)−K 1 if1 (t−κτ +τ )+ηs2 (t)−η r2 (t) .                            (42)
+                                                   Z τ
+                             phn τ                                                                                After discretization using time step counter k for implementa-
+                q 1n (t) = e       q 1n (t − τ ) +     ephn u if2 (t−u−Twp)du .                                   tion in a digital simulator, (41) and (42) are now expressed in
+                                                                0
+                                                                                                       (34)       the following form by using vector-matrix notation:
+                 Following the solution procedure used for (22) to (27),                                                                     iL (k) = Y v L (k) + η L (k)                                  (43)
+              q 1n (t) is resolved as follows:
+                                                                                                                  where iL (k) = [i1 (k), i2 (k)]T , and v L (k) = [v 1 (k), v 2 (k)]T .
+                     q 1n (t) = ephn τ q 1n (t − τ )                                                              The nodal admittance matrix Y is of size 2 × 2 and given by
+                                + αrn if2 (t − Twp ) + β rn if2 (t − Twp − τ )                         (35)                            (
+                                                                                                                                          YD,             if κ > 1
+              with                                                                                                              Y =                                               (44)
+                                                                                                                                          Y D + Y Pi , if κ = 1
+                                  e(phn −jωs )τ − 1 − (phn − jωs )τ
+                             αrn =                                                   with
+                                              (phn − jωs )2 τ                                                        
+                                  ejωs τ − ephn τ + ephn τ (phn − jωs )τ                                        1 0
+                          β rn =                                                                  YD = G                                            (45)
+                                                (phn − jωs )2 τ                                                 0 1
+                                                                                                                   2K 1 2        −2K 1
+                                                                                                                                         
+              where the shift frequency ωs is made available as an adjustable
+                                                                                                                           2
+              simulation parameter in addition to the time-step size.                            Y Pi = G 
+                                                                                                                1 − K1         1 − K12  .        (46)
+                 In order to calculate if2 (t − Twp ) and if2 (t − Twp − τ ) at                                   −2K   1        2K 1 2 
+              instants that are usually not an integer multiple of the time-                                     1 − K12 1 − K12
+              step size τ , the interpolation applied to analytic signals as
+                                                                                     The vector of history current sources, ηL (k) = [η 1 (k),η 2 (k)]T ,
+              shown in Appendix B is used in (35). Expressing (35) with
+                                                                                     is derived as follows:
+              the interpolation results, q 1n (t) becomes                                                            "                  #
+                                  phn τ                                                                                 i f2 (k − κ +  1)
+                     q 1n (t) = e       q 1n (t − τ ) + αrn ρ if2 (t − κτ + τ )                  η (k)−η (k)−K                             , if κ>1
+                                                                                                 
+                                                                                                 
+                                                                                                    s      r        1
+                                                                                      η L (k)=                        if1 (k − κ + 1)
+                              + αrn σ + β rn ρ if2 (t − κτ )                                      K 2 Kη (k) − η (k) ,
+                                                                                                                               
+                                                                                                 
+                                                                                                                 s           r
+                                                                                                                                              if κ=1
+                                   + β rn σif2 (t − κτ − τ )                    (36)               1 − K1
+                                                                                                                                                    (47)
+
+
+            0885-8977 (c) 2016 IEEE. Translations and content mining are permitted for academic research only. Personal use is also permitted, but republication/redistribution requires IEEE permission. See
+                                                           http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRD.2016.2630338, IEEE
+                                                                                                  Transactions on Power Delivery
+
+
+
+
+              IEEE TRANSACTIONS ON POWER DELIVERY, MANUSCRIPT, NOVEMBER 2016                                                                                                                                     5
+
+
+
+              with                                                                                                                             switches closed when κ = 1
+                                                                           
+                                                         1          −K 1                                                                                     2K 1
+                                             K=                                                        (48)                                   switch       1 − K 21
+                                                                                                                                                                    G        switch
+                                                        −K 1         1                                                      i1 (k)                                                                i2 (k)
+                                                                                                                          1                                                                            2
+              where η s (k) = [η s1 (k), η s2 (k)]T and η r (k) = [η r1 (k), η r2 (k)]T .                                                     η (k)
+                                                                                                                                               1
+                                                                                                                                                                               η (k)
+                                                                                                                                                                                 2
+              The forward current if2 (k) can be calculated with the definition                                     v 1 (k)     G                          −2K 1
+                                                                                                                                                                  G                              G     v 2 (k)
+                                                                                                                                                           1 + K1
+              of (31) in discretized form, and if1 (k) is obtained in an
+              analogous way.
+                The equivalent circuit of the resulting companion model is
+              depicted in Fig. 3. In the corresponding mathematical equation                                      Fig. 3. Multi-scale frequency-dependent model of single-phase line.
+              of (43), all variable quantities are represented by analytic sig-                                                 phase                                                        phase
+                                                                                                                                                       modal domain
+              nals whose Fourier spectra can be adaptively shifted through                                                     domain                                                       domain
+              the shift frequency ωs introduced before. Through flexible                                                      ip
+                                                                                                                               11
+                                                                                                                                                        im
+                                                                                                                                                         11            im
+                                                                                                                                                                        21                      ip
+                                                                                                                                                                                                 21
+
+              adjustments of both shift frequency and time-step size, multi-                                          vp             .
+                                                                                                                                     .
+                                                                                                                                                        vm
+                                                                                                                                                         11      .     vm
+                                                                                                                                                                        21                .     vp
+                                                                                                                       11
+                                                                                                                                  .                              .                        .      21
+                                                                                                                                                                 .                        .  p
+              scale simulation of transients can be achieved depending on                                                     ip
+                                                                                                                               1n        im    −1 p
+                                                                                                                                          1 = T i1
+                                                                                                                                                        im
+                                                                                                                                                         1n            im
+                                                                                                                                                                        2n     im    −1 p
+                                                                                                                                                                                2 = T i2
+                                                                                                                                                                                            i2n
+              the types of transients to be studied.                                                                 vp              . v m = TT v p     vm       .     vm            T p .               vp
+                                                                                                                      1n             . 1                 1n
+                                                                                                                                                                 .
+                                                                                                                                                                        2n     vm
+                                                                                                                                                                                2 = T v2 ..               2n
+                                                                                                                                  .               1
+                                                                                                                                                                 .
+                  • When simulating fast electromagnetic transients at a                                                      ip
+                                                                                                                               1Nc
+                                                                                                                                                        im
+                                                                                                                                                         Nc           im
+                                                                                                                                                                       2Nc
+                                                                                                                                                                                                  ip
+                                                                                                                                                                                                   2Nc
+                    small time-step size τ < Twp , it follows that κ > 1. In                                        vp                                  vm           vm                                  vp
+                                                                                                                     1Nc                                 1Nc          2Nc                                 2Nc
+                    this case, there is no topological coupling between both
+                    ends of the line, so all switches in Fig. 3 are open. The
+                                                                                                                  Fig. 4. Decoupling of M -phase line based on modal decomposition.
+                    tracking of natural waveforms as known in EMTP-type
+                    simulation is supported.
+                  • In the representation of slow transients, as for example                                      around fc as shown in Fig. 1. When simulating electromag-
+                    triggered by electromechanical oscillations, and steady                                       netic transients, a higher frequency is used to calculate T as
+                    state, the shift frequency ωs may be set equal to the                                         explained in Appendix A [24].
+                    carrier frequency. A larger time-step size τ can thus be                                         Through the decoupling scheme in Fig. 4, the M decoupled
+                    chosen for tracking envelopes of ac voltages and currents                                     modes are dealt with in the same way as it is done for the
+                    given by the magnitudes of the dynamic phasors. In this                                       single-phase model, and thus M companion models can be
+                    case, τ ≥ Twp , i. e. κ = 1, and a topological coupling is                                    formulated as follows:
+                    introduced by closing the switches in Fig. 3.
+                                                                                                                        im          m m          m
+                                                                                                                         Ln (k) = Y n v Ln (k)+η Ln (k)                   n = 1, 2, · · · , M .            (51)
+              Transitions between the tracking of the different types of
+              transients are given through the appropriate setting of the shift                                   For mode n in (51), im         m   m T      m       m      m T
+                                                                                                                                        Ln = [i1n , i2n ] , v Ln = [v 1n , v 2n ] ,
+              frequencies and time-step sizes as well as insertion or removal                                           m
+                                                                                                                  and Y n is an admittance matrix of size 2 × 2 as follows:
+              of the π-circuit in Fig. 3.                                                                                               m
+                                                                                                                                        Y n (1, 1) Y m
+                                                                                                                                                              
+                                                                                                                                  m                   n (1, 2)
+                                                                                                                                Yn =                            .             (52)
+                                                                                                                                        Ym            m
+                                                                                                                                          n (2, 1) Y n (2, 2)
+                  IV. M ULTI -S CALE M ODELING FOR M ULTIPHASE L INE
+                            WITH F REQUENCY D EPENDENCE                                                           Matrix Y m n is obtained in the same way as Y in (44). Thus,
+                 In this section, the single-phase multi-scale line model is                                      the shift frequency ωs is available in (52) as an adjustable
+              extended to a multi-scale model of a multi-phase line by using                                      parameter. Moreover, as in (44) and Fig. 3, Y mn allows for the
+              the modal decomposition technique [24]. For an M -phase line                                        insertion and removal processes of the equivalent π-circuits
+              as depicted in Fig. 4, the decomposition into decoupled modes                                       during the simulation run to enable multi-scale simulation of
+              is achieved through transformation matrix T . The latter is used                                    transients. By combining and rearranging the M companion
+              for currents and voltages at both ends of the line as follows:                                      models using the vector-matrix form, a modal-domain multi-
+                                                                                                                  scale model of the multiphase line is obtained as follows:
+                                        −1 p                                  −1 p
+                             im
+                              1 (t) = T   i1 (t) ,                 im
+                                                                    2 (t) = T   i2 (t)                 (49)                     m             m   m 
+                                      T p                                    T p                                                i1 (k)       m v 1 (k)      η (k)
+                            vm
+                             1 (t) = T v 1 (t) ,                   vm
+                                                                    2 (t) = T v 2 (t)                  (50)                      m      =  Y       m     + 1m                (53)
+                                                                                                                                i2 (k)           v 2 (k)    η 2 (k)
+              where superscripts m and p indicate the modal and phase quan-
+                                                                                   where Y m is detailed in Appendix D.
+              tities, respectively. The modal current im   1 , which is described
+                                                                                      By introducing (49) and (50) into (53), the multi-scale line
+              as an analytic signal, is a vector of dimension M ; its entries
+                                                                                   model    in (53) is re-transformed into the phase domain to
+              are im1n with n = 1, 2, · · · , M . This notation is also applicable
+                                                                                   facilitate integration with the multi-scale simulation of [8]:
+              to other modal and phase quantities in (49) and (50).
+                                                                                                   p              p   p 
+                  Transformation matrix T is calculated depending on the                           i1 (k)         p v 1 (k)      η (k)
+                                                                                                             =Y               + 1p              (54)
+              types of transients studied. For slower electromechanical tran-                      ip2 (k)          v p2 (k)     η2 (k)
+              sients and steady state, it is proposed to calculate T at the
+              carrier frequency fc since the Fourier spectra of the analytic where η p1 = T η m          1
+                                                                                                           , η p2 = T η m 2
+                                                                                                                            , and Y p is as given in
+              signals that describe the transients are narrowly concentrated Appendix D.
+
+
+            0885-8977 (c) 2016 IEEE. Translations and content mining are permitted for academic research only. Personal use is also permitted, but republication/redistribution requires IEEE permission. See
+                                                           http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRD.2016.2630338, IEEE
+                                                                                                  Transactions on Power Delivery
+
+
+
+
+              IEEE TRANSACTIONS ON POWER DELIVERY, MANUSCRIPT, NOVEMBER 2016                                                                                                                                    6
+
+
+
+                                  V. A PPLICATION AND VALIDATION                                                                                Lines 1 and 2, 124.3 km
+                                                                                                                                                                                       v ℓ (t)
+                 In order to validate the proposed line model, the multi-scale                                                        switch
+                                                                                                                                     CB
+              transients simulation is compared with the results of a field                 Raver                                          Schultz
+              test performed on a network section of the 525 kV system of                                    Line 3, 124.7  km
+              the Bonneville Power Administration (BPA). The test system
+              is illustrated by means of the one-line diagram of Fig. 5. The               520 kV            Line 4, 124.6 km              538 kV
+                                                                                          (RMS, L-L)                                    (RMS, L-L)
+              substations Raver and Schultz are linked by one double-circuit
+              line, lines 1 and 2, and two single-circuit lines, line 3 and Fig. 5. Test system of 525 kV for comparison of simulation and field test
+              line 4. Line 1 at the substation Raver was initally grounded results.
+              for the test. The circuit breaker (CB) was used to energize                              Lines 1 and 2, 124.3 km
+              and then disconnect line 1 in order to observe the transient
+              recovery voltage (TRV). The transposition structures of lines                   CAB          ABC         ABC         CAB CAB
+              1 and 2 are depicted in Fig. 6 in which the phase orders for
+                                                                                              ACB          CBA         BAC         BAC ACB
+              each section are listed as bottom-middle-top. Fig. 7 shows the Raver                                                                 Schultz
+              tower configuration of lines 1 and 2 and associated geometries.              42.47 km 14.41 km 33.05 km 25.31 km 9.06 km
+                 For the purpose of comparison, the following three alterna-
+              tives of representing the test system are included.                Fig. 6. Transposition structure of lines 1 and 2.
+                 • Case 1: The system was simulated with the methodology              6.1 m 8.4 m 5.6 m
+                                                                                                                        Phase conductors:
+                    FAST [8] in which lines 1 and 2 are modeled using                                                      Inner radius: 0.55 cm
+                    the multi-scale and frequency-dependent line model as                  Line 1             Line 2       Outer radius: 2.04 cm
+                    presented in Section IV. Parameters of (9) and (10) are 9.8 m                                          DC resistance : 0.032 Ω/km
+                                                                                                                           Shunt conductance : 10−8 S/km
+                    obtained through the curve fitting technique of [22].                      B                  B
+                 • Case 2: The simulation of the system was performed in         11.0 m                                Ground wires:
+                                                                                                                           Radius: 0.49 cm
+                    the alternative transients program (ATP), which belongs                                                Rdc = 1.491 Ω/km
+                                                                                          A                         C
+                    to the family of EMTP-type simulators. Lines 1 and 2 are 11.0 m                                    Overhead line sag at midpoint
+                    represented through the frequency-dependent line model                                                   between tower spans: 4.8 m
+                    of [13].                                                                    C            A               32 cm
+                 • Case 3: A field test was conducted [5], and the test results  15.5 m                                   64 cm
+                    were used as a reference for the comparisons.                                                      Earth resistivity : 100 Ωm
+                 The modeling of the networks connected to the substations
+              Raver and Schultz and of lines 3 and 4 follows the parameters Fig. 7. Tower configuration of lines 1 and 2.
+              described in Appendix E. The results for phase B of line volt-
+              age vℓ of Fig. 5 are depicted in Figs. 8(a) to 8(c), respectively. gives rise to a transient recovery voltage of triangular shape.
+              Initially, the circuit breaker CB is open. From t = 4.7 ms, the Correspondingly, τ is reset to 5 µs. The switches of the multi-
+              CB is closed to energize line 1, and a three-phase-to-ground scale line model in Fig. 3 are opened again.
+              short circuit occurs at the substation Raver where the closed         Fig. 8(b) shows the results obtained with the simulator ATP.
+              ground switch in Fig. 5 is represented by a fault resistance The simulation tracks natural waveforms, and a small time-
+              with the small value of 1 · 10−4 Ω [25]. At t = 46.2 ms, phase step size of τ = 5 µs is chosen throughout the simulation.
+              B of CB is opened to study the TRV. At this point, phases The field measurement is depicted in Fig. 8(c).
+              A and C are still connected and carry short circuit currents.         A zoomed-in view of the TRV for the above three alter-
+              The electromagnetic interphase coupling during this unbalance natives is shown in Fig. 9. It can be seen that the natural
+              influences the TRV of phase B.                                     waveforms obtained with FAST are in close agreement with
+                 As visible in Fig. 8(a), the proposed multi-scale line model those of the ATP simulation. Of particular interest in the field
+              supports the tracking of both natural and envelope waveforms test are the initial rate of rise and the first peak of the TRV.
+              within the same simulation run. The simulation starts out Regarding the first triangular section, the results of both FAST
+              from a de-energized state at t = 0 ms. From t = 4.7 ms, and ATP in Fig. 9 show a close matching with the field
+              electromagnetic transients do appear due to the closing of measurement.
+              CB, and thus natural waveforms need to be tracked. A time-            To further demonstrate the quality of the modeling, the short
+              step size τ = 5 µs that is small enough to simulate the fast circuit current energizing phase B of line 1 is also measured
+              transients of line energization is chosen. The switches of the and shown in Fig. 10. It is visible that the natural waveforms
+              multi-scale line model in Fig. 3 are opened due to τ < Twp . obtained with the FAST simulation match those of the field
+              As the energization transients damp out, an increasingly clean measurement very closely during the energization following
+              sine waveform appears. From t = 21.4 ms, the envelope is the closing of CB. Since the settling to steady-state and the
+              simulated by setting fs = 60 Hz to eliminate the carrier, transient recovery voltage are also closely matched, the model
+              and a larger time-step size of τ = 2 ms is chosen. Since shows to accurately simulate very diverse transients including
+              τ > Twp , the switches of the multi-scale line model of Fig. 3 the tracking of both natural and envelope waveforms.
+              are closed. At t = 46.2 ms, the opening of phase B of CB              In order to further investigate the performance, the compu-
+
+
+            0885-8977 (c) 2016 IEEE. Translations and content mining are permitted for academic research only. Personal use is also permitted, but republication/redistribution requires IEEE permission. See
+                                                           http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRD.2016.2630338, IEEE
+                                                                                                  Transactions on Power Delivery
+
+
+
+
+              IEEE TRANSACTIONS ON POWER DELIVERY, MANUSCRIPT, NOVEMBER 2016                                                                                                                                    7
+
+
+
+                                    500
+                                                                                                                                      500
+                    voltage (kV)
+
+
+
+
+                                    250
+                                      0
+                                                                                                                                      250
+                                   −250
+
+
+
+
+                                                                                                                    voltage (kV)
+                                   −500
+                                          0   4.7   10            21.4     30           40      46.2 50                                 0
+                                                                   time (ms)                                                                             450
+                 (a) FAST simulation using proposed multi-scale frequency-dependent line                                                                 400
+                                                                                                                                     −250
+                 model.                                                                                                                                  350
+                                    500                                                                                                                  300
+                                                                                                                                     −500                  46.9     47       47.1       47.2
+                    voltage (kV)
+
+
+
+
+                                    250
+                                      0                                                                                                    46   46.2   46.5           47                 47.5                   48
+                                                                                                                                                                  time (ms)
+                                   −250
+                                   −500                                                                           Fig. 9. Transient recovery voltage of phase B; solid light: field test; solid
+                                          0   4.7   10           20        30           40      46.2 50           bold: FAST simulation with proposed multi-scale line model; dash dot light:
+                                                                                                                  ATP simulation.
+                                                                   time (ms)
+                                                          (b) ATP simulation.
+
+                                    500
+                                                                                                                                      12
+                    voltage (kV)
+
+
+
+
+                                    250
+                                      0                                                                                                8
+                                   −250
+                                   −500                                                                                                4
+                                                                                                                      current (kA)
+
+
+
+
+                                          0   4.7   10           20        30           40      46.2 50
+                                                                   time (ms)                                                           0
+
+                                                         (c) Field measurement.
+                                                                                                                                      −4
+              Fig. 8. Comparison of phase B of voltage vℓ obtained through simulation
+              with various models and field measurement; solid light: natural waveform;
+              solid bold: envelope.                                                                                                   −8
+
+
+              tational efficiency is compared with that of a corresponding          −12
+                                                                                         4.7              10                15                       21.4
+              EMTP-type implementation. The latter processes real signals,                                       time (ms)
+              while the proposed line model processes analytic signals. In
+              the simulation of electromagnetic transients, both implementa- Fig. 10. Energization current of phase B; solid light: field test; solid bold:
+              tions require the same time-step size. Then, the processing of FAST simulation with proposed multi-scale line model.
+              analytic versus real signals has shown to increase the computa-
+              tional cost by a factor of about 1.35. During the period of slow
+              transients and steady state, the proposed line model may use a
+              significantly larger time-step. In the above example, the time- wave propagation time may be used within one simulation run.
+              step size increased by a factor of (2 ms)/(5 µs) = 400. Taking This allows both for the tracking of natural waveforms and the
+              into account that analytic signals are processed, the speed-up tracking of the envelopes given by dynamic phasors. Secondly,
+              of computation is still at a factor of about 300. Thus, for the it was shown that the modal transformation for representing
+              simulation over longer time intervals, the computational gain multi-phase lines is also a practical method for the multi-scale
+              is mainly given by the speed-up valid for the period of slow case. In the case when the wave propagation time is larger than
+              transients.                                                      the time-step size, the traveling wave effects pertaining to the
+                                                                               modes are emulated involving a galvanic decoupling of both
+                                     VI. C ONCLUSIONS                          line ends within one time-step. When the wave propagation
+                 A multi-scale and frequency-dependent line model was time is smaller than the time-step size, a π-segment is switched
+              developed, implemented, and validated. Three contributions in automatically. Thirdly, the model was tested by comparison
+              were made in this context. Firstly, the essential mathematical with the EMTP-type simulation and the results of a staged
+              steps of recursive convolution and interpolation used for line field test. The tests have validated the methodology in terms
+              modeling in EMTP-type simulation were reformulated using of accuracy and efficiency, showing that both slow transients as
+              analytic instead of real signals. A major distinguishing feature well as the fast transients of energization and transient recovery
+              is given by the fact that time-step sizes below or above the can be tracked.
+
+
+            0885-8977 (c) 2016 IEEE. Translations and content mining are permitted for academic research only. Personal use is also permitted, but republication/redistribution requires IEEE permission. See
+                                                           http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRD.2016.2630338, IEEE
+                                                                                                  Transactions on Power Delivery
+
+
+
+
+              IEEE TRANSACTIONS ON POWER DELIVERY, MANUSCRIPT, NOVEMBER 2016                                                                                                                                    8
+
+
+
+                                    A PPENDIX A                                                                                               A PPENDIX C
+                     T RANSFORMATION M ATRIX IN M ULTI - PHASE L INE                                                             D ETAILS OF L INE M ODEL PARAMETERS
+                                     M ODELING                                                                      Variables K 2 , K 3 , hr1 , and hr2 in (39) and (40) are
+                 An M -phase line model with frequency-dependent param-                                           expressed as
+              eters can be formulated in the modal domain by using the                                                             Nh
+                                                                                                                                   X                     Nh
+                                                                                                                                                         X                                Nh
+                                                                                                                                                                                          X
+              modal decomposition, which is obtained via a transformation                                              K2 = σ            hn αrn +ρ            hn β rn ,       K3 = σ            hn β rn ,
+              matrix T (ω). The latter can be derived from the eigenvalue-                                                         n=1                  n=1                               n=1
+              eigenvector theory to diagonalize the products Y ′ (ω)Z ′ (ω)
+              and Z ′ (ω)Y ′ (ω) as follows [24], [26]:                                                                                                   Nh
+                                                                                                                                                          X
+                                                                                                                                    hr1 (t − τ ) =              hn ephn τ q 1n (t − τ ) ,
+                                                −1            ′         ′
+                                  Λ(ω) = T    (ω) Y (ω)Z (ω) T (ω)                                     (55)                                              n=1
+                                                                −1                                                                                     Nh
+                                                                                                                                                         X
+                                  Λ(ω) = T T (ω) Z ′ (ω)Y ′ (ω) T T (ω)                                (56)                         hr2 (t − τ ) =              hn ephn τ q 2n (t − τ ) .
+                                                                                                                                                         n=1
+                              ′                    ′
+              where Z (ω) and Y (ω) are the per-unit-length series
+              impedance and shunt admittance matrices of dimension M ×                                      A PPENDIX D
+              M , respectively; Λ(ω) contains the eigenvalues as the diagonal      A  DMITTANCE    M  ATRICES   IN M ULTI - PHASE L INE M ODELS
+                                                                                                          m
+              elements. The frequency used for the transformation is found            The definition of Y in (53) is
+              in accordance with the algorithm in [8] where the frequencies                                      m
+                                                                                                                  Y 11 Y m
+                                                                                                                               
+                                                                                                           m                12
+              with significant contributions to the Fourier spectrum are de-                            Y =
+                                                                                                                  Ym21   Ym 22
+              termined. The transformation matrices for diverse frequencies
+              can be precalculated using the fitting procedure before the with
+              simulation starts. Recent research on the modal transform has
+              proven the accuracy of the technique for modeling transmis-                Ym             m           m                   m
+                                                                                            11 = diag[Y 1 (1, 1), Y 2 (1, 1), · · · , Y M (1, 1)]
+              sion lines [14]. In many practical cases, a real and constant              Ym             m           m                   m
+                                                                                            12 = diag[Y 1 (1, 2), Y 2 (1, 2), · · · , Y M (1, 2)]
+              transformation matrix T is preferred for the study of specific             Ym             m           m                   m
+                                                                                            21 = diag[Y 1 (2, 1), Y 2 (2, 1), · · · , Y M (2, 1)]
+              electromagnetic phenomena on overhead lines [24], and it is                Ym             m           m                   m
+                                                                                            22 = diag[Y 1 (2, 2), Y 2 (2, 2), · · · , Y M (2, 2)] .
+              computed here in the test at 5 kHz.
+                                                                                  The definition of Y p in (54) is
+                                                                                                                      T             
+                                                                                                          T 0            T         0
+                                       A PPENDIX B                                                Yp =             Ym                    .
+                     L INEAR I NTERPOLATION IN M ULTI - SCALE L INE                                       0 T             0 TT
+                                        M ODELING
+                                                                                                             A PPENDIX E
+                 In order to calculate the shifted analytic signals                    A DDITIONAL PARAMETERS OF F IELD T EST S YSTEM
+              S[ s(t − Twp ) ] at instant (t − Twp ), the usage of linear             The electric power networks connected to the substations
+              interpolation in [8] is appropriate whenever Twp is not an Raver and Schultz in Fig. 5 are represented by the equivalent
+              integer multiple of time-step size τ :                              circuit as shown in Fig. 11. The elements Rc and Lc mod-
+                                    
+                                           Twp
+                                               
+                                                                                 el  lumped parameters, and Zs models the equivalent surge
+                  S[ s(t − Twp ) ] = κ −          S[ s t − (κ − 1)τ ]             impedance of external transmission networks. The parameters
+                                            τ
+                                                                                of the networks are given in Table I, where subscripts 0 and
+                                                  Twp                             1  indicate zero and positive sequences, respectively. To focus
+                                    + 1−κ+               S[ s(t − κτ ) ] (57)
+                                                    τ                             on the frequency-dependent phenomena on lines 1 and 2, a
+                                                                                  constant distributed parameter model is used for lines 3 and
+              where κ = ceil (Twp /τ ), and ceil is a function that rounds a
+                                                                                  4. The per unit length resistances R′ , inductances L′ , and
+              real number to the nearest integer greater than or equal to itself.
+                                                                                  capacitances C ′ of lines 1, 2, 3, and 4 are given in Table II
+              Setting κ = 1 corresponds to the case when τ ≥ Twp , and
+                                                                                  for zero and positive sequences as denoted respectively by
+              κ > 1 corresponds to the case when τ < Twp . Multiplication
+                                                                                  subscripts 0 and 1. For reference purposes, constant distributed
+              of both sides of (57) by ejωs (t−Twp ) yields
+                                                                                  parameters are also given for lines 1 and 2, although those
+                                                                                  are not used in simulations performed for this paper. Tables I
+                    s(t − Twp ) = ρ s(t − (κ − 1)τ ) + σ s(t − κτ )        (58)
+                                                                                  and II modify and replace data given in [5], [8].
+              with
+                                                                                                                                               ACKNOWLEDGMENT
+                                         Twp
+                                   ρ= κ−       ejωs (κτ −τ −Twp)                                                    The authors would like to thank Dr. Feng Gao of Tsinghua
+                                          τ
+                                                                                                                University for his valuable discussions and suggestions. From
+                                             Twp
+                                   σ = 1−κ+          ejωs (κτ −Twp ) .                                            2008 to 2010, Dr. Feng Gao worked as a research fellow at
+                                              τ                                                                   the Technische Universität Berlin, Berlin, Germany.
+
+
+            0885-8977 (c) 2016 IEEE. Translations and content mining are permitted for academic research only. Personal use is also permitted, but republication/redistribution requires IEEE permission. See
+                                                           http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRD.2016.2630338, IEEE
+                                                                                                  Transactions on Power Delivery
+
+
+
+
+              IEEE TRANSACTIONS ON POWER DELIVERY, MANUSCRIPT, NOVEMBER 2016                                                                                                                                    9
+
+
+
+                                          Ve                 Rc              Lc                                   [14] B. Gustavsen, “Modal domain-based modeling of parallel transmission
+                                     −           +                                                                     lines with emphasis on accurate representation of mutual coupling
+                                                                     Zs                                                effects,” IEEE Trans. Power Del., vol. 27, no. 4, pp. 2159–2167, Oct.
+                                                                                                                       2012.
+                                                                                                                  [15] ——, “Avoiding numerical instabilities in the universal line model by
+                                                                                                                       a two-segment interpolation scheme,” IEEE Trans. Power Del., vol. 28,
+              Fig. 11. Structure of equivalent networks connected to Raver and Schultz                                 no. 3, pp. 1643–1651, Jul. 2013.
+              substations.                                                                                        [16] T. Noda, “Application of frequency-partitioning fitting to the phase-
+                                                                                                                       domain frequency-dependent modeling of overhead transmission lines,”
+                                                                                                                       IEEE Trans. Power Del., vol. 30, no. 1, pp. 174–183, Feb. 2015.
+                                                TABLE I                                                           [17] A. Lima and M. Y. Tomasevich, “Numerical issues in line models based
+                                   PARAMETERS OF EQUIVALENT NETWORKS .                                                 on a thin wire above a lossy ground,” IEEE Trans. Electromagn. Compat.,
+                                                                                                                       vol. 57, no. 3, pp. 555–564, Jun. 2015.
+                   Net-    V̂e 6 Ve             Rc0        Rc1 Lc0 Lc1      Zs0                    Zs1            [18] M. Y. Tomasevich and A. Lima, “Impact of frequency-dependent soil
+                   work (kV) (◦ )               (Ω)        (Ω) (mH) (mH) (Ω)                       (Ω)                 parameters in the numerical stability of image approximation-based line
+                                                                                                                       models,” IEEE Trans. Electromagn. Compat., vol. 58, no. 1, pp. 323–
+                   Raver 425.0 50.7             2.59       1.38 77.9 69.4 86.0                     56.0                326, Feb. 2016.
+                  Schultz 437.4 55.0            4.88       0.77 124.9 50.4 107.5                   86.0           [19] S. K. Mitra, Digital Signal Processing: A Computer-Based Approach,
+                                                                                                                       2nd ed. New York: McGraw-Hill, 2001.
+                                            TABLE II                                                              [20] H. D. Lüke, Signalübertragung, 4th ed. Berlin, Germany: Springer-
+                   F REQUENCY- INDEPENDENT PARAMETERS OF TRANSMISSION LINES .                                          Verlag, 1990.
+                                                                                                                  [21] J. A. Martinez-Velasco, Power System Transients: Parameter Determi-
+                    Line 10R0′  100R1′    L′0     L′1     C0′     C1′                                                  nation. Boca Raton: CRC Press, 2010.
+                     no. (Ω/km) (Ω/km) (mH/km) (mH/km) (nF/km) (nF/km)                                            [22] B. Gustavsen and A. Semlyen, “Rational approximation of frequency
+                                                                                                                       domain responses by vector fitting,” IEEE Trans. Power Del., vol. 14,
+                    1&2   1.90   1.26    3.35    0.89    6.77   12.61
+                                                                                                                       no. 3, pp. 1052–1061, Jul. 1999.
+                      3   2.02   2.39    3.73    1.23    5.46    9.26                                             [23] A. Semlyen and A. Dabuleanu, “Fast and accurate switching transient
+                      4   1.98   2.06    3.62    1.07    6.77   10.81                                                  calculations on transmission lines with ground return using recursive
+                                                                                                                       convolutions,” IEEE Trans. Power App. Syst., vol. PAS-94, no. 2, pp.
+                                                                                                                       561–571, Mar./Apr. 1975.
+                                                                                                                  [24] H. W. Dommel, EMTP Theory Book, 2nd ed. Vancouver, BC, Canada:
+                                                     R EFERENCES                                                       Microtran Power System Analysis Corporation, 1992.
+                                                                                                                  [25] A. L. Johnson, “Analysis of circuit breaker transient recovery voltages
+               [1] H. W. Dommel, “Digital computer solution of electromagnetic transients                              resulting from transmission line faults,” Master’s thesis, Univ. of Wash-
+                   in single- and multiphase networks,” IEEE Trans. Power App. Syst., vol.                             ington, Seattle, 2003.
+                   PAS-88, no. 4, pp. 388–399, Apr. 1969.                                                         [26] L. M. Wedepohl, H. V. Nguyen, and G. D. Irwin, “Frequency-dependent
+               [2] N. Watson and J. Arrillaga, Power Systems Electromagnetic Transients                                phase-domain transformation matrices for untransposed transmission
+                   Simulation. London, U.K.: Institution of Electrical Engineers, 2003.                                lines using Newton-Raphson method,” IEEE Trans. Power Syst., vol. 11,
+               [3] K. Strunz, “Position-dependent control of numerical integration in circuit                          no. 3, pp. 1538–1546, Aug. 1996.
+                   simulation,” IEEE Trans. Circuits Syst. II, Exp. Briefs, vol. 51, no. 10,
+                   pp. 561–565, Oct. 2004.                                                                                                       Hua Ye received the B.S. and M.S. degrees in
+               [4] A. M. Stanković and T. Aydin, “Analysis of asymmetrical faults in power                                                      electrical engineering from the China Agricultural
+                   systems using dynamic phasors,” IEEE Trans. Power Syst., vol. 15, no. 3,                                                      University, Beijing, China, in 2006 and 2008, re-
+                   pp. 1062–1068, Aug. 2000.                                                                                                     spectively. He received his Ph.D. degree in electrical
+               [5] K. Strunz, R. Shintaku, and F. Gao, “Frequency-adaptive network                                                               engineering from the Technische Universität Berlin,
+                   modeling for integrative simulation of natural and envelope waveforms                                                         Germany, in 2013.
+                   in power systems and circuits,” IEEE Trans. Circuits Syst. I, vol. 53,                                                           Currently, he is an Assistant Professor at the In-
+                   no. 12, pp. 2788–2803, Dec. 2006.                                                                                             stitute of Electrical Engineering, Chinese Academy
+                                                                                                                                                 of Sciences, Beijing, China. His research interests
+               [6] P. Zhang, J. R. Martí, and H. W. Dommel, “Shifted-frequency analysis
+                                                                                                                                                 include modeling of power system transients, com-
+                   for EMTP simulation of power-system dynamics,” IEEE Trans. Circuits
+                                                                                                                                                 putational methods, integration of wind power, and
+                   Syst. I, vol. 57, no. 9, pp. 2564–2574, 2010.
+                                                                                                                  HVDC grids.
+               [7] X. Guillaud, M. O. Faruque, A. Teninge, A. H. Hariri, L. Vanfretti,
+                   M. Paolone, V. Dinavahi, P. Mitra, G. Lauss, C. Dufour, P. Forsyth,                                                     Kai Strunz graduated with the Dipl.-Ing. degree
+                   A. K. Srivastava, K. Strunz, T. Strasser, and A. Davoudi, “Applications                                                 from the University of Saarland in Saarbrücken,
+                   of real-time simulation technologies in power and energy systems,” IEEE                                                 Germany, in 1996, and he was awarded the Dr.-Ing.
+                   Power Energy Technol. Syst. J., vol. 2, no. 3, pp. 103–115, Sep. 2015.                                                  degree with summa cum laude from the same univer-
+               [8] F. Gao and K. Strunz, “Frequency-adaptive power system modeling for                                                     sity in 2001. From 1995 to 1997, he pursued research
+                   multi-scale simulation of transients,” IEEE Trans. Power Syst., vol. 24,                                                at Brunel University in London. From 1997 to 2002,
+                   no. 2, pp. 561–571, May 2009.                                                                                           Dr. Strunz worked at the Division Recherche et
+               [9] P. Zhang, J. R. Martí, and H. W. Dommel, “Synchronous machine                                                           Développement of Electricité de France (EDF) in
+                   modeling based on shifted frequency analysis,” IEEE Trans. Power Syst.,                                                 the Paris area. From 2002 to 2007, he was Assistant
+                   vol. 22, no. 3, pp. 1139–1147, 2007.                                                                                    Professor of Electrical Engineering at the University
+              [10] F. Gao and K. Strunz, “Multi-scale simulation of multi-machine power                                                    of Washington in Seattle. Since September 2007, he
+                   systems,” Int. J. Elect. Power & Energy Syst., vol. 31, no. 9, pp. 538–545,                    has been Professor for Sustainable Electric Networks and Sources of Energy
+                   Oct. 2009.                                                                                     at Technische Universität Berlin.
+              [11] Y. Huang, M. Chapariha, F. Therrien, J. Jatskevich, and J. R. Martí, “A                           Dr. Strunz is Chairman of the IEEE PES Subcommittee on Distributed
+                   constant-parameter voltage-behind-reactance synchronous machine mod-                           Energy Resources. He is recipient of the IEEE PES Prize Paper Award 2015
+                   el based on shifted-frequency analysis,” IEEE Trans. Energy Convers.,                          and the IEEE Journal of Emerging and Selected Topics in Power Electronics
+                   vol. 30, no. 2, pp. 761–771, June 2015.                                                        First Prize Paper Award 2015. Dr. Strunz was the chairman of the conference
+              [12] Y. Huang, F. Therrien, J. Jatskevich, and L. Dong, “State-space voltage-                       IEEE PES Innovative Smart Grid Technologies held at TU Berlin from 14
+                   behind-reactance modeling of induction machines based on shifted-                              to 17 October 2012. On behalf of the Intergovernmental Panel on Climate
+                   frequency analysis,” in Proc. IEEE PES Gen. Meeting, Denver, CO,                               Change (IPCC), Dr. Strunz acted as Review Editor for the Special Report on
+                   USA, Jul. 2015, pp. 1–5.                                                                       Renewable Energy Sources and Climate Change Mitigation.
+              [13] J. R. Martí, “Accurate modeling of frequency-dependent transmission
+                   lines in electromagnetic transient simulations,” IEEE Trans. Power App.
+                   Syst., vol. PAS-101, no. 1, pp. 147–157, Jan. 1982.
+
+
+            0885-8977 (c) 2016 IEEE. Translations and content mining are permitted for academic research only. Personal use is also permitted, but republication/redistribution requires IEEE permission. See
+                                                           http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+

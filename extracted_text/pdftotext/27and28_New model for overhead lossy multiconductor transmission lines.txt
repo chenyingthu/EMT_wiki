@@ -1,0 +1,688 @@
+                                                                                                      www.ietdl.org
+    Published in IET Generation, Transmission & Distribution
+    Received on 6th June 2012
+    Revised on 5th April 2013
+    Accepted on 30th May 2013
+    doi: 10.1049/iet-gtd.2012.0284
+
+
+
+
+                                                                                                                ISSN 1751-8687
+
+
+New model for overhead lossy multiconductor
+transmission lines
+Juan C. Escamilla1, Pablo Moreno2, Pablo Gómez3
+1
+  CENALTE de la Comisión Federal de Electricidad (CFE), Calle Violetas No. 7, Reserva Territorial Atlixcáyotl, C.P. 72197,
+San Andrés Cholula, Puebla, Mexico
+2
+  CINVESTAV del IPN, Unidad Guadalajara, Av. del Bosque 1145, Col. El Bajío, C.P. 45019, Zapopan, Jal., Mexico
+3
+  Electrical Engineering Department of SEPI-ESIME Zacatenco, Instituto Politécnico Nacional (IPN), U.P. ‘Adolfo López
+Mateos’, Ediﬁcio Z-4 Primer piso, C.P. 07738, México, D.F., Mexico
+E-mail: pgomezz@ipn.mx
+
+Abstract: A new model for time-domain electromagnetic transient analysis of overhead multiconductor transmission lines with
+frequency-dependent electrical parameters is presented. The model is based on the method of characteristics, which has been used
+before by means of the application of ﬁnite difference schemes. Conversely to the regular method of characteristics, the model
+presented here does not require the spatial discretisation along the line. Also, the frequency dependence of the electrical
+parameters is included by means of a transient resistance matrix. To validate the model, the results are compared to those
+from a frequency-domain method, the alternative transients program/electromagnetic transients program (ATP/EMTP) and the
+electromagnetic transients program-restructured version (EMTP-RV).
+
+
+
+
+1      Introduction                                                 this model in terms of passivity enforcement, stability and
+                                                                    symmetry preservation [4–7]. Recently, it has been shown
+Electromagnetic transient analysis of power systems usually         that this model, with corresponding modiﬁcations, can be
+requires     line   models     capable    of      reproducing       effectively applied to perform real-time simulations [8].
+frequency-dependent effects. Although frequency-domain                 A different approach for the modelling of transmission
+models are very accurate, they present difﬁculties when             lines is based on state-space techniques in lumped
+dealing with non-linearities and are impractical for                parameter representations [9, 10]. However, this approach
+interfacing with time-domain simulation programs like               requires the external inclusion of frequency dependence
+EMTP. On the contrary, time-domain methods possess great            of the electrical parameters and the discretisation of the line
+versatility simulating topology changes of electrical               in a number of segments, which can be prone to
+networks and non-linear elements; however, modelling the            numerical oscillations. A recent paper has proposed the use
+elements with frequency-dependent parameters introduces             of a ﬁnite impulse response digital ﬁlter to reduce this
+convolution procedures.                                             problem [11].
+   In 1982, Martí [1] developed his line model which is still          This work presents a new model of overhead
+in use in the EMTP. In this model, the frequency                    multiconductor transmission lines (MTL) for time-domain
+dependence of the propagation function and the                      transient analysis. The model is based on the time-domain
+characteristic impedance of the line were taken into                solution of the telegrapher’s equations using the method of
+account, but the transformation matrix was considered as            characteristics [12]. The aim of this method is to convert
+real and constant.                                                  partial differential equations to ordinary differential
+   In 1998, Gustavsen and Semlyen [2] proposed a method in          equations and then solve the problem using ﬁnite
+the phase domain. In this work, the characteristic impedance        differences. The method of characteristics has been used
+and the propagation function were modelled by using the             before in modelling non-uniform, non-linear and external
+method of vector ﬁtting. All the elements in each column of         ﬁeld-excited transmission lines as well as cables and
+the transformation matrix were ﬁtted using the same poles.          machine windings [13–15]. In these cases using this method
+Another model in phase domain, named universal line                 requires a time–distance discretisation mesh.
+model (ULM), was proposed by Morched, Gustavsen and                    In the model presented in this paper, following the results
+Tartibi in 1999 [3]. This model arose from the necessity of         presented in [16] for single-phase frequency-dependent
+modelling highly frequency-dependent transformation                 lines, and in [17] for multiconductor frequency independent
+matrices and widely different modal velocities. This model          lines, the method of characteristics is reformulated for
+is considered today the most advanced and exact one in the          uniform MTL with frequency-dependent electrical
+time domain. Further researches have focused on improving           parameters. In this model, no discretisation mesh is required
+
+IET Gener. Transm. Distrib., 2013, Vol. 7, Iss. 11, pp. 1185–1193                                                             1185
+doi: 10.1049/iet-gtd.2012.0284                                                © The Institution of Engineering and Technology 2013
+www.ietdl.org
+and Norton equivalent circuits for the line ends are developed.   follows
+This model possesses some important advantages in
+comparison with existing frequency-dependent line models:                             dV (x, s)  ′        
+                                                                                  −            = R (s) + L0 sI(x, s)                  (3a)
+                                                                                        dx
+† Modal transformation matrices are constant and the
+frequency dependence of the electrical parameters is              where R′(s) is the transient resistance [19] given by
+embedded in the convolution term of the series transmission
+                                                                                                                      
+line equation.                                                                          ′      Z C (s) + Z E (s)
+† It requires only the synthesis of the transient resistance,                          R (s) =                                        (3b)
+                                                                                                       s
+while travelling wave models require synthesising the
+characteristic admittance and the propagation exponential
+matrices.                                                         Transforming (3a) to the time domain
+† Owing to the smoothness of the transient resistance, its                                           t
+rational ﬁtting is straightforward, requires only real poles            ∂v(x, t)      ∂i(x, t) ∂
+                                                                                 + L0         +           r′ (t − t)i(x, t) dt = 0    (4a)
+and there is no need of extracting time delays.                           ∂x             ∂t     ∂t    0
+† It only requires two matrix vector convolutions for the
+transmission line Norton model.                                   and transforming (1b)
+
+                                                                                       ∂i(x, t)      ∂v(x, t)
+2    Transmission line equations                                                                + C0          =0                      (4b)
+                                                                                         ∂x            ∂t
+2.1 MTL’s equations with frequency-dependent                      where v(x,t) and i(x,t) are the time domain voltage and current
+electrical parameters                                             vectors, respectively, and r′(t) is the time domain image of R′(s).
+The telegrapher’s equations in the frequency domain are
+deﬁned as follows                                                 2.2     Modiﬁed MTL series equation
+
+                                                                  The frequency-domain transient resistance given by (3b) can
+                     dV (x, s)                                    be calculated or measured over any frequency range and, after
+                 −             = Z(s)I(x, s),
+                       dx
+                                                        (1a,b)    that, it can be ﬁtted by means of a sum of rational functions as
+                       dI(x, s)                                   follows
+                     −          = Y (s)V (x, s)
+                          dx
+                                                                                             
+                                                                                             N
+                                                                                                   1        K
+where s is the Laplace variable, V(x,s) and I(x,s) are the                        R′ (s) =              Ki + 0 + K1                   (5a)
+                                                                                             i=1
+                                                                                                 s + pi      s
+voltage and current vectors, respectively; Z(s) and Y(s) are
+the series impedance and shunt admittance matrices. For a
+                                                                  where N is the order of approximation, Ki is the ith residues
+system of n conductors with ground return, all matrices are
+                                                                  matrix and pi is the corresponding pole. K0 is the residues
+of dimension n × n and vectors of n × 1.
+                                                                  matrix at s = 0 and K∞ is the residues matrix at s = ∞.
+   The series impedance matrix Z(s) consists of three
+                                                                  In (5a) it is assumed that all elements of R′(s) are ﬁtted
+components [18]
+                                                                  using the same poles. Expressing (5a) in time domain gives
+
+               Z(s) = Z C (s) + Z E (s) + Z G (s)         (2a)                                                    
+                                                                                                                  N
+                                                                               r′ (t) = RDC u(t) + K 1 d(t) +       e−pi t K i        (5b)
+where ZC(s) is the internal impedance of the conductors, ZE(s)                                                       i=1
+
+is the earth return path impedance and ZG(s) is the geometrical
+impedance due to the physical arrangement of the conductor.       where u(t) is the unit step, δ(t) is the Dirac impulse function
+    Moreover, the geometrical impedance can be expressed as       and RDC = K0 is the direct current resistance matrix.
+follows                                                             Using (5b), (4a) yields
+                                                                                                                t
+                                                                  ∂v(x, t)    ∂i(x, t)                 ∂
+                         Z G (s) = sL0                    (2b)             +D          + RDC i(x, t) +               h(t − t)i(x, t) dt = 0
+                                                                    ∂x           ∂t                    ∂t        0
+
+where L0 is the matrix of inductances due to the magnetic ﬂux                                                                         (6a)
+in the air.
+   The shunt admittance is evaluated considering only the         where
+electrical ﬁeld in the air. When the air is assumed to have
+zero conductance Y(s) is expressed as follows                                                                   
+                                                                                                                N
+                                                                                D = K 1 + L0 ,        h(t) =           K i e−pi t    (6b,c)
+                                                                                                                i=1
+                           Y = sC 0                       (2c)
+
+where C0 is the capacitances matrix.                              Applying the Leibniz’s rule in the convolution term of (6a),
+   Time-domain modelling of MTL requires that (1a) and (1b)       the next expression is obtained
+be expressed and solved in time domain. For overhead lines
+this involves a convolution in (1a) that can be stated in                 ∂v(x, t)    ∂i(x, t)
+                                                                                   +D          + Rx i(x, t) + C(x, t) = 0             (7a)
+various forms. Using (2a) and (2b), (1a) can be written as                  ∂x           ∂t
+
+1186                                                               IET Gener. Transm. Distrib., 2013, Vol. 7, Iss. 11, pp. 1185–1193
+© The Institution of Engineering and Technology 2013                                                  doi: 10.1049/iet-gtd.2012.0284
+                                                                                                                         www.ietdl.org
+where the resistance matrix is given by                                              In the following, variables x and t of the modal voltage,
+                                                                                     current and convolution vectors will be omitted for the sake
+                                             
+                                             N                                       of simplicity.
+                        Rx = RDC +                  Ki                       (7b)       It can be shown from (8) that while Rm is a full matrix, Dm
+                                              i=1                                    and Cm are diagonal and satisfy the following relationship
+
+and the convolution vector by                                                                             L = Dm C m = C m Dm                 (10a)
+
+                              
+                              N                                                     Moreover, from (10a) the matrix of modal velocities can be
+               C(x, t) = −               pi K i e−pi t ∗i(x, t)              (7c)    deﬁned as
+                               i=1
+                                                                                                                                     
+Equations (4b) and (7a) form the system to be solved to obtain                                       G=    L−1 = diag g1 , . . . , gn         (10b)
+the MTL model proposed in this work.
+                                                                                     Each modal velocity γj deﬁnes two families of characteristics,
+                                                                                     which can be expressed as solutions of
+3     Method of characteristics
+                                                                                                                  1               dxj
+The goal of the method of characteristics is to change                                                 gj =                  =+               (11a)
+coordinates (x, t) to a new coordinate system in which                                                         Dm jj Cm jj        dt
+partial differential equations (PDEs) become ordinary
+differential equations (ODEs) along certain curves in the x–t                        where Dm jj and Cm jj are the jjth elements of Dm and Cm,
+plane. Such curves are called characteristic curves or just                          respectively. Since modal velocities are constant, the
+characteristics. In order to deﬁne the characteristics for the                       characteristics are straight lines; moreover, (10b) can be
+PDEs system formed by (4b) and (7a), a modal analysis has                            written as follows
+to be performed. Let TV and TI be the matrices that                                                                             
+diagonalise the products DC0 and C0D, respectively, as                                                 dX         dx1        dxn
+follows                                                                                             G=    = diag      , ...,                  (11b)
+                                                                                                       dt          dt         dt
+
+                         T −1
+                           V D C0T V = L                                     (8a)    Now (9a) is left multiplied by Γ and (9b) by C −1
+                                                                                                                                    m .
+
+                          T −1
+                            I C 0 DT I = L                                   (8b)                   ∂vm      ∂i
+                                                                                                G       + Z W m + GRm i m + GCm = 0           (12a)
+                                                                                                     ∂x       ∂t
+Thus modal vectors of voltage and current, vm(x, t) and
+                                                                                                                 ∂i m ∂vm
+im(x, t), can be deﬁned as follows                                                                        GZ W       +    =0                  (12b)
+                                                                                                                 ∂x    ∂t
+        v(x, t) = T V vm (x, t),         i(x, t) = T I i m (x, t)          (8c,d)    where ZW is the wave impedance matrix deﬁned as
+
+Transformation matrices TV and TI are constant and can be                                                   ZW =      Dm C −1
+                                                                                                                           m                  (12c)
+interpreted as the voltage and current transformation
+matrices of an ideal MTL with inductance D, capacitance                              By adding and subtracting (12b) from (12a), it is obtained
+C0 and the same geometry of the actual line. Matrices TV
+and TI take into account the effect that line geometry has                                                                 
+                                                                                                    ∂     ∂           ∂     ∂
+on the propagation modes and, in this sense, they are the                                              +G    v + ZW      +G    i
+                                                                                                    ∂t    ∂x m        ∂t    ∂x m
+true transformation matrices for the ideal MTL. Note that
+the frequency dependence of the electrical parameters due                                        + GRm i m + GCm = 0                           (13)
+to skin effect in conductors and ground return is embedded
+in the convolution term given by (7c).                                               where the plus sign corresponds to the equation resulting from
+   Substituting (8c) and (8d) into (7a) and (4b) yields                              the addition operation and the minus sign to that resulting
+                                                                                     from the subtraction operation.
+    ∂vm (x, t)     ∂i (x, t)                                                            Along the characteristic lines deﬁned by (11b), the terms in
+               + Dm m        + Rm i(x, t) + Cm (x, t) = 0                    (9a)    parenthesis of (13) become total derivatives, hence it can be
+       ∂x             ∂t
+                                                                                     written as
+                   ∂ i m (x, t)     ∂v (x, t)
+                                + Cm m        =0                             (9b)               dvm      di
+                        ∂x             ∂t                                                           + Z W m + GRm i m + GCm = 0                (14)
+                                                                                                 dt       dt
+where
+                                                                                     Equation (14) together with (11b) is an ODE system that
+         Dm = T −1                 C m = T −1                                        represents the PDE system given by (9a) and (9b). The 2n
+                V D TI,                    m C0T V ,
+                                                                          (9c,d,e)   equations system (14) has been solved before using ﬁnite
+            Rm = T −1
+                   V Rx T I                                                          difference by spatial discretisation [12–15], which has
+                                                                                     proved to be useful when modelling non-uniform,
+                               
+                               n                                                    non-linear and external-ﬁeld excited transmission lines, or
+         Cm (x, t) = −T −1
+                        V                 pi K i e−pi t ∗T I i m (x, t)      (9f )   whenever measuring voltages or currents at discrete points
+                                   i=1                                               along the line is required. However, when dealing with
+
+IET Gener. Transm. Distrib., 2013, Vol. 7, Iss. 11, pp. 1185–1193                                                                              1187
+doi: 10.1049/iet-gtd.2012.0284                                                                 © The Institution of Engineering and Technology 2013
+www.ietdl.org
+uniform transmission lines for which only the terminal                characteristic lines given by (11b) yields (see Fig. 1)
+voltages and currents are required, spatial discretisation
+makes the algorithm very inefﬁcient and computer-time                                                         1  t−t       
+                                                                                 S,m + Z K i R,m − Z 4 i S,m + ℓ CS,m + wR,m = 0
+                                                                        vtR,m − vt− t        t           t−t             t
+consuming. In this work an efﬁcient method with no spatial                                                    2
+discretisation is proposed.                                                                                                   (17a)
+
+                                                                                                              1  t−t       
+                                                                                 R,m − Z K i S,m + Z 4 i R,m − ℓ CR,m + wS,m = 0
+                                                                        vtS,m − vt−t         t           t−t             t
+4 Model for uniform overhead transmission                                                                     2
+lines                                                                                                                         (17b)
+Consider that the solutions to (14) at time t − t are known, t        where
+being the travel time of the fastest mode
+                                                                                                              
+                  t−t                                                                 Dt   −1
+                                                                                               N
+                                                                                                      pi
+          vt− t              t            t T                                 ZK = Z3 − ℓ T V               K T                        (18a)
+            S,m = vS,m1  vt−
+                          S,m2  · · · vt−
+                                        S,mn  ,                                        2           1 + Dt pi i I
+                                                           (15a,b)                             i=1
+              t   t−t     t             t T
+            S,m = iS,m1
+          i t−          it−
+                         S,m2  · · · it−
+                                      S,mn
+                                                                                         1                        1
+                                                                              Z 3 = Z W + ℓRm ,     Z 4 = Z W − ℓRm                   (18b,c)
+                                                                                         2                        2
+                t−t
+       vt−  t
+          R,m = vR,m1  vt− t
+                               · · · vt− t T
+                                             ,                                                                   
+                        R,m2           R,mn
+                                                           (15c,d)                               N
+                                                                                                         ct−Dt
+            t   t−t     t             t T                                             wtS,m = −          S,i
+                                                                                                                   ,
+         R,m = iR,m1
+       i t−           it−
+                       R,m2  · · · it−
+                                     R,mn                                                              1 + Dt pi
+                                                                                                 i=1
+                                                                                                                                    (18d,e)
+                                                                                                    N
+                                                                                                           ct−Dt
+                                                                                                              R,i
+and the solutions at time t                                                               wR,m = −
+                                                                                            t
+
+                                                                                                    i=1
+                                                                                                         1 + Dt pi
+                                            T                                                              
+       vtS,m = vtS,m1 vtS,m2 · · · vtS,mn ,                                               
+                                                                                          N        t−t−Dt
+                                                                                                 cS,i
+                                                                                 t
+                                                         (16a, b)             S,m = −
+                                                                              Ct−
+       i tS,m = itS,m1 itS,m2 · · · itS,mn
+                                           T
+                                                                                          i=1
+                                                                                                 1 + Dtpi
+                                                                                                  N                 
+                                                                                                             pi K i
+                    t                                                                 − DtT −1                           T I i t−t
+                                                                                                                                       (18f )
+          vtR,m =    vR,m1 vtR,m2 · · · vtR,mn ,
+                                                 T                                           V
+                                                                                                   i=1
+                                                                                                           1 + Dtpi             S,m
+
+
+                                                          (16c,d)                                          
+                                               T
+           i tR,m = itR,m1 itR,m2 · · · itR,mn                                           
+                                                                                         N        t−t−Dt
+                                                                                                 cR,i
+                                                                               R,m = −
+                                                                              Ct− t
+
+                                                                                          i=1
+                                                                                                1 + Dt pi
+are required as shown in Fig. 1, where ℓ is the length of the                                     N                
+                    t     t−t     t−t       t−t                                                           pi K i
+line. Note that vt−
+                  S,mj , vR,mj , iS,mj and iR,mj are not located at                    − DtT −1                           T I i t−t
+                                                                                                                                       (18g)
+the ends of the line, thus they are calculated using linear                                  V
+                                                                                                  i=1
+                                                                                                         1 + Dtpi               R,m
+
+interpolations. Applying the central ﬁnite differences
+method to each mode of (14) along the corresponding                                                                 
+                                                                                            ℓ = diag ℓ1 , . . . , ℓn                   (18h)
+
+
+                                                                      In (18h) ℓj is the distance travelled by the jth mode at time t.
+                                                                      The convolution term Ψm has been solved with a recursive
+                                                                      convolution procedure based on the differential equation
+                                                                      method (see Appendix). Rearranging (17a) and (17b), the
+                                                                      subsequent equations are obtained
+
+                                                                                            vtR,m + Z K i tR,m = vSHm                  (19a)
+
+                                                                                            vtS,m − Z K i tS,m = vRHm                  (19b)
+
+                                                                      where
+
+                                                                                                             ℓ  t−t         
+                                                                                 vSHm = vt− t        t−t
+                                                                                         S,m + Z 4 i S,m −      CS,m + wtR,m           (19c)
+                                                                                                             2
+                                                                                                           ℓ  t−t         
+                                                                               vRHm = vt−t         t−t
+                                                                                       R,m − Z 4 i R,m +      CR,m + wtS,m             (19d)
+                                                                                                           2
+
+
+Fig. 1 Modal voltages in the characteristics curves diagram           Equations (19c) and (19d) represent ‘history terms’. Using the
+without discretisation mesh of the line                               transformation matrices TV and TI in (19a) and (19b) and
+
+1188                                                                   IET Gener. Transm. Distrib., 2013, Vol. 7, Iss. 11, pp. 1185–1193
+© The Institution of Engineering and Technology 2013                                                      doi: 10.1049/iet-gtd.2012.0284
+                                                                                                        www.ietdl.org
+rearranging it can be written in the phase domain
+
+                      i tR = Y KPhase vtR + i SH            (20a)
+
+                       i tS = Y KPhase vtS + i RH           (20b)
+
+where
+
+                       i SH = −T i Z −1
+                                     K vHm
+                                        S
+                                                            (21a)
+
+                       i RH = −T i Z −1
+                                     K vHm
+                                        R
+                                                            (21b)   Fig. 3 Conﬁguration of the line for the ﬁeld test [23]
+
+                      Y KPhase = T i Z −1 −1
+                                       K Tv                 (21c)
+
+Equations (20a) and (20b) represent a dual Norton model for
+the transmission line, as shown in Fig. 2.
+   The model depicted in Fig. 2 can be included into any
+simulation program based on the nodal or the modiﬁed
+nodal method. For example, when using the nodal method,
+the steps followed are:
+
+1. Calculate transmission line electrical parameters over a
+given frequency range.
+2. Obtain the rational functions representation of R’(s).
+3. Obtain constant matrices TV, TI and Λ.
+4. Calculate the constant conductance matrix Y KPhase given by
+(21c) and include it in the conductance network matrix in the
+positions corresponding to the nodes where the transmission
+line is connected.
+5. Provide initial conditions of the line.
+
+   Steps 1–5 are performed only once before the actual              Fig. 4 Voltages at receiving end
+simulation process starts. In the time stepping procedure in
+order to solve for node voltages at the time instant t, the
+steps are as follows:                                               the number of samples and the observation time; therefore
+6. The history current sources given by (21a) and (21b) are         it will be considered as the base of comparison for the
+calculated and included in the current sources vector of the        simulation results.
+network.                                                               Although not included in this paper due to space
+7. Solve the network system for the node voltages.                  restrictions, an additional set of simulations were performed
+8. Calculate network branch currents and currents injected          for a very long observation time (up to 2 s) to assess the
+into the transmission line ends.                                    stability of the model, considering a sinusoidal excitation.
+   Steps 6–8 are repeated until the observation time is             The model showed no instability problems in any of the tests.
+reached.
+                                                                    5.1   Field test
+5    Application examples
+                                                                    As a ﬁrst example, a comparison is made with the ﬁeld
+As an initial validation of the model, comparison with an           measurements published in [23]. The line conﬁguration is
+experimental measurement is provided. Then, different               shown in Fig. 3. The sending nodes of phases B and C and
+cases of transient events are used to compare the results           the receiving nodes for all phases are considered as open
+from the proposed model to those obtained using a                   circuits. The electrical parameters are calculated using the
+frequency-domain method (FDM) [20, 21], the model of                well-known formulas published in [24]. Simulation data for
+Martí available in the ATP/EMTP [1, 18] and the model of            this example are as follows: N = 1154 (number of samples)
+Morched, Gustavsen and Tartibi available in the EMTP-RV             and Δt = 0.346 μs (discretisation step). Fig. 4 shows the
+[3, 22]. Errors in the FDM can be controlled by means of            transient voltages at the receiving end of the line,
+                                                                    comparing the results from characteristics and from the ﬁeld
+                                                                    measurements. A remarkable agreement between the
+                                                                    waveforms can be noticed.
+
+                                                                    5.2   Energisation of MTL
+
+                                                                    As a second application example, a system with three parallel
+                                                                    three-phase lines is considered, as shown in Fig. 5. The length
+                                                                    of the lines is 100 km. The radius of the conductors (1 per
+                                                                    phase) is 0.02 m, the permeability of the ground and the
+                                                                    conductors is 1.2566 × 10 − 6 H/m, the resistivities of ground
+Fig. 2 Norton model of MTL                                          and conductors are 100 and 2.71 × 10 − 8 Ω m, respectively.
+
+IET Gener. Transm. Distrib., 2013, Vol. 7, Iss. 11, pp. 1185–1193                                                             1189
+doi: 10.1049/iet-gtd.2012.0284                                                © The Institution of Engineering and Technology 2013
+www.ietdl.org
+                                                                    closing are 0.002, 0.006 and 0.012 s for phases O, P and Q,
+                                                                    respectively, and the receiving end is considered as open
+                                                                    circuit. The B and C circuits are not energised with the
+                                                                    sending nodes grounded, while the receiving nodes are
+                                                                    considered as open circuits.
+                                                                       Figs. 6a and b depict the magnitudes and phase angles of
+                                                                    the self-elements of the transient resistance matrix for the A
+                                                                    circuit of Fig. 5, comparing the results obtained directly
+
+
+
+
+Fig. 5 Conﬁguration of a MTL with three circuits
+
+
+Sagging between towers is not considered. Simulation data
+for this example are N = 1350 and Δt = 22.22 μs.
+   At the sending node of the A circuit, a three-phase
+sinusoidal source of 230 kV is connected. The times of
+
+
+
+
+Fig. 6 Magnitude of the self-elements of the transient resistance   Fig. 7 Transient voltages in the P phase, receiving node
+matrix
+                                                                    a A circuit
+a Magnitude                                                         b B circuit
+b Phase angle                                                       c C circuit
+
+1190                                                                 IET Gener. Transm. Distrib., 2013, Vol. 7, Iss. 11, pp. 1185–1193
+© The Institution of Engineering and Technology 2013                                                    doi: 10.1049/iet-gtd.2012.0284
+                                                                                                       www.ietdl.org
+
+
+
+
+Fig. 8 Transient induced currents, receiving node (connected to ground)
+a O phase – B circuit
+b P phase – B circuit
+c O phase – C circuit
+d P phase – C circuit
+
+
+
+from (3b) and the ﬁtted values computed using vector ﬁtting          5.3   Lightning impulse
+[2]. It can be noticed that the functions are very smooth and
+that the difference between the original and the ﬁtted               As a third application example, the same conﬁguration of
+functions is imperceptible. The behaviour of the mutual              Fig. 5 is considered, but now with a length of 10 km.
+elements is very similar. The R′(s) was ﬁtted with nine              At the sending node of the O phase of the A circuit, a
+poles for all examples. In Fig. 7a the transient voltages in         typical lightning voltage impulse (1.2/50 µs) is injected.
+the P phase at the receiving node of the A circuit is shown.         The receiving end is considered as open circuit. Circuits B
+The induced per unit voltages in the P phase at the                  and C are not energised and sending nodes are grounded
+receiving ends of the B and C circuits are shown in Figs. 7b         while receiving nodes are considered as open circuits.
+and c, respectively. As it can be seen, both the EMTP-RV             Simulation data for this example are N = 1200 and Δt =
+model and the characteristics model provide for practical            1.33 μs. The transient voltages obtained in the O phase at
+purposes results close to those from the FDM.                        the receiving node of the A circuit are shown in Fig. 9a.
+   Consider now the case where the ends of all circuits are          Figs. 9b and c show the transient induced voltages in the O
+connected to ground through 10 Ω resistances. Figs. 8a–d             phase at the receiving ends of the B and C circuits.
+show the transient induced currents in the O and P phases               From Figs. 9a–c, it can be appreciated that the three models
+at the receiving ends of the B and C circuits. In this case          provide similar results, although the magnitudes are
+the ATP/EMTP model does not provide the correct results.             overestimated by the ATP/EMTP model.
+This can be attributed to the fact that this model does not
+take into account the frequency dependence of the                    5.4   Inclusion of a non-linear element
+transformation matrix or to the method used to synthesise
+the poles of the characteristic admittance and the                   As a ﬁnal example, the same conﬁguration, excitation and
+propagation matrix. Numerical experiments show that this             simulation data of Example 5.3 are considered. The
+behaviour appears in highly asymmetrical cases in the                objective of this example is to demonstrate the ability of the
+calculation of mutual effects.                                       proposed line model to manage the inclusion of a
+
+IET Gener. Transm. Distrib., 2013, Vol. 7, Iss. 11, pp. 1185–1193                                                              1191
+doi: 10.1049/iet-gtd.2012.0284                                                 © The Institution of Engineering and Technology 2013
+www.ietdl.org
+                                                                   Table 1 Surge arrester’s data for Example 5.4
+                                                                   Voltage range, pu                                     Resistance, Ω
+
+                                                                   0.0–1.0                                                   10 000
+                                                                   1.0–1.2                                                    325
+                                                                   1.2–1.3                                                     75
+                                                                   1.3 and above                                               35
+
+
+
+
+                                                                   Fig. 10 Transient voltages at the receiving node of the O phase of
+                                                                   the A circuit, with and without arrester
+
+
+                                                                   model in ATP/EMTP used the same piece-wise linear
+                                                                   approximation of Table 1. As shown in Fig. 10, results
+                                                                   from the model proposed here are very close to those from
+                                                                   ATP/EMTP.
+
+
+                                                                   6    Conclusions
+                                                                   In this work, a model for overhead MTLs with
+                                                                   frequency-dependent electrical parameters for time-domain
+                                                                   transient analysis has been presented.
+                                                                      The proposed model requires the approximation of one
+                                                                   parameter (the transient resistance) to include the frequency
+                                                                   dependence of the electrical parameters. In contrast, both
+                                                                   the Martí model implemented in the ATP/EMTP and the
+                                                                   model of Morched et al., implemented in the EMTP-RV,
+                                                                   require the approximation of two parameters. Moreover, the
+                                                                   model does not require the extraction of time delays.
+                                                                   Another important contribution is that the model does not
+                                                                   need the discretisation mesh of the line and it does not
+                                                                   present problems with asymmetric line conﬁgurations.
+Fig. 9 Transient voltages in the O phase, receiving node              Due to the fact that the frequency-dependent electrical
+a A circuit
+                                                                   parameters are included by means of the synthesis of the
+b B circuit                                                        transient resistance, which is a smooth function, the
+c C circuit                                                        technique does not present problems with the rational
+                                                                   functions ﬁtting and requires only real poles. Results
+                                                                   obtained with the developed model have been compared
+                                                                   with those from the ATP/EMTP, the EMTP-RV, a FDM
+non-linear element. A simple surge arrester is connected at the    program and ﬁeld measurements.
+receiving node of the O phase of the A circuit. This arrester is
+basically a non-linear resistance modelled by means of a
+piece-wise linear approximation (four slopes) of its v–i
+characteristic, as shown in Table 1. Transient voltages at the     7    References
+node where the arrester is connected are shown in Fig. 10.          1 Martí, J.: ‘Accurate modelling of frequency-dependent transmission
+For comparison purposes, results from the ATP/EMTP                    lines in electromagnetic transient simulations’, IEEE Trans. Power
+using the model of Martí [1] are also provided. The arrester          Appar. Syst., 1982, 101, (1), pp. 147–157
+
+
+1192                                                                IET Gener. Transm. Distrib., 2013, Vol. 7, Iss. 11, pp. 1185–1193
+© The Institution of Engineering and Technology 2013                                                   doi: 10.1049/iet-gtd.2012.0284
+                                                                                                                       www.ietdl.org
+ 2 Gustavsen, B., Semlyen, A.: ‘Combined phase domain and modal               22 Mahseredjian, J., Dennetière, S., Dubé, L., Khodabakhchian, B.,
+   domain calculation of transmission line transients based on vector            Gérin-Lajoie, L.: ‘On a new approach for the simulation of transients
+   ﬁtting’, IEEE Trans. Power Deliv., 1998, 13, (2), pp. 596–604                 in power systems’, Electr. Power Syst. Res., 2007, 77, (11),
+ 3 Morched, A., Gustavsen, B., Tartibi, M.: ‘A universal model for accurate      pp. 1514–1520
+   calculation of electromagnetic transients on overhead lines and            23 Nagaoka, N., Amentani, A.: ‘A development of a generalized
+   underground cables’, IEEE Trans. Power Deliv., 1999, 14, (3),                 frequency-domain transient program – FTP’, IEEE Trans. Power
+   pp. 1032–1038                                                                 Deliv., 1988, 3, (4), pp. 1996–2004
+ 4 Gustavsen, B.: ‘Passivity enforcement for transmission line models         24 Martinez-Velasco, J.A.: ‘Power system transients-parameter
+   based on the method of characteristics’, IEEE Trans. Power Deliv.,            determination’ (CRC Press, Boca Raton, FL, 2010)
+   2008, 23, (4), pp. 2286–2293                                               25 Semlyen, A., Dabuleanu, A.: ‘Fast and accurate switching transient
+ 5 Deschrijver, D., Gustavsen, B., Dhaene, T.: ‘Causality preserving             calculations on transmission lines with ground return using recursive
+   passivity enforcement for traveling-wave-type transmission-line               convolutions’, IEEE Trans. Power Appar. Syst., 1975, 94, (2),
+   models’, IEEE Trans. Power Deliv., 2009, 24, (4), pp. 2461–2462               pp. 561–571
+ 6 Kocar, I., Mahseredjian, J., Olivier, G.: ‘Improvement of numerical
+   stability for the computation of transients in lines and cables’, IEEE
+   Trans. Power Deliv., 2010, 25, (2), pp. 1104–1111                          8 Appendix
+ 7 Semlyen, A., Gustavsen, B.: ‘Phase-domain transmission-line modeling
+   with enforcement of symmetry via the propagated characteristic             Recursive convolution
+   admittance matrix’, IEEE Trans. Power Deliv., 2012, 27, (2),
+   pp. 626–631
+ 8 Ramos-Leaños, O., Naredo, J.L., Mahseredjian, J., Dufour, C.,
+                                                                              The convolution term given by (9f) can be expressed in the
+   Gutierrez-Robles, J.A., Kocar, I.: ‘A wideband line/cable model for        frequency domain as follows [25]
+   real-time simulations of power system transients’, IEEE Trans. Power
+   Deliv., 2012, 27, (4), pp. 2211–2218                                                                                     
+                                                                                                                
+                                                                                                                N
+                                                                                                                      pi
+ 9 Garcia, N., Acha, E.: ‘Transmission line model with frequency
+                                                                                      Cm (x, s) = −T −1                   K T I (x, s)                (22)
+   dependency and propagation effects: a model order reduction and                                   V
+                                                                                                                i=1
+                                                                                                                    s + pi i I m
+   state-space approach’. Proc. IEEE/PES General Meeting, Pittsburgh,
+   USA, July 2008, pp. 1–7
+10 Costa, E.C.M., Kurokawa, S., Pissolato, J., Prado, A.J.: ‘Efﬁcient         From (22)
+   procedure to evaluate electromagnetic transients on three-phase
+   transmission lines’, IET Gener. Transm. Distrib., 2010, 4, (9),
+   pp. 1069–1081                                                                                                      
+                                                                                                                      N
+11 Costa, E.C.M., Kurokawa, S., Shinoda, A.A., Pissolato, J.: ‘Digital                            Cm (x, s) = −             ci (x, s)                 (23)
+   ﬁltering of oscillations intrinsic to transmission line modeling based                                             i=1
+   on lumped parameters’, Int. J. Electr. Power Energy Syst., 2013, 44,
+   (1), pp. 908–915
+12 Naredo, J.L.: ‘The effect of corona on wave propagation on transmission
+                                                                              where
+   lines’. PhD thesis, The University of British Columbia, Vancouver,
+                                                                                                              pi
+   Canada, 1992
+13 Ramirez, A., Naredo, J.L., Moreno, P., Guardado, L.: ‘Electromagnetic
+                                                                                              ci (x, s) =         T −1 K T I (x, s)                   (24)
+                                                                                                            s + pi V i I m
+   transients in overhead lines considering frequency dependence and
+   corona effect via the method of characteristics’, Int. J. Electr. Power
+   Energy Syst., 2001, 23, (3), pp. 179–188                                   From (24)
+14 Ramírez, A., Naredo, J.L., Moreno, P.: ‘Full frequency-dependent line
+   model for electromagnetic transient simulation including lumped and
+   distributed sources’, IEEE Trans. Power Deliv., 2005, 20, (1),                           (s + pi )ci (x, s) = pi T −1
+                                                                                                                      V K i T I I m (x, s)            (25)
+   pp. 292–299
+15 Moreno, P., Chavez, A.R., Naredo, J.L.: ‘A simpliﬁed model for             Transforming (25) to time domain
+   nonuniform multiconductor transmission lines using the method of
+   characteristics’. Proc. IEEE/PES General Meeting, Pittsburgh, USA,
+                                                                                        d
+                                                                                          c (x, t) + pi ci (x, t) = pi T −1
+   July 2008, pp. 1–5
+16 Moreno, P., Ambrosio, A., Gómez, P.: ‘The characteristics approach for                                                V K i T I i m (x, t)         (26)
+                                                                                        dt i
+   modeling single phase transmission lines with frequency dependent
+   electrical parameters’. IEEE/PES T&D Conf. and Exposition Latin
+   America, Bogotá, Colombia, August 2008, pp. 1–4                            Using Euler method
+17 Escamilla, J.C., Moreno, P., Cruz, E.: ‘A new approach for modeling
+                                                                                                            (x) Dtpi T −1
+   multiconductor transmission lines with constant electrical parameters’.
+                                                                                                      ct−Dt            V K i T I i m (x, t)
+   Proc. North American Power Symposium (NAPS), Arlington, USA,                         ci (x, t) =     i
+                                                                                                                +                                     (27)
+   September 2010, pp. 1–4                                                                            1 + Dt pi       1 + Dt pi
+18 Dommel, H.W.: ‘Electromagnetic transients program reference manual
+   (EMTP theory book)’ (University of British Columbia, Department of
+   Electrical Engineering, Vancouver, Canada, 1989)                           Therefore
+19 Radulet, R., Timotin, A., Tugulea, A., Nica, A.: ‘The transient response
+   of the electric lines based on the equations with transient                                      
+                                                                                                    N
+                                                                                                      ct−Dt (x)
+   line-parameters’, Rev. Roum. Sci. Techn., 1978, 23, (1), pp. 3–19               Cm (x, t) = −            i
+20 Moreno, P., Ramírez, A.: ‘Implementation of the numerical Laplace
+                                                                                                      i=1
+                                                                                                          1 + Dt pi
+   transform: a review’, IEEE Trans. Power Deliv., 2008, 23, (4),                                                                
+   pp. 2599–2609                                                                                                
+                                                                                                                N
+                                                                                                                      pi K i
+21 Gómez, P., Uribe, F.A.: ‘The numerical Laplace transform: an accurate                         − DtT −1                            T I i m (x, t)   (28)
+   tool for analyzing electromagnetic transients on power system devices’,
+                                                                                                       V
+                                                                                                                i=1
+                                                                                                                    1 + Dt pi
+   Int. J. Electr. Power Energy Syst., 2009, 31, (2–3), pp. 116–123
+
+
+
+
+IET Gener. Transm. Distrib., 2013, Vol. 7, Iss. 11, pp. 1185–1193                                                                         1193
+doi: 10.1049/iet-gtd.2012.0284                                                            © The Institution of Engineering and Technology 2013
+
