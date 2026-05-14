@@ -526,6 +526,8 @@ updated: "2026-05-13"
 ||| 48 | exponential-integrator.md | methods | methods/numerical-methods/exponential-integrator.md | 完成 | 4093字/100公式/10wikilinks/6表格/12章节/5篇来源论文/AGEI+Parallel-Rate EI+Splitting EI+MEXP+GPU缓存五方法体系 |
 |||| 43 | frequency-domain-analysis.md | topics/tools-software/frequency-domain-analysis.md | 完成 | 8912字/79公式/14wikilinks/1SVG/9章节/5种核心方法/9篇来源论文/方法体系架构图
 || 44 | 1 | 1 | 0 | pv-power-plant.md |
+|||| 58 | 1 | 1 | 0 | distributed-parameter-model页面完成（4761字，114公式，13wikilink，10章节，6篇来源论文，三大建模方法体系：FD-Line/JMarti行波/ULM相域模型/扩展Bergeron模型）
+
 ||||| 45 | power-quality.md | topics/renewable-storage/power-quality.md | 完成 | 3958字(中文)/98公式(28块级+70行内)/25wikilinks/1SVG/10章节/8篇来源论文/8种核心方法(谐波潮流/闪变/超谐波/dq-SDP/电压插值/HP-AVM/DHD降阶/非特征环流)/方法体系架构SVG图/五类精度-效率对照表 | 2026-05-14 |
 |||| 46 | digital-simulator.md | topics/simulation/digital-simulator.md | 完成 | 5800字/34公式(10块级+24行内)/20wikilinks/7表格/11章节/9篇来源论文/五平台架构对比表/场景-平台选择决策表/离线到实时移植经验/FPGA-RTDS联合仿真/GPU加速/FTRT硬件仿真
 |||| 50 | equivalent-modeling.md | models/equivalent/equivalent-modeling.md | 完成 | 3388字/119公式/10wikilinks/11章节/4类等效方法/12篇来源论文/五模型精度效率映射 |
