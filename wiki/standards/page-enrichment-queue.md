@@ -77,7 +77,7 @@ updated: "2026-05-13"
 || 52 | balanced-three-phase-line.md | methods | methods/transmission-line/balanced-three-phase-line.md | P1 | 66 | 1282 | 6 | 12 | completed |
 || 53 | large-scale-hybrid-acdc-simulation.md | topics | topics/simulation/large-scale-hybrid-acdc-simulation.md | P1 | 64 | 1378 | 8 | 21 | completed |
 || 54 | quasi-tem-approximation.md | methods | methods/transmission-line/quasi-tem-approximation.md | P1 | 64 | 814 | 17 | 15 | completed |
-|| 55 | dispatch-operation.md | topics | topics/renewable-storage/dispatch-operation.md | P1 | 63 | 1558 | 7 | 27 | pending |
+|| 55 | dispatch-operation.md | topics | topics/renewable-storage/dispatch-operation.md | P1 | 63 | 1558 | 7 | 27 | completed |
 || 56 | hybrid-acdc-system.md | topics | topics/hvdc-facts/hybrid-acdc-system.md | P1 | 62 | 1507 | 5 | 19 | pending |
 || 57 | corona-effect-modeling.md | methods | methods/transmission-line/corona-effect-modeling.md | P1 | 62 | 1057 | 12 | 14 | pending |
 || 58 | distributed-parameter-model.md | methods | methods/transmission-line/distributed-parameter-model.md | P1 | 61 | 1241 | 9 | 15 | pending |
@@ -478,6 +478,7 @@ updated: "2026-05-13"
 ||| 41 | cable-model.md | models/transmission-line/cable-model.md | 完成 | 4359字/79公式/13wikilinks/1SVG/3表格/24章节/7种建模方法 | 2026-05-14 |
 |||| 42 | hierarchical-control.md | methods/control/hierarchical-control.md | 完成 | 5110字/52公式/10wikilinks/1SVG/8表格/11章节/6篇来源论文/一次下垂+二次PI恢复+VSG+UHVDC三层控制架构 |
 |||| 54 | quasi-tem-approximation.md | methods/transmission-line/quasi-tem-approximation.md | 完成 | 3719字/138公式/10wikilinks/8表格/9章节/7篇来源论文/准TEM框架+大地回路阻抗+ULM行波模型 | 2026-05-14
+|||| 55 | dispatch-operation.md | topics/renewable-storage/dispatch-operation.md | 完成 | 3705字/26公式/16wikilinks/2表格/9章节/15篇来源论文/超实时仿真+混合时间尺度+数字孪生接口 | 2026-05-14
 
 |||| 50 | emt-simulation.md | topics/simulation/emt-simulation.md | 完成 | 4695字/51公式/40wikilinks/16章节/6篇来源论文/核心机制+多速率混合仿真+分网并行+精度评估 | 2026-05-14 |
 | 轮次 | 处理页面数 | 完成数 | 跳过数 | 备注 |
