@@ -63,7 +63,7 @@ updated: "2026-05-13"
 || 38 | computational-acceleration.md | methods | methods/simulation-technology/computational-acceleration.md | P1 | 78 | 1502 | 2 | 19 | completed |
 || 39 | phase-domain-modeling.md | topics | topics/modeling-methods/phase-domain-modeling.md | P1 | 78 | 1440 | 2 | 14 | completed |
 || 40 | earth-return-impedance.md | methods | methods/transmission-line/earth-return-impedance.md | P1 | 81 | 1290 | 2 | 12 | completed |
-|| 41 | cable-model.md | models | models/transmission-line/cable-model.md | P1 | 76 | 2104 | 6 | 58 | pending |
+|| 41 | cable-model.md | models | models/transmission-line/cable-model.md | P1 | 76 | 2104 | 6 | 58 | completed |
 || 42 | hierarchical-control.md | methods | methods/control/hierarchical-control.md | P1 | 75 | 1257 | 5 | 13 | pending |
 || 43 | frequency-domain-analysis.md | topics | topics/tools-software/frequency-domain-analysis.md | P1 | 74 | 1682 | 4 | 31 | pending |
 || 44 | pv-power-plant.md | topics | topics/renewable-storage/pv-power-plant.md | P1 | 73 | 1699 | 5 | 34 | pending |
@@ -475,6 +475,7 @@ updated: "2026-05-13"
 ## 轮次记录
 || 37 | ibr.md | methods/system-studies/ibr.md | 完成 | 1329字/54公式/12wikilinks/1SVG | 2026-05-14 |
 ||| 40 | earth-return-impedance.md | methods/transmission-line/earth-return-impedance.md | 完成 | 3913字/105公式/28wikilinks/1SVG | 2026-05-14 |
+||| 41 | cable-model.md | models/transmission-line/cable-model.md | 完成 | 4359字/79公式/13wikilinks/1SVG/3表格/24章节/7种建模方法 | 2026-05-14 |
 
 | 轮次 | 处理页面数 | 完成数 | 跳过数 | 备注 |
 |------|-----------|--------|--------|------|
