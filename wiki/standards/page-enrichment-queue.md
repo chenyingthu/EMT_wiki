@@ -59,7 +59,7 @@ updated: "2026-05-13"
 || 34 | large-scale-grid-simulation.md | topics | topics/simulation/large-scale-grid-simulation.md | P1 | 83 | 2053 | 6 | 59 | completed |
 || 35 | runge-kutta-in-emt.md | methods | methods/numerical-methods/runge-kutta-in-emt.md | P1 | 82 | 1290 | 3 | 13 | completed |
 ||| 36 | heterogeneous-computing.md | methods | methods/simulation-technology/heterogeneous-computing.md | P1 | 82 | 1380 | 2 | 15 | completed |
-|| 37 | ibr.md | methods | methods/system-studies/ibr.md | P1 | 81 | 1177 | 5 | 12 | pending |
+|| 37 | ibr.md | methods | methods/system-studies/ibr.md | P1 | 81 | 1177 | 5 | 12 | completed |
 || 38 | computational-acceleration.md | methods | methods/simulation-technology/computational-acceleration.md | P1 | 78 | 1502 | 2 | 19 | pending |
 || 39 | phase-domain-modeling.md | topics | topics/modeling-methods/phase-domain-modeling.md | P1 | 78 | 1440 | 2 | 14 | pending |
 || 40 | earth-return-impedance.md | methods | methods/transmission-line/earth-return-impedance.md | P1 | 81 | 1290 | 2 | 12 | pending |
@@ -473,6 +473,7 @@ updated: "2026-05-13"
 | `skipped` | 跳过（PDF不可用或其他原因） |
 
 ## 轮次记录
+|| 37 | ibr.md | methods/system-studies/ibr.md | 完成 | 1329字/54公式/12wikilinks/1SVG | 2026-05-14 |
 
 | 轮次 | 处理页面数 | 完成数 | 跳过数 | 备注 |
 |------|-----------|--------|--------|------|
