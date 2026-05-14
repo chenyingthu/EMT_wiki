@@ -1,0 +1,400 @@
+                                                            Electric Power Systems Research 236 (2024) 110919
+
+
+                                                                 Contents lists available at ScienceDirect
+
+
+                                                       Electric Power Systems Research
+                                                         journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+A waveform-dependence lightning impulse corona model in PSCAD/EMTDC
+for investigating surge propagation on transmission lines
+Yudong Jiang, Fuchang Lin, Hua Li ∗
+School of Electrical and Electronic Engineering, Huazhong University of Science and Technology, 1037 Luoyu Road, Wuhan, 430074, Hubei, China
+
+
+
+ARTICLE               INFO                              ABSTRACT
+
+Keywords:                                               This paper proposes a waveform-dependence lightning impulse corona model and develops it in PSCAD/EMTDC.
+Corona                                                  The model computes corona initiation delay time by the critical volume method and considers the ionization
+Waveform-dependence                                     relaxation process in corona space charge generation. Thus, the model can calculate corona capacitance and
+Critical volume method
+                                                        charge caused by the various waveform lightning impulses. A simple algorithm is proposed to avoid iteration in
+Lightning impulse
+                                                        the solution process to apply the model to electromagnetic transient program for lightning overvoltage analysis.
+Electromagnetic transient program
+                                                        The accuracy of the model is verified by comparing the simulation results with measurement results available
+                                                        in the literature. Based on this model, we investigate the effect of the waveform on the attenuation and
+                                                        deformation of lightning impulse propagation on transmission lines. The results indicate that as the propagation
+                                                        distance increases, the attenuation rate of the voltage peak gradually slows down, and the front time linearly
+                                                        increases with distance. As the front and tail time decreases, the attenuation and deformation of lightning
+                                                        impulses caused by corona become more severe.
+
+
+
+1. Introduction                                                                             However, in this model, the value of the delay time is a constant,
+                                                                                            which contradicts the phenomenon that the corona initiation delay is
+    Corona is a primary source of attenuation and deformation of light-                     related to the waveform [14,15]. Correia et al. believe that the corona
+ning surge propagation on transmission lines [1–4]. The dissipation of                      discharge’s streamer development and ionization process should also be
+energy caused by the corona reduces the amplitude and front time of                         considered to obtain the waveform-dependence of the lightning impulse
+lightning surges, which are essential parameters for the insulation coor-                   corona [16].
+dination of substations [5]. Therefore, accurately evaluating the corona
+                                                                                                In addition, although electromagnetic transient programs are widely
+effect on the lightning surge is crucial for the lightning protection
+                                                                                            used for transient simulation of lightning overvoltage due to their
+design of electrical equipment.
+                                                                                            robust line models and excellent accuracy, it is difficult to establish the
+    When the electric field near the conductor’s surface exceeds the
+critical value, corona discharge occurs, and air ionization generates                       corona model in electromagnetic transient programs due to the nonlin-
+space charges in the vicinity of the conductor [6–9]. Thus, the corona                      earity of corona capacitance. Motoyama et al. simulate the nonlinearity
+effect is equivalent to an increase in the capacitance of the transmission                  of corona capacitors through three parallel linear capacitances [17].
+line and is usually simulated by the capacitance in transient analysis.                     Anane et al. proposed that a nonlinear corona capacitor model can
+The corona capacitance calculation has been widely studied. Some                            be developed using the type-94 component in ATP-EMTP, but this
+researchers have proposed several mathematical functions of corona                          requires many iterations in the program and does not apply to other
+capacitance to approximate the experimental charge–voltage (𝑄-𝑉 )                           electromagnetic transient programs [18,19]. Pereira and Tavares de-
+curves [10,11]. However, these approaches require experimental re-                          veloped a voltage-dependent line model under the corona effect in
+sults from field tests, which are always challenging. Tai et al. proposed                   Matlab software. However, the line model cannot be modified in most
+a simplified mathematical, physical model to calculate corona space                         electromagnetic transient programs [20,21].
+charge and capacitance based on the assumption of the distribution                              This paper proposes a waveform-dependence lightning impulse
+of corona space charge, which has the advantage of applying to lines
+                                                                                            corona model and develops it in PSCAD/EMTDC by a simple algorithm
+without experimental results [12]. To reproduce the experimental 𝑄-
+                                                                                            to investigate the effect of the waveform on the attenuation and
+𝑉 curves for various waveform lightning impulses, Li et al. proposed
+                                                                                            deformation of lightning impulse propagation on transmission lines
+it is necessary to consider the time delay in corona formation [13].
+
+
+  ∗ Corresponding author.
+     E-mail address: leehua@hust.edu.cn (H. Li).
+
+https://doi.org/10.1016/j.epsr.2024.110919
+Received 17 April 2024; Received in revised form 7 July 2024; Accepted 17 July 2024
+Available online 1 August 2024
+0378-7796/© 2024 Published by Elsevier B.V.
+Y. Jiang et al.                                                                                                                 Electric Power Systems Research 236 (2024) 110919
+
+
+
+
+                                             Fig. 1. The two-dimensional distribution of corona space charges and corona branch.
+
+
+caused by corona. The model can be applied to the lightning surge of                      where 𝑚 is the roughness factor of the conductor surface and 𝛿 is the
+various waveforms by considering the corona initiation delay time and                     relative density.
+the ionization relaxation process in corona space charge generation.                          For universality, this paper uses the lightning impulse corona initial
+                                                                                          voltage of the conductor when the probability of corona initiation is
+2. Corona model                                                                           50%.
+                                                                                              The relationship between the impulse corona inception field 𝐸𝑐𝑟 and
+2.1. Lightning impulse corona inception voltage                                           the initial voltage 𝑈𝑐𝑟 for the conductor-above-ground configuration
+                                                                                          can be expressed as [26]
+    When the electric field on a conductor surface reaches the minimum                                 (         ) (           )
+                                                                                                         2ℎ − 𝑟0       2ℎ − 𝑟0
+corona inception field 𝐸min , a delay time is required to produce a seed                  𝑈𝑐𝑟 = 𝐸𝑐𝑟 𝑟0             ln                                           (6)
+electron and start the corona discharge. This delay time is statistically                                  2ℎ            𝑟0
+distributed and cannot be ignored under impulse voltage [22].                             where ℎ is the conductor height.
+    The probability 𝑃 (𝑡) of having at least one impulse corona inception                    For the coaxial configuration, the following formula is used [15]
+within time 𝑡 is given as                                                                                𝑟
+              [              ]                                                            𝑈𝑐𝑟 = 𝐸𝑐𝑟 𝑟0 ln 𝑏                                                  (7)
+                              𝑡                                                                          𝑟0
+𝑃 (𝑡) =1 − exp −                  𝑅 (𝑡) 𝑑𝑡                                      (1)
+                        ∫𝑡0                                                               where 𝑟0 and 𝑟𝑏 are inner and outer radius of the coaxial cylindrical
+                                                                                          conductors.
+where 𝑡0 is the moment when the conductor surface electric field
+reaches the minimum corona inception field 𝐸min , 𝑅 (𝑡) is the rate of
+                                                                                          2.2. Lightning impulse corona capacitance
+electron detachment which can be expressed as
+                     𝑛−                                                                       Fig. 1 shows the two-dimensional distribution of corona space
+𝑅 (𝑡) =                      𝑑𝑟                                                 (2)
+          ∫𝑉𝑐𝑟 (𝑡) 𝜏𝑑 (𝑟, 𝑡)
+                                                                                          charges, all deposited on an outer thin shell. The electric field on a
+where 𝑉𝑐𝑟 (𝑡) is the critical volume, 𝑛− is the negative ion density, and                 conductor surface maintains a constant impulse corona inception field
+𝜏𝑑 (𝑟, 𝑡) is the mean negative ion lifetime. 𝜏𝑑(𝑟,𝑡) varies with the electric             𝐸𝑐𝑟 . The field at the outer thin shell takes the value of 𝐸𝑐 , which
+field 𝐸 and can be expressed as [23,24]                                                   is 1.8 × 106 V/m for negative polarity corona and 4 × 105 V/m for
+                  (          )                                                            positive [12]. The corona effect can be simulated by parallel corona
+                      𝐵
+𝜏𝑑 (𝑟, 𝑡) = 𝐴 exp                                                         (3)             branches, including corona capacitance 𝐶𝑐 and diode. Corona capaci-
+                    𝐸 (𝑟, 𝑡)
+                                                                                          tance represents the effective capacitance corresponding to the increase
+where 𝐴 and 𝐵 are related to absolute humidity 𝐻                                          of corona space charge, and the diode causes the corona branch to
+   Based on the definition of critical avalanche growth, the inner
+                                                                                          disconnect when the conductor voltage drops.
+boundary 𝑟𝑖𝑛 of the 𝑉𝑐𝑟 (𝑡) can be obtained by the following expression
+   [                ]                                                                         When the conductor voltage 𝑈 is known, the corona radius 𝑟𝑐
+          𝑟𝑖𝑛(𝑡)                                                                          for two configurations can be obtained by solving the two following
+exp                𝜆 (𝑟, 𝑡) 𝑑𝑟 = 𝑁𝑐𝑟                                            (4)       expressions based on the Newton–Raphson method.
+      ∫ 𝑟0
+                                                                                              For the conductor-above-ground configuration [26]:
+where 𝑟0 is the conductor radius, 𝑁𝑐𝑟 is the critical avalanche number,                               [                              ] [         ]
+                                                                                                                 𝐸 𝑟𝑐 (𝑡)(2ℎ−𝑟𝑐 (𝑡))       𝑟 (𝑡)
+and 𝜆 is the ionization coefficient, which can be estimated by absolute                     𝑈 (𝑡) = 𝑟0 𝐸𝑐𝑟 − 𝑐 2ℎ                       ln 𝑐𝑟      +
+                                                                                                                       (2ℎ−𝑟0 )               0
+humidity [24]. The outer boundary 𝑟𝑜𝑢𝑡 of the 𝑉𝑐𝑟 (𝑡) can be calculated                                       [           ] [            ]                     (8)
+                                                                                                                2ℎ−𝑟𝑐 (𝑡)       2ℎ−𝑟0
+by 𝜆 = 0. The minimum corona inception field 𝐸min can be calculated                                 𝐸𝑐 𝑟𝑐 (𝑡)     2ℎ
+                                                                                                                           ln     𝑟 (𝑡)
+                                                                                                                            𝑐
+by the Peek formula [25]
+             (           )                                                                    For the coaxial configuration [12]:
+                                                                                                           ( )           ( )
+                   0.308                                                                                    𝑟              𝑟
+𝐸min = 31𝑚𝛿 1 + √                                                   (5)                   𝑈 (𝑡) = 𝐸𝑐𝑟 𝑟0 ln 𝑐 + 𝐸𝑐 𝑟𝑐 ln 𝑏                                                   (9)
+                     𝛿𝑟0                                                                                    𝑟0             𝑟𝑐
+
+                                                                                      2
+Y. Jiang et al.                                                                                                     Electric Power Systems Research 236 (2024) 110919
+
+
+    The steady-state linear density of space charge 𝑄𝑐_𝑠𝑡𝑒𝑎𝑑𝑦 is given by
+
+𝑄𝑐_𝑠𝑡𝑒𝑎𝑑𝑦 (𝑡) = 2𝜋𝜀0 𝐸𝑐 𝑟𝑐 (𝑡) − 𝑄0 (𝑡)                              (10)
+
+where 𝜀0 is the air permittivity and 𝑄0 is the linear density of charge
+at the conductor; the latter can be expressed as Eq. (11) for the
+conductor above-ground configuration and as Eq. (12) for the coaxial
+configuration respectively:
+            2𝜋𝜀0 𝑈 (𝑡)
+𝑄0 (𝑡) =     (       )                                               (11)
+                  2ℎ−𝑟0
+            ln      𝑟0
+            2𝜋𝜀0 𝑈 (𝑡)
+𝑄0 (𝑡) =       ( )                                                   (12)
+                 𝑟
+             ln 𝑟𝑏                                                                               Fig. 2. Equivalent network of corona capacitance.
+                   0
+
+   Considering the ionization relaxation process, the corona linear
+density of space charge 𝑄𝑐 under impulse can be expressed as
+                        [                           ] −𝛥𝑡 .
+𝑄𝑐 (𝑡) = 𝑄𝑐−𝑠𝑡𝑒𝑎𝑑𝑦 (𝑡) − 𝑄𝑐−𝑠𝑡𝑒𝑎𝑑𝑦 (𝑡) − 𝑄𝑐 (𝑡 − 𝛥𝑡) 𝑒 𝜏𝑖            (13)
+
+where 𝛥𝑡 is the simulation step size, 𝜏𝑖 is the ionization relaxation time
+which can be calculated by
+    𝜀
+𝜏𝑖 = 0                                                                (14)
+    𝜎𝑐
+where 𝜎𝑐 is the conductivity of the ionization region, which is 15μS/m
+  Then, corona capacitance 𝐶𝑐 is given by
+            𝑄𝑐 (𝑡) − 𝑄𝑐 (𝑡 − 𝛥𝑡)
+𝐶𝑐 (𝑡) =                                                             (15)
+            𝑈 (𝑡) − 𝑈 (𝑡 − 𝛥𝑡)
+
+3. Algorithm
+
+     As shown in Fig. 2, 𝑘 and 𝑚 are the nodes at both ends of 𝐶𝑐 (𝑡),
+𝑖𝑘𝑚 (𝑡) is the current flowing from node 𝑘 to node 𝑚, and 𝑈𝑘𝑚(𝑡) is the
+voltage between the two ends of 𝐶𝑐 (𝑡). The relationship between 𝑈𝑘𝑚(𝑡)
+and 𝑖𝑘𝑚 (𝑡) can be represented by
+                               𝑡  𝑖𝑘𝑚 (𝑡)
+𝑈𝑘𝑚 (𝑡) = 𝑈𝑘𝑚 (𝑡 − 𝛥𝑡) +                  𝑑𝑡                         (16)
+                            ∫𝑡−𝛥𝑡 𝐶𝑐 (𝑡)
+   By trapezoidal integration method, Eq. (16) can be rewritten as
+                           [                     ]
+                         𝛥𝑡 𝑖𝑘𝑚 (𝑡) 𝑖𝑘𝑚 (𝑡 − 𝛥𝑡)
+𝑈𝑘𝑚 (𝑡) − 𝑈𝑘𝑚 (𝑡 − 𝛥𝑡) =           +                             (17)
+                         2 𝐶𝑐 (𝑡)    𝐶𝑐 (𝑡 − 𝛥𝑡)
+    By substitution, Eq. (17) can be easily rewritten as
+                                                                                   Fig. 3. Equivalent network containing corona capacitance calculation flowchart.
+            2𝐶𝑐 (𝑡)
+𝑖𝑘𝑚 (𝑡) =           𝑈𝑘𝑚 (𝑡) + 𝐼𝑐 (𝑡 − 𝛥𝑡)                            (18)
+              𝛥𝑡
+                   2𝐶𝑐 (𝑡)                  𝐶𝑐 (𝑡)                               surges, the corona capacitance 𝐶𝑐 (𝑡) at time 𝑡 can be approximately
+𝐼𝑐 (𝑡 − 𝛥𝑡) = −            𝑈𝑘𝑚 (𝑡 − 𝛥𝑡) −            𝑖 (𝑡 − 𝛥𝑡)      (19)
+                     𝛥𝑡                   𝐶𝑐 (𝑡 − 𝛥𝑡) 𝑘𝑚                         equal to 𝐶𝑐 (𝑡 − 𝛥𝑡) due to the small simulation step size. So that the
+                                                                                 resistance and current source values in the equivalent network of the
+where 𝑖𝑘𝑚 (𝑡 − 𝛥𝑡) in Eq. (19) can be obtained by changing 𝑡 in Eq. (18)
+                                                                                 corona capacitance in Fig. 2 can be replaced by 𝑅𝑐 (𝑡−𝛥𝑡) and 𝐼𝑐 (𝑡−2𝛥𝑡).
+to (𝑡 − 𝛥𝑡). Then
+                                                                                     The solving procedure of an equivalent network containing corona
+⎧           2𝐶𝑐 (𝑡)                                                              capacitance in PSCAD/EMTDC is described in the flow chart shown
+⎪ 𝑖𝑘𝑚 (𝑡) = 𝛥𝑡 𝑈𝑘𝑚 (𝑡) + 𝐼𝑐 (𝑡 − 𝛥𝑡)                                             in Fig. 3. When the conductor voltage does not reach the impulse
+⎨                   4𝐶𝑐 (𝑡)          𝐶𝑐 (𝑡)                          (20)
+⎪ 𝐼𝑐 (𝑡 − 𝛥𝑡) = − 𝛥𝑡 𝑈𝑘𝑚 (𝑡 − 𝛥𝑡) − 𝐶𝑐 (𝑡−𝛥𝑡) 𝐼𝑐 (𝑡 − 2𝛥𝑡)                       corona inception voltage, 𝑅𝑐 (𝑡) is set to 106 Ω, which is equivalent to
+⎩                                                                                disconnecting corona branch. The transmission line is subdivided into
+   Through Eq. (20), a transient equivalent circuit of corona capaci-            linear sections, and the shunt corona branch is placed at each junction
+tance composed of current source and resistance can be established as            node. The linear section length 𝐿 is 15 m, and the simulation step size
+shown in Fig. 2. 𝑅𝑐 (𝑡) is given by                                              𝛥𝑡 is 10−9 s.
+              𝛥𝑡
+𝑅𝑐 (𝑡) =                                                             (21)        4. Results
+            2𝐶𝑐 (𝑡)
+    In EMT-type programs, the node voltages of the equivalent network            4.1. Verification
+are treated as an unknown quantity and solved by the nodal equations.
+However, it can be seen from Fig. 2 that the electromagnetic transient               Fig. 4 shows the 𝑄-𝑉 curve from calculated results based on the
+equivalent network of the corona capacitance is dependent on its volt-           waveform-related impulse corona model. The delay time increases
+age, which is unknown before the network is solved. Therefore, when              the corona inception voltage, which reduces the corona charge and
+calculating electromagnetic transient equivalent networks containing             capacitance. The ionization relaxation process slows down the rate of
+corona capacitance, the calculation process inevitably requires itera-           initial corona charge increase and slightly reduces the maximum corona
+tion, affecting the speed and stability. For the research on the lightning       charge.
+
+                                                                             3
+Y. Jiang et al.                                                                                                             Electric Power Systems Research 236 (2024) 110919
+
+
+
+
+     Fig. 4. The effect of corona initiation delay time and ionization relaxation.       Fig. 6. Comparison between measured        and   calculated   𝑄-𝑉   curves   for   the
+                                                                                         conductor-above-ground configuration.
+
+
+
+
+                                                                                                                        Fig. 7. Test layout.
+
+
+
+
+Fig. 5. Comparison between measured and calculated 𝑄-𝑉 curves for the coaxial
+configuration.
+
+
+
+
+    For the coaxial configuration, the impulse voltage of 250 kV and
+120/2200 μs is applied to the conductor. The inner and outer radii of
+the coaxial cylindrical conductors are 0.475 and 29.05 cm, respectively.
+Fig. 5 shows excellent agreement between the model results and the
+measured results reported in Ref. [12].
+    For the conductor-above-ground configuration, the impulse voltage
+of 2.5/60 μs is applied to the conductor. The conductor radius is
+1.524 cm, the height was calculated from the radius, and the geomet-
+ric capacitance value was obtained from the measured 𝑄-𝑉 curves.
+Fig. 6 shows the satisfactory consistency between the calculated and
+measured results under various peak voltages; the measured results
+were reported in Ref. [25]. In addition, as shown in Fig. 6, the corona
+inception voltage increases with the peak of impulse voltage. The
+discrepancy between the calculated and the measured results may be
+due to the statistical distribution of delay time, which disperses the
+corona initiation voltage.
+    As shown in Fig. 7, Wagner applied the impulse voltage of 1.28 MV                    Fig. 8. Comparison between measured and calculated surge propagation. (a) Negative
+                                                                                         polarity. (b) Positive polarity.
+peak value and 1.3/6.2 μs to the sending end of the steel-reinforced
+aluminum (ACSR) conductor with a radius of 2.54 cm and an average
+height of 18.89 m [27]. The end of the line is equipped with a
+matching resistor to simulate an infinite-length line without reflection.                4.2. Effect of the waveform
+The voltage waveform is measured along the line through a voltage
+divider.                                                                                     To investigate the effect of the voltage surge waveform on the
+    The simulation and measured results are shown in Fig. 8, showing                     attenuation by corona, we apply impulse voltage of 3.83/75, 0.43/40,
+good consistency. The attenuation of positive polarity surge propaga-                    and 3.83/40 μs to the typical 110 kV single-circuit AC transmission line
+tion on the transmission line caused by corona is more significant than                  shown in Fig. 9 with the conductor LGJ-150. The overhead transmission
+negative.                                                                                line is simulated by Frequency Dependent (Phase) which is a distributed
+
+                                                                                     4
+Y. Jiang et al.                                                                                                               Electric Power Systems Research 236 (2024) 110919
+
+
+
+
+                                                                                            Fig. 11. The lightning surge peak value and front time vary with distance under
+                                                                                            different waveforms.
+Fig. 9. Tower configuration of 110 kV transmission line, with brackets indicating the
+central height of the span.
+
+                                                                                            attenuation increases with lower front and tail time. This is because
+                                                                                            corona space charges stopped being generated at an earlier time. As
+                                                                                            distance increases, the speed of lightning surge peak value attenuation
+                                                                                            gradually decreases. For the deformation of the front of the surge
+                                                                                            caused by the corona, reducing both the front and tail time increases
+                                                                                            the deformation, but the effect of reducing the tail time is more signif-
+                                                                                            icant. The front time rises linearly with distance during the lightning
+                                                                                            impulse propagating on the transmission line. When the propagation
+                                                                                            distance is 15 km and the peak value is 1200 kV, the impulse voltage
+                                                                                            of 3.83/75, 0.43/40, and 3.83/40 μs are attenuated by 209.2, 341.2,
+                                                                                            and 296.3 kV, respectively. And the front time increases 19.7, 20.2,
+                                                                                            and 17.2 μs, respectively.
+
+                                                                                            5. Conclusion
+     Fig. 10. Attenuation and deformation of surges under different waveforms.
+                                                                                                In summary, a waveform-dependence lightning impulse corona
+                                                                                            model with corona inception delay time and ionization relaxation is
+parameters model and can represent with good accuracy the frequency-                        proposed in this paper. The model is used to investigate the attenuation
+dependence of line parameters model [28]. The soil resistivity is 100                       and deformation of surge propagation on transmission lines caused
+Ω m.                                                                                        by corona under different waveform impulse voltages by developing
+    Among the three surge waveforms, 3.83/75 and 0.43/40 μs are                             it in PSCAD/EMTDC utilizing a simple algorithm. The corona initial
+typical waveforms for the first and subsequent lightning current strike.                    delay causes a higher corona initiation voltage for impulse surges
+The peak value of impulse voltage is set to 1200 kV, the typical critical                   with higher steepness, reducing corona charge and capacitance. The
+flashover voltage of the 110 kV line, and the polarity is negative.                         ionization relaxation process slows down the rate of initial corona
+    The waveform of lightning surge propagating 5 km on the transmis-                       charge increase and slightly reduces the maximum corona charge. The
+sion line is shown in Fig. 10. Although higher corona initiation voltage                    model is validated by comparing its results with the 𝑄-𝑉 curves and
+reduces corona capacitance, reducing the front time leads to a more                         impulse voltage along the transmission line measured in the literature.
+significant attenuation of lightning surge propagation on transmission                          For the attenuation of the voltage peak caused by the corona,
+lines due to the earlier time to disconnect the corona branch. In                           although lowering the front time increases the corona initiation voltage
+addition, the shorter tail time of the surge also results in the earlier time               and reduces the corona charge, similar to reducing the tail time, the
+without corona space charge generation and corona branch disconnect-                        voltage peak attenuation still increases due to the earlier time without
+ing, which means more obvious attenuation. Therefore, the impulse                           corona space charge generation. The rate of voltage peak attenuation
+voltage of 0.43/40 μs has the maximum attenuation. The attenuation                          gradually decreases with the increase in propagation distance of the
+speed of lightning surge caused by subsequent return strikes is higher                      lightning impulse propagation on the transmission line. For the defor-
+than the first.                                                                             mation of the front of the surge caused by the corona, reducing both the
+    Fig. 11 shows the variation of the surge’s peak value and front                         front and tail time increases the deformation, but the effect of reducing
+time with propagation distance. It can be seen that the voltage peak                        the tail time is more significant. The front time rises linearly with
+
+                                                                                        5
+Y. Jiang et al.                                                                                                                  Electric Power Systems Research 236 (2024) 110919
+
+
+distance during the lightning impulse propagating on the transmission                        [9] Xiaoqing Zhang, Yongzheng Zhang, Experimental investigation and modeling of
+line. When the propagation distance is 15 km and the peak value is                               corona characteristics under lightning impulses, J. Electrost. 90 (2017) 85–90.
+                                                                                            [10] M. Mihailescu-Suliciu, I. Suliciu, A rate type constitutive equation for the
+1200 kV, the impulse voltage of 3.83/75, 0.43/40, and 3.83/40 μs are
+                                                                                                 description of the corona effect, IEEE Trans. Power Appar. Syst. (8) (1981)
+attenuated by 209.2, 341.2, and 296.3 kV, respectively. And the front                            3681–3685.
+time increases 19.7, 20.2, and 17.2 μs, respectively.                                       [11] T.J. Gallagher, I.M. Dudurych, Model of corona for an EMTP study of surge
+                                                                                                 propagation along HV transmission lines, IEE Proc., Gener. Transm. Distrib. 151
+CRediT authorship contribution statement                                                         (1) (2004) 61–66.
+                                                                                            [12] M.A. AI-Tai, H.S.B. Elayyan, D.M. German, A. Haddad, N. Harid, R.T. Waters,
+                                                                                                 The simulation of surge corona on transmission lines, IEEE Trans. PWRD 4 (2)
+    Yudong Jiang: Writing – review & editing, Writing – original draft,                          (1989) 1360–1368.
+Visualization, Validation, Supervision, Software, Resources, Project ad-                    [13] Xiao-rong Li, O.P. Malik, et al., A practical mathematical model of corona for
+ministration, Methodology, Investigation, Data curation, Conceptual-                             calculation of transients on transmission lines, IEEE Power Eng. Rev. 9 (4) (1989)
+                                                                                                 75.
+ization. Fuchang Lin: Funding acquisition, Formal analysis, Data cu-
+                                                                                            [14] Evanthia I. Bousiou, Pantelis N. Mikropoulos, Inception characteristics of surge
+ration, Conceptualization. Hua Li: Investigation, Funding acquisition,                           corona on line conductors, IEEE Trans. Dielectr. Electr. Insul. (2023).
+Formal analysis, Data curation, Conceptualization.                                          [15] N. Harid, R.T. Waters, Statistical study of impulse corona inception parameters
+                                                                                                 on line conductors, IEE Proc. A 138 (3) (1991) 161–168.
+Declaration of competing interest                                                           [16] Celia De Jesus, M.T. Correia De Barros, Modelling of corona dynamics for surge
+                                                                                                 propagation studies, IEEE Trans. Power Deliv. 9 (3) (1994) 1564–1569.
+                                                                                            [17] Hideki Motoyama, Akihiro Ametani, Development of a linear model for corona
+    The authors declare that they have no known competing finan-                                 wave deformation, Electr. Eng. Japan 107 (2) (1987).
+cial interests or personal relationships that could have appeared to                        [18] Zahira Anane, Abdelhafid Bayadi, Kejie Huang, Distortion phenomena on trans-
+influence the work reported in this paper.                                                       mission lines using corona modeling ATP/EMTP, IEEE Trans. Dielectr. Electr.
+                                                                                                 Insul. 25 (2) (2018) 383–389.
+                                                                                            [19] Zahira Anane, Abdelhafid Bayadi, Noureddine Harid, A dynamic corona model
+Data availability                                                                                for EMTP computation of multiple and non-standard impulses on transmission
+                                                                                                 lines using a type-94 circuit component, Electr. Power Syst. Res. 163 (2018)
+    Data will be made available on request.                                                      133–139.
+                                                                                            [20] Thassio Matias Pereira, Maria Cristina Tavares, Development of a voltage-
+                                                                                                 dependent line model to represent the corona effect in electromagnetic transient
+References
+                                                                                                 program, IEEE Trans. Power Deliv. 36 (2) (2020) 731–739.
+                                                                                            [21] Thassio Matias Pereira, Maria Cristina Tavares, A new approach to represent the
+ [1] C.F. Wagner, B.L. Lloyd, Effects of corona on traveling waves, Electr. Eng. 74              corona effect and frequency-dependent transmission line models in EMT-type
+     (12) (1955) 1071.                                                                           programs, IEEE Trans. Power Deliv. 37 (6) (2022) 4711–4720.
+ [2] Jinliang He, Xiao Zhang, Pengcheng Yang, Shuiming Chen, Rong Zeng, Attenua-            [22] N.L. Allen, G. Berger, D. Dring, R. Hahn, Effects of humidity on corona inception
+     tion and deformation characteristics of lightning impulse corona traveling along            in a diverging electric field, IEE Proc. A (Phys. Sci. Meas. Instrum. Manag. Educ.
+     bundled transmission lines, Electr. Power Syst. Res. 118 (2015) 29–36.                      Rev.) 128 (8) (1981) 565–570.
+ [3] Fengnyu Xiao, Bo Zhang, Transient overvoltage on HVDC overhead transmission            [23] Ivo Gallimberti, The mechanism of the long spark formation, Le J. de Physique
+     lines with background DC space charges and impulse corona, IEEE Trans. Power                Colloques 40 (C7) (1979) C7–193.
+     Deliv. 36 (5) (2020) 2921–2928.                                                        [24] Gildas Hartmann, Theoretical evaluation of Peek’s law, IEEE Trans. Ind. Appl.
+ [4] Tran Huu Thang, Yoshihiro Baba, Naoto Nagaoka, Akihiro Ametani, Naoki                       (6) (1984) 1647–1651.
+     Itamoto, Vladimir A Rakov, FDTD simulation of direct lightning strike to a phase       [25] P. Sarma Maruvada, Helene Menemenlis, Ryszard Malewski, Corona character-
+     conductor: Influence of corona on transient voltages at the tower, Electr. Power            istics of conductor bundles under impulse voltages, IEEE Trans. Power Appar.
+     Syst. Res. 123 (2015) 128–136.                                                              Syst. 96 (1) (1977) 102–115.
+ [5] A. Ametani, T. Kawamura, A method of a lightning surge analysis recommended            [26] L. Ganesan, M. Joy Thomas, Studies on the influence of corona on overvoltage
+     in Japan using EMTP, IEEE Trans. Power Deliv. 20 (2) (2005) 867–875.                        surges, Electr. Power Syst. Res. 53 (2) (2000) 97–103.
+ [6] Mazen Abdel-Salam, E. Keith Stanek, Mathematical-physical model of corona              [27] C.F. Wagner, I.W. Gross, B.L. Lloyd, High-voltage impulse tests on transmission
+     from surges on high-voltage lines, IEEE Trans. Ind. Appl. (3) (1987) 481–489.               lines [includes discussion], Trans. Am. Inst. Electr. Eng. Part III Power Appar.
+ [7] Adam Semlyca, Huang Wei-Gang, Corona modelling for the calculation of                       Syst. 73 (2) (1954) 196–210.
+     transients on transmission lines, IEEE Trans. Power Deliv. 1 (3) (1986) 228–239.       [28] Atef Morched, Bjorn Gustavsen, Manoocher Tartibi, A universal model for accu-
+ [8] Taku Noda, Naoko Nose, Naoto Nagaoka, Akihiro Ametani, A wave-front-time                    rate calculation of electromagnetic transients on overhead lines and underground
+     dependent corona model for transmission-line surge calculations, Electr. Eng.               cables, IEEE Trans. Power Deliv. 14 (3) (1999) 1032–1038.
+     Japan 129 (1) (1999) 29–38.
+
+
+
+
+                                                                                        6
+

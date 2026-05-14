@@ -1,0 +1,699 @@
+IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 37, NO. 6, DECEMBER 2022                                                                                      4711
+
+
+
+
+A New Approach to Represent the Corona Effect and
+Frequency-Dependent Transmission Line Models in
+             EMT-Type Programs
+  Thassio Matias Pereira , Graduate Student Member, IEEE, and Maria Cristina Tavares , Senior Member, IEEE
+
+
+   Abstract—This paper presents an accurate and efficient model                  as the finite difference time domain (FDTD) [4], [5], finite ele-
+to represent the corona effect and frequency dependence of line                  ment method [6], [7], or method of characteristics [8]. However,
+parameters in electromagnetic transient simulations. The new                     these approximations are not directly applicable to EMT-type
+method, named the voltage and frequency dependent line model
+(VFDLM), can be seen as a more general case of the well-known                    programs since the line terminals cannot be represented by
+frequency-dependent (FD) or wideband (WB) line models, wherein                   Norton’s equivalents.
+the characteristic admittance and propagation function are con-                     The traditional approach to represent the corona effect in
+sidered voltage- and frequency-dependent parameters. The time                    EMT-type programs consists of subdividing the TL into linear
+domain traveling wave equations are solved using recursive con-                  sections, and at each junction node, a shunt corona branch
+volutions and rational approximation through vector fitting (VF).
+Since the model can be represented by Norton equivalents, it is to-              is placed. This procedure has been adopted in several works
+tally compatible with EMT-type programs. The model is validated                  over the years and combined with different corona models
+through comparisons with three field measurement data available                  [9]–[15]. A further improvement is achieved when nonlinear
+in the literature, and good agreement could be observed between                  corona branches are implicitly represented, and the solution of
+them, showing that the VFDLM is a stable, efficient, and accurate                the line equations is obtained using a recursive scheme [16], [17].
+approach to represent the corona effect in EMT-type programs.
+                                                                                 These approaches have as a common characteristic the fact that
+   Index Terms—Corona effect, transmission line modeling,                        the corona effect is decoupled from the transmission line model
+frequency-dependent line model, EMT-type programs.                               and externally represented by lumped elements, which in fact is
+                                                                                 not consistent with the real physical nature of the phenomenon.
+                           I. INTRODUCTION                                          More recently, our previous research introduced the idea of a
+                                                                                 voltage-dependent line model (VDLM) in EMT-type programs
+      MT-TYPE programs are probably the most widespread
+E     simulation tools used to predict electric power system
+behavior under transient phenomena and are extensively used
+                                                                                 [18]. The VDLM consists of a more general case of the Bergeron
+                                                                                 model, wherein the line capacitance and shunt conductance
+                                                                                 are modeled as voltage-dependent parameters. In addition to
+in insulation coordination studies. One of the main advantages                   presenting a more realistic approach to the distributed nature of
+of EMT-type programs is the capability to represent transmission                 the corona effect, this model can encapsulate the representation
+lines (TLs) with low computational cost and good accuracy.                       of the corona effect directly into the line modeling, resulting in
+Since its first version in 1969 [1], several line models have                    a more robust line model. Despite this fact, the VDLM still did
+been proposed that can accurately represent the frequency de-                    not solve the proper representation of the frequency dependence
+pendence of line parameters [2], [3]. Despite this fact, these                   of line parameters, which is a very important characteristic of
+currently available models are not able to represent the corona                  fast transient simulations, such as lightning overvoltages.
+effect directly in the transmission line formulation since the line                 In this context, the present paper expands the idea of VDLM
+is modeled as a linear component.                                                and presents a voltage- and frequency-dependent line model
+   Due to the nonlinear nature of the corona effect, most of                     (VFDLM). To be totally compatible with EMT-type programs,
+the approaches adopted to represent this phenomenon in wave                      the VFDLM consists of a more general case of the well-
+propagation calculations are based on numerical solutions, such                  established frequency-dependent (FD) [2] or wideband (WB)
+                                                                                 line models [3], with the difference that characteristic admit-
+   Manuscript received 23 September 2021; revised 5 January 2022; accepted       tance and propagation function are taken as both voltage- and
+17 February 2022. Date of publication 7 March 2022; date of current version
+28 November 2022. This work was supported by the Research Agencies in part       frequency-dependent parameters. In addition to representing the
+by CAPES under code-001, in part by CNPq under Grant 307237/2020-6, and          real distributed nature of the corona effect, the VFDLM couples
+in part by FAPESP under Grant 2019/20311-7. Paper no. TPWRD-01429-2021.          the frequency dependence and corona representation directly
+(Corresponding author: Thassio Matias Pereira.)
+   The authors are with the School of Electrical and Computer Engineering,       into the line modeling, constituting a full and very robust line
+University of Campinas, Campinas, São Paulo 13083-852, Brazil (e-mail: thas-     model. The VFDLM was validated through comparisons with
+sio_matias@hotmail.com; ctavares@unicamp.br).                                    three field measurement data available in the literature, and good
+   Color versions of one or more figures in this article are available at
+https://doi.org/10.1109/TPWRD.2022.3157163.                                      agreement could be observed between them. Furthermore, the
+   Digital Object Identifier 10.1109/TPWRD.2022.3157163                          model proves to be a stable, accurate and efficient alternative to
+
+                        0885-8977 © 2022 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                                      See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 15:15:43 UTC from IEEE Xplore. Restrictions apply.
+4712                                                                               IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 37, NO. 6, DECEMBER 2022
+
+
+
+
+Fig. 1.   Incident and reflected current waves at transmission line ends k and
+m.
+                                                                                  Fig. 2. Norton equivalents for WB line model representation in EMT-type
+                                                                                  programs.
+
+represent the corona effect in EMT-type platforms. At the current
+stage, the VFDLM can only deal with single-phase transmission
+lines.                                                                            to end k, as shown in (6).
+   This paper is organized as follows. Section II presents a brief
+                                                                                                             Ik = Yc · Vk − 2Iki                         (5)
+review of WB line models. Section III describes the mathemat-
+ical formulation of the VFDLM and its respective implemen-                                                   Iki = H · Imr                               (6)
+tation procedure in EMT-type programs. Validation tests and                                                             √
+discussions are presented in Sections IV and V, respectively.                                                Yc = Z −1 · Z · Y                           (7)
+                                                                                                                        √
+Concluding remarks are given in Section VI.
+                                                                                                             H = e− Y ·Zl                                (8)
+
+                 II. A REVIEW OF WB LINE MODEL                                    B. Time Domain Implementation
+A. Traveling-Wave Equations                                                          Transforming (5) – (8) to the time domain, the products are
+   Consider a single-phase overhead transmission line of length l                 replaced by convolutions. Furthermore, to interface with EMT-
+terminated by ends k and m, as shown in Fig. 1. In the frequency                  type programs, the traveling wave equations are represented
+domain, the relationship of voltage V and current I along an                      through Norton equivalents, composed of nodal conductance
+infinitesimal distance Δx of the line can be characterized by                     GS and historical current sources ihist , as shown in Fig. 2. In
+the well-known traveling wave Equations (1) – (4), where Z(s)                     this system, the terminal voltages vk and vm are first calculated
+and Y (s) correspond to per unit length series impedance and                      by the nodal network solver of the EMT main program and then
+shunt admittance, respectively. Since all the analyses performed                  read by the transmission line subroutine, which calculates the
+in this paper are in reference to single-phase lines, it is impor-                terminal currents according to (9) – (12) [20]. In these equations,
+tant to highlight that the quantities shown in these equations                    Δt denotes the integration step, and τ is the TL time delay.
+are scalars. Furthermore, uppercase letters represent frequency
+                                                                                             ik (t) = Gs · vk (t) − ihistk (t)                           (9)
+domain quantities, while lowercase letters indicate their time
+domain correspondents.                                                                       ikr (t) = ik (t) + iki (t)                                 (10)
+
+                          dV                                                                 iki (t + Δt) = H∗imr (t − τ )                              (11)
+                        −    = Z (s) · I                                   (1)
+                          dx                                                                 ihist,k (t + Δt) = Yc ∗vk (t) − 2iki (t + Δt)              (12)
+                          dI
+                        −    = Y (s) · V                                   (2)
+                          dx
+                       Z (s) = R (s) + sL (s)                              (3)
+                                                                                  C. Rational Approximation
+                       Y (s) = G + sC                                      (4)
+                                                                                     To solve the convolutions in (11) and (12), it is convenient to
+                                                                                  represent the frequency response of Yc and H through rational
+   As described in [19], the solution of ordinary differential                    functions, as will be better explained in the subsequent section.
+Equations (1) and (2) can be expressed in terms of the in-                        In ULM [3], this approach is performed directly in the s domain
+cident and reflected waves at the two-line ends, as shown in                      using the vector fitting (VF) technique [21], which is a fast and
+(5) – (8). For simplicity, in this paper, only the equations related              accurate tool for rational approximation. Thus, Yc and H are
+to the terminal k are presented, and the equations related to the                 synthetized as shown in (13) and (14), where d is a real constant
+terminal m can be obtained by substituting the subscript k by m.                  obtained at the limit of Yc when s → ∞; riYc and pYi c are the
+In these equations, Yc and H are the characteristic admittance                    i-th fitted residue and pole of Yc ; riH and pH
+                                                                                                                                i are the i-th fitted
+and propagation functions, and the subscripts i and r denote the                  residue and pole of H; Np Yc and Np H are the fitting order of
+incident and reflected waves, respectively. By observing (5) and                  Yc and H, respectively.
+Fig. 1, it can be noted that the current at the terminal k relates                                                   N p Yc
+                                                                                                                          riYc
+the voltage Vk and the incident current wave Iki . The incident                                         Yc ∼
+                                                                                                           =d+                                          (13)
+current wave Iki is equal to the reflected wave Imr propagating                                                      i=1
+                                                                                                                         s − pYi c
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 15:15:43 UTC from IEEE Xplore. Restrictions apply.
+PEREIRA AND TAVARES: NEW APPROACH TO REPRESENT THE CORONA EFFECT AND FREQUENCY-DEPENDENT                                                               4713
+
+
+
+                             Np H               
+                                        riH
+                   H∼
+                    =                                · e−sτ            (14)
+                             i=1
+                                       s − pHi
+
+   The fitting procedure of Yc is simple and straightforward.                   Fig. 3.   Spatial discretization of the line.
+However, as discussed in [22], to fit the propagation function
+H using the VF technique, we should extract the time delay
+before fitting is carried out. With this artifice, the adjustment
+can be performed with a minimum-phase-shift function and                                                                Np H
+                                                                                                                         
+using a low-order fitting. In this sense, several approaches can be               h∗imr (t − τ ) = aH (t) =                     αiH · aH (t − Δt)
+applied to extract the time delay of H, which include the use of                                                         i=1
+simpler methods such as Bode’s magnitude phase relation [22]                                  H
+or improved procedures, as described in [23]–[25].                                    +riH    λi · imr (t − τ ) + μH
+                                                                                                                   i · imr (t − τ − Δt)                (22)
+
+
+D. Discrete Recursive Convolutions                                                 In general, the time delay in (22) will not be an integer multiple
+                                                                                of the time step Δt. This problem is circumvented by applying
+   With Yc and H synthesized by rational functions, the solution                linear interpolation, and the convolution can be performed using
+of (11) and (12) can be obtained using recursive convolutions                   one- or two-interpolation segments, as described in [27]. Equa-
+[26]. In addition to implementing the frequency-to-time domain                  tions (20) – (22) show that for a time domain implementation, a
+transformation directly, this technique also provides a simple,                 transmission line can be characterized by the set of parameters
+fast, and accurate way to solve discrete convolutions and has                   Gs , riYc , αiYc , λYi c , μYi c , riH , αiH , λH    H
+                                                                                                                                i , μi and τ , which will
+been adopted by several EMT line models.                                        henceforth be referred simply as time domain implementation
+   To illustrate this technique, consider the calculation of a                  parameters (TDIPs). In other words, the TDIP constitutes the set
+simple convolution a (t) = b(t) ∗ c(t), where c(t) is the input,                of parameters that must be stored in the computer memory after
+and b(t) is the time domain image of B(s), which is a first-order               the line constants are calculated, to be used when the simulation
+system (one pole fitting), as shown in (15).                                    loop starts.
+                                           r                                       Inside the simulation loop, storage should be performed only
+                                B =                                    (15)     for the historical current values, whose minimum number of
+                                          s−p
+                                                                                historical samples that needs to be kept in the memory can be
+   If the solution of the convolution for the previous time step                calculated with (23), where BS is the buffer size. The concepts
+a(t − Δt) is known and the input has a linear variation between                 regarding the storage of the TDIP and the buffer size are high-
+t − Δt and t, the solution of a(t) can be written as [27]:                      lighted because, as will be shown later, the VFDLM makes use
+                                                                                of these same techniques.
+  a (t) = α · a (t − Δt) + r {λ · c (t) + μ · c (t − Δt)} (16)
+
+where α, λ and μ are known constant coefficients calculated                                                               τ
+                                                                                                              BS =           +1                        (23)
+through poles and time step, as shown in (17) – (19):                                                                     Δt
+
+                       α = epΔt                                        (17)
+                                                                                III. A VOLTAGE AND FREQUENCY-DEPENDENT LINE MODEL
+                             1    1−α
+                       λ = −   1+                                      (18)     A. Spatial Discretization
+                             p    pΔt
+                                                                                 To represent the corona effect in any approach based on
+                             1 α−1
+                       μ = −       −α                                  (19)     the transverse electric mode of propagation (TEM), the line
+                             p pΔt                                              must be discretized in short length sections, since in these
+   Applying the recursive convolution to solve (11) and (12) and                models the voltage can only be known in the line ends. As
+if Yc and H were fitted as in (13) and (14), after some algebraic               better discussed in [18], the appropriate section length should
+manipulations, we can obtain the set of equations shown in (20)                 consider that the travel time along each section is a fraction
+– (22), which characterizes the implementation of the WB line                   of the period associated with the maximum frequency involved
+model in EMT-type programs.                                                     in the analysis. Considering that in lightning overvoltages, the
+                                                                                maximum frequency is approximately 1 MHz, the section length
+              N p Yc
+                                                                               should be 100 m or less. In the case of switching overvoltage,
+  Gs = d +             riYc · λYi c                                    (20)     however, there are lower frequencies involved in the analysis,
+              i=1                                                               and consequently, larger section lengths can be adopted, which
+                            N p Yc 
+                                                                               are of the order of 10 km to 20 km. Since the VFDLM is based
+   
+  yc ∗ vk = aY (t) =                   αiYc · aY (t − Δt)                       on the TEM, the line must be discretized to the application of
+                              i=1                                               this model, as shown in Fig. 3. In this figure, each line section
+                                                                               is represented by the VFDLM, wherein the structure of the
+                            +riYc · μYi c · vk (t − Δt)                (21)     VFDLM is explained in the next subsection.
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 15:15:43 UTC from IEEE Xplore. Restrictions apply.
+4714                                                                                IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 37, NO. 6, DECEMBER 2022
+
+
+
+B. Mathematical Modeling of VFDLM
+   The central idea behind the VFDLM is very simple and based
+on a pseudo-nonlinear version of the WB line model presented
+in the previous section. Since the corona effect changes only the
+shunt parameters, we can rewrite (3) and (4), as shown in (24) and
+(25), where the capacitance C and shunt conductance G of each
+line section are now considered nonlinear and voltage-dependent
+parameters:
+                      Z (s) = R (s) + sL (s)                               (24)
+                      Y (s, v) = G (v) + sC (v)                            (25)
+  With this modification, the characteristic admittance and
+propagation function should be rewritten as:
+              Yc (s, v) = Z −1 (s) · Z (s) · Y (s, v)                      (26)
+                            √
+              H (s, v) = e− Y (s,v)·Z(s)l                                  (27)
+   Using a simple nonlinear corona model to describe the voltage
+dependence of G and C, the profiles of Yc (s, v) and H(s, v) can
+be characterized by the conductor voltage v and corona inception
+voltage vcrit . This idea is easier to understand by observing
+Fig. 4, which presents the magnitude and phase angle of Yc (s, v)
+and H(s, v) for a section length l = 100 m of the Tidd line
+[28]. Tidd line has a vcrit = 470 kV, and the line parameters
+are provided in Appendix B.
+   As shown in Fig. 4, when the conductor voltage v ≤ vcrit
+there is no corona effect, and we can assume that G = G0 =
+1 · 10−11 [S/m] [29] and C = Co (Co is the geometric ca-
+pacitance of the line). On the other hand, when v > vcrit , we
+should update the G and C values according to v and recalculate
+the frequency response of Yc and H. In short, this concept is
+like considering that we have a different transmission line each
+time that the voltage value is changed, resulting in a different
+frequency response for Yc and H. It should be highlighted that
+in the present paper, the calculations of G(v) and C(v) were
+performed applying the Umoto and Hara model [30], which is
+described in Appendix A. Regarding the frequency response of
+R(s) and L(s), the internal impedance is calculated with the
+Bessel functions [31], and the external impedance is calculated
+with the Deri-Semlyen logarithmic approximations [32].
+C. Time Domain Implementation and Solution Technique
+   As discussed in Section II, using recursive convolutions,
+the EMT-type implementation of the WB line model can be
+characterized by the TDIP — Gs , riYc , αiYc , λYi c , μYi c , riH ,
+αiH , λH     H
+        i , μi and τ . Considering the corona effect, however,
+it was shown that there is a different frequency response for
+each value of v, which leads us to consider these TDIPs to be
+voltage-dependent. More specifically, for an arbitrary voltage
+value vj , we can obtain rational approximations for Yc (s, vj )
+and H(s, vj ) and calculate their respective TDIP(vj ), that is,
+Gs (vj ), riYc (vj ), αiYc (vj ), λYi c (vj ), μYi c (vj ), riH (vj ), αiH (vj ),
+λH          H
+  i (vj ), μi (vj ) and τ (vj ).                                                    Fig. 4. Magnitude and phase angle profiles of Yc (s, v) and H(s, v) for the
+   In the case of the Tidd line, for instance, Fig. 5 shows the                     Tidd line. (a) Magnitude of Yc (s, v). (b) Phase angle of Yc (s, v). (c) Magnitude
+magnitude fitting of Yc and H for three different voltage samples:                  of H(s, v). (d) Phase angle of H(s, v).
+
+
+
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 15:15:43 UTC from IEEE Xplore. Restrictions apply.
+PEREIRA AND TAVARES: NEW APPROACH TO REPRESENT THE CORONA EFFECT AND FREQUENCY-DEPENDENT                                                                 4715
+
+
+
+
+                                                                                  Fig. 6.   History buffer management in the VFDLM.
+
+
+
+                                                                                     Based on the aforementioned information, the time domain
+                                                                                  implementation of VFDLM becomes very simple and straight-
+                                                                                  forward. For simplicity, this procedure is summarized in the
+                                                                                  following steps:
+                                                                                     1. In the line constants program, the TDIPs are calculated for
+                                                                                        n voltage samples linearly distributed in the range vcrit ≤
+                                                                                        vj ≤ vmax , where j = 12, . . . , n and vmax corresponds
+                                                                                        to the maximum overvoltage expected to occur along the
+                                                                                        line. Clearly, the ideal values for n and vmax depend on
+                                                                                        the analyzed phenomenon, and more discussion about this
+                                                                                        subject is presented in Section V.
+                                                                                     2. The respective TDIP associated with each voltage sample
+                                                                                        constitutes the output of the line constant program. These
+                                                                                        parameters are stored in the computer’s memory to be used
+                                                                                        in the simulation loop.
+                                                                                     3. When the simulation loop starts, at each time step, the
+                                                                                        conductor voltage v is checked. If the conductor is under
+                                                                                        corona, the transmission line subroutine searches in the
+                                                                                        computer’s memory for the closest voltage sample vj for
+                                                                                        which the TDIP(vj ) was calculated and then updates their
+                                                                                        respective values.
+Fig. 5. Magnitude fitting of the Yc and H functions for three voltage samples
+at the Tidd line. (a) Magnitude of Yc . (b) Magnitude of H.
+                                                                                     4. Since the time delay varies according to the voltage value,
+                                                                                        the minimum buffer size must be calculated in relation
+                                                                                        to the maximum voltage sampled, as shown in (28). This
+                                                                                        occurs because, as previously discussed, higher voltage
+without corona (v ≤ vcrit ), v = 1000 kV and v = 2000 kV.                               values present larger time delays. Consequently, the his-
+In all cases, the fitting order is automatically adjusted to obtain a                   torical term position inside the buffer changes according
+maximum final fitting error less than 0.02%, as done in EMTDC                           to the voltage value, as illustrated in Fig. 6. Linear inter-
+[29]. For each voltage sample, the respective TDIP(vj ) can be                          polation should be applied when the time delay is not an
+calculated with the time step, residues, and poles of Yc (s, vj )                       integer multiple of the time step, as discussed in Section II.
+and H(s, vj ), as described in Section II.                                                                                   
+                                                                                                                    τ (vmax )
+   Regarding the fitting procedure of Yc and H, two important                                             BS =                  +1               (28)
+                                                                                                                       Δt
+aspects should be highlighted:
+   r As shown in the data tips of Fig. 5(a), for the case with-                      5. Since the line parameters can be changed every time step
+      out corona, the magnitude of Yc varies with frequency,                            in the VFDLM, the Norton equivalents are represented
+      although this variation is much smoother when compared                            by nonlinear conductance and voltage-dependent current
+      with the cases of v = 1000 kV and v = 2000 kV.                                    sources, as shown in Fig. 7. If the conductor voltage does
+   r As discussed in [18], the corona effect reduces the wave                           not exceed the corona inception voltage, the VFDLM is the
+      propagation velocity, which leads to higher voltage values                        same as the WB line model described in Section II. Thus,
+      having higher time delays. For each voltage sample vj , the                       the VFDLM can be seen as a more general representation
+      time delay extraction of H(s, vj ) can be carried out using                       of the WB line model.
+      the same procedure as described in Section II. In this paper,                  Although the calculation and storage of the TDIP for several
+      Bode’s magnitude phase relation [25] was adopted, and                       voltage samples increase the computational effort, this proce-
+      the following time delays were obtained for the presented                   dure is not as heavy as it seems. The reason is that, as discussed
+      cases: τ = 33.39 µs for v ≤ vcrit , τ = 41.19 µs for                        in Section III, to derive the voltage profile along the line, the
+      v = 1000 kV and τ = 44.24 µs for v = 2000 kV.                               line should be discretized in short sections. For the lengths of
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 15:15:43 UTC from IEEE Xplore. Restrictions apply.
+4716                                                                               IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 37, NO. 6, DECEMBER 2022
+
+
+
+                                                                                  in terms of accuracy and computational efficiency.
+
+                                                                                    [Y sh (v (t − Δt))] · [v (t)] = [i (t)] − [ihist (v (t − Δt))]
+                                                                                                                                               (30)
+
+
+                                                                                                           IV. VALIDATION TESTS
+Fig. 7.   Norton equivalent of VFDLM.                                                Using the procedures described in the previous section, the
+                                                                                  VFDLM was implemented in the MATLAB platform, and to
+                                                                                  evaluate its accuracy, the simulation results were compared with
+                                                                                  the three well-known field measurement data available in the
+these line sections, both Yc and H present smooth frequency
+                                                                                  literature, which are the measurements performed on the Tidd
+responses for the entire voltage range, which allows them to
+                                                                                  [28], EDF [35] and Shiobara [36] lines. The structure adopted
+be quickly fitted with a low number of poles. Furthermore, the
+                                                                                  to reproduce these experiments in the simulations is described
+VF is naturally a very fast technique, and considerable effort
+                                                                                  in Appendix B. Furthermore, to carry out more comprehensive
+reduction can be obtained in terms of TDIP storage if only real
+                                                                                  analyses, the results obtained with the proposed VFDLM were
+poles are used [33]. As will be shown in Section IV, applying
+                                                                                  also compared with cases in which only the frequency depen-
+the abovementioned techniques, and using a personal computer,
+                                                                                  dence is represented in the simulations (without corona). For
+for the Tidd line previously mentioned, the calculation of the
+                                                                                  this purpose, the TDIP was calculated for only one voltage
+TDIP for n = 100 voltage samples was performed in less than
+                                                                                  sample referring to v ≤ vcrit , and inside the simulation loop,
+0.6 s.
+                                                                                  these parameters were kept invariable.
+   Finally, the TDIP is obtained in the line constants calculation
+                                                                                     For the simulations in the Tidd and Shiobara lines, where the
+routine, which is performed before the simulation loop starts. In-
+                                                                                  rise time of applied waveforms is approximately 1 µs, the lines
+side the simulation loop, the only computational effort increased
+                                                                                  were discretized into sections of 100 m. For the EDF line, the
+by the VFDLM is the search for the nearest voltage sample by
+                                                                                  applied waveform has a rise time of 0.26 μs, and sections of 50 m
+which the TDIP was calculated.
+                                                                                  were adopted. A time step of Δt = 10 ns was standardized for
+                                                                                  all simulation cases. The TDIP was calculated for n = 100
+D. Computational Procedure                                                        voltage samples linearly distributed in the following voltage
+   The network solver used in EMT-type programs is based on                       ranges: 470 ≤ v ≤ 2000 kV for the Tidd line, 250 ≤ v ≤ 1300
+the system nodal equations presented in (29) [1]. In this system,                 kV for the EDF line and 303 ≤ v ≤ 1800 kV for the Shiobara
+[v(t)] is a column vector containing the unknown voltages in                      line. The fitting procedure was set to obtain a final fitting error
+each node of the circuit; [Y sh ] is the nodal conductance matrix                 lower than 0.02% for Yc and H, and a maximum number of poles
+(made up of the conductances in the Norton equivalents); [i(t)]                   equal to 8 was enough to obtain this accuracy for all the voltage
+is a column vector of injected currents, and [ihist (t)] is a column              samples. Furthermore, the adjustment procedure was carried out
+vector composed of historical current sources.                                    using only real poles through VF, as described in [33].
+                                                                                     The obtained results are shown in Fig. 8, wherein the com-
+                [Y sh ] · [v (t)] = [i (t)] − [ihist (t)]                (29)     puted waveforms obtained with the VFDLM, and WB line
+                                                                                  model (without corona) are plotted with the measured wave-
+    Since [Y sh ], [i(t)] and [ihist (t)] are known quantities at time            forms. Due to the spatial discretization, in some cases, the
+t, (29) corresponds to a simple system of linear equations, which                 measurement points shown in the figure are approximated to
+can be easily solved by different methods [34]. However, in the                   those recorded in the original measurements. The values of
+VFDLM, the shunt conductance and historical current sources                       corona model parameters adopted for each line are presented in
+in Norton equivalents are voltage-dependent parameters (as il-                    Appendix A.
+lustrated in Fig. 7). Consequently, the nodal conductance matrix                     As shown in Fig. 8, the calculated waveforms obtained with
+and the vector of historical currents are also voltage-dependent                  VFDLM agree well with the measurement data. Above the
+quantities, that is, [Y sh (v(t))] and [ihist (v(t))], which means                corona inception voltage, the waveforms are attenuated and
+that (29) should be solved only by iterative methods, increasing                  distorted as the voltage surge propagates along the line. These
+the computational effort.                                                         phenomena are a consequence of the increase in the line capaci-
+    Nevertheless, a simpler and faster solution can be obtained if                tance and shunt conductance, which are adequately represented
+the values of shunt conductances and historical current sources                   by the VFDLM. On the other hand, waveforms obtained with the
+were taken with the basis in the voltage of the previous time                     WB line model (without corona) show that even though the fre-
+step, as shown in (30) [18]. Since [Y sh (v(t − Δt))], [i(t)] and                 quency dependence is accurately represented in the simulations,
+[ihist (v(t − Δt))] are known quantities at the current time t, the               disregarding the corona effect can lead to very conservative
+nodal voltages [v(t)] can be obtained by the solution of the linear               results. In this sense, the obtained results showed that WB line
+system, as in the standard procedure of EMT-type programs. As                     model led to overestimating the overvoltages by approximately
+will be shown in the next section, this procedure is applied to                   27% for the Tidd line, 49% for the EDF line and 31% for the
+validate the proposed model, and very good results are obtained                   Shiobara line.
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 15:15:43 UTC from IEEE Xplore. Restrictions apply.
+PEREIRA AND TAVARES: NEW APPROACH TO REPRESENT THE CORONA EFFECT AND FREQUENCY-DEPENDENT                                                                 4717
+
+
+
+                                                                                                                  TABLE I
+                                                                                                        TOTAL CPU TIME OF SIMULATIONS
+
+
+
+
+                                                                                   performed on a Dell XPS 8930 desktop computer with an Intel
+                                                                                   Core i7 processor and 16 GB RAM memory.
+
+
+                                                                                                               V. DISCUSSIONS
+                                                                                      This paper has introduced a new approach to represent
+                                                                                   frequency-dependent transmission line models and the corona
+                                                                                   effect in EMT-type platforms. Unlike the traditional approach,
+                                                                                   where the corona effect is externally represented by lumped
+                                                                                   shunt elements disposed at each junction node of line sections,
+                                                                                   the proposed VFDLM embedded the frequency dependence and
+                                                                                   corona phenomena directly in the line formulation, resulting in
+                                                                                   a more robust line model.
+                                                                                      It should be noted that, if the conductor voltage does not
+                                                                                   exceed the corona inception voltage vcrit , the VFDLM presents
+                                                                                   the same response as the WB line model, which means that
+                                                                                   the VFDLM is a more general case of the WB line model.
+                                                                                   Thus, if the VFDLM is implemented in an EMT-type platform,
+                                                                                   the representation of the corona can be set as a user-defined
+                                                                                   choice. If the user chooses not to represent the corona, in the
+                                                                                   line constant calculations the TDIPs are calculated for only one
+                                                                                   voltage sample related to v ≤ vcrit , and inside the simulation
+                                                                                   loop these parameters are kept constant.
+                                                                                      The only disadvantage of the VFDLM is the need for fitting the
+                                                                                   Yc and H functions for several voltage samples. However, this
+                                                                                   procedure needs to be performed only a single time during the
+                                                                                   line constant calculations, which is done before the simulation
+                                                                                   loop starts. Inside the simulation loop, the only computational
+                                                                                   burden added by VFDLM is to check the conductor voltage and
+                                                                                   update the TDIP when necessary.
+                                                                                      Regarding the number of voltage samples (n) and the voltage
+                                                                                   range for which the TDIP should be calculated (vcrit ≤ v ≤
+                                                                                   vmax ), the following considerations must be highlighted:
+                                                                                      1. As previously presented, vmax is the maximum overvolt-
+Fig. 8. Comparisons between measured and calculated waveforms. (a) Tidd
+line, (b) EDF line, (c) Shiobara line. (a) Tidd line. (b) EDF line. (c) Shiobara          age expected to occur along the line. For practical applica-
+line.                                                                                     tions, it is known that the conductor voltage rarely exceeds
+                                                                                          4 p.u. [15], since for overvoltages above this value, an elec-
+                                                                                          tric arc will probably occur. In this sense, we consider the
+                                                                                          adoption of vmax = 4 · vcrit or vmax = 5 · vcrit enough
+   Regarding the CPU time, as previously mentioned, the TDIP                              to produce good results for most cases, as demonstrated
+calculation for 100 voltage samples could be performed in less                            in Section IV. However, if necessary, the user can change
+than 0.6 seconds. Inside the simulation loop, the only additional                         this value according to the needs.
+time increased by VFDLM is related to the search and update                           2. The idea of voltage discretization inside the voltage range
+of the TDIP. The total CPU time for each line case is shown                               is like the idea of frequency response calculation in
+in Table I, where the CPU time for the WB line model is also                              EMTDC [29], wherein the user can define the frequency
+presented for comparison purposes. Evidently, for both cases                              range for which the line parameters will be calculated, as
+(WB and VFDLM), the lines were discretized into the same                                  well as the number of frequency samples logarithmically
+section length. It should be noted that all simulations were                              distributed within this range.
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 15:15:43 UTC from IEEE Xplore. Restrictions apply.
+4718                                                                               IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 37, NO. 6, DECEMBER 2022
+
+
+
+                               TABLE II                                                  to smooth results. Furthermore, as seen in the zoomed
+                        CORONA MODEL PARAMETERS
+                                                                                         portion, no significant differences are observed when in-
+                                                                                         creasing the number of voltage samples from n = 100 to
+                                                                                         n = 200, which explains the adoption of n = 100 for
+                                                                                         all analyzed cases in Section IV.
+                                                                                     Although not shown in the paper, it should be highlighted that
+                                                                                  we also attempted to apply trapezoidal integration instead of
+                                                                                  recursive convolutions to solve the discrete convolutions in (11)
+                                                                                  and (12). However, it was verified that the problem of spurious
+                                                                                  oscillations previously mentioned was more pronounced for
+                                                                                  trapezoidal integration, which means that recursive convolutions
+                                                                                  should be preferred over trapezoidal integration. Similar conclu-
+                                                                                  sions were reached in [27]. By using recursive convolutions, we
+                                                                                  performed several sensitivity analyses with the VFDLM, and for
+                                                                                  all the analyzed cases, the model proves to be stable, efficient,
+                                                                                  and accurate, as demonstrated in Section IV.
+
+                                                                                                               VI. CONCLUSION
+                                                                                     This paper has introduced a VFDLM for corona effect rep-
+                                                                                  resentation in EMT-type programs. The approach consists of a
+                                                                                  more general case of well-established FD or WB line models,
+                                                                                  wherein the characteristic admittance and propagation functions
+Fig. 9.   Influence of voltage sampling in VFDLM.
+                                                                                  are fitted for several voltage samples above the corona inception
+                                                                                  voltage using the VF technique. The implementation procedure
+                               TABLE III                                          of VFDLM is straightforward and very similar to the WB model,
+                     TRANSMISSION LINES PARAMETERS                                which allows the model to be used in a generic way; that is, the
+                                                                                  representation of the corona effect can be set as a user-defined
+                                                                                  choice. The model was validated through comparisons with three
+                                                                                  field measurement datasets and proven to be a stable, efficient,
+                                                                                  and accurate approach to represent the corona effect in EMT-type
+                                                                                  platforms.
+                                                                                     At the time of preparation of this paper, the VFDLM is being
+                                                                                  extended to multiphase transmission lines, in addition to being
+                                                                                  applied to more robust corona models.
+
+                                                                                  A. Corona Model
+                                                                                     In this paper, the voltage dependence of the capacitance and
+                                                                                  shunt conductance of the line are described by the empirical
+Fig. 10. Structure adopted to reproduce the field measurement tests in the
+                                                                                  equations proposed by Umoto and Hara [30]. Although these
+simulations.                                                                      equations do not represent the frequency dependence of the
+                                                                                  corona, they can represent with good accuracy the voltage
+                                                                                  dependence of the abovementioned parameters and have been
+   3. The ideal number of voltage samples for which the TDIP                      successfully applied in several papers over the years to represent
+      should be calculated evidently varies according to the                      the corona effect in wave propagation calculations [9], [10], [18].
+      voltage range. In the case of the Tidd line, for instance,                     According to this model, the variation of the capacitance and
+      Fig. 9 presents the results for n = 20, n = 50, n = 100                     shunt conductance per unit length of the line can be described
+      and n = 200 voltage samples linearly distributed inside                     as shown in (31) and (32), respectively.
+      the range 470 ≤ v ≤ 2000 kV. All the cases present rea-                                    
+                                                                                                     C0 ,                                      v ≤ vcrit
+      sonable results in terms of accuracy. However, as shown in                     C (v) =
+      the zoomed portion, spurious oscillations can be observed                                      C0 + σ C        r
+                                                                                                                    2h ·    1 − vcrit
+                                                                                                                                  v   · 20−11
+                                                                                                                                              , v > vcrit
+      for the cases with n = 20 and n = 50. These spurious                                                                                             (31)
+      oscillations occur due to the abrupt variation in the TDIP                                 
+                                                                                                     G0 ,                                      v ≤ vcrit
+      from one integration step to the other. By increasing the                      G (v) =                         r     −11
+                                                                                                                                      vcrit 2
+      number of voltage samples to n = 100 or n = 200, we                                            G0 + σG        2h .10           1− v      v > vcrit
+      have a smooth variation along the voltage range, leading                                                                                             (32)
+
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 15:15:43 UTC from IEEE Xplore. Restrictions apply.
+PEREIRA AND TAVARES: NEW APPROACH TO REPRESENT THE CORONA EFFECT AND FREQUENCY-DEPENDENT                                                                     4719
+
+
+
+   In the above equations, v is the conductor voltage [V]; vcrit                  [6] G. C. de Miranda, A. Emílio, A. de Araújo, R. R. Saldanha, and J. P. Filho,
+is the corona inception voltage [V]; G0 = 1E −11 [S/m]; r                             “Finite element method for transmission line corona effect simulation
+                                                                                      using the EMTP,” Electric Mach. Power Syst., vol. 27, no. 7, pp. 781–794,
+and h are the radius and height above ground of the conductor                         1999, doi: 10.1080/073135699269019.
+[m], respectively. Finally, σC and σG are corona loss constants                   [7] X. Liu, J. Yang, G. Liang, and L. Wang, “Modified field-to-line cou-
+(in [F/m] and [S/m], respectively), which are determined by a                         pling model for simulating the corona effect on the lightning induced
+                                                                                      voltages of multi-conductor transmission lines over a lossy ground,”
+trial-and-error procedure by comparing calculated and field-test                      IET Gener., Transmiss. Distrib., vol. 11, no. 7, pp. 1865–1876, 2017,
+waveforms. The values of corona parameters used in the re-                            doi: 10.1049/iet-gtd.2016.1340.
+production of the three field measurement tests presented in                      [8] J. L. Naredo, A. C. Soudack, and J. R. Marti, “Simulation of transients
+                                                                                      on transmission lines with corona via the method of characteristics,” IEE
+Section IV are shown in Table II, while the conductor radius                          Proc. - Gener., Transmiss. Distrib., vol. 142, no. 1, 1995, Art. no. 81,
+and height above ground are shown in Table III.                                       doi: 10.1049/ip-gtd:19951488.
+                                                                                  [9] K. Lee, “Non-linear corona models in an electromagnetic transients pro-
+                                                                                      gram (EMTP),” IEEE Trans. Power App. Syst., vol. PAS-102, no. 9,
+B. Experiments on Tidd, EDF, and Shiobara Lines                                       pp. 2936–2942, Sep. 1983, doi: 10.1109/TPAS.1983.318144.
+                                                                                 [10] H. Motoyama and A. Ametani, “Development of a linear
+   Experiments on the Tidd [28], EDF [35] and Shiobara [36]                           model for corona wave deformation and its effects on lightning
+lines were carried out to assess the influence of the corona effect                   surges,” Elect. Eng. Jpn., vol. 107, no. 2, pp. 98–106, 1987,
+                                                                                      doi: 10.1002/eej.4391070211.
+on the attenuation and distortion of traveling waves originating                 [11] W.-G. Huang and A. Semlyen, “Computation of electro-magnetic tran-
+from lightning overvoltages. The structure adopted to represent                       sients on three-phase transmission lines with corona and frequency de-
+these lines in the simulations is shown in Fig. 10. The line is                       pendent parameters,” IEEE Trans. Power Del., vol. 2, no. 3, pp. 887–898,
+                                                                                      Jul. 1987, doi: 10.1109/TPWRD.1987.4308193.
+composed of a single overhead wire placed at an average height                   [12] S. Carneiro and J. R. Marti, “Evaluation of corona and line models in
+H above the ground. The sending end is connected to a lumped                          electromagnetic transients’ simulations,” IEEE Trans. Power Del., vol. 6,
+voltage source, whereas the receiving end is connected to the                         no. 1, pp. 334–342, Jan. 1991, doi: 10.1109/61.103756.
+                                                                                 [13] T. J. Gallagher and I. M. Dudurych, “Model of corona for an EMTP
+ground through a matching resistor, whose resistance is equal to                      study of surge propagation along HV transmission lines,” IEE Proc.
+the characteristic impedance of the line. The line data necessary                     - Gener., Transmiss. Distrib., vol. 151, no. 1, 2004, Art. no. 61,
+for simulations are shown in Table III. It should be noted that                       doi: 10.1049/ip-gtd:20030927.
+                                                                                 [14] Z. Anane, A. Bayadi, and K. Huang, “Distortion phenomena on
+although these lines were originally three-phase transmission                         transmission lines using corona modeling ATP/EMTP,” IEEE Trans.
+lines, only one of the phases was energized in the experiments.                       Dielectrics Elect. Insul., vol. 25, no. 2, pp. 383–389, Apr. 2018,
+Since the adjacent phases did not interfere in the results, it                        doi: 10.1109/TDEI.2017.006484.
+                                                                                 [15] M. Cervantes et al., “Simulation of switching overvoltages and validation
+is enough to represent only the energized phase. This same                            with field tests,” IEEE Trans. Power Del., vol. 33, no. 6, pp. 2884–2893,
+procedure has already been successfully adopted in previous                           Dec. 2018, doi: 10.1109/TPWRD.2018.2834138.
+works [12], [16], [18].                                                          [16] S. Carneiro, J. R. Marti, H. W. Dommel, and H. M. Barros, “An efficient
+                                                                                      procedure for the implementation of corona models in electromagnetic
+   Regarding the waveform applied in the experiments, different                       transients’ programs,” IEEE Trans. Power Del., vol. 9, no. 2, pp. 849–855,
+characteristics are observed between them. In the Tidd line,                          Apr. 1994, doi: 10.1109/61.296266.
+a pulse voltage like a double exponential of 1/6.3 µs with                       [17] H. M. Barros, S. Carneiro, and R. M. Azevedo, “An efficient recursive
+                                                                                      scheme for the simulation of overvoltages on multiphase systems under
+amplitude of 1.55 MV was applied. In the EDF line, the ap-                            corona,” IEEE Trans. Power Del., vol. 10, no. 3, pp. 1443–1452, Jul. 1995,
+plied waveform consists of a double exponential with damped                           doi: 10.1109/61.400928.
+oscillations, which is approximately a 0.26/3.4 µs curve with                    [18] T. M. Pereira and M. C. Tavares, “Development of a voltage-dependent
+                                                                                      line model to represent the corona effect in electromagnetic transient
+1.10 MV of peak value. In the Shiobara line, a nonstandard                            program,” IEEE Trans. Power Del., vol. 36, no. 2, pp. 731–739, Apr. 2021,
+waveform of 1.2 µs of rise time and 1.58 MV peak value was                            doi: 10.1109/TPWRD.2020.2990968.
+applied. The described waveforms are presented together with                     [19] B. Gustavsen, J. Sletbak, and T. Henriksen, “Calculation of electromag-
+                                                                                      netic transients in transmission cables and lines taking frequency depen-
+the measurements along the lines in Fig. 8(a)–(c).                                    dent effects accurately into account,” IEEE Trans. Power Del., vol. 10,
+                                                                                      no. 2, pp. 1076–1084, Apr. 1995, doi: 10.1109/61.400879.
+                                                                                 [20] B. Gustavsen, G. Irwin, R. Mangelrød, D. Brandt, and K. Kent, “Trans-
+                                 REFERENCES                                           mission line models for the simulation of interaction phenomena between
+                                                                                      parallel AC and DC overhead lines,” in Proc. Int. Converence Power Syst.
+ [1] H. W. Dommel, “Digital computer solution of electromagnetic
+                                                                                      Transients, 1999, pp. 61–67.
+     transients in Single- and Multiphase networks,” IEEE Trans.
+                                                                                 [21] B. Gustavsen and A. Semlyen, “Rational approximation of frequency
+     Power App. Syst., vol. PAS-88, no. 4, pp. 388–399, Apr. 1969,
+                                                                                      domain responses by vector fitting,” IEEE Trans. Power Del., vol. 14,
+     doi: 10.1109/TPAS.1969.292459.
+                                                                                      no. 3, pp. 1052–1061, Jul. 1999, doi: 10.1109/61.772353.
+ [2] J. Marti, “Accurate modelling of frequency-dependent transmis-
+                                                                                 [22] B. Gustavsen and A. Semlyen, “Simulation of transmission line
+     sion lines in electromagnetic transient simulations,” IEEE Trans.
+                                                                                      transients using vector fitting and modal decomposition,” IEEE
+     Power App. Syst., vol. PAS-101, no. 1, pp. 147–157, Jan. 1982,
+                                                                                      Trans. Power Del., vol. 13, no. 2, pp. 605–614, Apr. 1998,
+     doi: 10.1109/TPAS.1982.317332.
+                                                                                      doi: 10.1109/61.660941.
+ [3] A. Morched, B. Gustavsen, and M. Tartibi, “A universal model for accurate
+                                                                                 [23] B. Gustavsen, “Time delay identification for transmission line model-
+     calculation of electromagnetic transients on overhead lines and under-
+                                                                                      ing,” in Proc. 8th IEEE Workshop Signal Propag. Interconnects, 2004,
+     ground cables,” IEEE Trans. Power Del., vol. 14, no. 3, pp. 1032–1038,
+                                                                                      pp. 103–106. doi: 10.1109/SPI.2004.1409018.
+     Jul. 1999, doi: 10.1109/61.772350.
+                                                                                 [24] I. Kocar and J. Mahseredjian, “New procedure for computation of time de-
+ [4] T. H. Thang et al., “A simplified model of corona discharge on over-
+                                                                                      lays in propagation function fitting for transient modeling of cables,” IEEE
+     head wire for FDTD computations,” IEEE Trans. Electromagn. Compat.,
+                                                                                      Trans. Power Del., vol. 31, no. 2, pp. 613–621, Apr. 2016, doi: 10.1109/TP-
+     vol. 54, no. 3, pp. 585–593, Jun. 2012, doi: 10.1109/TEMC.2011.2172688.
+                                                                                      WRD.2015.2444880.
+ [5] K. Huang, X. Zhang, and S. Tao, “Electromagnetic transient analysis
+                                                                                 [25] B. Gustavsen, “Optimal time delay extraction for transmission line mod-
+     of overhead lines including corona and frequency dependence effects
+                                                                                      eling,” IEEE Trans. Power Del., vol. 32, no. 1, pp. 45–54, Feb. 2017,
+     under damped oscillation surges,” IEEE Trans. Power Del., vol. 33, no. 5,
+                                                                                      doi: 10.1109/TPWRD.2016.2609039.
+     pp. 2198–2206, Oct. 2018, doi: 10.1109/TPWRD.2018.2794825.
+
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 15:15:43 UTC from IEEE Xplore. Restrictions apply.
+4720                                                                                     IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 37, NO. 6, DECEMBER 2022
+
+
+
+[26] A. Semlyen and A. Roth, “Calculation of exponential propagation step                                          Thassio Matias Pereira (Graduate Student Member,
+     responses - Accurately for three base frequencies,” IEEE Trans. Power                                         IEEE) was born in Minas Gerais, Brazil, in 1994.
+     App. Syst., vol. 96, no. 2, pp. 667–672, Mar. 1977, doi: 10.1109/T–                                           He received the Electrical Engineering degree from
+     PAS.1977.32378.                                                                                               the Federal University of São João del-Rei, São João
+[27] B. Gustavsen, “Avoiding numerical instabilities in the universal line model                                   del-Rei, Brazil, in 2017, and the M.Sc. degree in
+     by a two-segment interpolation scheme,” IEEE Trans. Power Del., vol. 28,                                      2019 from the University of Campinas, Campinas,
+     no. 3, pp. 1643–1651, Jul. 2013, doi: 10.1109/TPWRD.2013.2257878.                                             Brazil, where he is currently working toward the D.Sc.
+[28] C. F. Wagner, I. W. Gross, and B. L. Lloyd, “High-voltage impulse tests                                       degree. His research interests include electromagnetic
+     on transmission lines [includes discussion],” Trans. Amer. Inst. Elect. En-                                   modeling and transients, lightning, transmission line
+     gineers. Part III: Power App. Syst., vol. 73, no. 2, pp. 196–210, Apr. 1954,                                  performance, and insulation coordination.
+     doi: 10.1109/AIEEPAS.1954.4498810.
+[29] EMTDC User’s Guide - A Comprehensive Resource for EMTDC, Manitoba
+     Hydro Int. Ltd, Winnipeg, Manitoba, Canada, 2010.
+[30] J. Umoto and T. Hara, “Numerical analysis of line equations consider-
+     ing corona loss on single-conductor system,” Elect. Eng. Jpn., vol. 89,
+     pp. 909–916, 1969.
+[31] S. A. Schelkunoff, “The electromagnetic theory of coaxial transmission
+     lines and cylindrical shields,” Bell Syst. Tech. J., vol. 13, no. 4, pp. 532–579,                              Maria Cristina Tavares (Senior Member, IEEE)
+     Oct. 1934, doi: 10.1002/j.1538-7305.1934.tb00679.x.                                                            received the B.Sc. and M.Sc. degrees in electrical
+[32] A. Deri, G. Tevan, A. Semlyen, and A. Castanheira, “The complex ground                                         engineering from the Federal University of Rio de
+     return plane. A simplified model for homogeneous and multi-layer earth                                         Janeiro, Rio de Janeiro, Brazil, in 1984 and 1991,
+     return,” IEEE Power Eng. Rev., vol. PER-1, no. 8, pp. 31–32, Aug. 1981,                                        respectively, and the D.Sc. degree from the University
+     doi: 10.1109/MPER.1981.5511760.                                                                                of Campinas, Campinas, Brazil, in 1998. She has
+[33] E. S. Bañuelos-Cabral, B. Gustavsen, J. A. Gutiérrez-Robles, H. K.                                             provided consultation for engineering firms. Since
+     Høidalen, and J. L. Naredo, “Computational efficiency improvement of                                           2002, she has been with the University of Campinas,
+     the universal line model by use of rational approximations with real                                           where she is currently an Associate Professor. Her
+     poles,” Electric Power Syst. Res., vol. 140, pp. 424–434, Nov. 2016,                                           research interests include electromagnetic transients
+     doi: 10.1016/j.epsr.2016.05.033.                                                                               in power systems, arc modeling, very long-distance
+[34] F. H. Branin, “Computer methods of network analysis,” Proc. IEEE,                   transmission systems, and computer applications for transient analysis in power
+     vol. 55, no. 11, pp. 1787–1801, Nov. 1967, doi: 10.1109/PROC.1967.6010.             systems. He is the Editor of the IEEE TRANSACTIONS ON POWER DELIVERY and
+[35] C. Gary, G. Dragan, and D. Cristescu, “Attenuation of travelling waves              an Advisory Editorial Board Member of the International Journal of Electrical
+     caused by corona,” in Proc. Int. Conf. Large High Voltage Eletric Syst.,            Power and Energy Systems.
+     1978, Art. no. 38.
+[36] A. Inoue, “Propogation analysis of overvoltage surges with
+     corona based upon charge versus voltage curve,” IEEE Trans.
+     Power App. Syst., vol. PAS-104, no. 3, pp. 655–662, Mar. 1985,
+     doi: 10.1109/TPAS.1985.319001.
+
+
+
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 15:15:43 UTC from IEEE Xplore. Restrictions apply.
+

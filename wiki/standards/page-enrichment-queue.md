@@ -79,7 +79,7 @@ updated: "2026-05-13"
 || 54 | quasi-tem-approximation.md | methods | methods/transmission-line/quasi-tem-approximation.md | P1 | 64 | 814 | 17 | 15 | completed |
 || 55 | dispatch-operation.md | topics | topics/renewable-storage/dispatch-operation.md | P1 | 63 | 1558 | 7 | 27 | completed |
 || 56 | hybrid-acdc-system.md | topics | topics/hvdc-facts/hybrid-acdc-system.md | P1 | 62 | 7629 | 85 | 10 | completed |
-|| 57 | corona-effect-modeling.md | methods | methods/transmission-line/corona-effect-modeling.md | P1 | 62 | 1057 | 12 | 14 | pending |
+|| 57 | corona-effect-modeling.md | methods | methods/transmission-line/corona-effect-modeling.md | P1 | 62 | 1057 | 12 | 14 | completed |
 || 58 | distributed-parameter-model.md | methods | methods/transmission-line/distributed-parameter-model.md | P1 | 61 | 1241 | 9 | 15 | pending |
 || 59 | impedance-measurement.md | methods | methods/signal-processing/impedance-measurement.md | P1 | 59 | 1468 | 6 | 18 | pending |
 || 60 | power-system-network.md | topics | topics/tools-software/power-system-network.md | P1 | 59 | 1223 | 9 | 13 | pending |
@@ -532,3 +532,5 @@ updated: "2026-05-13"
 |||| 51 | midc.md | methods/power-electronics/midc.md | 完成 | 3979字/116公式(22块级+94行内)/11wikilinks/9章节/5种MIDC方法(SAB过零点预计算/3p-DAB混合SSA-GSSA/级联DAB聚合/时滞稳定性分析)/4篇来源论文/7表格/方法选择指南 |
 |||| 52 | balanced-three-phase-line.md | methods/transmission-line/balanced-three-phase-line.md | 完成 | 3803字/94公式/9wikilinks/0SVG/11章节/9篇来源论文/4种建模方法详解/量化性能表 |
 ||| 52 | large-scale-hybrid-acdc-simulation.md | topics/simulation/large-scale-hybrid-acdc-simulation.md | 完成 | 4175字/40公式/15wikilinks/7表格/9章节/6篇来源论文/四层次仿真方法体系+BBD并行+多速率接口 |
+|||| 57 | corona-effect-modeling.md | methods/transmission-line/corona-effect-modeling.md | 完成 | 874字/130公式/12wikilinks/0SVG/11章节/5种建模方法/9量化数据点/4篇来源论文 | 2026-05-14
+
