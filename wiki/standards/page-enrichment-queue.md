@@ -70,7 +70,7 @@ updated: "2026-05-13"
 || 45 | weak-grid-vsc.md | models | models/equivalent/weak-grid-vsc.md | P1 | 73 | 1291 | 4 | 11 | completed |
 || 46 | power-quality.md | topics | topics/renewable-storage/power-quality.md | P1 | 72 | 967 | 13 | 17 | completed |
 || 47 | digital-simulator.md | topics | topics/simulation/digital-simulator.md | P1 | 72 | 5800 | 34 | 20 | completed |
-|| 48 | exponential-integrator.md | methods | methods/numerical-methods/exponential-integrator.md | P1 | 71 | 1246 | 6 | 13 | pending |
+|| 48 | exponential-integrator.md | methods | methods/numerical-methods/exponential-integrator.md | P1 | 71 | 1246 | 6 | 13 | completed |
 || 49 | equivalent-modeling.md | models | models/equivalent/equivalent-modeling.md | P1 | 70 | 1115 | 9 | 13 | pending |
 || 50 | emt-simulation.md | topics | topics/simulation/emt-simulation.md | P1 | 69 | 9771 | 16 | 463 | pending |
 || 51 | midc.md | methods | methods/power-electronics/midc.md | P1 | 68 | 1141 | 8 | 11 | pending |
@@ -519,6 +519,7 @@ updated: "2026-05-13"
 ||| 36 | 1 | 1 | 0 | heterogeneous-computing页面完成（3982字，43公式，9wikilink，1SVG，8篇来源论文，5种硬件架构详解：CPU/GPU/FPGA/集群/DSP，含FGOAM最优分配算法、混合精度浮点方案、多尺度方法等核心机制）
 ||| 38 | computational-acceleration.md | methods/simulation-technology/computational-acceleration.md | 完成 | 3561字/41公式/13wikilinks/4表格 | 2026-05-14 |
 ||| 39 | 1 | 1 | 0 | phase-domain-modeling页面完成（5189字，66公式，30wikilink，1SVG，9章节，五层架构SVG图，8篇来源论文，覆盖线路/电缆/电机/网络求解五大领域） | 2026-05-14 |
+||| 48 | exponential-integrator.md | methods | methods/numerical-methods/exponential-integrator.md | 完成 | 4093字/100公式/10wikilinks/6表格/12章节/5篇来源论文/AGEI+Parallel-Rate EI+Splitting EI+MEXP+GPU缓存五方法体系 |
 |||| 43 | frequency-domain-analysis.md | topics/tools-software/frequency-domain-analysis.md | 完成 | 8912字/79公式/14wikilinks/1SVG/9章节/5种核心方法/9篇来源论文/方法体系架构图
 || 44 | 1 | 1 | 0 | pv-power-plant.md |
 ||||| 45 | power-quality.md | topics/renewable-storage/power-quality.md | 完成 | 3958字(中文)/98公式(28块级+70行内)/25wikilinks/1SVG/10章节/8篇来源论文/8种核心方法(谐波潮流/闪变/超谐波/dq-SDP/电压插值/HP-AVM/DHD降阶/非特征环流)/方法体系架构SVG图/五类精度-效率对照表 | 2026-05-14 |
