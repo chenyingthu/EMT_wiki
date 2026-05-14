@@ -284,3 +284,17 @@ LOADSYN 模型库仅保证电压变化 < 15%、频率变化 < 5% 范围内的精
 - **Torabi & Milani 2021** — 元件级综合负荷模型，涵盖 SMPS、CFL、LED、感应电机、变频驱动器等终端设备，Hydro-Québec 电压暂降现场数据验证（商业/居民馈线，电机脱扣阈值 45%–55%）
 - **Fini 等 2026** — fdLoad 频率相关负荷综合模型，Vector Fitting 网络综合 + SFA-EMT 集成，IEEE 39 节点系统验证（57–63 Hz 拟合误差 0.5%，步长 70 倍优势）
 - **Alboaouh 等 2025** — 感性恒功率负载 RMS 递推模型，逐时间步求解，非正弦工况验证（稳态误差 < 0.5%，O(1) 每步计算复杂度）
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[modeling-a-mixed-residential-commercial-load-for-simulations-involving-large-dis|Modeling A Mixed Residential-commercial Load  For Simulation]] | 2004 |
+| [[39pes20116039582|39/pes.2011.6039582]] | 2011 |
+| [[dynamic-average-modeling-of-front-end-diode-rectifier-loads-considering-13&14|Dynamic Average Modeling of Front-End Diode Rectifier Loads ]] | 2011 |
+| [[development-of-data-translators-for-interfacing-13&14|Development of Data Translators for Interfacing Power-Flow P]] | 2013 |
+| [[multi-fpga-digital-hardware-design-iet-gtd|Multi-FPGA digital hardware design for detailed large-scale ]] | 2013 |
+| [[development-and-validation-of-a-new-detailed-emt-type-component-based-load-model|Development and Validation of a New Detailed EMT-type Compon]] | 2021 |
+| [[loop-closing-analytical-calculation-system-based-on-electromagnetic-electromecha|Loop closing analytical calculation system based on electrom]] | 2023 |
+| [[fpga-based-simulation-of-grid-tied-converters-using-frequency-dependent-network-|FPGA-based simulation of grid-tied converters using frequenc]] | 2025 |
+| [[modeling-of-inductive-constant-power-load-for-electromagnetic-transient-simulati-26|Modeling of inductive constant power load for electromagneti]] | 2025 |

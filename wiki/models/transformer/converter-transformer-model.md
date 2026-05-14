@@ -445,3 +445,12 @@ end
 ---
 
 *本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[control-and-simulation-of-a-grid-forming-inverter-for-hybrid-pv-battery-plants-i|Control and Simulation of a Grid-Forming Inverter for Hybrid]] | 2021 |
+| [[analysis-on-non-characteristic-harmonic-circulating-current-in-parallel-inverter|Analysis on non-characteristic harmonic circulating current ]] | 2022 |
+| [[an-aggregation-method-of-permanent-magnet-synchronous-wind-farms-for-electromech|An aggregation method of permanent magnet synchronous wind f]] | 2023 |
+| [[fast-investigation-of-control-interaction-risks-in-pv-parks-using-eigenvalue-ana|Fast investigation of control interaction risks in PV parks ]] | 2025 |

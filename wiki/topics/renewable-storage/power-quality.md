@@ -321,174 +321,19 @@ Hu et al. 2016 揭示的非特征谐波环流问题表明：系统母线谐波�
 
 ## 来源论文
 
-| 论文 | 年份 | 贡献 |
-|------|------|------|
-| Horiuchi & Sano - "An Inverter Model Simulating Accurate Harmonics with Low Computational Burden for EMT Simulations" | 2020 | 提出电压插值法(VI)，将TAM推广至梯形积分法，步长扩大5倍、加速3倍，谐波误差<1% |
-| Cao et al. - "Harmonic-Preserved Average-Value Model for Converters in EMT Simulation" | 2026 | 提出HP-AVM"平均值+谐波"统一框架，加速5~6倍，谐波误差<1.5%，内存减少60%~70% |
-| Karami et al. - "Analysis of Frequency-Dependent Network Equivalents in Dynamic Harmonic Domain" | 2021 | 提出DHD+VF降阶框架，实现频变网络等值的直接谐波分析，DHD比EMTP快2.8倍 |
-| Cao - "A Time-Domain Harmonic Power-Flow Algorithm" | 2010 | 提出全时域谐波潮流(TDHPF)，消除频域截断误差，较基波潮流(CPF)精度提升28%~42% |
-| Horton et al. - "A Time-Domain AC Electric Arc Furnace Model for Flicker Planning Studies" | 2009 | 提出EAF时域随机模型，PCC处 $P_{st99\%}$ 预测误差<1%，远优于频域法(误差>30%) |
-| Darmawardana et al. - "Development of high frequency (Supraharmonic) models of small-scale PV inverters" | 2019 | 提出PV逆变器超谐波黑箱建模方法，800 Hz频带聚合包含90%以上超谐波能量 |
-| Hu et al. - "Analysis on non-characteristic harmonic circulating current in parallel inverter system" | 2016 | 揭示并联变流器非特征谐波环流机理，720 Hz环流在变流器侧占比60%，提出5种抑制策略 |
-| Mao - "Modeling and application of DQ-sequence dynamic phasors under unbalanced AC conditions" | 2025 | 提出dq-SDP建模方法，统一正负序+dq接口，避免abc转换，支持不平衡小信号分析 |
-
-<div style="text-align:center;margin:16px 0;">
-<svg viewBox="0 0 900 520" xmlns="http://www.w3.org/2000/svg">
-  <!-- Background -->
-  <rect width="900" height="520" fill="#ffffff" rx="8"/>
-  
-  <!-- Title -->
-  <text x="450" y="28" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="#333">电能质量EMT分析 · 方法体系架构</text>
-  
-  <!-- Layer 1: 输入/源 (Blue) -->
-  <rect x="30" y="48" width="160" height="50" rx="6" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
-  <text x="110" y="68" text-anchor="middle" font-family="Arial,sans-serif" font-size="12" fill="#1e40af" font-weight="bold">非线性负荷/源</text>
-  <text x="110" y="84" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#3b82f6">电弧炉 / 逆变器 / 整流器</text>
-  
-  <rect x="210" y="48" width="160" height="50" rx="6" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
-  <text x="290" y="68" text-anchor="middle" font-family="Arial,sans-serif" font-size="12" fill="#1e40af" font-weight="bold">故障/开关操作</text>
-  <text x="290" y="84" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#3b82f6">短路 / 投切 / 励磁涌流</text>
-  
-  <rect x="390" y="48" width="160" height="50" rx="6" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
-  <text x="470" y="68" text-anchor="middle" font-family="Arial,sans-serif" font-size="12" fill="#1e40af" font-weight="bold">电网阻抗/拓扑</text>
-  <text x="470" y="84" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#3b82f6">频变线路 / 电缆 / 变压器</text>
-  
-  <!-- Arrow from Layer 1 to Layer 2 -->
-  <line x1="110" y1="98" x2="110" y2="130" stroke="#333" stroke-width="1.2"/>
-  <polygon points="105,130 110,140 115,130" fill="#333"/>
-  <line x1="290" y1="98" x2="290" y2="130" stroke="#333" stroke-width="1.2"/>
-  <polygon points="285,130 290,140 295,130" fill="#333"/>
-  <line x1="470" y1="98" x2="470" y2="130" stroke="#333" stroke-width="1.2"/>
-  <polygon points="465,130 470,140 475,130" fill="#333"/>
-  
-  <!-- Layer 2: 建模方法 (Green) -->
-  <rect x="30" y="140" width="160" height="55" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
-  <text x="110" y="160" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#166534" font-weight="bold">开关模型(SW)</text>
-  <text x="110" y="176" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" fill="#16a34a">步长≈1μs / 完整谐波</text>
-  <text x="110" y="188" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" fill="#16a34a">基准精度</text>
-  
-  <rect x="210" y="140" width="160" height="55" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
-  <text x="290" y="160" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#166534" font-weight="bold">电压插值法(VI)</text>
-  <text x="290" y="176" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" fill="#16a34a">步长5μs / 谐波误差&lt;1%</text>
-  <text x="290" y="188" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" fill="#16a34a">3倍加速</text>
-  
-  <rect x="390" y="140" width="160" height="55" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
-  <text x="470" y="160" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#166534" font-weight="bold">HP-AVM</text>
-  <text x="470" y="176" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" fill="#16a34a">半载波周期更新</text>
-  <text x="470" y="188" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" fill="#16a34a">5~6倍加速</text>
-  
-  <!-- Arrow from Layer 2 to Layer 3 -->
-  <line x1="110" y1="195" x2="110" y2="230" stroke="#333" stroke-width="1.2"/>
-  <polygon points="105,230 110,240 115,230" fill="#333"/>
-  <line x1="290" y1="195" x2="290" y2="230" stroke="#333" stroke-width="1.2"/>
-  <polygon points="285,230 290,240 295,230" fill="#333"/>
-  <line x1="470" y1="195" x2="470" y2="230" stroke="#333" stroke-width="1.2"/>
-  <polygon points="465,230 470,240 475,230" fill="#333"/>
-  
-  <!-- Layer 3: 分析场景 (Yellow) -->
-  <rect x="30" y="240" width="160" height="55" rx="6" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
-  <text x="110" y="260" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#92400e" font-weight="bold">谐波潮流/TDHPF</text>
-  <text x="110" y="276" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" fill="#d97706">非正弦周期稳态</text>
-  <text x="110" y="288" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" fill="#d97706">消除截断误差</text>
-  
-  <rect x="210" y="240" width="160" height="55" rx="6" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
-  <text x="290" y="260" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#92400e" font-weight="bold">闪变/暂降评估</text>
-  <text x="290" y="276" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" fill="#d97706">EAF随机模型</text>
-  <text x="290" y="288" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" fill="#d97706">Pst99% &lt;1%误差</text>
-  
-  <rect x="390" y="240" width="160" height="55" rx="6" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
-  <text x="470" y="260" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#92400e" font-weight="bold">超谐波/环流分析</text>
-  <text x="470" y="276" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" fill="#d97706">黑箱端口模型</text>
-  <text x="470" y="288" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" fill="#d97706">2~150 kHz频段</text>
-  
-  <!-- Arrow from Layer 3 to Layer 4 -->
-  <line x1="110" y1="295" x2="110" y2="330" stroke="#333" stroke-width="1.2"/>
-  <polygon points="105,330 110,340 115,330" fill="#333"/>
-  <line x1="290" y1="295" x2="290" y2="330" stroke="#333" stroke-width="1.2"/>
-  <polygon points="285,330 290,340 295,330" fill="#333"/>
-  <line x1="470" y1="295" x2="470" y2="330" stroke="#333" stroke-width="1.2"/>
-  <polygon points="465,330 470,340 475,330" fill="#333"/>
-  
-  <!-- Layer 4: 频域分析 (Purple) -->
-  <rect x="30" y="340" width="160" height="55" rx="6" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.5"/>
-  <text x="110" y="360" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#5b21b6" font-weight="bold">DHD+VF降阶</text>
-  <text x="110" y="376" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" fill="#7c3aed">频变网络谐波</text>
-  <text x="110" y="388" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" fill="#7c3aed">2.8倍加速</text>
-  
-  <rect x="210" y="340" width="160" height="55" rx="6" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.5"/>
-  <text x="290" y="360" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#5b21b6" font-weight="bold">dq-SDP动态相量</text>
-  <text x="290" y="376" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" fill="#7c3aed">不平衡工况</text>
-  <text x="290" y="388" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" fill="#7c3aed">100~1000倍加速</text>
-  
-  <rect x="390" y="340" width="160" height="55" rx="6" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.5"/>
-  <text x="470" y="360" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#5b21b6" font-weight="bold">频域FFT/WFFT</text>
-  <text x="470" y="376" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" fill="#7c3aed">谐波频谱分析</text>
-  <text x="470" y="388" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" fill="#7c3aed">暂态虚假振荡</text>
-  
-  <!-- Arrow from Layer 4 to Layer 5 -->
-  <line x1="110" y1="395" x2="110" y2="430" stroke="#333" stroke-width="1.2"/>
-  <polygon points="105,430 110,440 115,430" fill="#333"/>
-  <line x1="290" y1="395" x2="290" y2="430" stroke="#333" stroke-width="1.2"/>
-  <polygon points="285,430 290,440 295,430" fill="#333"/>
-  <line x1="470" y1="395" x2="470" y2="430" stroke="#333" stroke-width="1.2"/>
-  <polygon points="465,430 470,440 475,430" fill="#333"/>
-  
-  <!-- Layer 5: 输出/结果 (Amber) -->
-  <rect x="200" y="440" width="280" height="50" rx="6" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
-  <text x="340" y="460" text-anchor="middle" font-family="Arial,sans-serif" font-size="12" fill="#92400e" font-weight="bold">电能质量评估报告</text>
-  <text x="340" y="478" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#d97706">THD / Pst / 暂降深度 / 不平衡度 / 超谐波发射</text>
-  
-  <!-- Right side: 并行路径 -->
-  <rect x="580" y="140" width="120" height="55" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
-  <text x="640" y="160" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#166534" font-weight="bold">IEC闪变仪</text>
-  <text x="640" y="176" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" fill="#16a34a">61000-4-15</text>
-  <text x="640" y="188" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" fill="#16a34a">Pst / Plt</text>
-  
-  <rect x="580" y="240" width="120" height="55" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
-  <text x="640" y="260" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#166534" font-weight="bold">IEEE 519</text>
-  <text x="640" y="276" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" fill="#16a34a">谐波限值标准</text>
-  <text x="640" y="288" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" fill="#16a34a">THD&lt;5%</text>
-  
-  <rect x="580" y="340" width="120" height="55" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
-  <text x="640" y="360" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#166534" font-weight="bold">61000-4-30</text>
-  <text x="640" y="376" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" fill="#16a34a">PQ测量标准</text>
-  <text x="640" y="388" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" fill="#16a34a">分类/精度</text>
-  
-  <!-- Dashed arrows from right to main -->
-  <line x1="580" y1="167" x2="550" y2="167" stroke="#333" stroke-width="1" stroke-dasharray="4,3"/>
-  <line x1="580" y1="267" x2="550" y2="267" stroke="#333" stroke-width="1" stroke-dasharray="4,3"/>
-  <line x1="580" y1="367" x2="550" y2="367" stroke="#333" stroke-width="1" stroke-dasharray="4,3"/>
-  
-  <!-- Legend -->
-  <rect x="720" y="48" width="150" height="120" rx="6" fill="#f9fafb" stroke="#d1d5db" stroke-width="1"/>
-  <text x="795" y="68" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#666" font-weight="bold">图例</text>
-  <rect x="735" y="78" width="12" height="12" rx="2" fill="#dbeafe" stroke="#2563eb" stroke-width="1"/>
-  <text x="755" y="89" font-family="Arial,sans-serif" font-size="9" fill="#333">输入/源参数</text>
-  <rect x="735" y="98" width="12" height="12" rx="2" fill="#dcfce7" stroke="#16a34a" stroke-width="1"/>
-  <text x="755" y="109" font-family="Arial,sans-serif" font-size="9" fill="#333">EMT建模方法</text>
-  <rect x="735" y="118" width="12" height="12" rx="2" fill="#fef3c7" stroke="#d97706" stroke-width="1"/>
-  <text x="755" y="129" font-family="Arial,sans-serif" font-size="9" fill="#333">分析场景</text>
-  <rect x="735" y="138" width="12" height="12" rx="2" fill="#ede9fe" stroke="#7c3aed" stroke-width="1"/>
-  <text x="755" y="149" font-family="Arial,sans-serif" font-size="9" fill="#333">频域分析方法</text>
-  <rect x="735" y="158" width="12" height="12" rx="2" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
-  <text x="755" y="169" font-family="Arial,sans-serif" font-size="9" fill="#333">评估输出</text>
-</svg>
-</div>
-<p style="text-align:center;font-size:12px;color:#666;margin-top:8px;">图1 · 电能质量EMT分析方法体系架构 — 从非线性负荷/故障输入，经多层建模与分析方法，到电能质量评估输出的完整流程</p>
-
----
-
-*本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*
-
+| 论文 | 年份 |
+|------|------|
+| [[neutral-conductor-current-in-three-phase-networks-with-compact-fluorescent-lamps|Neutral conductor current in three-phase networks with compa]] | 2013 |
+| [[emtp-model-of-a-bidirectional-multilevel-solid-state-transformer-for-distributio|EMTP model of a bidirectional multilevel solid state transfo]] | 2014 |
+| [[a-hybrid-simulation-tool-for-the-study-of-pv-integration-impacts-on-distribution|A Hybrid Simulation Tool for the Study of PV Integration Imp]] | 2016 |
+| [[development-of-high-frequency-supraharmonic-models-of-small-scale-amplt5kw-singl|Development of high frequency (Supraharmonic) models of smal]] | 2019 |
+| [[electromagnetic-transient-emt-and-quasi-static-time-series-qsts-co-simulation-fo|Electromagnetic transient (EMT) and quasi static time series]] | 2026 |
 ## 来源论文
 
 | 论文 | 年份 |
 |------|------|
-| [[a-time-domain-ac-electric-arc-furnace-model-for-flicker-planning-studies]] | 2009 |
-| [[a-time-domain-harmonic-power-flow-algorithm]] | 2010 |
-| [[analysis-of-frequency-dependent-network-equivalents-in-dynamic-harmonic-domain]] | 2021 |
-| [[an-inverter-model-simulating-accurate-harmonics-with-low-computational-burden-fo]] | 2020 |
-| [[development-of-high-frequency-supraharmonic-models-of-small-scale-amplt5kw-singl]] | 2019 |
-| [[analysis-on-non-characteristic-harmonic-circulating-current-in-parallel-inverter]] | 2016 |
-| [[modeling-and-application-of-dq-sequence-dynamic-phasors-under-unbalanced-ac-cond]] | 2025 |
-| [[harmonic-preserved-average-value-model-for-converters-in-electromagnetic-transie]] | 2026 |
+| [[neutral-conductor-current-in-three-phase-networks-with-compact-fluorescent-lamps|Neutral conductor current in three-phase networks with compa]] | 2013 |
+| [[emtp-model-of-a-bidirectional-multilevel-solid-state-transformer-for-distributio|EMTP model of a bidirectional multilevel solid state transfo]] | 2014 |
+| [[a-hybrid-simulation-tool-for-the-study-of-pv-integration-impacts-on-distribution|A Hybrid Simulation Tool for the Study of PV Integration Imp]] | 2016 |
+| [[development-of-high-frequency-supraharmonic-models-of-small-scale-amplt5kw-singl|Development of high frequency (Supraharmonic) models of smal]] | 2019 |
+| [[electromagnetic-transient-emt-and-quasi-static-time-series-qsts-co-simulation-fo|Electromagnetic transient (EMT) and quasi static time series]] | 2026 |

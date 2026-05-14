@@ -144,7 +144,3 @@ $$Re\{H(j\omega)\} \geq 0, \quad \forall \omega$$
 | [[realization-of-rational-models-for-tower-footing-grounding-systems|Realization of rational models for tower-footing grounding s]] | 2025 |
 | [[z-tool-frequency-domain-characterization-of-emt-models-for-small-signal-stabilit|Z-Tool: Frequency-domain characterization of EMT models for ]] | 2025 |
 | [[time-delay-estimation-through-all-pass-functions-for-ulm-line-and-cable-models|Time-delay estimation through all-pass functions for ULM lin]] | 2026 |
-
----
-
-*本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*

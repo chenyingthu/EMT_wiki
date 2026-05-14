@@ -461,3 +461,10 @@ D1 anode cathode DMOD
 ---
 
 *本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[stability-evaluation-of-interpolation-extrapolation-and-numerical-oscillation-da|Stability Evaluation of Interpolation, Extrapolation, and Nu]] | 2020 |
+| [[an-improved-high-accuracy-interpolation-method-for-switching-devices-in-emt-simu|An improved high-accuracy interpolation method for switching]] | 2023 |

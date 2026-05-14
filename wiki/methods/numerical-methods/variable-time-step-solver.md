@@ -486,3 +486,11 @@ $$\Delta x \approx \left| \frac{dx}{dt} \right| \cdot \Delta t_d$$
 - **Shampine, L. F. & Reichelt, M. W.** — "The MATLAB ODE Suite" (*SIAM Journal on Scientific Computing*, 18(1):1-22, 1997)。介绍了 ode45 (Dormand-Prince RK45) 和 ode15s (变阶 BDF) 的实现细节，是变步长求解器工程实现的重要参考。
 
 - **Zhang et al., 2023** — "An Efficient Half-Bridge MMC Model for EMTP-Type Simulation Based on Hybrid Numerical Integration" (*IEEE Transactions on Power Delivery*)。提出 MMC 的混合数值积分建模方法，结合中点法和梯形法，将 MMC 离散化为恒定电导的 Norton 等效电路。
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[electromagnetic-transient-modeling-of-asynchronous-machine-in-modelica-accuracy--16|Electromagnetic Transient Modeling of Asynchronous Machine i]] | 2024 |
+| [[electromagnetic-transient-modeling-of-asynchronous-machine-in-modelica-accuracy-|Electromagnetic Transient Modeling of Asynchronous Machine i]] | 2024 |
+| [[huang-等-a-heterogeneous-multiscale-method-for-efficient-simulation-of-power-syst|Huang 等 | A Heterogeneous Multiscale Method for Efficient Si]] | 2025 |

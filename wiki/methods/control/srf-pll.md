@@ -139,9 +139,6 @@ SRF-PLL 的稳态初始化精度直接影响 EMT 仿真启动质量 [Guilherme 2
 
 ## 来源论文
 
-| 论文 | 年份 | 关注点 |
-|------|------|--------|
-| [[rmsx002b-augmenting-the-traditional-circuit-model-to-capture-pll-instability|RMS+: PLL Instability"]] | 2026 | SRF-PLL 失稳机理 |
-| [[advanced-dsogi-pll-with-adaptive-bandwidth-for-improved-transient-performance-of|Advanced DSOGI PLL"]] | 2024 | DSOGI-PLL vs SRF-PLL 基线 |
-| [[equivalent-grid-following-inverter-based-generator-model-for-atpatpdraw-simulati|GF-IBR Model"]] | 2023 | SRF-PLL 在 ATP 中的应用 |
-| [[a-steady-state-initialization-procedure-for-generic-voltage-source-converters-in|VSC Steady-State Initialization"]] | 2023 | SRF-PLL 初始化 |
+| 论文 | 年份 |
+|------|------|
+| [[advanced-dsogi-pll-with-adaptive-bandwidth-for-improved-transient-performance-of|Advanced DSOGI PLL with Adaptive Bandwidth for Improved Tran]] | 2024 |

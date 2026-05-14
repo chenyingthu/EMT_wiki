@@ -86,3 +86,9 @@ $$L\frac{di_q}{dt} = v_q - Ri_q - \omega Li_d - v_{dc}s_q$$
 ---
 
 *本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[a-component-level-modeling-and-fine-grained-simulation-method-for-renewable-ener|适用于级联型电力电子拓扑电磁暂态仿真的N端口网络通用等效建模方法]] | 2024 |

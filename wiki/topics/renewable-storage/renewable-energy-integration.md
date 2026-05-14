@@ -405,3 +405,17 @@ GFM 和 GFL 逆变器在同一系统中的混合运行涉及复杂的功率分�
 - **Marthi 2024** "Benchmark High-Fidelity EMT Models for Power Grid with PV Plants" — 基于 IEEE-39 母线系统的 PV 场站基准模型（3 场站，500 MW）
 - **Hussein 2016** "A Wideband Equivalent Model of Type-3 Wind Power Plants for EMT Studies" — Type-3 WPP 宽频等效模型（FDNE + DLFE），85% 计算时间减少
 - **Li 2022** "Structure Preserving Aggregation Method for Doubly-Fed Induction Generators in Wind Power Conversion" — DFIG 结构保持聚合方法，递归降阶，70% 计算时间减少
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[comparative-study-on-electromechanical-and-electromagnetic-transient-model-for-g|Comparative study on electromechanical and electromagnetic t]] | 2014 |
+| [[advanced-hybrid-transient-stability-and-emt-simulation-for-vsc-hvdc-systems|Advanced Hybrid Transient Stability and EMT Simulation for V]] | 2015 |
+| [[dynamic-model-reduction-of-power-electronic-interfaced-generators-based-on-singu|Dynamic model reduction of power electronic interfaced gener]] | 2019 |
+| [[comparison-and-selection-of-grid-tied-inverter-models-for-accurate-and-efficient|Comparison and Selection of Grid-Tied Inverter Models for Ac]] | 2021 |
+| [[a-piecewise-generalized-state-space-model-of-power-converters-for-electromagneti|A Piecewise Generalized State Space Model of Power Converter]] | 2022 |
+| [[parallelization-of-emt-simulations-for-integration-of-inverter-based-resources|Parallelization of EMT simulations for integration of invert]] | 2023 |
+| [[advanced-dsogi-pll-with-adaptive-bandwidth-for-improved-transient-performance-of|Advanced DSOGI PLL with Adaptive Bandwidth for Improved Tran]] | 2024 |
+| [[accelerating-electromagnetic-transient-simulations-using-graphical-processing-un|Accelerating electromagnetic transient simulations using gra]] | 2025 |
+| [[low-dimensional-equivalent-models-and-multithreading-based-parallel-emt-simulati|Low-Dimensional Equivalent Models and Multithreading-Based P]] | 2025 |

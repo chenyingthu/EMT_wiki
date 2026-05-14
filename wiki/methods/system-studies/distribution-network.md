@@ -368,3 +368,12 @@ $$\bar{\mathbf{u}}_0 = \mathbf{u}_0(t) - \mathbf{a}(t) * \bar{\mathbf{u}}_\ell(t
 - **Bruned et al. (2021)** — "Compensation method for parallel real-time EMT studies" — 提出补偿法（CM）实现无自然线路延迟场景下的EMT并行仿真，在600节点配电网中实现3.63倍加速，实时步长从145 μs降至40 μs。
 - **Debnath & Choi (2023)** — "EMT Simulation Algorithms for Evaluation of Large-Scale Extreme Fast Charging Systems" — 提出混合数值离散算法框架，联合应用数值刚度分离、时间常数分离、DAE聚类聚合和多阶积分，在300个XFC场景中实现271倍加速。
 - **Kida et al. (2025)** — "Improving EMT simulations using frequency-shifted rational approximations" — 提出基于复矢量拟合(CVF)与频移解析信号的EMT仿真框架，CVF拟合误差较传统VF降低8个数量级，仿真步长可扩大2.33–5.5倍。
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[an-fpga-based-electromagnetic-transient-analysis-of-power-distribution-network|An FPGA based electromagnetic transient analysis of power di]] | 2021 |
+| [[compensation-method-for-parallel-real-time-emt-studies|Compensation method for parallel real-time EMT studies✰]] | 2021 |
+| [[electromagnetic-transient-emt-simulation-algorithms-for-evaluation-of-large-scal|Electromagnetic Transient (EMT) Simulation Algorithms for Ev]] | 2023 |
+| [[improving-emt-simulations-using-frequency-shifted-rational-approximations|Improving EMT simulations using frequency-shifted rational a]] | 2025 |

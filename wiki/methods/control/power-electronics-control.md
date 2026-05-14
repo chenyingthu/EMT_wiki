@@ -308,3 +308,9 @@ $$P = P_{ref} + K_f (\omega_{ref} - \omega), \quad Q = Q_{ref} + K_v (V_{ref} - 
 ---
 
 *本页面内容基于电力电子控制理论经典文献和近年来的前沿研究成果整合而成。量化数据均标注来源，无来源处标记"原文未报告可核验的数值结果"。*
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[transient-electromagnetic-power-compensationbased-adaptive-inertia-control-strat|Transient Electromagnetic Power Compensation‐Based Adaptive ]] | 2025 |

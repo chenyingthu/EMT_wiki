@@ -287,4 +287,5 @@ $$I_{max} = \sqrt{i_d^2 + i_q^2} \leq I_{rated}$$
 | [[a-type-4-wind-power-plant-equivalent-model|A Type-4 Wind Power Plant Equivalent Model]] | 2012 |
 | [[a-new-sequence-domain-emt-level-multi-input-multi-output-frequency-scanning-meth|A new sequence domain EMT-level multi-input multi-output fre]] | 2023 |
 | [[dq-admittance-model-extraction-for-ibrs-via-gaussian-pulse-excitation|DQ Admittance Model Extraction for IBRs via Gaussian Pulse E]] | 2023 |
+| [[an-enhanced-k-means-two-step-clustering-method-for-dynamic-equivalent-modeling-o|An enhanced K-means two-step clustering method for dynamic e]] | 2025 |
 | [[comprehensive-full-scale-converter-wind-park-initialization-for-electromagnetic-|Comprehensive Full-Scale Converter Wind Park Initialization ]] | 2025 |

@@ -82,10 +82,13 @@ graph TD
 | 论文 | 年份 |
 |------|------|
 | [[digital-time-domain-investigation-of-transient-behavior-of-coupling-capacitor-vo|Digital Time-Domain Investigation of Transient Behavior of C]] | 2004 |
+| [[application-of-emtp-in-the-research-of-uhv-ac-power-transmission|Application of EMTP in the research of UHV AC power transmis]] | 2006 |
 | [[dual-reversible-transformer-model-for-the-13&14|Dual Reversible Transformer Model for the]] | 2013 |
+| [[analysing-a-power-transformers-internal-response-to-system-transients-using-a-hy|Analysing a power transformer⠒s internal response to system ]] | 2015 |
 | [[duality-based-transformer-modeling-for-low-frequency-transients|Duality-Based Transformer Modeling for Low-Frequency Transie]] | 2016 |
 | [[accurate-simulation-model-for-a-three-phase-ferroresonant-circuit-in-emtpatp|Accurate simulation model for a three-phase ferroresonant ci]] | 2018 |
 | [[saturable-reactor-hysteresis-model-based-on-jilesatherton-formulation-for-ferror|Saturable reactor hysteresis model based on Jiles–Atherton f]] | 2018 |
+| [[determination-of-the-saturation-curve-of-power-transformers-by-processing-transi|Determination of the saturation curve of power transformers ]] | 2021 |
 ## 技术演进脉络
 
 ### 1990-2000年：现象识别与机理研究

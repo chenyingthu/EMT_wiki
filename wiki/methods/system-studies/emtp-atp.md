@@ -136,3 +136,9 @@ ATP 的仿真流程按如下步骤组织：
 ---
 
 *本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[accurate-simulation-model-for-a-three-phase-ferroresonant-circuit-in-emtpatp|Accurate simulation model for a three-phase ferroresonant ci]] | 2018 |

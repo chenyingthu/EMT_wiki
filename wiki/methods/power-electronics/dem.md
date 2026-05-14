@@ -92,14 +92,9 @@ Meng 2020构建通用桥臂等效电路（UAM），使DEM与广义开关函数AV
 
 ## 来源论文
 
-| 论文 | 年份 | 核心贡献 |
-|------|------|----------|
-| [[efcient-modeling-of-modular-multilevel-hvdc-15|Gnanarathna — Efficient MMC-HVDC]] | 2010 | 戴维南桥臂等效，310x加速 |
-| [[an-accelerated-detailed-equivalent-model-for-modular-multilevel-converters|Parvari — Accelerated DEM]] | 2023 | 欧拉积分恒定导纳，+30~60% |
-| [[adaptive-modular-multilevel-converter-model-for-electromagnetic-transient-simula|Stepanov — Adaptive MMC Model]] | 2020 | 三模型统一诺顿接口 |
-| [[combining-detailed-equivalent-model-with-switching-function-based-average-value-|Meng — DEM+AVM Framework]] | 2020 | UAM通用切换框架 |
-| [[spurious-power-losses-in-modular-multilevel-converter-arm-equivalent-model|Stepanov — Spurious Losses]] | 2019 | AEM虚假功率及其消除 |
-
----
-
-*本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*
+| 论文 | 年份 |
+|------|------|
+| [[combining-detailed-equivalent-model-with-switching-function-based-average-value-|Combining Detailed Equivalent Model With Switching-Function-]] | 2020 |
+| [[an-accelerated-detailed-equivalent-model-for-modular-multilevel-converters|An accelerated detailed equivalent model for modular multile]] | 2023 |
+| [[modeling-of-mmc-based-statcom-with-embedded-energy-storage-for-the-simulation-of|Modeling of MMC-based STATCOM with embedded energy storage f]] | 2023 |
+| [[an-electromagnetic-transient-simulation-model-of-mmc-bess-for-various-operating-|An Electromagnetic Transient Simulation Model of MMC-BESS fo]] | 2025 |

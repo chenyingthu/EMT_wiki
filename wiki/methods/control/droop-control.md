@@ -205,3 +205,10 @@ Nurunnabi (2025) 指出，GFM 逆变器的下垂控制受两类硬约束：
 ---
 
 *本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[control-and-simulation-of-a-grid-forming-inverter-for-hybrid-pv-battery-plants-i|Control and Simulation of a Grid-Forming Inverter for Hybrid]] | 2021 |
+| [[advancing-grid-forming-inverter-technology-comprehensive-pq-capability-and-perfo|Advancing Grid-Forming Inverter Technology: Comprehensive PQ]] | 2025 |

@@ -245,3 +245,11 @@ $$
 
 *本页面基于Karpathy LLM Wiki Pattern构建，内容来自EMT领域学术文献的深度分析*
 *支撑书籍第一篇第1章"电磁暂态的数学基础"*
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[implementation-of-an-integrated-online-instantaneous-discrete-wavelet|Implementation of an integrated online instantaneous discret]] | 2015 |
+| [[a-julia-based-simulation-platform-for-power-system-transients|A Julia-based simulation platform for power system transient]] | 2025 |
+| [[discretized-impedance-based-modeling-of-converter-interfaced-energy-resources-fo|Discretized Impedance-Based Modeling of Converter-Interfaced]] | 2025 |

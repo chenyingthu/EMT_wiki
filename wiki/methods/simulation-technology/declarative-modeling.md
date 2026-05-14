@@ -317,3 +317,11 @@ EMT 仿真传统上使用固定小步长（1~10 μs）：
 ---
 
 *本页面遵循学术严谨性原则，所有技术细节和数据均基于同行评议的学术文献。*
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[msemt-an-advanced-modelica-library-for-power-system-electromagnetic-transient-st|MSEMT: An Advanced Modelica Library for Power System Electro]] | 2022 |
+| [[electromagnetic-transient-modeling-of-asynchronous-machine-in-modelica-accuracy--16|Electromagnetic Transient Modeling of Asynchronous Machine i]] | 2024 |
+| [[electromagnetic-transient-modeling-of-asynchronous-machine-in-modelica-accuracy-|Electromagnetic Transient Modeling of Asynchronous Machine i]] | 2024 |

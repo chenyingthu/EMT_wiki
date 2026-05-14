@@ -146,3 +146,11 @@ $$\mathbf{\theta}_{k+1} = \mathbf{\theta}_k + (\mathbf{J}^T\mathbf{J})^{-1}\math
 ---
 
 *本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[analysis-and-estimation-of-truncation-errors-in-modeling-complex-resonant-circui-fix|Analysis and estimation of truncation errors in modeling com]] | 2002 |
+| [[real-time-rms-emt-co-simulation-and-its-application-in-hil-testing-of-protective|Real-time RMS-EMT co-simulation and its application in HIL t]] | 2021 |
+| [[an-enhanced-method-to-achieve-exact-dc-values-for-frequency-dependent-transmissi|An Enhanced Method to Achieve Exact DC Values for Frequency-]] | 2023 |

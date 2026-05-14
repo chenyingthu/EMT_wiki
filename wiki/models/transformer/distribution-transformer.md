@@ -110,10 +110,10 @@ $$T_h = \frac{V_{2h}}{V_{1h}} = \frac{1}{|1 + hZ_k/Z_{load}|}$$
 
 | 论文 | 年份 |
 |------|------|
-| [[an-fpga-based-electromagnetic-transient-analysis-of-power-distribution-network|An FPGA based electromagnetic transient analysis of power distribution network]] | 2021 |
-| [[an-improved-low-frequency-transformer-model-for-use-in-gic-studies|An improved low-frequency transformer model for use in GIC studies]] | 2004 |
-| [[duality-based-transformer-model-including|Duality-Based Transformer Model Including Eddy Current Effects in the Windings]] | 2015 |
-
+| [[empirical-model-of-a-current-limiting-fuse-using-emtp|Empirical model of a current-limiting fuse using EMTP]] | 1998 |
+| [[an-fpga-based-electromagnetic-transient-analysis-of-power-distribution-network|An FPGA based electromagnetic transient analysis of power di]] | 2021 |
+| [[a-thvenin-type-version-of-the-extended-modal-domain-model-for-lightning-induced-|A Thévenin-Type Version of the Extended Modal-Domain Model f]] | 2023 |
+| [[calculation-of-lightning-induced-voltages-on-a-large-scale-distribution-network-|Calculation of lightning-induced voltages on a large-scale d]] | 2025 |
 ## 相关模型
 
 - [[transformer-model]] - 变压器通用模型

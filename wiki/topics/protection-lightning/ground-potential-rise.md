@@ -856,12 +856,12 @@ IEC 61936-1《Power installations exceeding 1 kV a.c.》规定了电力装置的
 
 ## 来源论文
 
-参见 [[index]] 获取更多地电位升相关文献。
-
----
-
-*本文档为EMT Wiki知识库的一部分，内容基于IEEE 80、IEC 61936等国际标准及EMT领域学术文献整理。*
-
+| 论文 | 年份 |
+|------|------|
+| [[evaluation-of-the-impact-of-different-transmission-line-models-on-electromagneti|Evaluation of the impact of different transmission line mode]] | 2018 |
+| [[computation-of-ground-potential-rise-and-grounding-impedance-of-simple-arrangeme|Computation of ground potential rise and grounding impedance]] | 2021 |
+| [[ground-potential-rise-in-wind-farms-due-to-direct-lightning|Ground Potential Rise in Wind Farms due to Direct Lightning]] | 2021 |
+| [[performance-of-the-recursive-methods-applied-to-compute-the-transient-responses-|Performance of the recursive methods applied to compute the ]] | 2021 |
 ## 来源论文
 
 | 论文 | 年份 |

@@ -177,3 +177,12 @@ $$\f\frac{1}{2}C_{dc}\f\frac{dV_{dc}^2}{dt} = P_{in} - P_{out}$$
 ---
 
 *本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[a-wideband-equivalent-model-of-type-3-wind-power-plants-for-emt-studies|A Wideband Equivalent Model of Type-3 Wind Power Plants for ]] | 2016 |
+| [[field-validated-generic-emt-type-model-of-a-full-converter-wind-turbine-based-on|Field Validated Generic EMT-Type Model of a Full Converter W]] | 2018 |
+| [[electromechanical-transient-modelling-and-application-of-modular-multilevel-conv|Electromechanical transient modelling and application of mod]] | 2021 |
+| [[advanced-dsogi-pll-with-adaptive-bandwidth-for-improved-transient-performance-of|Advanced DSOGI PLL with Adaptive Bandwidth for Improved Tran]] | 2024 |

@@ -128,3 +128,12 @@ $$
 ---
 
 *本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[a-new-distance-relaying-algorithm-based-on-complex-differential-equation-for-sym|A new distance relaying algorithm based on complex different]] | 2004 |
+| [[a-novel-distance-protection-algorithm-in-frequency-domain-based-on-parameter-ide|A Novel Distance Protection Algorithm in Frequency Domain Ba]] | 2012 |
+| [[distance-protection-scheme-for-dc-distribution-systems-based-on-the-high-frequen|Distance Protection Scheme for DC Distribution Systems Based]] | 2019 |
+| [[distance-protection-scheme-for-dc-distribution-systems-based-on-the-high-frequen|Distance Protection Scheme for DC Distribution Systems Based]] | 2019 |

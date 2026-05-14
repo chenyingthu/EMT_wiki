@@ -180,3 +180,12 @@ MATE 将大网络划分为多个区域，各区域独立形成端口戴维南等
 - [[network-equivalent]]：系统级等值，含静态、动态和频变端口模型
 - [[multirate-method]]：多速率接口中的端口等效交换
 - [[state-space-method]]：SSN 集群的状态空间描述基础
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[numerical-integration-2s-dirk-iet-gtd|Numerical Integration by the 2-Stage Diagonally Implicit Run]] | 2013 |
+| [[high-performance-computing-engines-for-the-fpga-based-simulation-of-the-ulm|High performance computing engines for the FPGA-based simula]] | 2020 |
+| [[efficient-implementation-of-multi-port-frequency-dependent-network-equivalents-f|Efficient Implementation of Multi-Port Frequency Dependent N]] | 2022 |
+| [[analytical-modeling-of-the-half-bridge-leg-using-an-associated-discrete-circuit-|Analytical Modeling of the Half-Bridge Leg Using an Associat]] | 2026 |

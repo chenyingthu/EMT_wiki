@@ -379,3 +379,14 @@ Y10 进一步划分为 11 个子模块后，各模块计算量分布在 1692–3
 - **Fu 等 (2025)** — "Splitting State-Space Method for Converter-Integrated Power Systems EMT Simulations", IEEE Trans. Power Delivery, 40(1). 提出分裂状态空间法，通过 SASV 识别自动分离常数/时变部分，结合多阶指数分裂公式，在 MMC/风电场/LLC 变换器等场景中验证 1.7x–6x 加速。
 - **Duan & Dinavahi (2020)** — "A Novel Linking-Domain Extraction Decomposition Method for Parallel EMT Simulation of Large-Scale AC/DC Networks", IEEE Trans. Power Delivery. 提出 LDE 分解法，利用 Woodbury 恒等式实现网络矩阵的直接并行求逆，在 FPGA/GPU 上验证 4.2x–6.8x 加速。
 - **Hu 等 (2015)** — "Compacting and partitioning-based simulation solution for frequency-dependent network equivalents in real-time digital simulator", IET Gen. Trans. Distrib. 提出 FDNE 的 SVD 低秩压缩与模块划分联合策略，在 RTDS 上实现多端口 FDNE 的实时仿真。
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[loewner-matrix-approach-for-modelling-fdnes-of-power-systems|Loewner matrix approach for modelling FDNEs of power systems]] | 2015 |
+| [[a-hierarchical-low-rank-approximation-based-network-solver-for-emt-simulation|A Hierarchical Low-Rank Approximation Based Network Solver f]] | 2020 |
+| [[compacting-and-partitioningbased-simulation-solution-for-frequencydependent-netw|Compacting and partitioning‐based simulation solution for fr]] | 2020 |
+| [[new-compact-white-box-transformer-model-for-the-calculation-of-electromagnetic-t|New Compact White-Box Transformer Model for the Calculation ]] | 2022 |
+| [[adaptive-variable-step-size-calculation-method-for-transient-temperature-rise-and-fall|Adaptive Variable Step Size Calculation Method for Transient]] | 2024 |
+| [[an-interface-method-for-co-simulation-of-emt-model-and-shifted-frequency-emt-mod|An Interface Method for Co-Simulation of EMT Model and Shift]] | 2025 |

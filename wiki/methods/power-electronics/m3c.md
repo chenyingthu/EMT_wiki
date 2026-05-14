@@ -161,3 +161,9 @@ $$
 - M3C 在 EMT 尺度下的详细开关模型及其与机电暂态模型的接口
 - 多 M3C 并联或 M3C 与 MMC 混合系统的协调控制
 - M3C 内部环流和子模块电容电压平衡对系统级稳定性的影响
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[electromechanical-transient-modeling-of-the-low-frequency-ac-system-with-modular|Electromechanical Transient Modeling of the Low-Frequency AC]] | 2023 |

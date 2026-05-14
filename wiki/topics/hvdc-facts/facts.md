@@ -109,8 +109,6 @@ FACTS 在 EMT 仿真中已有可核验的量化结果：
 
 ## 来源论文
 
-| 论文 | 年份 | 核心贡献 |
-|------|------|---------|
-| [[combined-transient-and-dynamic-analysis-of-hvdc-and-facts-systems|Combined transient and dynamic analysis of HVDC and FACTS sy]] | 1998 | EMT-TSP混合仿真奠基 |
-| [[hybrid-svc-vsc-modeling-approaches-for-hardware-in-the-loop-simulation|Hybrid SVC-VSC modeling for HIL]] | 2023 | 大步长SVC-VSC建模偏差<1% |
-| [[hybrid-simulation-of-power-systems-with-svc-dynamic-phasor-model|SVC dynamic phasor hybrid simulation]] | 2009 | SVC动态相量混合仿真 |
+| 论文 | 年份 |
+|------|------|
+| [[combined-transient-and-dynamic-analysis-of-hvdc-and-facts-systems|Combined transient and dynamic analysis of HVDC and FACTS sy]] | 2004 |

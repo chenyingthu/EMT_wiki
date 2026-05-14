@@ -875,12 +875,13 @@ graph TD
 
 ## 来源论文
 
-参见 [[index]] 获取更多输电网络相关文献。
-
----
-
-*本页面基于电力系统输电网络技术综述编写，涵盖交流输电、直流输电、网络建模、稳定控制、保护系统、调度运行、规划设计及智能电网技术等领域。*
-
+| 论文 | 年份 |
+|------|------|
+| [[29tpwrd20162518676-2|29/TPWRD.2016.2518676]] | 2016 |
+| [[application-of-electromagnetic-transient-transient-stability-hybrid-simulation-t|Application of Electromagnetic Transient-Transient Stability]] | 2016 |
+| [[co-simulation-of-electromagnetic-transients-and-phasor-models-a-relaxation-appro|Co-Simulation of electromagnetic transients and Phasor model]] | 2016 |
+| [[co-simulation-of-electrical-networks-by-interfacing-emt-and-dynamic-phasor-simul|Co-simulation of electrical networks by interfacing EMT and ]] | 2018 |
+| [[advanced-dsogi-pll-with-adaptive-bandwidth-for-improved-transient-performance-of|Advanced DSOGI PLL with Adaptive Bandwidth for Improved Tran]] | 2024 |
 ## EMT中的作用
 
 输电网络 (Transmission Network) 在EMT仿真中的核心作用：

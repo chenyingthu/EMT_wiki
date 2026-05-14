@@ -140,11 +140,10 @@ $m_1$、$m_2$为PWM调制比，$n$为高频变压器变比。
 
 | 论文 | 年份 |
 |------|------|
-| [[accelerated-electromagnetic-transient-emt-equivalent-model-of-solid-state-transf|Accelerated EMT Equivalent Model of Solid-State Transformer]] | 2022 |
-| [[a-numerically-efficient-and-accurate-model-for-real-time-simulation-of-solid-sta|A numerically efficient and accurate model for real-time simulation of solid-state transformer]] | 2026 |
-| [[universal-decoupled-equivalent-circuit-models-of-solid-state-transformer-for-acc|Universal decoupled equivalent circuit models of solid-state transformer]] | 2025 |
-| [[multirate-emt-simulation-of-power-electronic-transformers-with-high-precision-fi|Multirate EMT Simulation of Power Electronic Transformers]] | 2025 |
-
----
-
-*本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*
+| [[emtp-model-of-a-bidirectional-multilevel-solid-state-transformer-for-distributio|EMTP model of a bidirectional multilevel solid state transfo]] | 2014 |
+| [[emtp-model-of-a-bidirectional-multilevel-solid-state-transformer-for-distributio|EMTP model of a bidirectional multilevel solid state transfo]] | 2014 |
+| [[modeling-of-modular-multilevel-converters-with-different-levels-of-detail-13&14|Dynamic Electro-Magnetic-Thermal Modeling of MMC-Based DC-DC]] | 2017 |
+| [[accelerated-electromagnetic-transient-emt-equivalent-model-of-solid-state-transf|Accelerated Electromagnetic Transient (EMT) Equivalent Model]] | 2022 |
+| [[fast-electromagnetic-transient-modeling-method-for-half-bridge-type-voltage-sour|Fast Electromagnetic Transient Modeling Method for Half-brid]] | 2023 |
+| [[a-component-level-modeling-and-fine-grained-simulation-method-for-renewable-ener|适用于级联型电力电子拓扑电磁暂态仿真的N端口网络通用等效建模方法]] | 2024 |
+| [[a-numerically-efficient-and-accurate-model-for-real-time-simulation-of-solid-sta|A Numerically Efficient and Accurate Model for Real-Time Sim]] | 2026 |

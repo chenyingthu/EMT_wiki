@@ -314,3 +314,11 @@ Duarte 等（2023）通过全波 FDTD 方法验证了准TEM近似在地下电缆
 - **Ye 和 Strunz 2016** - "Multi-Scale and Frequency-Dependent Modeling of Electric Power Transmission Lines" — 基于准TEM框架开发了多尺度频变线路模型，实现了从电磁暂态到机电暂态的统一仿真
 - **Carson 1926** - "Wave Propagation in Overhead Wires" — 首次推导了考虑有损大地回路的线路阻抗公式（Carson 公式），是准TEM大地回路分析的奠基性工作
 - **Wedepohl 1963** - "Applications of Matrix Methods to the Solution of Traveling-Wave Phenomena" — 将矩阵方法引入行波现象分析，奠定了多导体线路准TEM模态分析的基础
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[fast-electromagnetic-transient-model-for-mmc-hvdc-considering-dc-fault|Fast Electromagnetic Transient Model for MMC-HVDC Considerin]] | 2018 |
+| [[high-frequency-transients-in-buried-insulated-wires-transmission-line-simulation-19、20、21|High-frequency transients in buried insulated wires: Transmi]] | 2024 |
+| [[high-frequency-transients-in-buried-insulated-wires-transmission-line-simulation|High-frequency transients in buried insulated wires: Transmi]] | 2024 |

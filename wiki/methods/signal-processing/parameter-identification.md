@@ -144,4 +144,13 @@ $$\hat{\theta}_i \pm 1.96\sqrt{\text{Cov}_{ii}}$$
 | 论文 | 年份 |
 |------|------|
 | [[a-novel-distance-protection-algorithm-in-frequency-domain-based-on-parameter-ide|A Novel Distance Protection Algorithm in Frequency Domain Ba]] | 2012 |
+| [[a-novel-distance-protection-algorithm-in-frequency-domain-based-on-parameter-ide|A Novel Distance Protection Algorithm in Frequency Domain Ba]] | 2012 |
+| [[a-parallel-multi-modal-optimization-algorithm-for-simulation-based-design-of-pow|A Parallel Multi-Modal Optimization Algorithm for Simulation]] | 2015 |
+| [[a-parallel-multi-modal-optimization-algorithm-for-simulation-based-design-of-pow|A Parallel Multi-Modal Optimization Algorithm for Simulation]] | 2015 |
+| [[analysing-a-power-transformers-internal-response-to-system-transients-using-a-hy|Analysing a power transformer⠒s internal response to system ]] | 2015 |
+| [[dq-admittance-model-extraction-for-ibrs-via-gaussian-pulse-excitation|DQ Admittance Model Extraction for IBRs via Gaussian Pulse E]] | 2023 |
+| [[dq-admittance-model-extraction-for-ibrs-via-gaussian-pulse-excitation|DQ Admittance Model Extraction for IBRs via Gaussian Pulse E]] | 2023 |
+| [[improved-methods-for-optimization-of-power-systems-with-renewable-generation-usi|Improved methods for optimization of power systems with rene]] | 2023 |
+| [[locating-arc-faults-on-coupling-two-parallel-transmission-lines-using-the-novel-|Locating arc faults on coupling two parallel transmission li]] | 2023 |
 | [[electromagnetic-transient-analysis-using-a-frequency-dependent-network-equivalen|Electromagnetic Transient Analysis Using a Frequency Depende]] | 2024 |
+| [[double-ended-fault-locating-method-for-parallel-lines-without-measuring-parallel|Double-Ended Fault-Locating Method for Parallel Lines Withou]] | 2025 |

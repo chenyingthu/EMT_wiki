@@ -487,3 +487,10 @@ Li 2025 的神经网络通用等值模型通过单机训练 + 输入参数等效
 - **Yang 等 2011**《An aggregation method of permanent magnet synchronous generators wind farm model for electromagnetic transient studies》，IEEE/PES. — 针对永磁直驱风电场的聚合等值方法，为 PMSG 场站同调聚类提供参考。
 - **Li 等 2022**《Structure Preserving Aggregation Method for Doubly-Fed Induction Generators in Wind Power Conversion》，IEEE Trans. on Sustainable Energy. — 保持结构的 DFIG 聚合方法，在保持系统物理结构的前提下实现模型降阶。
 - **Guo 等 2025**《Electromagnetic transient aggregation of large-scale doubly-fed induction wind farm based on analytical criteria》. — 基于解析判据的大规模 DFIG 风电场电磁暂态聚合方法。
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[a-combined-state-space-nodal-method-for-the-simulation-of-power-system-transient|A combined state-space nodal method for the simulation of po]] | 2011 |
+| [[基于电流轨迹相似度的双馈风电机群电磁暂态同调分群方法|基于电流轨迹相似度的双馈风电机群电磁暂态同调分群方法]] | 2017 |

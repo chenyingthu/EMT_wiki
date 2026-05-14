@@ -107,3 +107,19 @@ $$\mathbf{H}(\omega)=e^{-\ell\sqrt{\mathbf{Z}'(\omega)\mathbf{Y}'(\omega)}}$$
 - 大规模概率雷电研究与详细 EMT 模型之间仍存在计算成本冲突。
 - 直击雷中的电弧、闪络路径、土壤电离和保护器热恢复需要更细的非线性模型与验证。
 - 配电网和风电场场景下，真实接地布置、低压负荷高频模型和设备内部绝缘数据常是主要证据缺口。
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[an-improved-approach-for-modeling-lightning-transients-of-wind-turbines|An improved approach for modeling lightning transients of wi]] | 2018 |
+| [[computation-of-ground-potential-rise-and-grounding-impedance-of-simple-arrangeme|Computation of ground potential rise and grounding impedance]] | 2021 |
+| [[earth-return-admittance-impact-on-crossbonded-underground-cables|Earth return admittance impact on crossbonded underground ca]] | 2021 |
+| [[extension-of-vances-closed-form-approximation-to-calculate-the-ground-admittance|Extension of Vance]] | 2021 |
+| [[full-wave-black-box-transmission-line-tower-model-for-the-assessment-of-lightnin|Full-wave black-box transmission line tower model for the as]] | 2021 |
+| [[performance-of-the-recursive-methods-applied-to-compute-the-transient-responses-|Performance of the recursive methods applied to compute the ]] | 2021 |
+| [[influence-of-a-lossy-ground-on-the-lightning-performance-of-overhead-transmissio|Influence of a lossy ground on the lightning performance of ]] | 2022 |
+| [[comparison-of-soil-modeling-concerning-physical-factors-application-to-transient|Comparison of soil modeling concerning physical factors: App]] | 2023 |
+| [[impact-of-solenoid-effects-on-series-impedance-of-three-core-armoured-cables|Impact of solenoid effects on series impedance of three-core]] | 2023 |
+| [[electromagnetic-transient-modeling-and-surge-analysis-of-overhead-power-lines-ab|Electromagnetic transient modeling and surge analysis of ove]] | 2025 |
+| [[influence-of-approximate-internal-impedance-formula-on-half-wavelength-transmiss|Influence of approximate internal impedance formula on half-]] | 2025 |

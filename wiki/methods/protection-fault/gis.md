@@ -418,3 +418,9 @@ Gustavsen [2023] 对合并模型的验证：
 - **Ametani et al. 2018** — "Electromagnetic disturbances in gas-insulated substations and VFT calculations"（Electric Power Systems Research 160, 2018）：系统总结了 GIS 中 VFT 的实测数据（频率 1–140 MHz，过电压 1.2–3.0 pu），详细说明了 EMTP 中 GIS 元件的建模方法（CP/WB 线模型、分支等效、引线建模、VT/CT 高频等效），并对比了 FDTD 与 EMTP 的三维仿真结果。是 GIS VFT 建模的权威综述。
 - **Meredith 1997** — "EMTP Modeling of Electromagnetic Transients in Multi-Mode Coaxial Cables by Finite Sections"（IEEE Trans. Power Delivery, 1997）：提出有限截面法（finite sections）建模同轴电缆，同时模拟轴向和径向电磁波传播，可精确表征导体集肤效应和多层结构。为 GIS 外壳涡流和厚度方向高频效应提供了精确建模方法。
 - **Gustavsen 2023** — "Multi-Conductor Cable Modeling With Inclusion of Measured Coaxial Wave Propagation Characteristics"（IEEE Trans. Power Delivery, 2023）：提出将测量得到的同轴传播特性与经典多导体传输线模型合并的方法，通过低通/高通滤波器在中间频率平滑过渡，确保低频保留经典模型精度、高频采用精确同轴模式数据。适用于 GIS 外壳接地方式变化时的精确仿真。
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[expanding-the-measuring-range-via-s-parameters-in-a-ehv-voltage-transformer-mode|Expanding the measuring range via S-parameters in a EHV volt]] | 2021 |

@@ -269,17 +269,38 @@ $$\max_k T_{\mathrm{step}}(k) < \Delta t$$
 
 ## 来源论文
 
-| 论文 | 年份 | 贡献 |
-|------|------|------|
-| Filizadeh 2025 — Electromagnetic Transient Modeling and Simulation of Large Power Systems | 2025 | EMT 仿真器技术路线综述：传播延迟线路、补偿法、自动初始化、多域协同仿真 |
-| Xiong 等 2024 — ParaEMT: An Open Source, Parallelizable, and HPC-Compatible EMT Simulator | 2024 | 开源 BBD 并行 EMT 框架，10080 母线 36× 加速，NREL Eagle HPC 验证 |
-| Zhou & Dinavahi 2014 — Parallel Massive-Thread EMT Simulation on GPU | 2014 | MT-EMTP GPU 并行架构，node-mapping structure，2458 母线验证 |
-| Aluthge 等 2026 — Accelerating EMT Simulations Using GPUs | 2026 | 全 GPU 驻留求解器，cuDSS/Cholesky，Texas 2000 节点 39.5× 加速 |
-| Cheng 等 2025 — ML-Reinforced Massively Parallel Transient Simulation | 2025 | ML-ANN 替代非线性迭代，2.56M PV 面板 400× 加速 |
-| Xu 等 2025 — Low-Dimensional Equivalent Models and Multithreading-Based Parallel EMT | 2025 | 多 VSC 低维等效 + OpenMP 并行，100 MW 光伏电站 80× 串行加速 |
-| Wang 等 2026 — Component-Level Modeling and Fine-Grained Simulation for Renewable Energy | 2026 | N 端口通用子模块等效，MMC 500 子模块 29.47× 加速 |
-| Le-Huy 等 2023 — Lessons Learned in Porting Offline Large-Scale EMT to Real-Time | 2023 | Hydro-Québec 离线到实时 HIL 移植经验，WAMPAC 系统 |
-| Le-Huy 等 2023 — Performance Evaluation of Communication Fabrics for Offline Parallel EMT | 2023 | 离线并行 EMT 平台评估，通信结构对扩展性的影响 |
-| Jiang 等 2024 — Key Technologies for EMT Parallel Simulation in New Power System | 2024 | 新型电力系统 EMT 并行仿真关键技术综述 |
-| Zhou 等 2021 — Large-Scale Hybrid Real-Time Simulation for Nelson River HVDC | 2021 | Nelson River 多馈入 HVDC 混合实时 HIL 现场验证 |
-| Abusalah 等 2018 — CPU-Based Parallel Computation of EMT for Large Power Grids | 2018 | CPU 多核并行 EMT，自然解耦线路模型 |
+| 论文 | 年份 |
+|------|------|
+| [[hybrid-transient-stability-simulation-using-dynamic-phasor-based-interface-model-22|Hybrid Transient Stability Simulation Using Dynamic Phasor B]] | 2006 |
+| [[hybrid-model-transient-stability-simulation-using-dynamic-phasors-based-hvdc-system-model|Hybrid-model transient stability simulation using dynamic ph]] | 2006 |
+| [[2728nested-fast-and-simultaneous-solution-for-time-domain-simulation-of-integrat|Nested fast and simultaneous solution for time-domain simula]] | 2006 |
+| [[interfacing-techniques-for-transient-stability-and-electromagnetic-transient-hyb|Interfacing Techniques for Transient Stability and Electroma]] | 2009 |
+| [[dynamic-phasor-based-interface-model-for-emt-and-transient-stability-hybrid-simu|Dynamic Phasor Based Interface Model for EMT and Transient S]] | 2017 |
+| [[functional-mock-up-interface-based-approach-for-parallel-and-multistep-simulatio|Functional Mock-up Interface Based Approach for Parallel and]] | 2018 |
+| [[real-time-fpga-rtds-co-simulator-for-power-systems|Real-Time FPGA-RTDS Co-Simulator for Power Systems]] | 2018 |
+| [[a-multi-domain-co-simulation-method-for-comprehensive-shifted-frequency-phasor-d|A Multi-Domain Co-Simulation Method for Comprehensive Shifte]] | 2019 |
+| [[a-two-layer-network-equivalent-with-local-passivity-compensation-with-applicatio|A Two-layer Network Equivalent with Local Passivity Compensa]] | 2019 |
+| [[accelerated-sparse-matrix-based-computation-of-electromagnetic-transients|Accelerated Sparse Matrix-Based Computation of Electromagnet]] | 2019 |
+| [[electro-mechanical-transient-modeling-of-mmc-based-multi-terminal-hvdc-system-wi-15|Electro-mechanical transient modeling of MMC based multi-ter]] | 2019 |
+| [[hybrid-transient-stability-simulation-using-dynamic-phasor-based-interface-model|Hybrid Transient Stability Simulation Using Dynamic Phasor B]] | 2019 |
+| [[mmc-upfc电磁-机电混合仿真技术研究|MMC-UPFC电磁-机电混合仿真技术研究]] | 2019 |
+| [[a-harmonic-phasor-domain-co-simulation-method-and-new-insight-for-harmonic-analy|A Harmonic Phasor Domain Co-Simulation Method and New Insigh]] | 2020 |
+| [[iet-generation-transmission-distribution|IET Generation, Transmission & Distribution]] | 2020 |
+| [[average-value-modeling-of-line-commutated-ac-dc-converters-with-unbalanced-ac-ne|Average-Value Modeling of Line-Commutated AC-DC Converters W]] | 2021 |
+| [[damping-of-subsynchronous-control-interactions-in-large-scale-pv-installations-t|Damping of Subsynchronous Control Interactions in Large-Scal]] | 2021 |
+| [[extending-the-frequency-bandwidth-of-transient-stability-simulation-using-dynami|Extending the Frequency Bandwidth of Transient Stability Sim]] | 2021 |
+| [[extending-the-frequency-bandwidth-of-transient-stability-simulation-using-dynami|Extending the Frequency Bandwidth of Transient Stability Sim]] | 2021 |
+| [[high-frequency-oscillation-analysis-and-suppression-strategy-of-mmc-hvdc-system-|High-frequency oscillation analysis and suppression strategy]] | 2022 |
+| [[2728基于电压源换流器的高压直流输电系统多尺度暂态建模与仿真研究|基于电压源换流器的高压直流输电系统多尺度暂态建模与仿真研究]] | 2022 |
+| [[massively-parallel-modeling-of-battery-energy-storage-systems-for-acdc-grid-high|Massively Parallel Modeling of Battery Energy Storage System]] | 2023 |
+| [[parallelization-of-emt-simulations-for-integration-of-inverter-based-resources|Parallelization of EMT simulations for integration of invert]] | 2023 |
+| [[a-semi-analytical-approach-for-state-space-electromagnetic-transient-simulation|A Semi-Analytical Approach for State-Space Electromagnetic T]] | 2024 |
+| [[paraemt-an-open-source-parallelizable-and-hpc-compatible-emt-simulator-for-large|ParaEMT: An Open Source, Parallelizable, and HPC-Compatible ]] | 2024 |
+| [[accelerating-electromagnetic-transient-simulations-using-graphical-processing-un|Accelerating electromagnetic transient simulations using gra]] | 2025 |
+| [[an-interface-method-for-co-simulation-of-emt-model-and-shifted-frequency-emt-mod|An Interface Method for Co-Simulation of EMT Model and Shift]] | 2025 |
+| [[co-simulation-and-compensation-method-for-parallel-simulation-of-electromagnetic|Co-simulation and compensation method for parallel simulatio]] | 2025 |
+| [[electromagnetic-transient-modeling-and-simulation-of-large-power-systems-emt-sim|Electromagnetic Transient Modeling and Simulation of Large P]] | 2025 |
+| [[partial-refactorization-techniques-for-electromagnetic-transient-simulations|Partial Refactorization Techniques for Electromagnetic Trans]] | 2025 |
+| [[electromechanical-transientelectromagnetic-transient-hybrid-simulation-method-co|Electromechanical transientelectromagnetic transient hybrid ]] | 2026 |
+| [[electromechanical-transientelectromagnetic-transient-hybrid-simulation-method-co|Electromechanical transientelectromagnetic transient hybrid ]] | 2026 |
+| [[multirate-method-for-dynamic-phasor-simulation-of-large-scale-power-systems|Multirate Method for Dynamic Phasor Simulation of Large-Scal]] | 2026 |

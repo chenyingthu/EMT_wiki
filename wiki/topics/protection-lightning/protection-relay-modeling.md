@@ -121,3 +121,11 @@ $$
 - 如何在保护厂家黑盒算法不可公开时报告可审核的模型等效和误差边界。
 - 如何统一 EMT 波形、实际录波和 HIL 测试之间的保护动作证据。
 - 如何在换流器型电源比例较高的系统中重新定义保护判据的适用边界。
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[a-novel-ultra-high-speed-traveling-wave-protection-principle-for-vsc-based-dc-gr|A Novel Ultra-High-Speed Traveling-Wave Protection Principle]] | 2019 |
+| [[distance-protection-scheme-for-dc-distribution-systems-based-on-the-high-frequen|Distance Protection Scheme for DC Distribution Systems Based]] | 2019 |
+| [[low-complexity-graph-based-traveling-wave-models-for-hvdc-grids-with-hybrid-tran|Low-complexity graph-based traveling wave models for HVDC gr]] | 2022 |

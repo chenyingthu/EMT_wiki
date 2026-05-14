@@ -111,3 +111,9 @@ $$$G_{system} = \begin{bmatrix} G_{StageI} & 0 & 0 \\ 0 & G_{StageII} & 0 \\ 0 &
 3. PET页面后续是否应提升为topic级页面，取决于相邻方法页（[[dual-active-bridge]], [[m3c]], [[n-port-network]]）和场景页的收敛情况。
 4. 当前所有方法的验证基线均为详细开关模型，缺乏与硬件实测在故障暂态下的定量误差对比。
 </｜DSML｜parameter>
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[analysis-and-prospect-of-development-of-chinas-independent-electromagnetic-trans-fix|Analysis and Prospect of Development of China]] | 2022 |

@@ -419,3 +419,12 @@ STATCOM：
 
 *本页面基于Karpathy LLM Wiki Pattern构建，内容来自EMT领域学术文献的深度分析*
 *支撑书籍第六篇第24章"宽频振荡与稳定性分析"*
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[damping-multimodal-subsynchronous-resonance-using-a-generator-terminal-subsynchr|Damping multimodal subsynchronous resonance using a generato]] | 2013 |
+| [[analysis-of-low-frequency-interactions-of-dfig-wind-turbine-systems-in-series-co|Analysis of low frequency interactions of DFIG wind turbine ]] | 2020 |
+| [[comparison-of-dynamic-phasor-discrete-time-and-frequency-scanning-based-ssr-mode|Comparison of dynamic phasor, discrete-time and frequency sc]] | 2021 |
+| [[high-frequency-oscillation-analysis-and-suppression-strategy-of-mmc-hvdc-system-|High-frequency oscillation analysis and suppression strategy]] | 2022 |

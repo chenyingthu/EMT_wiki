@@ -166,18 +166,31 @@ Z_g(s) = R_0 + \sum_{k=1}^{N}\frac{R_k}{s - p_k}$$
 | [[an-improved-approach-for-modeling-lightning-transients-of-wind-turbines|An improved approach for modeling lightning transients of wi]] | 2018 |
 | [[electromagnetic-disturbances-in-gas-insulated-substations-and-vft-calculations|Electromagnetic disturbances in gas-insulated substations an]] | 2018 |
 | [[evaluation-of-the-impact-of-different-transmission-line-models-on-electromagneti|Evaluation of the impact of different transmission line mode]] | 2018 |
+| [[evaluation-of-the-impact-of-different-transmission-line-models-on-electromagneti|Evaluation of the impact of different transmission line mode]] | 2018 |
 | [[grounding-grids-in-electro-magnetic-transient-simulations-with-frequency-depende|Grounding grids in electro-magnetic transient simulations wi]] | 2019 |
+| [[an-electromagnetic-model-for-the-calculation-of-tower-surge-impedance-based-on-t|An Electromagnetic Model for the Calculation of Tower Surge ]] | 2020 |
+| [[an-electromagnetic-model-for-the-calculation-of-tower-surge-impedance-based-on-t|An Electromagnetic Model for the Calculation of Tower Surge ]] | 2020 |
 | [[an-electromagnetic-model-for-the-calculation-of-tower-surge-impedance-based-on-t|An Electromagnetic Model for the Calculation of Tower Surge ]] | 2020 |
 | [[effect-of-frequency-dependent-soil-parameters-on-wave-propagation-and-transient-|Effect of frequency-dependent soil parameters on wave propag]] | 2020 |
 | [[electromagnetic-transient-modeling-of-grounding-electrodes-buried-in-frequency-d|Electromagnetic transient modeling of grounding electrodes b]] | 2020 |
+| [[electromagnetic-transient-modeling-of-grounding-electrodes-buried-in-frequency-d|Electromagnetic transient modeling of grounding electrodes b]] | 2020 |
+| [[electromagnetic-transient-modeling-of-grounding-electrodes-buried-in-frequency-d|Electromagnetic transient modeling of grounding electrodes b]] | 2020 |
+| [[an-accurate-analysis-of-lightning-overvoltages-in-mixed-overhead-cable-lines|An accurate analysis of lightning overvoltages in mixed over]] | 2021 |
 | [[an-accurate-analysis-of-lightning-overvoltages-in-mixed-overhead-cable-lines|An accurate analysis of lightning overvoltages in mixed over]] | 2021 |
 | [[ground-potential-rise-in-wind-farms-due-to-direct-lightning|Ground Potential Rise in Wind Farms due to Direct Lightning]] | 2021 |
+| [[ground-potential-rise-in-wind-farms-due-to-direct-lightning|Ground Potential Rise in Wind Farms due to Direct Lightning]] | 2021 |
+| [[performance-of-the-recursive-methods-applied-to-compute-the-transient-responses-|Performance of the recursive methods applied to compute the ]] | 2021 |
+| [[performance-of-the-recursive-methods-applied-to-compute-the-transient-responses-|Performance of the recursive methods applied to compute the ]] | 2021 |
+| [[performance-of-the-recursive-methods-applied-to-compute-the-transient-responses-|Performance of the recursive methods applied to compute the ]] | 2021 |
 | [[performance-of-the-recursive-methods-applied-to-compute-the-transient-responses-|Performance of the recursive methods applied to compute the ]] | 2021 |
 | [[comparison-of-soil-modeling-concerning-physical-factors-application-to-transient|Comparison of soil modeling concerning physical factors: App]] | 2023 |
+| [[comparison-of-soil-modeling-concerning-physical-factors-application-to-transient|Comparison of soil modeling concerning physical factors: App]] | 2023 |
+| [[comparison-of-soil-modeling-concerning-physical-factors-application-to-transient|Comparison of soil modeling concerning physical factors: App]] | 2023 |
+| [[electrical-power-and-energy-systems-148-2023-108967|Electrical Power and Energy Systems 148 (2023) 108967]] | 2023 |
 | [[electrical-power-and-energy-systems-148-2023-108967|Electrical Power and Energy Systems 148 (2023) 108967]] | 2023 |
 | [[calculation-of-lightning-induced-voltages-on-a-large-scale-distribution-network-|Calculation of lightning-induced voltages on a large-scale d]] | 2025 |
-
----
+| [[efficient-modeling-of-parallel-counterpoise-wires-using-an-fdtd-based-transmissi|Efficient modeling of parallel counterpoise wires using an F]] | 2025 |
+| [[efficient-modeling-of-parallel-counterpoise-wires-using-an-fdtd-based-transmissi|Efficient modeling of parallel counterpoise wires using an F]] | 2025 |
 ## EMT中的作用
 
 接地系统 (Grounding System) 在EMT仿真中主要用于：

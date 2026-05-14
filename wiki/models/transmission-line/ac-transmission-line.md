@@ -167,3 +167,18 @@ $$\mathbf{C} = \frac{1}{\mathbf{Z}_c} \sinh(\gamma l)$$
 ---
 
 *本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[a-wavelet-transform-based-method-for-improved-modeling-of-transmission-lines-pow|A wavelet transform-based method for improved modeling of tr]] | 2001 |
+| [[modeling-nonuniform-transmission-lines-for-time-domain-simulation-of-electromagn|Modeling nonuniform transmission lines for time domain simul]] | 2001 |
+| [[mode-domain-multiphase-transmission-line-model-use-in-transient-studies-power-de|Mode domain multiphase transmission line model - use in tran]] | 2004 |
+| [[a-new-procedure-to-derive-transmission-line-parameters-applications-and-restrict|A new procedure to derive transmission-line parameters Appli]] | 2005 |
+| [[dynamic-performance-of-embedded-hvdc-with-13&14|Dynamic Performance of Embedded HVDC with]] | 2015 |
+| [[frequency-dependent-multiconductor-line-model-based-on-the-bergeron-method|Frequency-dependent multiconductor line model based on the B]] | 2015 |
+| [[half-wavelength-system-transients-stability-simulation-using-dynamic-phasor-mode|输电线路工频动态相量模型在半波长交流输电系统机电暂态仿真中的应用研究]] | 2017 |
+| [[mmc-hvdc系统高频稳定性分析与抑制策略(一)稳定性分析|High Frequency Stability Analysis and Suppression Strategy o]] | 2021 |
+| [[a-modified-implementation-of-the-folded-line-equivalent-transmission-line-model-|A modified implementation of the Folded Line Equivalent tran]] | 2022 |
+| [[characteristic-analysis-of-high-frequency-resonance-of-flexible-high-voltage-dir|Characteristic Analysis of High-frequency Resonance of Flexi]] | 2022 |

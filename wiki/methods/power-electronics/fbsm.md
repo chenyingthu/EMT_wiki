@@ -251,3 +251,9 @@ Parvari(2023)在PSCAD/EMTDC中实现了CIGRE B4-57标准系统,换流站采用FB
 - [[an-accelerated-detailed-equivalent-model-for-modular-multilevel-converters|Parvari 2023 - 加速MMC详细等效模型]]
 - [[modular-multilevel-converter-models|MMC Models 2013 - 四种MMC模型保真度分层]]
 - [[dynamic-averaged-and-simplified-models-for|Yu 2013 - MMC-HVDC六种模型系统性对比]]
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[combining-detailed-equivalent-model-with-switching-function-based-average-value-|Combining Detailed Equivalent Model With Switching-Function-]] | 2020 |

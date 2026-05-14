@@ -805,7 +805,3 @@ $$V_{th} = V_C \cdot S - R_{on} \cdot i_{SM}$$
 | [[an-accelerated-detailed-equivalent-model-for-modular-multilevel-converters|An accelerated detailed equivalent model for modular multile]] | 2023 |
 | [[analysis-and-general-calculation-of-dc-fault-currents-in-mmc-mtdc-grids|Analysis and general calculation of DC fault currents in MMC]] | 2023 |
 | [[dead-time-effect-modeling-for-hybrid-modular-multilevel-converter-using-twin-map|Dead-time effect modeling for hybrid modular multilevel conv]] | 2026 |
-
----
-
-*本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*

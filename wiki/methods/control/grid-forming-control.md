@@ -210,3 +210,12 @@ RMS 计算耗时较全阶 EMT 缩短 80-90%（Misyris 2021）。
 - [[impedance-modeling]]：与 Jiang (2025) 动态频率扫描的阻抗视角关联
 
 *页面基于 Nguyen (2021)、Misyris (2021)、Allabadi (2024) 和 Jiang (2025) 的证据写作。*
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[control-and-simulation-of-a-grid-forming-inverter-for-hybrid-pv-battery-plants-i|Control and Simulation of a Grid-Forming Inverter for Hybrid]] | 2021 |
+| [[grid-forming-converters-sufficient-conditions-for-rms-modeling|Grid-forming converters: Sufficient conditions for RMS model]] | 2021 |
+| [[initializing-emt-models-of-grid-forming-vscs-in-mtdc-systems|Initializing EMT models of grid forming VSCs in MTDC systems]] | 2024 |
+| [[an-emt-based-dynamic-frequency-scanning-tool-for-stability-analysis-of-inverter-|An EMT based dynamic frequency scanning tool for stability a]] | 2025 |

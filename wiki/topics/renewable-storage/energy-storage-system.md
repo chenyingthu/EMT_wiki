@@ -100,10 +100,7 @@ BESS 建模的精度-效率权衡已有可核验的量化结果：
 
 ## 来源论文
 
-| 论文 | 年份 | 核心贡献 |
-|------|------|---------|
-| [[massively-parallel-modeling-of-battery-energy-storage-systems-for-acdc-grid-high]] | 2023 | 大规模BESS并行建模与EMT-TS联合仿真 |
-| [[decoupled-detailed-equivalent-model-for-parallel-and-multi-rate-emt-type-simulat|Decoupled DEM for MMC-BESS Multi-Rate EMT]] | 2026 | D-DEM恒定导纳+CPU-GPU多速率 |
-| [[transient-electromagnetic-power-compensationbased-adaptive-inertia-control-strat|Transient EM Power Compensation Adaptive Inertia]] | 2025 | 并联VSC-ESS自适应惯量与功率补偿 |
-| [[an-electromagnetic-transient-simulation-model-of-mmc-bess-for-various-operating-|MMC-BESS EMT Model for Various Operating Conditions]] | 2025 | MMC-BESS四工况EMT模型验证 |
-| [[modeling-of-mmc-based-statcom-with-embedded-energy-storage-for-the-simulation-of|MMC STATCOM with Embedded Energy Storage]] | 2023 | 嵌入式储能STATCOM建模 |
+| 论文 | 年份 |
+|------|------|
+| [[transient-electromagnetic-power-compensationbased-adaptive-inertia-control-strat|Transient Electromagnetic Power Compensation‐Based Adaptive ]] | 2025 |
+| [[decoupled-detailed-equivalent-model-for-parallel-and-multi-rate-emt-type-simulat|Decoupled Detailed Equivalent Model for Parallel and Multi-R]] | 2026 |

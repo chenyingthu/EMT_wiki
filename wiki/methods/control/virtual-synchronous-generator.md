@@ -261,3 +261,10 @@ $$
 - [[companion-circuit]]：VSG控制器的EMT伴随电路建模
 - [[dynamic-phasor]]：动态相量法在VSG系统中的应用
 - [[multirate-method]]：多速率方法在VSG控制-电路解耦中的应用
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[electromechanical-transient-modeling-of-the-low-frequency-ac-system-with-modular|Electromechanical Transient Modeling of the Low-Frequency AC]] | 2023 |
+| [[transient-electromagnetic-power-compensationbased-adaptive-inertia-control-strat|Transient Electromagnetic Power Compensation‐Based Adaptive ]] | 2025 |

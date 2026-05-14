@@ -175,3 +175,15 @@ $$\mathbf{V}_{ind} = \mathbf{Z}_{mutual} \cdot \mathbf{I}_{lightning}$$
 ---
 
 *本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[fast-and-efficient-calculation-of-lightning-induced-voltages-in-frequency-depend|Fast and efficient calculation of lightning-induced voltages]] | 2013 |
+| [[lightning-induced-voltage-analysis-on-a-three-phase-compact-distribution-line-co|Lightning-induced voltage analysis on a three-phase compact ]] | 2020 |
+| [[compact-matrix-formulation-for-calculating-lightning-induced-voltages-on-electro|Compact Matrix Formulation for Calculating Lightning-Induced]] | 2021 |
+| [[evaluation-of-the-extended-modal-domain-model-in-the-calculation-of-lightning-in|Evaluation of the extended modal-domain model in the calcula]] | 2021 |
+| [[analysis-on-induced-voltages-in-wind-farms-close-to-distribution-lines-on-freque|Analysis on Induced Voltages in Wind Farms Close to Distribu]] | 2022 |
+| [[a-thvenin-type-version-of-the-extended-modal-domain-model-for-lightning-induced-|A Thévenin-Type Version of the Extended Modal-Domain Model f]] | 2023 |
+| [[calculation-of-lightning-induced-voltages-on-a-large-scale-distribution-network-|Calculation of lightning-induced voltages on a large-scale d]] | 2025 |

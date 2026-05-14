@@ -361,11 +361,6 @@ N 端口矩阵包含 $N(N+1)/2$ 个独立元素，每个元素都需要独立拟
 
 ## 来源论文
 
-| 论文 | 年份 | 贡献 |
-|------|------|------|
-| Morched 等 - Multi-Port Frequency Dependent Network Equivalents for the EMTP | 1993 | 首次系统化实现多端口 FDNE，提出层叠缩减策略和 $\alpha$ 型等效电路，在 EMTP 中实现 RLC 并联分支拟合 |
-| Saldaña 和 Calzolari - Efficient Implementation of Multi-Port FDNEs for EMT Studies using Norton Equivalent Circuits | 2022 | Norton 等效电路时域实现，梯形积分推导，$\pi$ 型等效电路导纳计算，复共轭极点无需特殊处理，乌拉圭 500 kV 系统验证 |
-| Ahmadi 等 - A Guaranteed Passive Model for Multi-Port FDNEs using Network Synthesis Approach | 2021 | Brune/Tellegen 网络综合方法，四步循环无源实现，天然保证无源性，无需 passivity enforcement，3 端口测试验证 |
-| Gurrala - Loewner Matrix Approach for Modelling FDNEs of Power Systems | 2015 | Loewner 矩阵切向插值框架，非迭代拟合，SVD 自动估阶，4 个电力系统案例与 VF 对比验证 |
-| Zhang 等 - Frequency Dependent Network Equivalent for Electromagnetic and Electromechanical Hybrid Simulation | 2012 | FDNE 在机电-电磁混合仿真中的应用，半无源验证方法，接口稳定性分析 |
-| Xu 等 - A General Equivalent Modeling Method of N-port Networks Suitable for the Electromagnetic Transient Simulation | 2024 | 适用于 EMT 仿真的 N 端口网络通用等效建模方法，级联型电力电子拓扑的细粒度仿真 |
+| 论文 | 年份 |
+|------|------|
+| [[a-component-level-modeling-and-fine-grained-simulation-method-for-renewable-ener|适用于级联型电力电子拓扑电磁暂态仿真的N端口网络通用等效建模方法]] | 2024 |

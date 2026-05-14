@@ -670,12 +670,12 @@ $$V_i = V_0 - n_{q,i} \cdot (Q_i - Q_{0,i})$$
 
 ## 来源论文
 
-参见 [[index]] 获取更多分布式发电相关文献。
-
----
-
-**免责声明**: 本文档内容基于已发表的学术论文和技术文献整理，仅供学术研究和工程参考使用。实际工程应用应遵循相关国家标准和行业规范。
-
+| 论文 | 年份 |
+|------|------|
+| [[development-of-data-translators-for-interfacing-13&14|Development of Data Translators for Interfacing Power-Flow P]] | 2013 |
+| [[advanced-emt-and-phasor-domain-hybrid-simulation-with-simulation-mode-switching-|Advanced EMT and Phasor-Domain Hybrid Simulation With Simula]] | 2018 |
+| [[2169-3536-c-2018-ieee-translations-and-content-mining-are-permitted-for-academic|Efficient GPU-based Electromagnetic Transient Simulation for]] | 2018 |
+| [[key-technologies-and-prospects-for-electromagnetic-transient-parallel-simulation|Key Technologies and Prospects for Electromagnetic Transient]] | 2024 |
 ## 来源论文
 
 | 论文 | 年份 |

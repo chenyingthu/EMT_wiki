@@ -249,3 +249,9 @@ $$
 - [[surge-arrester-model]]：避雷器模型，用于CL-DCCB能量吸收支路建模
 - [[real-time-simulation]]：实时仿真是CL-DCCB控制闭环验证的关键方法
 - [[frequency-dependent-modeling]]：频变电缆模型用于直流电网故障暂态准确分析
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[a-new-topology-for-current-limiting-hvdc-circuit-breaker|A new topology for current limiting HVDC circuit breaker]] | 2018 |

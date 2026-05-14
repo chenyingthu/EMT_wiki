@@ -342,3 +342,12 @@ Cheng et al. (2024) 使用 4 个互联的 IEEE 118 系统构建 256 万 MLP 建�
 - **Marthi et al. (2024)** - *Benchmark High-Fidelity EMT Models for Power Grid with PV Plants*, Oak Ridge National Laboratory. 提供高保真 EMT 基准模型开发方法，适用于 IEEE 118 等大规模电网的新能源改造。
 - **Zhou et al. (2021)** - *Large-scale hybrid real time simulation modeling and benchmark for Nelson River multi-infeed HVDC system*, Electric Power Systems Research. 大规模混合实时仿真建模方法，为 IEEE 118 的 RTDS 仿真提供参考。
 - **Pena et al. (2018)** - *An extended IEEE 118-bus test system with high renewable penetration*, IEEE Trans. Power Systems. 提出高比例可再生能源版本的 IEEE 118 扩展系统。
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[co-simulation-of-electrical-networks-by-interfacing-emt-and-dynamic-phasor-simul|Co-simulation of electrical networks by interfacing EMT and ]] | 2018 |
+| [[flexible-time-stepping-dynamic-emulation-of-acdc-grid-for-faster-than-scada-appl|Flexible Time-Stepping Dynamic Emulation of AC/DC Grid for F]] | 2021 |
+| [[massively-parallel-modeling-of-battery-energy-storage-systems-for-acdc-grid-high|Massively Parallel Modeling of Battery Energy Storage System]] | 2023 |
+| [[machine-learning-reinforced-massively-parallel-transient-simulation-for-large-sc|Machine-Learning-Reinforced Massively Parallel Transient Sim]] | 2024 |

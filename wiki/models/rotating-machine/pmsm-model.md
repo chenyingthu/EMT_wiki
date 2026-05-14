@@ -273,15 +273,16 @@ $$
 
 | 论文 | 年份 |
 |------|------|
-| [[a-flux-defined-pmsm-model-based-on-fea-results-for-real-time-emt-simulation|A Flux-Defined PMSM Model Based on FEA Results]] | 2025 |
-| [[modeling-of-ac-machines-using-a-voltage-behind-reactance-formulation-for-simulat|Modeling of AC Machines Using VBR Formulation]] | 2006 |
-| [[methods-of-interfacing-rotating-machine-models-in-emtp|Methods of Interfacing Rotating Machine Models in EMTP]] | 2010 |
-| [[digital-hardware-emulation-of-universal-machine-13&14|Digital Hardware Emulation of Universal Machine]] | 2011 |
-| [[massively-parallel-implementation-of-ac-machine-modeling-for-real-time-simulatio|Massively Parallel Implementation of AC Machine Modeling]] | 2011 |
-| [[multi-scale-induction-machine-model-in-the-phase-domain-with-constant-inner-impe|Multi-scale Induction Machine Model in the Phase Domain]] | 2019 |
-| [[multi-timescale-reduced-model-of-direct-drive-permanent-magnet-synchronous-gener|Multi-timescale Reduced Model of Direct-Drive PMSG]] | 2024 |
-| [[inertia-mimicking-characteristics-of-direct-drive-permanent-magnet-synchronous-ge|Inertia Mimicking Characteristics of Direct-Drive PMSG]] | 2022 |
-| [[improved-wind-farm-equivalent-model-considering-frequency-response-characteristi|Improved Wind Farm Equivalent Model Considering Frequency Response]] | 2025 |
-| [[a-semi-implicit-delay-decoupling-method-for-parallel-emt-simulation|A Semi-Implicit Delay Decoupling Method for Parallel EMT]] | 2022 |
-| [[review-of-wind-power-equivalent-model-and-frequency-regulation|Review of Wind Power Equivalent Model and Frequency Regulation]] | 2024 |
-| [[an-enhanced-emt-model-of-permanent-magnet-synchronous-generator-with-multi-timesc|An Enhanced EMT Model of PMSG with Multi-timescale Characteristics]] | 2024 |
+| [[massively-parallel-implementation-of-ac-machine-modeling-for-real-time-simulatio|Massively Parallel Implementation of AC Machine Modeling for]] | 2011 |
+| [[直驱式风电机组机电暂态建模及仿真|直驱式风电机组机电暂态建模及仿真]] | 2022 |
+| [[直驱风力发电单元的电磁暂态半隐式延迟解耦与仿真方法|直驱风力发电单元的电磁暂态半隐式延迟解耦与仿真方法]] | 2022 |
+| [[an-aggregation-method-of-permanent-magnet-synchronous-wind-farms-for-electromech|An aggregation method of permanent magnet synchronous wind f]] | 2023 |
+| [[modeling-for-large-scale-offshore-wind-farm-using-multi-thread-parallel-computin|Modeling for large-scale offshore wind farm using multi-thre]] | 2023 |
+| [[fixed-admittance-modeling-method-of-pmsg-based-on-compensation-of-impedance-基于虚拟|Fixed-admittance Modeling Method of PMSG Based on Compensati]] | 2024 |
+| [[基于全阶模型的直驱风电机组多时间尺度等效惯量机理建模|基于全阶模型的直驱风电机组多时间尺度等效惯量机理建模]] | 2024 |
+| [[基于全阶模型的直驱风电机组多时间尺度等效惯量机理建模|基于全阶模型的直驱风电机组多时间尺度等效惯量机理建模]] | 2024 |
+| [[电力系统风力发电建模与仿真研究综述|电力系统风力发电建模与仿真研究综述]] | 2024 |
+| [[a-flux-defined-pmsm-model-based-on-fea-results-for-real-time-emt-simulation|A Flux-Defined PMSM Model Based on FEA Results for Real-Time]] | 2025 |
+| [[a-flux-defined-pmsm-model-based-on-fea-results-for-real-time-emt-simulation|A Flux-Defined PMSM Model Based on FEA Results for Real-Time]] | 2025 |
+| [[comprehensive-full-scale-converter-wind-park-initialization-for-electromagnetic-|Comprehensive Full-Scale Converter Wind Park Initialization ]] | 2025 |
+| [[适用于电网频率响应分析的直驱型风电场实用化等值方法|适用于电网频率响应分析的直驱型风电场实用化等值方法]] | 2025 |

@@ -368,3 +368,11 @@ Zhou 2021 在 Nelson River 系统中的实践表明，实时 HIL 仿真的瓶颈
 - **Sano 等 2022** — 系统比较五种并网逆变器建模方法（SW/VI/AV/CCI/SCI）的动态行为和计算时间，建立精度-效率权衡框架和场景-模型选择指南
 - **Jalili-Marandi 等 2009**（IEEE Task Force）— 系统构建 TS-EMT 混合仿真的标准化接口技术框架，讨论网络分割、接口等值、多速率同步和频移集成方法
 - **Lehn 和 Rittiger 1995** — 经典跨工具对比研究，对比 ATP/EMTP 与 NETOMAC 在 CIGRE HVDC Benchmark System 上的仿真结果，揭示时间步长对结果的影响
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[development-of-data-translators-for-interfacing-13&14|Development of Data Translators for Interfacing Power-Flow P]] | 2013 |
+| [[inverter-based-resources-model-verification-using-electromagnetic-transient-play|Inverter-Based Resources Model Verification Using Electromag]] | 2024 |
+| [[frequency-and-transient-responses-of-a-275-kv-pressure-oil-filled-cable-model-va|Frequency and transient responses of A 275 kV pressure oil-f]] | 2025 |

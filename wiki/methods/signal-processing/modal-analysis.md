@@ -164,7 +164,7 @@ $$
 | [[proposal-of-an-alternative-transmission-line-model-for-symmetrical-and-asymmetri|Proposal of an alternative transmission line model for symme]] | 2011 |
 | [[a-novel-distance-protection-algorithm-in-frequency-domain-based-on-parameter-ide|A Novel Distance Protection Algorithm in Frequency Domain Ba]] | 2012 |
 | [[comparison-between-electromechanical-transient-model-and-electromagnetic-transie|Comparison between electromechanical transient model and ele]] | 2013 |
-| [[published-in-iet-generation-transmission-distribution-27&28|Numerical Integration by the 2-Stage Diagonally Implicit Run]] | 2013 |
+| [[numerical-integration-2s-dirk-iet-gtd|Numerical Integration by the 2-Stage Diagonally Implicit Run]] | 2013 |
 | [[frequency-dependent-multiconductor-line-model-based-on-the-bergeron-method|Frequency-dependent multiconductor line model based on the B]] | 2015 |
 | [[modal-decoupling-of-overhead-transmission-lines-using-real-and-constant-matrices|Modal decoupling of overhead transmission lines using real a]] | 2017 |
 | [[2728multi-scale-and-frequency-dependent-modeling-of-electric-power-transmission-|Multi-scale and Frequency-dependent Modeling of Electric Pow]] | 2017 |

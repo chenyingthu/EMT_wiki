@@ -127,3 +127,9 @@ $$
 - 林继灿（2023）：原文明确给出VSG一阶传递函数、2×2状态矩阵、一致性权重定义 $d_{ij}=a_{ij}/\sum a_{ij}$ 和互阻尼补偿公式；但未报告振荡峰值降低比例、收敛时间或通信延时裕度等定量数值。
 - 姜继恒（2024）：原文明确划分5类时间尺度并采用奇异摄动降阶，但未报告模型阶数、误差百分比或计算耗时等可核验数据。
 - 本页所有惯量控制的具体效果（频率最低点、RoCoF下降幅度、稳定时间）必须绑定具体系统规模、控制参数和测试工况，不给出无来源的通用数值。
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[transient-electromagnetic-power-compensationbased-adaptive-inertia-control-strat|Transient Electromagnetic Power Compensation‐Based Adaptive ]] | 2025 |

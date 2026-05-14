@@ -75,9 +75,7 @@ $$S[\underline{s}(t)] = \underline{s}(t) e^{-j\omega_s t}$$
 
 | 论文 | 年份 |
 |------|------|
-| [[wave-function-and-multiscale-modeling-of-mmc-hvdc-system-for-wide-frequency-tran|Wave Function and Multiscale Modeling of MMC-HVdc System for Wide-Frequency Transient Simulation]] | 2021 |
-
----
+| [[wave-function-and-multiscale-modeling-of-mmc-hvdc-system-for-wide-frequency-tran|Wave Function and Multiscale Modeling of MMC-HVdc System for]] | 2021 |
 ## EMT中的作用
 
 MMC宽频多尺度建模 在EMT仿真中主要用于：

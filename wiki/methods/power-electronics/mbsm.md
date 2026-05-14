@@ -291,3 +291,9 @@ Xu 等 2019 提出的拓扑自动识别方法要求用户输入关联矩阵 $A_a
 - **Parvari 等 2023** — "An Accelerated Detailed Equivalent Model for Modular Multilevel Converters"：改进 DEM 的戴维南等效电阻处理，HBSM 和 FBSM 分别提升 30% 和 60% 的计算效率。
 - **Beddard 等 2015** — "Comparison of Detailed Modeling Techniques for MMC Employed on VSC-HVDC Schemes"：首次独立比较 TDM、DEM 和 AM 三种 MMC 建模方法，为 MBSM 方法的选择提供基准数据。
 - **Gnanarathna 等 2011** — "Efficient Modeling of Modular Multilevel HVDC Converters (MMC) on Electromagnetic Transient Simulation Programs"：首次提出 MMC 的 DEM 概念，将桥臂等效为时变戴维南电路，奠定 MBSM 理论基础。
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[combining-detailed-equivalent-model-with-switching-function-based-average-value-|Combining Detailed Equivalent Model With Switching-Function-]] | 2020 |

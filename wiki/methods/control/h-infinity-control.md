@@ -119,3 +119,10 @@ H∞ 控制适合处理小信号、线性化和频域鲁棒性能问题。对于
 ## 证据边界
 
 本页给出 H∞ 控制的通用方法框架和 EMT 相关使用边界。具体控制器是否有效，取决于模型来源、权重选择、运行点、不确定性描述、离散实现和 EMT 多工况验证；不能仅凭 H∞ 范数小于某值宣称工程系统全局安全。
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[high-frequency-oscillation-analysis-and-suppression-strategy-of-mmc-hvdc-system-|High-frequency oscillation analysis and suppression strategy]] | 2022 |
+| [[high-frequency-oscillation-analysis-and-suppression-strategy-of-mmc-hvdc-system-|High-frequency oscillation analysis and suppression strategy]] | 2022 |

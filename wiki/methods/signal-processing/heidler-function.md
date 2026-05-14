@@ -121,3 +121,11 @@ $$t_{peak} \approx \tau_1(10\tau_2/\tau_1)^{1/10}$$
 ---
 
 *本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[ground-potential-rise-in-wind-farms-due-to-direct-lightning|Ground Potential Rise in Wind Farms due to Direct Lightning]] | 2021 |
+| [[analysis-on-induced-voltages-in-wind-farms-close-to-distribution-lines-on-freque|Analysis on Induced Voltages in Wind Farms Close to Distribu]] | 2022 |
+| [[influence-of-a-lossy-ground-on-the-lightning-performance-of-overhead-transmissio|Influence of a lossy ground on the lightning performance of ]] | 2022 |

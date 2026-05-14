@@ -316,8 +316,6 @@ $$C_{\text{th}} \frac{dT_j}{dt} = P_{\text{loss}} - \frac{T_j - T_a}{R_{\text{th
 
 ## 来源论文
 
-| 论文 | 年份 | 贡献 |
-|------|------|------|
-| Zhang 等 - Real-Time HIL Emulation of DRM With Machine Learning Accelerated WBG Device Models | 2023 | PFNN/FTPNN 建模方法，GaN HEMT/SiC IGBT 变量时步建模（可低至 1 ns），FPGA 实时 HIL 验证，与 PSCAD/EMTDC 和 SaberRD 对比 |
-| 沈卓轩，姜齐荣 - 电力系统电磁暂态仿真 IGBT 详细建模及应用 | 2020 | 综述 IGBT/GaN/SiC 详细建模方法体系（理想开关→稳态→瞬态→物理→电热），L/C 伴随电路参数计算，多项式拟合，分段折线模型，FPGA 实时实现 |
-| Sinkar 等 - A Computationally Efficient Approach for Power Semiconductor Loss Estimation of MMC in EMT Simulations | 2025 | MMC 臂级半导体损耗快速估计方法，导通/阻断/开关损耗分解，EMT 仿真中的损耗量化 |
+| 论文 | 年份 |
+|------|------|
+| [[analytical-modeling-of-the-half-bridge-leg-using-an-associated-discrete-circuit-|Analytical Modeling of the Half-Bridge Leg Using an Associat]] | 2026 |

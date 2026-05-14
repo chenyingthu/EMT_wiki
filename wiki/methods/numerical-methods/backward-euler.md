@@ -221,3 +221,11 @@ $$
 - [[numerical-oscillation-suppression]] — 数值振荡抑制技术
 - [[companion-circuit]] — 伴随电路中的 BE 等效导纳
 - [[companion-circuit]] — CDA 方法的详细实现
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[a-review-of-efficient-modeling-methods-for-modular-multilevel-converters|A review of efficient modeling methods for modular multileve]] | 2015 |
+| [[fast-electromagnetic-transient-simulation-method-of-modular-multilevel-converter|Fast Electromagnetic Transient Simulation Model of Doubly-fe]] | 2019 |
+| [[mmc-upfc电磁-机电混合仿真技术研究|MMC-UPFC电磁-机电混合仿真技术研究]] | 2019 |

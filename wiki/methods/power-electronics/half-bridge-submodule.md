@@ -131,3 +131,9 @@ $$$\begin{cases} x_2(t)=0 \\ x_1(t)=0 \end{cases} \text{ 当 } x_1(t-\Delta T)=0
 - [[a-review-of-efficient-modeling-methods-for-modular-multilevel-converters|Xu 2015 — MMC高效建模方法综述]]
 - [[analytical-modeling-of-the-half-bridge-leg-using-an-associated-discrete-circuit-|Lai 2026 — 半桥桥臂ADC解析模型]]
 - [[the-diode-clamped-half-bridge-mmc-structure-with-internal-spontaneous-capacitor-|Xu 2018 — 二极管钳位HBSM自均压拓扑]]
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[a-component-level-modeling-and-fine-grained-simulation-method-for-renewable-ener|适用于级联型电力电子拓扑电磁暂态仿真的N端口网络通用等效建模方法]] | 2024 |

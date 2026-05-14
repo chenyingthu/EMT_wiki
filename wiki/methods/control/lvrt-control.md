@@ -167,3 +167,11 @@ $$
 ---
 
 *本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[a-multi-functional-series-compensator-to-squirrel-cage-induction-generator|A multi-functional series compensator to squirrel cage induc]] | 2015 |
+| [[fast-electromagnetic-transient-simulation-method-of-modular-multilevel-converter|Fast Electromagnetic Transient Simulation Model of Doubly-fe]] | 2019 |
+| [[an-enhanced-k-means-two-step-clustering-method-for-dynamic-equivalent-modeling-o|An enhanced K-means two-step clustering method for dynamic e]] | 2025 |

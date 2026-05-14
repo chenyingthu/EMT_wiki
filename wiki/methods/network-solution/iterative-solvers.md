@@ -188,3 +188,11 @@ Krylov 方法的收敛速度高度依赖预处理矩阵 ${\bf M}$ 的选择：
 - [[stiff-system-handling]]：刚性系统的步长和稳定性问题
 - [[real-time-simulation]]：硬实时中迭代次数约束的工程处理
 - [[numerical-integration]]：隐式积分形成的代数方程结构
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[modelica-based-simulation-of-electromagnetic-transients-using-dynao-current-stat|Modelica-based simulation of electromagnetic transients usin]] | 2021 |
+| [[evaluation-of-time-domain-and-phasor-domain-methods-for-power-system-transients|Evaluation of time-domain and phasor-domain methods for powe]] | 2022 |
+| [[modeling-of-inductive-constant-power-load-for-electromagnetic-transient-simulati-27&28|Modeling of inductive constant power load for electromagneti]] | 2025 |

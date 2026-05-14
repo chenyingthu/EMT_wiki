@@ -168,3 +168,12 @@ $$
 - 大步长 EMT 如何同时报告稳态包络误差、暂态模态误差和事件时间误差，仍需要统一评估模板。
 - 多速率接口在强耦合电力电子系统中的稳定性边界需要算例级验证。
 - 实时仿真中，大步长带来的计算裕度与模型保真度损失需要按 HIL 目标而非通用指标权衡。
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[nodal-reduced-induction-machine-modeling-for|Nodal Reduced Induction Machine Modeling for]] | 2012 |
+| [[direct-interfacing-of-parametric-average-value-models-of-acx2013dc-converters-fo|Direct Interfacing of Parametric Average-Value Models of AC&]] | 2022 |
+| [[multi-timescale-simulator-of-nonlinear-electrical-elements-by-interfacing-shifte|Multi-timescale simulator of nonlinear electrical elements b]] | 2022 |
+| [[2728模块化多电平换流器时间尺度变换建模和仿真|模块化多电平换流器时间尺度变换建模和仿真]] | 2022 |

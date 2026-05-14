@@ -405,3 +405,17 @@ $$
 - **Francois et al. 2023** — 分析了常延迟时间策略在宽频线路模型中的准确性来源，发现常延迟选择不当是导致频变模型时域误差的主要原因。比较了 RKF、VF 和 Bode 拟合在宽频线路建模中的性能。
 - **Gurrala 2015** — 提出了 Loewner 矩阵方法用于电力系统 FDNE 建模，提供了另一种基于系统辨识的频域等值途径。
 - **De Conti & Lima 2026** — 评估了地下电缆地返回阻抗解析表达式的准确性，为频域电缆建模提供了土壤阻抗参数基准。
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[analysis-and-estimation-of-truncation-errors-in-modeling-complex-resonant-circui-fix|Analysis and estimation of truncation errors in modeling com]] | 2002 |
+| [[a-novel-distance-protection-algorithm-in-frequency-domain-based-on-parameter-ide|A Novel Distance Protection Algorithm in Frequency Domain Ba]] | 2012 |
+| [[dual-band-reduced-order-model-of-an-hvdc-link-embedded-into-a-power-network-for-|Dual-Band Reduced-Order Model of an HVDC Link Embedded into ]] | 2019 |
+| [[laplace-transform-inversion-through-the-theta-algorithm-for-power-system-emt-ana|Laplace transform inversion through the theta algorithm for ]] | 2021 |
+| [[low-complexity-graph-based-traveling-wave-models-for-hvdc-grids-with-hybrid-tran|Low-complexity graph-based traveling wave models for HVDC gr]] | 2022 |
+| [[analytical-and-measurement-based-wideband-two-port-modeling-of-dc-dc-converters-|Analytical and measurement-based wideband two-port modeling ]] | 2023 |
+| [[impact-of-solenoid-effects-on-series-impedance-of-three-core-armoured-cables|Impact of solenoid effects on series impedance of three-core]] | 2023 |
+| [[assessment-of-the-accuracy-of-the-modal-domain-line-models-with-real-and-frequen|Assessment of the accuracy of the modal-domain line models w]] | 2024 |
+| [[high-frequency-transients-in-buried-insulated-wires-transmission-line-simulation-19、20、21|High-frequency transients in buried insulated wires: Transmi]] | 2024 |

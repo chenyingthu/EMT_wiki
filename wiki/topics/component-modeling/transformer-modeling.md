@@ -149,3 +149,12 @@ $$\mathbf{Q} = \mathbf{C}\mathbf{V}$$
 - 如何在工程保密条件下共享足够的绕组和磁路信息以验证高频模型。
 - 如何统一饱和、磁滞、剩磁和涌流的参数辨识流程。
 - 如何在实时仿真中保留关键非线性而不破坏 deadline。
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[a-z-transform-model-of-transformers-for-the-study-of-electromagnetic-transients-|A Z-transform model of transformers for the study of electro]] | 2004 |
+| [[rational-approximation-of-frequency-domain-responses-by-vector-fitting-power-del|Rational approximation of frequency domain responses by vect]] | 2004 |
+| [[dual-reversible-transformer-model-for-the-13&14|Dual Reversible Transformer Model for the]] | 2013 |
+| [[duality-based-transformer-modeling-for-low-frequency-transients|Duality-Based Transformer Modeling for Low-Frequency Transie]] | 2016 |

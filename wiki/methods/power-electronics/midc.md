@@ -316,3 +316,9 @@ MIDC 在直流微网中运行时，控制环路延时（采样+极控+阀控+调
 - **Qi 等 (2024)** — 提出多层级联 DAB 的状态空间聚合建模方法，结合 UCM+IFP 触发脉冲处理，在 RTDS RSCAD 平台上实现 100 kHz 开关频率的实时仿真，计算资源消耗降低 70%。发表于 IEEE PES General Meeting。
 - **Zhang 等 (2022)** — 提出基于广义特征根的时滞稳定性分析方法，直接求解 MIDC/MMC-HVDC 系统的时滞稳定裕度，并设计 H∞ 鲁棒控制器抑制高频振荡。发表于《电力自动化设备》。
 - **González 等 (2015)** — 提出面向配电系统研究的 EMTP 双向多层固态变压器模型，为 MIDC 在配电场景的应用提供建模参考。
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[equivalent-modelling-method-of-single-active-network-for-fast-electromagnetic-tr|Equivalent Modelling Method of Single Active Network for Fas]] | 2025 |

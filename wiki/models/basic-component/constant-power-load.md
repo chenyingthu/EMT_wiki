@@ -174,3 +174,10 @@ $$\frac{dV}{dI} = \frac{I - P_0/V}{C(V_s - RI - V)/L}$$
 ---
 
 *本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[modeling-of-inductive-constant-power-load-for-electromagnetic-transient-simulati-27&28|Modeling of inductive constant power load for electromagneti]] | 2025 |
+| [[modeling-of-inductive-constant-power-load-for-electromagnetic-transient-simulati-27&28|Modeling of inductive constant power load for electromagneti]] | 2025 |

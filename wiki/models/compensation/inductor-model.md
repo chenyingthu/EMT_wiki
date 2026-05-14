@@ -452,3 +452,9 @@ SATURABLE_TRANSFORMER
 ---
 
 *本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[electromagnetic-modeling-of-inductors-in-emt-type-software-by-three-circuit-base|Electromagnetic modeling of inductors in EMT-type software b]] | 2022 |

@@ -119,3 +119,12 @@ $$
 - [[gpu-parallel-acceleration]]：对比共享内存 CPU 与 GPU 数据并行。
 - [[high-performance-computing]]：讨论多节点或集群级扩展。
 - [[real-time-simulation]]：定义实时仿真需要满足的最坏时延和抖动证据。
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[equivalent-modeling-method-of-parallel-elements-for-fast-electromagnetic-transie|Equivalent Modeling Method of Parallel Elements for Fast Ele]] | 2023 |
+| [[modeling-for-large-scale-offshore-wind-farm-using-multi-thread-parallel-computin|Modeling for large-scale offshore wind farm using multi-thre]] | 2023 |
+| [[efficient-electromagnetic-transient-simulation-for-dfig-based-wind-farms-using-f|Efficient electromagnetic transient simulation for DFIG-base]] | 2024 |
+| [[low-dimensional-equivalent-models-and-multithreading-based-parallel-emt-simulati|Low-Dimensional Equivalent Models and Multithreading-Based P]] | 2025 |

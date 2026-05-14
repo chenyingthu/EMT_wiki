@@ -255,3 +255,9 @@ $$\lambda_i = \text{eig}(Z_{MMC}Y_{ac})$$
 ---
 
 *本页内容基于EMT领域来源论文的证据整理，所有数值结论均标注来源出处。*
+
+## 来源论文
+
+| 论文 | 年份 |
+|------|------|
+| [[transient-electromagnetic-power-compensationbased-adaptive-inertia-control-strat|Transient Electromagnetic Power Compensation‐Based Adaptive ]] | 2025 |
