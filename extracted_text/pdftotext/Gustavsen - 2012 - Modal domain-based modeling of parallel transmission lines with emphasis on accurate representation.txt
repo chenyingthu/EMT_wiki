@@ -1,0 +1,508 @@
+IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 27, NO. 4, OCTOBER 2012                                                                                   2159
+
+
+
+
+         Modal Domain-Based Modeling of Parallel
+       Transmission Lines With Emphasis on Accurate
+         Representation of Mutual Coupling Effects
+                                                       Bjørn Gustavsen, Senior Member, IEEE
+
+
+
+   Abstract—Transient and harmonic coupling effects between par-                     introduced [6]–[13] where the computations are performed in
+allel overhead lines are normally modeled via frequency-depen-                       the actual phase domain coordinates. In particular, the phase do-
+dent traveling-wave-type transmission-line models. Several elec-                     main model, known as the universal line model (ULM) [9] with
+tromagnetic transient programs rely on a line model based on a
+constant transformation matrix and modes (FD-line). These line                       improvements [10]–[13], is known to produce highly accurate
+models can, however, give substantial errors in the studies of cou-                  results for overhead line and cable systems. Nevertheless, sev-
+pled disturbance from one line to a neighbor line. In this paper, we                 eral simulation platforms still rely on the FD-line model alone
+show that the accuracy of the FD-line in these applications can be                   and so it is of interest to further increase its accuracy.
+greatly improved by representing the line system by independent                         The FD-line [3] produces quite accurate results in the case
+FD-lines in combination with rational models that take the mutual
+coupling between the lines into account. A mode-revealing trans-                     of single circuit overhead lines. However, the accuracy deterio-
+formation is used for further enhancing the accuracy of the cou-                     rates in application which involves several circuits (i.e. parallel
+pling effect. The approach is demonstrated for the simulation of                     overhead lines). In this paper, we focus on the ability to accu-
+transient coupling between two parallel overhead lines caused by                     rately simulate the disturbance effect between two or more lines
+line energization and for assessing the disturbance of a railway sig-                in parallel when only the FD-line model is available. Here, quite
+naling system from a neighboring overhead line caused by a trans-
+former inrush current and fault transients.                                          large errors may result for the mutual coupling due to the as-
+                                                                                     sumption of a constant transformation matrix. As a remedy, we
+  Index Terms—Disturbance, electromagnetic compatibility                             propose a simulation approach where the two lines are treated
+(EMC), mutual coupling, railway, transients, transmission-line                       as independent (uncoupled) lines that are each modeled by an
+model.
+                                                                                     FD-line. The mutual coupling is represented by a wideband
+                                                                                     state-space model. In this modeling, special care is taken for en-
+                                                                                     suring high accuracy by: 1) separating the inductive and capaci-
+                             I. INTRODUCTION
+                                                                                     tive coupling at low frequencies and by 2) introducing mode-re-
+                                                                                     vealing transformations to prevent the interphase modes to be
+                                                                                     masked by the common-mode component. The new modeling
+
+E       LECTROMAGNETIC transient simulation programs [1]
+        include transmission-line models that can be embedded in
+general electrical circuits for detailed studies of transient volt-
+                                                                                     approach is demonstrated for the simulation of disturbances be-
+                                                                                     tween: 1) a 230-kV overhead line and a 115-kV overhead line,
+                                                                                     and 2) a 230-kV overhead line and a railway signaling system.
+ages and currents in power system networks. The most com-                            The accuracy of the new approach is validated by alternative
+monly applied line model is the traveling-wave-type model due                        computations by the ULM line model and by the inverse Nu-
+to its efficiency in handling the delay effects of the line. This cat-               merical Laplace Transform (NLT).
+egory of line models has developed over the years, from modal
+domain models (FD-line) [2], [3] based on a constant trans-                                                   II. MODELING
+formation matrix and frequency-dependent modes to models
+based on frequency-dependent transformation matrix and fre-                          A. Motivation
+quency-dependent modes [4], [5] (FDQ-line). More recently,
+                                                                                        The starting point for any transmission-line model is the per-
+the more accurate and versatile phase domain models have been
+                                                                                     unit-length parameters of the line system (i.e., the matrices for
+                                                                                     series impedance        and shunt admittance       ) which define
+                                                                                     the differential change in voltage    and current over a short
+   Manuscript received December 08, 2011; revised April 20, 2012; ac-
+cepted May 22, 2012. Date of publication July 13, 2012; date of current              line section
+version September 19, 2012. This work was supported in part by the Nor-
+wegian Research Council (RENERGI Programme) and in part by DONG                                                                                    (1a)
+Energy, EdF, EirGrid, Hafslund Nett, National Grid, Nexans Norway, RTE,
+Siemens Wind Power, Statnett, Statkraft, and Vestas Wind Systems. Paper no.
+TPWRD-01040-2011.                                                                                                                                  (1b)
+   The author is with SINTEF Energy Research, Trondheim N-7465, Norway
+(e-mail: bjorn.gustavsen@sintef.no).                                                                   and         . and are column vectors
+                                                                                     with
+   Color versions of one or more of the figures in this paper are available online
+at http://ieeexplore.ieee.org.                                                       of length where is the number of conductors. , , and
+   Digital Object Identifier 10.1109/TPWRD.2012.2202923                                 are matrices of dimension   .
+
+                                                                  0885-8977/$31.00 © 2012 IEEE
+2160                                                                    IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 27, NO. 4, OCTOBER 2012
+
+
+
+                                                                          is the identity matrix while    and     are the matrices of
+                                                                      propagation and characteristic admittance, respectively. An ap-
+                                                                      proach for calculating     via diagonalization is shown in [15,
+                                                                      App.].
+                                                                        Inverting       gives the corresponding terminal impedance
+                                                                      matrix . By partitioning       according to lines #1 and #2, we
+                                                                      obtain
+
+                                                                                                                                        (5)
+
+                                                                         It follows from (5) that                   represents the in-
+                                                                      duced terminal voltages on line 1 from the terminal currents on
+                                                                      line 2. Similarly,                   represents the induced ter-
+Fig. 1. Two parallel lines with terminal numbering.
+                                                                      minal voltages on line 2 from the terminal currents on line 1.
+
+                                                                      C. Separation of Capacitive and Inductive Coupling Effects
+   In the case of continuously transposed single-circuit lines, the      The elements of           and         are at low frequencies
+3 3 matrices and            are balanced (i.e. their diagonal ele-    dominated by the capacitive coupling between the two lines
+ments are equal and their offdiagonal elements are equal). The        while the contribution from the inductive coupling is very
+matrix product         can now be diagonalized by a real trans-       small. The reason is that the elements of (5) define voltage re-
+formation matrix which is real and constant with frequency.           sponses with current application on one terminal with all other
+Therefore, the assumption on which the FD-line model is based         terminals open. Therefore, a modeling of the coupling based
+is perfectly valid. When the line is untransposed, the matrices       on (5) cannot be expected to represent the inductive coupling
+become weakly imbalanced but the FD-line approach can still           with a high degree of accuracy. We therefore represent the
+produce good results. In situations of parallel overhead lines,       mutual coupling so that          and        are calculated based
+the resulting and can become strongly imbalanced and so               on the terminal voltages      at end and the terminal currents
+the assumption of a real and constant transformation matrix can            at end     as defined by matrices        and       (6). The
+give substantial errors in the simulation result. We remark that      contribution from       ensures high accuracy for the inductive
+situations exist where diagonalization fails [29], but such situa-    coupling since the terminals on the other line end       are now
+tions are rare.                                                       grounded. Conversely, the contribution from         ensures high
+   In this paper, we propose modeling systems of parallel over-       accuracy for the capacitive coupling since the terminals on
+head lines as follows. Each line is modeled by a separate FD-line     the other line end       are now open. A robust procedure for
+model where the presence of the neighbor lines is ignored. This       calculating       and      from      is shown in the Appendix.
+gives a modeling with almost balanced matrices and and,               It is noted that
+hence, an accurate model for each line. The mutual coupling is
+modeled separately via rational functions in the phase domain.                                                                         (6a)
+That way, a line model is obtained which overcomes the errors
+produced by the unbalancing in and for the complete over-
+                                                                                                                                       (6b)
+head line system.
+
+B. Mutual Coupling
+                                                                      D. Mode Revealing Transformations
+   We consider a system of two parallel lines of length with
+ends and       as shown in Fig. 1. The lines have       and              One is often concerned about whether the operation of one
+conductors, respectively.                                             line can be disturbed by the other line. This implies that the oper-
+   The terminal admittance matrix     of the line system relates      ational mode component of the coupling must be accurately rep-
+the             terminal currents to the terminal voltages            resented (i.e., the positive-sequence mode for a three-phase line
+                                                                      and the differential mode for a dc line or a telephone line). How-
+                                                               (2)    ever, the operational mode component in is often masked by
+                                                                      a dominating zero-sequence component. This problem is over-
+        is obtained by (2) [14]                                       come by introducing a transformation           for each of the two
+                                                                      lines to better reveal the operational mode in       . It is essential
+                                                               (3)    to use real-valued matrices in order to preserve the causality
+                                                                      of the elements of        (i.e. their complex conjugate property).
+where                                                                 For instance, we use (7) and (8) when the considered line is a
+                                                                      pair and a three-phase line, respectively
+                                                              (4a)
+                                                                                                                                        (7)
+                                                              (4b)
+GUSTAVSEN: MODAL DOMAIN-BASED MODELING OF PARALLEL TRANSMISSION LINES                                                                           2161
+
+
+
+
+                                                               (8)
+
+
+   Let the transformation matrix associated with lines #1 and
+#2 be denoted as     and    , respectively. This gives the fol-
+lowing relations between the physical variables and the trans-
+formed ones denoted by tilde (“ ”):
+
+                                                              (9a)
+                                                              (9b)
+                                                              (9c)    Fig. 2. Representing the mutual coupling by controlled voltage sources.
+
+  Combining (6) and (9) gives the transformed matrix
+                                                                      coupling taken into account by the series voltage sources only.
+                                                              (10)    The voltage sources       are calculated as the convolution be-
+                                                                      tween the measured quantities                 and the rational
+with                                                                  model for    . Similarly, the voltage sources       are calcu-
+                                                             (11a)    lated as the convolution between                      and the ra-
+                                                                      tional model for       .
+                                                             (11b)       We use recursive convolution [2] as implemented in the
+                                                                      PSCAD software by a user-defined component (FDTF) [19].
+   Note that the transformation does not imply a diagonal         .   It is noted that this modeling approach for the voltage transfer
+The transformation only achieves to make the individual modes         involves a time delay equal to the simulation time step length.
+more visible, thereby preventing loss of accuracy of the small        In the examples, we shall see that quite accurate results can still
+modes during the rational modeling process. Since          and        be achieved.
+are both real, the elements of      become a linear combination
+of elements of        with real coefficients. Therefore, the trans-   G. Simplifications to the Procedure
+formation preserves the causality of        and so the elements of       In many instances, the coupling between the lines is fairly
+     can be fitted by a rational function of poles and residues       weak in the sense that the induced transient in line #2 is much
+that are real or complex conjugate.                                   smaller than the source transient in line #1. In these cases, one
+                                                                      can ignore the coupling from line #2 to line #1, thereby reducing
+E. Modeling via Rational Functions                                    the computational burden in the time domain by a factor of two.
+   The transformed coupling matrix               is modeled by        We will apply this simplification in all of the sample cases.
+state-space models (12)
+                                                                             III. EXAMPLE: TWO PARALLEL OVERHEAD LINES
+                                                              (12)
+                                                                      A. Case
+   The actual model extraction is performed using vector fitting
+(VF) [16] with relaxation [17] and fast implementation [18]. VF          Fig. 3 shows a system of two parallel overhead lines oper-
+is applied columnwise to      , giving a model with a private pole    ating at 230 kV and 115 kV, respectively. We investigate the
+set for each column (13). Inverse magnitude weighting is used in      induced voltage on the 115-kV line that results from energizing
+the least-squares process of VF in order to obtain relative error     one phase of the 230-kV line with a 1-kHz sinusoidal source at
+control                                                               voltage maximum, see Fig. 4.
+
+                                                              (13)    B. Results With the Conventional Modeling Approach
+                                                                         The system is modeled in PSCAD using two alternative
+   Following the model extraction step, the model’s coefficients
+                                                                      approaches: 1) Modal domain modeling (FD-line) with a real
+are transformed back into the actual phase domain:
+                                                                      transformation matrix evaluated at       2 kHz, and 2) the ULM
+                                                              (14)    line. (FD and ULM exist as built-in models in PSCAD.) In
+                                                                      addition, a solution is calculated based on the (fast) Numerical
+                                                                      Laplace Transform (NLT) [20]–[22]. Here, the frequency-do-
+F. Interface With Simulation Engine                                   main responses are obtained via         and nodal analysis with
+   The induced voltages        ,        are in the transient sim-           and       calculated as shown in [23] and [24].
+ulation represented by controlled voltage sources in series with         Fig. 5 shows the simulated waveform at terminals 10 and 11.
+the line terminations, see Fig. 2. In that way, the line system       It can be seen that appreciable deviations appear between the
+is modeled via two independent line models with the mutual            waveforms as calculated by the two approaches. In particular,
+2162                                                                    IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 27, NO. 4, OCTOBER 2012
+
+
+
+
+Fig. 3. Two parallel three-phase overhead lines. Length:   10 km.
+
+
+
+                                                                      Fig. 6. Differential voltage             .
+
+
+
+
+Fig. 4. Energization of a 230-kV line.
+
+
+
+
+                                                                      Fig. 7. First and fourth column of   .
+
+
+
+                                                                      The columns of the resulting 6 6            are subjected to rational
+                                                                      modeling (13) by VF using 100 poles for each column with in-
+                                                                      verse magnitude weighting.
+                                                                         Fig. 7 shows the result for the first and fourth columns of      .
+                                                                      It can be seen that the elements of the first column are “flat” at
+Fig. 5. Induced voltage on the 115-kV line      and    .              low frequencies since they represent capacitive coupling. The
+                                                                      elements of the fourth column increase almost proportionally
+                                                                      with frequency since they represent inductive coupling.
+the two voltages predicted by ULM are nearly equal while those           Fig. 8 shows the elements of the first and fourth column of
+by the FD-line are quite different.                                         that result in transforming the model back into physical
+   This difference is highlighted in Fig. 6 where the differential    quantities by (14). It is seen that in each column, all elements
+voltage is shown separately. It can be seen that the differential     are nearly equal at low frequencies since the matrix elements are
+voltage predicted by ULM agrees closely to that obtained by           dominated by a common-mode component. Clearly, the usage
+the theoretically accurate NLT while the result by the FD-line is     of the mode-revealing transformation (Fig. 7) has the advantage
+much too large.                                                       of separating out this common-mode component.
+                                                                         Fig. 9 shows the simulated voltage           and     as obtained
+C. Results With a New Approach                                        by the new approach. We used a 1- s time step in the excitation
+   In order to rectify the problems with the FD-line, we apply the    and the voltage source was ramped up from 0 to 1 V in 10 s in
+new approach where each of the two lines is modeled by a sepa-        order to suppress the frequency information above the 100-kHz
+rate FD-line with the transformation matrix evaluated at 2 kHz.       band limit used in the rational model. The result is seen to agree
+The mutual coupling between the lines is taken into account by        closely with that obtained by ULM, unlike the case when using
+a rational model as follows. The coupling matrix          is calcu-   a single FD line model in Fig. 5.
+lated by the procedure described in the Appendix. Its four sub-          Fig. 10 shows the differential mode voltage               . Again,
+matrices are subjected to transformation by Clarke’s matrix (8).      one achieves very close agreement with the result by ULM. The
+GUSTAVSEN: MODAL DOMAIN-BASED MODELING OF PARALLEL TRANSMISSION LINES                                                             2163
+
+
+
+
+Fig. 8. First and fourth column of   .
+                                                                    Fig. 10. Differential voltage              .
+
+
+
+
+                                                                    Fig. 11. Railway in parallel with the overhead line.
+
+Fig. 9. Induced voltage on the 115-kV line   and   .
+
+
+
+
+improvement over the FD-line model is now quite evident in
+comparison with Fig. 6.
+
+
+        IV. EXAMPLE: DISTURBANCE OF THE RAILWAY
+                   SIGNALING SYSTEM
+
+A. Case
+   In some railway systems, the presence and position of a
+train on the track is detected by a system based on subdividing
+the track into zones. In each zone, the rails are isolated and
+a voltage source is applied at one end while a relay is placed      Fig. 12. First and fourth column of    .
+
+at the other end. The presence of a train will short-circuit the
+two rails and the relay is triggered. The source operates close
+to 100 Hz in order to prevent disturbance from 50-Hz currents       B. Modeling
+and harmonics.                                                         With the new approach, the system is modeled as two
+   In this example, we simulate the disturbance of such a           independent overhead lines with frequency-dependent
+detection system from induction by a parallel overhead line,        per-unit-length parameters, similar to the previous example.
+see Fig. 11. The two rails are represented by round conductors      We use Clarke’s matrix (8) for         and (7) for       to better
+having a geometric mean radius equal to that of the actual rail.    reveal the modal information in the 4         6       during the
+The nonlinearity of the steel is ignored. For more accurate         rational fitting process. Each of the six columns is fitted using
+modeling of rails, including the choice of relative permeability,   40 poles with inverse magnitude weighting. The result is shown
+we refer to [25]. We consider a zone length of 1.5 km.              in Fig. 12 for the 1st and 4th column of      .
+2164                                                                     IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 27, NO. 4, OCTOBER 2012
+
+
+
+
+Fig. 13. Energization of the transformer.
+
+
+
+
+                                                                       Fig. 15. Rail differential voltage         following transformer energization.
+
+
+
+
+Fig. 14. Transformer inrush current.
+
+
+
+C. Results
+                                                                       Fig. 16. Rail differential voltage           following a ground fault at C.
+   The total length of the overhead line is 10 km as shown in
+Fig. 13. A transformer is energized at the far end of the line by
+simultaneously closing the three breakers.
+   Fig. 14 shows the transformer inrush current resulting from
+the energization. The current reaches 800 A and it has a large
+100-Hz component that could possibly disturb the signaling
+system which operates near 100 Hz.
+   Fig. 15 shows the track differential voltage              as cal-
+culated in three different ways: 1) using ULM; 2) using modal
+domain line (FD); and 3) using the new approach. All simu-
+lations are performed in PSCAD using the built-in implemen-
+tations of ULM and the FD-line. With the FD line modeling,
+the modal transformation matrix is calculated at 100 Hz. The
+100-Hz voltage source in Fig. 13 is set equal to zero. It can be
+seen that all three approaches give a similar result for the in-
+duced voltage. The voltage is quite small, not reaching 1.5 V.
+   Fig. 16 shows the track differential voltage              when a    Fig. 17. Rail voltage      following a ground fault at C.
+ground fault occurs at C in Fig. 12, 100 ms after transformer en-
+ergization. The ground fault results in fast transients in the over-
+head line system which gives an induced voltage that reaches 20        the new approach practically give an identical result while the
+V. The simulation by the new approach agrees very closely with         FD-line gives a very high voltage.
+that by the ULM while the FD model gives a noticeably higher              One may wonder why the differential mode coupling is quite
+deviation.                                                             accurately represented by the FD-line in Fig. 16 while it is inac-
+   The error in the common-mode induced voltage as calculated          curately represented in the case of two parallel overhead lines in
+by the FD-line is much higher than for the differential mode           Fig. 6. This can be explained by the difference in height above
+voltage. This is shown in Fig. 17 for the rail voltage on point A      ground for line #2 (115-kV line versus tracks). It was found that
+in Fig. 12, following the ground fault. It is seen that ULM and        increasing the height of the tracks (from 0.1 m) gave a quick
+GUSTAVSEN: MODAL DOMAIN-BASED MODELING OF PARALLEL TRANSMISSION LINES                                                                     2165
+
+
+
+                                                                                                   VI. CONCLUSION
+                                                                               This paper has introduced a new approach for wideband mod-
+                                                                            eling of systems of parallel overhead lines. The new method
+                                                                            represents each line by a traveling-wave-type model based on
+                                                                            modes and a real transformation matrix (FD-line) where the
+                                                                            presence of the neighboring lines is ignored. The mutual cou-
+                                                                            pling between the lines is taken into account by state-space
+                                                                            models that are controlling series voltage sources at the line
+                                                                            terminals. The input to the coupling model is the current and
+                                                                            voltage of the other line at opposite ends. The usage of current
+                                                                            and voltage as input ensures that the inductive and capacitive
+                                                                            coupling effects are captured. The accuracy is further enhanced
+                                                                            by introducing mode-revealing transformations to prevent the
+Fig. 18. Induced voltage on the 115-kV line   with ground resistivity   m
+                                                                            interphase coupling to be masked by the (large) common-mode
+as the parameter. Simulation using ULM.                                     coupling component.
+                                                                               Calculated results shows that the new approach can greatly
+                                                                            improve the accuracy in simulation or disturbance effects com-
+deterioration in accuracy of the induced differential voltage as            pared to the usage of an FD-line for representing the entire
+predicted by the FD-line.                                                   line system. This was demonstrated for the coupling between
+                                                                            a 230-kV line and a 115-kV line, and for the disturbance of a
+                            V. DISCUSSION                                   railway signaling system from transients on a nearby 230-kV
+   One advantage with the new approach is that it is not likely             overhead line.
+to produce instabilities due to passivity violations. This is, in
+particular, the case when one takes into account the coupling in                                      APPENDIX A
+one direction only (as in the examples) since there is no feed-                The induced voltage between two lines can be inferred
+back from the disturbed circuit (line #2) to the disturbing circuit         from terminal impedance matrix           (15) as the terms
+(line #1). Here, only the two FD-lines themselves are required                               and
+to be passive. This is contrary to the modeling of the entire line
+systems with a state-space representation of the entire nodal ad-                                                                        (15)
+mittance matrix [26] (or the related FLE approach [27]) where
+passivity violations are always an issue.                                      The objective is to reformulate (15) so that the induced
+   The computational cost of the new approach is modest in sit-             voltage on one line is given by terminal voltage and current at
+uations that combine a limited bandwidth and line length as in              the other line instead of current alone
+the examples in this paper. However, if one increases the upper
+bandwidth in Example #1 from 100 kHz to 1 MHz, one will                                                                                  (16)
+with the given line length of 10 km require a very high model
+order since the required number of poles will increase by a factor
+                                                                              To obtain the formulation (16), we partition (15)
+of about ten. These cases can be handled by subdividing the
+line into segments                      and introducing coupling
+matrices       ,      for each segment. On the other hand, most
+                                                                                                                                         (17)
+studies of coupling effects are not concerned with coupling at
+very high frequencies.
+   The procedure in this paper can be easily expanded to handle
+the coupling between more than two circuits. Each line becomes                 From (17) we find with the condition                   and
+modeled by an independent FD-line, and between any two lines                after algebraic manipulation, the following result for the in-
+  and , one introduces coupling matrices          and      .                duced voltage:
+   Although the new modeling procedure assists in producing
+more accurate results in the simulation of induced transient volt-                                                                       (18)
+ages, there are certainly other sources of errors. For instance,
+the ground conductivity is normally not well known and it often               It was found that the right partition of (18) could not be eval-
+varies as a function of depth. Fig. 18 shows the induced voltage            uated accurately at very low frequencies. This problem is over-
+on terminal 10 in Fig. 4 with alternative values for the ground re-         come by calculating the right partition starting from the nodal
+sistivity. Clearly, the induced voltage increases with increasing           admittance matrix
+ground resistivity as the magnetic coupling between the two
+lines increases. (The current flowing out of the voltage source in
+Fig. 4 changed only very little when varying the soil resistivity.)
+Other reasons that may result in simulation errors include vari-                                                                         (19)
+ations in the line sags.
+2166                                                                   IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 27, NO. 4, OCTOBER 2012
+
+
+
+  Since the right partition of (18) is given with           and                                    REFERENCES
+because     has no interest, we delete the left column and top
+                                                                        [1] H. W. Dommel, EMTP Theory Book. Portland, OR: Bonneville
+row of (19). Inverting the resulting admittance matrix gives
+                                                                            Power Administration, Aug. 1986.
+                                                                        [2] A. Semlyen and A. Dabuleanu, “Fast and accurate switching transient
+                                                                            calculations on transmission lines with ground return using recursive
+                                                               (20)         convolutions,” IEEE Trans. Power App. Syst., vol. PAS-94, no. 2, pp.
+                                                                            561–575, Mar./Apr. 1975.
+                                                                        [3] J. R. Marti, “Accurate modelling of frequency-dependent transmission
+  Again, we set                    , which gives for the induced            lines in electromagnetic transient simulations,” IEEE Trans. Power
+                                                                            App. Syst., vol. PAS-101, no. 1, pp. 147–157, Jan. 1982.
+voltage                                                                 [4] L. Marti, “Simulation of transients in underground cables with fre-
+                                                                            quency-dependent modal transformation matrices,” IEEE Trans.
+                                                               (21)         Power Del., vol. 3, no. 3, pp. 1099–1110, Jul. 1988.
+                                                                        [5] B. Gustavsen and A. Semlyen, “Simulation of transmission line
+                                                                            transients using vector fitting and modal decomposition,” IEEE Trans.
+  Thus, the transfer function        is obtained as                         Power Del., vol. 13, no. 2, pp. 605–614, Apr. 1998.
+                                                                        [6] G. Angelidis and A. Semlyen, “Direct phase-domain calculation of
+                                                                            transmission line transients using two-sided recursions,” IEEE Trans.
+                                                               (22)         Power Del., vol. 10, no. 2, pp. 941–949, Apr. 1995.
+                                                                        [7] T. Noda, N. Nagaoka, and A. Ametani, “Phase domain modeling of fre-
+  The procedure for calculating           is analogous. Equation            quency-dependent transmission lines by means of an ARMA model,”
+                                                                            IEEE Trans. Power Del., vol. 11, no. 1, pp. 401–411, Jan. 1996.
+(18) becomes                                                            [8] B. Gustavsen and A. Semlyen, “Calculation of transmission line tran-
+                                                               (23)         sients using polar decomposition,” IEEE Trans. Power Del., vol. 13,
+                                                                            no. 3, pp. 855–862, Jul. 1998.
+                                                                        [9] A. Morched, B. Gustavsen, and M. Tartibi, “A universal model for
+   The right partition in (23) is replaced by steps similar to those        accurate calculation of electromagnetic transients on overhead lines
+leading to (22).                                                            and underground cables,” IEEE Trans. Power Del., vol. 14, no. 3, pp.
+                                                                            1032–1038, Jul. 1999.
+                                                                       [10] B. Gustavsen, G. Irwin, R. Mangelrød, D. Brandt, and K. Kent,
+                           APPENDIX B                                       “Transmission line models for the simulation of interaction phe-
+   The series impedance matrix                    and the modal             nomena between parallel AC and DC overhead lines,” in Proc. Int.
+                                                                            Conf. Power Syst. Transients (IPST), Budapest, Hungary, Jun. 20–24,
+transformation matrix    are listed as calculated at 2 kHz for the          1999, pp. 61–67.
+modeling of the six-conductor system in Fig. 3 by the FD-line          [11] H. M. J. De Silva, A. M. Gole, and L. M. Wedepohl, “Accurate
+model. The results were produced by PSCAD (v4.2.1).                         electromagnetic transient simulations of HVDC cables and overhead
+                                                                            transmission lines,” presented at the Int. Conf. Power Syst. Transients
+                                                                            (IPST), Lyon, France, Jun. 4–7, 2007.
+                                                                       [12] B. Gustavsen and J. Nordstrom, “Pole identification for the universal
+                                                                            line model based on trace fitting,” IEEE Trans. Power Del., vol. 23, no.
+                                                                            1, pp. 472–479, Jan. 2008.
+                                                                       [13] I. Kocar, J. Mahseredjian, and G. Olivier, “Improvement of numerical
+                                                                            stability for the computation of transients,” IEEE Trans. Power Del.,
+                                                                            vol. 25, no. 2, pp. 1104–1111, Apr. 2010.
+                                                                       [14] A. Semlyen and B. Gustavsen, “Phase domain transmission line mod-
+                                                                            eling with enforcement of symmetry via the propagated characteristic
+                                                                            admittance matrix,” IEEE Trans. Power Del., vol. 27, no. 2, pp.
+                                                                            626–631, Apr. 2012.
+                                                                       [15] B. Gustavsen, “Validation of frequency dependent transmission line
+                                                                            models,” IEEE Trans. Power Del., vol. 20, no. 2, pt. 1, pp. 925–933,
+                                                                            Apr. 2005.
+                                                                       [16] B. Gustavsen and A. Semlyen, “Rational approximation of frequency
+                                                                            domain responses by vector fitting,” IEEE Trans. Power Del., vol. 14,
+                                                                            no. 3, pp. 1052–1061, Jul. 1999.
+                                                                       [17] B. Gustavsen, “Improving the pole relocating properties of vector fit-
+                                                                            ting,” IEEE Trans. Power Del., vol. 21, no. 3, pp. 1587–1592, Jul. 2006.
+                                                                       [18] D. Deschrijver, M. Mrozowski, T. Dhaene, and D. De Zutter, “Macro-
+                                                                            modeling of multiport systems using a fast implementation of the
+                                                                            vector fitting method,” IEEE Microw. Wireless Compon. Lett., vol. 18,
+                                                                            no. 6, pp. 383–385, Jun. 2008.
+                                                                       [19] B. Gustavsen and O. Mo, “Interfacing convolution based linear models
+                                                                            to an electromagnetic transients program,” presented at the Int. Conf.
+                                                                            Power Systems Transients, Lyon, France, Jun. 4–7, 2007.
+                                                                       [20] D. J. Wilcox, “Numerical Laplace transformation and inversion,” Int.
+                                                                            J. Elect. Eng. Educ., vol. 15, pp. 247–265, 1978.
+                                                                       [21] L. M. Wedepohl, “Power system transients: Errors incurred in the nu-
+                                                                            merical inversion of the Laplace transform,” in Proc. 26th Midwest
+                                                                            Symp. Circuits Syst., Aug. 1983, pp. 174–178.
+                                                                       [22] P. Moreno and A. Ramirez, “Implementation of the numerical Laplace
+                                                                            transform: A review task force on frequency domain methods for EMT
+                                                                            studies,” IEEE Trans. Power Del., vol. 23, no. 4, pp. 2599–2609, Oct.
+                                                                            2008.
+                                                                       [23] L. M. Wedepohl and D. J. Wilcox, “Transient analysis of underground
+                                                                            power transmission systems; system-model and wave propagation
+                                                                            characteristics,” Proc. Inst. Elect. Eng., vol. 120, no. 2, pp. 252–259,
+                                                                            Feb. 1973.
+GUSTAVSEN: MODAL DOMAIN-BASED MODELING OF PARALLEL TRANSMISSION LINES                                                                                         2167
+
+
+
+  [24] A. Deri, G. Tevan, A. Semlyen, and A. Castanheira, “The complex              [29] J. A. Brandao Faria and J. F. Borges da Silva, “Wave propagation in
+       ground return plane. A simplified model for homogenous and multi-                 polyphase transmission lines. A general soution to include cases where
+       layer earth return,” IEEE Trans. Power App. Syst., vol. PAS-100, no.              ordinary modal theory fails,” IEEE Trans. Power Syst., vol. PWRS-1,
+       8, pp. 3686–3693, Aug. 1981.                                                      no. 2, pp. 182–189, Apr. 1986.
+  [25] R. J. Hill and D. C. Carpenter, “Determination of rail internal
+       impedance for electric railway traction system simulation,” Proc. Inst.
+       Elect. Eng. B, vol. 138, no. 6, pp. 311–321, Nov. 1991.                   Bjørn Gustavsen (M’94–SM’03) was born in Norway in 1965. He received the
+  [26] B. Gustavsen, “Computer code for rational approximation of frequency      M.Sc. and Dr.Ing. degrees in electrical engineering from the Norwegian Institute
+       dependent admittance matrices,” IEEE Trans. Power Del., vol. 17, no.      of Technology (NTH), Trondheim, Norway, in 1989 and 1993, respectively.
+       4, pp. 1093–1098, Oct. 2002.                                                 Since 1994, he has been with SINTEF Energy Research, Trondheim, where he
+  [27] B. Gustavsen and A. Semlyen, “Admittance-based modeling of trans-         is a Chief Research Scientist. His interests include the simulation of electromag-
+       mission lines by a folded line equivalent,” IEEE Trans. Power Del.,       netic transients and modeling of frequency-dependent effects. He spent 1996 as
+       vol. 24, no. 1, pp. 231–239, Jan. 2009.                                   a Visiting Researcher at the University of Toronto, Toronto, ON, Canada, and
+  [28] M. C. Tavares, J. Pissolato, and C. M. Portela, “Mode domain multi-       1998 at the Manitoba HVDC Research Centre, Winnipeg, MB, Canada.
+       phase transmission line model-use in transient studies,” IEEE Trans.         He was a Marie Curie Fellow at the University of Stuttgart, Stuttgart, Ger-
+       Power Del., vol. 14, no. 4, pp. 1533–1544, Oct. 1999.                     many, from 2001 to 2002.
+

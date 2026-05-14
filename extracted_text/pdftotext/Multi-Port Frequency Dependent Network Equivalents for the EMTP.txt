@@ -1,0 +1,740 @@
+ 1402                                                                IEEE Transactions on Power Delivery, Vol. 8, No.3. July 1993
+
+        Multi-Port Frequency Dependent Network Equivalents for the EMTP
+                A. S. Morched                          J. H. Ottevangers                             L. Mart1
+                 Senior member                                                                        Member
+
+                                               Ontario Hydro. Ontario, Canada
+
+
+Abstract - A method is developed to reduce large power            Efforts to establish rules for the size of the networks to be
+systems to single and multi-port frequency dependent              representedhave been made. Notably, the work of the CIGRE
+equivalents. h e equivalents consist of simple RLC moduh          Working Group 13.05', which recommends theuse of detailed
+that faithfilly reproduce the frequency characteristics of the    representation of the system up to two buses behind the
+netwok The method is implemented in the EMTP and has              terminal buses. However, in dense networks with many
+been extensively tested at Ontario Hydro. The implementation      transmission lines, even a two-bus explicit representation can
+involws a pre-processor program to generate the model: the        be computationally prohibitive. If these dense networks also
+Frequency Depena!ent Equivalent Fz)NE), and a EM= time            contain many short lines, the two-bus rule may not guarantee
+step b o p module to calculate the transient response. zhe use    the accuracy of the results, and the detailed modelling of larger
+of the "Eresults in major reductions in computer time and         portions of the system could be required.
+is especially beneficialfor multi-case statistical EMW stdies.
+An example showing the accuracy and e c i e n c y of the IDhE     The use of the frequency dependent equivalents for power
+when used to reduce a large 51x)kV network is presented.          networks goes as far back as the late sixties and early
+                                                                  seventies. Pioneering work in this area was conducted by N.
+Keywords - Nehvork equivalent, Multi-port, Frequency              Hingorani2and A. Clerici3. More recent W O ~ K 'atkempted
+                                                                                                                          *~*~
+dependence, Electromagnetic transients, EM'PP.                    to establish systematic procedures to generate frequency
+                                                                  dependent network equivalents. Morched and Brandwajn4
+                                                                  proposed an approach to produce single-port equivalents with
+                                                                  models that only matched the network admittances at the series
+                    1. INTRODUCTION                               resonant frequencies.     Do and G a v r i l o v i ~ proposed
+                                                                                                                       ~*~      a
+                                                                  procedure where the component modules used to represent
+The study of Electromagnetic transients often requires the        each of the admittance series resonance! are selected by
+detailed modelling of complex transmission networks.              inspection, and a least squares method is used to match the
+However, detailed representations may require prohibitive         network admittances over a range of frequencies. While they
+amounts of computer time, especially when statisticalanalysis     presented methods for generating multi-port equivalents, the
+is involved. It is, therefore, a common practice to represent     treatment was not sufficientlygeneral.
+in detail only a small portion of the system and to model the
+rest using equivalent networks.                                   This paper describes an efficient method to calculate network
+                                                                  equivalent admittances as seen from one or more ports. It
+Until very recently, only simplified equivalents have been used   descrih the extension of the concepts developed in [4] to
+in transient studies. The most common representation consists     multi-port equivalents and the improvement of the fitting
+of simple inductances derived from the short circuit              technique to match the admittances over a wide range of
+impedancesat the terminal buses evaluated at power frequency.     frequencies.
+A better representation, in terms of frequency response, can be
+obtained by shunting the power frequency impedanceswith the       The application of these techniques has resulted in the
+equivalent surge impedances of the lines attached to the buses.   developmentof the Frequency Dependent Network Equivalent
+This produces improved first reflections, but degraded low        (FDNE) program and its subsequent implementation in the
+frequency behaviour, and incorrect steady-state solutions.        EMTP. The FDNE can simulate any type of network, and the
+                                                                  generation of its parameters is automatic and does not require
+Since these representations are only adequate for very simple     special skills on the part of the user.
+transient studies, it has been neces68fy to represent in detail
+large portions of the system behind the terminal buses. The       The FDNE is a stand-alone program which uses a description
+correct assessment of how much of the system should be            of the network similar to the one used by the EMTP. It
+modelled explicitly, is as much an art as it is the result of     evaluates the nodal admittance matrix seen from multi-port
+experience.                                                       terminals over a user-specified frequency range. On output,
+                                                                  the FDNE produces a number of modules consisting of RLC
+                                                                  branches (in EMTP-compatible format) whose ftesuency
+92 SM 461-4 PWRD     A paper recommended and approved             response matches that of the system seen from the terminals.
+by the IEEE Transmission and Distribution Committee
+of the IEEE Power Engineering Society for presenta-
+tion at the IEEEIPES 1992 Summer Meeting, Seattle,               The FDNE allows the modelling of large portions of the
+WA, July 12-16, 1992. Manuscript submitted January               system at a small fraction of the computatiod cost required to
+31, 1992; made available for printing May 15, 1992.              model them explicitly. This m l t s in more reliable
+                                                                 simulations as the need to estimate what portion of the system
+                                                                 should be modelled in detail becomes less crucial.
+                                                              .OO d 1992 IEEE
+                                                0885-8977/93$03
+                                                                                                                                1403
+
+         2. NETWORK COMPONEm MODELS                                  calculated explicitly at 10 frequencies over the entire frequency
+                                                                     range; intermediate values of X are calculated by interpolation.
+The first step in the creation of a network equivalent is to build
+the nodal admittance matrix of the portion of the system to be
+represented over a given frequency range. Rather than using          The zero sequence admittance matrices are calculated using
+the EMTP itself to produce frequency scans of the entire             (A.5) and (A.6), where the transmission coefficients as well as
+network, the FDNE calculates the admittance matrix of each           the modal transformation matrix   vV] are frequency dependent.
+system componentindependently according to its mathematical          For the purposes of the FDNE, the eigenvector matrix       vyO]
+description. This is more efficient from a computational point       evaluated at 10 kHz is used to diagonalize[AIz over the entm
+of view, and it does not tie the FDNE to a given version of the      frequency range with acceptable accuracy. As in the case of
+EMTP. The representations used in the FDNE to model the              the positive sequence calculations, [A]' is evaluated explicitly
+major system components are described below.                         at only 10 frequency po+        The zero sequence admittance
+                                                                     matrices are calculated w t h (AS) and (A.6) with [A] obtained
+                                                                     using interpolation. The use of [TvJ instead of solving the
+2.1 TransmissionLines                                                eigenvalue problem at each frequency results in significant
+                                                                     savings in computer time and in preserving the continuity of
+The representation of transmission lines used in the FDNE is         the eigenvalue functions.
+based on the following assumptions:
+   The line parameters are distributedand their dependenceon         2.2 Linear branches
+   frequency due to skin effect and finite earth resistivity is
+   taken into Bccount.                                               Power system components other than transmission lines are
+                                                                     normally represented as concentrated-parameter, single or
+   A transmission line consisting of only one circuit is forced      multi-phase elements. For the purposes of the FDNE,
+   to be balanced by averaging the diagonal and offdiagonal          symmetry among the phases of three-phase components is
+   elements of the series impedance matrix [Z] and the shunt         as&.
+   admittance matrix Ty] per unit length.
+   In the case of a multicircuit line, or of several single-         Series Elements
+   circuit lines sharing the same right-of-way, the zero
+   sequence coupling between circuits is taken into 8ccount.         In power networks, series elements appear as capacitive
+                                                                     compensation of long lines, current limiting reactors or
+                                                                     transformers (in their simplest representation).
+The relationships between voltages and currents at both ends
+of the line, in nodal admittance matrix form, are given in the       The admittance Ty3] of a series element can be calculated from
+Appendix. In its most general form, voltages and currents at         its equivalent circuit, or it can be measured at the required
+sending and receiving ends of the line can be described with         frequencies. The nodal admittance matrix of a series element
+equation (A.4); namely,                                              connected between buses i andj is given by
+
+
+
+
+The evaluation of [Y,] and Cyij] requires the calculation of the
+eigenvalues and the associated eigenvector matrix of [ZlrY]for       Shunt Elements
+each right-of-way at each frequency. This can result in
+excessive computation times, especially for crowded right-of-        Shunt elements appear as generators, loads, and inductive or
+ways.                                                                capacitive shunt compensation. The admittance matrix [YJ
+                                                                     which describ the shunt element connected at bus i can be
+Since the area of interest in a transient simulation is normally     calculated from equivalent circuits or can be measured at the
+modelled in detail and not included in a network equivalent, it      required frequencies.
+is possible to assume symmetry among the phases of the
+circuits forming the equivalent without significant loss of
+accuracy.                                                                            3. NETWORK REDUCTION
+As can be seen from the Appendix, this assumption results in         The nodal admittance matrices of the network have to be
+two identical uncoupled networks (positive and negative              calculated at every frequency, and decomposed into positive
+sequence) and a third network (zero sequence), which would           and zero sequencenetworks using the well-known Karrenbauer
+be coupled in the case of multicircuit right-of-ways, and            modal transformation matrix. In the case of multicircuit right-
+uncoupled in the case of isolated singlecircuit lines.               of-ways, the contributionto the zero sequence network will be
+                                                                     a matrix, rather that a scalar. The sequence admittance
+For each right-of-way, the FDNE calculates the positive              matrices are then reduced between a given number of
+sequenceparameters for each circuit using the singleconductor        terminals, or ports, producing a family of frequencydependent
+equations (A.2) and (A.3). The only frequency dependent              reduced-order admittance matrices.
+parameter in these equationsis the transmission coefficient X.
+Given that X is a very smooth function of frequency, it is only      In the FDNE, the admittance matrices of the entire network are
+1404
+
+never fully calculated: only partial matrices including two bus    Before proceedingwith the descriptionof the fittingprocedure,
+layers beyond the reference ports are formed. In this process,     the main differences between single and multi-port equivalents
+the network is divided in layers. All transmission circuits and    should be pointed out.
+linear branches connected to the first reference port are
+counted in layer 1. The reference port is considered to be the
+'from' bus. Corresponding 'to' buses are designated as layer 1     4.1 Single-Port Equivalents
+buses. All circuits of a right-of-way must be assigned to the
+same layer in order to Bccoullt for the ground mode coupling       The realization of the single-port equivalent is straightforward.
+between the circuits. The second layer consists of all             The stability of the model is not an issue, provided that each
+remaining circuits connected to layer 1 buses.                     of the fitted RLC branches has a positively-damped response.
+The admittance matrix for the partial network consisting of the    Reduced-order models are obtained by the rejection of less
+first two layers, and complemented by all shunts added to          significaut admittance peaks as compared to the largest peak of
+layer 1 and layer 2 buses, can now be reduced by eliminating       the fitted frequency characteristic.
+the rows and columns corresponding to layer 1 buses. Any
+reference ports that might appear in layer 1 are retained.
+                                                                   4.2 Multi-Port Equivalents
+The next stage is to extend the reduced admittance matrix by
+including buses belonging to a new layer, e.g., layer 3. This      The multi-port equivalent is realized in the form of the multi-
+new layer consists of all remaining circuits connectedbetween      terminal a-equivalent shown in Figure 2. The components of
+layer 2 and layer 3 buses, and circuits between layer 3 buses,     this a-equivalent are easily calculated from the nodal
+including shunts. Matrix reduction will eliminate the now          admittance matrix of the reduced network. The admittance
+redundant layer 2 buses, with the exception of reference ports.    yP,*of the component connectedbetween node i and ground is
+This process of adding layers, followed by reducing the matrix     given by the sum of the elements of the row i of the nodal
+is repeated until all circuits and shunts are included. In this    admittance matrix.
+context, linear branches are treated the same way as
+transmission circuits.                                                                      YifJ =   cN
+
+                                                                                                     /-1
+                                                                                                           y,                   (2)
+The network admittance matrix is kept to a relatively small size
+during this process and the final reduction produces an N x N      The component connected between nodes i a n d j of the T-
+matrix for a network with N reference ports. The matrix is         circuit is given by the negative of the corresponding off-
+                      +
+symmetrical with N(N 1)/2 distinctelements. The admittance         diagonal element of the reduced-order nodaladmittance matrix.
+matrix is calculated over a range of frequencies. Each element
+of the matrix produces a frequency response curve, to be                                     YU,% = -Yu                         (3)
+matched by a multi-branch linear network.
+                                                                   Each component of the positive and zero se~uencea-
+The described process is more efficient than the direct            equivalents has to be fitted to an RLC module for both positive
+reduction of the admittance matrix of the full system because      and zero sequence networks.
+it confines the operations to low order, almost full, matrices.
+It also eliminates the need to store large complex matrices and    A number of factors have to be taken into consideration during
+would allow the program to run on small computers with             the realization of the multi-port equivalent:
+limited memory regardless of the size of the network modelled.
+                                                                    a. The real part of the equivalent transfer admittances y;,*
+                                                                       have negative peaks. These can only be reproduced by
+                                                                       negative RLC branches. This is not a problem, provided
+    4. FREQUENCY DEPENDENT EQUIVALENTS                                 that each RLC branch has a positively damped response.
+
+Once the equivalent positive and zero sequence admittance           b. The shunt components of the a-equivalent can be
+matrices are calculated as functions of frequency, their               produced by fitting them directly, or by fitting each of
+elements are fitted using modules of the type shown in
+Figure 1. Each module consists of a number of parallel RLC
+branches.
+
+
+
+
+           Fig. 1: Structure of an "Emodule.                                    Fig. 2: Equivalent a-representation
+                                                                                                                             1405
+
+     the elements of the reduced nodal admittance matrix and         e. The value of C, is adjusted by minimizingthe square of
+     then adding the approximationsaccordingto equation (2).            the error of over the whole frequency range, and R, IS
+     The former procedure produces a lower order model but              selected by matching the power system admittance at a
+     it may not be numerically stable.                                  very high frequency (default value 500 kHz).
+These factors are taken into consideration when multi-port           f. The values of & and Lo are selected to match the
+equivalents are produced. The process starts with scanning the               admittance of the system at power frequency.
+frequency characteristics of each of the diagonal and off-
+diagonal elements of the reduced matrices. Series and parallel     These steps are repeated until the error falls within acceptable
+resonance frequencies and the corresponding admittances are        limits, or until the maximum number of permissible iterations
+identified. Peaks whose magnitudesare small compared to the        is reached. During this optimizationprocess, the parameters
+magnitudeof the largest resonance peak in all the elements are     of each branch are constrained to produce positively damped
+rejected. A list of all retained resonance frequencies is          feSp0-s
+prepared. A second scan is made through each of the matrix
+elements, and peaks cormpnding to any of the listed
+frequencies are retained regardless of their magnitude. This                             6. THE FDNE PROGRAM
+process is carried out on the positive and zero sequence
+equivalent networks.                                               The implementation of the Frequency Dependent Network
+                                                                   Equivalents in the EMTP involves:
+     5. CALCULATION OF THE RLC MODULES                               1) An auxiliary routine to calculate the model parameters.
+
+Each matrix element is approximated by an RLC module                 2) A time step loop module to calculate the transient
+whose frequency response matches that of the matrix element.                 response.
+ An RLC module consists of one RC branch R     (,     C-), one
+RL branch (%,LJ,and a number of RLC branches (Rk, k,
+,&t    k-1, ...,M) connected in parallel (see Figure 1). The       6.1 The FDNE Auxiliary Routine
+ method described in [4] is used to generate a module that
+ matches the frequency characteristic at series resonance          The FDNE auxiliary routine carries out the network reduction
+  frequencies only. This is then used as an initial gum for an     and the fittingprocedures described above. The description of
+ optimization process to minimize the mean square of the error     the network is similar to the one used in the EMTP and the
+ over the entire frequency range. An iterative procedure is        resulting model can be included directly into an EMTP data
+  followed where the parameters of the module are adjusted one     case.
+ branch at a time. The process is based on a steepest decent
+ approach with the following steps:                                There are no intrinsic constraints regarding the size of the
+                                                                   system that can be modelled. With default dimensions, a
+     The partial derivativesof the square of the error function    system may contain. 60 right-of-ways with 20 circuits each
+     with respect to 4, and the resonance frequency U0,k of        250 circuits c o ~ e c t e dbetween 250 busbars; 100 series
+     each RLC branch are calculated over a limited frequency       elements, and 50 shunt elements. The default number of ports
+     range, This establishes the direction in which to change      is 5. The number of frequencies for which the matching is
+     each parameter in order to reduce the error. The              attempted can be as high as 1O00, either linearly or
+     influence of &, 4, and C, on the value of the                 logarithmically spaced. These defaults can easily be changed
+     admittance at frequencies which are not close to the          as required.
+     resonance frequency of branch k is small. Therefore, the
+     frequency range used in the optimization of branch k,
+     extends only to the neighbouring parallel resonaclce          6.2 The Time Step Loop Module
+     frequencies.
+                                                                   The time step loop module implemented in the EMTP as part
+     The inductance of branch k is changed first. The change       of the work described in [4] can also be used to model multi-
+     is carried out in two steps. On each step, is changed         port equivalents, given that the original implementation
+     by 20% of the value obtained in the previous iteration.       allowed the connection of an RLC module between any two
+     The second step is camed out only if the first step results   buses (rather thanjust between a bus and ground). Only minor
+     in a lower error. A linear search using the.Fibonacci’s       d i n g changes were required to allow modules with negative
+     ratio is conducted to locate the value of 4 that produces     R, L, and C.
+     the lowest error within the frequency range.
+     The resonance frequency w, k of branch k is the second                                   7. EXAMPLE
+     parameter to be adjusted, and the change is limited to 1%
+     of the resonance frequency calculated in the initialization   The 500 kV system shown in Figure 3 is used to illustrateuse
+     process. A linear search is then camed out to establish       of the FDNE. It consistsof 41 transmissioncircuits c o ~ e c t e d
+     the resonance frequency corresponding to the minimum          between 20 busbars, with many circuitssharing the same tower
+     error within the frequency range. The capacitance of the      or right-of-way. The 60 Hz self and transfer impedances of
+     branch is updated using the new values of Z, and w , , ~      the underlying 230 kV system are mnnected to the terminal
+                                                                   buses (not shown in Figure 3).
+     The resistance of branch k is calculated by matching the
+     equivalent system admittance at the series resonance          A two-port equivalent between busbars ES and HN was
+     frequency.                                                    produced with the FDNE. Comparisons between system and
+ 1406
+
+model admittancecharacteristics are shown in Figures 4,5 and   The effect of different network representations on the switching
+6. The figures illustrate the good agreement between the       surges caused by the energization of one circuit of the double-
+model and system characteristics.                              circuit line between buses HN and ES was examined. Figure 7
+                                                               shows the voltages at bus ES calculated with the full system
+                               111"                            representation, and with the two-port equivalent between the
+                                                               buses ES and HN.
+                                                               The full system simulation requires 30 minutes of CPU time on
+                                                               a VAX 8600, whereas the FDNE simulation requires only
+                                                               4 minutes. Preparation time to generate the FDNE equivalent
+                                                               is 23 minutes, while the time required to generate 41 JMAR'll
+                                 I    n'llY                    line models is 2% hours.
+                                                               The results obtained using a simple 60 Hz equivalent (with and
+                                                               without surge impedance in parallel) are shown in Figure 8.
+
+
+
+                                              2q
+                                               i:
+                                                               CPU time for each of these runs was slightly under 4 minutes.
+                                                               In the assessment of switching surge levels at Ontario Hydro,
+                                                               it is a standard procedure to carry out statistical studies based
+                                                 am LW         on a set of 100 switching operations. Considering the results
+                                                               shown, it would be impractical to use the full system
+                                                     am        representation and it would be inaccurate to use the simple
+                                                               equivalents. The use of the FDNE solves this problem.
+
+
+                Fig. 3: 500 kV test system.
+
+
+
+
+                                                               Fig. 5: Zero sequence admittance from bus HN to ground
+                                                                       (real part only).
+
+                                                                0
+
+
+
+
+                                                                                                                                                                              1
+                                                                0
+                                                                                                   I   i       j                        i                 j
+
+
+
+
+                                                                              ........                                     ............ ...............       ..............
+
+
+
+                                                                    .     .   ..............           .....       .....                                          .........
+
+
+
+                                                                    ...                        1                      ...............                          ............
+                                                                                                   i           j
+                                                                0
+                                                                                                   i                                                      l
+                                                                                                   j           j
+
+
+
+Fig. 4: Positive sequence admittance from bus HN to ground.
+        (a) Real part.                                         Fig. 6: Positive sequence admittance between buses HN and
+        (b) Imaginary Part-                                            ES (real part only).
+                                                                                                                                               1407
+
+                                                                                          in many instances, eliminatethe need to re-aimenslonthe
+                                                                                          EMTP to accommadate a large system. While re-
+                                                                                          dimensioningthe EMTP is not difficult, it is a task which
+       a. 0 0                                                                             may involve system administrators,access privileges, and
+2                                                                                         other time consuming details. Also, the FDNE makes
+-
+E
+       b.OO
+
+       Y.00                                                                               possible the simulation of very large systems using
+                                                                                          computers with relatively modest memory and CPU
+b
+v-
+       a-oo
+       0.00                                                                               TesouTce8.
+,,    -a.oo
+0 -*.00
+5     -..00                                                                          REFERENCES
+9     -0.00
+
+     -,o.oo!                                                                     1   [l] GIGRE WG 13-05III. "TransmissionLineRepresentation
+                                                   0.la
+                0.0.1    0.0.     0.0.    0.10
+                                         TIME
+                                                           0.1.)
+                                                  lo**(-1) SEC
+                                                                   0.1.   0.10
+                                                                                     for Energization and Re-energization Studies with Complex
+                                                                                     Feeding Networks", Electra Vol. 62, pp. 45-78, Jan. 1979.
+                                                                                     [2] N.G. Hingorani, and M.F. Burbery, "Simulation of AC
+Fig. 7 ; Transient simulution.                                                       System Impedance in HVDC System Studies", IEEE Trans.
+         Solid trace: Full system                                                    Power App. Syst., Vol. PAS-89, PP. 820-28, MayIJune 1970.
+         Dashed trace: FDhE equivalent.
+                                                                                     [3] A. Clerici, and L. Mario, "Coordinateduse of TNA and
+                                                                                     Digital Computer for Switching Surge Studies: Transient
+                                                                                     Equivalent of a Complex Network", IEEE Trans., Power App.
+2
+--
+N
+       0.00
+
+       b.OO
+                                                                                     Syst., Vol. PAS-89, PP. 1717-26, Nov./D~c. 1970.
+
+-
+0
+
+,,,
+       Y.00
+
+       1.00
+
+       0.00
+                                                                                     [4] A.S. Morched, and V. Brandwajn, "Transmission
+                                                                                     Network Equivalents for Electromagnetic Transients Studies",
+                                                                                     IEEE Trans., Power App. Syst., Vol. PAS-102, PP. 2984-90,
+2     -a.oo                                                                          Sept. 1983.
+5     -.l.OO
+
+9     -*.00                                                                          [SI V.Q. Do, and M.M. Gavrilovic, "An Interactive Pole-
+      -a. 0 0                                                                        Removal Method for Synthesis of Power System Equivalent
+                - .- .
+                1.0-     ..
+                         0  .-.
+                           .0     0.0-     0.10     0.1.   0.11    0.1.   0.I.
+                                                                                     Networks", IEEE Trans. Power App. Syst., Vol. PAS-103,
+                                          TIME -10**(-1) SEC
+                                                                                     PP. 2065-70, August 1984.
+Fig. 8: Results with conventional equivalents.                                       [6] V.Q. Do, and M.M. Gavrilovic, "A Synthesis Method for
+                 Solid trace: Full system;                                           One Port and Multi-Port Equivalent Networks for Analysis of
+                 Dashed trace: 60 Hz equivalent;                                     Power System Transients", T-PWRD, Vol. 1, PP. 103-11,
+                 Dotted trace: 60 Hz equivalent and surge impedance.                 Apr. 1985.
+
+                                                                                                             APPENDIX
+                                  8. CONCLUSIONS
+                                                                                     LINE EQUATIONS IN ADMITTANCE MATRIX FORM
+     1. This paper describes the procedures developedto produce
+        equivalent networks whose Erequency response matches                         A. 1 Single Conductor Relationships
+        that of a much larger portion of a power system as seen
+        from one or more terminals. These network equivalents                        The relationshipbetween voltages and currents at both ends i
+        make it unnecessary to use detailed but computationally                      andj of a single conductor transmission line of length I at any
+        expensive models to represent those parts of the system                      frequency is given by
+        which are not the prime concem of a given transient
+        simulation. Furthermore, since the FDNE does not use
+        travellingwave representations of transmission lines, the
+        time step of an EMTP simulation does not have to be
+        smaller than the travel time of the shortest line in the
+        equivalend system. These computational advantages                            where
+        are specially beneficial for multicase EMTP statistical                                         yit = yJ = Ab .coth(Al)               (A4
+         Studies.                                                                                       Y,, = Y, = Ah) .mcir(AU               (A-3)
+     2. The FDNE use8 robust analytical techniques and has been                      z and y are the longitudinal impedance and transverse
+        extensively tested at Ontario Hydro. Input data is in the                    admittance of the line per unit length, and the transmission
+        form of a network description similar to the one used in                     coefficient X is the square root of zy.
+        the EMTP. On output, the FDNE produces a series of
+        RLC modules which can be included directly into an                           A.2 Multi-Conductor Lines
+        EMTP data case.
+                                                                                     The admittance matrix of a multi-conductor line is similar to
+     3. From the point of view of EMTP users, the FDNE may,                          that given in (A. 1) where scalars are replaced with matrices.
+1408
+
+
+
+
+where
+          [YJ = [YJ = [rJ [T,] [AI-' coth ([AI I ) [T,]-'      (A.5)
+         [YJ   [YJ -[YJ [T,][A]-' CSC~([A]1 ) [T,]-'           (A.6)
+                        [AI2 = [TvI-' rzlryl [T,I              (A.7)
+[Z] and [yl are the longitudinal impedance and transverse
+admittance matrices of the multiconductor line per unit length.
+                                                                                                                                     Ye Yc Ye
+A is a diagonal matrix containing the modal transmission
+coefficients of the line; that is, the square root of the                                              ;     Md        [Y,,] = Ye Ye Ye             (A.12)
+eigenvalues of the product [Z]M.        Matrix [T,] is the
+corresponding eigenvector matrix. Both [A] and [Q] are                                                                               Y c Yc   Ye-
+complex and frequency dependent.
+                                                                       Introducing (A. 11) and (A. 12) into (A. 10) gives
+A.3 Single-Circuit Lines
+                                                                                                       '~
+                                                                                                        lo         0       0         1        ~     0    0
+Matrices [Z], [Y], .and [Zlfy] associated with a balanced three-
+phase singlecircuit lme can be diagonalized by a family of                                              oatlo o                       o       o
+constant transformation matrices. Symmetrical components,
+Clarke, and Karrenbauer transformations are examples of                                                 0      01:,0                  0       0
+these. For a balanced three-phase b e , the following                                                                                               (A. 13)
+relationships hold:                                                                                    A:      0       0       Ai,    0       0
+
+                                                                                                        o      o       o oai,o
+                                                                                                        0      0       0        0     01;
+                                                                       where
+                                                                                              = (Z,l   +    2Lr,,)cy,,     +   2Y-1)
+where                                                                                       = A:'   = <Z,l - zl3Osl             - Y"1)
+                                                                                                       a: = 3zeyC
+                                                                       For the uncoupled sky modes (A. 1) is applicable, while for the
+                                                                       coupled zero sequence mode (A.4) should be used instead.
+
+
+                 At = z,y, = (2, + 2zJ(y,          +   2yJ             BIOGRAPHIES
+               1 21   -- 1 2 - ZlYl = (2, - ZJO:        - YJ           Atef S. Morched (M'77SM190)received a B.Sc. in Electrical
+                                                                       Engineering from Cairo University in 1964,a Ph.D. and a D.Sc.
+The transformation matrix [HI in (A.8) reduces the coupled             from the Norwegian Institute of Technology in Trodheim in 1970and
+relationships of a three-phase balanced line to three uncoupled        1972. H e has been with Ontario Hydro since 1975 where he
+relationships among the transformed quantities.            The         currently holds the position of Section Head - Electmmagnefic
+transformed quantities are referred to as a ground mode (zero          Transients in the Power System Planning Division.
+sequence) and two identical sky modes (positive and negative
+sequence). Singleconductor relationships given in (A. 1) are           Jan H. Ottevangers received an MSc. in Electrical Engineering from
+applicable for each of these modes.                                    the Delft Institute of Technology in 1956. H e has been with Ontario
+                                                                       Hydro since 1967 where he is currently working in the Analytical
+                                                                       Methods and Specialized Studies Department of the Power System
+A.4 Multi-Circuit Lines (or right-of-way$                              Planning Division.
+Consider two three-phase circuits sharing the same right+f-            Luis Marti (M'79) received an undergraduate degree in Electrical
+way; then                                                              Engineering from the Central University of Venezuela in 1979,
+                                                                       MASc and PhD degrees in Electrical Engineering in 1983 and 1987,
+                                                                       respectively, from The University of British Columbia. H e did post-
+                                                                       doctoral work in cable modelling in 1987-1988,and joined Ontario
+                                                                       Hydro in 1989, where he is currently working in the Analytical
+                                                                       Methods & Specialized Studies Department of the Power System
+                                                                       Planning Division.
+
+[Zll] and [Y1J are the longitudinalimpedance and transverse
+admittance matrices per unit length of circuit 1. Similarly
+[G2]and [Y2Jare the longitudinalimpedance and transverse
+admittance matrices per unit length of circuit 2. If each circuit
+is assumed to be balanced,
+                                                                                                                                           1409
+
+                              Discussion                                  M. C. Kieny (Electricit6 de France, France): I would like first to
+                                                                          congratulate the authors for their detailed presentation and excellent
+                                                                          results obtained with a method both efficient and rigorous. I also
+Adam Semlyen (University of Tofonto): This is a well written,             would like to point out the usefulness of the routines implemented on
+interesting and useful paper. It gives a comprehensive description of a   EMTP.
+methodology for obtaining external system equivalents for the EMTP        My questions are:
+for the general case when there are several connecting buses between
+the study zone and the external system.                                      The structure of the RLC network to model an FDNE branch is
+                                                                             slightly different from the ones you use to model the High Fre-
+One particular procedure has caught my attention: it is the building of      quency Transformer Model described in [A]. Can you comment on
+the reduced external system in the frequency domain in a gradual,            that? Also, is your fitting method appropriate for highly resistive
+sequential manner. I believe the method represents a useful alternative      networks which exhibit, for instance, many real poles?
+to sparsity techniques and would appreciate it if the authors would          How do you model rotating machines? I guess you use XA in series
+provide a more detailed description of the procedure.                        with a resistance and a voltage source. But how would you repre-
+                                                                             sent a machine in a longer simulation involving X> and/or includ-
+In closing, I wish to commend the authors for their tine paper.              ing 50 Hz (60 Hz) steady state? I am thinking of load rejection or
+                                                                             line tripping studies.
+Manuscript received J u l y 2 7 , 1992.                                      I am interested in using your equivalent to study nonlinear phe-
+                                                                             nomena such as ferroresonance. How would you deal with the case
+                                                                             where one or several nonlinear elements are connected to nodes
+                                                                             inside the reduced part of the network? Could you define one or
+                                                                             more equivalent nonlinear elements connected to the remaining
+N. R.Watson (University of Canterbury, New Zealand): I would like to
+                                                                             nodes?
+congratulate the authors on a very useful and interesting paper. I was
+interested to note that the matching was performed on the admittance                                     Reference
+matrix elements, whereas we have tended to invert this and match the
+elements of the impedance matrix. Also we use a state variable
+implementation (TCS) [I, 21, which is computationally more expensive      [A] A. S. Morched, L. Marti, J. H. Ottevagers, “A High Frequency
+than the EMTP approach, therefore comparison of the computation               Transformer Model for The EMTP,” Presented to IEEE/PES
+times using the different equivalents cannot be directly made. The            1992 Summer Meeting, Seattle, WA, July 12-16, 1992.
+reason for using state variable approach is the accuracy obtained when      Manuscript received August 10, 1992.
+modelling HVDC systems as it does not suffer from the same numeri-
+cal oscillation problems that electromagnetic transient programs expe-
+rience, due to frequent switchings.
+   I would be grateful if the authors would comment on the following
+questions:                                                                   HARI SINGH, Texas A & M University, College Sta-
+                                                                          tion, Texas; The authors have presented a systematic method
+1. At how many frequencies is the error between the equivalent and
+                                                                          of obtaining multi-port frequency-dependent network equivalents
+   system evaluated when calculating the mean square error over a
+   limited frequency range? Is there a fixed interval between each        useful for studying switching transients in electric power systems.
+   error evaluation or a fixed number of evaluations?                     The method is implemented as FDNE program in the DCG/EPRI
+2. What error function is used, i.e., is the error in the admittance      EMTP and is a useful tool, particularly because it requires mini-
+   magnitude minimized, or a combination of magnitude and angle           mal intervention and judgmental decisions by the user. However,
+   (or equivalently conductance and susceptance)?
+3. Typically how many iterations (of steps a, b, c, d and e ) are         the user will always have to specify the desired frequency range
+   required to reach convergence and what is the convergence crite-       (bandwidth) for which the equivalent produced is valid and, there-
+   ria?                                                                   fore, it is under user control in FDNE. Since the method involves
+4. Please clarify what is meant by constrained to produce positic>ely     obtaining the frequency response of the network’s driving-point
+   damped response and how does this relate to the networks repre-        and transfer admittances in the specified bandwidth, which is
+   senting mutual terms (which will have some negative R, L and C
+   values).                                                               highly oscillatory in nature, the frequency resolution, A f, used
+5. The Fibonacci’s search requires the two initial points to bracket      to obtain the response is a very important parameter. The FDNE
+   the minimum and this is achieved by the stepping procedure (by         provides user control over this by allowing upto a maximum of
+   20% in inductance) prior to the search. However, there is the          1000 points within the bandwidth of interest. Since switching
+   possibility of local minimum being found rather than global being
+                                                                          transients in power systems have frequencies in the range of 3
+   found. This is probably more likely when an optimization is
+   performed over the full frequency range (such as performed for         Hz 30 kHz [A], equivalents which are valid (atleast) uptil 30
+                                                                              -
+
+
+
+   C), rather than limited frequency range (as for L k ) .Has any such    kHz will usually be required. This constrains the best possible
+   problem been experienced?                                              resolution for this typical equivalencing problem t o A f = 30H.z.
+6. Can you comment on why 500 kHz was chosen as the very high                 The frequency response of the admittances consists of multiple
+   frequency to determine R,?
+7. Although a multi-port T representation is shown, it is not clear       series and parallel resonances (poles and zeros) and is influenced
+   how this is actually implemented since the aerial and ground mode      by the topology (sparse or dense) and the elements (low-loss or
+   admittances are used for the matching process. The use of a Y-D        high-loss) of the network to be equivalenced. Therefore, whether
+   transformer is made when one port equivalent is used, however,         a particular value of frequency resolution is “good” or ‘Lbad’’will
+   how is this extended to multi-port, and in particular the incorpora-   depend on the characteristic of the network. Specifically. a worst-
+   tion of the mutual admittances between ports?
+                                                                          case situation will be one where the resonance peaks have a high
+                                References                                Q-factor (low-loss network) and/or the response consists of many
+                                                                          closely-spaced series/parallel resonance frequencies. In that case,
+[l] Watson N. R. and Arrillaga J., “Frequency-Dependent A. C.             even a Af of 30 Hz may not be good enough since there is a
+    System Equivalents for Harmonic Studies and Transient Conver-         high likelihood that the true resonance frequencies of the network
+    tor Simulation,” IEEE Trans. on Power Deliuefy, Vol. 3, No. 3,
+    July 1988, pp. 1196-1203.                                             will not be detected unless most of them are an integral niiiltiple
+[2] Watson N.R., Arrillaga J., and Arnold C. P. “Simulation of HV         of A f. If this error occurs for many of the dominant resonance
+    DC System Disturbances with Frequency-Dependent AC-System             frequencies, it will result in “capturing” a frequency response very
+    Models IEE Proc., Vol. 136, Pt. C, No. 1, January 1989, pp. 9-14.     different from the true response of the network. Consequently,
+   Manuscript received August 6, 1992.                                    FDNE will generate an inaccurate equivalent.
+1410
+
+   In view of the above, the authors' comments on the following         branch to have the same sign (an RLC branch where R, L, and
+questions will help in providing better guidelines for use of FDNE.     C have the same sign is always stable). The choice of 500 kHz
+                                                                        as the "high frequency" for asymptotic calculations is an
+       During their extensive testing of FDNE, have the authors         anachronism from early "E days. It was dictated by the
+       encountered any networks wliose frequency response ap-           largest argument of the hyperbolic tangent that the compiler
+       proaches the worst-case described above:' If not. is there       allowed in those days.
+       anytliing inherent in the toplogy and elements of physical
+       power system networks which precludes such a case from           The Fibonacci search used in the optimization process can
+       arising?                                                         converge to a local rather than to a global minimum in a given
+                                                                        iteration. In practice, obvious occurrences of this situation
+       As a practical guideline for FDNE use. can the authors sug-      seldom happen. Perhaps this is the case because the initial
+       gest some criteria for n przorz selection of frequency resolu-
+                                                                        guess is relatively close to the final solution. If the
+       tion that will ensure accurate equivalencing? Also, in the
+                                                                        optimization process does become locked in a local minimum,
+       same vein, can the authors comment on the factor(s) in-
+                                                                        and a satisfactory fit cannot be obtained, the best alternativeis
+                                                                        to disturb the problem slightly, by either using a different
+       fluencing the choice of logarithmic or linear spacing of fre-    number of points per function or by changing the distribution
+       quency points in the bandwidth of interest? In the limited       of the data points (e.g., using a logarithmic, rather than a linear
+       experience provided by a few studies using FDNE, little dif-     scale).
+       ference in results was observed by us using either selection!
+
+ [.\I EMTP Application Guide, EPRI Publication No. EL-4650,             The last question posed by Prof. Watson can best be answered
+                                                                        by an example. Assume a two-port equivalent between buses
+ Chap. 1, pp. 7.                                                        1 and 2. The nodal admittance matrix will be given by
+  Manuscript received A u g u s t 17, 1992.
+
+
+
+A.S. Morched, J. Ottevangers, L. Marti: We would like to
+thank the discussers for their interest and their many thought-         where each Yij represents a 3x3 matrix. The "one-line
+provoking questions presented.                                          diagram" of the multi-port A for this matrix is shown in
+                                                                        Figure 1.a.. Each "element" of this circuit is a 3-phase
+We agree with Professor Watson when he indicates that a direct          sub-network. The nodal admittance matrix of each of these
+comparison between the "E and network equivalencing                     sub-networks is then diagonalized with a modal transformation
+methods implemented in different platforms is indeed very               matrix. The resulting zero and positive sequence admittances
+difficult to make. We have not had the opportunity to evaluate          are then fitted in the "E. In the EMTP, these modal
+the state variable approach mentioned by Prof. Watson and its           networks are not modelled explicitly with series RLC branches
+advantages in terms of speed and accuracy as compared to the            and transformers, but with a dedicated model for each sub-
+FDNE. However, we would like to point out that while it is              network. This model consists of a constant conductance matrix
+true that in the past the EMTP has had problems in the                  and past history current sources, as illustrated in Figure 1.b.
+simulation of HVDC and power electronics because of                     These current sources are updated at each time step of the
+numerical oscillations, these restrictions have been overcome in        transient simulation based on the sequence networks fitted
+recent years by different means. The Critical Damping                   outside the E m .
+Adjustment (CDA) procedure [a], developed at the University
+of British Columbia, is an example of a successful                                                    Y2.r = -y12
+implementation of a numerical oscillation suppression method
+in the E m . The CDA procedure has already been
+implemented in some versions of the EMTP [bl.                                                              YaJI = Y, + Y2t
+
+In the fitting of an admittance function in the "E,the error                                  Y1.n = Yll + YlZ
+
+function is defined as
+                                                                                          -
+                                                                                          -
+                                                                                          - (a)Frequencydomah
+                                                                                                                 hi2
+
+                                                                                             I                           \
+
+ where Y(o) and Y,(o) are the actual and approximating
+ admittance functions, respectively. The error function is
+ calculated at all data points within a given frequency range.
+ The number of data points is controlled by the user. The
+ present implementation allows a maximum of lo00 points in
+ either linear or logarithmic scales. A typical application will
+ use 500 points in a linear scale, and convergence generally
+                                                                                      --
+                                                                                      U             (b)Tmdomain              -5-
+
+
+
+ occurs within 3 to 8 iterations. Convergence is assumed when                   Fig I: Single-line diagram, multiphase A-circuit
+ the error function decreases less than 0.5 % between two
+ consecutive iterations (maximum number of iterations allowed
+ is 30). As indicated in the paper, the fitting algorithm is             We will now address the questions asked by Mr. Kieny. The
+ constrained to produce a positively damped response. This is            structure of an "E5branch is shown in Figure 1 of the paper.
+ achieved by forcing the R, L and C elements of a given RLC              The structure of a branch used in the High Frequency
+                                                                                                                                1411
+
+Transformer (HFT) model to which Mr. Kieny refers is shown          resonances andlor increase the number of frequency points.
+in Figure 11 below.                                                 Experience. however, suggests that the number of frequency
+                                                                    points is less critical than the tolerance in the initial
+                                                                    identification of resonant points. A linear scale effectively
+                                                                    increases the resolution at high frequencies while a logarithmic
+                                                                    scale increases the resolution at lower frequencies. The fact
+                                                                    that linearflogarithmic options yielded similar answers in Mr.
+                                                                    Sigh's tests, suggests that the high frequency poles were well
+                                                                    separated and that the selected number of frequency points
+                                                                    specified was sufficient.
+                                                                    Professor Semlyen's interest in the network reduction technique
+                                                                    used in the "E is gratifying. We did not place too much
+           Fig IT: RLC module of the HFT model.                     emphasis in the description because we felt that in today's
+                                                                    world of vast computer resources such an algorithm would not
+                                                                    be as important as it was when it was fust developed. Perhaps
+The reason for the differences in structure is that in the          the best way to clarify the process is by means of a small
+development of the HFT model it was felt that a larger degree       example: Consider the network shown in Figure III. Layer 1
+of freedom in the fitting process would be beneficial in the        consists of all branches connected between layer 1buses and/or
+approximation of measured data. To achieve this additional          between layer 1 buses and the reference bus. Layer 2 consists
+flexibility, the following steps were taken: (a) adding a           of all remaining branches connected between layer 1 and layer
+resistance across the capacitance (since this is the most general   2 buses. The nodal admittance matrix involving these nodes is
+realization of a complex conjugate pole); (b) optimizing poles      formed. Once formed, the buses corresponding to layer 1 can
+and zeros (rather than the R, L, and C components of each           be eliminated. Any reference buses that might appear in
+branch); (c) adding more than one RL branch. In the FDNE,           layer 1 are retained. Next, the reduced admittance matrix is
+only two real poles (the RL and RC branches) must provide the       extended to include layer 3 buses. as shown in Figure III. This
+dynamics that cannot be accounted for by using complex              new layer consists of all remaining circuits connected between
+conjugate poles alone. While this provides good overall             layer 2 and layer 3 buses, and circuits between layer 3 buses.
+answers over a wide frequency range, we feel that quality of        Again, matrix reduction will eliminate the now redundant
+the approximations at lower frequencies (e.g., between 60 Hz        layer 2 buses, with the exception of reference ports. This
+and 1 kHz) would improve with the addition of extra real poles      process of adding layers. followed by matrix reduction is
+ and zeros. Part of the ongoing "E development is                   repeated until all buses are included.
+concerned with the addition of these extra poles and zeros.
+'If the behaviour of a network element like a machine is
+ important to the outcome of a transient simulation, the best
+ approach is not to include it inside the network equivalent. As                           .......................
+                                                                                         ,yr,
+ Mr. Kieny correctly points out, there is no simple way to
+ account for the behaviour of a rotating machine over a broad
+ range of operating conditions by using only an impedance
+ behind an infinite bus. Likewise, if the nonlinear behaviour of
+ a transformer is important, it should not be included inside the
+ equivalent. There are, however, no restrictions regarding what
+ type or how many elements are connected to the external nodes
+ of the "Eequivalent, or to the number of "Eequivalents
+ in a given simulation.
+ Mr. Singh's concerns regarding the number of points required
+ to obtain reasonable resolution for fitting purposes are
+ legitimate,although his conclusions require further examination.
+ The limit of 10oO points indicated in the paper is strictly a                                    ...............
+ programming limit and it does not reflect any inherent FDNE                                .........................
+ limit. This number was chosen to give ample leeway in the
+ resolution required in all the practical cases examined. The
+ highest Q we have observed in most practical positive sequence
+ networks lies between 80 and 100, which, depending on the
+ resonant frequency, results in a bandwidth between 70 and 150
+ Hz. A 30 Hz resolution would be sufficient in these cases
+ since to identify and to fit a complex conjugate pole/zero, very
+ few points are really necessary. If a peak is missed because a
+ 30 Hz resolution is not sufficient to identify them, chances are
+ that their effect in a transient simulation would be minimal:
+ closely-packed peaks generally result from transmission lines
+ with small differences in length, and the resulting differences
+ in a transient simulation would only become evident after a
+ relatively long time.
+
+ If the "Eapproximations are not acceptable, there are two
+ courses of action: reduce the tolerance in the identification of                    Fig III: Network reduction
+1412
+
+Some sparsity techniques are also used throughout the process,       Oscillations in the EMTP". ZEEE Transactionson Power
+such as keeping track of zero elements. However, the reduced         Systems. pp. 739-747, May 1989.
+matrix rapidly becomes full and sparsity techniques are only
+effective when a new layer is added.                             [b] Jimin Lin and J. R. Martl, "Implementation of the CDA
+                                                                     Procedure in the EMTP". ZEEE Transactions on Power
+References                                                           Systems, Vol. 5, No. 2. pp. 394-402, May 1990.
+
+[a] J. R. Marti and Jimin Lin, "Suppression of Numerical         Manuscript r e c e i v e d September 28,      1992.
+

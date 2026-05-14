@@ -1,0 +1,554 @@
+                                                            Electric Power Systems Research 234 (2024) 110778
+
+
+                                                                 Contents lists available at ScienceDirect
+
+
+                                                       Electric Power Systems Research
+                                                         journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Enhancing computation performance of rational approximation for
+frequency-dependent network equivalents with parallelism and complex
+vector fitting✩
+Alexandre A. Kida a,b ,∗, Felipe N.F. Dicler c , Thomas M. Campello c,d , Loan T.F.W. Silva c ,
+Antonio C.S. Lima c , Fernando A. Moreira a , Robson F.S. Dias c , Glauco N. Taranto c
+a
+  Federal University of Bahia, UFBA, BA, Brazil
+b
+  Federal Institute of Bahia, IFBA, BA, Brazil
+c
+  Federal University of Rio de Janeiro, COPPE/UFRJ, RJ, Brazil
+d
+  CEFET/RJ – Federal Center for Technological Education Celso Suckow da Fonseca, RJ, Brazil
+
+
+
+ARTICLE               INFO                              ABSTRACT
+
+Keywords:                                               This work examines two strategies for enhancing the rational approximation of Frequency-Dependent Network
+Complex vector fitting                                  Equivalents (FDNE) using an 8-port FDNE featuring a frequency response marked by numerous peaks and
+Electromagnetic transients                              valleys. Firstly, we employ Complex Vector Fitting (CVF), an alternative to the Vector Fitting (VF). CVF
+Frequency-domain realization
+                                                        eliminates the constraint of complex conjugate pairs and was originally conceived for modeling baseband
+Vector fitting
+                                                        equivalents through scattering parameters. The implications of CVF for admittance (or impedance) matrix
+Parallelization
+                                                        synthesis have not yet been previously reported in specialized literature. To enhance code performance and
+                                                        remove dependence on commercial software such as MATLAB® , VF and CVF were implemented in the C-
+                                                        language, utilizing a low-level linear algebra package and exploiting parallelism. We evaluated performance
+                                                        by varying the model order, number of ports, and frequency samples. The results confirm the feasibility of our
+                                                        approach, prompting a more in-depth exploration of the potential benefits regarding FDNE realization.
+
+
+
+1. Introduction                                                                               remainder of the network and has linear and time-invariant characteris-
+                                                                                              tics, tailored for analyzing EMT phenomena. The buses connecting the
+    Power systems are undergoing significant transformations, marked                          study and external systems are called boundary buses (or equivalent
+by the increasing adoption of converter-based generation and HVDC                             ports). The selection of these ports considers the interest area where
+technologies, alongside increasing environmental constraints [1]. These                       an EMT phenomenon or equipment will be analyzed.
+transformations introduce new network dynamics, emphasizing the ne-                                Typically, the external area is represented by a simplified short-
+cessity for a comprehensive network representation to ensure accurate                         circuit equivalent at grid frequency, preserving only the fundamental
+modeling. However, electromagnetic transient (EMT) phenomena may                              frequency characteristics of the external area. On the other hand,
+have extensive frequency bandwidth. Thus, modeling an entire electric                         FDNEs maintain their characteristics across a wide range of frequen-
+power system with such a detailed representation greatly increases the                        cies, offering higher accuracy [4]. Among the available methods for
+model complexity. In addition, simulation times can be impractical,                           obtaining FDNEs, rational models (RMs) have been extensively utilized
+especially for statistical cases and sensitivity analysis [2].                                for this purpose and other important applications [5].
+     Therefore, it is convenient to separate the electrical power system
+                                                                                                   Another method for obtaining FDNEs involves solving a system of
+into two subsystems [3]. The first one is the study system, which
+                                                                                              differential–algebraic equations, typically derived from a circuit model
+is modeled in detail, including its nonlinearities. The second subsys-
+                                                                                              formulation. This approach yields a complex equation set, often sim-
+tem, known as the external system, is characterized by a Frequency-
+                                                                                              plified using model order reduction (MOR) techniques. The resulting
+Dependent Network Equivalent (FDNE). This system encompasses the
+
+
+ ✩ This research was supported in part by Coordenação de Aperfeiçoamento de Pessoal de Nível Superior (CAPES), Brazil under Grant 001, Conselho Nacional
+de Desenvolvimento Científico e Tecnológico (CNPq), Brazil under grants 404068/2020-0, 400851/2021-0, Fundação de Amparo à Pesquisa do Estado de Minas
+Gerais (FAPEMIG), Brazil under grant APQ-03609-17 and Instituto Nacional de Energia Elétrica (INERGE), Brazil.
+  ∗ Corresponding author at: Federal Institute of Bahia, IFBA, BA, Brazil.
+    E-mail address: alexandre.kida@ifba.edu.br (A.A. Kida).
+
+https://doi.org/10.1016/j.epsr.2024.110778
+Received 1 October 2023; Received in revised form 12 March 2024; Accepted 17 June 2024
+Available online 26 June 2024
+0378-7796/© 2024 Elsevier B.V. All rights are reserved, including those for text and data mining, AI training, and similar technologies.
+A.A. Kida et al.                                                                                                     Electric Power Systems Research 234 (2024) 110778
+
+
+equations can be directly integrated into an EMT solver like ATP,                 where 𝑠 = 𝑗𝜔 ∈ C, 𝜔 is the angular frequency in rad/s, 𝐘(𝑠) ∈ C𝑁×𝑁 is
+EMTP or PSCAD, or synthesized as an equivalent circuit. However, most             the approximated (fitted) nodal admittance, 𝑁𝑝 is the number of poles
+commercial programs lack external equation exporting capabilities. As             (model order), 𝐃 ∈ R𝑁×𝑁 and 𝐄 ∈ R𝑁×𝑁 are positive definite matrices,
+an alternative, frequency scan tools within these programs, along with            𝑝𝑛 is the 𝑛th pole and 𝐑𝑛 ∈ C𝑁×𝑁 is the associated 𝑛th residues matrix.
+curve fitting methods, are commonly employed to approximate the                        The expression in (1) can be converted from the pole-residue
+system frequency response and obtain an FDNE [5].                                 realization to a state-space formulation [30–33], such as
+    The RM employing curve fitting methods for realizing FDNE has
+been under considerable investigation in recent years. In addition to             ̇ = 𝐀𝐱(𝑡) + 𝐁𝐮(𝑡),
+                                                                                  𝐱(𝑡)                                                                            (2)
+the pole-relocation algorithm, known as Vector Fitting (VF) [6–8], the
+Frequency-partitioning Fitting [3,9], the Matrix Pencil Method [10]               𝐲(𝑡) = 𝐂𝑇 𝐱(𝑡) + 𝐃𝐮(𝑡) + 𝐄𝐮(𝑡),
+                                                                                                            ̇                                                     (3)
+and the Loewner Matrix [11] have been applied successfully to RM.                               𝑁⋅𝑁𝑝 ×𝑁⋅𝑁𝑝
+Interested readers should check [4,12] for a detailed comparison of               where 𝐀 ∈ C              is a diagonal matrix containing all poles, 𝑁 is
+these formulations. However, irrespective of the chosen approach, there           the number of ports, 𝐱(𝐭) ∈ C𝑁 is the state variable vector, 𝐱(𝑡)
+                                                                                                                                                ̇    is the
+are two common challenges.                                                        time derivative of 𝐱(𝐭), 𝐮(𝐭) ∈ C𝑁 is the input vector, 𝐁 ∈ C𝑁⋅𝑁𝑝 ×𝑁 is
+    The first challenge regards the necessity for a post-processing rou-          a matrix with ones and zeros, 𝐓 corresponds to the transpose operator,
+tine to enforce passivity [13–19]. The second concern revolves around             𝐂 ∈ R𝑁⋅𝑁𝑝 ×𝑁 is a matrix having all 𝐑𝐧 and 𝐲(𝐭) ∈ C𝑁 is the output
+the significant decrease in numerical performance as the number of                vector.
+ports increases. To address the latter, [9] suggests two enhancements                Applying the Laplace transform to (2) and (3) yields
+for the VF: a stop criterion for iterative process and a modification
+                                                                                  (𝑠𝐈 − 𝐀)𝐱(𝑠) = 𝐁𝐮(𝑠),                                                           (4)
+that leverages frequency partitioning and MOR, grounded in balanced
+truncation [20]. Alternatively, to improve the numerical performance,
+one may also consider a parallelization of the VF algorithm [21].                 𝐲(𝑠) = 𝐂𝑇 𝐱(𝑠) + 𝐃𝐮(𝑠) + 𝑠𝐄𝐮(𝑠),                                                (5)
+     Concerning passivity, the expected behavior from the resulting RM            where 𝐈 ∈ Z  𝑁⋅𝑁𝑝 ×𝑁⋅𝑁𝑝
+                                                                                                           is the identity matrix.
+implies that it must absorb active power under any given set of applied
+                                                                                      Solving (4) for 𝐱(𝑠), substituting in (5) and considering that the input
+voltages, regardless of frequency. Thus, the passivity is essential to
+                                                                                  𝐮(𝐬) are the voltages at boundary buses and the output 𝐲(𝐬) are the
+ensure stable time-domain simulations [22]. This topic has received
+                                                                                  currents injected in those buses, obtains 𝐘(𝑠) as
+considerable attention in the literature [23,24].
+      Passivity violations of an RM might occur outside the frequency             𝐘(𝑠) = 𝐂 (𝑠𝐈 − 𝐀)−1 𝐁 + 𝐃 + 𝑠𝐄.                                                 (6)
+range of interest, regardless of the accuracy of the model. Furthermore,
+enforcing passivity might deteriorate the overall quality of the RM.                  Similarly, the pole-residue formulation can be obtained from the
+The specifics of when passivity breaks down depend on the particular              state-space formulation as demonstrated in [33].
+RM being analyzed. For models with very low orders, this issue arises                 The matrices in (6) are obtained with the VF (or CVF) by solving
+from insufficient fitting precision, leading to eigenvalues of the RM             an over-determined linear system. The dimensions of this system are
+that fail to adequately approximate the original eigenvalues of the fre-          directly proportional to 𝑁 ⋅ 𝑁𝑝 , and the complexity of the VF algorithm
+quency response. As a result, passivity violations can occur at any point         is not less than 𝑂(𝑁 2 ) [21].
+within the fitting range. Passivity violations in models with very high
+orders often happen beyond the fitting range, as they incorporate poles           2.2. Complex vector fitting
+with resonant frequencies outside this range, leading to uncontrolled
+responses beyond it [25].                                                              In contrast to the VF, the CVF accommodates the modeling of non-
+    This study explores strategies to improve the performance (speed              physical systems, like those operating at baseband frequencies, which
+and accuracy) of RMs by exploiting parallelization and leveraging on              lack Hermitian symmetry [26]. This flexibility is achieved by relaxing
+the Complex Vector Fitting (CVF) [26]. While both algorithms share
+                                                                                  the conjugacy constraint imposed on VF, which forces poles with non-
+a similar underlying framework, CVF differs from VF in that it does
+                                                                                  zero imaginary parts (complex poles) to manifest as complex conjugate
+not impose complex conjugacy constraints on poles (and residues).
+                                                                                  pairs. The same considerations can be extended to the residues. Due
+The implications of applying CVF to admittance (Y) parameters sys-
+                                                                                  to the conjugacy constraint relaxation, baseband models achieved with
+tems will be investigated, given its successful application in model-
+                                                                                  CVF are complex-valued, presenting complex impulse responses even
+ing baseband photonic systems characterized by their scattering (S)
+parameters [26–28]. Furthermore, while MATLAB® scripts for both                   for real-valued inputs [34].
+VF [29] and CVF [27] are freely available, they rely on commercial                    The CVF also integrates improvements from VF, including the re-
+software for implementation. To address this limitation, we imple-                laxation of the non-triviality constraint for enhanced convergence [35]
+ment parallelization techniques based on freely distributed C-language            and QR decomposition for improved numerical performance [8].
+libraries.                                                                            The baseband modeling may find application in electric power
+    This paper is organized as follows. Section 2 shows the theoreti-             systems within a framework known as Shifted Frequency Analysis
+cal groundwork for frequency-domain realization, including the CVF                (SFA) [36–40] developed in [38]. In this framework, voltages and cur-
+method, passivity criteria and strategies for parallelization. Following          rents in a power system are represented by frequency-shifted analytic
+this, Section 3 delves into the modeling of an 8-port FDNE used for               signals. Such signals, akin to an FDNE, are inherently band-limited,
+results validation. In Section 4, the numerical results and discussions re-       offering advantages in accuracy and computational efficiency for sim-
+garding the proposed approach are presented. Finally, the key insights            ulations of complex electrical systems within their frequency band of
+and conclusions are summarized in Section 5.                                      interest [2]. While the usage of complex-valued arithmetic increases
+                                                                                  computational and memory usage, the baseband modeling diminishes
+2. Mathematical modeling
+                                                                                  the maximum frequency of interest, allowing the usage of larger time
+                                                                                  steps without compromising accuracy [38].
+2.1. Frequency-domain realization
+
+    The approximation of an N xN Multiple-Input Multiple-Output Trans-            2.3. Passivity assessment
+fer Function (MIMO TF) Y(s) by an RM 𝐘(𝑠) is given by
+                                                                                      Given 𝐆(𝑠) = R(𝐘(𝑠)) ∈ R𝑁×𝑁 , with eigenvalues 𝜆(𝑠) = eig(𝐆(𝑠)),
+                   𝑁
+              ∑ 𝑝
+                    𝐑𝐧                                                            a system is passive if 𝐆𝑛 (𝑠) is positive definite, that is 𝜆(𝑠) > 0 for all
+𝐘(𝑠) ≈ 𝐘(𝑠) =            + 𝐃 + 𝑠 𝐄,                                    (1)
+                  𝑠 + 𝑝𝑛                                                          frequencies [15].
+              𝑛=1
+
+                                                                              2
+A.A. Kida et al.                                                                                                   Electric Power Systems Research 234 (2024) 110778
+
+
+
+
+                                                         Fig. 1. Single-line diagram of the Test-system.
+
+
+    A straightforward method for evaluating passivity involves fre-                 parallelization algorithm, either VF or CVF, by dividing the complete
+quency sweeping the singular values of 𝐆𝑛 (𝑠). However, this approach               system into subsystems. By integrating these subsystems into a com-
+is slow and also does not guarantee that the sampling  (    is fine )enough         prehensive model, state-space realizations with increased sparsity are
+to capture all regions where passivity violations 𝜆(𝑠) < 0 occur.                   achieved, facilitating parallel execution.
+Those regions indicate the frequencies where the equivalent model                       VF and CVF algorithms are implemented in C-language using LA-
+will generate, instead of consume, active power. This might lead to                 PACK linear algebra functions from the Intel® oneAPI Math Kernel
+instability in( time-domain
+                        )     simulations, even if the RM only contains             Library. This library is widely employed for its high-performance nu-
+stable poles R(𝑝𝑛 ) < 0 [22].                                                       merical computing capabilities and is conveniently freely accessible
+    Analytically, the passivity violation regions can be identified through         at [41].
+the cross-over frequencies, computed via singular values (purely imag-                  To enhance performance, the parallelism strategy outlined in [21]
+inary eigenvalues) of the Hamiltonian matrix 𝐇 ∈ C2𝑁⋅𝑁𝑝 ×2𝑁⋅𝑁𝑝 [34],                is adopted, which highlighted the QR decomposition as the most com-
+where                                                                               putationally intensive step of the VF algorithm in terms of number of
+     [                                              ]
+      𝐀 − 𝐁(𝐃 + 𝐃𝐡 )−𝟏 𝐂         𝐁(𝐃 + 𝐃𝐡 )−𝟏 𝐁𝐡                                    floating-point operations accounting for over 95% of the VF execution
+𝐇=         𝐡                    𝐡                     ,                  (7)
+       −𝐂 (𝐃 + 𝐃𝐡 )−𝟏 𝐂     −𝐀 + 𝐂𝐡 (𝐃 + 𝐃𝐡 )−𝟏 𝐁𝐡                                  time in virtually all analyzed cases. The same consideration can be
+                                                                                    extended to the CVF.
+where 𝐡 corresponds to the complex conjugate transpose operator.
+                                                                                        Given the nearly diagonal block structure of the matrix employed
+    The primary distinction between (7) and the Hamiltonian matrix
+                                                                                    for system pole identification, it becomes feasible to execute the QR de-
+employed in VF [15] lies in the utilization of 𝐡 instead of 𝐓 , at-
+                                                                                    composition in parallel for each block [8]. OpenMP directives preced-
+tributed to the complex-valued nature of systems without Hermitian
+symmetry [34]. Consequently, CVF cannot exploit the efficient half-                 ing relevant for-loops are employed for parallelization, requiring min-
+size singularity test used for passivity assessment in VF [15], as it is            imal alterations to the original code structure. This approach ensures
+designed only for real-valued systems [26].                                         an efficient parallel implementation of the VF and CVF algorithms.
+
+2.4. Parallelization                                                                3. Electrical system under consideration
+
+    A multi-port structure can be conceptualized as a series of in-                     The electrical network under analysis is referred to as the Test-
+terconnected yet distinct subsystems. Thus, it is feasible to apply a               system and it is depicted in Fig. 1, where the external area, study area
+
+                                                                                3
+A.A. Kida et al.                                                                                                 Electric Power Systems Research 234 (2024) 110778
+
+Table 1
+Comparison performance between VF and the CVF.
+ Method            𝑁𝑝          RMSE              RRMSE      Relative CPU
+                               (pu)              (%)        time
+ VF                100         0.2127            0.5319     1.00
+ CVF               100         0.0015            0.0037     2.18
+
+
+
+
+and boundary buses are delineated in black, blue and red, respectively.
+The Test-system includes 107 buses, 104 transmission lines, 9 shunt
+branches (either capacitor or reactor banks), 67 transformers, 1 static
+compensator, 39 loads and 24 synchronous generators [9].
+    The external area is modeled using an 8-port FDNE, covering a
+frequency range from 10 Hz to 2 kHz with sampling intervals of 1 Hz.
+The model encompasses 36 scalar MIMO TFs of 𝐘(𝑠), with 15 of them
+being null. This reduces the problem to 21 unique frequency responses,
+akin to a 6-port FDNE (𝑁 = 6), as the number of distinct transfer
+functions 𝑁𝐷𝑇 𝐹 is
+                                                                                              Fig. 2. Magnitude of frequency response, using VF.
+𝑁𝐷𝑇 𝐹 = 𝑁(𝑁 + 1)∕2.                                                   (8)
+
+4. Numerical results and discussion
+
+      This paper adopts Root Mean Square Error (RMSE) and Relative
+Root Mean Square Error (RRMSE) metrics for evaluating the fitting ac-
+curacy of 𝐘(𝑠), as shown in (9) and (10), respectively. The former quan-
+tifies the average magnitude of errors between fitted and measured val-
+ues, providing a straightforward measure of model fitting. In contrast,
+the RRMSE scales the RMSE with the RMS of the observed data, pro-
+viding a normalization and facilitating more meaningful comparisons
+of errors across datasets.
+             √
+             √
+             √ ∑𝑁 ∑𝑁 ∑𝑁𝑆           (𝑖)             2
+             √
+         (𝑖) √ 𝑞=1 𝑚=1 𝑘=1 |𝐘𝐪𝐦 (𝑠) − 𝐘𝐪𝐦 (𝑠)|
+𝑅𝑀𝑆𝐸 =                                               ,               (9)
+                             𝑁𝑇 𝐹 𝑁𝑆
+
+where 𝑅𝑀𝑆𝐸 (𝑖) is the RMSE at the 𝑖th iteration, 𝑁𝑠 is the number
+of frequency samples and 𝑁𝑇 𝐹 is the number of scalar TF. 𝐘𝐪𝐦 (𝑠)
+and 𝐘𝐪𝐦 (𝑠) are the fitted and frequency response data admittance,
+respectively, between ports 𝑞 and 𝑚.
+              √
+              √
+              √ ∑𝑁 ∑𝑁 ∑𝑁𝑆          (𝑖)            2
+              √
+              √ 𝑞=1 𝑚=1 𝑘=1 |𝐘𝐪𝐦 (𝑠) − 𝐘𝐪𝐦 (𝑠)|
+                                                                                             Fig. 3. Magnitude of frequency response, using CVF.
+𝑅𝑅𝑀𝑆𝐸 =  (𝑖)  √      ∑𝑁 ∑𝑁 ∑𝑁𝑆                      ,         (10)
+                       𝑞=1   𝑚=1  𝑘=1
+                                       |𝐘𝐪𝐦 (𝑠)|2
+
+where 𝑅𝑅𝑀𝑆𝐸 (𝑖) is the RRMSE at the 𝑖th iteration.
+    The computational efficiency is also meticulously scrutinized. For
+a fair comparison, we employ for VF and CVF the same number of
+iterations (10), model order (𝑁𝑝 = 100) and initial set of linear-
+spaced complex-conjugated poles, unless specified otherwise. The RMs
+are strictly proper (𝐃 ≠ 0 and 𝐄 = 0). Numerical computations were
+executed on an 8-core Ryzen 7 5800X @ 3.80 GHz, with 16 GB of RAM
+and MATLAB® R2019b.
+
+4.1. Fitting accuracy
+
+    The magnitude of the frequency responses of VF and CVF are
+depicted in Fig. 2 and Fig. 3, respectively. Those illustrations de-
+pict that the error associated with VF is approximately two orders of
+                                                                                                Fig. 4. RMSE vs model order for VF and CVF.
+magnitude greater than that obtained using CVF, across the specified
+frequency range. Quantitatively, the accuracy metrics presented in
+Table 1 validate the observed disparity in error discrepancy between
+both techniques. Specifically, the RRMSE of the CVF indicates that for          with CVF for 25 ≤ 𝑁𝑝 ≤ 300. Both methodologies show similar RMSE
+𝑁𝑝 = 100, the error is nearly negligible, suggesting that the model order       for 𝑁𝑝 ≥ 325. The same conclusions can be extended for the RRMSE as
+can be further reduced while maintaining satisfactory accuracy.                 both techniques share the same Y(s) as input.
+    The behavior of RMSEs concerning model order is illustrated in                  The resulting poles placement for VF and CVF are illustrated in
+Fig. 4, where 25 ≤ 𝑁𝑝 ≤ 500, in increments of 25. This depiction shows          Fig. 5. As anticipated, the poles of the former exhibit symmetry around
+that RMSEs associated with VF are noticeably superior to those attained         the imaginary axis, whereas those of the latter do not.
+
+                                                                            4
+A.A. Kida et al.                                                                                                             Electric Power Systems Research 234 (2024) 110778
+
+                                                                                         Table 2
+                                                                                         Comparison between VF and the CVF with model order reduction.
+                                                                                          Method            𝑁𝑝             RMSE             RRMSE              Relative CPU
+                                                                                                                           (pu)             (%)                time
+                                                                                          VF                100            0.2127           0.5319             1.00
+                                                                                          CVF               52             0.2106           0.5338             1.06
+
+
+
+
+                   Fig. 5. Poles of the VF (top) and CVF (bottom).
+
+
+
+
+                                                                                         Fig. 7. Magnitude of frequency response for the element 𝑌 1,1 using different number
+                                                                                         of poles for VF and CVF.
+
+
+
+
+                                                                                         order reduction (MOR) is applied to the CVF, reducing 𝑁𝑝 from 100 to
+                                                                                         52, as 𝑁𝑅𝑃 = 4. Theoretically, the maximum achievable MOR using
+                                                                                         CVF is 50%, when the RM contains only complex poles. The results in
+                                                                                         Table 2 highlight that even with a reduced order, CVF has comparable
+                                                                                         performance to VF with a higher order.
+                                                                                              The results depicted in Fig. 7 contrasts the magnitude of frequency
+                                                                                         response of 𝐘1,1 (𝑠) using VF (𝑁𝑝 = 100) and CVF (𝑁𝑝 = 52). Notably,
+                                                                                         despite a reduction of 48 poles in CVF, the congruence between both
+Fig. 6. Relative CPU time vs model order for VF and CVF. Results are scaled to the
+CPU time of the VF with 𝑁𝑝 = 100.                                                        fittings remains consistent across the considered frequency range.
+
+                                                                                         4.2.3. Parallelism
+                                                                                             The CVF implementation introduces a trade-off: while it enhances
+4.2. Computational performance
+                                                                                         accuracy, it makes the fitting process slower. To overcome this is-
+                                                                                         sue, Parallel Vector Fitting (PVF) and Parallel Complex Vector Fit-
+4.2.1. Vector fitting vs complex vector fitting
+                                                                                         ting (PCVF) were implemented in C-language using the methodology
+    From the optimization standpoint, relaxing the complex conjugate
+                                                                                         described in Section 2.4.
+constraint streamlines the optimization problem by increasing the solu-
+                                                                                             Eighteen cases based on the Test-system were employed to in-
+tion search space. The effective number of variables for the VF (𝑁𝑉 𝑉 𝐹 )
+                                                                                         vestigate the scalability of the proposed methodology across various
+is
+                                                                                         scenarios. These cases were generated by altering the number of poles
+𝑁𝑉 𝑉 𝐹 = 𝑁𝑅𝑃 + 𝑁𝐶𝑃 ∕2,                                                       (11)        (100 ≤ 𝑁𝑝 ≤ 300), the effective number of ports (2 ≤ 𝑁 ≤ 6) and the
+                                                                                         frequency samples (1991 ≤ 𝑁𝑠 ≤ 19991).
+where 𝑁𝑅𝑃 and 𝑁𝐶𝑃 are the number of real and complex conjugate                               The performance results between the MATLAB® scripts (VF[29] and
+poles, respectively.                                                                     CVF [27]) and the proposed implementation (PVF and PCVF) are sum-
+   For the VF, the 𝑁𝐶𝑃 is divided by the factor of two in (11), as the                   marized in Table 3. It is noteworthy that linear algebra and numerical
+poles must come as complex conjugate pairs. In contrast, the effective                   functions such as 𝑒𝑖𝑔, 𝑠𝑣𝑑, and 𝑠𝑜𝑟𝑡 have been natively multi-threaded
+number of variables for the CVF (𝑁𝑉 𝐶𝑉 𝐹 ) is                                            in MATLAB® since version R2008a [42].
+𝑁𝑉 𝐶𝑉 𝐹 = 𝑁𝑅𝑃 + 𝑁𝐶𝑃 = 𝑁𝑝 .                                                   (12)              Three main observations emerge upon analyzing the effects of
+                                                                                         individually increasing 𝑁𝑝 , 𝑁 or 𝑁𝑠 at Table 3.
+    Fig. 6 illustrates that the CPU time required for both techniques                        Firstly, CPU times grew alongside these variables. This behavior
+increases with 𝑁𝑝 . Additionally, CVF was consistently slower than VF,                   is expected as the computational complexity scales quadratically with
+for the same 𝑁𝑝 . This discrepancy arises due to 𝑁𝑉 𝐶𝑉 𝐹 > 𝑁𝑉 𝑉 𝐹 when                   the number of poles and linearly with the number of MIMO TFs (8),
+complex poles are employed.                                                              frequency samples and iterations [21].
+                                                                                             Secondly, the speed-up observed for most PVF and PCVF cases
+4.2.2. Model order reduction                                                             was more pronounced for smaller 𝑁𝑝 , 𝑁 or 𝑁𝑠 . For instance, when
+   The 𝑁𝑉 𝑉 𝐹 and 𝑁𝑉 𝐶𝑉 𝐹 are 52 (𝑁𝑅𝑃 = 4 and 𝑁𝐶𝑃 = 96)                                  comparing Case 1 with Case 3 (where 𝑁 increases from 2 to 6), the
+and 100 (𝑁𝑅𝑃 = 0 and 𝑁𝐶𝑃 = 100), respectively. To simplify the                           speed-up (VF/PVF) decreases from 3.00 to 1.78, respectively. Similarly,
+mathematical model, while preserving its core characteristics, a model                   comparing Case 5 with Case 14 (where 𝑁𝑠 increases from 1991 to
+
+                                                                                     5
+A.A. Kida et al.                                                                                                              Electric Power Systems Research 234 (2024) 110778
+
+                            Table 3
+                            Summary of the computational performance for VF, PVF, CVF and PCVF, considering one iteration.
+                                Case   𝑁𝑝       𝑁       𝑁𝑠        VFa (s)      PVFb (s)      Speed-upc     CVFa (s)      PCVFb (s)       Speed-upd
+                                1      100      2       1991      0.18         0.06          3.00          0.28          0.15            1.87
+                                2      100      4       1991      0.28         0.17          1.65          0.80          0.46            1.74
+                                3      100      6       1991      0.64         0.36          1.78          1.52          0.91            1.67
+                                4      200      2       1991      0.32         0.16          2.00          0.77          0.43            1.79
+                                5      200      4       1991      0.81         0.45          1.80          2.28          1.31            1.74
+                                6      200      6       1991      1.68         0.93          1.81          4.51          2.68            1.68
+                                7      300      2       1991      0.55         0.30          1.83          1.51          0.87            1.74
+                                8      300      4       1991      1.58         0.88          1.80          4.52          2.77            1.63
+                                9      300      6       1991      2.94         1.75          1.68          8.98          5.70            1.58
+                                10     100      2       19 991    1.20         0.50          2.40          2.41          1.39            1.73
+                                11     100      4       19 991    2.52         1.40          1.80          6.74          4.85            1.39
+                                12     100      6       19 991    4.92         2.97          1.66          13.40         8.65            1.55
+                                13     200      2       19 991    2.70         1.43          1.89          8.10          4.82            1.68
+                                14     200      4       19 991    6.70         4.36          1.54          21.54         14.95           1.44
+                                15     200      6       19 991    13.58        8.78          1.55          43.65         30.50           1.43
+                                16     300      2       19 991    5.55         2.97          1.87          16.22         10.61           1.53
+                                17     300      4       19 991    13.86        8.77          1.58          45.58         32.17           1.42
+                                18     300      6       19 991    29.89        17.90         1.67          90.68         68.75           1.32
+                            a
+                              MATLAB® implementation.
+                            b Proposed implementation.
+                            c Computed by VF/PVF.
+
+                            d Computed by CVF/PCVF.
+
+
+
+
+Table 4
+Passivity violations metrics.
+ Method                Min. 𝜆(𝑠)             Mean 𝜆(𝑠) < 0           Count 𝜆(𝑠) < 0
+ VF                    −2914.4               −39.656                 25 501
+ CVF                   −2889.6               −39.650                 25 524
+
+
+
+
+19991), the speed-up (CVF/PCVF) decreases from 1.74 to 1.44, respec-
+tively. Also, when comparing Case 1 with Case 7 (where 𝑁𝑝 increases
+from 100 to 300), the speed-up (VF/PVF) decreases from 3.00 to 1.83.
+In such instances, more mathematical operations are needed. Thus,
+the communication overhead between parallel processes can cause
+dependency bottlenecks that limit parallelization efficiency.
+    Lastly, parallelization consistently reduced CPU times across all                                              Fig. 8. Passivity of 𝐆(𝑠) using VF.
+cases. In worst-case scenarios, Case 14 and Case 18, speed-up reached
+1.54 (VF/PVF) and 1.32 (CVF/PCVF), respectively. Conversely, the
+best-case scenario (Case 1) yielded speed-up values of 3.00 (VF/PVF)
+and 1.87 (CVF/PCVF).
+    Overall, the proposed implementation offered a straightforward and
+effective solution to enhance the computational performance of FDNE
+realization.
+
+4.3. Passivity
+
+     As mentioned in Section 2, passivity violations, if present, can be
+identified by the singular values of 𝐇 or by conducting a frequency
+sweep on the eigenvalues 𝜆(𝑠) of 𝐆(𝑠). Figs. 8 and 9 illustrate the
+passivity violations (𝜆(𝑠) < 0) for VF and CVF, respectively, using a
+frequency sweep from 10 Hz to 2 kHz, with a resolution of 0.2 Hz. To                                        Fig. 9. Passivity violations of 𝐆(𝑠) using CVF.
+enhance clarity and avoid using a negative log scale, the 𝑦-axis was
+truncated at −400 pu. The synthesized RM is non-passive across the
+entire frequency range of interest.                                                        5. Conclusions
+    Although both techniques yield non-passive models, they do not
+necessarily exhibit the same passivity characteristics. To illustrate this                    This paper shows that Complex Vector Fitting (CVF) consistently
+                                            (
+point, we developed three passivity metrics Min. 𝝀(𝒔), Mean. 𝝀(𝒔) and                      outperforms Vector Fitting (VF) in terms of accuracy in the rational
+                 )
+Count 𝝀(𝒔) < 𝟎 using the previously computed 𝜆(𝑠) The first metric                         model synthesis of a Nodal Admittance Multiple-input Multiple-output
+indicates the most significant passivity violation. The second metric                      𝐘(𝑠) for the same number of poles (𝑁𝑝 ). However, CVF increases the
+represents the average values of passivity violations. Finally, the last                   computational burden due to the increased number of variables for
+metric denotes the number of passivity violations.                                         the same 𝑁𝑝 and it leads to complex impulse responses. CVF shows
+    Table 4 presents these passivity metrics for both VF and CVF,                          promise in reducing model order (up to 50%), while achieving perfor-
+with the latter showing smaller yet noticeable passivity differences                       mance comparable to VF with fewer poles. Our results demonstrate that
+compared to the former across all metrics provided.                                        even with a 48% reduction in model order, the CVF maintains fitting
+
+                                                                                       6
+A.A. Kida et al.                                                                                                                    Electric Power Systems Research 234 (2024) 110778
+
+
+accuracy and computational performance similar to VF. Additionally,                            [10] K. Sheshyekani, H.R. Karami, P. Dehkhoda, M. Paolone, F. Rachidi, Application
+differences in passivity characteristics can be observed when comparing                             of the matrix pencil method to rational fitting of frequency-domain responses,
+                                                                                                    IEEE Trans. Power Deliv. 27 (4) (2012) 2399–2408.
+VF and CVF. Finally, the parallel implementations of VF and CVF (PVF
+                                                                                               [11] M. Kabir, R. Khazaka, Macromodeling of distributed networks from frequency-
+and PCVF) in C-language using LAPACK and OpenMP directives are                                      domain data using the loewner matrix approach, IEEE Trans. Microw. Theory
+straightforward and further enhance computational efficiency, elimi-                                Tech. 60 (12) (2012) 3927–3938.
+nating the need for reliance on commercial software like MATLAB® .                             [12] J. Morales Rodriguez, E. Medina, J. Mahseredjian, A. Ramirez, K. Sheshyekani, I.
+For future work, the authors intend to incorporate additional tech-                                 Kocar, Frequency-domain fitting techniques: A review, IEEE Trans. Power Deliv.
+                                                                                                    35 (3) (2020) 1102–1110.
+niques for FDNE rational modeling and compare their performance
+                                                                                               [13] B. Gustavsen, Computer code for passivity enforcement of rational macromodels
+against the CVF method.                                                                             by residue perturbation, IEEE Trans. Adv. Packag. 30 (2) (2007) 209–215.
+                                                                                               [14] D. Deschrijver, T. Dhaene, D. De Zutter, Robust parametric macromodeling using
+CRediT authorship contribution statement                                                            multivariate orthonormal vector fitting, IEEE Trans. Microw. Theory Tech. 56 (7)
+                                                                                                    (2008) 1661–1667.
+                                                                                               [15] B. Gustavsen, Fast passivity enforcement for pole-residue models by perturbation
+    Alexandre A. Kida: Conceptualization, Data curation, Formal anal-                               of residue matrix eigenvalues, IEEE Trans. Power Delivery 23 (3) (2008)
+ysis, Investigation, Methodology, Project administration, Supervision,                              2278–2285.
+Validation, Writing – original draft, Writing – review & editing. Felipe                       [16] A. Semlyen, B. Gustavsen, A half-size singularity test matrix for fast and reliable
+N.F. Dicler: Conceptualization, Data curation, Investigation, Software,                             passivity assessment of rational models, IEEE Trans. Power Delivery 24 (1)
+                                                                                                    (2009) 345–351.
+Validation, Visualization, Writing – original draft, Writing – review &
+                                                                                               [17] B. Gustavsen, Passivity enforcement by residue perturbation via constrained
+editing. Thomas M. Campello: Conceptualization, Data curation, For-                                 non-negative least squares, IEEE Trans. Power Deliv. 36 (5) (2021) 2758–2767.
+mal analysis, Investigation, Methodology, Validation, Writing – original                       [18] T. Bradde, S. Grivet-Talocia, A. Zanco, G.C. Calafiore, Data-driven extraction of
+draft, Writing – review & editing. Loan T.F.W. Silva: Conceptual-                                   uniformly stable and passive parameterized macromodels, IEEE Access 10 (2022)
+ization, Data curation, Formal analysis, Validation, Writing – original                             15786–15804.
+                                                                                               [19] L.P.R.K. Ihlenfeld, G.H.C. Oliveira, Completion-based passivity enforcement for
+draft, Writing – review & editing. Antonio C.S. Lima: Conceptual-
+                                                                                                    multiport networks rational models, IEEE Trans. Power Deliv. 36 (4) (2021)
+ization, Data curation, Formal analysis, Investigation, Methodology,                                2213–2220.
+Project administration, Writing – original draft, Writing – review & edit-                     [20] W.H. Schilders, H.A. Van der Vorst, J. Rommes, Model Order Reduction: Theory,
+ing. Fernando A. Moreira: Conceptualization, Data curation, Formal                                  Research Aspects and Applications, vol. 13, Springer, 2008.
+analysis, Investigation, Methodology, Project administration, Writing                          [21] A. Chinea, S. Grivet-Talocia, On the parallelization of vector fitting algorithms,
+                                                                                                    IEEE Trans. Compon. Packag. Manuf. Technol. 1 (11) (2011) 1761–1773.
+– original draft, Writing – review & editing. Robson F.S. Dias: Con-
+                                                                                               [22] B. Gustavsen, A. Semlyen, Enforcing passivity for admittance matrices ap-
+ceptualization, Supervision, Writing – original draft, Writing – review                             proximated by rational functions, IEEE Trans. Power Syst. 16 (1) (2001)
+& editing. Glauco N. Taranto: Supervision, Writing – original draft,                                97–104.
+Writing – review & editing, Conceptualization, Project administration.                         [23] A. Semlyen, B. Gustavsen, A half singularity test matrix for fast and reliable
+                                                                                                    passivity assessment of rational models, IEEE Trans. Power Syst. 24 (1) (2009)
+                                                                                                    345–351.
+Declaration of competing interest                                                              [24] J. Morales, J. Mahseredjian, K. Sheshyekani, AbnerRamirez, E. Medina, I. Kocar,
+                                                                                                    Pole-selective residue perturbation technique for passivity enforcement of FDNEs,
+    The authors declare that they have no known competing finan-                                    IEEE Trans. Power Syst. 33 (6) (2018) 2746–2754.
+cial interests or personal relationships that could have appeared to                           [25] J.M. Rodríguez, Computation of Frequency Dependent Network Equivalents
+                                                                                                    Using Vector Fitting, Matrix Pencil Method and Loewner Matrix (Ph.D. thesis),
+influence the work reported in this paper.
+                                                                                                    Université de Montréal, Montreal, Canada, 2019.
+                                                                                               [26] Y. Ye, D. Spina, D. Deschrijver, W. Bogaerts, T. Dhaene, Time-domain compact
+Data availability                                                                                   macromodeling of linear photonic circuits via complex vector fitting, Photonics
+                                                                                                    Res. 7 (7) (2019) 771.
+                                                                                               [27] D. Spina, Y. Ye, D. Deschrijver, W. Bogaerts, T. Dhaene, Complex vector fitting
+    No data was used for the research described in the article.
+                                                                                                    toolbox: a software package for the modelling and simulation of general linear
+                                                                                                    and passive baseband systems, Electron. Lett. 57 (10) (2021) 404–406.
+References                                                                                     [28] Y. Ye, T. Ullrick, W. Bogaerts, T. Dhaene, D. Spina, SPICE-compatible equiv-
+                                                                                                    alent circuit models for accurate time-domain simulations of passive photonic
+ [1] M. Paolone, T. Gaunt, X. Guillaud, M. Liserre, S. Meliopoulos, A. Monti, T. Van                integrated circuits, J. Lightwave Technol. 40 (24) (2022) 7856–7868.
+     Cutsem, V. Vittal, C. Vournas, Fundamentals of power systems modelling in the             [29] B. Gustavsen, The Vector Fitting Website, Sintef, 2008, [Online]. Available
+     presence of converter-interfaced generation, Electr. Power Syst. Res. 189 (April)              https://www.sintef.no/projectweb/vectorfitting/.
+     (2020) 106811.                                                                            [30] B. Gustavsen, A. Semlyen, Simulation of transmission line transients using vector
+ [2] A.C. Lima, F. Camara, J.P. Salvador, M.T.C. de Barros, Frequency-dependent                     fitting and modal decomposition, IEEE Trans. Power Deliv. 13 (1998) 605–614.
+     equivalent based on idempotent decomposition and grouping, Electr. Power Syst.            [31] B. Gustavsen, Time delay identification for transmission line modeling, in: Signal
+     Res. 189 (2020) 106800.                                                                        Propagation on Interconnects, 2004. Proceedings. 8th IEEE Workshop on, 2004,
+ [3] T. Noda, Identification of a multiphase network equivalent for electromagnetic                 pp. 103–106.
+     transient calculations using partitioned frequency response, IEEE Trans. Power            [32] B. Gustavsen, H.M.J. De Silva, Inclusion of rational models in an electromagnetic
+     Deliv. 20 (2) (2005) 1134–1142.                                                                transients program: Y-parameters, Z-parameters, S-parameters, transfer functions,
+ [4] T. Campello, F. Dicler, S. Varricchio, H. de Barros, C. Costa, A. Lima, G. Taranto,            IEEE Trans. Power Deliv. 28 (2) (2013) 1164–1174.
+     Reviewing the large electrical network equivalent methods under development               [33] T. Campello, S. Varricchio, G. Taranto, Three-phase frequency-dependent net-
+     for electromagnetic transient studies in the Brazilian interconnected power                    work equivalents in the ATP for lumped parameter systems using descriptor
+     system, Int. J. Electr. Power Energy Syst. 151 (2023) 109033.                                  formulation, rational models, and symmetrical component data, J. Control
+ [5] S. Grivet-Talocia, B. Gustavsen, Black-box macromodeling and its EMC                           Autom. Electr. Syst. 32 (2021) 1690–1703.
+     applications, IEEE Electromagn. Compat. Mag. 5 (2016) 71–78.                              [34] Y. Ye, D. Spina, Y. Xing, W. Bogaerts, T. Dhaene, Numerical modeling of a linear
+ [6] B. Gustavsen, A. Semlyen, Rational approximation of frequency domain responses                 photonic system for accurate and efficient time-domain simulations, Photon. Res.
+     by vector fitting, IEEE Trans. Power Deliv. 14 (3) (1999) 1052–1061.                           6 (6) (2018) 560–573.
+ [7] B. Gustavsen, Improving the pole relocation properties of vector fitting, IEEE            [35] B. Gustavsen, Relaxed vector fitting algorithm for rational approximation of
+     Trans. Power Delivery 21 (3) (2006) 1587–1592.                                                 frequency domain responses, in: Signal Propagation on Interconnects, 2006. IEEE
+ [8] D. Deschrijver, M. Mrozowski, T. Dhaene, D. De Zutter, Macromodeling of                        Workshop on, 2006, pp. 97–100.
+     multiport systems using a fast implementation of the vector fitting method, IEEE          [36] K. Strunz, R. Shintaku, F. Gao, Frequency-adaptive network modeling for
+     Microw. Wirel. Compon. Lett. 18 (6) (2008) 383–385.                                            integrative simulation of natural and envelope waveforms in power systems and
+ [9] T. Campello, S. Varricchio, G. Taranto, A. Ramirez, Enhancements in vector                     circuits, IEEE Trans. Circuits Syst. I. Regul. Pap. 53 (12) (2006) 2788–2803.
+     fitting implementation by using stopping criterion, frequency partitioning and            [37] F. Gao, K. Strunz, Frequency-adaptive power system modeling for multiscale
+     model order reduction, Int. J. Electr. Power Energy Syst. 120 (2020) 105905.                   simulation of transients, IEEE Trans. Power Syst. 24 (2) (2009) 561–571.
+
+
+                                                                                           7
+A.A. Kida et al.                                                                                                              Electric Power Systems Research 234 (2024) 110778
+
+
+[38] P. Zhang, J.R. Marti, H.W. Dommel, Shifted-Frequency Analysis for EMTP               [40] F. Camara, A.C. Lima, K. Strunz, Multi-scale formulation of admittance-based
+     Simulation of Power-System Dynamics, IEEE Trans. Circuits Syst. I. Regul. Pap.            modeling of cables, Electr. Power Syst. Res. 195 (2021) 107120.
+     57 (9) (2010) 2564–2574.                                                             [41] Intel, Intel OneAPI Math Kernel Library, Intel, 2023, [Online]. Available https:
+[39] J.R. Marti, H.W. Dommel, B.D. Bonatto, A.F.R. Barrete, Shifted Frequency                  //www.intel.com/content/www/us/en/developer/tools/oneapi/onemkl.html.
+     Analysis (SFA) concepts for EMTP modelling and simulation of Power System            [42] Mathworks, The MATLAB Multicore, Sintef, 2023, [Online]. Available https:
+     Dynamics, in: 2014 Power Systems Computation Conference, IEEE, 2014, pp.                  //www.mathworks.com/discovery/matlab-multicore.html.
+     1–8.
+
+
+
+
+                                                                                      8
+

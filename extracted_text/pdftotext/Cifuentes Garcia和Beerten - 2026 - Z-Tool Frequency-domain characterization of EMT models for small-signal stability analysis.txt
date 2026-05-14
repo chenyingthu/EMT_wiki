@@ -1,0 +1,525 @@
+                                                             Electric Power Systems Research 252 (2026) 112405
+
+
+                                                                   Contents lists available at ScienceDirect
+
+
+                                                        Electric Power Systems Research
+                                                           journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Z-Tool: Frequency-domain characterization of EMT models for small-signal
+stability analysis ⋆
+Francisco Javier Cifuentes Garcia                          a,b,∗, Jef Beerten            a,b
+
+a Department of Electrical Engineering (ESAT-ELECTA), KU Leuven, 3000, Leuven, Belgium
+b
+    Etch by EnergyVille, 8310, Genk, Belgium
+
+
+
+
+a r t i c l e             i n f o                        a b s t r a c t
+
+Keywords:                                                This paper presents a novel frequency-domain identiﬁcation tool based on Electromagnetic Transient (EMT)
+AC/DC power systems                                      simulations: Z-tool. This is the ﬁrst open source program oﬀering a versatile automated scan and state-of-the-
+Admittance measurement                                   art small-signal analysis of multi-terminal AC, DC and AC/DC power systems. The approach is introduced with
+Black-box
+                                                         an emphasis on implementation aspects and its use for stability assessment. Furthermore, the stability analysis
+Multi-terminal scan
+MMC HVDC
+                                                         capabilities are illustrated in a subsynchronous oscillation screening study. In addition, reﬁnements to decrease
+                                                         the runtime, such as multi-frequency excitation and the exploitation of symmetry properties, are described and
+                                                         demonstrated for diﬀerent systems. The identiﬁcation error is time-step-dependent due to the nature of EMT
+                                                         routines. Moreover, the trade-oﬀ between signiﬁcant time-savings, achieved by adopting the proposed develop-
+                                                         ments, and loss of accuracy are quantiﬁed for basic power system components oﬀering a useful guideline for
+                                                         their applicability and parameter selection.
+
+
+
+1. Introduction                                                                                scope of study. Furthermore, original equipment manufacturers of RES
+                                                                                               power plants and HVDC stations generally provide black-box models to
+    To ensure stable integration of renewable energy sources (RES) and                         preserve their intellectual property rights [7,8]. These detailed models,
+High Voltage Direct Current (HVDC) systems interfaced via power elec-                          which might not have an available analytical counterpart, are used in
+tronic (PE) converters, detailed representation of converter dynamics                          Electromagnetic Transient (EMT) programs such as PSCAD and EMTP-
+is crucial, as these could negatively interact across a wider frequency                        RV to evaluate their dynamic performance via time-domain simulations.
+range than legacy power system equipment, as demonstrated in numer-                            However, performing root-cause analysis of small-signal interactions via
+ous actual incidents [1]. Moreover, small-signal stability is a prereq-                        time-consuming EMT simulations is neither eﬃcient nor always possi-
+uisite for transient or large-signal stability, since it corresponds to the                    ble. Contrary to SS models, frequency-domain (FD) models can more ac-
+majority of the operational time, and most real-life interaction issues                        curately describe distributed parameter transmission assets and black-
+have a small-signal origin [1]. To this end, frame transformations are                         box converter controls involving time-delays [9,10]. Additionally, FD
+typically employed to describe the system dynamics by time-invariant                           analysis can be performed at diﬀerent electrical nodes, allowing for
+continuous-time non-linear diﬀerential equations in a state-space (SS)                         modularity in how components are grouped together [11–13]. More-
+model, which is then linearized for the application of modal analysis                          over, speciﬁc dynamic phenomena can be studied by just selecting the
+[2]. However, state-space approximations of practical converter con-                           frequency range of interest, e.g. subsynchronous torsional interactions.
+trols, which are of discrete nature and often involve time delays, and                         In addition, the participation factors of speciﬁc components on the os-
+of the electromagnetic properties of power systems assets, such as the                         cillatory modes can be captured by FD analysis [14–16]. Therefore, FD
+distributed nature of transmission lines and cables, entail a high level of                    methods appear as a scalable and proven alternative to the SS approach,
+complexity and very high model order [3–6]. In addition, the disperse                          unveiling insights otherwise inaccessible via time-domain simulations.
+nature of RES, as opposed to large-scale centralized power plants based                        Although FD analysis of power systems is well documented and it has
+on synchronous generators (SG), requires more modular stability anal-                          been used successfully in actual engineering projects [13,17–21], cur-
+ysis methods which can handle a selective range of dynamic phenom-                             rently there is not a standardized approach for FD characterization of
+ena, diﬀerent topologies and subsystem aggregation depending on the                            EMT models. Contrary to the existing harmonic impedance calculations
+
+
+    ⋆
+        Paper submitted to the International Conference on Power Systems Transients (IPST2025) in Guadalajara, Mexico, June 8–12, 2025.
+    ∗ Corresponding author.
+
+        E-mail address: franciscojavier.cifuentesgarcia@kuleuven.be (F.J. Cifuentes Garcia).
+
+https://doi.org/10.1016/j.epsr.2025.112405
+Received 6 January 2025; Received in revised form 5 March 2025; Accepted 17 October 2025
+Available online 1 November 2025
+0378-7796/© 2025 Elsevier B.V. All rights are reserved, including those for text and data mining, AI training, and similar technologies.
+F.J. Cifuentes Garcia and J. Beerten                                                                                 Electric Power Systems Research 252 (2026) 112405
+
+
+in commercial EMT packages, such as DIgSILENT PowerFactory’s Fre-
+quency Sweep Calculation, which do not consider the dynamic impact of
+PE, electrical machines and controls, the admittance and impedance ma-
+trices for small-signal analysis need to precisely capture those dynamic
+characteristics.
+    This paper ﬁlls this gap by presenting a novel EMT-based system
+identiﬁcation methodology for AC, DC and hybrid AC/DC systems im-
+plemented in the open-source Z-tool1 . Moreover, simpliﬁcations allow-
+ing for a more eﬃcient characterization are introduced and their ac-
+curacy discussed. Several study cases demonstrate the eﬃcacy of the
+Z-tool package to seamlessly measure any FD admittance and carry-out
+stability analysis. Overcoming the shortcomings of other implementa-
+tions, such as limitation to single-terminal analysis and overlooking of
+AC/DC couplings [22–26], the Z-tool is capable of fully characterizing
+any AC and/or DC multi-terminal system, including the 3×3 AC/DC ad-
+mittance of HVDC converters, thereby enabling a ﬂexible analysis of
+modern power networks with high PE penetration.
+    The rest of the paper is structured as follows. Section 2 introduces
+the proposed FD identiﬁcation approach. Section 3 develops an improve-
+ment for dq-symmetric systems, studies the accuracy implications of dif-
+ferent parameters and examines an interaction study involving a VSC
+connected via a long transmission line with series compensation. Sec-
+tion 4 validates the approach for the case of an MMC-HVDC station.
+Lastly, Section 5 summarizes the contributions of the paper.
+
+2. System identiﬁcation approach                                                            Fig. 1. Steady-state, decoupling and perturbation generation.
+
+   In the following, the basic considerations for the system modeling
+and the proposed FD identiﬁcation procedure are outlined together with              in per unit are less dependent on the assets’ ratings than currents. Fur-
+their implementation aspects.                                                       thermore, among the diﬀerent practical perturbation signals, e.g. pseudo
+                                                                                    random binary sequence (PRBS), chirp, etc., sinusoidal perturbations
+2.1. Frame selection for three-phase systems                                        are adopted due to their limited energy band, high signal-to-noise ra-
+                                                                                    tio, straightforward implementation, simple relation to the Fast Fourier
+    The 𝑑𝑞 frame is usually adopted for modeling and studying AC sys-               Transform (FFT) parameters and robustness [28].
+tems as their steady-state periodic trajectories can more conveniently be               In addition, from a linear algebra perspective, the necessary sinu-
+described by constant quantities [2]. Furthermore, it simpliﬁes the anal-           soidal perturbation sets at each frequency to identify any subsystem,
+ysis by inherently capturing frequency coupling eﬀects without requir-              i.e. the number of required linearly independent perturbation vectors
+ing explicit handling of frequency shifting caused by machines and con-             at every frequency, is given by its FD input/output description’s di-
+trols’ asymmetries, unlike sequence quantities [19,20]. The employed                mensionality. Since AC components are fully described by 𝑑𝑞-frame
+amplitude-invariant 𝑎𝑏𝑐-to-𝑑𝑞 transformation is (1), corresponding to a             quantities, and DC nodes by 𝑑𝑐 quantities, these variables deﬁne an or-
+𝑑𝑞-frame with the 𝑑-axis aligned to the phase 𝑎 voltage and the 𝑞-axis              thogonal vector space. For instance, for a single AC bus scan only two
+lagging the 𝑑-axis.                                                                 linearly independent (orthogonal) perturbations are required at each
+           (                                          )                             frequency, which for simplicity are selected as the standard basis, i.e.
+          2 cos(𝜃)    cos(𝜃 − 2𝜋∕3) cos(𝜃 + 2𝜋∕3)
+𝑇𝑑𝑞 (𝜃) =                                                             (1)           Δv1 = [Δ𝑣, 0]T and Δv2 = [0, Δ𝑣]T as shown in Fig. 1. Another exam-
+          3 sin(𝜃)     sin(𝜃 − 2𝜋∕3)    sin(𝜃 + 2𝜋∕3)
+                                                                                    ple is an overhead line (OHL) between two buses, deﬁned in the FD
+                                                                                    by a 4×4 𝑑𝑞-frame matrix relating the 𝑑𝑞 voltages to the currents at
+2.2. Introduction to the proposed approach
+                                                                                    both buses, which requires 4 linearly independent voltage perturba-
+                                                                                    tion vectors again selected as its standard basis, i.e. Δv1 = [Δ𝑣, 0, 0, 0]T ,
+    Contrary to implementations based on shunt current injections or se-
+                                                                                    Δv2 = [0, Δ𝑣, 0, 0]T , … , Δv4 = [0, 0, 0, Δ𝑣]T . This is generalized for any
+ries voltage perturbation in [22–24,27], we propose an eﬀective subsys-
+                                                                                    arbitrary-size AC/DC subsystem where the number and type of nodes
+tem decoupling by directly connecting controlled shunt voltage sources
+                                                                                    simply add to the dimension of its FD matrix representation and its stan-
+as illustrated in Fig. 1. The voltage sources are ideal, i.e. they present
+                                                                                    dard basis. To summarize, any 𝑁×𝑁 admittance can be computed via
+zero impedance, controlled so as not to alter the operating point and
+                                                                                    𝑁-independent 𝑁×1 vectors of currents and voltages by
+inserted in the circuit through an ideal breaker. When the binary vari-
+                                                                                              [                  ][                     ]−1
+able freeze is 1, the steady-state values are sampled and held, and the             𝐘(𝑗𝜔) = Δi1       …      Δi𝑁 Δv1         …     Δv𝑁                         (2)
+breaker is closed. After the decoupling, a snapshot is taken to speed up
+                                                                                    Note that (2) holds for every frequency and thus several frequen-
+subsequent simulations as illustrated in the general ﬂowchart of the tool
+                                                                                    cies can be perturbed at the same time. Moreover, all subsystems are
+in Fig. 2. This decoupling is a prerequisite for more detailed FD analysis
+                                                                                    interfaced via a single AC and/or DC connection point. This allows
+since the objective is to capture the standalone or open loop dynamic
+                                                                                    to independently perturb each terminal simultaneously. Therefore, all
+characteristics of the diﬀerent components and subsystems. In contrast
+                                                                                    sources/loads can be identiﬁed concurrently, which considerably im-
+with existing methods, the proposed approach enables the study of un-
+                                                                                    proves the simulation time for characterizing only the components at
+stable interconnected systems as the ideal sources guarantee stable stan-
+                                                                                    the network’s edges, such as machines and power converters. The mea-
+dalone operation. In addition, the voltage-based injection facilitates the
+                                                                                    surements used to identify the components at the network’s edge can
+selection of the perturbation amplitude because normal voltage ranges
+                                                                                    also be employed for the calculation of the interconnecting network’s
+                                                                                    admittance. Therefore, a greedy algorithm is implemented to schedule
+  1 The tool is freely available in https://www.esat.kuleuven.be/electa/ztool       all perturbations minimizing the runtime by employing the user-input
+
+                                                                                2
+F.J. Cifuentes Garcia and J. Beerten                                                                                    Electric Power Systems Research 252 (2026) 112405
+
+
+                                                                                  [28]. Note that the time-invariant description in terms of 𝑑𝑞-frame quan-
+                                                                                  tities, and the lack of frequency coupling among 𝑑𝑞 quantities and be-
+                                                                                  tween 𝑑𝑞 and DC systems quantities facilitates the application of stan-
+                                                                                  dard system identiﬁcation methods. The perturbation amplitude should
+                                                                                  excite the system enough to eﬀectively register its response while re-
+                                                                                  specting linearity and proximity to the operating point. To this end,
+                                                                                  a selection of the perturbation amplitude is given as a percentage of
+                                                                                  the steady-state voltage within the expected normal operating range.
+                                                                                  The maximum voltage deviation is generally no larger than ±5 %, but
+                                                                                  smaller amplitudes are recommended, specially for voltage-controlling
+                                                                                  units since this operational mode is more responsive to voltage devi-
+                                                                                  ations. In our experience, satisfactory results have been obtained with
+                                                                                  perturbations ranging from 0.02 % to 2 %.
+
+
+                                                                                  2.5. Multi-frequency perturbations
+
+                                                                                       A general multi-sine or multi-tone perturbation signal with m com-
+                                                                                  ponents is described by (3), where each 𝑖-component has a frequency
+                                                                                  𝜔𝑖 , initial phase 𝜙𝑖 and amplitude 𝑎𝑖 .
+
+                                                                                            ∑
+                                                                                            𝑚
+                                                                                  Δ𝑣(𝑡) =         𝑎𝑖 sin (𝜔𝑖 𝑡 + 𝜙𝑖 )                                                (3)
+                                                                                            𝑖=1
+
+                                                                                  To maintain the linear operating regime it is important to minimize the
+                                                                                  crest factor (CF) of the perturbation signal, CF = max(|Δ𝑣(𝑡)|)∕Δ𝑣RMS .
+                                                                                  Selecting 𝜔𝑖 , 𝜙𝑖 and 𝑎𝑖 in (3) to minimize its CF for an arbitrary number
+             Fig. 2. General summary of the Z-tool implementation.
+                                                                                  of frequencies is a complex non-linear problem due to the diﬃculty in
+                                                                                  ﬁnding the maximum of |Δ𝑣(𝑡)| within its period as the inﬁnity norm
+topological data. Furthermore, PSCAD parallel computing capabilities              of (3) is neither convex nor diﬀerentiable [32]. Considering equal am-
+are exploited by splitting the simulations across multiple processors.            plitude for all frequencies, 𝑎𝑖 = 𝑎𝑚 , corresponds to a ﬂat spectrum with
+                                                                                  ﬁxed RMS value, and the inﬁnity norm bounds of (3) given by (4), which
+2.3. Steady-state operating point                                                 lead to the CF range in (5).
+                                                                                               √                            √
+                                                                                  Δ𝑣RMS = 𝑎𝑚 𝑚∕2, max(|Δ𝑣(𝑡)|) ∈ 𝑎𝑚 [ 𝑚, 𝑚]                              (4)
+    Since negative sequence voltage and total harmonic distortion (THD)
+are limited below 2 % by power systems standards [29,30], it can be
+considered that any normal operating point is dominated by its positive                  max(|Δ𝑣(𝑡)|)         √ √
+sequence waveform. The magnitude, frequency, and angle of this three-             CF =                     ∈ [ 2, 2𝑚]                                                (5)
+                                                                                            Δ𝑣RMS
+phase voltage can be estimated using a conventional PLL. A simple im-
+plementation with a low-pass ﬁlter (LPF) tuned at 8 Hz is used to retrieve        The phase of each tone, 𝜙𝑖 , can be selected to reduce the CF with
+the average system frequency and steady-state phase-to-ground voltage             respect to the random phase or zero phase options by Schroeder’s heuris-
+magnitude as illustrated in Fig. 1. The operating point is maintained af-         tic [33] as 𝜙𝑖 = −𝜋𝑖(𝑖 − 1)∕𝑚, or by Guillaume’s method which itera-
+ter connecting the ideal voltage source reproducing the measured volt-            tively solves a non-linear least-squares problem [34]. In addition, set-
+                                                                                                                                                        √
+ages. Furthermore, since the PLL is only used to compute the steady-              ting 𝑚 = 2𝑧 , 𝑧 ∈ ℕ enables achieving the theoretical minimum CF = 2
+state quantities, it does not have any dynamic impact on the subsequent           by changing both the initial phase and frequency of each tone as de-
+FD characterization. The steady-state voltage angles are used to rotate           scribed in [35] for a sampling equal to the Nyquist-Shannon limit. How-
+the AC and AC/DC admittances to a common frame for multi-infeed                   ever, attention is needed as methods for CF reduction of discrete sig-
+studies [31]. In the case of DC systems, the steady state is dominated            nals, i.e. concerning the highest sampled amplitude, might not hold
+by the 0 Hz or the constant average term in voltage and current wave-             for the continuous case and thus the signals applied in EMT simula-
+forms and thus this low-pass ﬁlter is suﬃcient to remove any harmonic             tions could have higher CF since the integration time-step is larger than
+components. Note that, while frequency components other than the fun-             the sampling time. This is illustrated in Fig. 3 where 𝑚 = 23 = 8 tones
+damental are no longer reﬂected on the steady-state voltage at the ideal          are generated according to [35] in blue, and by Schroeder’s heuris-
+sources, current harmonics can still exist, e.g. due to unbalances, as well       tic in red. The blue circles representing the sampled signal do not go
+as voltages harmonics everywhere in the system but where the ideal                beyond the minimum bound in (4) while the continuous signal, more
+sources or analysis points are deﬁned. In addition, the internal period-          closely approximating that applied during EMT simulations, goes out
+icity and frequency coupling present in PE components such as MMCs                of these bounds. Furthermore, Schroeder’s method shows a lower CF in
+are still preserved. Future work includes retaining a predeﬁned set of            Fig. 3, and because of the negligible computational time with respect to
+characteristic voltage harmonics to account for the impact of harmonic            Guillaume’s method, the phase angles are subsequently chosen follow-
+distortion. Subsequently, selected frequency components are added to              ing Schroeder’s method. Although the CF minimization problem does
+the steady-state waveforms exciting the sub-systems’ dynamic response             not have a closed-form solution, PRBS-based perturbations possessing
+as explained next in Sections 2.4 and 2.5.                                        the lowest CF might be an even faster alternative to multi-sine signals
+                                                                                  [26].
+2.4. Single-frequency perturbations                                                    Furthermore, excessive energy injection should be avoided to respect
+                                                                                  the small-signal assumption. This can be achieved by setting the ampli-
+   The response of a linear time-invariant system to a single sinusoidal          tude 𝑎𝑚 producing
+                                                                                              √       the same RMS value as a single-frequency sinusoidal,
+excitation as Δ𝑣(𝑡) = 𝑎 sin (𝜔𝑡) is also a sinusoidal at the same frequency       i.e. 𝑎𝑚 = 𝑎∕ 𝑚.
+
+                                                                              3
+F.J. Cifuentes Garcia and J. Beerten                                                                                  Electric Power Systems Research 252 (2026) 112405
+
+
+
+
+                                                                                               Fig. 4. Symmetric 𝐘𝑑𝑞 action on orthogonal 𝑑𝑞-voltages.
+
+Fig. 3. Multi-tone example with 8 components generated according to [35]
+(blue) and Schroeder’s method [33] (red).                                                This symmetry can be exploited to solve for the admittance with
+                                                                                     half of the general case’s computational eﬀort. From (6), given a ﬁrst
+2.6. FFT considerations                                                              set of measurements, Δv1 and Δi1 , it follows that a second perturba-
+                                                                                     tion vector orthogonal with the ﬁrst one, e.g. Δv2 = 𝐖Δv1 , produces
+    The FFT is at the core of FD identiﬁcation methods. Thus, its assump-            a response Δi2 = 𝑌𝑑,𝑑 𝐈Δv2 + 𝑌𝑑,𝑞 𝐖Δv2 = 𝐖(𝑌𝑑,𝑑 𝐈 + 𝑌𝑑,𝑞 𝐖)Δv1 = 𝐖Δi1 .
+tions and parameters are revisited for EMT scans.                                    Therefore, by rotating the measurements obtained from a ﬁrst perturba-
+                                                                                     tion, those of the second can be estimated, thus halving the computa-
+2.6.1. Sampling frequency, aliasing and resolution                                   tional time. This process is illustrated in Fig. 4 and can be applied to
+    According to the Nyquist-Shannon sampling theorem, a sampling fre-               any 𝑑𝑞-frame matrix, including those in larger 𝑁×𝑁 dq-matrices repre-
+quency 𝑓𝑠 , larger than twice the bandwidth of the signal ensures no                 senting multi-terminal networks, as long as the system is approximately
+aliasing. If there are frequencies above the Nyquist frequency, 𝑓𝑠 ∕2, they          symmetric.
+appear as alias in [0, 𝑓𝑠 ∕2]. Therefore, 𝑓𝑠 ≥ 2𝑓max ensures that 𝑓max is re-        Note that 𝑑𝑞-symmetric systems exhibit no frequency coupling between
+solved by the FFT. Slight oversampling might be beneﬁcial, but a too                 positive and negative sequence variables. Hence, under the symmetry
+small sampling time would result in unnecessarily large time-domain                  consideration this strategy is equivalent to leveraging the relationship
+result ﬁles which translate to computational time overhead in opening                between sequence quantities [18] for faster identiﬁcation by only ap-
+and reading several hundreds of such ﬁles. A recommended sampling                    plying either positive or negative sequence perturbations [27].
+frequency is between twice and four times the maximum frequency to
+be resolved, i.e. 𝑓𝑠 ≥ 4𝑓max . In addition, the frequency resolution of the          3.2. Single-terminal application case
+FFT is given by the inverse of the length of the recorded signal which
+imposes a minimum bound on the EMT simulation time. For instance, to                     Fig. 5 shows the SLD of a study case involving the long-distance con-
+scan a system in intervals of 1 Hz, the sinusoidal steady-state response             nection of a generic two-level VSC model in grid-following (GFL) control
+needs to be recorded for at least 1 s.                                               with grid-supporting functionalities, i.e. proportional-type (droop) volt-
+                                                                                     age and frequency support of 5 p.u./p.u., feeding a 350 km OHL with se-
+2.6.2. Window and leakage                                                            ries capacitor compensation, which is commonly used to increase trans-
+    The FFT assumes periodicity and that the sampled signals contain an              mission capacity [2]. In this setup, subsynchronous oscillations (SSO)
+integer number of periods. If these conditions are not met, spectral leak-           might arise depending on the compensation level, and thus the capabil-
+age occurs. When the transient system response has died out to negligi-              ities of the Z-tool are demonstrated via a SSO screening study. Firstly,
+ble levels, the signal can be considered periodic and thus a rectangular             the custom-made PSCAD library block is inserted at the PCC bus and
+window can be used. The duration of the sampled signal is selected as                the frequency sweep parameters are deﬁned. Next, the Z-tool automat-
+an integer multiple of the base period by default in the Z-tool. This also           ically runs the frequency scan of the VSC and grid-side simultaneously,
+holds for multi-sine signals: if each tone is an integer multiple of a base          returning the admittances in Fig. 6.
+frequency, 𝜔𝑖 = 𝑘𝑖 𝜔𝑏 = 2𝜋𝑘𝑖 ∕𝑇𝑏 , 𝑘𝑖 ∈ ℕ, then 𝑇 = 𝑇𝑏 ∕gcd(𝑘1 , … , 𝑘𝑚 ) is a
+period of the signal, where gcd(⋅) denotes the greatest common divider.
+Since 𝑇 ≤ 𝑇𝑏 , recording the signal for periods multiples of this base pe-
+riod guarantees no FFT spectral leakage.
+
+3. Three phase systems
+                                                                                              Fig. 5. Generic 2L-VSC feeding a series-compensated OHL.
+    This section focuses on the particularities of three-phase systems and
+introduces an improvement exploiting dq-frame symmetry. The method
+is applied to two representative study cases and several accuracy tests
+are presented.
+
+3.1. Identiﬁcation simpliﬁcation for symmetric systems
+
+    For 𝑑𝑞-symmetric systems, such as those made out symmetrical 𝑑𝑞-
+frame controls and machine parameters as well as certain loads, trans-
+mission lines and cross-bonded cables, every 2×2 dq-matrix has the form
+in (6) [36].
+       [             ]        [    ]       [       ]
+         𝑌𝑑,𝑑   𝑌𝑑,𝑞            1 0          0   1
+𝐘𝑑𝑞 =                  = 𝑌𝑑,𝑑        +𝑌𝑑,𝑞                           (6)
+         −𝑌𝑑,𝑞  𝑌𝑑,𝑑            0 1         −1 0
+                              ⏟⏞⏟⏞⏟        ⏟⏞⏞⏟⏞⏞⏟                                             Fig. 6. Analytical admittances (lines) & Z-tool SF (dots).
+                                       𝐈          𝐖
+
+
+                                                                                 4
+F.J. Cifuentes Garcia and J. Beerten                                                                             Electric Power Systems Research 252 (2026) 112405
+
+
+
+
+               Fig. 7. Stability analysis results and EMT validation.
+
+
+    Subsequently, a range of series compensation between 5 % and 70 %
+with 1 % increments is investigated by simply adding the correspond-
+ing impedance of the capacitors 𝐶 to the scanned OHL impedance for
+every frequency 𝑓𝑖 ≠ 𝑓𝑛 as 𝐙𝑔 = 𝐘−1   𝑂𝐻𝐿
+                                           + (𝑗2𝜋𝑓𝑖 𝐶𝐈 + 2𝜋𝑓𝑛 𝐶𝐖)−1 , where
+𝑓𝑛 = 50 Hz is the fundamental frequency. Lastly, assuming no major
+operation point impact, the identiﬁed VSC admittance, 𝐘𝑐 , is used to
+screen for SSO by iteratively applying the GNC to the loop gain formed
+by the product of the diﬀerent series-compensated grid-side impedance,
+𝐙𝑔 , and the VSC admittance, i.e. 𝐋 = 𝐙𝑔 𝐘𝑐 . Since both subsystems are
+standalone stable, i.e. 𝐙𝑔 and 𝐘𝑐 have no right-half plane poles, their
+interconnection is stable only if the Nyquist plot neither crosses nor en-
+circles the critical point [37]. This is shown in Fig. 7a, where the curve
+is closer to encircling the critical point (black dot) as the compensation
+increases, and instability is predicted above 55 % series compensation.
+The main oscillatory frequency of 43.5 Hz is also identiﬁed by the Z-
+tool at the peak of the eigenvalue decomposition over the frequency of
+the closed-loop impedance matrix |𝜆(𝐙𝑔 + 𝐘−1    𝑐 )| [31,38]. The complete
+SSO screening study comprising the admittance scan over 120 frequen-
+cies between 1 and 100 Hz with a simulation timestep of 10 𝜇s, and
+the iterative stability analysis took less than 1 min in a laptop with an
+Intel® Core™ i9-10885H CPU @ 2.40 GHz 8 cores. The code and mod-
+els to replicate the study are provided in the Z-tool1 repository. Lastly,
+the presence of undamped oscillations is veriﬁed via non-linear PSCAD
+simulations in Fig. 7b after increasing the series compensation by 5 %
+at 1 s, proving the capability of the Z-tool for rapidly performing FD
+stability analysis.
+
+3.3. Multi-terminal application case
+
+    In this example, the multi-terminal characterization capabilities of
+the Z-tool are demonstrated for the four-terminal AC grid in Fig. 8a con-
+taining one overhead line (OHL) and two cables of the same conﬁgura-
+tion but diﬀerent lengths. Fig. 8 presents the results for the admittance                  Fig. 8. 4T-AC grid admittance identiﬁcation comparison.
+identiﬁcation for diﬀerent cases. Fig. 8b displays the admittance ob-
+tained by four combinations of the alternatives introduced in Section 2
+and Section 3.1: single-frequency (SF) perturbations, SF perturbations            transposed and cross-bonded case. In both cases the largest error corre-
+leveraging 𝑑𝑞 symmetry (SF + sym), multi-frequency (MF) perturba-                 sponds to the multi-frequency sweep assuming symmetry which tops be-
+tions, and MF perturbations leveraging 𝑑𝑞 symmetry (MF + sym).                    low 2 % in the non-symmetric system at 163 Hz, and below 0.4 % around
+Due to the 𝑑𝑞-symmetry a high degree of overlapping occurs, which to-             1360 Hz for the idealized symmetric case. These results conﬁrm that
+gether with the large number of non-zero entries, 40 out of 8×8 = 64,             signiﬁcant runtime improvements can be achieved with no signiﬁcant
+make a visual comparison of the methods impractical. Instead, a mea-              loss of accuracy. In addition, the impact of the EMT simulation timestep
+sure of the frequency-wise error is employed: the relative error between          on the identiﬁcation accuracy is an important aspect that needs to be
+a reference matrix 𝐆⋆ and another matrix 𝐆 can be computed at every               quantiﬁed so as to ensure a representative characterization. To evaluate
+frequency by                                                                      the timestep impact, Fig. 9 compares the relative error between the SF
+                                                                                  sweep obtained for 20 𝜇s and 40 𝜇s with respect to those simulating at
+    ̄ ⋆ − 𝐆)∕𝛔(𝐆
+𝜀 = 𝜎(𝐆      ̄ ⋆)                                                       (7)
+                                                                                  10 𝜇s. Although the error stays well-below 2 % up to around 1 kHz, a
+where the 2-norm or maximum singular value is noted by 𝜎̄ [39]. This              peak is observed near the fundamental and a maximum error of 16 %
+metric is shown in Fig. 8c considering the SF as the reference for the            at a double peak near 1.48 kHz and 1.58 kHz, the latter correspond-
+identiﬁed network admittance, and its inverse because of its signiﬁcance          ing to a network parallel resonance. This timestep-dependent accuracy
+for stability analysis. Fig. 8c (left) presents the case of no transposi-         is expected due to the nature of EMT programs, specially at higher fre-
+tion and no cross-bonding, and Fig. 8c (right) corresponds to the ideally         quencies as observed in Fig. 9 for excessively large simulation steps.
+
+                                                                              5
+F.J. Cifuentes Garcia and J. Beerten                                                                             Electric Power Systems Research 252 (2026) 112405
+
+
+
+
+               Fig. 9. Simulation timestep impact on the accuracy.
+
+
+3.4. Scan parameters sensitivity for a two-level VSC
+
+    The same GFL-VSC as in Section 3.2 is now adapted to the
+widespread constant power control mode to study the impact of the
+frequency sweep parameters on the scanned admittance. The analytical
+model (solid lines) in Fig. 10a displays little deviations with respect to
+the results via SF and MF perturbations over 400 frequency points. How-
+ever, diﬀerences around 100 Hz are visible in the 𝑑, 𝑞 component as the
+EMT simulation timestep increases. Fig. 10b quantiﬁes this dependency
+by computing the relative error via (7) with respect to the analytical
+model considering ﬁve diﬀerent simulation timesteps for both SF (solid)
+and MF (dots) perturbations. The results indicate a consistent relative er-
+ror increase with higher simulation timestep, while the diﬀerences due
+to the SF or MF remain negligible as the dots overlap the solid lines.
+Furthermore, Fig. 10c shows that the EMT computational time is ap-
+proximately reduced by a factor equal to the number of multi-frequency
+components, eight in this case, while runtime sharply increases as the
+timestep reduces.
+
+4. Hybrid AC/DC systems
+
+    The focus of this section is on HVDC converters, and the interested
+reader is referred to [31] for a complete hybrid AC/DC system study
+case. HVDC converters have both AC and DC interfaces: the AC-side dy-
+namics can be described by two current and two voltage variables, e.g.                     Fig. 10. VSC admittance identiﬁcation: parametric study.
+dq-frame quantities, while the DC side requires only one current and one
+voltage to be represented. Therefore, the converter is characterized by a         5. Conclusions
+3 × 3 admittance matrix relating the three AC/DC voltages and currents.
+It follows from Section 2.2 that three linearly independent voltage per-              A new frequency-domain admittance measurement method for EMT
+turbations are needed: two at the AC-side, as for three-phase systems,            models implemented in the ﬁrst open-source package Z-tool has been
+and an additional one at the DC-side, while all currents are recorded.            introduced. This Python-based tool automates the admittance identi-
+Consequently, the 3 × 3 converter admittance is computed by (2), where            ﬁcation for arbitrary systems between any speciﬁed electrical nodes,
+the subscripts refer to each linearly independent set of perturbations,           including HVDC converters and black-box models, enabling usage ﬂex-
+here implemented as separated d, q and dc voltage perturbations.                  ibility and simplifying small-signal analysis. Practical system identiﬁ-
+                                                                                  cation considerations related to parameter settings, and improvements
+4.1. HVDC converter admittance measurement                                        for faster computations are presented. Several study cases are covered
+                                                                                  including AC networks, AC/DC converters, and subsynchronous oscilla-
+    An arm-averaged MMC model with uncompensated modulation and                   tions analysis with PE converters, validating the approach and providing
+generic GFL controls is used to evaluate the Z-tool’s built-in AC/DC scan         guidance to other power system practitioners.
+capabilities. The non-linear model is implemented in PSCAD and an an-
+alytical multiple 𝑑𝑞-frame model as described in [40] is used as refer-           CRediT authorship contribution statement
+ence. Fig. 11 presents the 3×3 AC/DC admittance in per unit between
+1 Hz and 1 kHz, characterized by single-frequency (SF) perturbations                  Francisco Javier Cifuentes Garcia: Writing – original draft, Soft-
+simulated at 1 𝜇s in red dots and given by its analytical model in blue           ware, Investigation, Data curation, Writing – review & editing, Valida-
+lines. The tested case corresponds to constant power control at nomi-             tion, Formal analysis, Conceptualization, Visualization, Methodology;
+nal voltage and feeding 𝑝 = 0.6 p.u. & 𝑞 = −0.2 p.u. into the AC grid.            Jef Beerten: Writing – review & editing, Resources, Conceptualization,
+The results show an excellent match between the analytical admittance             Supervision, Funding acquisition, Project administration.
+and that obtained from the Z-tool. Other tests performed for alternative
+control modes, e.g. DC-voltage control operation, and with diﬀerent in-           Data availability
+ternal controllers, such as diﬀerent energy controllers, exhibit a similar
+agreement.                                                                           Data will be made available on request.
+
+                                                                              6
+F.J. Cifuentes Garcia and J. Beerten                                                                                                    Electric Power Systems Research 252 (2026) 112405
+
+
+
+
+                                 Fig. 11. AC/DC admittance matrix identiﬁcation validation for a PQ-controlled MMC-based HVDC station.
+
+
+Declaration of competing interest                                                                [9] A. Bayo Salas, Control Interactions in Power Systems with Multiple VSC HVDC Con-
+                                                                                                     verters, Ph.D. thesis, KU Leuven, 2018.
+                                                                                                [10] T. Roose, Small-Signal Modeling and Stability Analysis of Multi-Terminal DC Sys-
+    The authors declare that they have no known competing ﬁnancial                                   tems - For Low- and High-Voltage Applications, Ph.D. thesis, KU Leuven, 2023.
+interests or personal relationships that could have appeared to inﬂuence                        [11] M. Amin, M. Molinas, Small-signal stability assessment of power electronics based
+the work reported in this paper.                                                                     power systems: a discussion of impedance- and eigenvalue-based methods, IEEE
+                                                                                                     Trans. Ind. Appl. 53 (5) (2017) 5014–5030.
+                                                                                                [12] H. Liu, X. Xie, W. Liu, An oscillatory stability criterion based on the uniﬁed 𝑑𝑞 -frame
+Acknowledgement                                                                                      impedance network model for power systems with high-penetration renewables,
+                                                                                                     IEEE Trans. Power Syst. 33 (2018) 3472-3485.
+                                                                                                [13] C. Zhang, M. Molinas, A. Rygg, X. Cai, Impedance-based analysis of interconnected
+    This work was partially supported by the DIRECTIONS project                                      power electronics systems: impedance network modeling and comparative studies of
+through the ETF, FOD Economie Belgium and project Innovative solu-                                   stability criteria, IEEE J. Emerg. Sel. Top. Power Electron. 8 (3) (2020) 2520–2533.
+tions for underground high-voltage lines and grids, funded by the Flemish                       [14] Y. Zhu, Y. Gu, Y. Li, T.C. Green, Participation analysis in impedance models: the
+                                                                                                     grey-box approach for power system stability, IEEE Trans. Power Syst. 37 (1) (2022)
+Government.                                                                                          343–353. https://doi.org/10.1109/TPWRS.2021.3088345
+                                                                                                [15] C. Zhang, H. Zong, X. Cai, M. Molinas, On the relation of nodal admittance- and loop
+                                                                                                     gain-model based frequency-domain modal methods for converters-dominated sys-
+References                                                                                           tems, IEEE Trans. Power Syst. 38 (2) (2023) 1779–1782. https://doi.org/10.1109/
+                                                                                                     TPWRS.2022.3233759
+ [1] P. De Rua, T. Roose, Ö.C. Sakinci, N. de Morais Dias Campos, J. Beerten, Identiﬁca-        [16] L. Orellana, L. Sainz, E. Prieto-Araujo, M. Cheah-Mané, H. Mehrjerdi, O. Gomis-
+     tion of mechanisms behind converter-related issues in power systems based on an                 Bellmunt, Study of black-box models and participation factors for the positive-
+     overview of real-life events, Renewable Sustainable Energy Rev. 183 (2023) 113431.              mode damping stability criterion, Int. J. Electr. Power Energy Syst. 148 (2023)
+     https://doi.org/10.1016/j.rser.2023.113431                                                      108957.
+ [2] P. Kundur, N.J. Balu, Power System Stability and Control, EPRI Power System En-            [17] J.M. Undrill, T.E. Kostyniak, Subsynchronous oscillations part 1: comprehensive sys-
+     gineering Series, McGraw-Hill, 1994.                                                            tem stability analysis, IEEE Trans. Power Apparatus Syst. 95 (4) (1976) 1446–1455.
+ [3] J. Beerten, S. D’Arco, J.A. Suul, Frequency-dependent cable modelling for small-                https://doi.org/10.1109/T-PAS.1976.32240
+     signal stability analysis of VSC-HVDC systems, IET Gener. Transm. Distrib. 10 (6)          [18] J. Sun, Two-Port characterization and transfer immittances of AC-DC converters-
+     (2016) 1370–1381. https://doi.org/10.1049/iet-gtd.2015.0868                                     part i: modeling, IEEE Open J. Power Electron. 2 (2021) 440–462. https://doi.org/
+ [4] S. D’Arco, J.A. Suul, J. Beerten, Time-invariant state-space model of an AC cable by            10.1109/OJPEL.2021.3104502
+     𝑑𝑞-representation of frequency-dependent 𝜋-sections, in: 2019 IEEE PES Innovative          [19] X. Wang, L. Harnefors, F. Blaabjerg, Uniﬁed impedance model of grid-
+     Smart Grid Technologies Europe (ISGT-Europe), 2019, pp. 1–5. https://doi.org/10.                Connected voltage-source converters, IEEE Trans. Power Electron. 33 (2) (2018)
+     1109/ISGTEurope.2019.8905577                                                                    1775–1787.
+ [5] S. D’Arco, J.A. Suul, J. Beerten, Conﬁguration and model order selection of                [20] Y. Liao, X. Wang, Small-signal modeling of AC power electronic systems: critical
+     frequency-dependent 𝜋 models for representing DC cables in small-signal eigenvalue              review and uniﬁed modeling, IEEE Open J. Power Electron. 2 (2021) 424–439. https:
+     analysis of HVDC transmission systems, IEEE J. Emerg. Sel. Top. Power Electron. 9               //doi.org/10.1109/OJPEL.2021.3104522
+     (2) (2021) 2410–2426.                                                                      [21] S. Shah, L. Parsa, Impedance modeling of three-phase voltage source converters
+ [6] P. De Rua, Model Transformations and Periodic Trajectory Calculations for Stabil-               in DQ, sequence, and phasor domains, IEEE Trans. Energy Convers. 32 (3) (2017)
+     ity Assessments of Modular Multilevel Converter-Based Systems, Ph.D. thesis, KU                 1139–1150. https://doi.org/10.1109/TEC.2017.2698202
+     Leuven, 2023.                                                                              [22] D. Yang, X. Wang, M. Ndreco, W. Winter, R. Juhlin, A. Krontiris, Automation of
+ [7] Working Group C4.56, Electromagnetic Transient Simulation Models for Large-                     impedance measurement for harmonic stability assessment of MMC-HVDC systems,
+     Scale System Impact Studies in Power Systems Having a High Penetration of                       in: 18th Wind Integration Workshop, 2019.
+     Inverter-Connected Generation, Technical Brochure 881, CIGRE C4, 2022.                     [23] H. Wu, X. Wang, Y. Liao, M. Ndreko, R. Dimitrovski, W. Winter, Development of an
+ [8] Working Group B4.81, Interaction between Nearby VSCHVDC Converters, FACTs                       AC/DC impedance matrix measurement toolbox for MTDC system, in: WIW 2021,
+     Devices, HV Power Electronic Devices and Conventional AC Equipment, Technical                   2021, 2021, pp. 442–448. https://doi.org/10.1049/icp.2021.2647
+     Brochure 934, CIGRE B4, 2024.
+
+                                                                                            7
+F.J. Cifuentes Garcia and J. Beerten                                                                                                 Electric Power Systems Research 252 (2026) 112405
+
+
+[24] S. Shah, P. Koralewicz, E. Mendiola, V. Gevorgian, R. Wallen, W. Yan, Grid                [32] B. Sanchez, G. Vandersteen, R. Bragos, J. Schoukens, Optimal multisine excitation
+     impedance scan tool (GIST): software for stability analysis of ibr power systems,              design for broadband electrical impedance spectroscopy, Meas. Sci. Technol. 22 (11)
+     2023.                                                                                          (2011) 115601. https://doi.org/10.1088/0957-0233/22/11/115601
+[25] C. Henderson, A. Egea-Alvarez, S. Fekriasl, T. Knueppel, G. Amico, L. Xu, The eﬀect       [33] M. Schroeder, Synthesis of low-peak-factor signals and binary sequences with low
+     of grid-connected converter control topology on the diagonal dominance of con-                 autocorrelation, IEEE Trans. Inf. Theory 16 (1) (1970) 85–89. https://doi.org/10.
+     verter output impedance, IEEE Open Access J. Power Energy 10 (2023) 617–628.                   1109/TIT.1970.1054411
+     https://doi.org/10.1109/OAJPE.2023.3316297                                                [34] P. Guillaume, J. Schoukens, R. Pintelon, I. Kollar, Crest-factor minimization using
+[26] N. Mohammed, W. Zhou, B. Bahrani, D. Hill, F. Blaabjerg, PRBS-based impedance                  nonlinear Chebyshev approximation methods, IEEE Trans. Instrum. Meas. 40 (6)
+     measurement tool for stability analysis of black-box EMT models in PSCAD, in: Es-              (1991) 982–989. https://doi.org/10.1109/19.119778
+     marTA, 2024, pp. 1–8. https://doi.org/10.1109/eSmarTA62850.2024.10638870                  [35] Y. Zhuang, D. Chen, Multi-tone Sine Wave Generation Achieving the Theoretical
+[27] J. Pedra, L. Sainz, L. Monjo, Review and improvements to the measurements of the               Minimum of Peak-To-Average Power Ratio, Springer International Publishing, 2018,
+     VSC impedance transfer matrix, IEEE Trans. Power Del. 39 (2) (2024) 1283–1298.                 pp. 127–148. https://doi.org/10.1007/978-3-319-77718-4_8
+     https://doi.org/10.1109/TPWRD.2024.3362392                                                [36] Y. Levron, J. Belikov, Modeling power networks using dynamic phasors in the dq0
+[28] R. Pintelon, J. Schoukens, System Identiﬁcation: A Frequency Domain Approach,                  reference frame, Electr. Power Syst. Res. 144 (2017) 233–242. https://doi.org/10.
+     Wiley, 2012.                                                                                   1016/j.epsr.2016.11.024
+[29] Electromagnetic Compatibility (EMC) - Part 3–13: Limits - Assessment of Emission          [37] S. Skogestad, I. Postlethwaite, Multivariable Feedback Control: Analysis and Design,
+     Limits for the Connection of Unbalanced Installations to MV, HV and EHV Power                  Wiley, 2005.
+     Systems, Technical Report IEC TR 61000-3-13:2008, International Electrotechnical          [38] W. Xu, Z. Huang, Y. Cui, H. Wang, Harmonic resonance mode analysis, IEEE Trans.
+     Commission (IEC), 2008.                                                                        Power Del. 20 (2) (2005) 1182–1190.
+[30] IEEE Standard for harmonic control in electric power systems, IEEE Std 519–2022           [39] E. Anderson, Z. Bai, C. Bischof, S. Blackford, J. Demmel, J. Dongarra, J. Du Croz, A.
+     (Revision of IEEE Std 519–2014) (2022) 1–31. https://doi.org/10.1109/IEEESTD.                  Greenbaum, S. Hammerling, A. McKenney, et al., LAPACK Users’ Guide: Third Edi-
+     2022.9848440                                                                                   tion, Software, Environments, and Tools, Society for Industrial and Applied Mathe-
+[31] F.J. Cifuentes Garcia, T. Roose, Ö.C. Sakinci, D. Lee, L. Dewangan, E. Avdiaj, J.              matics, 1999.
+     Beerten, Automated frequency-domain small-signal stability analysis of electrical         [40] Ö.C. Sakinci, A. Lekić, J. Beerten, Generalized impedance-based AC/DC power sys-
+     energy hubs, IEEE PES Innovative Smart Grid Technol. Europe (ISGT Europe) 2024                 tem modeling for harmonic stability analysis, Int. J. Elec. Power 143 (2022) 108456.
+     (2024) 1–6.                                                                                    https://doi.org/10.1016/j.ijepes.2022.108456
+
+
+
+
+                                                                                           8
+

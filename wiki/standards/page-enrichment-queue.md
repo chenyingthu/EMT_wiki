@@ -65,7 +65,7 @@ updated: "2026-05-13"
 || 40 | earth-return-impedance.md | methods | methods/transmission-line/earth-return-impedance.md | P1 | 81 | 1290 | 2 | 12 | completed |
 || 41 | cable-model.md | models | models/transmission-line/cable-model.md | P1 | 76 | 2104 | 6 | 58 | completed |
 || 42 | hierarchical-control.md | methods | methods/control/hierarchical-control.md | P1 | 75 | 1257 | 5 | 13 | completed |
-|| 43 | frequency-domain-analysis.md | topics | topics/tools-software/frequency-domain-analysis.md | P1 | 74 | 1682 | 4 | 31 | pending |
+|| 43 | frequency-domain-analysis.md | topics | topics/tools-software/frequency-domain-analysis.md | P1 | 74 | 8912 | 79 | 14 | completed |
 || 44 | pv-power-plant.md | topics | topics/renewable-storage/pv-power-plant.md | P1 | 73 | 1699 | 5 | 34 | pending |
 || 45 | weak-grid-vsc.md | models | models/equivalent/weak-grid-vsc.md | P1 | 73 | 1291 | 4 | 11 | pending |
 || 46 | power-quality.md | topics | topics/renewable-storage/power-quality.md | P1 | 72 | 967 | 13 | 17 | pending |
@@ -519,3 +519,4 @@ updated: "2026-05-13"
 ||| 36 | 1 | 1 | 0 | heterogeneous-computing页面完成（3982字，43公式，9wikilink，1SVG，8篇来源论文，5种硬件架构详解：CPU/GPU/FPGA/集群/DSP，含FGOAM最优分配算法、混合精度浮点方案、多尺度方法等核心机制）
 ||| 38 | computational-acceleration.md | methods/simulation-technology/computational-acceleration.md | 完成 | 3561字/41公式/13wikilinks/4表格 | 2026-05-14 |
 ||| 39 | 1 | 1 | 0 | phase-domain-modeling页面完成（5189字，66公式，30wikilink，1SVG，9章节，五层架构SVG图，8篇来源论文，覆盖线路/电缆/电机/网络求解五大领域） | 2026-05-14 |
+|||| 43 | frequency-domain-analysis.md | topics/tools-software/frequency-domain-analysis.md | 完成 | 8912字/79公式/14wikilinks/1SVG/9章节/5种核心方法/9篇来源论文/方法体系架构图
