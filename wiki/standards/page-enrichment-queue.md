@@ -68,7 +68,7 @@ updated: "2026-05-13"
 || 43 | frequency-domain-analysis.md | topics | topics/tools-software/frequency-domain-analysis.md | P1 | 74 | 8912 | 79 | 14 | completed |
 || 44 | pv-power-plant.md | topics | topics/renewable-storage/pv-power-plant.md | P1 | 73 | 1699 | 5 | 34 | completed |
 || 45 | weak-grid-vsc.md | models | models/equivalent/weak-grid-vsc.md | P1 | 73 | 1291 | 4 | 11 | completed |
-|| 46 | power-quality.md | topics | topics/renewable-storage/power-quality.md | P1 | 72 | 967 | 13 | 17 | pending |
+|| 46 | power-quality.md | topics | topics/renewable-storage/power-quality.md | P1 | 72 | 967 | 13 | 17 | completed |
 || 47 | digital-simulator.md | topics | topics/simulation/digital-simulator.md | P1 | 72 | 1582 | 6 | 30 | pending |
 || 48 | exponential-integrator.md | methods | methods/numerical-methods/exponential-integrator.md | P1 | 71 | 1246 | 6 | 13 | pending |
 || 49 | equivalent-modeling.md | models | models/equivalent/equivalent-modeling.md | P1 | 70 | 1115 | 9 | 13 | pending |
@@ -521,3 +521,4 @@ updated: "2026-05-13"
 ||| 39 | 1 | 1 | 0 | phase-domain-modeling页面完成（5189字，66公式，30wikilink，1SVG，9章节，五层架构SVG图，8篇来源论文，覆盖线路/电缆/电机/网络求解五大领域） | 2026-05-14 |
 |||| 43 | frequency-domain-analysis.md | topics/tools-software/frequency-domain-analysis.md | 完成 | 8912字/79公式/14wikilinks/1SVG/9章节/5种核心方法/9篇来源论文/方法体系架构图
 || 44 | 1 | 1 | 0 | pv-power-plant.md |
+||| 45 | power-quality.md | topics/renewable-storage/power-quality.md | 完成 | 3958字(中文)/98公式(28块级+70行内)/25wikilinks/1SVG/10章节/8篇来源论文/8种核心方法(谐波潮流/闪变/超谐波/dq-SDP/电压插值/HP-AVM/DHD降阶/非特征环流)/方法体系架构SVG图/五类精度-效率对照表 | 2026-05-14 |
