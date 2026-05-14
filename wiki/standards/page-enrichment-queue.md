@@ -80,7 +80,7 @@ updated: "2026-05-13"
 || 55 | dispatch-operation.md | topics | topics/renewable-storage/dispatch-operation.md | P1 | 63 | 1558 | 7 | 27 | completed |
 || 56 | hybrid-acdc-system.md | topics | topics/hvdc-facts/hybrid-acdc-system.md | P1 | 62 | 7629 | 85 | 10 | completed |
 || 57 | corona-effect-modeling.md | methods | methods/transmission-line/corona-effect-modeling.md | P1 | 62 | 1057 | 12 | 14 | completed |
-|| 58 | distributed-parameter-model.md | methods | methods/transmission-line/distributed-parameter-model.md | P1 | 61 | 1241 | 9 | 15 | pending |
+|| 58 | distributed-parameter-model.md | methods | methods/transmission-line/distributed-parameter-model.md | P1 | 61 | 1241 | 9 | 15 | completed |
 || 59 | impedance-measurement.md | methods | methods/signal-processing/impedance-measurement.md | P1 | 59 | 1468 | 6 | 18 | pending |
 || 60 | power-system-network.md | topics | topics/tools-software/power-system-network.md | P1 | 59 | 1223 | 9 | 13 | pending |
 || 61 | heidler-function.md | methods | methods/signal-processing/heidler-function.md | P1 | 59 | 713 | 18 | 10 | pending |
@@ -533,4 +533,5 @@ updated: "2026-05-13"
 |||| 52 | balanced-three-phase-line.md | methods/transmission-line/balanced-three-phase-line.md | 完成 | 3803字/94公式/9wikilinks/0SVG/11章节/9篇来源论文/4种建模方法详解/量化性能表 |
 ||| 52 | large-scale-hybrid-acdc-simulation.md | topics/simulation/large-scale-hybrid-acdc-simulation.md | 完成 | 4175字/40公式/15wikilinks/7表格/9章节/6篇来源论文/四层次仿真方法体系+BBD并行+多速率接口 |
 |||| 57 | corona-effect-modeling.md | methods/transmission-line/corona-effect-modeling.md | 完成 | 874字/130公式/12wikilinks/0SVG/11章节/5种建模方法/9量化数据点/4篇来源论文 | 2026-05-14
+|||| 58 | distributed-parameter-model.md | methods/transmission-line/distributed-parameter-model.md | 完成 | 4761字/114公式/13wikilinks/0SVG/10章节/6篇来源论文/三大建模方法体系(FD-Line/ULM/扩展Bergeron) | 2026-05-14
 

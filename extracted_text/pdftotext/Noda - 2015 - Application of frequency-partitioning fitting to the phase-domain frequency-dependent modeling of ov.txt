@@ -1,0 +1,602 @@
+174                                                                                 IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 30, NO. 1, FEBRUARY 2015
+
+
+
+
+  Application of Frequency-Partitioning Fitting to the
+  Phase-Domain Frequency-Dependent Modeling of
+            Overhead Transmission Lines
+                                                          Taku Noda, Senior Member, IEEE
+
+
+   Abstract—This paper shows that a previously proposed                             models are based on the theory of natural modes of propaga-
+linear-system identiﬁcation method based on frequency parti-                        tion [1], [2] for computational efﬁciency. In those modal-do-
+tioning and adaptive weighting can be successfully applied to                       main models [3]–[7], the frequency dependence of character-
+the phase-domain frequency-dependent modeling of overhead
+transmission lines for electromagnetic transient simulations. As                    istic admittances and propagation functions is represented in the
+the framework of the phase-domain modeling, the universal line                      modal domain, and voltages and currents are transformed back
+model is used, and the frequency responses of the characteristic                    and forth between the phase and the modal domain at every time
+admittance and propagation function matrices are realized by                        step using transformation matrices. To carry out this phase and
+linear equivalents obtained by the identiﬁcation method men-
+tioned before, instead of the well-known Vector Fitting method.
+                                                                                    modal transformation in the time domain, transformation ma-
+In this paper, numerical techniques to enhance the identiﬁcation                    trices are approximated by real and constant matrices. Thus,
+method for this phase-domain line modeling application are also                     the modal-domain models are not accurate enough for mod-
+presented. For validation, the proposed approach is applied to                      eling transmission lines whose transformation matrices exhibit
+modeling an existing 500-kV double-circuit transmission line. The                   heavy frequency dependence. To solve this problem, phase-do-
+effectiveness of the numerical techniques for enhancements are
+shown through the modeling process, and transient waveforms                         main models have been proposed [8]–[12]. The calculations of
+obtained by the proposed approach are compared with those by                        the phase-domain models are formulated fully in the phase do-
+the rigorous Laplace transform method and with a ﬁeld-test result.                  main, and the modal transformation itself is avoided. In the
+  Index Terms—Electromagnetic transient analysis, frequency re-
+                                                                                    phase domain, characteristic admittance and propagation func-
+sponse, identiﬁcation, power system modeling, power system sim-                     tion are treated as matrices, whose frequency dependence is re-
+ulation, power transmission lines.                                                  alized by matrix-vector convolutions in time-domain EMT sim-
+                                                                                    ulations. For the matrix-vector convolutions, the frequency re-
+                                                                                    sponses of the two matrices mentioned before have to be rep-
+                            I. INTRODUCTION                                         resented by, in other words, ﬁtted with matrix partial fraction
+                                                                                    expansions (MPFEs) [13, App. A]. The ﬁtting of the charac-
+
+M        ODERN power systems use power-electronics devices                          teristic-admittance matrix is straightforward, and the vector-ﬁt-
+         for dc transmission, back-to-back system interconnec-                      ting (VF) method [14] is directly used to obtain its MPFE rep-
+tion, system stabilization, and other purposes. Since waveform-                     resentation. The ﬁtting of the propagation-function matrix, on
+level calculations are essential to consider switching in power-                    the other hand, is not straightforward. Since its time-domain re-
+electronics devices, studies of power systems, including power-                     sponse includes step-wise changes due to modal traveling-time
+electronics devices, are now often carried out by electromag-                       differences, the form of MPFE is modiﬁed in order to explic-
+netic transient (EMT) simulations. This trend gives further im-                     itly include time-delay terms. This methodology is called the
+portance to EMT simulations in addition to studies of conven-                       universal line model (ULM) [15]. The idea of explicitly in-
+tional phenomena, such as overvoltages, inrush currents, and                        cluding time-delay terms was originally introduced in a -do-
+abnormal oscillations.                                                              main modeling method [10]. In [15], the ULM is combined with
+   Accurate modeling of transmission lines is a key to accurate                     the VF method to identify the modiﬁed MPFE. As an alterna-
+EMT simulations. When a wide range of frequencies is of in-                         tive to the VF method, the author has proposed an MPFE iden-
+terest in an EMT simulation, the frequency dependence of a                          tiﬁcation method based on frequency partitioning and adaptive
+transmission line, that is, the skin effects of wires and ground                    weighting [16], [17]. Since the method is mainly characterized
+soil has to be represented accurately. A variety of line models                     by frequency partitioning, it is called the frequency-partitioning
+has been proposed to represent the frequency dependence. Early                      ﬁtting (FpF) method in this paper. So far, the method has been
+                                                                                    applied to network equivalent modeling.
+                                                                                       This paper shows that the FpF method can be successfully
+   Manuscript received December 04, 2013; revised April 27, 2014; accepted
+June 01, 2014. Date of publication July 01, 2014; date of current version January   applied to the phase-domain frequency-dependent modeling of
+21, 2015.Paper no. TPWRD-01356-2013.                                                overhead transmission lines. For the ﬁtting of a characteristic-
+   The author is with the Electric Power Engineering Research Laboratory, Cen-      admittance matrix, the FpF method is directly used to obtain
+tral Research Institute of Electric Power Industry, Kanagawa 240-0196, Japan
+(e-mail: takunoda@ieee.org).                                                        its MPFE representation. In the same way as the VF method,
+   Digital Object Identiﬁer 10.1109/TPWRD.2014.2329532                              the ULM is combined with the FpF method for the ﬁtting of a
+
+                         0885-8977 © 2014 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                             See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 12:58:02 UTC from IEEE Xplore. Restrictions apply.
+NODA: APPLICATION OF FREQUENCY-PARTITIONING FITTING                                                                                                       175
+
+
+
+propagation-function matrix. Numerical techniques to enhance
+the FpF method for this phase-domain line modeling applica-
+tion are also presented in this paper. For validation, the pro-
+posed FpF-based approach is applied to modeling an existing
+500-kV double-circuit transmission line. The effectiveness of
+the numerical techniques for enhancements is shown through
+the modeling process, and transient waveforms obtained by the
+proposed approach are compared with those by the rigorous
+Laplace transform method [18] and with a ﬁeld-test result [19].
+Results for underground cables will be presented in a separate                   Fig. 1. Equivalent circuit derived by the phase-domain equations.
+paper due to a lack of space.
+
+                 II. PHASE-DOMAIN MODELING                                       C. MPFE
+
+A. Phase-Domain Equations                                                          Once the frequency responses of              and           have
+                                                                                 been calculated, each of them is ﬁtted with an MPFE to perform
+   Consider a transmission line with       wires. We denote the                  matrix-vector convolutions. In the case of        , the following
+voltages and the currents of the conductors at the sending end,                  normal MPFE form is used:
+respectively, by the vectors and and those at the receiving
+end by and . The phase-domain Bergeron-type solution of
+the wave equation of the line is expressed by the following equa-                                                                                         (5)
+tions in the time domain [10]:
+                                                                                 For        , the form of MPFE is modiﬁed to explicitly include
+                                                                        (1a)     time-delay terms as in the following equation, and this method-
+                                                                        (1b)     ology is called the ULM [15]:
+where        is the impulse response of the characteristic-admit-
+tance matrix and the operator denotes a matrix-vector convo-                                                                                              (6)
+lution. The propagation terms      and      are given by
+                                                                                 where                  and      is the traveling time of the th
+                                                                        (2a)     mode. It is assumed that there exist      modes which have dis-
+                                                                        (2b)     tinct traveling times.     is the residue matrix of the th pole
+                                                                                       of the th mode.
+where is the traveling time of the fastest mode among all prop-
+agation modes of the line and         is the impulse response of                 D. Time-Domain Implementation
+the transfer function matrix that is obtained by eliminating the                    Applying a numerical integration algorithm to (5) transforms
+time delay due to from the current propagation function ma-                      the matrix-vector convolutions of         in (1) into recursive for-
+trix [10]. Note that all vectors shown here are column vectors                   mulas. The terms in the recursive formula can be classiﬁed into
+of size and the dimensions of all matrices are by .                              an instantaneous part and a history part. Let us denote the former
+B. Calculation of              and                                               part that relates the instantaneous values of         and      , re-
+                                                                                 spectively, to those of        and        as the constant conduc-
+   To perform the matrix-vector convolutions of          in (1) and              tance matrix        and the latter part by the current source
+      in (2), we ﬁrst have to calculate their frequency responses.               for the sending end and        for the receiving end. Then, (1) is
+The impedance matrix of an overhead line can be calculated                       rewritten as
+using Carson's and Schelkunoff's formula considering the skin
+effects of ground soil and wires. Since the capacitance matrix                                                                                           (7a)
+of an overhead line does not exhibit frequency dependence, the                                                                                           (7b)
+admittance matrix can be calculated by a textbook formula.
+Using and , the frequency-domain counterpart of                   is             where the history current vectors              and       are given by
+calculated by
+                                                                                                                                                         (8a)
+                                                                         (3)                                                                             (8b)
+The frequency-domain counterpart of                  is calculated by
+                                                                                 Equations (7) and (8), which can be readily incorporated into the
+                                                                         (4)     equations of the remaining circuit in an EMT simulation, lead
+                                                                                 to the equivalent circuit shown in Fig. 1.
+where is the length of the line and     denotes the transpose of                    In (2), the matrix-vector convolutions of      do not have to
+matrix . and are calculated at discrete frequency samples,                       be decomposed into their instantaneous and history parts, since
+and then           and         are calculated using (3) and (4),                 their inputs are associated with a time delay of . Using a nu-
+respectively, at the same frequency samples.                                     merical integration algorithm, the recursive formula of (6) is
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 12:58:02 UTC from IEEE Xplore. Restrictions apply.
+176                                                                              IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 30, NO. 1, FEBRUARY 2015
+
+
+
+obtained, and the matrix-vector convolutions are performed just                 sense. If relative-error evaluation is applied to this frequency
+according to the recursive formula. The exponential terms in (6)                response, the denominators for calculating weighting values in
+are simply treated as additional time delays in the time domain.                that almost-zero-magnitude region are almost zero, thus leading
+   For the numerical integration of MPFEs, the trapezoidal                      to quite large weighting values. As a result, the residuals in that
+method has been widely used. Recently, the 2S-DIRK method,                      region are unexpectedly exaggerated.
+which does not involve the problem of ﬁctitious numerical                          To solve this problem, we should clarify what kind of error
+oscillation, was proposed [20].                                                 evaluation is desired for practical simulations. Generally, rela-
+                                                                                tive-error evaluation is desired, since similar accuracy should be
+E. Application of FpF to Phase-Domain Modeling                                  achieved over the entire frequency range. This will give similar
+   Before the VF method was developed, it was common to                         accuracy for any type of simulations. In an almost-zero-magni-
+identify a rational function of             instead of an MPFE.                 tude region, however, we, in practice, do not pay attention to
+Multiplying the denominators to both sides of the rational ap-                  ﬁtting accuracy so long as the response in that region is sufﬁ-
+proximation equations gives a linear least-squares problem. The                 ciently small. To satisfy these requirements, the following hy-
+resulting overdetermined equations are, however, intrinsically                  brid error evaluation is proposed in this paper. First, let     be a
+ill-conditioned, since     terms coming from the rational func-                 small positive constant which is used as the threshold to judge
+tion take a wide range of values which cannot be dealt with                     whether the response is meaningfully large or not. For the sam-
+by machine arithmetic accuracy. The FpF method solves this                      ples whose magnitudes are larger than , relative-error evalu-
+problem [16]. The FpF method divides the frequency range of                     ation is applied. If we write the th sample of the frequency re-
+interest into subsections and performs rational ﬁtting for each                 sponse to be ﬁtted as and the response of the identiﬁed MPFE
+subsection. Since the frequency range of each subsection is lim-                at the same frequency sample as               , relative-error eval-
+ited, the     terms do not take a wide range of values and an                   uation is expressed by
+accurate result is obtained. Then, the poles of each subsection
+are calculated, and the poles from all subsections are gathered                                                                                        (9)
+and considered as the complete set of poles of the entire fre-
+quency response. The poles identiﬁed by the FpF method are                      where is a vector consisting of the coefﬁcients of the MPFE.
+all on the left-hand side of the plane, and they are therefore                  For the samples whose magnitudes are less than or equal to ,
+stable. For the ﬁtting of         , the frequency response of its
+                                                                                the following absolute-error evaluation is applied:
+trace is used to identify the poles as proposed in [16]. For the
+ﬁtting of         , its th mode propagation function             ,
+                                                                                                                                                      (10)
+whose traveling time       has been extracted, is used to identify
+the poles                              in (6), and this process is
+                                                                                Equations (9) and (10) are incorporated into the residue-ma-
+repeated for all modes according to [15]. Thus, all entries of
+                                                                                trix identiﬁcation process proposed in [16]. In this way, mean-
+          share the same set of poles, and the same applies to
+                                                                                ingfully large samples are treated by relative-error evaluation,
+        . With the known poles, their residue matrices are identi-
+                                                                                and almost-zero samples by absolute-error evaluation. Note that
+ﬁed through a linear least-squares problem using the entire fre-
+                                                                                (10) is scaled by     so that the two error evaluation methods
+quency response. Note that        terms are not involved in this
+                                                                                mentioned before are continuously connected to each other.
+least-squares problem. The poles and their identiﬁed residue
+matrices give an MPFE model. In the two least-squares prob-                     B. Upper-Limit Frequency for Fitting and Pole Removal
+lems mentioned before, adaptive weighting and other numerical
+                                                                                   As mentioned in the previous section, we do not pay atten-
+techniques are used to gain accuracy [16]. An algorithm to opti-
+                                                                                tion to ﬁtting accuracy in an almost-zero-magnitude region
+mally divide the frequency range of interest into subsections is
+                                                                                so long as the response of the identiﬁed MPFE in that region
+proposed in [17].
+                                                                                is sufﬁciently small. This idea can also be applied to deter-
+                  III. ENHANCEMENTS TO FPF                                      mine the upper-limit frequency when the modal components
+                                                                                                              are ﬁtted for identifying the poles
+A. Practically Effective Weighting                                              of         according to (6). Let    be a small positive constant
+   The frequency response of an off-diagonal element of                         which is used as the threshold to judge if the response is mean-
+often includes frequency regions where its magnitudes are large                 ingfully large or not. The magnitude of            is, in general,
+and regions where its magnitudes are small. If a simple least-                  monotonically-decreasing as frequency goes up and, therefore
+squares method is applied to the residue-matrix identiﬁcation of                                                                                      (11)
+        , the residuals at samples with large magnitudes are over-
+estimated and those with small magnitudes are underestimated.                   is satisﬁed above a certain angular frequency . Since we do
+A remedy for this is to introduce weighting to realize relative-                not care about ﬁtting accuracy for frequency samples above the
+error evaluation [10], and the FpF method uses this weighting                   upper-limit (angular) frequency       , those frequency samples
+in the pole and the residue-matrix identiﬁcation process [16].                  are removed from the ﬁtting in order to avoid unnecessary par-
+However, even relative-error evaluation is not perfect. Consider                tial fractions to represent a meaninglessly small response above
+the case in which a frequency response includes a region where                      . Even with the upper-limit frequency set, the FpF method
+its magnitude is very small, in other words, zero in a practical                may identify a few poles whose natural oscillation frequencies
+         Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 12:58:02 UTC from IEEE Xplore. Restrictions apply.
+NODA: APPLICATION OF FREQUENCY-PARTITIONING FITTING                                                                                                     177
+
+
+
+are above . Since the response of              above    is suf-                  Spike voltages, which should reach one end of the line at dif-
+ﬁciently small, those poles above      are removed before the                    ferent time steps, may unexpectedly reach that end at the same
+residue-matrix identiﬁcation process. This will avoid unwanted                   time step due to the large step size used and, thus, they are ac-
+responses above     generated by those poles. In addition                        cumulated. This accumulation leads to numerical ampliﬁcation
+                                                                                 since the spike voltages travel back and forth on the line. Trav-
+                                                                        (12)     eling times may not be exact multiples of a time-step size used,
+                                                                                 and interpolation operations used for its compensation further
+                                                                                 complicate the phenomenon.
+gives a reasonable estimate of the traveling time    of mode
+in order to obtain an accurate MPFE of          according to (6),                D. Numerically Stable Solution Utilizing SVD
+where       is the phase constant of the same mode.
+                                                                                    Both the rational ﬁtting for each frequency subsection and
+C. Filtering                                                                     the residue-matrix identiﬁcation process result in a least-squares
+                                                                                 problem represented by overdetermined linear equations of the
+   Even if the MPFEs of              and         identiﬁed for a
+                                                                                 form
+phase-domain line model have no poles on the righthand side
+of the complex frequency plane, the line model can still be                                                                                            (15)
+numerically unstable due to violation of passivity. Rigorously
+speaking, the MPFEs have to be identiﬁed so that the mathe-                      If the condition number of is improved, a more accurate solu-
+matical condition of the passivity is satisﬁed, and this kind of                 tion can be obtained. For this purpose, column scaling is applied
+procedure is called “passivity enforcement” [21]. In the case                    to the FpF method [16]. However, cases exist where the condi-
+of overhead lines, however, such numerical instability mostly                    tion number cannot be sufﬁciently improved by column scaling,
+comes from the following phenomenon. When a line model is                        thus leading to a computation failure of the solution. To avoid
+excited, spike voltages generated by small traveling time dif-                   this situation, we utilize singular value decomposition (SVD)
+ferences between distinct modes are ampliﬁed as the traveling                    [22]. The SVD of is expressed by
+waves go back and forth on the line. The spike voltages actually
+exist, but they are not ampliﬁed in reality. This numerical am-                                                                                        (16)
+pliﬁcation phenomenon results from high-frequency response
+(including the frequency region beyond the given highest fre-                    When the size of is by            is an orthogonal matrix of size
+quency sample) of the identiﬁed MPFE of            . To suppress                    by     is a diagonal matrix of size by , and is an orthog-
+the numerical ampliﬁcation phenomenon, multiplying a low-                        onal matrix of size by . The diagonal entries
+pass ﬁlter response to the given frequency response of                           of are real and positive and called the singular values of .
+prior to the identiﬁcation of its MPFE is proposed in [21]. This                 and can be determined in order to satisfy                       .
+method solves the problem by attenuating the spike voltages, but                 If we write           and             , (15) is rewritten as
+some of the ﬁlter parameters are tentatively determined. As an
+alternative, the following ﬁlter for which the parameter is theo-                                                                                      (17)
+retically determined is proposed. According to Shannon's sam-
+                                                                                 From this equation, it is clear that the value of represents the
+pling theorem, the time-step size of an EMT simulation must be
+                                                                                 contribution of the th equation in (17) to the solution. Normal-
+larger than
+                                                                                 izing the singular values by gives
+                                                                        (13)
+                                                                                                                                                       (18)
+
+where         is the upper limit of the given frequency response,                and they represent the contribution rates of the equations. The
+that is, the highest frequency sample. This leads to multiplying                 situation when the condition number is fairly large and the com-
+the following ﬁrst-order ﬁlter to the given frequency response                   putation of the solution fails is equivalent to the situation when
+of          when its residue matrices are identiﬁed:                             the tail portion of the normalized singular values are close to
+                                                                                 or smaller than the machine epsilon         of the computer used.
+                                                                        (14)     This can be understood in the following way—this ill condi-
+                                                                                 tioning comes from the fact that we are trying to include equa-
+It should be noted that the ﬁlter proposed here and the ﬁlter pro-               tions whose contributions are much smaller than those of the re-
+posed in [21] are effective only when the time-step size of an                   maining equations, by an order of      , and this difference cannot
+EMT simulation is set to a value which is small enough to rep-                   be dealt with by the machine arithmetic accuracy of the com-
+resent traveling time differences between distinct modes. If it                  puter used. To avoid this problem, we remove the low-contribu-
+is not small enough, the spike voltages mentioned before are                     tion equations from (17). Assume that we want to keep roughly
+not reproduced as expected in time-domain simulations. This is                     digits of accuracy in the least-squares solution. If the largest
+due to the fact that discretization using a numerical integration                that satisﬁes
+method cannot accurately reproduce a high-frequency response
+close to its Nyquist frequency determined by the time-step size.                                                                                       (19)
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 12:58:02 UTC from IEEE Xplore. Restrictions apply.
+178                                                                               IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 30, NO. 1, FEBRUARY 2015
+
+
+
+
+Fig. 2. Sectional wire arrangement of a 500-kV double-circuit transmission
+line (Kaga-Reinan line).
+                                                                                 Fig. 3. Schematic diagram of a ﬁeld test using the Kaga-Reinan line.
+
+is , only the ﬁrst to the th equations are used to obtain the
+solution, and the remaining equations are removed. With this                        Both line sections, divided by Point P, are modeled by the
+condition, the solution of (17) is given by                                      proposed FpF-based approach with the enhancements described
+                                                                                 in Section III. The line constants [23] are calculated at 400
+                                                                        (20)     frequency points from 0.1 Hz to 10 MHz, where the ground
+                                                                                 wires are eliminated by taking their presence into account. In
+The ﬁnal solution of (15) is obtained by                                         the following results, although only the ﬁtting results of the
+                                                                                 Reinan-side line section are shown, it should be noted that the
+                                                                        (21)
+                                                                                 results of the Kaga-side line section are essentially the same.
+                                                                                 The parameter values used for the enhancements to the FpF
+The technique shown above ensures a computationally stable
+                                                                                 method are                              , and       2, while the
+solution process.
+                                                                                 parameter values used for the FpF method itself are shown in
+                                                                                 Appendix A. If the difference of two modal traveling times is
+                     IV. NUMERICAL EXAMPLE                                       larger than 1%, these two modes are considered to be distinct
+   The proposed FpF-based approach is applied to the mod-                        modes. Fig. 4 shows the ﬁtting result of the ﬁrst-row entries of
+eling of an existing 500-kV double-circuit transmission line, and                        , and Fig. 5 shows the same for         . The identiﬁed
+the effectiveness of the aforementioned numerical techniques is                  MPFEs accurately reproduce the given frequency responses,
+shown through its modeling process. The passivity of the cre-                    and deviations cannot be seen from the ﬁgures. The ﬁrst-row en-
+ated line model is assessed, and the ﬁtting performance of the                   tries are taken just as examples, and the remaining entries also
+FpF-based approach is compared with that of the VF-based ap-                     show similar ﬁtting accuracy.
+proach using this example. Then, transient waveforms obtained                       The effects of the parameters        , and on ﬁtting results
+by the created line model are compared with those by the rig-                    are examined in Appendix B, and the ﬁtting performance for a
+orous Laplace transform method and with a ﬁeld-test result for                   high ground resistivity case is demonstrated in Appendix C.
+validation.
+                                                                                 B. Effectiveness of the Enhancements
+A. 500-kV Double-Circuit Transmission Line and its Modeling
+                                                                                    Numerical techniques to enhance the FpF method for the
+   Fig. 2 shows the wire arrangement of an existing 500-kV                       phase-domain line modeling application have been presented
+double-circuit transmission line in Japan. Since this transmis-                  in Section III. In order to verify the effectiveness of those en-
+sion line connects the Kaga and the Reinan substation, it is                     hancements, the following numerical experiments are carried
+called the Kaga–Reinan line. A ﬁeld test for obtaining wave                      out using the Reinan-side line section.
+propagation characteristics was carried out using this transmis-                    Table I shows maximum deviations between the given and the
+sion line [19]. The schematic diagram of this ﬁeld test is shown                 ﬁtted frequency responses of all entries of          for the cases
+in Fig. 3. An impulse generator (IG) was installed around the                    with and without the proposed weighting algorithm described
+midpoint of the line, and actually its location marked by P in                   in Section III-A. In the absolute-error sense, the algorithm sig-
+Fig. 3 was closer to the Kaga substation by 3.5 km from the                      niﬁcantly reduces the ﬁtting errors by accepting larger errors in
+exact midpoint. Impulse voltages generated by the IG were ap-                    almost-zero-magnitude regions.
+plied to phase b of the line's ﬁrst circuit at Point P. At both sub-                Table II shows for each mode of              , a change in the
+stations, each phase was grounded through a 50- resistor that                    number of poles when an upper-limit frequency is set and poles
+represents the surge impedance of the busbar of the same phase.                  beyond that frequency are removed in the pole-identiﬁcation
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 12:58:02 UTC from IEEE Xplore. Restrictions apply.
+NODA: APPLICATION OF FREQUENCY-PARTITIONING FITTING                                                                                                          179
+
+
+
+
+Fig. 4. Fitting result of the ﬁrst-row entries of        , where (a) shows the     Fig. 5. Fitting result of the ﬁrst-row entries of        , where (a) shows the
+magnitudes and (b) shows the phase angles.                                         magnitudes and (b) shows the phase angles.
+
+
+
+process as proposed in Section III-B. This result shows that the                   process is performed element by element. When the residue
+proposed idea of setting an upper-limit frequency achieves the                     matrices of          were identiﬁed, one singular value was
+same degree of accuracy with a smaller number of poles.                            smaller than          in each of the 30 entries out of 36 and
+   The effectiveness of the proposed ﬁltering described in                         that singular value was removed from the solution process.
+Section III-C is veriﬁed by the following numerical experiment.                    For comparison, the residue matrices of          are identiﬁed
+Using the proposed FpF-based approach, two line models, one                        using the QR algorithm instead of the proposed SVD-based
+with and the other without the proposed ﬁltering, are created for                  algorithm. The result is shown in Table III. By comparing
+the Reinan-side line section, and an EMT simulation in which                       it with Table I(a), it is clear that the SVD-based algorithm
+a step voltage of 1 p.u. is applied to the ﬁrst circuit's phase a at               improves the solution.
+one end and the rest of the terminals remain open-circuited is
+performed using both line models. A time step of 2 s which is
+                                                                                   C. Passivity
+sufﬁciently smaller than the traveling time difference between
+distinct modes of the line, in this particular case, 14.2 s, is                       As mentioned in Section III-C, a line model has to satisfy
+used. Fig. 6 shows the simulation results. With the proposed                       the mathematical condition of passivity for numerically stable
+ﬁltering, spike voltages generated by the traveling time differ-                   simulations. The passivity condition is that the real part of the
+ence are damped out as they travel back and forth on the line.                     admittance matrix        seen from both ends of the line model
+Without the proposed ﬁltering, the spike voltages are ampliﬁed                     is positive deﬁnite for all frequencies, that is, all eigenvalues
+and they lead to divergence. Even with the proposed ﬁltering,                      of             are positive for all frequencies. Fig. 7 shows
+numerical ampliﬁcation is observed when a large time-step                          all eigenvalues of              of the Reinan-side line model
+size, such as 10 s, is used. To stabilize phase-domain line                        obtained by the proposed FpF-based approach, with respect to
+models for large time-step sizes, further investigations have to                   frequency. Note that the frequency range shown here is wider
+be carried out.                                                                    than that shown in Figs. 4 and 5 for the ﬁtting of            and
+   The ﬁnal point to check is the effectiveness of the SVD-based                          . All eigenvalues are positive for the shown frequency
+algorithm described in Section III-D for numerically stable                        range that is sufﬁciently wide, and the line model is therefore
+least-squares solutions. The residue matrix identiﬁcation                          veriﬁed stable.
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 12:58:02 UTC from IEEE Xplore. Restrictions apply.
+180                                                                                 IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 30, NO. 1, FEBRUARY 2015
+
+
+
+
+                              TABLE I
+        EFFECTIVENESS OF THE PROPOSED WEIGHTING ALGORITHM.
+(a) MAXIMUM DEVIATIONS BETWEEN THE GIVEN AND THE FITTED FREQUENCY
+  RESPONSES OF ALL ENTRIES OF       WITH THE PROPOSED WEIGHTING
+   ALGORITHM. (b) MAXIMUM DEVIATIONS BETWEEN THE GIVEN AND THE
+  FITTED FREQUENCY RESPONSES OF ALL ENTRIES OF       WITHOUT THE
+                   PROPOSED WEIGHTING ALGORITHM
+
+
+
+
+                                                                                   Fig. 6. Results of EMT simulations with and without the proposed ﬁltering.
+                                                                                   (a) shows the voltages of the ﬁrst circuit at the remote end obtained with the
+                                                                                   proposed ﬁltering and (b) shows those without the proposed ﬁltering.
+
+
+
+                                                                                                                   TABLE III
+                                                                                                  EFFECTIVENESS OF THE SVD-BASED ALGORITHM
+
+
+
+
+                                TABLE II
+      EFFECTIVENESS OF THE PROPOSED IDEA OF SETTING AN UPPER-LIMIT
+                               FREQUENCY
+
+
+
+
+D. Comparison with the VF-Based Approach
+   Using the example, the ﬁtting performance of the proposed
+FpF-based approach is compared with that of the VF-based ap-
+proach. Table IV compares the total number of poles used for
+the ﬁtting of        by both approaches. This is equivalent to
+comparing computational efﬁciency, since the computational
+load of a frequency-dependent line model is proportional to
+the total number of poles. For the VF-based approach, the ﬁt-
+ting program implemented in EMTP-RV was used. It allows
+the user to modify only one ﬁtting parameter called “conver-
+                                                                                   Fig. 7. Frequency response of all eigenvalues of              . It has been con-
+gence tolerance” which is denoted by       in this paper. From                     ﬁrmed that all eigenvalues are positive at all frequency points.
+Table I(a), the maximum deviation in the absolute value be-
+tween the given and the ﬁtted frequency response of          by
+the FpF-based approach is               . To obtain similar ac-                    adjust . In Table IV, the result obtained by the VF-based ap-
+curacy using the VF-based approach, the attempt was made to                        proach with             is indicated by “VF1”, and that with
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 12:58:02 UTC from IEEE Xplore. Restrictions apply.
+NODA: APPLICATION OF FREQUENCY-PARTITIONING FITTING                                                                                                       181
+
+
+
+
+                           TABLE IV
+COMPARISON OF THE TOTAL NUMBER OF POLES USED FOR                 BETWEEN
+              THE FPF- AND THE VF-BASED APPROACH
+
+
+
+
+             by “VF2.” Since the maximum deviation does not
+vary linearly with respect to , these two results are shown.
+Note that one complex-conjugate pole pair requires more com-
+putations than two real poles. From the comparison, we may say
+that the FpF-based approach requires somewhat more poles for
+similar accuracy compared with the VF-based approach. In the
+FpF-based approach, however, the total number of poles can be
+reduced to 33, if the value of the ﬁtting parameter     is set to
+       as shown in Appendix B. In this paper, the more conser-
+vative value             is used, since achieving good accuracy
+is considered more important. It should also be noted that the
+FpF-based approach simply gathers the poles from modes with
+almost the same traveling time and does not remove the redun-
+dant ones. Removing such redundant poles may be an important
+future work.
+
+E. EMT Simulation Result
+   Transient voltage waveforms of all phases at Point P are cal-
+culated by the line models obtained by the proposed FpF-based
+approach with a time step of 0.5 s. As a reference, the same
+simulation is carried out by the rigorous numerical Laplace
+transform method [18] that is able to take into account the
+frequency-dependent effects without approximations. In those
+simulations, the IG is represented by the equivalent circuit
+shown in Fig. 3, and the air gap in series with the capacitor
+is represented by an ideal switch. As shown in Fig. 8, the
+simulation result obtained by the proposed FpF-based approach
+agrees well with the result by the numerical Laplace transform
+method. In addition, the simulation result well reproduces the
+ﬁeld-test result [19] shown in Fig. 9 in terms of microsecond
+to millisecond responses.
+
+                          V. CONCLUSION
+   This paper has shown that a previously proposed
+linear-system identiﬁcation method, which is called the FpF
+method in this paper, can be successfully applied to the
+phase-domain frequency-dependent modeling of overhead
+transmission lines for EMT simulations. Numerical techniques
+to enhance the FpF method for this phase-domain line modeling
+application have also been presented. The proposed FpF-based
+approach was applied to the modeling of an existing 500-kV
+double-circuit transmission line, and the effectiveness of the
+numerical enhancements was demonstrated. Then, it has been                      Fig. 8. EMT simulation result of the 500-kV double-circuit transmission line
+veriﬁed that transient waveforms obtained by the proposed                       (Kaga-Reinan Line) obtained by the proposed FpF-based approach. The result
+                                                                                is shown using solid lines, where the result obtained by the numerical Laplace
+FpF-based approach agree well with those by the rigorous                        transform method is superimposed using dashed lines. Since both results agree
+Laplace transform method and also with a ﬁeld-test result.                      quite well with each other, the dashed lines cannot be distinguished.
+         Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 12:58:02 UTC from IEEE Xplore. Restrictions apply.
+182                                                                                IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 30, NO. 1, FEBRUARY 2015
+
+
+
+                                                                                                                    TABLE A1
+                                                                                                 EFFECTS OF          , AND ON FITTING RESULTS
+
+
+
+
+                                                                                  for       , its symmetry is taken into account to reduce com-
+                                                                                  putation.
+
+
+
+                                                                                                                  APPENDIX B
+                                                                                           EFFECTS OF              , AND ON FITTING RESULTS
+                                                                                     Using the Reinan-side line section of the transmission line
+                                                                                  shown in Figs. 2 and 3, the effects of the parameters              ,
+                                                                                  and on ﬁtting results are examined. Maximum deviations be-
+                                                                                  tween the given and the ﬁtted frequency responses of the 36
+                                                                                  entries of         are calculated, and the largest one of those
+                                                                                  36 maximum deviations is considered as the ﬁtting error index.
+                                                                                  The parameter values                                  , and
+                                                                                  used in Section IV are assumed to be the base values. The re-
+                                                                                  sults obtained when each parameter is changed within a prac-
+Fig. 9. Field-test result of the 500-kV double-circuit transmission line (Kaga-   tical range are shown in Table A1. The total number of poles
+Reinan line). The waveform of the ﬁrst circuit's phase b is not available.
+                                                                                  used is also shown in each case. Although it is difﬁcult to draw
+                                                                                  recommended parameter values from this examination carried
+                                                                                  out using a single transmission-line example, the most impor-
+                     APPENDIX A                                                   tant observation is that the ﬁtting result is not sensitive to those
+       PARAMETER VALUES USED FOR THE FPF METHOD                                   parameters.
+   In the numerical example shown in Section IV, the following
+parameter values are used in the FpF method [16], [17]. In the                                           APPENDIX C
+adaptive weighting process, the maximum number of iteration                          FITTING RESULT FOR A HIGH GROUND RESISTIVITY CASE
+steps is set to 30. An optimal model order is searched for by in-                    Higher ground resistivity gives larger variations in the fre-
+creasing the order one by one from 2 to 8. If the standard devia-                 quency response of             due to larger differences of prop-
+tion, in the relative-error sense, of the identiﬁed model becomes                 agation velocities and attenuations between the ground mode
+equal to or less than       , that order is readily considered as the             and the remaining modes. To observe the ﬁtting performance of
+optimum order and the order search is terminated. If the standard                 the proposed FpF-based approach under such a condition, the
+deviation values for all orders from 2 to 8 are larger than         ,             ground resistivity of the Reinan-side line section of the trans-
+then the order that minimizes the standard deviation is consid-                   mission line shown in Figs. 2 and 3 is set to 1000 m, and
+ered as the optimum order. When residue matrices are identiﬁed                    its ﬁtting is carried out. Fig. A1 shows the ﬁtting result of the
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 12:58:02 UTC from IEEE Xplore. Restrictions apply.
+NODA: APPLICATION OF FREQUENCY-PARTITIONING FITTING                                                                                                               183
+
+
+
+                                                                                       [7] J. R. Marti, “Accurate modelling of frequency-dependent transmission
+                                                                                           lines in electromagnetic transient simulations,” IEEE Trans. Power
+                                                                                           App. Syst., vol. PAS-101, no. 1, pp. 147–155, Jan. 1982.
+                                                                                       [8] B. Gustavsen, J. Sletbak, and T. Henriksen, “Calculation of electro-
+                                                                                           magnetic transients in transmission cables and lines taking frequency
+                                                                                           dependent effects accurately into account,” IEEE Trans. Power Del.,
+                                                                                           vol. 10, no. 2, pp. 1076–1084, Apr. 1995.
+                                                                                       [9] G. Angelidis and A. Semlyen, “Direct phase-domain calculation of
+                                                                                           transmission line transients using two-sided recursions,” IEEE Trans.
+                                                                                           Power Del., vol. 10, no. 2, pp. 941–949, Apr. 1995.
+                                                                                      [10] T. Noda, N. Nagaoka, and A. Ametani, “Phase domain modeling of fre-
+                                                                                           quency-dependent transmission lines by means of an ARMA model,”
+                                                                                           IEEE Trans. Power Del., vol. 11, no. 1, pp. 401–411, Jan. 1996.
+                                                                                      [11] T. Noda, N. Nagaoka, and A. Ametani, “Further improvements to a
+                                                                                           phase-domain ARMA line model in terms of convolution, steady-state
+                                                                                           initialization, and stability,” IEEE Trans. Power Del., vol. 12, no. 3, pp.
+                                                                                           1327–1334, Jul. 1997.
+                                                                                      [12] H. V. Nguyen, H. W. Dommel, and J. R. Marti, “Direct phase-domain
+                                                                                           modelling of frequency-dependent overhead transmission lines,” IEEE
+                                                                                           Trans. Power Del., vol. 12, no. 3, pp. 1335–1342, Jul. 1997.
+                                                                                      [13] Power System Transients: Parameter Determination, J. A. Martinez-
+                                                                                           Velasco, Ed. Boca Raton, FL, Canada: CRC, 2010.
+                                                                                      [14] B. Gustavsen and A. Semlyen, “Rational approximation of frequency
+                                                                                           domain responses by vector ﬁtting,” IEEE Trans. Power Del., vol. 14,
+                                                                                           no. 3, pp. 1052–1061, Jul. 1999.
+                                                                                      [15] A. Morched, B. Gustavsen, and M. Tartibi, “A universal model for
+                                                                                           accurate calculation of electromagnetic transients on overhead lines
+                                                                                           and underground cables,” IEEE Trans. Power Del., vol. 14, no. 3, pp.
+                                                                                           1032–1038, Jul. 1999.
+                                                                                      [16] T. Noda, “Identiﬁcation of a multiphase network equivalent for electro-
+                                                                                           magnetic transient calculations using partitioned frequency response,”
+                                                                                           IEEE Trans. Power Del., vol. 20, no. 2, pt. 1, pp. 1134–1142, Apr. 2005.
+                                                                                      [17] T. Noda, “A binary frequency-region partitioning algorithm for the
+                                                                                           identiﬁcation of a multiphase network equivalent for EMT studies,”
+                                                                                           IEEE Trans. Power Del., vol. 22, no. 2, pp. 1257–1258, Apr. 2007.
+                                                                                      [18] A. Ametani, “The application of the fast Fourier transform to electrical
+                                                                                           transients phenomena,” Int. J. Elect. Eng. Educ., vol. 10, no. 4, pp.
+                                                                                           277–281, 1973.
+                                                                                      [19] T. Ono, “Study on switching overvoltages in power systems (in
+                                                                                           Japanese) Tokyo, Japan, CRIEPI rep. no. 121, Jan. 1985.
+                                                                                      [20] T. Noda, K. Takenaka, and T. Inoue, “Numerical integration by the
+                                                                                           2-stage diagonally implicit Runge-Kutta method for electromagnetic
+                                                                                           transient simulations,” IEEE Trans. Power Del., vol. 24, no. 1, pp.
+Fig. A1. Fitting result of the ﬁrst-row entries of      when the ground re-                390–399, Jan. 2009.
+sistivity is set to 1000 m. (a) shows the magnitudes and (b) shows the phase          [21] B. Gustavsen and A. Semlyen, “Enforcing passivity for admittance ma-
+angles.                                                                                    trices approximated by rational functions,” IEEE Trans. Power Syst.,
+                                                                                           vol. 16, no. 1, pp. 97–104, Feb. 2001.
+                                                                                      [22] T. Noda, A. Semlyen, and R. Iravani, “Reduced-order realization of a
+                                                                                           nonlinear power network using companion-form state equations with
+ﬁrst-row entries (the remaining entries also show similar ﬁtting                           periodic coefﬁcients,” IEEE Trans. Power Del., vol. 18, no. 4, pp.
+accuracy). It is veriﬁed that the FpF-based approach shows good                            1478–1488, Oct. 2003.
+                                                                                      [23] T. Noda, “Numerical techniques for accurate evaluation of overhead
+ﬁtting performance also for this high-ground resistivity case.                             line and underground cable constants,” Inst. Elect. Eng. Jpn. Trans.
+                                                                                           Elect. Electron. Eng., vol. 3, no. 5, pp. 549–559, 2008.
+                               REFERENCES
+    [1] L. M. Wedepohl, “Application of matrix methods to the solution of
+        travelling-wave phenomena in polyphase systems,” Proc. Inst. Elect.
+        Eng. , vol. 110, no. 12, pp. 2200–2212, Dec. 1963.
+    [2] L. M. Wedepohl and S. E. T. Mohamed, “Multiconductor transmission
+        lines: Theory of natural modes and Fourier integral applied to transient                             Taku Noda (M'97–SM'08) was born in Osaka,
+        analysis,” Proc. Inst. Elect. Eng., vol. 116, no. 9, pp. 1553–1563, Sep.                             Japan, in 1969. He received the B.Eng., M.Eng.,
+        1969.                                                                                                and Ph.D. degrees in engineering from Doshisha
+    [3] W. S. Meyer and H. W. Dommel, “Numerical modelling of fre-                                           University, Kyoto, Japan, in 1992, 1994, and 1997,
+        quency-dependent transmission-line parameters in an electromagnetic                                  respectively.
+        transient program,” IEEE Trans. Power App. Syst., vol. PAS-93, no. 5,                                   In 1997, he joined Central Research Institute of
+        pp. 1401–1409, Sep. 1974.                                                                            Electric Power Industry (CRIEPI), Tokyo, Japan.
+    [4] A. Semlyen and A. Dabuleau, “Fast and accurate switching transient                                   Currently, he is Senior Research Scientist with
+        calculations on transmission lines with ground return using recursive                                Electric Power Engineering Research Laboratory of
+        convolutions,” IEEE Trans. Power App. Syst., vol. PAS-94, no. 2, pp.                                 CRIEPI, Yokosuka, Japan, and Lecturer at Shibaura
+        561–571, Mar./Apr. 1975.                                                                             Institute of Technology, Tokyo. He also serves as
+    [5] A. Ametani, “A highly efﬁcient method for calculating transmission         Editor of the IEEE TRANSACTIONS ON POWER DELIVERY and Treasurer of the
+        line transients,” IEEE Trans. Power App. Syst., vol. PAS-95, no. 5, pp.    IEEE Power and Energy Society Japan Chapter. He was Visiting Scientist at
+        1545–1551, Sep./Oct. 1976.                                                 the University of Toronto, Toronto, ON, Canada, from 2001 to 2002 and was
+    [6] J. F. Hauer, “State-space modeling of transmission line dynamics via       Adjunct Professor at Doshisha University from 2005 to 2008. His research
+        nonlinear optimization,” IEEE Trans. Power App. Syst., vol. PAS-100,       interests include electromagnetic transient analysis of power systems and the
+        no. 12, pp. 4918–4925, Dec. 1981.                                          development of smart energy systems.
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 12:58:02 UTC from IEEE Xplore. Restrictions apply.
+
