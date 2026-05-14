@@ -1,0 +1,1190 @@
+                 Received 13 November 2024; revised 21 December 2024; accepted 27 December 2024. Date of publication 3 January 2025;
+                        date of current version 29 January 2025. The review of this article was arranged by Associate Editor Yingyi Yan.
+                                                               Digital Object Identifier 10.1109/OJPEL.2024.3525019
+
+
+
+
+        Discretized Impedance-Based Modeling of
+        Converter-Interfaced Energy Resources for
+             State-Variable-Based Real-Time
+                      EMT Simulators
+               TALEB VAHABZADEH                      1 (Member, IEEE), SEYYEDMILAD EBRAHIMI                                        2 (Member, IEEE),
+
+                                                      AND JURI JATSKEVICH                        3 (Fellow, IEEE)
+                                                             1
+                                                               Electric Power Engineers, LLC., Austin, TX 78735 USA
+                                 2
+                                   School of Electrical Engineering and Computer Science, Washington State University, Pullman, WA 99163 USA
+                               3
+                                 Electrical and Computer Engineering Department, University of British Columbia, Vancouver, BC V6T 1Z4, Canada
+                                          CORRESPONDING AUTHOR: SEYYEDMILAD EBRAHIMI (e-mail: s.ebrahimi@wsu.edu)
+                   This work was supported by the Natural Sciences and Engineering Research Council (NSERC) of Canada under the Collaborative Research and
+                                                                             Development Grant.
+
+
+
+
+         ABSTRACT      Modern power systems are experiencing high penetration of voltage-source converter (VSC)-
+         interfaced distributed energy resources and loads. Design, analysis, and reliable operation of such systems
+         require extensive offline and real-time electromagnetic transient (EMT) simulations. This paper proposes
+         discretized impedance-based modeling (DIBM) of VSCs for efficient time-domain transient analysis in
+         state-variable (SV)-based EMT simulators. Specifically, the VSC-based systems are first represented as
+         admittance-based models in Laplace domain, and then they are discretized and formulated to construct a
+         Thévenin equivalent impedance matrix and history voltages that can be interfaced seamlessly with external
+         systems in SV-based simulators. By replacing VSC subsystems with Thévenin equivalent circuits, the
+         proposed DIBM technique significantly reduces the number of states and eliminates the need for fictitious
+         snubbers that may be needed in SV-based EMT simulators for compatible interfacing. The effectiveness
+         of the proposed DIBM approach over the conventional method that uses average value models of VSCs is
+         demonstrated on a seven-bus VSC-based system in offline (MATLAB Simscape Electrical) and real-time
+         (OPAL-RT) EMT simulators. It is verified that the proposed method enables high accuracy and larger
+         simulation time steps while also significantly improving the overall computational performance.
+
+         INDEX TERMS Admittance-based modeling, average-value model (AVM), discretization, EMT simulation,
+         impedance-based modeling, interfacing, state-variable, voltage source converter (VSC).
+
+
+
+
+I. INTRODUCTION                                                                            dynamics and potential sub/super-synchronous converter-grid
+The adoption of renewable and distributed energy resources                                 interactions [5], [6]. With the increasing deployment of VSCs
+(R/DERs) has surged in modern electric power systems,                                      and the rapid evolution of grid dynamics, there is a need
+prompting significant changes in electricity generation, trans-                            for advanced simulation tools capable of analyzing modern
+mission, and distribution [1], [2]. The interfacing of such                                power-electronic-based systems efficiently and accurately [7].
+R/DERs into conventional power grids is mainly done using                                     The so-called state-variable-based (SV-based, e.g., MAT-
+power-electronic-based voltage-source converters (VSCs) [3].                               LAB Simscape Electrical, PLECS, OPAL-RT, Typhoon HIL
+While the increasing use of power electronics offers poten-                                [8], [9], [10], [11]) and nodal-analysis-based (NA-based, e.g.,
+tial benefits such as enhanced controllability, sustainability,                            PSCAD, MicroTran, EMTP, RTDS [12], [13], [14], [15])
+and overall efficiency, it also introduces new challenges [4].                             electromagnetic transient (EMT) programs are among the
+These challenges include, but are not limited to, faster system                            most common tools for studying modern power systems with
+       © 2025 The Authors. This work is licensed under a Creative Commons Attribution 4.0 License. For more information, see https://creativecommons.org/licenses/by/4.0/
+212                                                                                                                                                               VOLUME 6, 2025
+fast transients. The SV-based programs utilize a differential-        simulation time steps, it introduces a time-varying conduc-
+algebraic modeling approach to represent all system compo-            tance matrix that requires additional calculations at every
+nents, from which the state-space equations are constructed.          simulation step. More recently, a constant-parameter DI-AVM
+These equations are subsequently discretized and numerically          (CP-DI-AVM) was proposed for more efficient simulations
+solved using ordinary differential equation (ODE) solvers             of VSC-based power-electronic systems in NA-based simu-
+[16], [17]. Although SV-based simulators are very effective           lators, which does not require re-calculation of the network
+for studying small-scale power systems and power electronics,         conductance matrix at each simulation time step [28]. This
+they are computationally expensive for the analysis of large-         was achieved through a numerical approximation. Although
+scale VSC-based systems [18]. The offline SV-based packages           both the DI-AVM [25] and the CP-DI-AVM [28] can ef-
+(e.g., MATLAB Simscape Electrical and PLECS) do not have              fectively eliminate the interfacing time-step delay in the
+time constraints and may offer variable time-step ODE solvers         implementation of VSC AVMs, they are specifically derived
+for enhanced simulation efficiency. The real-time SV-based            for NA-based simulators, such as PSCAD and RTDS. Al-
+simulators (e.g., OPAL-RT and Typhoon HIL) are constrained            though a direct translation of the method in [25] and [28]
+to fixed-time steps due to interfacing with hardware and the          to SV-based simulators (e.g., MATLAB, Opal-RT, etc.) is
+real-time simulation environment.                                     possible, it would offer only limited improvements due to
+   The NA-based programs, on the other hand, are based on             interfacing.
+the discretization of the differential equations at the compo-           Recent research efforts have been made to employ
+nent level (typically using the numerical trapezoidal rule of         admittance-based modeling (ABM) to improve the EMT sim-
+integration) [19]. This, in turn, results in a set of difference      ulations of VSC-based systems in SV-based programs [30],
+equations that are formulated in the nodal form and solved            [31], [32]. In ABMs, the converters are typically expressed
+at each time step. Employing the fixed simulation time steps          as transfer functions in Laplace domain, which are able to
+(which is the case in most non-iterative NA-based programs),          capture the dynamic behavior at the interfacing terminals but
+the nodal equations become time-invariant, resulting in signif-       without disclosure of the internal details. In [30], the ABMs
+icant computational efficiency [19]. Furthermore, in systems          of grid-following converter-based resources were represented
+with switching converters, the switching elements can be              as proper transfer functions and interfaced with external sys-
+modeled using a constant conductance and a current injection          tems using dependent current sources and snubbers in the
+to represent the off- and on-states of the switches [20]. This        MATLAB/Simulink environment. Although some noticeable
+modeling approach avoids the use of iterative methods to han-         computational advantages become achievable, the size of the
+dle switching events and ensures that the overall conductance         state space equations to be solved is not affected, resulting in
+matrix remains constant.                                              the same state count as the conventional AVMs of convert-
+   Using both SV- and NA-based programs, the time-domain              ers. Such representation also has some limitations regarding
+transients of VSC-based systems can be reproduced with rel-           numerical accuracy due to employing fictitious interfacing
+atively high accuracy by representing the power-electronic            snubbers, which increases the system’s numerical stiffness
+converters with their detailed switching models [21]. The             and introduces error.
+detailed switching models are discrete and event-driven, al-             In [31] and [32], a MATLAB/Simulink-based open-source
+lowing for the accurate reproduction of voltage and current           toolbox was introduced that utilizes the state space represen-
+waveforms. However, they necessitate small simulation time            tation of electrical components to perform dynamic stability
+steps that significantly slow down simulation studies. Al-            and sensitivity analysis of inverter-based resources via admit-
+ternatively, the average-value models (AVMs), which are               tance/ impedance modeling. For time-domain simulations, the
+non-switching, were developed to alleviate the computational          admittance models undergo discretization using the forward
+burden while preserving the slower dynamics [21], [22], [23],         Euler integration rule, and the resulting discretized equations
+[24]. Although the AVMs of converters are continuous and              are then integrated into the Simulink environment using de-
+generally allow using larger simulation time steps, the time          pendent sources and snubbers. The presence of a time-step
+step delay inherent in the interfacing of the AVMs [25], [26],        delay at the interface with external systems and the use of the
+[27] and the time step delay in the interfacing of control            Euler method limit the possible simulation time step size and
+systems with external networks [29] result in numerical in-           accuracy of this approach.
+accuracies or instabilities; thus, restricting the largest possible      Moreover, an ABM was recently proposed in [33] to im-
+time step size.                                                       prove the time-domain simulations of VSCs by reducing the
+   A directly interfaced AVM (DI-AVM) for VSCs was de-                effective network size and eliminating interfacing time step
+veloped to eliminate the simulation time-step delays in con-          delays. However, the method in [33], similar to [25], [26],
+ventional AVMs [25], [26], [27] for NA-based simulators.              [27], [28], has been developed for NA-based simulators. Al-
+This was achieved by formulating the AVM as a conduc-                 though the direct and brute-force translation of the method
+tance matrix integrated with the overall network nodal equa-          in [33] to the SV-based EMT programs may be possible, it
+tions for a simultaneous solution with external subsystems,           may also result in only limited improvements. For example,
+thereby avoiding latency. While the DI-AVM allows for larger          the implementation of the Norton equivalent circuit proposed
+
+
+
+VOLUME 6, 2025                                                                                                                     213
+VAHABZADEH ET AL.: DISCRETIZED IMPEDANCE-BASED MODELING OF CONVERTER-INTERFACED ENERGY RESOURCES
+
+
+
+
+in [33] in SV-based programs necessitates fictitious snubbers,
+potentially impacting the numerical stability and accuracy of
+simulations.
+   To address some of the aforementioned challenges, this
+paper proposes a novel discretized impedance-based mod-
+eling (DIBM) of VSCs for time-domain transient analysis
+in SV-based programs. Specifically, the VSC-based systems
+with interfacing filters and controllers are first represented     FIGURE 1. A simplified single-line diagram of a three-phase
+                                                                   grid-connected VSC.
+as ABMs in the form of transfer functions in Laplace do-
+main. These ABMs are discretized, similar to the NA-type
+simulators, and then formulated to construct a Norton equiv-
+alent admittance matrix and current history sources at the
+interfacing terminals (nodes). The Norton circuit can be con-
+verted into a Thévenin equivalent circuit. The proposed DIBM
+method substitutes the VSC and its control system with a
+Thévenin equivalent impedance matrix and history voltage
+sources to interface with external systems in SV-based simula-
+tors. This approach substantially reduces the number of states
+and eliminates the need for fictitious snubbers that may be
+needed in SV-based EMT simulators for compatible interfac-
+ing.
+   The effectiveness of the proposed approach is demonstrated
+on a seven-bus VSC-based system simulated using offline
+MATLAB Simscape Electrical and real-time OPAL-RT sim-
+ulators. In the context of the examined VSC-based power
+system, the proposed approach offers several benefits:
+   r The proposed DIBM eliminates time-step delays in inter-
+                                                                   FIGURE 2. A simplified single-line diagram of a grid-connected VSC with
+      facing models of VSCs with control systems and external      dq vector PI-based control (the nonlinear elements of the controller are
+      networks while also avoiding the need for fictitious         highlighted in red).
+
+      snubbers, thus improving both accuracy and numerical
+      stability.
+   r The proposed DIBM enhances computational efficiency           and dq-vector control is used [34], [35]. In the second case,
+      and achieves up to four times computational improve-         the proportional-resonant (PR) controller in the stationary
+      ment (per time step) compared to conventional AVMs of        αβ-frame is used [36], [37]. The proposed DIBM technique
+      VSCs in real-time simulators.                                is formulated and implemented for both configurations to
+   r The proposed DIBM allows the use of larger simulation         demonstrate its applicability in cases where VSCs utilize
+      time steps, up to one millisecond (1 ms). In contrast, the   Park’s and Clark’s transformations for synchronization with
+      AVMs of VSCs are constrained to simulation time steps        the grid.
+      of approximately 80 microseconds (80 µs) to maintain
+      reasonable accuracy and numerical stability.                 A. ABM OF VSC WITH DQ-VECTOR PI-BASED CONTROL
+   r The proposed DIBM method is versatile and can be ap-
+                                                                   The VSC system with dq-vector PI-based control is shown
+      plied to most SV-based simulation environments without       in Fig. 2, where the voltages vm,abc are modulated from the
+      the need for additional add-on tools, making it easy to      dc bus voltage Vdc . As shown in Fig. 2, the VSC ac output
+      implement and use.                                           terminals are connected to an RL-filter, and the converter
+                                                                   is synchronized with the grid through a phase-locked-loop
+II. ADMITTANCE-BASED MODELING OF VSCS                              (PLL).
+A generic VSC-based system considered in this paper is                To derive the ABM, the VSC system physical variables in
+shown in Fig. 1. Herein, the VSC is assumed to have a com-         the abc-coordinates need to be transformed into the dq-frame
+mon two-level topology [21], where it is connected to the          using Park’s transformation as
+grid at the point of common coupling (PCC). Without loss
+of generality, a sinusoidal pulse-width modulation (SPWM)                  iVSC,dq = Ks iVSC,abc , vPCC,dq = Ks vPCC,abc ,                 (1)
+is assumed for the switching converter. The ac system is rep-
+resented by the Thévenin equivalent of the grid, as depicted       where
+                                                                                                                         
+in Fig. 1. In this paper, a grid-following VSC is considered               2 cos(θPLL ) cos(θPLL −2π /3) cos(θPLL +2π /3)
+                                                                   Ks =                                                     .
+with two commonly used control configurations. For the first               3 sin(θPLL ) sin(θPLL −2π /3) sin(θPLL +2π /3)
+case, the PI-based controller is implemented in the dq-frame                                                              (2)
+
+
+214                                                                                                                              VOLUME 6, 2025
+                                                                                 The physical variables of the VSC system in the abc-
+                                                                               coordinates can be transformed into the stationary αβ-frame
+                                                                               using Clarke’s transformation as
+                                                                                   iVSC,αβ = Tαβ iVSC,abc , vPCC,αβ = Tαβ vPCC,abc ,            (9)
+                                                                               where
+                                                                                                                     
+                                                                                                              −1 −1
+                                                                                                          1 2 √    √ .
+                                                                                                  Tαβ =                                        (10)
+                                                                                                          3 0   3 − 3
+                                                                               The equations describing the LCL filter shown in Fig. 3 can
+FIGURE 3. A simplified single-line diagram of a grid-connected VSC with
+                                                                               be expressed in the αβ-frame in Laplace domain as
+PR-based control (the nonlinear elements of the controller are highlighted                         1
+in red).                                                                          iout,αβ =                 (vm,αβ − vc,αβ + r3 iVSC,αβ ), (11)
+                                                                                              sL1 + r1 + r3
+                                                                                                   1
+                                                                                iVSC,αβ =                   (vc,αβ − vPCC,αβ + r3 iout,αβ ),
+   The equations governing the VSC’s dq-vector control in                                     sL2 + r2 + r3
+Fig. 2 can be expressed in Laplace domain as                                                                         (12)
+                   
+          sk p + ki re f                                                             1
+ ∗
+vm,d =−              iVSC,d − iVSC,d − ωL f iVSC,q +Fv vPCC,d ,             vc,αβ =     (iout,αβ − iVSC,αβ ).        (13)
+               s                                                                     sC
+                                                          (3) Moreover, the modulated output voltages of the VSC in Fig. 3
+                   
+          sk p + ki re f                                       can be calculated as
+ ∗                                                                                                            
+vm,q =−              iVSC,q − iVSC,q + ωL f iVSC,d +Fv vPCC,q ,                                re f
+               s                                                           vm,αβ = GPR (s) iVSC.αβ    − iVSC.αβ ,    (14)
+                                                          (4)
+where ω is the estimated angular frequency, and k and k are where
+                                                            p        i
+                     re f
+the PI gains. Here, iVSC,dq are the VSC current references.                                    s2 kPR1 + s(kPR2 + 2ωc kPR1 ) + kPR1 ω02
+                                                                                  GPR (s) =                                             .      (15)
+   The equations describing the voltage drop of the RL-filter                                              s2 + s2ωc + ω02
+can be written in the dq-frame in Laplace domain as
+                                                                               Here, ωc and ω0 are the cutoff and nominal angular frequen-
+    ∗
+   vm,d − vPCC,d = r f iVSC,d + sL f iVSC,d − ωL f iVSC,q ,              (5)   cies of the controller, and kPR1 and kPR2 are the PR controller
+    ∗                                                                          gains, respectively.
+   vm,q − vPCC,q = r f iVSC,q + sL f iVSC,q + ωL f iVSC,d .              (6)      Subsequently, substituting (14) and (15) into (11) used
+Combining (3), (4) with (5), (6) for the VSC system in                         along with (11)–(13), the ABM of the VSC can be formulated
+Fig. 2, including the RL-filter and the current-control loop,                  as [33], [37], [38]
+one can formulate an admittance-based transfer matrix model                                n5 s5 + n4 s4 + n3 s3 + n2 s2 + n1 s1 + n0
+in Laplace domain as                                                           iVSC,αβ =                                              I2 vPCC,αβ
+                                                                                           d s5 + d4 s4 + d3 s3 + d2 s2 + d1 s1 + d0
+                                                re f                                       5                    
+    iVSC,dq = AVSC,dq (s)vPCC,dq + BVSC,dq (s) iVSC,dq ,                 (7)                                  AVSC,αβ
+
+where                                                                                 m5 s5 + m4 s4 + m3 s3 + m2 s2 + m1 s1 + m0 re f
+                                 s(Fv − 1)                                        +                                              I2 iVSC,αβ ,
+            AVSC,dq (s) = 2                          I2 ,                              d s5 + d4 s4 + d3 s3 + d2 s2 + d1 s1 + d0
+                          s L f + s(r f − k p ) − ki                                   5                   
+                                                                                                           BVSC,αβ
+                                 −sk p − ki                                                                                                    (16)
+            BVSC,dq (s) = 2                          I2 .                (8)
+                          s L f + s(r f − k p ) − ki                           where coefficients ni , mi , and di (for i = 0, …, 5) are presented
+Here, I2 is a 2 × 2 identity matrix. The transfer matrix                       in Appendix A. In (16), the transfer matrix AVSC,αβ specifies
+AVSC,dq specifies the relationship between the d- and q-axes                   the relationship between the α- and β-axes output currents
+output currents of the VSC and their corresponding PCC volt-                   of the VSC system and their corresponding PCC voltages;
+ages; and the transfer matrix BVSC,dq specifies the relationship               and the transfer matrix BVSC,αβ specifies the relationship
+between d- and q-axes output currents of the VSC system and                    between α- and β-axes VSC system output currents and the
+the dq current references.                                                     αβ current references.
+
+B. ABM OF VSC WITH PR-BASED CONTROL                                            III. PROPOSED DISCRETIZED IMPEDANCE-BASED
+Fig. 3 shows a VSC connected to the grid through an LCL-                       MODELING
+filter at the PCC. Therein, an inner current-control loop is                   The ABM of the VSCs in (7), (8) and (16) were used for
+utilized, which establishes the required VSC output voltages                   time-domain simulations in [30] and [31]. More specifically,
+(i.e., vm,abc ) using a PR controller denoted by GPR .                         the output currents of the VSCs [i.e., iVSC,dq in (7) and iVSC,αβ
+
+
+VOLUME 6, 2025                                                                                                                                  215
+VAHABZADEH ET AL.: DISCRETIZED IMPEDANCE-BASED MODELING OF CONVERTER-INTERFACED ENERGY RESOURCES
+
+
+
+
+in (16)] are injected into the external systems using controlled            The ABM (19) is established in the dq-frame. In order to
+current sources with fictitious snubbers. However, with such             interface it with external systems in the abc coordinates, it
+representations, the size of the overall state space model to            needs to undergo a transformation to be represented as
+be solved is not affected, and certain limitations may arise
+concerning the numerical accuracy, stability, and time step                            iVSC,abc (t ) = Gabc
+                                                                                                        PI
+                                                                                                            vPCC,abc (t ) + habc
+                                                                                                                             PI
+                                                                                                                                 (t ),           (22)
+selection due to the snubbers. In this paper, the continuous             where
+ABMs of VSCs are discretized and reformulated to construct
+a Thévenin equivalent impedance matrix and voltage history
+                                                                                PI
+                                                                               Gabc = [Ks ]† Gdq
+                                                                                              PI
+                                                                                                 [Ks ] ,         PI
+                                                                                                                habc (t ) = [Ks ]† hdq
+                                                                                                                                    PI
+                                                                                                                                       (t ).     (23)
+terms to achieve a simultaneous and efficient solution of the
+VSCs with external networks.                                             Here, [Ks ]† is the pseudo-inverse of Park transformation in
+                                                                         (2).
+A. DISCRETIZATION OF ABM OF THE VSC WITH
+DQ-VECTOR PI-CONTROL                                                     B. DISCRETIZATION OF ABM OF THE VSC WITH PR
+To conduct the time-domain simulations, the continuous                   CONTROL
+                                                                                                                   2 z−1
+ABM of the VSC with dq-vector PI-based control in (7)                    Substituting the Laplace variable “s” with        , the ABM
+is discretized by substituting the Laplace variable “s” with                                                      t z + 1
+                                                                         (16) can be discretized using the trapezoidal rule with time
+ 2 z−1
+           for the trapezoidal rule of integration with time step        step t and expressed as
+t z + 1
+t [19]. Consequently, the result is expressed in the z-domain           iVSC,αβ (z)
+as
+                                                                                q5 z−5 +q4 z−4 +q3 z−3 +q2 z−2 +q1 z−1 +q0
+                     a2 z−2 + a1 z−1 + a0                                 =                                                vPCC,αβ (z)
+       iVSC,dq (z) =                      vPCC,dq (z)                          w5 z−5 +w4 z−4 +w3 z−3 +w2 z−2 +w1 z−1 +w0
+                     c2 z−2 + c1 z−1 + c0
+                                                                                g5 z−5 +g4 z−4 +g3 z−3 +g2 z−2 +g1 z−1 +g0 re f
+                        b2 z−2 + b1 z−1 + b0 re f                         +                                                i     (z).
+                      +                     i       (z),         (17)          w5 z−5 +w4 z−4 +w3 z−3 +w2 z−2 +w1 z−1 +w0 VSC,αβ
+                        c2 z−2 + c1 z−1 + c0 VSC,dq
+                                                                                                                                 (24)
+where coefficients a j , b j , and c j (for j = 0, 1, and 2) are
+presented in Appendix B. Applying the z-inverse transform                Here, similar to (17) and (18), the coefficients qi , gi , and wi
+to (17), z−1 becomes a delay corresponding to the simulation             (for i = 0, . . . , 5) depend on the system parameters and the
+time step t, and the result can be expressed as                         time-step size t used for the discretization. These coeffi-
+                                                                         cients are also summarized in Appendix C.
+c0 iVSC,dq (t ) + c1 iVSC,dq (t − t ) + c2 iVSC,dq (t − 2t )              In this work, the trapezoidal rule of integration is selected
+= a0 vPCC,dq (t ) + a1 vPCC,dq (t − t ) + a2 vPCC,dq (t − 2t )         for discretization due to its advantageous properties in terms
+                                                                         of accuracy and good numerical stability [19].
+            re f              re f                  re f
+      + b0 iVSC,dq (t ) + b1 iVSC,dq (t −t ) + b2 iVSC,dq (t − 2t ).      The discretized ABM of the VSC in the time domain can
+                                                                 (18)    be derived by applying the z-inverse transform to (24), and
+                                                                         the result can be expressed as
+   For the purpose of the proposed DIBM, (18) can be orga-
+nized as                                                                   5                                    5
+                                                                                w j iVSC,αβ (t − jt ) =             q j vPCC,αβ (t − jt )
+               iVSC,dq (t ) = Gdq
+                               PI
+                                  vPCC,dq (t ) + hdq
+                                                  PI
+                                                     (t ),       (19)
+                                                                          j=0                                j=0
+where GdqPI and hPI (t ) are the resultant conductance matrix
+                    dq                                                                                               5
+                                                                                                                               re f
+and history terms of the ABM of the VSC system, respectively                                                +             g j iVSC,αβ (t − jt ). (25)
+[19]. These terms can be expressed as                                                                               j=0
+       a0               a1                  a2
+  PI
+Gdq  = I2 , hdqPI
+                  (t ) = vPCC,dq (t−t )+ vPCC,dq (t−2t )               Moreover, similar to (19), one can organize (25) as
+       c0               c0                  c0
+ b1 re f         b1 re f               b2 re f                                         iVSC,αβ (t ) = Gαβ
+                                                                                                       PR
+                                                                                                          vPCC,αβ (t ) + hαβ
+                                                                                                                          PR
+                                                                                                                             (t ),               (26)
++   i      (t ) + iVSC,dq   (t − t ) + iVSC,dq (t − 2t )
+ c0 VSC,dq       c0                    c0                                                              PR and vector of history terms
+                                                                         where the conductance matrix Gαβ
+ c1                      c2                                               PR (t ) can be expressed as
+− iVSC,dq (t − t ) + iVSC,dq (t − 2t ).             (20)               hαβ
+ c0                      c0
+                           re f                                                                             5
+   The current references iVSC,dq in (20) may be defined as the                  q0                                 qj
+                                                                            PR
+                                                                           Gαβ =    I2 ,        PR
+                                                                                               hαβ (t ) =              vPCC,αβ (t − jt )
+input of the system, or they can be computed from the power                      w0                                 w0
+                                                                                                            j=1
+control references as [39]
+                                               re f                          5                                  5
+                   2         vPCC,d vPCC,q       P                                    g j re f                            wj
+   re f
+  iVSC,dq  =                                             . (21)            +              i     (t− jt )−                   iVSC,αβ (t− jt ). (27)
+              3 v
+                         2 vPCC,q −vPCC,d        Qre f                                w0 VSC,αβ                           w0
+                    PCC,dq                                                      j=0                                 j=1
+
+
+
+216                                                                                                                                      VOLUME 6, 2025
+                        re f
+The current references iVSC,αβ    in (27) can be constructed from
+power control as [39]
+                                                   re f 
+  re f             2           vPCC,α vPCC,β         P
+ iVSC,αβ =               2 vPCC,β −vPCC,α
+                                                             . (28)
+             3 v                                     Qre f
+                      PCC,αβ
+
+  Furthermore, the ABM (26) can be transformed into the abc
+coordinates as
+            iVSC,abc (t ) = Gabc
+                             PR
+                                 vPCC,abc (t ) + habc
+                                                  PR
+                                                      (t ),        (29)
+where
+                  †                                      †
+  PR
+ Gabc = Tαβ Gαβ
+             PR
+                Tαβ ,                  PR
+                                      habc (t ) = Tαβ hαβ
+                                                       PR
+                                                          (t ). (30)
+
+Here, [Tαβ ]† is the pseudo-inverse of Clarke transformation
+in (10).
+
+C. IMPLEMENTATION OF ABM IN SV-BASED EMT
+SIMULATORS
+In the SV-based EMT programs, interfacing of the discretized
+ABMs can be accomplished by implementing the conduc-
+tance matrices and history terms as coupled resistors and
+controlled current sources, respectively. However, this inter-
+facing poses challenges, especially when the external system
+is an inductive circuit. In that case, the interfacing will require
+fictitious snubbers, contributing to numerical stiffness and in-
+troducing numerical inaccuracy.
+   To overcome this challenge, the ABM (22) can be rewritten
+                                                                          FIGURE 4. Implementation of the proposed DIBM of the VSC system and
+in its dual impedance form as                                             its interfacing with the external network using an equivalent Thévenin
+                                                                          impedance matrix and voltage history terms for: (a) with dq vector
+             vPCC,abc (t ) = ZPI
+                              abc iVSC,abc (t ) + eabc (t ),
+                                                   PI
+                                                                   (31)   PI-based control, (b) with PR-based control.
+
+where
+                        −1                          −1 PI
+      abc = Gabc
+     ZPI                     , eabc (t ) = − Gabc
+             PI                 PI            PI
+                                                      habc (t ).   (32)   pled resistors [based on (20), (23), (32)], and the history terms
+                                                                           PI (t ) as controlled voltage sources [based on (20), (21), (23),
+                                                                          eabc
+Here, ZPI abc is the Thévenin equivalent impedance matrix and
+ PI (t ) is the history voltage sources of the discretized model.
+eabc                                                                      (32)], respectively.
+   Similarly, for the AMB of the VSC with PR-controller, (29)                For the VSC with PR-control, as depicted in Fig. 4(b), the
+is rewritten in its dual impedance form as                                PCC voltages and the reference active and reactive power
+                                                                          are the inputs to the DIBM. The DIBM is computed based
+             vPCC,abc (t ) = ZPR
+                              abc iVSC,abc (t ) + eabc (t ),
+                                                   PR
+                                                                   (33)   on (24), (27), (28), (30), and (34). The impedance matrix
+                                                                          ZPR
+                                                                            abc is implemented using coupled resistors [based on (27),
+where                                                                                                          PR (t ) as controlled voltage
+                                                                          (30), (34)], and the history terms eabc
+                        −1                          −1 PR                 sources [based on (27), (28), (30), (34)].
+      abc = Gabc
+     ZPR                     , eabc (t ) = − Gabc
+             PR                 PR            PR
+                                                      habc (t ).   (34)
+                                                                             The procedure for implementing the proposed DIBM is
+   It is also noted that the impedances in (31)–(34) are con-             summarized in the flowchart shown in Fig. 5. As shown in
+stant. Based on (31) and (33), the DIBMs of VSCs are                      Fig. 5, the VSC system equations need to be constructed in
+implemented and interfaced in the SV-based EMT simulators                 Laplace domain to construct the VSC admittance-based trans-
+using coupled constant resistive branches and voltage sources             fer matrix as in (1)–(16). Then, the continuous admittance-
+(i.e., as the Thévenin equivalent circuit). This interfacing is           based transfer matrix needs to be discretized using a numerical
+shown in Fig. 4, and it achieves a simultaneous solution for              integration rule to construct the ABM in the z-domain. After
+the VSCs and the external system within the given SV-based                that, using inverse z-transform, the ABM of VSC can be con-
+EMT simulator.                                                            structed in the time domain as in (18) and (25). Next, using the
+   As shown in Fig. 4(a) for the VSC with dq-vector control,              ABM of VSC in the time domain, the dual impedance form of
+the PCC voltages, the PLL phase angle, and the reference                  the ABM of the VSC can be constructed to acquire the VSC
+active and reactive power are provided as the inputs to the               system’s Thévenin equivalent impedance matrix. Finally, the
+model. The impedance matrix ZPI  abc is implemented using cou-            Thévenin equivalent impedance matrix is implemented using
+
+
+VOLUME 6, 2025                                                                                                                                217
+VAHABZADEH ET AL.: DISCRETIZED IMPEDANCE-BASED MODELING OF CONVERTER-INTERFACED ENERGY RESOURCES
+
+
+
+
+                                                                     TABLE 1. Total Number of States of the Considered Case-Study System in
+                                                                     Fig. 6 for the Subject Models
+
+
+
+
+                                                                     considered as the reference average-value solution. The re-
+                                                                     alization of models in the OPAL-RT simulator is shown in
+                                                                     Fig. 7.
+                                                                        In this study, the fixed time-step ode4 solver is employed
+                                                                     in both MATLAB Simscape Electrical and OPAL-RT sim-
+                                                                     ulations. While MATLAB’s Simscape Electrical supports
+                                                                     iterative solvers to address algebraic loops caused by direct
+                                                                     feedthrough paths (e.g., the interfacing between the VSC
+                                                                     and its control subsystems) [8], [29], the real-time simulators
+                                                                     such as OPAL-RT must adhere to strict timing constraints
+                                                                     that necessitate fixed time-step solvers. Additionally, using
+                                                                     iterative methods significantly increases computational costs.
+                                                                     The chosen approach ensures compatibility with real-time
+FIGURE 5. Flowchart of the procedure for implementing the proposed
+DIBM.                                                                hardware-in-the-loop environments while maintaining com-
+                                                                     putational efficiency and enabling fair comparisons.
+                                                                        For the system depicted in Fig. 6, the state counts of the
+                                                                     models implemented in MATLAB Simscape Electrical are
+coupled resistive branches and voltage sources, as shown in          summarized in Table 1. As illustrated, the detailed switching
+Fig. 4, to achieve a simultaneous solution of the VSC and the        model and the AVM encompass 271 states originating from
+external system.                                                     VSC filters, control systems, and network components (i.e.,
+                                                                     line impedances). In contrast, the system with the proposed
+                                                                     DIBM comprises only 43 states, primarily associated with the
+IV. COMPUTER STUDIES
+                                                                     network’s line impedances.
+To validate the proposed DIBM technique, a 7-bus VSC-based
+                                                                        This reduction is achieved by substituting the VSC systems
+energy conversion system shown in Fig. 6 is considered.
+                                                                     (along with their filters and control systems), with equivalent
+This system comprises a total of 20 VSCs. The system inte-
+                                                                     DIBMs incorporating a Thévenin equivalent impedance ma-
+grates two groups of power-electronically-interfaced DERs in
+                                                                     trix and voltage history terms. Consequently, employing the
+buses 4 and 6 (emulating wind and solar energy sources) and
+                                                                     DIBM reduces the state count within the systems.
+two groups of power-electronically-interfaced constant power
+loads (CPLs) in buses 5 and 7. The ac grid is represented by its
+Thévenin equivalent connected to bus 1. The DERs in buses            A. TIME-DOMAIN SIMULATION OF LARGE-SIGNAL
+4 and 6 each include two VSCs equipped with dq-vector PI-            TRANSIENTS
+based control, which are shown in blue. Moreover, the CPLs           First, offline simulation is considered. It is assumed that the
+in buses 5 and 7 each comprise eight VSCs equipped with              system of Fig. 6 operates in a steady state achieved when the
+PR-based control, as shown in red. Furthermore, five constant        reference active and reactive power of the DERs are set to
+impedance loads are also connected at buses 1, 2, 3, 5, and 7        10 kW and 0 kVAR, respectively; and the active and reactive
+(loads are named according to their bus number). It is assumed       power of the CPLs are set to 5 kW and 0 kVAR, respectively.
+that the VSC dc link capacitor is sufficiently large to consider     At time t = 0.1 s, the active power command of all the CPLs
+a stiff and constant dc voltage. The parameters of the system        is increased by 1 kW. At time t = 0.4 s, the active power
+are summarized in the Appendix D.                                    command of the DERs is increased by 5 kW. The reactive
+   The VSC-based system in Fig. 6 is implemented in MAT-             power settings are unchanged and remain at zero.
+LAB Simscape Electrical [9] and OPAL-RT [11] using the                  The transient response of several variables obtained by the
+detailed switching model and the AVM of VSCs (in dq and              subject models is depicted in Fig. 8, where the AVM and the
+αβ frames, i.e., two-axis systems) from the existing library         proposed DIBM are run with a simulation time-step of 5 µs.
+components in Simulink. The proposed DIBMs have also                 Therein, the active and reactive powers flowing from bus 1 to
+been implemented as custom models using electrical circuit           2 (P12 , Q12 ), bus 1 to 3 (P13 , Q13 ), and bus 1 to 7 (P17 , Q17 )
+components and MATLAB code. For comparisons, the results             are shown in Fig. 8(a)–(f), respectively. The phase a voltage
+of the AVM obtained with a small time-step (i.e., 1 µs) are          at bus 1 (v1a ) is depicted in Fig. 8(g).
+
+
+218                                                                                                                            VOLUME 6, 2025
+FIGURE 6. Simplified single-line diagram of a 7-bus VSC-based system with two groups of DERs and two groups of CPLs.
+
+
+
+
+                                                                              In the meantime, the proposed DIBM yields highly accurate
+                                                                           results, as seen in Fig. 9, where the results of the DIBM
+                                                                           closely match the reference solution even with simulation time
+                                                                           steps of 200 µs. This is achieved by the delay-free interfacing
+                                                                           of the proposed DIBM with the rest of the system imple-
+                                                                           mented in the SV-based simulation environment of Simulink
+                                                                           and its Simscape Electrical toolbox.
+                                                                              To compare the accuracy of the proposed DIBM against
+                                                                           the conventional AVM, the cumulative 2-norm error [40] of
+FIGURE 7. Realization of the subject models in offline (MATLAB Simscape    the solution trajectory over the considered simulation time
+Electrical) and real-time (OPAL-RT 5700) simulators.                       interval is considered. The 2-norm error of the phase a volt-
+                                                                           age at bus 1 (v1a ) is computed for different simulation time
+                                                                           steps, and the results are presented in Fig. 10, utilizing a
+   As shown in Fig. 8, following the changes in active power               semilogarithmic scale. As illustrated in Fig. 10, the accuracy
+commands at t = 0.1 s and t = 0.4 s, the controllers effectively           of the AVM diminishes rapidly when the simulation time step
+regulate the output power of DERs and CPLs to their newly                  exceeds ∼80 µs. In contrast, the proposed DIBM maintains
+set reference values. Fig. 8 also illustrates that the AVM and             acceptable accuracy (i.e., error below ∼2 %) even with time
+the proposed DIBM closely match the transient responses                    steps as large as 500 µs.
+produced by the reference AVM and the detailed switching
+model.
+   Furthermore, the AVMs and the DIBM consistently and                     B. TIME-DOMAIN SIMULATION UNDER FAULT
+accurately capture the average values of the dc variables,                 CONDITIONS
+active and reactive powers, and the fundamental frequency                  Here, the performance of the proposed DIBM is compared
+component of bus 1 voltage. These results also agree with the              against AVM and the detailed switching model under faulty
+responses from the detailed switching model.                               conditions in the case study system of Fig. 6. The system
+   To further assess the accuracy of the proposed DIBM tech-               operates in a steady-state condition before the fault, with the
+nique compared to the AVM, the transient study of Fig. 8 has               reference active and reactive power of the DERs set to 10 kW
+been repeated using larger time steps of 85 µs (for AVM) and               and 0 kVAR, and the CPLs at 5 kW and 0 kVAR. At time
+100 µs & 200 µs (for DIBM); and the results are illustrated in             t = 150 ms, a three-phase-to-ground fault with 0.3  fault
+Fig. 9 for the variables P12 , P13 , and v1a . As seen in Fig. 9,          impedance is applied at bus 1 and cleared after 100 ms. The
+the AVM results diverge after the second change in the active              transient response of several variables, including active and
+power of the DERs at t = 0.4 s, and the results become                     reactive power flows (P12 , Q12 , P13 , Q13 , P17 , Q17 ) and the
+numerically unstable. These inaccuracies stem from the one-                phase a voltage at bus 1 (v1a ), obtained from the detailed
+time-step delay inherent at the interface of the conventional              switching model, AVM, and the proposed DIBM, are shown
+AVMs of converters and control subsystems.                                 in Fig. 11.
+
+
+VOLUME 6, 2025                                                                                                                           219
+VAHABZADEH ET AL.: DISCRETIZED IMPEDANCE-BASED MODELING OF CONVERTER-INTERFACED ENERGY RESOURCES
+
+
+
+
+                                                                                FIGURE 9. Transient response of several variables obtained by the subject
+                                                                                models for: (a) P12 , (b) P13 , and (c) v1a . The simulation time-step for AVM is
+                                                                                t = 85 µs, and the proposed DIBM is run with t = 100 µs and t =
+                                                                                200 µs.
+
+
+
+
+                                                                                FIGURE 10. The 2-norm error of the phase a voltage at bus 1 (v1a ) in the
+                                                                                0.6 s transient study using the subject models with different time step
+                                                                                sizes.
+
+
+
+
+                                                                                that because the three-phase-to-ground fault is through a 0.3 
+                                                                                resistance, the phase voltage does not become zero but drops,
+                                                                                as shown in Fig. 11(g). Additionally, Fig. 11(a)–(g) shows
+FIGURE 8. Transient response of several variables obtained by the subject       that the results of both the AVM and the proposed DIBM
+models: (a) active power from bus 1 to bus 2 P12 ; (b) reactive power from
+bus 1 to bus 2 Q12 ; (c) active power from bus 1 to bus 3 P13 , (d) reactive    closely match those of the detailed switching model, accu-
+power from bus 1 to bus 3 Q13 , (e) active power from bus 1 to bus 7 P17 ,      rately capturing the system’s transient response and predicting
+(f) reactive power from bus 1 to bus 7 Q17 , and (g) phase a voltage at bus 1   fast transients effectively.
+v1a . The simulation time-step for AVM and proposed DIBM is t = 5 µs.
+                                                                                   Next, the performance of the proposed DIBM method is
+                                                                                evaluated against AVM using larger time steps. For this pur-
+                                                                                pose, the same study is repeated with a time-step size of
+   As seen in Fig. 11(a) and (e), when the fault occurs, the                    85 µs (for AVM) and 100 µs & 200 µs (for DIBM), and the
+active power from bus 1 to buses 2 and 7 (i.e., P12 and P17,                    results are shown in Fig. 12. As observed in Fig. 12, the AVM
+respectively) decreases due to the fault. However, the active                   shows significant errors, and its results diverge after the fault
+power flow from bus 1 to bus 3 (i.e., P13) becomes negative                     is cleared. This is due to the one-time delay in the interfacing
+because now the DERs supply power to the loads at bus 7.                        of the AMV of the VSCs and the control subsystems. How-
+Once the fault is cleared, the power flow returns to its initial                ever, the proposed DIBM provides accurate results, closely
+status as it was before the fault. It is also worth mentioning                  matching the detailed switching model, even with time steps
+
+
+220                                                                                                                                               VOLUME 6, 2025
+                                                                                 FIGURE 12. Transient response of several variables when a three-phase to
+                                                                                 ground fault occurs at bus 1 obtained by the subject models for: (a) P12 ,
+                                                                                 (b) P13 , and (c) v1a . The simulation time-step for AVM is t = 85 µs, and the
+                                                                                 proposed DIBM is run with t = 100 µs and t = 200 µs.
+
+
+
+                                                                                 TABLE 2. Computational Performance of the Subject Models for the
+                                                                                 Considered Case-Study System in Fig. 6 with Different Time-Step Sizes in
+                                                                                 OPAL-RT 5700 Real-Time Simulator
+
+
+
+
+FIGURE 11. Transient response of several variables when a three-phase to         The results are summarized in Table 2. As observed there, for
+ground fault occurs at bus 1 obtained by the subject models: (a) active
+power from bus 1 to bus 2 P12 ; (b) reactive power from bus 1 to bus 2 Q12 ;
+                                                                                 the AVM, when using simulation time steps of smaller than
+(c) active power from bus 1 to bus 3 P13 , (d) reactive power from bus 1 to      80 µs (i.e., t = 10 µs, t = 25 µs, and t = 50 µs), the
+bus 3 Q13 , (e) active power from bus 1 to bus 7 P17 , (f) reactive power from   real-time processor becomes overloaded. The CPU utilization
+bus 1 to bus 7 Q17 , and (g) phase a voltage at bus 1 v1a . The simulation
+time-step for AVM and proposed DIBM is t = 5 µs.
+                                                                                 of the AVM model for the time-step of t = 80 µs is 93.5%,
+                                                                                 which is close to the limit (with the available real-time pro-
+                                                                                 cessor cores). The AVM also becomes numerically unstable
+                                                                                 at any larger steps, as seen in Fig. 9.
+as large as 200 µs. This demonstrates the robustness of the                         Meanwhile, as seen in Table 2, the proposed DIBM over-
+proposed DIBM under large transients such as grid faults,                        loads the real-time CPU cores with a small simulation time-
+further validating its applicability to simulations of severe                    step of t = 10 µs but can successfully execute with larger
+conditions.                                                                      time-step sizes. Specifically, it can run with time steps of t
+                                                                                 = 25 µs, t = 50 µs, t = 80 µs, and t = 500 µs, with CPU
+C. NUMERICAL EFFICIENCY COMPARISON                                               utilization of 79.5%, 38.4%, 25.6%, and 3.8%, respectively.
+To evaluate the numerical efficiency of the proposed DIBM                        Moreover, as shown in Figs. 9 and 10, the proposed DIBM can
+method, the subject models were executed on the OPAL-RT                          run with time step sizes as large as 500∼1000 µs, for which
+5700 real-time simulator using different fixed-time step sizes.                  the real-time CPU utilization is 2∼4%.
+
+
+VOLUME 6, 2025                                                                                                                                              221
+VAHABZADEH ET AL.: DISCRETIZED IMPEDANCE-BASED MODELING OF CONVERTER-INTERFACED ENERGY RESOURCES
+
+
+
+
+                                                                      TABLE 4. Discrete Time-Domain and Frequency Response of the
+                                                                      Equivalent Admittance Expressions
+
+
+
+
+FIGURE 13. The linear system with a single-frequency input.
+
+
+
+TABLE 3. Continuous Time- and Frequency-Domain Representation of an
+Ideal Inductor
+
+
+
+
+  Comparing the CPU usage of the AVM versus the proposed
+DIBM for the simulation time-step t = 80 µs in Table 2 (i.e.,
+93.5% vs. 25.6%), one can see that the proposed method is
+approximately ∼3.6 times more efficient than the AVM for the
+system of Fig. 6. This is achieved by substituting VSC systems
+with their equivalent DIBMs (instead of the detailed switching
+models or the traditional AVMs), which reduces the size of the
+overall state model solved by the Simscape Electrical toolbox.
+Therefore, using the proposed DIBM, much larger VSC-based
+systems can be simulated on the same real-time processor.
+
+V. DISCUSSION
+This section discusses some clarifications regarding the ad-
+vantages and limitations of the proposed DIBM method,
+which are also supported by simulation results.
+
+A. SELECTION OF NUMERICAL INTEGRATION RULE FOR
+THE DIBM
+This paper uses the trapezoidal integration rule to discretize
+the continuous impedance/admittance-based transfer func-
+tions to achieve the final Thévenin equivalent model. This
+                                                                      FIGURE 14. Frequency response of the equivalent admittance of an
+method is chosen due to its numerical advantages, particu-            inductor discretized with different integration rules compared to the exact
+larly regarding phase accuracy, over other common integration         solution (i.e., Bode of ratio Ydiscretized (ω)/Yexact (ω)).
+methods. To provide further context and investigate the nu-
+merical accuracy of different integration rules, either the error
+in the time domain or frequency response in the frequency             response of the resulting discrete-time integrator can be cal-
+domain can be evaluated. Since impedance-based analysis is            culated, as presented in Table 4. In this case, the frequency
+closely related to circuit theory, the frequency response of a        response of the equivalent admittance of the inductor dis-
+linear system with a single-frequency input (i.e., exponential        cretized with each integration rule can be compared to the
+function e jωt ) is examined, as shown in Fig. 13, to assess          actual admittance of the ideal inductor in continuous time as
+the numerical accuracy of various integration rules. Here, we         Ydiscretized (ω)/Yexact (ω), where
+consider an ideal inductor as an example of a linear system,
+                                                                                                          I (ω)    1
+which can be represented as a continuous function in both the                             Yexact (ω) =          =     ,                     (35)
+time and frequency domains, as shown in Table 3.                                                          V (ω)   jωL
+   The continuous time-domain equations can be discretized            and Ydiscretized (ω) is the frequency response of the discretized
+using various integration rules [19] (herein, we consider             equivalent admittance corresponding to each integration rule
+commonly used Forward Euler, Backward Euler, implicit                 shown in the last column of Table 4. Fig. 14 depicts the fre-
+Trapezoidal, and 2nd-order Gear’s method), and the frequency          quency response of the ratio Ydiscretized (ω)/Yexact (ω) for each
+
+
+222                                                                                                                                VOLUME 6, 2025
+FIGURE 15. Simplified single-line diagram of a VSC system with nonlinear current limiter and Clarke and Park transformations (the nonlinear elements of
+the controller are highlighted in red and green).
+
+
+
+
+integration rule, with the frequency range considered from 0                 frames and incorporates nonlinear saturation for VSC current
+                 1                                                           protection. More specifically, this system includes the linear
+to fNyquist =       = 0.5 p.u.(Nyquist frequency).
+               2t                                                           current control and ac filter subsystems, as well as nonlin-
+   As observed in Fig. 14, all considered integration rules pro-             ear components such as current saturation, power control,
+vide an acceptable magnitude response for frequencies up to                  and Clarke and Park transformations. The linear subsystems
+0.1 p.u., but distortion increases as the frequency approaches               are modeled using the impedance/admittance method as in
+the Nyquist limit. Unlike the other integration rules, the im-               (9)–(16), (24)–(30), (33), and (34). At the same time, the
+plicit Trapezoidal rule stands out by maintaining zero phase                 nonlinear components are implemented in the time domain
+distortion across all frequencies. Although Forward Euler and                using conventional EMT library components without modifi-
+Backward Euler methods provide better magnitude accuracy,                    cation/alteration.
+they introduce significant phase distortion. The Gear’s 2nd-                    The proposed DIBM model is validated against the AVM,
+order method, despite having larger magnitude errors, pro-                   and the detailed switching models for the case study sys-
+vides better phase accuracy than Forward Euler and Backward                  tem presented in Fig. 15 under fault conditions. The VSC
+Euler. Consequently, due to the very good phase response and                 system requires a current limiter (modeled as a saturation
+the fact that the implicit Trapezoidal rule is A-stable (i.e., its           block in Fig. 15) to switch from the power control mode to
+stability is not constrained by the discretization time step), the           the current-limited control mode to protect the VSC system
+proposed DIBM utilizes this method for discretizing continu-                 when a fault happens. The current limiter is set to a maximum
+ous impedance/admittance-based transfer functions.                           of 15 A based on the VSC-rated value that is presented in
+                                                                             Appendix D. In this study, the VSC system initially operates
+B. HANDLING NONLINEARITIES AND SATURATIONS IN                                in a steady state, while the reference active and reactive power
+DIBM                                                                         of the VSC are set to 5 kW and 0 VAR, respectively. At t =
+While one possible approach is to linearize the entire VSC                   150 ms, a three-phase-to-ground fault is applied at the PCC
+system (including the nonlinear parts) and form a single                     and is cleared after 100 ms.
+impedance model for EMT simulation, such an approach                            The transient response of several variables obtained by the
+would result in a model that would be operating-point de-                    detailed switching model, the AVM, and the proposed DIBM
+pendent and require continuously updating and re-computing                   method, all run with a small simulation time-step (i.e., 5 µs)
+the impedance model at each time step, which introduces                      is depicted in Fig. 16. As observed in Fig. 16, before the fault,
+additional complexity and overhead. In contrast, the proposed                the VSC operates in a constant power mode and generates
+DIBM approach employs impedance/admittance modeling                          5 kW active power and 0 kVAR reactive power. However,
+only for the linear parts of the VSC subsystems, which are                   during the fault, the PCC voltage drops significantly, and the
+interfaced with the rest of the system using a Thévenin equiv-               VSC is switched to the constant current mode (due to the
+alent impedance matrix and history voltages. The nonlinear                   current limiter). During the fault, the VSC output current is
+parts of the VSC system are incorporated directly within the                 limited to 10.6 A RMS (corresponding to 2 kW active power).
+time-domain discretized equations, as highlighted in Figs. 2,                After the fault is cleared, the VSC system control is switched
+3, 15. This approach avoids the need to linearize the entire sys-            back to the constant power mode, and it regulates the active
+tem while maintaining the integrity of the nonlinear dynamics.               and reactive power to their reference values. Fig. 16 shows
+To further clarify the proposed DIBM approach, the case study                that the AVM and the proposed DIBM predict the system’s
+system shown in Fig. 15 is considered here for discussion.                   transient response under faulty conditions very closely to the
+   Different from the systems in Figs. 2 and 3, this system                  detailed switching model when the simulation is run with a
+utilizes control schemes implemented in both the αβ and dq                   small time step.
+
+
+VOLUME 6, 2025                                                                                                                                     223
+VAHABZADEH ET AL.: DISCRETIZED IMPEDANCE-BASED MODELING OF CONVERTER-INTERFACED ENERGY RESOURCES
+
+
+
+
+                                                                             even with simulation time steps of 200 µs. This study further
+                                                                             demonstrates the effectiveness of the proposed DIBM method
+                                                                             for fault analysis and the effective inclusion of the saturation
+                                                                             block and nonlinear components, along with the DIBM.
+
+                                                                             C. MODELING DIGITAL CONTROL DELAY IN THE
+                                                                             PROPOSED DIBM
+                                                                             The converter control systems include inherent delays due to
+                                                                             digital computations as well as the pulse width modulation
+                                                                             delay [41]. Typically, the delay of the digital computations is
+                                                                             estimated to be approximately equal to the sampling period/
+                                                                             interval, i.e., Ts , and the pulse width modulation delay is
+                                                                             estimated to be approximately half of the sampling period,
+                                                                             i.e., 0.5Ts [41], [42]. Therefore, the total delay for the digital
+                                                                             control can be approximated as 1.5Ts . The time delay can be
+                                                                             modeled as e−T s in Laplace domain, where s is the Laplace
+                                                                             operator and T is the length of the delay (in seconds). In
+                                                                             control systems, Pade approximation is a mathematical tool
+                                                                             (based on Taylor series expansion) for analyzing nonlinear
+                                                                             control systems. Specifically, [43] provides an extensive re-
+FIGURE 16. Transient response of several variables obtained by the           view and discussion regarding the continuous models of time
+detailed switching model, AVM, and the proposed DIBM when a
+three-phase to ground fault occurs at the PCC: (a) VSC active power PVSC ;
+                                                                             delays using the Pade approximation. For instance, the Pade
+(b) VSC reactive power QVSC , and (c) phase a PCC voltage vPCCa . The        approximation can be employed to express the equivalent time
+simulation time-step for all models is t = 5 µs.                            delay exponential term as a transfer function as [43]
+                                                                                            n
+                                                                                                   bi (T s)i               (n + m − i)!n!
+                                                                                  e−T s = mi=0               , bi = (−1)i                ,
+                                                                                              j=0 ja  (T s) j                 i!(n − i)!
+                                                                                          (n + m − j)!m!
+                                                                                   aj =                  .                                (36)
+                                                                                             j!(m − j)!
+                                                                                To demonstrate the accuracy of the Pade approximation,
+                                                                             the frequency response of a pure time delay e−T s where T =
+                                                                             1.5Ts and Ts = 5 × 10−6 s (similar to the sampling period
+                                                                             used in the cases study system in Fig. 6) is compared with
+                                                                             the frequency response of the first-order [i.e., n = m = 1 in
+                                                                             (36)] and second-order [i.e., n = m = 2 in (36)] Pade approx-
+                                                                             imations in Fig. 18 for frequencies up to 100 kHz. As shown
+                                                                             in Fig. 18, the first-order Pade approximation matches the
+                                                                             frequency response of the pure time delay up to 10 kHz. How-
+                                                                             ever, the second-order Pade approximation perfectly matches
+FIGURE 17. Transient response of several variables obtained by the           the pure time delay even at 100 kHz. Therefore, the Pade
+detailed switching model, AVM, and the proposed DIBM when a
+three-phase to ground fault occurs at the PCC: (a) VSC active power PVSC ,
+                                                                             approximation can effectively model digital control delays as
+and (b) VSC reactive power QVSC . The simulation time-step for AVM is t =   transfer functions within the proposed DIBM approach. It is
+85 µs, and the proposed DIBM is run with t = 100 µs and t = 200 µs.        also important to note that digital time delays in the DIBM
+                                                                             approach can also be modeled in the time domain without
+                                                                             approximations, using standard EMT components, similar to
+   The same time-domain simulation is conducted when the                     the modeling of nonlinearities and saturations discussed in
+AVM and the proposed DIBM models are run with larger                         Section V-B.
+simulation time steps of 85 µs (for AVM) and 100 µs &
+200 µs (for DIBM), and the results are shown in Fig. 17.                     D. LIMITATIONS OF THE PROPOSED DIBM
+As observed in Fig. 17, the AVM results diverge after the                    The proposed DIBM method employs AVMs to represent
+fault happens. These inaccuracies due to the one-time-step                   converters, unlike the conventional switching (discontinuous)
+delay inherent at the interface of the AVM of the VSC and                    models typically used in EMT simulators. In the AVMs of
+the control subsystems. However, as seen in Fig. 17, the pro-                VSCs, the fast-switching dynamics are neglected in favor of
+posed DIBM method provides accurate results during the fault                 capturing slower dynamics [21]. While detailed switching
+transients and perfectly matches the detailed switching model                models can reproduce exact switching transients of currents
+
+
+224                                                                                                                               VOLUME 6, 2025
+                                                                       conducted on a 7-bus system comprising 20 VSCs represent-
+                                                                       ing DERs and CPLs. The studies were conducted offline (in
+                                                                       MATLAB Simscape Electrical) and in real-time (in OPAL-
+                                                                       RT) EMT simulators. Compared to the alternative traditional
+                                                                       AVMs of the VSC systems, the proposed DIBM technique
+                                                                       demonstrated approximately 3.6 times reduction of the CPU
+                                                                       utilization per step (with an 80 µs time step in the real-time
+                                                                       simulator) while permitting the use of a much larger time
+                                                                       step (up to 500 µs ∼1000 µs) and still providing reason-
+                                                                       able accuracy. These achievements hold considerable promise
+                                                                       for studying large-scale systems with many VSC-interfaced
+                                                                       DERs and loads in SV-based EMT simulators.
+
+                                                                       APPENDIX
+                                                                       A. TRANSFER FUNCTION COEFFICIENTS IN (16)
+
+                                                                       ⎧
+                                                                       ⎪ n0 = −ω02
+                                                                       ⎪
+                                                                       ⎪
+                                                                       ⎪
+                                                                       ⎪ n = −ω02 (r1 + r3 )C − 2ωc
+FIGURE 18. Comparison between the frequency response of a pure time    ⎪
+                                                                       ⎪ 1
+delay and the frequency response of its first- and second-order Pade   ⎨ n2 = −ω0 L1C − 2ωc (r1 + r3 )C − 1
+approximation.                                                                                                       ,
+                                                                       ⎪
+                                                                       ⎪ n3 = −2ωc L1C − (r1 + r3 )C
+                                                                       ⎪
+                                                                       ⎪
+                                                                       ⎪
+                                                                       ⎪n4 = −L1C
+                                                                       ⎪
+                                                                       ⎩
+                                                                         n5 = 0
+and voltages with high-frequency ripples, these switching              ⎧
+transients are not represented in the AVMs and the proposed            ⎪
+                                                                       ⎪ m0 = kPR1 ω02
+                                                                       ⎪
+                                                                       ⎪
+DIBM.                                                                  ⎪
+                                                                       ⎨m1 = kPR1 ω0 r3C + 2kPR1 ωc + kPR2
+                                                                                          2
+   The DIBM approach is applied to the VSC subsystem                     m2 = kPR1 + (2kPR1 ωc + kPR2 )r3C                           (A1)
+connected to a larger power network modeled in EMT-type                ⎪
+                                                                       ⎪
+                                                                       ⎪
+                                                                       ⎪ m   =   k     r  C
+simulators. It relies on impedance modeling, which collapses           ⎪
+                                                                       ⎩
+                                                                           3       PR1 3
+
+all electrical nodes and control systems into an equivalent              m4 = m5 = 0
+                                                                       ⎧
+model interfaced with external systems at the VSC connec-              ⎪ d0 = ω02 (r1 + r2 + kPR1 )
+                                                                       ⎪
+                                                                       ⎪
+tion point. Although this approach accurately represents the           ⎪
+                                                                       ⎪
+                                                                       ⎪
+                                                                       ⎪ d1 = ω02 r1 r2C + 2ωc (r1 + r2 + kPR1 )
+overall VSC dynamics at the interfacing terminals, it limits the       ⎪
+                                                                       ⎪
+                                                                       ⎪
+                                                                       ⎪   + · · · ω02 r3 (r1 + r2 + kPR1 )C + ω02 (L1 + L2 ) + kPR2
+visibility to interfacing variables only without access to many        ⎪
+                                                                       ⎪
+                                                                       ⎪
+                                                                       ⎪ d2 = ω02 (r1 L2 +r2 L1 )C+2ωc r1 r2C+2ωc r3 (r1 +r2 +kPR1 )C
+internal variables. For example, in the VSC system shown               ⎪
+                                                                       ⎪
+                                                                       ⎪
+                                                                       ⎪
+in Fig. 3, the DIBM captures variables such as VSC output              ⎨ + · · · 2ωc (L1 + L2 ) + ω02 r3 (L1 + L2 )C + kPR2 r3C + r1
+currents (iVSC,abc ) and voltages (vPCC,abc ), but the internal            +r2 + kPR1
+                                                                       ⎪
+                                                                       ⎪
+variables, such as capacitor voltages (vc,abc ) are not available.     ⎪
+                                                                       ⎪ d3 = ω0 L1 L2C + 2ωc (r1 L2 + r2 L1 )C + r1 r2C
+                                                                                   2
+                                                                       ⎪
+                                                                       ⎪
+Therefore, while the detailed switching model is preferred             ⎪
+                                                                       ⎪   +r3 (r1 + r2 + kPR1 )C
+                                                                       ⎪
+                                                                       ⎪
+during the design stage for more comprehensive analysis, the           ⎪
+                                                                       ⎪   + · · · 2ωc r3 (L1 + L2 )C + L1 + L2
+                                                                       ⎪
+                                                                       ⎪
+proposed DIBM method may offer significant advantages in               ⎪
+                                                                       ⎪
+                                                                       ⎪
+                                                                       ⎪ d4 = 2ωc L1 L2C + r3 (L1 + L2 )C + (r1 L2 + r2 L1 )C
+terms of simulation efficiency for system-level studies when           ⎪
+                                                                       ⎩d = L L C
+internal details of the affected parts are not of particular              5       1 2
+interest.                                                                                                                            (A2)
+
+                                                                       B. DISCRETIZED TRANSFER FUNCTION COEFFICIENTS IN
+VI. CONCLUSION
+                                                                       (17)
+The discrete impedance-based modeling (DIBM) of VSCs
+has been proposed for state-variable-based EMT simulators.
+                                                                         ⎧                               ⎧
+The VSC systems, including their filters and controllers,                ⎨a0 = −2t (Fv − 1)             ⎨b0 = t 2 ki + 2tk p
+were represented as admittances in Laplace domain. The ad-                 a1 = 0                 ,        b = 2t 2 ki           .
+mittances were then discretized using the trapezoidal rule               ⎩                               ⎩ 1
+                                                                           a2 = 2t (Fv − 1)               b2 = t 2 ki − 2tk p
+and formulated into Thévenin equivalent impedance matri-                 ⎧
+ces and voltage history terms to achieve a simultaneous                  ⎨c0 = 4L f + 2t (r f + k p ) + t 2 ki
+solution with the external network. The efficacy of the pro-               c = 2t 2 ki − 8L f                                   (B1)
+                                                                         ⎩ 1
+posed DIBM technique was validated through simulations                     c2 = 4L f − 2t (r f + k p ) + t 2 ki
+
+
+VOLUME 6, 2025                                                                                                                        225
+VAHABZADEH ET AL.: DISCRETIZED IMPEDANCE-BASED MODELING OF CONVERTER-INTERFACED ENERGY RESOURCES
+
+
+
+
+C. DISCRETIZED TRANSFER FUNCTION COEFFICIENTS IN                        Parameters of Line Impedances:
+(24)
+                                                                                     z12 = z13 = z23 = 50 + j189 m,
+ ⎧
+ ⎪
+ ⎪ q0 = pq0 + pq1 + pq2 + pq3 + pq4 + pq5                                            z17 = z24 = z25 = z36 = j3.8 m.
+ ⎪
+ ⎪
+ ⎪
+ ⎪ q1 = 5pq0 + 3pq1 + pq2 − pq3 − 3pq4 − 5pq5
+ ⎪
+ ⎪
+ ⎪
+ ⎪ q2 = 10pq0 + 2pq1 − 2pq2 − 2pq3 + 2pq4 + 10pq5                       Parameters of Constant Impedance Loads:
+ ⎪
+ ⎪
+ ⎪
+ ⎪ q3 = 10pq0 − 2pq1 − 2pq2 + 2pq3 + 2pq4 − 10pq5
+ ⎪
+ ⎨                                                                                  zload1 = zload7 = 20|| j150.8 ,
+   q4 = 5pq0 − 3pq1 + pq2 + pq3 − 3pq4 + 5pq5
+ ⎪ q5 = pq0 − 2pq1 + 2pq2 − pq3 + pq4 − pq5                                        zload2 = zload3 = zload5 = 20|| − j2650 .
+ ⎪
+ ⎪
+ ⎪
+ ⎪        n0 t 5         n1 t 4         n2 t 3
+ ⎪
+ ⎪
+ ⎪
+ ⎪ p q0 =         , pq1 =         , pq2 =
+ ⎪
+ ⎪          32              16               8                          REFERENCES
+ ⎪
+ ⎪
+ ⎪
+ ⎪        n3 t 2         n4 t
+ ⎩ pq3 =          , pq4 =       , pq5 = n5
+                                                                         [1] J. Matevosyan et al., “A future with inverter-based resources: Finding
+             4              2                                                strength from traditional weakness,” IEEE Power Energy Mag., vol. 19,
+                                                                 (C1)        no. 6, pp. 18–28, Nov./Dec. 2021.
+                                                                         [2] Y. Gu and T. C. Green, “Power system stability with a high penetration
+ ⎧                                                                           of inverter-based resources,” Proc. IEEE, vol. 111, no. 7, pp. 832–853,
+ ⎪
+ ⎪ g0 = pg0 + pg1 + pg2 + pg3 + pg4 + pg5                                    Jul. 2023.
+ ⎪g = 5p + 3p + p − p − 3p − 5p
+ ⎪
+ ⎪
+ ⎪  1      g0       g1     g2     g3       g4        g5                  [3] F. Blaabjerg, R. Teodorescu, M. Liserre, and A. V. Timbus, “Overview
+ ⎪g = 10p + 2p − 2p − 2p + 2p + 10p
+ ⎪                                                                           of control and grid synchronization for distributed power generation
+ ⎪
+ ⎪  2        g0       g1      g2       g3       g4        g5
+ ⎪
+ ⎪     =        −        −       +        +        −
+                                                                             systems,” IEEE Trans. Ind. Electron., vol. 53, no. 5. pp. 1398–1409,
+ ⎪
+ ⎪ g3    10p g0    2p g1   2p g2    2p g3    2pg4     10pg5                  Oct. 2006.
+ ⎨g = 5p − 3p + p + p − 3p + 5p                                          [4] M. Barnes, D. Van Hertem, S. P. Teeuwsen, and M. Callavik, “HVDC
+    4      g0       g1     g2     g3       g4        g5
+       =     −        +       −       +      −               ,               systems in smart grids,” Proc. IEEE, vol. 105, no. 11, pp. 2082–2098,
+ ⎪
+ ⎪ g5    pg0    2p g1    2pg2    pg3     pg4    p g5
+ ⎪
+ ⎪
+                                                                             Nov. 2017.
+ ⎪
+ ⎪        m0 t 5           m1 t 4           m2 t 3                    [5] L. Harnefors, M. Bongiorno, and S. Lundberg, “Input-admittance cal-
+ ⎪
+ ⎪      =         ,      =          ,      =
+ ⎪
+ ⎪ p g0              pg1               pg2                                   culation and shaping for controlled voltage-source converters,” IEEE
+ ⎪
+ ⎪           32 2             16                   8                         Trans. Ind. Electron., vol. 54, no. 6, pp. 3323–3334, Dec. 2007.
+ ⎪
+ ⎩ pg3 = m3 t , pg4 = m4 t , pg5 = m5
+ ⎪                                                                       [6] X. Wang and F. Blaabjerg, “Harmonic stability in power electronic-
+             4                 2                                             based power systems: Concept, modeling, and analysis,” IEEE Trans.
+                                                                             Smart Grid, vol. 10, no. 3, pp. 2858–2870, May 2019.
+                                                                 (C2)    [7] S. Subedi et al., “Review of methods to accelerate electromag-
+ ⎧                                                                           netic transient simulation of power systems,” IEEE Access, vol. 9,
+ ⎪
+ ⎪ w0 = pw0 + pw1 + pw2 + pw3 + pw4 + pw5                                    pp. 89714–89731, 2021.
+ ⎪
+ ⎪                                                                       [8] “MATLAB/Simulink: Dynamic system simulation software,” User’s
+ ⎪
+ ⎪ w 1 = 5pw0 + 3pw1 + pw2 − pw3 − 3pw4 − 5pw5
+ ⎪
+ ⎪
+                                                                             Manual, MathWorks Inc., Natick, MA, USA, 2023. [Online]. Available:
+ ⎪
+ ⎪ w 2 = 10pw0 + 2pw1 − 2pw2 − 2pw3 + 2pw4 + 10pw5                           http://www.mathworks.com
+ ⎪
+ ⎪
+ ⎪
+ ⎪ w 3 = 10pw0 − 2pw1 − 2pw2 + 2pw3 + 2pw4 − 10pw5
+                                                                         [9] “Simscape electrical (SimPowerSystems): Model and simulate electri-
+ ⎪
+ ⎨                                                                           cal power systems,” User’s Guide, MathWorks Inc., Natick, MA, USA,
+   w4 = 5pw0 − 3pw1 + pw2 + pw3 − 3pw4 + 5pw5                                2023. [Online]. Available: http://www.mathworks.com
+   w5 = pw0 − 2pw1 + 2pw2 − pw3 + pw4 − pw5          .
+ ⎪
+ ⎪
+                                                                        [10] “Piecewise linear electrical circuit simulation (PLECS),” User’s Man-
+ ⎪
+ ⎪                                                                           ual, Version 4.7.1, Plexim GmbH, Zurich, Switzerland, 2023. [Online].
+ ⎪
+ ⎪        d0 t 5         d1 t 4         d2 t 3
+ ⎪
+ ⎪ p    =         , p   =         , p   =
+                                                                             Available: http://www.plexim.com
+ ⎪
+ ⎪  w0               w1              w2                                 [11] OPAL-RT Technologies, “RT-lab: Real-time simulation and control
+ ⎪
+ ⎪
+            32              16               8
+ ⎪
+ ⎪        d3 t 2         d4 t
+                                                                             software,” Version 11.3, Montreal, QC, Canada, 2024. [Online]. Avail-
+ ⎪
+ ⎩ pw3 =          , pw4 =       , pw5 = d5
+                                                                             able: https://www.opal-rt.com/software-rt-lab/
+             4              2                                           [12] “EMTDC TM transient analysis for PSCAD power system simula-
+                                                                             tion USER’s GUIDE A comprehensive resource for EMTDC,” 2018.
+                                                  (C3)                       [Online]. Available: http://www.hvdc.ca
+                                                                        [13] “Electromagnetic transient program, EMTP,” Ver. 4.2.1, POWERSYS
+D. CASE-STUDY SYSTEM PARAMETERS                                              Solutions Inc., Le Puy-Sainte-R´eparade, France, 2021. [Online]. Avail-
+Parameters of AC Grid System:                                                able: http://www.emtp.com
+                                                                        [14] “Alternative transients programs, ATP-EMTP,” ATP User Group, 2007.
+      |vgrid |rms
+              line = 400 V, zgrid = j0.377 , f e = 60 Hz.
+                                                                             [Online]. Available: http://emtp.org
+                                                                        [15] “RTDS simulator software,” RTDS Technologies Inc., Winnipeg, MB,
+Parameters of VSC with dq-Vector Control [34], [35]:                         Canada, 2023. [Online]. Available: http://www.rtds.com
+                                                                        [16] O. Wasynczuk and S. Sudhoff, “Automated state model generation
+ Vdc = 1 kV, Srated = 15 kVA, L f = 5 mH, r f = 0.2 ,                       algorithm for power circuits and systems,” IEEE Trans. Power Syst.,
+                                                                             vol. 11, no. 4, pp. 1951–1956, Nov. 1996.
+  fsw = 10 kHz, k p = 33.29, ki = 433.                                  [17] J. V. Jatskevich, “A state selection algorithm for the automated state
+                                                                             model generator,” Ph.D. dissertation, Purdue Univ., West Lafayette, IN,
+Parameters of VSC with PR Control [36], [37], [38]:                          USA, 1999.
+                                                                        [18] C. Dufour, J. Mahseredjian, and J. Bélanger, “A combined state-space
+Vdc = 1 kV, Srated = 10 kVA, L1 = 1 mH, L2 = 57 µH,                          nodal method for the simulation of power system transients,” IEEE
+                                                                             Trans. Power Del., vol. 26, no. 2, pp. 928–935, Apr. 2011.
+C = 30.7 µF, r1 = 0.1 , r2 = 0.05 , rc = 0.3 ,                       [19] H. W. Dommel, EMTP Theory Book, 2nd ed. Vancouver, BC, Canada:
+                                                                             Microtran Power Systems Analysis Corp., 1992–1996.
+ kPR1 = 0.4183, kPR2 = 4600, ω0 = 377 rad/sec,                          [20] P. Pejovic and D. Maksimovic, “A method for fast time-domain simu-
+                                                                             lation of networks with switches,” IEEE Trans. Power Electron., vol. 9,
+ ωc = 0.5 rad/sec, fsw = 5 kHz.                                              no. 4, pp. 449–456, Jul. 1994.
+
+
+226                                                                                                                                  VOLUME 6, 2025
+[21] S. Chiniforoosh et al., “Definitions and applications of dynamic average   [42] Y. Wang, X. Wang, F. Blaabjerg, and Z. Chen, “Harmonic instability
+     models for analysis of power systems,” IEEE Trans. Power Del., vol. 25,         assessment using state-space modeling and participation analysis in
+     no. 4, pp. 2655–2669, Oct. 2010.                                                inverter-fed power systems,” IEEE Trans. Ind. Electron., vol. 64, no. 1,
+[22] H. Saad et al., “Modular multilevel converter models for elec-                  pp. 806–816, Jan. 2017.
+     tromagnetic transients,” IEEE Trans. Power Del., vol. 29, no. 3,           [43] J. L. Agorreta, M. Borrega, J. López, and L. Marroyo, “Modeling and
+     pp. 1481–1489, Jun. 2014.                                                       control of N -paralleled grid-connected inverters with LCL filter cou-
+[23] N. Herath and S. Filizadeh, “Average-value model for a modular multi-           pled due to grid impedance in PV plants,” IEEE Trans. Power Electron.,
+     level converter with embedded storage,” IEEE Trans. Energy Convers.,            vol. 26, no. 3, pp. 770–785, Mar. 2011.
+     vol. 36, no. 2, pp. 789–799, Jun. 2021.
+[24] A. Yazdani and R. Iravani, “A generalized state-space averaged model
+     of the three-level NPC converter for systematic DC-voltage-balancer
+     and current-controller design,” IEEE Trans. Power Del., vol. 20, no. 2,
+     pp. 1105–1114, Apr. 2005.                                                                            TALEB VAHABZADEH (Member, IEEE) received
+[25] S. Ebrahimi and J. Jatskevich, “Average-value model for voltage-source                               the B.Sc. degree in electrical engineering from
+     converters with direct interfacing in EMTP-type solution,” IEEE Trans.                               the University of Tehran, Tehran, Iran, in 2021,
+     Energy Convers., vol. 38, no. 3, pp. 2231–2234, Sep. 2023.                                           and the M.A.Sc. degree in electrical and com-
+[26] S. Ebrahimi, T. Vahabzadeh, and J. Jatskevich, “Direct inter-                                        puter engineering from The University of British
+     facing of average-value models of voltage-source converters in                                       Columbia, Vancouver, BC, Canada, in 2024. He
+     PSCAD/EMTDC,” in Proc. IEEE Canada Electric Power Energy Conf.,                                      is currently with Electric Power Engineers LLC.,
+     2022, pp. 1–6.                                                                                       Austin, TX, USA. His research interests include
+[27] S. Ebrahimi, T. Vahabzadeh, and J. Jatskevich, “Numerically effi-                                    modeling, transient and stability analysis, and con-
+     cient average-value model for VSCs in nodal-analysis-based programs,”                                trol of power electronics-based power systems.
+     IEEE Open J. Power Electron., vol. 5, pp. 93–105, 2024.
+[28] S. Ebrahimi, T. Vahabzadeh, and J. Jatskevich, “Constant-parameter
+     average-value model of power-electronic voltage-source converters
+     with direct interface in electromagnetic transient simulators,” IEEE
+     Open J. Power Electron., vol. 5, pp. 1446–1458, 2024.
+[29] J. Mahseredjian, L. Dube, M. Zou, S. Dennetiere, and G. Joos, “Simul-
+     taneous solution of control system equations in EMTP,” IEEE Trans.                                   SEYYEDMILAD EBRAHIMI (Member IEEE) re-
+     Power Syst., vol. 21, no. 1, pp. 117–124, Feb. 2006.                                                 ceived the B.Sc. and M.Sc. degrees in electrical
+[30] A. Safavizadeh, T. Vahabzadeh, S. Ebrahimi, and J. Jatskevich,                                       engineering from Sharif University of Technology,
+     “Admittance-based modeling of grid-following converters for time do-                                 Tehran, Iran, in 2010 and 2012, respectively, and
+     main simulations of multi-converter electrical power systems,” in Proc.                              the Ph.D. degree in electrical and computer engi-
+     Int. Conf. Clean Elect. Power, 2023, pp. 510–518.                                                    neering from The University of British Columbia
+[31] “GitHub - future-power-networks/simplus-grid-tool,” Accessed: Jul.                                   (UBC), Vancouver, BC, Canada, in 2019. He was a
+     21, 2022. [Online]. Available: https://github.com/Future-Power-                                      Postdoctoral Teaching and Research Fellow with
+     Networks/Simplus-Grid-Tool                                                                           the Department of Electrical and Computer En-
+[32] Y. Li, T. C. Green, and Y. Gu, “Descriptor state space modeling of power                             gineering, UBC, till 2024. He is currently an
+     systems,” 2023, arXiv:2303.01701v1.                                                                  Assistant Professor with the School of Electrical
+[33] T. Vahabzadeh, A. Safavizadeh, S. Ebrahimi, and J. Jatskevich,             Engineering and Computer Science, Washington State University, Pullman,
+     “Admittance-based modeling for electromagnetic transient and stability     WA, USA. His research interests include modeling and analysis of power
+     analysis of power-electronic-based energy conversion systems,” IEEE        electronic converters and electrical machines, application of power electron-
+     Trans. Energy Convers., vol. 39, no. 3, pp. 1879–1890, Sep. 2024.          ics to power systems, modeling and control of power systems, and simulation
+[34] W. Taha, A. R. Beig, and I. Boiko, “Design of PI controllers for a         of electromagnetic transients. Dr. Ebrahimi is the Chair of IEEE Power and
+     grid-connected VSC based on optimal disturbance rejection,” in Proc.       Energy Society Task Force on Dynamic Average Modeling Techniques, and
+     IECON - 41st Annu. Conf. IEEE Ind. Electron. Soc., 2015, pp. 001954–       an Associate Editor for IEEE TRANSACTIONS ON TRANSPORTATION ELECTRI-
+                                                                                FICATION.
+     001959.
+[35] T. Vahabzadeh, S. Baig, S. Ebrahimi, and J. Jatskevich, “Investigation
+     of MIMO state feedback controller for grid-connected AC-DC voltage
+     source converters,” in Proc. Int. Conf. Elect., Comput. Energy Technol.,
+     2022, pp. 1–6.
+[36] R. Teodorescu, F. Blaabjerg, M. Liserre, and P. C. Loh, “Proportional
+     resonant controllers and filters for grid-connected voltage-source con-                              JURI JATSKEVICH (Fellow, IEEE) received the
+     verters,” IEE Proc. Elect. Power Appl., vol. 153, no. 5, pp. 750–762,                                M.S.E.E. and the Ph.D. degrees in electrical en-
+     Sep. 2006.                                                                                           gineering from Purdue University, West Lafayette,
+[37] T. Vahabzadeh, S. Ebrahimi, and J. Jatskevich, “Impedance-based on-                                  IN, USA, in 1997 and 1999, respectively. Since
+     line stability monitoring and control of VSC-based power systems,” in                                2002, he has been with The University of British
+     Proc. IEEE Int. Conf. Eng. Emerg. Technol., 2023, pp. 1–6.                                           Columbia, Vancouver, BC, Canada, where he is
+[38] T. Vahabzadeh, S. Ebrahimi, and J. Jatskevich, “Numerical recursive                                  currently a Professor with the Department of Elec-
+     aggregation of VSC-based systems using impedance modeling for sta-                                   trical and Computer Engineering. His research
+     bility analysis,” IEEE Open J. Ind. Electron. Soc., vol. 6, pp. 62–75,                               interests include power electronic systems, electri-
+     Jan. 2025.                                                                                           cal machines and drives, modeling, and simulation
+[39] C. J. O’Rourke, M. M. Qasim, M. R. Overlin, and J. L. Kirtley,                                       of electromagnetic transients. Dr. Jatskevich was
+     “A geometric interpretation of reference frames and transformations:       an Associate Editor for IEEE TRANSACTIONS ON POWER ELECTRONICS from
+     dq0, Clarke, and Park,” IEEE Trans. Energy Convers., vol. 34, no. 4,       2008 to 2013, Editor-in-Chief of the IEEE TRANSACTIONS ON ENERGY CON-
+     pp. 2070–2083, Dec. 2019.                                                  VERSION from 2013 to 2019, and Editor-in-Chief At-Large for the IEEE
+[40] G. H. Golub and C. F. Van Loan, Matrix Computations, 4th ed. Balti-        Power and Energy Society journals from 2019 to 2020. He also chaired the
+     more, MD, USA: Johns Hopkins Univ. Press, 2013.                            IEEE PES Task Force on Dynamic Average Modeling from 2007 to 2022.
+[41] S. Buso and P. Mattavelli, Digital Control in Power Electronics. San       He was the recipient of the 2022 IEEE PES Cyril Veinott Electromechanical
+     Rafael, CA, USA: Morgan & Claypool, 2006.                                  Energy Conversion Award and 2023 Nagamori Award.
+
+
+
+
+VOLUME 6, 2025                                                                                                                                            227
+

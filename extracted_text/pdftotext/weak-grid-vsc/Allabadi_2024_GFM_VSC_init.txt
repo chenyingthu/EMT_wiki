@@ -1,0 +1,362 @@
+                                                               Electric Power Systems Research 235 (2024) 110674
+
+
+                                                                    Contents lists available at ScienceDirect
+
+
+                                                         Electric Power Systems Research
+                                                            journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Initializing EMT models of grid forming VSCs in MTDC systems
+Ahmad Allabadi a,*, Jean Mahseredjian a , Keijo Jacobs a , Sébastien Dennetière b, Ilhan Kocar c ,
+Tarek Ould-Bachir a
+a
+  Department of Electrical Engineering, Polytechnique Montréal, Canada
+b
+  Réseau de Transport d’Electricité, Paris, France
+c
+  Department of Electrical Engineering, Hong Kong Polytechnic University, Hong Kong
+
+
+
+
+A R T I C L E I N F O                                      A B S T R A C T
+
+Keywords:                                                  This paper highlights the importance of proper initialization techniques for simulation model stability and
+HVDC                                                       computational efficiency of multi-terminal direct current (MTDC) systems. A steady-state approach is presented
+EMT                                                        for initializing grid-forming voltage source converters (GVSCs). Moreover, for black-box GVSC models, a generic
+Offline simulation
+                                                           initialization method, called decoupling interface (DI) is proposed. The method is tested on the CIGRE BM4
+MTDC
+                                                           benchmark using EMTP. Compared to an existing load-flow initialization technique, both initialization methods
+Initialization
+                                                           reduce the complete system initialization time by 6.9 times.
+
+
+
+
+1. Introduction                                                                            become unacceptably lengthy.
+                                                                                               The load-flow (LF) solution method [12-17] can be used to auto-
+    High Voltage Direct Current (HVDC) systems started a new era in                        matically initialize complex power systems with various grid compo-
+efficient power transmission over long distances. Recent innovations in                    nents and controls, such as exciters and governors [17]. Challenges arise
+voltage-source converter (VSC) technology have contributed to the                          in the presence of power electronic converters with their complex con-
+increased manageability, reliability, and flexibility of HVDC systems                      trol systems. While it is possible to initialize converter controls, the
+[1]. Multi-Terminal Direct Current (MTDC) networks are engineered to                       necessary calculations can be tedious and are dependent on the system’s
+facilitate the collection and seamless integration of remote onshore and                   topology.In [10], accurate SS analysis and initialization is proposed for
+offshore renewable energy sources. Additionally, these networks are                        the modular multilevel converter (MMC), including its detailed control
+designed to interconnect different grids and systems, including weak                       system. It is a model-based initialization that cannot be used for generic
+networks or networks with different nominal frequencies [2].                               MTDC systems. Another concern is that grid component models might
+    Successful design, operation, and maintenance of MTDC systems                          be proprietary and in a black-box form, making their internal details
+hinge on the effective application of simulation techniques and models.                    inaccessible. For such models, using analytic initialization is not
+Within this context, electromagnetic transient (EMT) simulation tools                      possible. The authors of [18] proposed a technique for initializing large
+and models are fundamental for the comprehensive simulation of MTDC                        ac-dc systems that include black-box models. However, it requires
+system [3]. Simulating large-scale systems with intricate models of                        determining the Thevenin equivalents for all devices. For large MTDC
+MTDC converters and inverter-based resources (IBR) can lead to lengthy                     grid models, such a procedure becomes time-consuming and complex to
+computation times. Various techniques can be employed to accelerate                        generalize.
+EMT simulations, such as parallelizing the simulations [4-7], optimizing                       In HVDC systems, the main control mode used for Grid forming VSC
+grid component models with a heavy computational burden [8,9], and                         (GVSC) is V/f control. It is used for integrating the ac islands into the
+utilizing simulation initialization methodologies [10]. Nevertheless,                      MTDC network, for collecting renewable power from offshore resources,
+there is a scarcity of literature addressing initialization methods for                    and for feeding passive loads. In case of multiple GVSCs in the same
+large-scale AC-DC systems [10,11].                                                         island, V/f control can be combined with voltage droop [19,20],. On the
+    Typically, transient studies for MTDC systems are conducted once a                     other hand, in cases of connecting the GVSC with ac grids, a power
+system attains steady-state (SS) in time-domain. However, for medium                       synchronizing loop, a virtual oscillator, or others can be used [19,21],.
+and large systems, the simulation time required for initialization can                         This paper presents two methods for the automatic initialization of
+
+
+    * Corresponding author.
+      E-mail address: ahmad.allabadi@polymtl.ca (A. Allabadi).
+
+https://doi.org/10.1016/j.epsr.2024.110674
+Received 1 October 2023; Received in revised form 21 February 2024; Accepted 17 June 2024
+Available online 17 July 2024
+0378-7796/© 2024 Published by Elsevier B.V.
+A. Allabadi et al.                                                                                                      Electric Power Systems Research 235 (2024) 110674
+
+
+V/f-GVSC connected to an MTDC system and compares them with an                       always work when the TDIS is a GVSC, or renewable resource model
+existing LF initialization method. The first method, called Control                  connected to a GVSC. For instance, consider the TDIS in Fig. 1 which
+Initialization in SS (CISS), is by performing SS analysis for the GVSC to            contains a complete wind park model connected to a GVSC in V/f control
+initialize its outer control system. The second method, known as                     mode. Both the GVSC and the wind park model are TDISs. Auxiliary
+Decoupling Interface (DI), does not necessitate knowledge of model                   voltage sources are included at the GVSC and the wind park (or
+parameters or access to the internal GVSC control system, apart from an              photovoltaic) terminals. Therefore, once starting the time-domain
+understanding of the outer control mode. Therefore, it can be applied to             simulation, the GVSC control (shown in Fig. 2) measures the voltage
+black-box models. Both proposed methods can achieve fast and stable                  magnitude, |Vac |, seen from the auxiliary source instead of the actual
+initialization for interacting VSC and IBR components. The proposed                  values. Consequently, since the auxiliary source has an amplitude of
+methods are tested on large-scale MTDC grid benchmark model, CIGRE                   |Vac |that matches the control setpoint, the error signal (e) will be zero.
+BM4 [2].                                                                                         ref
+                                                                                     Therefore, Ed will be
+    This paper is divided into five sections. Section II demonstrates an                         ⃒ set ⃒
+existing LF initialization method. Section III introduces the SS analysis            Eref
+                                                                                      d = Ki h + Vac ,
+                                                                                                 ⃒ ⃒                                                                 (1)
+required to initialize the GVSC control. Section IV introduces the second
+method (DI) for initializing the GVSC. Finally, Section V presents the               where h is the initial condition of the integrator.
+                                                                                                                                                 ref
+EMT simulation of the CIGRE BM4 benchmark.                                              If this integrator is not initialized, i.e. h = 0, Ed will be set to an
+                                                                                                         ref   ⃒   ⃒                       ref
+                                                                                     incorrect value of E = ⃒V set ⃒. The corresponding E will also become
+                                                                                                         d         ac                            abc
+2. Overview of load-flow based initialization
+                                                                                     incorrect. Since the active and reactive powers delivered to the GVSC
+                                                                                                  ref
+    The initialization process based on LF ensures precise computation of            depend on Eabc , the GVSC will operate at an incorrect operating point.
+SS values across diverse grid components, ultimately resulting in an                 This constitutes a conflict between LFSI and the actual control. Once Ti
+effective initialization of the system. It comprises three main steps                elapses and the auxiliary sources are disconnected, the operating points
+described below.                                                                     of the wind park and VSC will differ, leading to a long transient that
+    Load-flow solution: The first step is to determine the system SS                 delays initialization.
+operating point by finding the LF solution. This is accomplished by ac-                  Two methods are proposed below for improving the time-domain
+counting for the constraints of the controlled buses. As MTDC systems                initialization step. The first method (CISS) involves initializing the
+are ac-dc systems, ac-dc LF is required to determine the accurate SS                 main PI controllers of GVSC control by performing SS analysis. The
+operating point of the system, more details about this step can be found             second is a generic method called DI. In both methods, all non-initialized
+in [15] and [16].                                                                    converter control variables are rapidly and automatically self-initialized
+    Steady-state solution and initialization: Following the acquisition of LF        through time-domain computations due to forcing from SS solution.
+results, the SS solution uses lumped models to calculate currents and
+voltages for all grid components. Each grid component is initialized by              3. GVSC control initialization by SS analysis
+computing the initial values of its internal variables, which include
+power components and control systems. In EMTP® [17] this step allows                     This method (CISS) calculates the initial condition (h) of GVSC’s PI
+to initialize automatically conventional systems, such as rotating ma-               controller at the LFSI setup. This method does not replace the LFSI
+chines with related controls, and all passive components (lines/cables,              method, but it fixes the conflict demonstrated in section II. The pre-
+transformers, etc.).                                                                 requisites for this step are the LF results and GVSC model parameters.
+    Time-domain initialization: The last step focuses on more complex IBR                Fig. 3 shows the ac side of a GVSC represented by an average value
+subsystems which are called time-domain initialized subcircuits (TDISs).                                                            →ref
+                                                                                     model (AVM) in pu quantities. In this figure E abc is the internal voltage
+Initializing such subsystems through SS analysis is complex since all                                →                               →
+                                                                                     of the GVSC, I ac is the ac current phasor, Z tr and jXLarm /2 are the
+control variables and signals must be initialized in addition to converter
+                                                                                     equivalent impedances of the GVSC transformer and arm inductance,
+circuit. Therefore, this portion of the initialization is done by direct time-
+                                                                                     respectively. More information about that model can be found in [1]. By
+domain simulation.
+                                                                                     applying KVL:
+    An existing approach in EMTP® is presented in Fig. 1 it is named LF
+and source initialization (LFSI). An auxiliary voltage source is tempo-              →LF      → (→             / ) →ref
+                                                                                     V PCC − I ac Z tr + jXLarm 2 = E abc                                   (2)
+rarily (duration Ti ) added at the terminals of each TDIS to fix the voltage
+at the SS phasor value found from the LF solution. Consequently, the
+control system ramps up until its SS operating point, after which the
+auxiliary source is disconnected from TDIS terminals. Some important
+parts in control functions, such as the PLL, are also initialized.
+    While the third step proves effective in certain scenarios, it may not
+
+
+
+
+                 Fig. 1. Time-domain initialization for wind park.                                           Fig. 2. GVSC control schematic.
+
+                                                                                 2
+A. Allabadi et al.                                                                                                  Electric Power Systems Research 235 (2024) 110674
+
+
+
+
+Fig. 3. AC side representation in phasor domain of GVSC modelled by its AVM.
+
+
+where from Fig. 2,
+
+               ref Vdc
+→ref   (          )
+E abc = Eref
+         d + jEq                                                        (3)
+                    2
+     Since Eref                                                                                        Fig. 5. The DI initialization system.
+            q is always zero, by utilizing (1) and (3), one can rewrite (2)
+as
+     { [              (              )]          }                                 replica of GVSC in time-domain. The role of the IAS is to ramp up the IGS
+   1 2 →LF        → →         jXLarm      ⃒ set ⃒                                  independently from the GVSC. It is modelled by a dependent source that
+h=        V PCC − I ac Z tr +           − ⃒Vac  ⃒                       (4)
+   Ki Vdc                       2                                                  interfaces the ac voltage waveforms of GVSC’s at the PCC.
+    Therefore, by utilizing (4), the initial condition h can be calculated
+using the voltage and current phasors which are taken from the LF.                 4.2. Decoupled simulation and recoupling
+Ultimately, the integrator would be initialized correctly and start from
+the correct SS operating point.                                                       Following system decoupling, the time-domain simulation com-
+                                                                                   mences. All IGS and the decoupled GVSC are initialized separately. Once
+4. Time-domain initialization using Decoupling interface                           they reach their SS conditions within a predefined tolerance, the
+                                                                                   recoupling is initiated. All IASs are disconnected, and the original MTDC
+    The proposed DI method replaces the auxiliary voltage source in the            network is recreated.
+GVSC time-domain initialization. It is designed to prevent startup con-
+trol conflicts and to suppress the interactions between islanded grid              5. Performance evaluation
+subsystem (IGS) components and their GVSC.
+    The high-level overview of the DI method is presented in Fig. 4. It                The new DI method proposed in this paper, is implemented in
+isolates (i.e., decouples) the IGS from the GVSC by adding interfacing             EMTP® [17] and tested on the CIGRE BM4 benchmark [2] shown in
+auxiliary sources (IASs). Then, the decoupled system is simulated in               Fig. 6. BM4 consists of three interconnected HVDC systems. The first one
+time-domain until SS operating point. Finally, the network is switched             is a monopolar point-to-point (P2P) line (Cm-D1 and Cm-D2). The sec-
+back to its coupled mode by removing the IASs and reconnecting the IGS             ond system is a five-terminal Bipolar MTDC system (Cb-D3, Cb-D4,
+to achieve smooth initialization. The interfacing sources can be included          Cb-D6, Cb-D7, and Cb-D9). The last one is a four terminal monopolar
+in the models, to eliminate software user intervention. In the following,          system (Cm-D5, Cm-D10, Cm-D12, and Cm-D13).
+these steps are described in detail.                                                   The DI initialization method is compared with the CISS method and
+                                                                                   the basic LFSI method described in section II. The MTDC components are
+4.1. System decoupling                                                             modeled as described in Table 1, where Ti represent the time for
+                                                                                   removing the auxiliary sources from the TDIS models as explained in
+    All IGSs are disconnected from their corresponding GVSCs as shown              section II. The shown Ti values are applicable for both the LFSI and CISS
+in Fig. 5. Two IAS are inserted: the equivalent auxiliary source and the           methods.
+replicating auxiliary source. The equivalent auxiliary source is an in-                For the DI method, it is only implemented on the links between
+dependent source that represents the SS behaviour of the IGS, therefore,           GVSCs and their islanded grids. The rest of the system including the
+it should supply the converter with the same P and Q values found in the           other VSC types are remain initialized the default LFSI method. Since
+SS solution. Since the GVSC is controlling Vac andf, this source can be            most of the IGSs are wind parks, the DI is set to recouple at 0.5 s. All
+represented by an ac current source to achieve SS values for P and Q. The          simulations are conducted using a time-step of 10 μs. The initialization is
+source phasor is found from the LF solution.                                       considered complete (i.e., the MTDC system is in SS) when the power
+    On the other side, the replicating auxiliary source represents the             and voltage are within a ±1% of the LF results.
+                                                                                       The time-domain results of the first system (the P2P line) are shown
+                                                                                   in Fig. 7. As depicted in Fig. 7.(a), the LFSI method starts to ramp the
+                                                                                   power and settles initially at the wrong SS operating point due to the
+                                                                                   auxiliary sources (the GVSC and wind park sources). Consequently, the
+                                                                                   Vdc controlled VSC (Cm-D2) in Fig. 7.(b) receives incorrect dc power and
+                                                                                   settles also on a wrong operating point. Once the wind park Ti elapses,
+                                                                                   the auxiliary sources are disconnected and the GVSC control starts to
+                                                                                   correct the operating point to reach the correct SS and Cm-D2 follows.
+                                                                                   LFSI finds SS within 1.45 s of simulation interval. Both the CISS and the
+                                                                                   DI initialization methods show comparable performance. They initialize
+                                                                                   quickly within 0.15 s and 0.3 s, respectively.
+                                                                                       Fig. 8 shows the results for the bipolar MTDC powers. In this case, a
+                                                                                   longer time required for the LFSI method to reach SS. The Vdc controlled
+                                                                                   VSC (Cb-D6) requires 3.4 s to settle. The main reason here is the fact that
+                                                                                   the bipolar system is connected with the monopolar through Cd-D5 dc-
+                     Fig. 4. The DI initialization method.                         dc converter, therefore, a power oscillation can be seen through Cd-D5
+
+                                                                               3
+A. Allabadi et al.                                                                                                    Electric Power Systems Research 235 (2024) 110674
+
+
+
+
+                                                                 Fig. 6. The CIGRE BM4 benchmark.
+
+
+
+Table 1
+Model types used in BM4.
+  Device                       Modelled by
+
+  MMC                          Arm Equivalent Model (Model 3 in [3]), Ti = 0.2 s
+  dc-dc converters             Ideal dc transformers
+  Wind parks                   Aggregated DFIG models with controls, Ti = 0.5 s
+  Electrical loads             Fixed impedances
+  Lines /cables                Wideband models
+
+
+
+
+Fig. 7. Initialization with LFSI, CISS and DI methods, P2P line powers in BM4.
+                                                                                       Fig. 8. Initialization with LFSI, CISS and DI methods, Bipolar system in
+in Fig. 8.(c). On the other hand, DI and CISS show comparable perfor-                  BM4 benchmark.
+mance and allow Cd-D5 to settle within 0.4 s.
+    The monopolar system initialization is shown in Fig. 9. The GVSC                   initializing the monopolar MTDC within 0.4 s. Ultimately, the entire
+(Cm-D5) is connected to an electrical load where there is no auxiliary                 BM4 benchmark reaches SS using LFSI before 3.4 s. Both CISS and DI
+source. However, the effect of its own auxiliary source appears in LFSI                accomplish SS solution before 0.5 s
+case until 0.2 s. Both DI and CISS show comparable performances by
+
+                                                                                   4
+A. Allabadi et al.                                                                                                      Electric Power Systems Research 235 (2024) 110674
+
+
+                                                                                  Table 2
+                                                                                  Computational efficiency comparisons.
+                                                                                    Measure (s)                         Initialization method
+
+                                                                                                                        LFSI                    DI                CISS
+
+                                                                                    Initialization interval             3.4                     0.5               0.5
+                                                                                    CPU time                            1714.8                  249.9             248.4
+                                                                                    Computing time gain                 1                       6.9               6.9
+
+
+
+                                                                                  benchmark using EMTP. The methods demonstrated fast initialization in
+                                                                                  a simulation interval below 0.5 s. The gains are significant when
+                                                                                  compared to an existing basic initialization technique. The presented
+                                                                                  methods are applicable to other converter control types and systems,
+                                                                                  and further demonstrations remain for future work.
+
+                                                                                  CRediT authorship contribution statement
+
+                                                                                      Ahmad Allabadi: Conceptualization, Data curation, Methodology,
+                                                                                  Software, Writing – original draft, Writing – review & editing. Jean
+                                                                                  Mahseredjian: Conceptualization, Supervision, Validation, Software,
+                                                                                  Writing – review & editing. Keijo Jacobs: Writing – review & editing.
+                                                                                  Sébastien Dennetière: Supervision, Writing – review & editing. Ilhan
+                                                                                  Kocar: Supervision. Tarek Ould-Bachir: Supervision.
+
+                                                                                  Declaration of competing interest
+
+                                                                                      The authors declare that they have no known competing financial
+                                                                                  interests or personal relationships that could have appeared to influence
+                                                                                  the work reported in this paper.
+
+                                                                                  Data availability
+
+                                                                                      Data will be made available on request.
+
+Fig. 9. Initialization with LFSI, CISS and DI methods, monopolar MTDC in
+BM4 benchmark.
+                                                                                  References
+
+5.1. Computational time gains                                                      [1] D. Jovcic, High Voltage Direct Current transmission: converters, Systems and DC
+                                                                                       Grids, John Wiley & Sons, 2019.
+                                                                                   [2] DC grid benchmark models for system studies, CIGRE Technical Brochure 804
+    Table 2. compares initialization and CPU times for LFSI, CISS, and DI              (2020). June.
+methods. The CPU time corresponds to the initialization interval. The              [3] H. Saad, S. Dennetière, J. Mahseredjian, P. Delarue, X. Guillaud, J. Peralta,
+computing time gain is used to quantify initialization performance. It                 S. Nguefeu, Modular multilevel converter models for electromagnetic transients,
+                                                                                       IEEE Trans. Power Delivery 29 (3) (2014) 1481–1489, https://doi.org/10.1109/
+represents the relative acceleration in CPU time for initialization when               TPWRD.2013.2285633.
+compared to LFSI method. Overall, both the DI and CISS methods                     [4] M. Cai, J. Mahseredjian, U. Karaagac, A. El-Akoum, X. Fu, Functional mock-up
+demonstrate nearly identical initialization performance, achieving                     interface based parallel multistep approach with signal correction for
+                                                                                       electromagnetic transients simulations, IEEE Trans. Power Syst. 34 (3) (2019)
+steady-state 6.9 times faster than LFSI. This highlights the advantages of
+                                                                                       2482–2484, https://doi.org/10.1109/TPWRS.2019.2902740.
+both methods over existing LFSI. However, the DI method remains the                [5] C. Fu, T. Yang, Sparse LU factorization with partial pivoting on distributed memory
+most generic and efficiently applicable, as it does not require manual                 machines, in: Proceedings of the 1996 ACM/IEEE Conference on Supercomputing,
+interventions like CISS, making it the preferred approach for the systems              1996, p. 31. -es.
+                                                                                   [6] A. Abusalah, O. Saad, J. Mahseredjian, U. Karaagac, I. Kocar, Accelerated sparse
+presented in this paper.                                                               matrix-based computation of electromagnetic transients, IEEE Open Access J.
+                                                                                       Power Energy 7 (2020) 13–21, https://doi.org/10.1109/OAJPE.2019.2952776.
+6. Conclusion                                                                      [7] A. Stepanov, J. Mahseredjian, H. Saad, U. Karaagac, Parallelization of MMC
+                                                                                       detailed equivalent model, Electric Power Systems Res. 195 (2021) 107168,
+                                                                                       https://doi.org/10.1016/j.epsr.2021.107168.
+    In this paper, two methods were proposed for the fast initialization of        [8] A. Stepanov, J. Mahseredjian, U. Karaagac, H. Saad, Adaptive modular multilevel
+grid-forming voltage source converters. The methods align with load-                   converter model for electromagnetic transient simulations, IEEE Trans. Power
+                                                                                       Delivery 36 (2) (2020) 803–813.
+flow solution results for traditional network generators, loads, as well           [9] S. Yu, S. Zhang, Y. Wei, Y. Zhu, Y. Sun, Efficient and accurate hybrid model of
+as inverter-based resources connected to MTDC systems.                                 modular multilevel converters for large MTDC systems, IET Generation,
+    The first method named Control Initialization in SS (CISS) is set to               Transmission & Distribution 12 (7) (2018) 1565–1572.
+                                                                                  [10] A. Stepanov, H. Saad, U. Karaagac, J. Mahseredjian, Initialization of modular
+initialize the PI controller of grid-forming voltage source converters. Its
+                                                                                       multilevel converter models for the simulation of electromagnetic transients, IEEE
+disadvantage is that it requires access to model parameters and internal               Trans. Power Delivery 34 (1) (2018) 290–300.
+control details.                                                                  [11] A. Lekić, H. Ergun, J. Beerten, Initialisation of a hybrid AC/DC power system for
+                                                                                       harmonic stability analysis using a power flow formulation, High Voltage 5 (5)
+    The second method is named Decoupling Interface (DI). It can be
+                                                                                       (2020) 534–542.
+applied to black-box grid-forming voltage source converters connected             [12] N. Rashidirad, J. Mahseredjian, I. Kocar, U. Karaagac, O. Saad, MANA-Based load-
+to wind or photovoltaic parks. It is more generic and more efficiently                 flow solution for islanded AC microgrids, IEEE Trans. Smart Grid (2022) 1, https://
+applied than CISS.                                                                     doi.org/10.1109/TSG.2022.3199762. -1.
+
+    The presented initialization methods were tested on the CIGRE BM4
+
+
+                                                                              5
+A. Allabadi et al.                                                                                                                 Electric Power Systems Research 235 (2024) 110674
+
+[13] H.M.A. Ahmed, A.B. Eltantawy, M.M.A. Salama, A generalized approach to the              [17] J. Mahseredjian, S. Dennetière, L. Dubé, B. Khodabakhchian, L. Gérin-Lajoie, On a
+     load flow analysis of AC–DC hybrid distribution systems, IEEE Trans. Power Syst.             new approach for the simulation of transients in power systems, Electric Power
+     33 (2) (2018) 2117–2127, https://doi.org/10.1109/TPWRS.2017.2720666.                         Syst. Res. 77 (11) (2007) 1514–1520.
+[14] J. Lei, T. An, Z. Du, Z. Yuan, A general unified AC/DC power flow algorithm with        [18] Y. Liu, Y. Song, L. Zhao, Y. Chen, C. Shen, A General Initialization Scheme for
+     MTDC, IEEE Trans. Power Syst. 32 (4) (2017) 2837–2846, https://doi.org/                      Electromagnetic Transient Simulation: towards Large-Scale Hybrid AC-DC Grids,
+     10.1109/TPWRS.2016.2628083.                                                                  in: 2020 IEEE Power & Energy Society General Meeting (PESGM), IEEE, 2020,
+[15] R. Benato, G. Gardan, A Novel AC/DC power Flow: HVDC-LCC/VSC inclusion Into                  pp. 1–5.
+     the PFPD bus admittance matrix, IEEE Access 10 (2022) 38123–38136, https://doi.         [19] Guide for the Development of Models for, CIGRE Technical Brochure 604 (2014).
+     org/10.1109/ACCESS.2022.3165183.                                                        [20] L. Zhang, Modeling and Control of VSC-HVDC Links Connected to Weak AC
+[16] N. Rashidirad, J. Mahseredjian, I. Kocar, U. Karaagac, Unified MANA-based load-              Systems, Royal Institute of Technology, Stockholm, Sweden, 2010. Ph.D. Thesis.
+     flow for multi-frequency hybrid AC/DC multi-microgrids, Electric Power Syst. Res.       [21] H. Zhang, W. Xiang, W. Lin, J. Wen, Grid forming converters in renewable energy
+     220 (2023) 109313.                                                                           sources dominated power grid: control strategy, stability, application, and
+                                                                                                  challenges, J. Modern Power Syst. Clean Energy 9 (6) (2021) 1239–1256, https://
+                                                                                                  doi.org/10.35833/MPCE.2021.000257.
+
+
+
+
+                                                                                         6
+

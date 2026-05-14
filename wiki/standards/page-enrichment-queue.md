@@ -67,7 +67,7 @@ updated: "2026-05-13"
 || 42 | hierarchical-control.md | methods | methods/control/hierarchical-control.md | P1 | 75 | 1257 | 5 | 13 | completed |
 || 43 | frequency-domain-analysis.md | topics | topics/tools-software/frequency-domain-analysis.md | P1 | 74 | 8912 | 79 | 14 | completed |
 || 44 | pv-power-plant.md | topics | topics/renewable-storage/pv-power-plant.md | P1 | 73 | 1699 | 5 | 34 | completed |
-|| 45 | weak-grid-vsc.md | models | models/equivalent/weak-grid-vsc.md | P1 | 73 | 1291 | 4 | 11 | pending |
+|| 45 | weak-grid-vsc.md | models | models/equivalent/weak-grid-vsc.md | P1 | 73 | 1291 | 4 | 11 | completed |
 || 46 | power-quality.md | topics | topics/renewable-storage/power-quality.md | P1 | 72 | 967 | 13 | 17 | pending |
 || 47 | digital-simulator.md | topics | topics/simulation/digital-simulator.md | P1 | 72 | 1582 | 6 | 30 | pending |
 || 48 | exponential-integrator.md | methods | methods/numerical-methods/exponential-integrator.md | P1 | 71 | 1246 | 6 | 13 | pending |
