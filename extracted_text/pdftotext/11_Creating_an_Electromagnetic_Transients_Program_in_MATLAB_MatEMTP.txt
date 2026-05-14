@@ -1,0 +1,593 @@
+380                                                                               IEEE Transactions on Power Delivery, Vol. 12, No. 1, January 1997
+
+                  Creating an ~ ~ e c t r ~ m a g nTransients
+                                                   et~c       Program in MATLAB: MatEMTP
+             Jean Mahseredjian (IEEE member)                                               Fernando Alvarado (IEEE fellow member)
+       Institut de Recherche d'Hydro-Quebec (IREQ)                                             University of Wisconsin-Madison
+                    1800 Montee Ste-Julie                                                     Electrical & Computer Engineering
+             Varennes, Quebec, Canada J3X 1S1                                             1415Johnson Drive, Madison, WI 53706, USA
+
+ABSTRACT: The traditional method for developing electric                         hibitive to experiment with modern algorithmic ideas for
+network analysis computer programs is based on coding using                      eliminating solution limitations or for improving the computa-
+a conventional computer language: FORTRAN, C or Pascal.                          tional speed on changing computer architectures.
+The programming language of the EMTP (Electromagnetic                                 Most network solution and modelling methods are simple
+Transients Program) is FORTRAN-77. Such a program has a                          to visualize and support mathematically, but their translation
+closed architecture and uses a large number of code lines to                     into an actual large scale working code is complex. Com-
+satisfy requirements ranging from low level data manipulation                    monly used programming languages are ill-suited to human
+to the actual solution mathematics which eventually become                       abilities for dealing with complexity. Software built using
+diluted and almost impossible to visualize. This paper pro-                      such languages is often inadequate. Some other new lan-
+poses a new design idea suitable for EM" re-development in                       guages such as ADA, C++ and FORTRAN-90, provide pow-
+a high level programming context. It presents the creation of                    erful features for the formulation of appropriate abstractions
+the transient analysis numerical simulator MatEMTP in the                         [Z] for the desired application. But programming is always
+computational engine frame of MATLAB. This new approach                          easier if a specialized language is already available for the cre-
+to software engineering can afford a dramatic coding simplifi-                   ation of similar applications. Specialized applications should
+cation for sophisticated algorithmic structures.                                 use dedicated computational engines where the developer can
+                                                                                 build and compose with high level constructs. In addition to
+  eywords: EMTP, MATLAB, time-domain network analy-                              defining a new library of functions and overloading existing
+sis, software engineering                                                        operators, such an engine must provide a minimal number of
+                                                                                 portable graphical data visualization and manipulation func-
+                                                                                 tions. It is obvious that programming a computational engine
+                                                                                 from scratch is a major effort.
+                                                                                      This paper proposes to use a widely used general purpose
+    In a conventional electric network simulator design,                         program available on most popular computer platforms as a
+everything is based on line-by-line coding. Every component                      computational engine: MATLAB 131. MATLAB has a large
+is implemented this way, as is the network analysis algorithm                    number of built-in functions and constructs covering a wide
+and any minor details of the overall computation and data                        range of EMTP development needs and is expandable by
+manipulation process. The actual network model equations                         means of optional toolboxes. The recent implementation of
+and network matrix operations are diluted in a large number                       sparse matrix manipulation capabilities eliminates a major
+of cryptic code lines created by specialized and experienced                     feasibility barrier.
+developers. Moreover, old-fashioned and historically sup-                             This paper presents the creation of MatEMTP: a transient
+ported programming techniques inhibit modularity and are                         analysis program in MATLAB M-files. It is based on a new
+geared towards memory conservation. Models for any one                           formulation of the main system of network equations,
+component appear in more than one place in the code. This is                      designed to eliminate several topological data restrictions and
+the case of the EMTP [l] (Electromagnetic Transients Pro-                         capable of handling arbitrary switch interconnections. The
+gram) code. The low level design methodology of such a code                       existing EMTP is used for validation and as a reference for
+explains its low renewal and enhancement rate. It is also pro-                    solution timings.
+
+96 WM 098-4 PWRD A paper recommended and approved by the IEEE
+Transmission and Distribution Committee of the IEEE Power Engineering                                 2. SOLUTION METHOD
+Society for presentation at the 1996 IEEEPES Winter Meeting, January 21-
+25, 1996, Baltimore, MD. Manuscript submitted August 1, 1995; made
+available for printing December 5, 1995.
+                                                                                     The basic time-domain solution method implemented in
+                                                                                 MatEMTP is similar to the existing EMTP approach [4]. A
+                                                                                 large set of algebraic-differential equations is first trans-
+                                                                                 formed into a discrete algebraic equivalent and then solved
+                                                                                 over the requested interval [0, t,,,]   . The solution is avail-
+                                                                                 able at discrete time-points (0, tl, t2, ..., tmax). The design
+
+
+
+                                                          0885-8977/97/$10.000 1996 IEEE
+
+      Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 13:48:52 UTC from IEEE Xplore. Restrictions apply.
+                                                                                                                                                         381
+
+utilizes a fixed integration time-step At as is the case for                       2.c ComDonent models
+EMTP.
+    The high level matrix manipulation capabilities of MAT-                       Network models consist of an interconnection of compo-
+LAB stimulate algorithmic ideas based on matrix computa-                      nent models. Component models interact with the core code
+tions. MatEMTP uses matrices and vectors for coding and                       by inserting their frequency domain and time-domain equa-
+solving network equations, closely replicating the underlying                 tions into (1).Node incidence matrices are used for formulat-
+mathematics of network theory. The core code operates by                      ing the interconnection of component model equations.
+defining a larger and more general matrix to represent net-                       For a passive component, the frequency domain requires a
+work equations than is customary.                                             complex admittance matrix at each solution frequency. Active
+                                                                              components insert their voltage or current phasors in the right
+   2.b Network eauations: the core code                                       hand side of (1).
+                                                                                  The time-domain solution is based on the discretization of
+    The network component interconnecting equations consti-                   the component models. Although trapezoidal integration is the
+tute the core code equations and must be defined before                       default discretization method, other integration methods such
+accordingly programming the individual component models.                      as Backward Euler are applied in individual model equations,
+The following augmented sparse formulation is used:                           as long as compliance with core code requests exists. In addi-
+                                                                              tion to handling discontinuities [7], Backward Euler integra-
+                                                                              tion is useful for startup from user-defined initial conditions.
+                                                                                  Several components of the same type (same model) usu-
+                                                                              ally exist in a given network. Fig. 1 shows the ith element of a
+                                                                              multiphase coupled component model. The following equa-
+                                                                              tion can be written for this component type during the time-
+where Yn is the standard n x n nodal admittance matrix                        domain solution:
+excluding switches, Va is the nVSx n node incidence matrix                         Ix = yxvktn + Ixh                                                     (2)
+of voltage sources, Sa is the ns x n node incidence matrix                    Bold characters denote matrices and vectors. Subscript h
+of closed switches, OVs is an nVs x nVs null matrix, Ovss is                  stands for history terms. Matrix Yx is a sparse block-diagonal
+
+
+
+
+                                                                                           m-
+an flVs x ns null matrix, So is an ns x ns sparse binary                      admittance matrix containing individual matrices Y
+                                                                                                                                  I
+                                                                                                                                                 .
+matrix used to nullify open switch currents, V n is the vector
+                                                                                                                      I
+of unknown node voltages, I", holds the unknown voltage                                                k             IX
+                                                                                                                                   m
+source currents, IS holds unknown switch currents, In holds                                                i       +
+known nodal current injections and v, stands for known                                                                                                Im
+source voltages.                                                                   +                                                       e
+                                                                                                                                                     4+-
+    This new formulation is less restrictive than the standard
+EMTP nodal analysis. It expands modified nodal analysis [51
+by including explicitly the switch equations. Equation (1) is                      Figure 1: A coupled multiphase component model
+used in both steady-state and time-domain solutions. The node                 If all component types possess their own sparse node-
+incidence switch matrix S a is modified to avoid the reformu-
+                                                                              incidence matrix Ma, equation (2) is inserted into (1) using
+lation of Yn when the topology changes. MatEMTP can
+model voltage sources not connected to ground, floating                       the following formulas:
+switch nodes and branch to branch relations. All switch cur-                                    before M t Y   +
+
+
+
+
+rents are automatically calculated and the explicit switch                         ynafter = Yn           a x a                                          (3)
+matrix S a usage simplifies the detection of illegal switch                          after    before   t
+                                                                                   In       In       -M I                                                (4)
+loops. A switch loop creates linearly dependent rows in the                                            a 'h
+switch matrix Sa. This dependency is deleted by removing
+redundant closed switches.
+    The steady-state solution is a frequency domain solution.                                      3. THE MatEMTP CODE
+Its objective is to initialize the time-domain solution when
+steady-state conditions exist before transient analysis.                           3.a Main structure
+MatEMTP can handle a fundamental frequency and harmonic
+initialization [6].                                                               The objective is to program MatEMTP using only MAT-
+                                                                              LAB M-files [3]. These files include standard MATLAB
+                                                                              statements and may also refer to other M-files. An M-file is an
+
+
+
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 13:48:52 UTC from IEEE Xplore. Restrictions apply.
+382
+
+ASCII script or function file. Since these files are run directly                   tion by the model selector.
+in the MATLAB environment and there is no requested com-                                The organizer is another M-file created by the input pro-
+pilation stage, MatEMTP inherits an open source code.                               cessor that calls solution M-files according to selected options
+    In inexperienced hands, the large number of available                           and overall solution needs. Thus, MatEMTP is based on a data
+MATLAB building functions and constructs, can result in                             dependent interconnection of individual code modules. Here
+inefficient and cryptic code. Some experience is needed for                         is a valid sequence of files called in by the organizer for solv-
+programming with a minimal number of code lines and for                             ing a typical case casem:
+minimal CPU time. The key to minimal CPU time is the vec-                           1 0 matemtp.m: program startup and request for data case
+torization of the solution algorithms. Other important rules to                     2@ case.m: the actual case file, any name can be used
+follow for increased efficiency are: avoid extreme modularity;                      ~IJ    start.m: initial setups, initial conditions, initialization of
+use function files instead of script files; minimize the number                            the time-domain solution
+of logical statements for model and option selections; mini-                        4@ time1oop.m: the time-domain loop for the simulation
+mize data initialization; avoid data storage pointers; preallo-                     The start.m script file initializes all network variables
+cate vectors and matrices of predictable size. Except for                           (including automatic frequency domaiq initialization for any
+memory preallocation, vectorization and the above outlined                          subnetwork where active sources exist at t < 0 ).
+rules actually improve code readability and simplicity. Blind
+                                                                                         Appendix A shows a section of code called from start.m
+usage of dynamic memory allocation simplifies programming
+                                                                                    for linear harmonic initialization. The listing for timeloopm
+but places a heavy burden on the MATLAB interpreter.
+                                                                                    shown in Appendix B demonstrates the advantages of pro-
+    By programming through matrix and vector operations the
+                                                                                    gramming within the computational engine frame of MAT-
+MatEMTP code is naturally vectorized. To eliminate useless
+                                                                                    LAB.
+testing, initialization procedures and repetitive dead code exe-
+                                                                                         Since all component models appear hidden to the main
+cutions, the ready-to-run structure of Fig. 2 is proposed. This
+                                                                                    MatEMTP code, the model selector can only communicate
+data adaptable structure relies on the input processor to inter-
+                                                                                    through 3 built-in generic function files: msourcem,
+connect the M-files. The input processor is a separate pro-
+                                                                                    mbranchm and mswitchm. A file mg1obal.m is used to trans-
+gram (also written with M-files) that decodes standard EMTP
+                                                                                    fer data from the main code to model function files.
+data files [l] and creates the case.m file. This file is a pro-
+                                                                                         The simple test circuit of Fig. 3 demonstrates the above
+cessed file of network data created from the external case data
+                                                                                    outlined functionality. The contents of automatically gener-
+format.
+                                                                                    ated test2iwh.m (this is now casem) are listed in Appendix C.
+                                                                                    The names of model M-files used in this circuit are available
+                                                                                    in an input processor library. The model selector consists of
+                                                                                    the following files created by the input processor:
+                                                                                    mgloba1.m: (called in from matemtp.m)
+                                                                                           gvsine; %sinusoidal voltage source data
+                                                                                           gisine; %sinusoidal current source data
+                                                                                           rlcglob;      %RLC m o d e l d a t a
+                                                                                           sw0glob;      % o r d i n a r y s w i t c h model d a t a
+                                                                                    msource .m:
+                                                                                           f u n c t i o n msource ( i d o )
+                                                                                           vsine(ido);          %sinusoidal voltage source
+                                                                                           i s i n e (ido);     %sinusoidal current source
+                                                                                    mbranckm:
+                                                                                           f u n c t i o n mbranch ( i d o )
+                                                                                           rlcmod(id0);          %RLC m o d e l
+                Figure 2: MatEMTP main structure                                    mswitch.m:
+                                                                                           function mswitch(ido)
+    The model selector is a set of M-files created by the input                            sw0 ( i d o ) ; %ordinary s w i t c h m o d e l
+processor for connecting required case.m models to the main                         As an example of model data connection file, here are the con-
+program. All models are programmed in separate M-files that                         tents of gvsine.m:
+obey to a set of predefined core code requests. A typical
+                                                                                    g l o b a l V a d j V s i n e i n Vmag V s t a r t V s t o p V p h i Vw;
+request for a component model is “provide admittance
+matrix” or “update history”. The creation of any new model
+is as simple as programming a new M-file which is automati-
+cally recognized and inserted into the appropriate code loca-
+
+
+
+
+      Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 13:48:52 UTC from IEEE Xplore. Restrictions apply.
+                                                                                                                                                          383
+
+                                          0.552                               The transmission line is connected between nodes k and m.
+                                     d-                                       The following arrays and variables are calculated for ido=l in
+                                                                              tZm0d.m: n T is the total number of single phase lossless
+                                                                              transmission lines, T i n t e r is an interpolation vector
+                                                                              according to the propagation delay of each line, T N h i st is a
+                                                                              vector holding the number of history cells required for each
+                                                                              line, T r o t a t e is the sparse rotation matrix, T a d j k and
+                                                                              T a d j m are sparse node incidence matrices found from the
+                                                                              main node incidence matrix T a d ] of this line model. Only
+       -
+       -                     -
+                             -                              -
+                                                            - -
+                                                              -               minor modifications are needed to incorporate lumped
+                Figure 3: Test case test2iwh.m                                resistances for losses [4].
+                                                                                  Since equations (2) to (4) are applicable to any number of
+                                                                              phases, programming of multiphase component models is
+   3.b Procramming the comnonent models                                       based on matrix manipulations similar to single phase models.
+
+    Every component model is located in a separate M-file and                      3.c User interface
+responds to a standardized number of id0 values sent to it by
+the core code. As an example, an i&=2 requests the insertion                       MATLAB provides high level functions that enable a por-
+of the component model admittance matrix into Y, .                             table programming of a graphical user interface (GUI) for
+    To illustrate the simplicity of programming, here is a por-                MatEMTP. Fig. 4, for example, shows the GUI appearing dur-
+tion of code from r1cmod.m:                                                    ing the initial program startup procedure. It is used to modify
+if ido==2 %insert into Yn for steady-state                                     basic simulation data and options. The menu item Schematic
+  Yn=Yn+RLCadj'*sparse(l:nRLC,l:nRLC,                                          opens the schematic capture GUI shown in Fig. 5.
+    1 . / (RLCR+jz*(w*RLCL - RLCC/w ) ) ) *RLCadj;
+elseif ido==5 %insert into Yn in time-domain
+  GRLC=sparse (1:nRLC,1 :nRLC,
+     l./(RLCR+(2/Dt) .*RLCL + (Dt/2).*RLCC));
+                                                                                   number of nodes: 3
+  Yn=Yn+RLCadj'*GRLC*RLCadj;
+elseif    ...                                                                      Dt= 0.02
+   The programming of a transmission line model [4] usually                        Tmax= 25             [mol
+requires the implementation of pointers for holding and updat-                            solution options
+ing history. MatEMTP avoids this complexity by using a sin-
+gle two dimensional sparse array for holding history and a
+sparse rotation vector for extracting and storing history terms
+at each time-point. This is best demonstrated by the following
+self explanatory code lines taken from the lossless single
+phase transmission line model (t1mod.m):                                          Figure 4: The initial data capture GUI of MatEMTP
+elseif ido == 6 %insert into In in time-domain
+                        .
+  Tikh= (1-Tinter) *Tikhist ( :,1)+
+    Tinter.*Tikhist(:,2); %k side history
+                        .
+ Timh= (1-Tinter) *Timhist ( :,1)+
+                                                                               II'-
+                                                                                  File    clipboard    Edit    Qptions     Simulation     Slyle
+                                                                                                                                                          'll
+                                                                                                                                                         El
+    Tinter.*Timhist(:,2); %m side history
+ In=In+Tadjk'*Tikh; %contribute to In
+                                                                                    Sin
+ In=In+Tadjm'*Timh;
+elseif ido == I %update history
+  Tikh=Tadjk*Vn./TZc-Tikh;      %ik=vk/Zc-ikh
+  Timh=Tadjm*Vn./TZc-Timh;      %im=vm/Zc-imh
+  Tikhx=Tadjm*Vn./TZc+Timh; %ikh=vm/Zc+im
+  Timhx=Tadjk*Vn./TZc+Tikh; %imh=vk/Zc+ik
+  Tikhist=Tikhist*Trotate+
+   spconvert([(l:nT)', TNhist, Tikhxl); %store
+  Timhist=Timhist*Trotate+                                                       Figure 5: The schematic capture GUI of MatEMTP
+   spconvert([(l:nT)', TNhist, Timhxl); %store
+elseif   ...                                                                       The GUI of Fig. 5 can be used for creating and modifying
+
+
+
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 13:48:52 UTC from IEEE Xplore. Restrictions apply.
+384
+
+an arbitrary multiphase circuit diagram. Clicking on a given                                                        9 coupled pi-sections
+component opens the corresponding data capture panel. The
+programming of this GUI is based on the MATLAB-SIM-                                                                               Q
+ULINK [8] toolbox. Any new component icon or subcircuits
+can be created through block masking [8]. Available network
+                                                                                          =187.79 cos(2~60t)
+list generation functions allow the translation of a circuit dia-                   -
+gram into the actual data case M-file. It must be remarked that                     -
+the SIMULINK GUI was originally created for assembling                                                                                                      -
+control circuits and its usage for circuit diagrams suffers from                                                                                            - -
+                                                                                                                                                              -
+visual limitations such as obligatory arrows and boxed blocks.                        Figure 7: Test case pi.m: energization of cable phase a.
+
+                                                                                                                                  the r e c. e. i v u
+                            4. TESTCASES
+
+
+
+    The circuit diagram of this test case is shown in Fig. 3.
+The standard EMTP cannot handle steady-state initialization
+with different source frequencies in the same subnetwork, and
+according to test2iwh.m (see Appendix C) the harmonic cur-
+rent sources is1and is2are connected for t < 0 . Thus, EMTP                                 0            5            10
+                                                                                                                           t   (ms) l5
+                                                                                                                                                   20
+starts with wrong initial conditions (both current sources dis-                           Figure 8: MatEMTP and EMTP solutions, Case 2
+connected in the 60Hz initialization) and enters almost perfect
+steady-state only after 8s of simulation time. MatEMTP
+solves this case directly through its initialization algorithm                            r     , Ikm    k w v o ' t a o ~                              A
+(Appendix A). Fig. 6 superimposes an EMTP waveform
+delayed by 7.95s to the MaEMTP waveform. Both solutions
+are undistinguishable.
+
+
+
+
+                                                                                           Figure 9: MatEMTP and EMTP solutions, Case 3
+                                                                                       4.c Case 3
+      -90   1
+            0
+                       I
+
+                      10
+                                    I
+
+                                   20
+                                                  I            I
+
+                                                              40
+                                                                             I
+                                                                                       The objective of this case is to validate and test the perfor-
+                                        t   (ms) 30
+                                                                                   mance of MatEMTP distributed parameter line modelling
+Figure 6: MatEMTP and shifted EMTP solutions, Case 1                               where a sparse matrix based history maintenance method has
+                                                                                   been proposed. The line setup taken from [lo] is used for
+                                                                                   corona modelling, each phase is subdivided into 500 sections
+                                                                                   and a total of 1503 nodes is created. Only phase a is energized
+      This test case is taken from an EMTP Workbook [9]. It                        with a surge voltage function [lo]. Simulation results are
+simulates the energization of a three-phase 1 5 mile 230kV                         shown in Fig. 9. Since MatEMTP does not yet possess a
+cable. The circuit diagram for phase a is shown in Fig. 7. The                     corona model, corona branches are disconnected in EMTP
+cables are represented using 9 two-phase pi-sections. The                          and a constant distributed parameter line model is used.
+sheath is grounded at the sending end and at each pi-section.                      Zooming on these waveforms will show a minor At delay
+A partial listing for pi.m is given in Appendix D. The simula-                     between EMTP and MatEMTP, related to the programming of
+tion results from EMTP and MatEMTP shown in Fig. 8 are                             the surge function in EMTP-TACS [l],MatEMTP is actually
+perfectly identical.                                                               more precise.
+
+
+
+
+      Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 13:48:52 UTC from IEEE Xplore. Restrictions apply.
+                                                                                                                                                         385
+                        5. DISCUSSION                                              The ultimate contribution of this paper is a dramatic illus-
+                                                                               tration of the possibilities afforded by this new approach to
+    The short length of Appendices A and B indicates that                      software development.
+only a small number of code lines is needed to express solu-
+tion procedures and elaborate sparse matrix manipulations                                                       APPENDIX A
+through readily available MATLAB functions and constructs.
+This is a dramatic improvement over conventional coding for                           MatEMTP linear initialization module: steady1in.m
+performing similar tasks. Data output and plotting are easily                        The following is a listing of steady1in.m:
+                                                                                   Wall= [ J ;
+handled through available MATLAB functions.                                        msource(5); %put a l l source ws in Wall
+    The next step in this paper is to compare MatEMTP com-                         Wall=sort (Wall);        ,
+
+putational performance against EMTP. The eratio is defined                         Vn-init=zeros (n,1);%preallocate n node voltages
+as total MatEMTP elapsed execution time over EMTP execu-                           IVs=zeros (nVs,1);         %preallocate IVs
+tion time.                                                                         IS=zeros (nS,1);           %preallocate IS
+                                                                                   nfreq=size(Wall,l);        %the number of ws to do
+    For Case 1EMTP needs a much longer simulation time,                            ifreq=l; wdone=[];
+and the found eratio of 50.25 is in favor of MatEMTP.                              while ifreq <= nfreq
+This erutio is achieved only after modifying EMTP [ll] to                           w=Wall (ifreq);
+disable plot data storage before 7.95 seconds.                                      if w -= wdone
+    If the EMTP initilization time is excluded, the eratio                             steadyl; % ( s e e code b e l o w )
+                                                                                      wdone=w;
+becomes 2.5 for At = 5Ops and 10 for At = l o p s .                                   mbranch(3); %accumulate steady-state at t=O
+MatEMTP CPU time is an almost linear function of the total                          end
+number of solution steps.                                                           ifreq=ifreq+l;
+    Case 2 has an erutio of z 7 . The case 3 eratio is z 6 . If                    end
+the number of line sections is dropped to 500 (by deleting                         Vn=Vn-init; %solution at t=O
+                                         .
+phases b and c) then eratio 5 5.7 This relative insensitivity
+                                                                                     The following lines are from steadyl .m :
+to network dimensions is the result of both methodologies                      %steady-state module step for the frequency w
+using sparse matrix techniques.                                                Yn=sparse (n,n) ; %Build Yn
+    A detailed analysis of MatEMTP CPU usage in the time-                      mbranch(2); %contribution to Yn by branch models
+step loop for the typical case of Fig. 3, shows the following                  Ytmp=[Yn Vadj'; Vadj sparse(nVs,nVs)];
+disposition: less than 15% for LU factorization and triangular                 Stmp=sparse(l:nS,l:nS,Sactive)*
+                                                                                  [Sadj sparse (nS,nVs) ] ; %active switches
+solution, close to 60% for updating the right hand side of                     Sz =sparse(l:nS,l:nS,-Sactive);
+equation (1) and the remaining is for individual model                         Yaug=[Ytmp Stmp'; Stmp Sz 1;
+updates. Half of that 60% is drained by the source function                    %
+ms0urce.m. A promising possibility is the replacement of such                  In=zeros(n,l);     %n is the number of nodes
+functions by compiled C language MEX-files [12], but this                      msource(3); %put sources in Vs and In f o r w
+                                                                               Itmp=[In; Vs];
+should be applied only at the last stage of programming.                       Iaug=[Itmp; zeros(nS,l) ] ; %account for switches
+Another possibility is to resort to an automatic M-file com-                   Vaug=Yaug\Iaug;         %compute unknown phasors
+piler.                                                                         Vn=Vaug (1:n) ;         %nodal phasor voltages
+                                                                               Vn-init=real (Vn)+Vn-init;      %at t=O accumulate
+                        CONCLUSIONS                                            IVs=real(Vaug(n+l:n+nVs))+IVs; %v source currents
+                                                                               IS=real(Vaug(n+nVs+l:n+nVs+nS))+IS; %switch currents
+
+    This paper has demonstrated an implementation of a com-
+                                                                                                                APPENDIX B
+prehensive electromagnetic transients analysis program using
+MATLAB as a computational engine.                                                    MatEMTP time-domain solution module: time1oop.m
+    Used algorithms provide results identical to those from the
+EM".     However, the proposed environment is implemented                      Yn=sparse(n,n);    %Initialize the conductance matrix
+in very few lines of code, is easily expandable, modifiable and                mbranch (5);      %Contributions to Yn
+highly portable. It also eliminates EMTP modelling limita-                     Ytmp=[Yn Vadj'; Vadj sparse(nVs,nVs)];
+                                                                               Saug=[Sadj sparse(nS,nVs)]; %account for switches
+tions through a less restrictive formulation of main network                   reBuild=l ;
+equations.                                                                     Vs=zeros (nVs,1); %eliminate alloc functions
+    Although in a few cases the new environment is faster, in                  %
+general studies show that the conventional coding retains a                    for itime=l:tmax %start of main loop
+speed advantage ranging from 2.51 in the best case to 1O:l in                        . . . p r i n t i n g and p l o t t i n g f u n c t i o n s . . .
+                                                                                    t=t+Dt;
+the worst case. Ideas for reducing this ratio have been pro-                        In=zeros (n,1);                  %currents may add
+posed.                                                                              msource (4 ;                     %contribution to Vs and In
+
+
+
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 13:48:52 UTC from IEEE Xplore. Restrictions apply.
+386
+    mbranch(6);         %contribution to In from history                            %
+    Iaug=[In; V s ; zeros(nS,l)I;                                                   Vnout=[2; 3; 4;); %output request of node voltages
+    %
+    if (reBuild) %process switches and LU if rebuild                                                             APPENDIX D
+      Stmp=sparse (l:nS,l:nS,Sactive)*Saug;
+      Sz=sparse(l:nS,l:nS,-Sactive);                                                                Partial listinp for the test case:pi.m
+      Yaug=[Ytmp Stmp'; Stmp Sz];                                                   ...
+      [LL,UU]=lu (Yaug);                                                            %PI section model
+    end;                                                                            PIadj=sparse (54,n); %node incidence matrix
+    tmp=LL\Iaug; Vaug=UU\tmp;                                                       PIadj (1,3)=l; PIadj (1,4)=-1; %first pi-section
+    Vn=Vaug (1:n) ;       %extract nodal voltages                                                   PIadj (2,5)=-1;
+    IVs=Vaug(n+l:n+nVs); %voltage source currents                                   ...
+    IS=Vaug(n+nVs+l:n+nVs+nS); %switch currents                                     PIR=sparse ( 5 4 , 5 4 ) ;    %resistance matrix
+    %                                                                               PIL=sparse (54,54);           %inductance matrix
+  mbranch(7) ; %update history terms                                                PIC=sparse (54,54);           %capacitance matrix
+  mswitch(7); %update switch status, signal reBuild                                 %
+end %of main l o o p                                                                for k=1:2:54
+                                                                                    PIR(k:k+l,k:k+l)=[ .25387 .10212; .lo212 .69831];
+                               APPENDIX C                                           PIL(k:k+l, k:k+l)= [ . 56461 .13758;
+                                                                                                         .13758 .13139]*1e-03;
+        MatEMTP data file for the test case of Firr. 2                              PIC(k:k+l,k:k+l)=[ .7268 -.7268
+   The following is a listing of test2iwh.m, manual comments                                          -.7268 3.4012]*le-06;
+have been added for readability:                                                    end
+Dt=10e-06; tmax=ceil(0,05/Dt); %this is 50ms
+storedata=O;    %indicates hard disk store when 1
+steadystate=l; %request for steady state when 1                                                                  REFERENCES
+%
+n=6; %number of nodes                                                                   Electric Power Research Institute, EMTP Development
+%
+                                                                                        Coordination Group, EPRI EL-6412-L:Electromagnetic
+BUS=['BUSl ';'BUS12 ';'BUS13L1;'BUS13S';'BUS1S
+';'SRC   I ; ] ; %node names                                                            Transients Program Rule Book, Version 2
+%                                                                                       G. Bray and D. Pokrass: Understanding Ada, A Software
+%RLC model                                                                              Engineering Approach. John Wiley & Sons, 1985
+RLCad]=sparse (8,n) ;
+RLCadj(l,G)=l; RLCadj(l,l)=-1;                                                          MATLAB, High-Performance Numeric Computation and
+RLCad] (2,1)=1; RLCadj (2,2)=-1;                                                        Visualization Software. The Mathworks, Inc. MATLAB
+ ....                                                                                   User's guide, August 1992
+RLCad] ( 8 , 3 ) =l;
+%
+                                                                                        H. W. Dommel: Electromagnetic Transients Program ref-
+RLCout=[5;]; %current output for 5                                                      erence manual (EMTP Theory Book). Bonneville Power
+RLCR= [ 0 ; 0. OS; 0;0;0;22.61 ;0.5; 0;] ;                                              Administration, August 1986.
+RLCL=[0.006;0.002;0;0;0.006; 0.01972;O;O;l;
+RLCC=[0;0;8e-07; 8e-07;0;0;0;le-06; 1 ;
+                                                                                        C. W. Ho,A. E. Ruehli and P. A. Brennan: The modified
+%                                                                                       nodal approach to network analysis. Proc. 1974 Interna-
+%Sine current source model                                                              tional symposium on circuits and systems, San Francisco,
+Isineadj=sparse (2,n) ;
+                                                                                        pp. 505-509,April 1974
+              =1; Isineadj (2,l)=1;
+Isineadj (I,??)
+Imagn=[2.001; 1.1; 1 ; Iphl=[lO.O; 5.0; 1 ;                                             X. Lombard, J. Mahseredjian, S. Lefebvre and C. Kieny:
+Istart=[-l.O; -1.0; I; Istop=[Inf; Inf; 1 ;                                             Implementation of a new harmonic initialization method
+Iw=2*pi*[l80.0; 360.0; I ;                                                              in the EMTP. IEEE Trans. on Power Systems, Summer
+%
+%Ordinary switch model                                                                  Meeting 94,paper 94 SM 438-2PWRD
+Sadj=sparse (2,n);                                                                      B. Kullicke: Simulation program Netomac, Difference
+Sadj(l,3)=-l; Sadj(l,4)=1;                                                              conductance method for continuous and discontinuous
+Sadj (2,3)=-1; Sadj (2,5)=1:
+Sclose=[17.E-3; 22.E-3; 1;
+                                                                                        systems. Siemens Research and Development Reports,
+Seps=[O; 0; 1 ; Sopen=[Inf; Inf; 1;                                                     Vol. 10, pp. 299-302,1981,no. 5
+%                                                                                       SIMULINK, Dynamic System Simulation Software. The
+%
+                                                                                        Mathworks, Inc. (April 1993
+%Sine voltage source model
+Vadj=sparse (1,n) ;                                                                     F. Alvarado: EM" Workbook II. University of Wiscon-
+Vadj (1,6)=1;                                                                           sin at Madison. EL4651,Volume 2,June 1989
+Vsinein=[l;l; Vmag=[56.34; I ; Vphi=[O.O; 1 ;                                        [1O]C.Gary, A. Timotin, D. Critescu: Prediction of surge
+Vstart=[-1.0; I ; Vstop=[Inf; I ; Vw=2*pi*[60.0;1;
+
+
+
+
+        Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 13:48:52 UTC from IEEE Xplore. Restrictions apply.
+                                                                                                                                                           387
+
+     propagation influenced by corona and skin effect. Proc.
+     IEE, 130-A, pp. 264-272, July 1983.
+[l IlJ. Mahseredjian: The EMTP SUN and CRAY UNIX ver-
+     sions. Rapport IREQ-93-065, March 1993, Hydro-
+     Quebec
+[121MATLAB, High-PerformanceNumeric Computation and
+     Visualization Software. The Mathworks, Inc. External
+     Interface guide, January 1993
+
+                        BIOGRAPHIES
+
+   Jean Mahseredjian (M)received the B.Sc.A., M.Sc.A.
+and Ph.D. in Electrical Engineering from Ecole Polytechnique
+de Montrhl (Canada) in 1982, 1985 and 1990 respectively.
+At present he is a researcher at Institut de Recherche d'Hydro-
+Qukbec and an associate-professor at Ecole Polytechnique de
+Montrhl.
+   Fernando L. Alvarado (F)was born in Lima, Peru in
+1945. He received the BEE and PE degrees from the National
+University of Engineering in Lima, Peru, the MS degree from
+Clarkson College (now Clarkson University) in Potsdam,
+New York, and the Ph. D. degree from the University of
+Michigan in 1972. Since 1975 he has been with the University
+of Wisconsin in Madison, where he is currently a Professor of
+Electrical and Computer Engineering.
+
+
+
+
+              Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 13:48:52 UTC from IEEE Xplore. Restrictions apply.
+388
+                                      Discussion                                                identical (but fully vectorized) solution techniques are used by
+                                                                                                MatEMTP.
+V. Rajagopalan, Z. Yao, and E. Lecourtois (Chaire de                                                We agree with the discussers that the SIMULLNK building
+recherche industrielle Hydro-QuCbec-CRSNG, UniversitC                                           blocks can be successfully applied to the simulation of electri-
+du QuCbec, Trois-Rivikres, QuCbec, G9A 5H7, Canada):                                            cal circuits through the state variable approach. However such
+                                                                                                an approach is inherently slower than the sparse modified
+The authors describe an interesting link between MATLAB and the EMTP programs to                nodal analysis method proposed in this paper (see equation
+create an interacuve MatEMTP program Our expenence with both the EMTP and                       (1)). Our experience indicates that the current version (1.3~)
+Matlab-SIMULWK sofiware programs indicates that the user-friendly graphical inte~ace
+SIMULINK provides a much better environment for the linkmg of EMTP We have                      of SIMULINK becomes significantly slow when more than 50
+developed an extensive library of models in SIMcnINK environment called SIMUPELS                state variables are involved. This is not the case of MatEMTP
+[ 11 for the power electromc converters, transformers, and electrical machines, models for
+distributlon lines and other system components are avdable in SIMUBEEP [2],                     which has been shown to maintain its performance for very
+SIMUBEEP is used for the study of propagabon of disturbances in distribution systems            large cases. There are also other shortcomings for represent-
+During simulationin SIMULINK, it is possible to write the results on files and read results
+from files In this way, a complex model such as a converter-fed electrical machme can be        ing the network portion of a simulation in a state-variable
+studied in S I M U L m using three phase circuits with its complete topology and the            environment, such as the exact representation and initializa-
+required results can be written on files particularly for the current drawn from distribution
+lines These results mght be converted in to ASCII files and the results can then be used,       tion of nonlinear functions, the recalculation of topological
+if necessary, with the EMTP simulator with the complex loads modeled as current                 trees for ideal switch modelling, the solution of transmission
+sources Will the authors comment on their experiencewith SIMULINK simulator 7
+                                                                                                line functions and time-step delays for some feedback loops.
+References                                                                                      The state-variable representation is far less intuitive and
+[l] M Gheorghe, D 0 Neacsu, APittet, Z Yao and V RaJagopdan, “ S W E L S
+                                                                                                depleted from the physical realities of electric circuits.
+Simulation of Power Electromc Systems in the MATLAB-SIMULW Environment”,                             It is our opinion that the powerful graphical user interface
+Research Report 4E/95, CPEE, Universite du Quebec a Trois-Rvieres, Quebec, G9A
+5H7, Canada, Nov 1995
+                                                                                                of SIMULINK should be connected to MatEMTP for sche-
+121 E Lecourtois, D Neacsu, Z Yao and V Rapgopalan, “S-EEP           Simulation of A            matic capture and control system simulation. Interfacing con-
+Test Bench for the Study of Propagation of Disturbances in Electrical Distribution
+Systems”, Research Report 7Fi95, CPEE, Universite du Quebec a Trois-Rmeres, Quebec,
+                                                                                                trol system simulation in SIMULINK with the MatEMTP
+G9A 5H7, Canada, Jan 1996                                                                       network equations is similar to the interconnection of EMTP-
+                                                                                                TACS (Transient Analysis of Control Systems) module with
+Manuscript received February 8, 1996.                                                           the EMTP network solution module. Also, whenever state-
+                                                                                                variable modelling is more advantageous it can be created in
+                                                                                                SIMULINK and called in by MatEMTP acting as the main
+    J. Mahseredjian and F. Alvarado: We thank the discuss-                                      circuit simulation engine. It has been shown in this paper that
+ers for their interest in our work.                                                             in addition to control circuit diagrams SIMULLNK can be
+    We must first indicate that this paper did not present a link                               used for drawing electric circuit diagrams. A background pro-
+between MATLAB and EMTP, it rather describes a stand-                                           cess can convert such diagrams into nodal analysis equations.
+alone program named MatEMTP that can perform EMTP type                                          It must be pointed out however, that the lack of the notion of
+simulations entirely in MATLAB. MatEMTP is written                                              an electric node in SIMULINK (1.3~)severely limits the clar-
+through MATLAB M-files and its only links with the standard                                     ity of electric circuit diagrams and remains more appropriate
+EMTP (DCG-EPRI version) are its ability to decode the                                           for the original task of interconnecting control system blocks.
+EMTP data file syntax by means of a translation module (also
+implemented in MATLAB), and the fact that functionally                                          Manuscript received April 2, 1996.
+
+
+
+
+      Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 13:48:52 UTC from IEEE Xplore. Restrictions apply.
+

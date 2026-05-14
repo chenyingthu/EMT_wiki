@@ -72,7 +72,7 @@ updated: "2026-05-13"
 || 47 | digital-simulator.md | topics | topics/simulation/digital-simulator.md | P1 | 72 | 5800 | 34 | 20 | completed |
 || 48 | exponential-integrator.md | methods | methods/numerical-methods/exponential-integrator.md | P1 | 71 | 1246 | 6 | 13 | completed |
 ||| 49 | equivalent-modeling.md | models | models/equivalent/equivalent-modeling.md | P1 | 70 | 3388 | 119 | 10 | completed |
-|| 50 | emt-simulation.md | topics | topics/simulation/emt-simulation.md | P1 | 69 | 9771 | 16 | 463 | pending |
+|| 50 | emt-simulation.md | topics | topics/simulation/emt-simulation.md | P1 | 69 | 9771 | 16 | 463 | completed |
 || 51 | midc.md | methods | methods/power-electronics/midc.md | P1 | 68 | 1141 | 8 | 11 | pending |
 || 52 | balanced-three-phase-line.md | methods | methods/transmission-line/balanced-three-phase-line.md | P1 | 66 | 1282 | 6 | 12 | pending |
 || 53 | large-scale-hybrid-acdc-simulation.md | topics | topics/simulation/large-scale-hybrid-acdc-simulation.md | P1 | 64 | 1378 | 8 | 21 | pending |
@@ -478,6 +478,7 @@ updated: "2026-05-13"
 ||| 41 | cable-model.md | models/transmission-line/cable-model.md | 完成 | 4359字/79公式/13wikilinks/1SVG/3表格/24章节/7种建模方法 | 2026-05-14 |
 |||| 42 | hierarchical-control.md | methods/control/hierarchical-control.md | 完成 | 5110字/52公式/10wikilinks/1SVG/8表格/11章节/6篇来源论文/一次下垂+二次PI恢复+VSG+UHVDC三层控制架构 |
 
+|||| 50 | emt-simulation.md | topics/simulation/emt-simulation.md | 完成 | 4695字/51公式/40wikilinks/16章节/6篇来源论文/核心机制+多速率混合仿真+分网并行+精度评估 | 2026-05-14 |
 | 轮次 | 处理页面数 | 完成数 | 跳过数 | 备注 |
 |------|-----------|--------|--------|------|
 || 1 | 2 | 2 | 0 | MPC和TSC页面完成 |
