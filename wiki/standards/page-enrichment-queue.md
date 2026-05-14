@@ -64,7 +64,7 @@ updated: "2026-05-13"
 || 39 | phase-domain-modeling.md | topics | topics/modeling-methods/phase-domain-modeling.md | P1 | 78 | 1440 | 2 | 14 | completed |
 || 40 | earth-return-impedance.md | methods | methods/transmission-line/earth-return-impedance.md | P1 | 81 | 1290 | 2 | 12 | completed |
 || 41 | cable-model.md | models | models/transmission-line/cable-model.md | P1 | 76 | 2104 | 6 | 58 | completed |
-|| 42 | hierarchical-control.md | methods | methods/control/hierarchical-control.md | P1 | 75 | 1257 | 5 | 13 | pending |
+|| 42 | hierarchical-control.md | methods | methods/control/hierarchical-control.md | P1 | 75 | 1257 | 5 | 13 | completed |
 || 43 | frequency-domain-analysis.md | topics | topics/tools-software/frequency-domain-analysis.md | P1 | 74 | 1682 | 4 | 31 | pending |
 || 44 | pv-power-plant.md | topics | topics/renewable-storage/pv-power-plant.md | P1 | 73 | 1699 | 5 | 34 | pending |
 || 45 | weak-grid-vsc.md | models | models/equivalent/weak-grid-vsc.md | P1 | 73 | 1291 | 4 | 11 | pending |
@@ -476,6 +476,7 @@ updated: "2026-05-13"
 || 37 | ibr.md | methods/system-studies/ibr.md | 完成 | 1329字/54公式/12wikilinks/1SVG | 2026-05-14 |
 ||| 40 | earth-return-impedance.md | methods/transmission-line/earth-return-impedance.md | 完成 | 3913字/105公式/28wikilinks/1SVG | 2026-05-14 |
 ||| 41 | cable-model.md | models/transmission-line/cable-model.md | 完成 | 4359字/79公式/13wikilinks/1SVG/3表格/24章节/7种建模方法 | 2026-05-14 |
+|||| 42 | hierarchical-control.md | methods/control/hierarchical-control.md | 完成 | 5110字/52公式/10wikilinks/1SVG/8表格/11章节/6篇来源论文/一次下垂+二次PI恢复+VSG+UHVDC三层控制架构 |
 
 | 轮次 | 处理页面数 | 完成数 | 跳过数 | 备注 |
 |------|-----------|--------|--------|------|
