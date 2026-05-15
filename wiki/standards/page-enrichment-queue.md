@@ -131,7 +131,7 @@ updated: "2026-05-13"
 
 || 106 | power-flow-calculation.md | methods | methods/system-studies/power-flow-calculation.md | P2 | 34 | 7100 | 102 | 13 | completed |
 || 107 | large-scale-power-system.md | topics | topics/simulation/large-scale-power-system.md | P2 | 6847 | 58 | 26 | completed |
-|| 108 | optimal-power-flow.md | methods | methods/system-studies/optimal-power-flow.md | P2 | 33 | 1507 | 8 | 12 | pending |
+|| 108 | optimal-power-flow.md | methods | methods/system-studies/optimal-power-flow.md | P2 | 33 | 6622 | 33 | 13 | completed |
 || 109 | finite-element-method.md | methods | methods/network-solution/finite-element-method.md | P2 | 33 | 1568 | 12 | 25 | pending |
 || 110 | sequence-network-model.md | methods | methods/protection-fault/sequence-network-model.md | P2 | 33 | 1631 | 6 | 13 | pending |
 || 111 | fault-analysis.md | methods | methods/protection-fault/fault-analysis.md | P2 | 33 | 1942 | 1 | 16 | pending |
@@ -575,8 +575,8 @@ updated: "2026-05-13"
 |||| 84 | passivity-enforcement.md | methods/signal-processing/passivity-enforcement.md | 完成 | 4497字/121公式/19wikilinks/1表格/11章节/7篇来源论文/5种方法体系 | 2026-05-15 |
 ||||| 87 | multithreaded-parallel-computing.md | methods/simulation-technology/multithreaded-parallel-computing.md | 完成 | 986字/45公式(3块级+42行内)/15wikilinks(全部验证有效)/8章节/5种线程级任务划分(BTF/设备解耦/诺顿等效/多速率/场景级)/7篇来源论文/Abusalah2018 KLU-BTF 4线程1.39×/Xu2025 80×串行+2-3×并行/ParaEMT 25-36× | 2026-05-15 |
 |||||| 90 | small-signal-stability.md | methods/stability-analysis/small-signal-stability.md | 完成 | 7558字/97公式(17块级+80行内)/21wikilinks(全部验证有效)/10章节/6表格/4条分析路径(伴随电路-DAE-Floquet-频域扫描)/6篇来源论文(Chindu2023/Sajjadi2026/Jiang2025/Cifuentes2025/Masoom2025/Carreño2026)/伪特征值剔除/Floquet参与因子/CSCR 3.7/电流源型VSG强网稳定 | 2026-05-15 |
-||||||||| 98 | network-partitioning.md | topics/modeling-methods/network-partitioning.md | 完成 | 7056字/36公式/27wikilinks(全部验证有效)/9章节/4类分区原理(图划分负载均衡/电气边界/Schur补/LDE-Woodbury)/5项量化性能边界表/5个关键技术挑战/补偿法无延迟并行/MATE-TLM/SFA-MATE/7篇来源论文 | 2026-05-16 |
-|||||||||| 102 | state-space-average-method.md | methods/numerical-methods/state-space-average-method.md | 完成 | 1754字/140公式(30块级+110行内)/17wikilinks(全部验证有效)/11章节/8篇来源论文/6种方法体系(基本SSA/P-SSA/GSSA/P-GSSA/混合SSA-GSSA/死区补偿)/Berger2018 SSA在d>30°精度失效/Wang2019 P-GSSA 1.32%误差/量化性能边界表/选择指南 | 2026-05-16 |
-||| 107 | large-scale-power-system.md | topics/simulation/large-scale-power-system.md | 完成 | 6847字(中)/58公式(11块级+47行内)/26wikilinks(全部验证有效)/9章节/4类大规模EMT仿真方法体系(分区协同/并行计算/实时HIL/多速率)+9篇来源论文/12.8倍加速比(Rupasinghe2023)/faster-than-real-time SFA(Zhang2024)/Nelson River RTDS平台构建经验/Hydro-Québec离线→实时移植流程 | 2026-05-16 |
-|||||| 103 | concurrent-commutation-failure.md | methods/power-electronics/concurrent-commutation-failure.md | 完成 | 8149字/74公式(9块级+65行内)/15wikilinks(全部验证有效)/9章节/4种EMT建模方法(PAVM自动检测/MIIF电压灵敏度/负序相位修正/谐波传递等效电路)/5个关键技术挑战/3篇来源论文(Hong2022/Yao2023/Zhang2018)/量化性能边界表/适用边界与选择指南 | 2026-05-16 |
-|||||| 104 | grid-forming-inverter.md | models | models/converter/grid-forming-inverter.md | 完成 | 1547字/87公式(20块级+67行内)/12wikilinks(全部验证有效)/9章节/6种EMT建模方法(DSM/AVM/VSM/CISS/DI/PQ边界)/5个关键技术挑战/4篇来源论文(Nurunnabi2025/Misyris2021/Nguyen2021/Allabadi2024)/量化性能边界表/适用边界与选择指南 | 2026-05-16 |
+|||||||||| 98 | network-partitioning.md | topics/modeling-methods/network-partitioning.md | 完成 | 7056字/36公式/27wikilinks(全部验证有效)/9章节/4类分区原理(图划分负载均衡/电气边界/Schur补/LDE-Woodbury)/5项量化性能边界表/5个关键技术挑战/补偿法无延迟并行/MATE-TLM/SFA-MATE/7篇来源论文 | 2026-05-16 |
+|||| 107 | large-scale-power-system.md | topics/simulation/large-scale-power-system.md | 完成 | 6847字(中)/58公式(11块级+47行内)/26wikilinks(全部验证有效)/9章节/4类大规模EMT仿真方法体系(分区协同/并行计算/实时HIL/多速率)+9篇来源论文/12.8倍加速比(Rupasinghe2023)/faster-than-real-time SFA(Zhang2024)/Nelson River RTDS平台构建经验/Hydro-Québec离线→实时移植流程 | 2026-05-16 |
+||||||| 103 | concurrent-commutation-failure.md | methods/power-electronics/concurrent-commutation-failure.md | 完成 | 8149字/74公式(9块级+65行内)/15wikilinks(全部验证有效)/9章节/4种EMT建模方法(PAVM自动检测/MIIF电压灵敏度/负序相位修正/谐波传递等效电路)/5个关键技术挑战/3篇来源论文(Hong2022/Yao2023/Zhang2018)/量化性能边界表/适用边界与选择指南 | 2026-05-16 |
+||||||| 104 | grid-forming-inverter.md | models | models/converter/grid-forming-inverter.md | 完成 | 1547字/87公式(20块级+67行内)/12wikilinks(全部验证有效)/9章节/6种EMT建模方法(DSM/AVM/VSM/CISS/DI/PQ边界)/5个关键技术挑战/4篇来源论文(Nurunnabi2025/Misyris2021/Nguyen2021/Allabadi2024)/量化性能边界表/适用边界与选择指南 | 2026-05-16 |
+||| 108 | optimal-power-flow.md | methods | methods/system-studies/optimal-power-flow.md | 完成 | 6622字/33公式/13wikilinks/6种EMT-OPF协同方法/9章节/6篇来源论文(混合GA-Simplex/并行GA/筛选/多相潮流/MMC限流器/风电场优化) | 2026-05-16 |
