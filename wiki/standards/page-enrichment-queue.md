@@ -90,7 +90,7 @@ updated: "2026-05-13"
 ||| 65 | emt-simulation-verification.md | methods | methods/system-studies/emt-simulation-verification.md | P1 | 55 | 1002 | 30 | 17 | completed |
 || 66 | frequency-control.md | methods | methods/control/frequency-control.md | P1 | 54 | 8556 | 120 | 11 | completed |
 || 67 | power-electronics-modeling.md | models | models/converter/power-electronics-modeling.md | P1 | 52 | 1105 | 11 | 9 | completed |
-|| 68 | curve-fitting.md | methods | methods/signal-processing/curve-fitting.md | P1 | 52 | 918 | 18 | 17 | pending |
+|| 68 | curve-fitting.md | methods | methods/signal-processing/curve-fitting.md | P1 | 52 | 918 | 18 | 17 | completed |
 || 69 | phasor-measurement-unit.md | methods | methods/system-studies/phasor-measurement-unit.md | P1 | 52 | 1649 | 3 | 16 | pending |
 || 70 | gruson-2011-reduced-mmc.md | models | models/equivalent/gruson-2011-reduced-mmc.md | P1 | 51 | 1059 | 11 | 6 | pending |
 || 71 | abb.md | entities | entities/industry/abb.md | P1 | 50 | 1797 | 0 | 15 | pending |
@@ -528,6 +528,7 @@ updated: "2026-05-13"
 |||| 43 | frequency-domain-analysis.md | topics/tools-software/frequency-domain-analysis.md | 完成 | 8912字/79公式/14wikilinks/1SVG/9章节/5种核心方法/9篇来源论文/方法体系架构图
 || 44 | 1 | 1 | 0 | pv-power-plant.md |
 |||| 58 | 1 | 1 | 0 | distributed-parameter-model页面完成（4761字，114公式，13wikilink，10章节，6篇来源论文，三大建模方法体系：FD-Line/JMarti行波/ULM相域模型/扩展Bergeron模型）
+||||||| 68 | curve-fitting.md | methods/signal-processing/curve-fitting.md | 完成 | 3200字/53公式(12块级+41行内)/11wikilinks/10章节/6种核心方法(VF/FpF/FDM%DC/CVF/低阶拟合/饱和曲线辨识)/6篇来源论文/量化性能边界表 | 2026-05-15 |
 
 ||||| 45 | power-quality.md | topics/renewable-storage/power-quality.md | 完成 | 3958字(中文)/98公式(28块级+70行内)/25wikilinks/1SVG/10章节/8篇来源论文/8种核心方法(谐波潮流/闪变/超谐波/dq-SDP/电压插值/HP-AVM/DHD降阶/非特征环流)/方法体系架构SVG图/五类精度-效率对照表 | 2026-05-14 |
 |||| 46 | digital-simulator.md | topics/simulation/digital-simulator.md | 完成 | 5800字/34公式(10块级+24行内)/20wikilinks/7表格/11章节/9篇来源论文/五平台架构对比表/场景-平台选择决策表/离线到实时移植经验/FPGA-RTDS联合仿真/GPU加速/FTRT硬件仿真
