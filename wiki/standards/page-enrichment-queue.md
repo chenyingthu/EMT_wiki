@@ -88,7 +88,7 @@ updated: "2026-05-13"
 ||| 63 | energy-storage-system.md | topics | topics/renewable-storage/energy-storage-system.md | P1 | 56 | 3116 | 50 | 19 | completed |
 || 64 | hybrid-modeling.md | methods | methods/simulation-technology/hybrid-modeling.md | P1 | 56 | 783 | 66 | 8 | completed |
 ||| 65 | emt-simulation-verification.md | methods | methods/system-studies/emt-simulation-verification.md | P1 | 55 | 1002 | 30 | 17 | completed |
-|| 66 | frequency-control.md | methods | methods/control/frequency-control.md | P1 | 54 | 1341 | 8 | 14 | pending |
+|| 66 | frequency-control.md | methods | methods/control/frequency-control.md | P1 | 54 | 8556 | 120 | 11 | completed |
 || 67 | power-electronics-modeling.md | models | models/converter/power-electronics-modeling.md | P1 | 52 | 1105 | 11 | 9 | pending |
 || 68 | curve-fitting.md | methods | methods/signal-processing/curve-fitting.md | P1 | 52 | 918 | 18 | 17 | pending |
 || 69 | phasor-measurement-unit.md | methods | methods/system-studies/phasor-measurement-unit.md | P1 | 52 | 1649 | 3 | 16 | pending |
@@ -543,3 +543,5 @@ updated: "2026-05-13"
 |||| 63 | energy-storage-system.md | topics/renewable-storage/energy-storage-system.md | 完成 | 3116字/50公式/19wikilinks/11章节/10篇来源论文/7表格/储能介质层(电池/超级电容/飞轮)+变流器层(传统PCS/MMC-BESS/MMC-STATCOM/MPT)+控制系统(VSG/自适应惯量/暂态功率补偿)+大规模并行(CPU-GPU/多速率/切换插值)
 544|||||| 64 | hybrid-modeling.md | methods/simulation-technology/hybrid-modeling.md | 完成 | 783字/66公式/8wikilinks/9章节/6种混合建模方法体系(详细简化/平均开关/EMT机电/EMT-DP协同/场路/软硬件)/5表格/量化性能边界表/5篇来源论文 | 2026-05-15 |
 545||||||| 65 | emt-simulation-verification.md | methods/system-studies/emt-simulation-verification.md | 完成 | 1002字/30公式(5块级+25行内)/17wikilinks/1SVG/13章节/6篇来源论文/五类验证方法/六步审计流程/量化性能边界表/IBR POI回放/XFC 271×加速 | 2026-05-15 |
+
+||||| 66 | frequency-control.md | methods/control/frequency-control.md | 完成 | 8556字/120公式(15块级+105行内)/11wikilinks/9章节/5种核心机制(同步机调速器/P-f下垂/VSG/自适应惯量/构网型PQ边界)/5表格/5篇来源论文/GFM vs GFL对比表/EMT初始化加速6.9倍 | 2026-05-15 |
