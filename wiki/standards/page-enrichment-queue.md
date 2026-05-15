@@ -111,7 +111,7 @@ updated: "2026-05-13"
 || 86 | pss-model.md | methods | methods/stability-analysis/pss-model.md | P2 | 41 | 1296 | 85 | 12 | completed |
 || 87 | multithreaded-parallel-computing.md | methods | methods/simulation-technology/multithreaded-parallel-computing.md | P2 | 41 | 986 | 45 | 15 | completed |
 || 88 | phase-domain-model.md | topics | topics/modeling-methods/phase-domain-model.md | P2 | 4684 | 35 | 15 | 20 | completed |
-|| 89 | model-compatibility-layer.md | methods | methods/system-studies/model-compatibility-layer.md | P2 | 39 | 1726 | 4 | 16 | pending |
+|| 89 | model-compatibility-layer.md | methods | methods/system-studies/model-compatibility-layer.md | P2 | 0 | 305 | 21 | 24 | completed |
 || 90 | small-signal-stability.md | methods | methods/stability-analysis/small-signal-stability.md | P2 | 39 | 1587 | 8 | 19 | pending |
 || 91 | gnanarathna-2011-efficient-mmc.md | models | models/equivalent/gnanarathna-2011-efficient-mmc.md | P2 | 39 | 1048 | 14 | 7 | pending |
 || 92 | excitation-system.md | methods | methods/stability-analysis/excitation-system.md | P2 | 39 | 1438 | 9 | 14 | pending |
@@ -485,6 +485,7 @@ updated: "2026-05-13"
 ||||| 86 | pss-model.md | methods/stability-analysis/pss-model.md | 完成 | 1296字/85公式(13块级+72行内)/12wikilinks(全部验证有效)/1SVG图/11章节/3篇来源论文/PSS控制链路+IEEE标准结构+Anderson变体+EMT离散化+参数整定+限幅处理 | 2026-05-15
 
 |||| 50 | emt-simulation.md | topics/simulation/emt-simulation.md | 完成 | 4695字/51公式/40wikilinks/16章节/6篇来源论文/核心机制+多速率混合仿真+分网并行+精度评估 | 2026-05-14 |
+||||| 43 | model-compatibility-layer.md | methods/system-studies/model-compatibility-layer.md | 完成 | 5385字/21公式/24wikilinks/10章节/5表格/4类映射/6篇来源论文 | 2026-05-15 |
 | 轮次 | 处理页面数 | 完成数 | 跳过数 | 备注 |
 |------|-----------|--------|--------|------|
 || 1 | 2 | 2 | 0 | MPC和TSC页面完成 |
