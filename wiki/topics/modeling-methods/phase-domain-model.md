@@ -1,100 +1,164 @@
 ---
 title: "相域模型 (Phase-Domain Model)"
 type: topic
-tags: [phase-domain, model, transmission-line, unbalanced, untranspose, asymmetrical]
+tags: [phase-domain, model, transmission-line, unbalanced, untransposed, asymmetrical, emt, synchronous-machine, wideband]
 created: "2026-05-02"
+updated: "2026-05-15"
 ---
 
 # 相域模型 (Phase-Domain Model)
 
+## 定义
 
-```mermaid
-graph TD
-    N0[相域模型 (Phase-Doma…]
-    N1[定义与边界]
-    N0 --> N1
-    N2[EMT 中的作用]
-    N0 --> N2
-    N3[主要分支与机制]
-    N0 --> N3
-    N4[适用边界与失败模式]
-    N0 --> N4
-    N5[代表性来源]
-    N0 --> N5
-    N6[与相关页面的关系]
-    N0 --> N6
-    N7[开放问题]
-    N0 --> N7
-```
+相域模型（Phase-Domain Model）是在 $abc$ 相坐标中直接表示线路、变压器、电机、电缆、故障和控制接口的建模路线。其核心特征是**保留相间耦合、不对称参数、非换位结构和任意相别故障**，而不是先假设三相完全对称再解耦到模域或序域。
 
+在 EMT 仿真中，相域模型用相电压 $\mathbf{v}_{abc} = [v_a, v_b, v_c]^T$ 和相电流 $\mathbf{i}_{abc} = [i_a, i_b, i_c]^T$ 作为网络接口量，通过相域阻抗矩阵 $\mathbf{Z}_{abc}$ 和导纳矩阵 $\mathbf{Y}_{abc}$ 描述多导体耦合系统。若线路、回流路径或几何不对称，矩阵元素随相别和频率变化。
 
-## 定义与边界
-
-相域模型（Phase-Domain Model）是在 $abc$ 相坐标中直接表示线路、变压器、电机、电缆、故障和控制接口的建模路线。它保留相间耦合、不对称参数、非换位结构和任意相别故障，而不是先假设三相完全对称再解耦到模域或序域。
-
-本页讨论相域建模的主题边界。它不同于 [[phase-domain-modeling]] 方法页，也不同于 [[symmetrical-components]] 的序域分析工具。相域模型不是自动更“精确”的模型；它只是减少了对称性和常数变换假设，代价是矩阵维度、参数辨识、频变拟合和数值稳定性要求更高。
-
-## EMT 中的作用
+## EMT 中的角色
 
 EMT 仿真常以相电压和相电流作为网络接口，因此相域模型是非对称线路、不平衡故障、多芯电缆、三相变压器、同步机和电力电子接口的重要底层表达。它适合研究：
 
-- [[unbalanced-fault-analysis]]、非全相运行和保护测量中的相别差异。
-- 非换位或不完全换位线路中的负序、零序和相间耦合。
-- [[frequency-dependent-line-model]]、电缆护层、铠装层和接地导体的多导体宽频传播。
-- 三相三柱变压器、相域同步机和饱和磁路引起的相间耦合。
-- [[real-time-simulation]] 中需要保留相域频变线路而又满足固定步长约束的硬件实现。
+- [[unbalanced-fault-analysis]]、非全相运行和保护测量中的相别差异
+- 非换位或不完全换位线路中的负序、零序和相间耦合
+- [[frequency-dependent-line-model]]、电缆护层、铠装层和接地导体的多导体宽频传播
+- 三相三柱变压器、相域同步机和饱和磁路引起的相间耦合
+- [[real-time-simulation]] 中需要保留相域频变线路而又满足固定步长约束的硬件实现
 
-## 主要分支与机制
+## 形式化表达
 
-相域网络的基本端口形式为
+### 基本端口方程
 
-$$
-\mathbf{i}_{abc}(s)=\mathbf{Y}_{abc}(s)\mathbf{v}_{abc}(s),
-\qquad
-\mathbf{Y}_{abc}(s)=\mathbf{Z}_{abc}^{-1}(s).
-$$
+相域网络的基本端口形式为：
 
-其中 $\mathbf{v}_{abc}=[v_a,v_b,v_c]^T$，$\mathbf{i}_{abc}=[i_a,i_b,i_c]^T$，$\mathbf{Z}_{abc}$ 是相域阻抗矩阵。非对角元素 $Z_{ab},Z_{bc},Z_{ca}$ 表示相间互耦；若线路、回流路径或几何不对称，矩阵元素随相别和频率变化。
+$$\mathbf{i}_{abc}(s) = \mathbf{Y}_{abc}(s) \mathbf{v}_{abc}(s), \qquad \mathbf{Y}_{abc}(s) = \mathbf{Z}_{abc}^{-1}(s) \tag{1}$$
 
-对频变线路，常见宽频表达为
+其中 $\mathbf{v}_{abc} = [v_a, v_b, v_c]^T$，$\mathbf{i}_{abc} = [i_a, i_b, i_c]^T$，$\mathbf{Z}_{abc}$ 是相域阻抗矩阵。非对角元素 $Z_{ab}, Z_{bc}, Z_{ca}$ 表示相间互耦。
 
-$$
-\mathbf{Z}_{abc}(\omega)=\mathbf{R}(\omega)+j\omega\mathbf{L}(\omega),
-\qquad
-\mathbf{Y}_{sh,abc}(\omega)=\mathbf{G}(\omega)+j\omega\mathbf{C}(\omega).
-$$
+### 频变阻抗与导纳
 
-其中 $\mathbf{R},\mathbf{L},\mathbf{G},\mathbf{C}$ 分别表示频率相关的电阻、电感、电导和电容矩阵。进入时域 EMT 时，这些频响通常需要有理函数拟合、递归卷积或状态空间实现。
+对频变线路，常见宽频表达为：
 
-相域与模域的差异可概括为：模域通过变换 $\mathbf{T}$ 试图解耦传播模态，$\mathbf{v}_{m}=\mathbf{T}^{-1}\mathbf{v}_{abc}$；相域则保留耦合矩阵，避免把频变或不对称的 $\mathbf{T}(\omega)$ 简化为常数矩阵。是否值得这样做取决于不对称程度、目标频带和计算约束。
+$$\mathbf{Z}_{abc}(\omega) = \mathbf{R}(\omega) + j\omega\mathbf{L}(\omega), \qquad \mathbf{Y}_{sh,abc}(\omega) = \mathbf{G}(\omega) + j\omega\mathbf{C}(\omega) \tag{2}$$
 
-## 适用边界与失败模式
+其中 $\mathbf{R}, \mathbf{L}, \mathbf{G}, \mathbf{C}$ 分别表示频率相关的电阻、电感、电导和电容矩阵。进入时域 EMT 时，这些频响通常需要有理函数拟合、递归卷积或状态空间实现。
 
-- 相域模型需要完整的相间和对地参数。若几何、土壤、电缆护层、接地方式或测量数据不足，直接相域计算也可能只是精细外壳。
-- 对宽频模型，逐元素拟合可能破坏矩阵无源性或互易性；需要 [[passivity-enforcement]]、误差检查和时域稳定验证。
-- 矩阵维度随导体数和节点数增加。三相网络约为正序网络的三倍维度，多导体电缆还会继续扩大。
-- 相域模型保留不平衡，但不自动处理非线性磁路、电弧、避雷器或控制限幅；这些仍需独立模型。
-- 实时或 FPGA 实现中的步长、定点/浮点格式和流水线资源结论必须绑定平台，不能从单篇线路算例外推。
+### 相域 vs 模域的差异
 
-## 代表性来源
+模域通过变换 $\mathbf{T}$ 试图解耦传播模态，$\mathbf{v}_m = \mathbf{T}^{-1} \mathbf{v}_{abc}$；相域则保留耦合矩阵，避免把频变或不对称的 $\mathbf{T}(\omega)$ 简化为常数矩阵。是否值得这样做取决于不对称程度、目标频带和计算约束。
 
-- [[application-of-frequency-partitioning-fitting-to-the-phase-domain-frequency-depe]] 将频域分区拟合用于相域频变架空线建模，支撑“相域宽频矩阵拟合需要误差和稳定性检查”的讨论。
-- [[development-of-phase-domain-frequency-dependent-transmission-line-model-on-fpga-]] 讨论 FPGA 上的相域频变线路实时模型；其步长和资源结论应限定在原文线路规模和硬件平台。
-- [[an-efficient-phase-domain-synchronous-machine-model-with-constant-equivalent-adm]] 可作为相域同步机恒等效导纳模型的来源入口。
-- [[phase-domain-model-of-twelve-phase-synchronous-machine-for-emtp-type-simulation]] 可作为多相同步机相域 EMT 模型的来源入口。
-- [[modeling-and-application-of-dq-sequence-dynamic-phasors-under-unbalanced-ac-cond]] 可用于连接相域不平衡波形和 dq 序动态相量表示。
+### 相域 Bergeron 等效电路
 
-## 与相关页面的关系
+基于相域 Bergeron 型波动方程，时域解可写成端点等效电路（以发送端为例）：
 
-- [[phase-domain-modeling]] 是更具体的方法页；本页说明相域模型作为主题的边界。
-- [[modal-transformation]] 和 [[modal-domain-decoupling]] 解释模域路线；它们与相域模型是建模坐标选择的两端。
-- [[symmetrical-components]] 与 [[sequence-component-method]] 适合工频序域解释；相域模型适合直接处理不对称 EMT 波形。
-- [[frequency-dependent-line-model]]、[[universal-line-model]] 和 [[wideband-modeling]] 是相域宽频线路的重要相邻模型和方法。
-- [[unbalanced-fault-analysis]] 是相域模型的典型应用场景，但故障模型和保护逻辑仍需单独定义。
+$$i_k(t) = \mathbf{G} \mathbf{v}_k(t) - \mathbf{i}_{hist,k}(t) \tag{3}$$
+
+$$\mathbf{i}_{hist,k}(t) = \mathbf{Y}_c \mathbf{v}_k(t-\Delta t) - 2\mathbf{H} \mathbf{i}_{mr}(t-\Delta t - \tau) \tag{4}$$
+
+其中 $\mathbf{G}$ 为等效导纳矩阵，$\mathbf{Y}_c$ 为特征导纳矩阵，$\mathbf{H}$ 为传播函数矩阵，$\tau$ 为行波延迟时间。这是相域频变线路模型嵌入 EMT 网络方程的核心接口方程。
+
+### 同步机恒定诺顿导纳等效
+
+Xia et al. (2019) 将传统相域同步机模型中随转子位置变化的等效电阻矩阵，通过 Park 变换分解为恒定分量与转子位置相关分量，并将相关分量移至历史电压源中，从而构造出**恒定等效导纳矩阵**的诺顿等效电路：
+
+$$\mathbf{R}_{eq,const} = -R_s + \mathbf{K}^{-1}(\theta_r) \mathbf{R}_a \mathbf{K}(\theta_r) \tag{5}$$
+
+定子电压离散方程为：
+
+$$v_{abcs}(k) = \mathbf{R}_{eq,const} \mathbf{i}_{abcs}(k) + \mathbf{e}_{rh}(k) \tag{6}$$
+
+恒定导纳特性使网络总导纳矩阵无需随转子位置更新，适合大规模 EMT 节点分析仿真。E-PD 模型单步浮点运算降至 175 FLOPs，较 VBR 模型 (298 FLOPs) 降低约 41.3%，较 CC-PD 模型 (316 FLOPs) 降低约 44.6%（Xia et al. 2019）。
+
+## EMT 建模方法
+
+### 方法一：频域分区拟合（FpF）相域线路模型
+
+Noda (2015) 将频域分区拟合（Frequency-Partitioning Fitting, FpF）方法应用于相域频变架空线路建模，以替代传统的矢量拟合（VF）法。该方法基于 ULM 框架，直接在相域处理特征导纳矩阵和传播函数矩阵的频率响应。
+
+**核心机制**：首先利用 Carson 公式计算线路频域参数；随后采用混合误差评估策略（大信号用相对误差、近零信号用绝对误差）进行频域分区，在各子区间内独立辨识极点；针对传播函数矩阵，显式提取模态行波时延并设定拟合上限频率以剔除冗余极点；引入基于采样定理的理论低通滤波器抑制高频数值振荡；最后利用 SVD 求解病态最小二乘问题以获取留数矩阵。
+
+**关键数值**：混合加权算法使矩阵拟合最大绝对偏差降至 $1.2 \times 10^{-3}$；设定上限频率后，传播函数矩阵各模态拟合所需极点数量平均减少约 15%-20%（Noda 2015）。验证对象为日本 500 kV 双回架空输电线路（加贺-岭南线），波形与严格拉普拉斯变换法及现场冲击试验结果高度吻合。
+
+### 方法二：FPGA 并行流水相域频变线路模型
+
+Liu et al. (2021) 提出一种基于 FPGA 的频变相域（FDPD）输电线路实时仿真模型。该方法直接在相域进行计算，避免了传统模域模型中恒定变换矩阵在非对称线路中引入的误差。
+
+**核心机制**：硬件架构采用全流水线与并行计算设计，将矩阵参数按"并行维度（列）"与"流水线维度（行）"存储，实现多路乘加运算同步执行。针对 FPGA 资源与精度的矛盾，设计了 48 位自定义浮点数据格式，有效抑制长卷积累加过程中的舍入误差累积。
+
+**关键数值**：全流水线并行架构将 FDPD 线路模型实时仿真步长压缩至 2.4 µs～3.27 µs，较传统处理器大时间步长模型（约 50 µs）提升约 15～20 倍（Liu et al. 2021）。48 位自定义浮点格式在 VCU118 上实现时，LUT 占用率为 48.39%，DSP48 占用率为 47.08%，彻底消除了 32 位单精度模型在长卷积中的数值发散问题。
+
+### 方法三：磁路等效相域同步机模型
+
+Yonezawa (2023) 提出一种基于磁路等效的相域同步电机建模技术，将同步电机的电枢、励磁及阻尼绕组间的电磁耦合关系转化为由基本电路元件构成的磁路网络。
+
+**核心机制**：利用电流控制电流源（CCCS）将绕组电流映射为磁动势，通过受控电阻（其阻值随转子位置角 $\theta$ 实时变化）计算各绕组磁链，利用电压控制电流源（VCCS）与 1H 电感构成的微分电路求取磁链导数，得到感应电动势，再通过电压控制电压源（VCVS）注入电气回路。机械方程在控制子系统独立求解，通过单步延迟预测实现电-磁-机耦合。
+
+**关键数值**：模型在 100 µs 仿真步长下与 10 µs 步长参考模型的故障暂态波形高度接近，验证了单步延迟预测策略在该测试系统中的数值可用性（Yonezawa 2023）。通过受控电阻直接映射时变电感矩阵，可添加 4 次、6 次等空间谐波分量，或修改单相绕组参数以构造内部短路模型。
+
+### 方法四：恒定导纳相域同步机 E-PD 模型
+
+Xia et al. (2019) 提出的 E-PD 模型将同步机表示为恒定诺顿导纳并联受控电流源，消除了因转子位置变化导致的网络导纳矩阵更新与求逆操作。
+
+**核心机制**：在 qd0 旋转坐标系下重构转子电流与历史电压源表达式，利用稀疏常数矩阵替代全矩阵乘法运算。同时引入定子直轴电流的三点线性预测与代数校正机制，在避免网络导纳矩阵频繁更新与求逆的同时，保证相域直接接口的数值精度。
+
+**关键数值**：E-PD 模型单步浮点运算降至 175 FLOPs，较 VBR 模型 (298 FLOPs) 降低约 41.3%，较 CC-PD 模型 (316 FLOPs) 降低约 44.6%（Xia et al. 2019）。恒定导纳矩阵特性使大规模节点系统求解器的矩阵分解开销大幅降低。
+
+## 关键技术挑战
+
+### 挑战一：频变矩阵的有理函数拟合
+
+相域频变线路需要在宽频带内用矩阵部分分式展开（MPFE）拟合 $\mathbf{Y}_c(\omega)$ 和 $\mathbf{H}(\omega)$ 两个矩阵频响。传统矢量拟合（VF）方法中，$\mathbf{H}$ 的时域响应包含由模态行波时间差异造成的阶跃型变化，不能直接用有理函数拟合，需要结合 ULM 显式保留时延项。Noda (2015) 的 FpF 方法通过频率分区和自适应加权解决此问题。
+
+### 挑战二：数值稳定性与无源性
+
+即使 MPFE 的极点都在左半复平面，相域线路模型仍可能数值不稳定——这主要来源于不同模态行波时间差异产生的高频"尖峰电压"被放大。解决思路包括：低通滤波器抑制高频响应（Noda 2015 基于采样定理的理论滤波器）、利用 SVD 截断低贡献方程以避免病态最小二乘问题、以及选择合适的数值积分算法（如 2S-DIRK 方法避免虚假数值振荡）。
+
+### 挑战三：计算效率与实时约束
+
+相域模型的矩阵维度是正序/模域模型的 3 倍（若含大地回路和护层则更高），每步计算涉及多导体矩阵-向量乘加和递归卷积。实时/FPGA 实现中的挑战包括：如何在固定步长内完成矩阵运算、如何组织数据流以充分利用硬件并行性、以及如何平衡定点/浮点格式精度与资源占用。Liu et al. (2021) 的全流水线并行架构和 48 位自定义浮点格式提供了参考方案。
+
+### 挑战四：时变电感与恒定导纳的兼容
+
+同步机相域模型的等效导纳矩阵通常随转子位置变化，若直接嵌入网络方程，则每步需更新并重分解整体导纳矩阵，这对大规模 EMT 是显著开销。Xia et al. (2019) 通过方程重排将转子角相关性从矩阵项转移到历史源中，实现了恒定诺顿导纳。Yonezawa (2023) 则通过磁路等效和受控元件直接映射时变电感，提供了另一种保留相域结构的途径。
+
+## 量化性能边界
+
+| 研究 | 方法 | 步长 | 计算效率 | 精度 |
+|------|------|------|----------|------|
+| Noda 2015 | FpF 相域线路 + ULM | 未报告 | 极点数量减少 15-20% | 最大绝对偏差 $1.2 \times 10^{-3}$ |
+| Liu et al. 2021 | FPGA FDPD 线路（48 位浮点） | 2.4 µs～3.27 µs（实时） | 较 50 µs 模型提升 15-20 倍 | 与 PSCAD/EMTDC 基准误差可忽略 |
+| Yonezawa 2023 | 磁路等效 PD 同步机 | 100 µs | 未量化 | 与 EMTP-RV 和 UM 参考波形高度接近 |
+| Xia et al. 2019 | E-PD 同步机恒定导纳 | 50 µs（典型） | 175 FLOPs/步（较 VBR 降低 41.3%） | 与 CC-PD 和 VBR 波形精度相当 |
+
+## 适用边界与选择指南
+
+| 应用场景 | 推荐方法 | 原因 |
+|----------|----------|------|
+| 非对称/非换位架空线路宽频 EMT | FpF 相域线路模型（Noda 2015） | 避免频变模态变换矩阵近似，拟合精度高 |
+| 实时数字仿真（RTDS/FPGA） | FPGA FDPD 模型（Liu et al. 2021） | 全流水线并行，微秒级步长，48 位精度 |
+| 含空间谐波/内部故障的同步机 | 磁路等效 PD 模型（Yonezawa 2023） | 模型结构可编辑，受控元件映射时变电感 |
+| 大规模多机系统 EMT 节点分析 | E-PD 恒定导纳模型（Xia et al. 2019） | 恒定诺顿导纳消除矩阵重分解，175 FLOPs/步 |
+| 强不平衡故障/相间耦合分析 | 相域通用框架 + 节点分析 | 保留相间耦合，无需对称假设 |
+
+## 相关方法 / 相关模型 / 相关主题
+
+- [[phase-domain-modeling]] 是更具体的方法页；本页说明相域模型作为主题的边界
+- [[modal-transformation]] 和 [[modal-domain-decoupling]] 解释模域路线；它们与相域模型是建模坐标选择的两端
+- [[symmetrical-components]] 与 [[sequence-component-method]] 适合工频序域解释；相域模型适合直接处理不对称 EMT 波形
+- [[frequency-dependent-line-model]]、 [[universal-line-model]] 和 [[wideband-modeling]] 是相域宽频线路的重要相邻模型和方法
+- [[unbalanced-fault-analysis]] 是相域模型的典型应用场景，但故障模型和保护逻辑仍需单独定义
+- [[passivity-enforcement]] 是保证相域频变模型数值稳定性的关键后处理步骤
+- [[real-time-simulation]] 中 FPGA 相域线路模型是实现微秒级实时仿真的重要方案
+
+## 来源论文
+
+- [[application-of-frequency-partitioning-fitting-to-the-phase-domain-frequency-depe]] (Noda 2015) — 将 FpF 方法应用于相域频变架空线路，混合误差评估 + SVD 数值增强，500 kV 双回线路验证
+- [[development-of-phase-domain-frequency-dependent-transmission-line-model-on-fpga-]] (Liu et al. 2021) — FPGA 全流水线并行 FDPD 模型，2.4 µs～3.27 µs 实时步长，48 位自定义浮点
+- [[a-phase-domain-synchronous-machine-modeling-technique-by-using-magnetic-circuit-]] (Yonezawa 2023) — 磁路等效相域同步机，100 µs 步长，受控元件映射时变电感
+- [[an-efficient-phase-domain-synchronous-machine-model-with-constant-equivalent-adm]] (Xia et al. 2019) — E-PD 恒定导纳诺顿等效，175 FLOPs/步，较 VBR/CC-PD 降低 41-45%
 
 ## 开放问题
 
-- 如何为相域频变模型建立统一的拟合误差、无源性、互易性和时域稳定报告格式。
-- 如何在大规模 EMT 中平衡相域保真度、矩阵规模和实时仿真约束。
-- 如何把相域模型参数从几何计算、现场测量和设备厂家数据中一致地追溯。
-- 如何判断一个问题应使用相域模型、模域模型、序域模型或混合表示，而不是默认采用最复杂模型。
+- 如何为相域频变模型建立统一的拟合误差、无源性、互易性和时域稳定报告格式
+- 如何在大规模 EMT 中平衡相域保真度、矩阵规模和实时仿真约束
+- 如何把相域模型参数从几何计算、现场测量和设备厂家数据中一致地追溯
+- 如何判断一个问题应使用相域模型、模域模型、序域模型或混合表示，而不是默认采用最复杂模型

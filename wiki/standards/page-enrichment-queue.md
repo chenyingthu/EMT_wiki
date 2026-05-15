@@ -110,7 +110,7 @@ updated: "2026-05-13"
 || 85 | power-system-stabilizer.md | methods | methods/stability-analysis/power-system-stabilizer.md | P2 | 42 | 2500 | 21 | 12 | completed |
 || 86 | pss-model.md | methods | methods/stability-analysis/pss-model.md | P2 | 41 | 1296 | 85 | 12 | completed |
 || 87 | multithreaded-parallel-computing.md | methods | methods/simulation-technology/multithreaded-parallel-computing.md | P2 | 41 | 986 | 45 | 15 | completed |
-|| 88 | phase-domain-model.md | topics | topics/modeling-methods/phase-domain-model.md | P2 | 40 | 1454 | 11 | 20 | pending |
+|| 88 | phase-domain-model.md | topics | topics/modeling-methods/phase-domain-model.md | P2 | 4684 | 35 | 15 | 20 | completed |
 || 89 | model-compatibility-layer.md | methods | methods/system-studies/model-compatibility-layer.md | P2 | 39 | 1726 | 4 | 16 | pending |
 || 90 | small-signal-stability.md | methods | methods/stability-analysis/small-signal-stability.md | P2 | 39 | 1587 | 8 | 19 | pending |
 || 91 | gnanarathna-2011-efficient-mmc.md | models | models/equivalent/gnanarathna-2011-efficient-mmc.md | P2 | 39 | 1048 | 14 | 7 | pending |
