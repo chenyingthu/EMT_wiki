@@ -223,20 +223,20 @@ $$
 - [[sequence-network-model]]：序网等效电路建模
 - [[phase-domain-model]]：相域建模（适用于强耦合和非换位场景）
 - [[fault-impedance-model]]：故障阻抗建模
-- [[high-impedance-fault-detection]]：高阻故障检测方法
+- [[impedance-relay]]：高阻故障检测方法
 - [[distance-relay]]：距离保护继电器
 - [[grounding-system-model]]：接地系统模型
 - [[grounding-system-modeling]]：接地系统建模方法
 - [[differential-protection]]：差动保护原理
 - [[dynamic-phasor]]：动态相量法
-- [[pq-controllable-inverter]]：可编程逆变器控制
+- [[inverter-model]]：可编程逆变器控制
 - [[mmc-model]]：模块化多电平换流器模型
 - [[lcc-model]]：线换相换流器模型
 - [[emt-simulation-verification]]：EMT 仿真验证流程
 
 ## 来源论文
 
-- [[modeling-and-application-of-dq-sequence-dynamic-phasors-under-unbalanced-ac-cond|Mao 2025]] - dq 序动态相量法，专为非对称交流工况下 dq 坐标控制设备设计，在两端 MMC-HVDC 上验证，提供了统一的乘法性质和复数状态方程实数化方法
-- [[decision-tree-based-methodology-for-high-impedance-fault-detection|Sheng & Rovnyak 2004]] - 基于决策树的高阻故障检测，采样率 1920 Hz，100% 仿真测试准确率，HIF 检测延迟 ≤ 2 周期
-- [[a-new-distance-relaying-algorithm-based-on-complex-differential-equation-for-sym|Rosołowski 1997]] - 融合对称分量滤波与复数微分方程的距离保护算法，10 ms 响应，1 kHz 采样率，适合并行线路高阻远端故障
-- [[average-value-modeling-of-line-commutated-ac-dc-converters-with-unbalanced-ac-ne|Ebrahimi 2021]] - 不平衡交流网络中 LCC 换流器的平均值建模，适合与不对称故障分析联用
+- [[modeling-and-application-of-dq-sequence-dynamic-phasors-under-unbalanced-ac-cond]] - dq 序动态相量法，专为非对称交流工况下 dq 坐标控制设备设计，在两端 MMC-HVDC 上验证，提供了统一的乘法性质和复数状态方程实数化方法
+- [[decision-tree-based-methodology-for-high-impedance-fault-detection]] - 基于决策树的高阻故障检测，采样率 1920 Hz，100% 仿真测试准确率，HIF 检测延迟 ≤ 2 周期
+- [[a-new-distance-relaying-algorithm-based-on-complex-differential-equation-for-sym]] - 融合对称分量滤波与复数微分方程的距离保护算法，10 ms 响应，1 kHz 采样率，适合并行线路高阻远端故障
+- [[average-value-modeling-of-line-commutated-ac-dc-converters-with-unbalanced-ac-ne]] - 不平衡交流网络中 LCC 换流器的平均值建模，适合与不对称故障分析联用
