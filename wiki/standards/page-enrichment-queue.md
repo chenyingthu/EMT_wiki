@@ -93,7 +93,7 @@ updated: "2026-05-13"
 || 68 | curve-fitting.md | methods | methods/signal-processing/curve-fitting.md | P1 | 52 | 918 | 18 | 17 | completed |
 || 69 | phasor-measurement-unit.md | methods | methods/system-studies/phasor-measurement-unit.md | P1 | 52 | 1649 | 3 | 16 | completed 
 || 70 | gruson-2011-reduced-mmc.md | models | models/equivalent/gruson-2011-reduced-mmc.md | P1 | 51 | 2383 | 67 | 9 | completed |
-|| 71 | abb.md | entities | entities/industry/abb.md | P1 | 50 | 1797 | 0 | 15 | pending |
+|| 71 | abb.md | entities | entities/industry/abb.md | P1 | 50 | 1797 | 0 | 15 | completed |
 || 72 | phasor-model.md | methods | methods/system-studies/phasor-model.md | P2 | 50 | 1320 | 10 | 16 | pending |
 || 73 | fdtd.md | methods | methods/simulation-technology/fdtd.md | P2 | 48 | 1535 | 8 | 21 | pending |
 || 74 | harmonic-interaction.md | methods | methods/signal-processing/harmonic-interaction.md | P2 | 48 | 1763 | 6 | 27 | pending |
@@ -549,3 +549,4 @@ updated: "2026-05-13"
 |||||| 67 | power-electronics-modeling.md | models/converter/power-electronics-modeling.md | 完成 | 2700字(中)/65公式(15块级+50行内)/15wikilinks/10章节/6篇来源论文/五类模型精度-效率映射/SW-VI-AV-CCI-SCI框架
 |||||| 69 | phasor-measurement-unit.md | methods/system-studies/phasor-measurement-unit.md | 完成 | 3578字(中)/52公式(12块级+40行内)/16wikilinks(全部验证有效)/9章节/6种核心方法(DFT/MFPM/GAM/SFA/BFDP/DP)+4类估计算法对比表+量化性能边界表/6篇来源论文 | 2026-05-15 |
 |||| 70 | gruson-2011-reduced-mmc.md | models/equivalent/gruson-2011-reduced-mmc.md | 完成 | 2383字(中)/67公式(8块级+59行内)/9wikilinks(全部验证有效)/12章节/4种方法对比表+量化性能边界表+阻塞态等效电路/3篇来源论文(Ahmed2014连续模型/Gnanarathna2011戴维南/Gruson2011原始) | 2026-05-15 |
+||||| 71 | abb.md | entities/industry/abb.md | 完成 | 1797字/0公式/15wikilinks(全部验证有效)/已验证质量良好/实体页面(公司历史/技术演进/工程案例/竞争对比) | 2026-05-15 |
