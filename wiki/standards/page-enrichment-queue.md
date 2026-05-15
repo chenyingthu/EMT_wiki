@@ -122,7 +122,7 @@ updated: "2026-05-13"
 || 97 | network-partitioning.md | topics | topics/modeling-methods/network-partitioning.md | P2 | 37 | 7056 | 36 | 27 | completed |
 || 98 | eeac.md | methods | methods/stability-analysis/eeac.md | P2 | 36 | 10522 | 48 | 8 | completed |
 || 99 | ieee-39-bus-system.md | topics | topics/test-system/ieee-39-bus-system.md | P2 | 36 | 161 | 34 | 11 | completed |
-||| 100 | cloudpss.md | entities | entities/software/cloudpss.md | P2 | 36 | 2360 | 0 | 36 | pending |
+||| 100 | cloudpss.md | entities | entities/software/cloudpss.md | P2 | 36 | 2360 | 0 | 36 | completed |
 ||| 101 | complex-differential-equation-solving.md | methods | methods/system-studies/complex-differential-equation-solving.md | P2 | 36 | 1833 | 5 | 22 | completed |
 || 102 | state-space-average-method.md | methods | methods/numerical-methods/state-space-average-method.md | P2 | 35 | 1537 | 9 | 17 | pending |
 || 103 | concurrent-commutation-failure.md | methods | methods/power-electronics/concurrent-commutation-failure.md | P2 | 35 | 1863 | 1 | 13 | pending |
@@ -489,6 +489,7 @@ updated: "2026-05-13"
 |||||| 97 | eeac.md | methods/stability-analysis/eeac.md | 完成 | 10522字/48公式/8wikilinks/1SVG/9章节/5类EEAC变体+OMIB等效+面积裕度+稳定性分析框架 | 2026-05-16 |
 ||||||| 98 | ieee-39-bus-system.md | topics/test-system/ieee-39-bus-system.md | 完成 | 161字/34公式/11wikilinks/10章节/1篇来源论文/IEEE-39节点系统完整描述+发电机EMT模型+变压器模型+关键技术挑战+量化性能边界 | 2026-05-16 |
 
+|||||||| 99 | cloudpss.md | entities/software/cloudpss.md | 跳过 | 内容完整（技术演进脉络+ANSYS对比表+关键发现），实体页skip | 2026-05-16 |
 |||| 50 | emt-simulation.md | topics/simulation/emt-simulation.md | 完成 | 4695字/51公式/40wikilinks/16章节/6篇来源论文/核心机制+多速率混合仿真+分网并行+精度评估 | 2026-05-14 |
 ||||| 43 | model-compatibility-layer.md | methods/system-studies/model-compatibility-layer.md | 完成 | 5385字/21公式/24wikilinks/10章节/5表格/4类映射/6篇来源论文 | 2026-05-15 |
 |||||| 91 | gnanarathna-2011-efficient-mmc.md | models/equivalent/gnanarathna-2011-efficient-mmc.md | 完成 | 4577字/90公式/11wikilinks/0SVG/7章节 | 2026-05-15 |
