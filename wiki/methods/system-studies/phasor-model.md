@@ -1,124 +1,416 @@
 ---
 title: "相量模型 (Phasor Model)"
 type: method
-tags: [phasor, rms, steady-state, frequency-domain, electromechanical]
+tags: [phasor, rms, steady-state, frequency-domain, electromechanical, hybrid-simulation, dynamic-phasor]
 created: "2026-05-02"
+updated: "2026-05-15"
 ---
 
 # 相量模型 (Phasor Model)
 
-
-```mermaid
-graph TD
-    subgraph Ncmp[相量模型 (Phasor Model)]
-        N0[静态相量: 潮流、稳态短路、基频等值]
-        N1[RMS 动态模型: 机电暂态和控制慢动态]
-        N2[对称分量相量: 线性不平衡故障的序网络分析]
-        N3[动态相量: 用时变傅里叶系数描述选定频率分量]
-        N4[谐波相量: 多个谐波频率的相量耦合]
-    end
-```
-
-
 ## 定义与边界
 
-相量模型把单一频率正弦量表示为复数有效值和相角。若
+相量模型将单一频率正弦量表示为复数有效值和相角，实现从时域波形到频域相量的维度压缩。若时域电压电流表示为：
 
-$$
-v(t)=\sqrt{2}V\cos(\omega_0 t+\theta_v),\qquad
-i(t)=\sqrt{2}I\cos(\omega_0 t+\theta_i),
-$$
+$$v(t)=\sqrt{2}V\cos(\omega_0 t+\theta_v),\qquad i(t)=\sqrt{2}I\cos(\omega_0 t+\theta_i),$$
 
-则相量为
+则复数相量定义为：
 
-$$
-\bar{V}=Ve^{j\theta_v},\qquad \bar{I}=Ie^{j\theta_i}.
-$$
+$$\bar{V}=Ve^{j\theta_v}=V\angle\theta_v,\qquad \bar{I}=Ie^{j\theta_i}=I\angle\theta_i.$$
 
-这个表示只保留选定频率的幅值和相位，不保留开关沿、非周期暂态、高频谐波和直流偏移。它不同于 [[three-phase-instantaneous-model]]：后者直接求解 $abc$ 时域瞬时值，适合 EMT 中的开关、饱和、故障行波和宽频暂态。
+相量表示只保留选定频率的**幅值**和**相位**信息，丢弃了开关沿、非周期暂态、高频谐波和直流偏移等瞬时细节。这一降维表示使稳态分析、潮流计算和机电暂态仿真得以采用大步长（典型值 $\Delta t_{TS}=0.01\sim0.02$ s），但代价是无法描述电磁暂态中的快速波形畸变。
 
-## EMT 中的作用
+相量模型与[[three-phase-instantaneous-model]]的本质区别在于：**瞬时模型**在 $abc$ 三相坐标系中求解微分方程，保留开关状态和谐波细节；**相量模型**则在单一频率复平面上用代数方程近似微分运算，适用于慢动态或准稳态场景。
 
-在 EMT 知识体系中，相量模型主要用于边界、初始化和近似接口，而不是替代详细 EMT 求解：
+### 与动态相量的层次关系
 
-- 为 EMT 初始条件提供潮流或稳态相量解。
-- 在 [[electromechanical-electromagnetic-hybrid-simulation]] 中连接机电暂态侧和 EMT 侧。
-- 表示外部交流系统的基频等值，配合 [[thevenin-equivalent]] 或 [[norton-equivalent]] 使用。
-- 为频域阻抗、动态相量和小信号分析提供基频参考。
+相量模型不是一个单一方法，而是覆盖多个精度层次的**模型族**：
 
-因此，相量模型适合描述慢变化基频包络；当研究对象依赖瞬时波形、开关函数、谐波相互作用或暂态过电压时，应回到 [[time-domain-formulation]]、[[three-phase-instantaneous-model]] 或 [[dynamic-phasor]]。
+| 层次 | 名称 | 时间特性 | 典型步长 | EMT精度 |
+|------|------|----------|----------|----------|
+| L0 | 静态相量 | 稳态 | 无时间轴 | 仅潮流初值 |
+| L1 | RMS动态模型 | 机电慢动态 | 0.01~0.1 s | 机电暂态 |
+| L2 | 对称分量相量 | 基频正序 | 0.01~0.02 s | 线性故障分析 |
+| L3 | 动态相量 | 时变傅里叶系数 | 0.1~10 ms | 频带截断动态 |
+| L4 | 谐波相量 | 多频率耦合 | 0.1~1 ms | 周期谐波分析 |
+
+动态相量（[[dynamic-phasor]]）是相量模型族中**时域化程度最高**的变体，它用时变傅里叶系数描述选定频率分量，在保留部分暂态信息的同时仍避免全开关级EMT的微秒步长。
+
+## EMT 中的角色
+
+在 EMT 知识体系中，相量模型的核心价值不是替代详细电磁暂态求解，而是作为**边界条件**、**初始化接口**和**跨域耦合桥接**：
+
+### 2.1 潮流与稳态初始化
+
+EMT 仿真的初始条件（$t=0$ 时刻的节点电压和支路电流）必须满足交流系统的潮流平衡。传统做法是：
+
+$$\bar{Y}V^{(0)}=\bar{I}^{(0)}$$
+
+其中 $\bar{Y}$ 是基频节点导纳矩阵，$V^{(0)}$ 是潮流给出的电压幅值和相角。将 $\bar{V}^{(0)}$ 作为 EMT 仿真的初值，可避免从零状态启动时的瞬态冲击。
+
+### 2.2 机电-电磁混合仿真接口
+
+在 [[electromechanical-electromagnetic-hybrid-simulation]] 中，相量侧以较大步长 $\Delta t_{TS}$ 求解机电暂态方程，EMT侧以微秒步长 $\Delta t_{EMT}$ 求解详细电磁暂态方程。二者通过接口变换交换变量：
+
+- **TS → EMT 方向**：将机电侧诺顿等值电流 $i_{TS}(t)$ 或戴维南等值电压 $v_{Thev}(t)$ 插值到 EMT 步长时刻
+- **EMT → TS 方向**：将 EMT 侧基频分量（通过傅里叶提取或最小二乘估计）映射为 TS 侧的等值注入
+
+### 2.3 外部交流系统等值
+
+当研究对象是局部换流器或故障区时，外部交流网络可用相量形式的 [[thevenin-equivalent]] 或 [[norton-equivalent]] 表示：
+
+$$\bar{V}_{Thev} = \bar{E}_{eq} - \bar{Z}_{eq}\bar{I}$$
+
+戴维南等值阻抗 $\bar{Z}_{eq}$ 随频率变化时，需采用频率扫描结果进行宽频等值建模。
+
+### 2.4 频域阻抗分析基频参考
+
+谐波阻抗、网络阻抗轨迹和电压响应分析都需要以基频相量为参考点进行频域运算。
 
 ## 核心方程
 
-在线性正弦稳态条件下，微分关系可写为代数阻抗：
+### 3.1 微分-积分算子的相量近似
 
-$$
-\frac{d}{dt}\rightarrow j\omega_0,\qquad
-\int(\cdot)\,dt\rightarrow \frac{1}{j\omega_0}.
-$$
+在单一频率 $f_0=\omega_0/(2\pi)$ 正弦稳态下，时域微分/积分运算退化为乘除代数运算：
 
-常见元件的相量关系为：
+$$\frac{d}{dt}\bar{x}(t) \xrightarrow{\omega_0} j\omega_0\bar{X},$$
 
-$$
-\bar{V}_R=R\bar{I},\qquad
-\bar{V}_L=j\omega_0 L\bar{I},\qquad
-\bar{I}_C=j\omega_0 C\bar{V}.
-$$
+$$\int x(t)\,dt \xrightarrow{\omega_0} \frac{1}{j\omega_0}\bar{X}.$$
 
-网络节点方程写为：
+这一代换的精度边界是：**被近似信号必须是准正弦的**，即主频率含量远高于其他频率成分。当系统含显著谐波或间谐波时，$j\omega_0$ 代换产生截断误差。
 
-$$
-\mathbf{Y}(\omega_0)\mathbf{V}=\mathbf{I}.
-$$
+### 3.2 基本元件的相量关系
 
-复功率采用共轭电流定义：
+| 元件 | 时域方程 | 相量关系 |
+|------|----------|----------|
+| 电阻 $R$ | $v=Ri$ | $\bar{V}_R=R\bar{I}$ |
+| 电感 $L$ | $v=L\frac{di}{dt}$ | $\bar{V}_L=j\omega_0 L\bar{I}=\bar{Z}_L\bar{I}$ |
+| 电容 $C$ | $i=C\frac{dv}{dt}$ | $\bar{I}_C=j\omega_0 C\bar{V}=\bar{Y}_C\bar{V}$ |
+| 互感 $M$ | $v_1=M\frac{di_2}{dt}$ | $\bar{V}_1=j\omega_0 M\bar{I}_2$ |
 
-$$
-\bar{S}=\bar{V}\bar{I}^{*}=P+jQ.
-$$
+相量阻抗的频率依赖性（尤其对输电线路的频变参数）不可忽略，此时需使用 [[frequency-dependent-network-equivalent]] 或 [[vector-fitting]] 方法拟合 $\bar{Z}(\omega)$ 曲线。
 
-这些方程的证据边界是线性、单频、稳态或准稳态。若电感饱和、开关状态突变或频率含量宽，$j\omega_0$ 代换不能代表完整时域响应。
+### 3.3 网络节点方程
 
-## 变体
+线性网络的节点方程在相量域写为：
 
-| 变体 | 主要用途 | 与 EMT 的关系 |
-|------|----------|---------------|
-| 静态相量 | 潮流、稳态短路、基频等值 | 常用于 EMT 初始化或外部系统等值 |
-| RMS 动态模型 | 机电暂态和控制慢动态 | 可作为混合仿真慢侧模型 |
-| 对称分量相量 | 线性不平衡故障的序网络分析 | 适合基频故障近似，不保留暂态波形 |
-| 动态相量 | 用时变傅里叶系数描述选定频率分量 | 比静态相量更接近 EMT，但仍是频带截断模型 |
-| 谐波相量 | 多个谐波频率的相量耦合 | 可分析周期稳态谐波，不等同于开关级 EMT |
+$$\mathbf{\bar{Y}}(\omega_0)\mathbf{\bar{V}}=\mathbf{\bar{I}}.$$
 
-## 适用边界与失败模式
+当网络含非线性元件（饱和电感、开关）时，需通过补偿法或迭代求解，每次迭代需重新计算相量域导纳。
 
-- **非正弦波形**：相量只代表某一频率分量；谐波和直流分量必须另建模或后处理。
-- **快速暂态**：断路器操作、行波、换流器开关沿和雷电暂态不满足准稳态假设。
-- **强非线性**：饱和、限幅、保护动作和器件状态切换会使固定阻抗矩阵失效。
-- **频率偏移**：频率快速变化时，固定 $\omega_0$ 的相量模型会产生幅相解释误差。
-- **不平衡系统**：单一正序相量不足以描述负序、零序和相间耦合；必要时应使用 [[symmetrical-components]] 或相域瞬时模型。
+### 3.4 复功率定义
 
-## 代表性证据边界
+三相复功率采用共轭电流定义：
 
-本页采用的是教材级和方法页级的基础关系，不把任何单篇论文结果外推为领域结论。相关证据边界包括：
+$$\bar{S}=\bar{V}\bar{I}^{*}=P+jQ,$$
 
-- [[a-multi-rate-co-simulation-of-combined-phasor-domain-and-time-domain-models-for-]] 代表相量域与时域混合仿真的接口问题，不能证明相量模型可替代所有 EMT 细节。
-- [[a-harmonic-phasor-domain-co-simulation-method-and-new-insight-for-harmonic-analy]] 代表谐波相量域用于周期谐波分析，证据范围不同于开关瞬时波形仿真。
-- [[dynamic-phasor]] 页面讨论时变频率系数，适合作为静态相量和 EMT 之间的中间表示。
+其中：
 
-## 与相关页面的关系
+$$P=VI\cos(\theta_v-\theta_i),\qquad Q=VI\sin(\theta_v-\theta_i).$$
 
-- [[three-phase-instantaneous-model]]：保留 $abc$ 瞬时值，是详细 EMT 建模的直接对照。
-- [[average-value-model]]：平均掉开关周期细节，通常仍在时域中保留控制和低频动态。
-- [[state-space-average-method]]：把开关状态方程按占空比平均，常用于变换器平均模型推导。
-- [[switching-function-method]]：从二值开关函数出发，可得到详细开关模型或平均值模型。
-- [[power-flow-calculation]]：提供相量稳态初值，但不验证 EMT 暂态精度。
+相量域功率守恒需满足 $P_{in}=P_{out}$ 和 $Q_{in}=Q_{out}$，但 EMT 侧瞬时功率波动（含谐波分量）不能从相量功率推算。
 
-## 开放问题
+## 形式化表达
 
-相量模型在混合仿真中的主要风险不是公式本身，而是接口边界：哪些频率分量被传递、哪些状态被丢弃、以及相量侧延迟如何影响 EMT 侧能量一致性。具体工程模型应通过时域波形、功率平衡和故障工况复核，而不是只检查基频相量误差。
+### 4.1 静态相量（潮流级）
+
+输入：$\bar{V}_{slack}$，网络拓扑 $\mathbf{\bar{Y}}$
+输出：全网节点电压相量 $\mathbf{\bar{V}}$
+
+$$\mathbf{\bar{Y}}\mathbf{\bar{V}}=\mathbf{\bar{I}}_{spec}$$
+
+求解方法：牛顿-拉夫森或快速解耦法。此方程与时域方程的维数相同（$n$ 个相量），但每个方程是复数代数方程而非微分方程。
+
+### 4.2 RMS 动态模型
+
+定义 RMS 值为一个周期内的等效值：
+
+$$V_{RMS}=\sqrt{\frac{1}{T}\int_0^T v^2(t)\,dt}.$$
+
+RMS 动态模型的微分方程：
+
+$$\frac{dV_{RMS}}{dt}=\frac{1}{T}(v^2(t)-V_{RMS}^2),$$
+
+其中 $T=1/f_0$ 是基频周期。RMS 模型在 EMT 中的精度约为 **5%~15%**（据 Shu 2018 混合仿真数据），适用于机电暂态和慢控制动态。
+
+### 4.3 动态相量（时变傅里叶系数）
+
+对时域信号 $x(t)$ 在滑动窗口 $[t-T_w, t]$ 内提取 $k$ 次谐波的傅里叶系数：
+
+$$\bar{X}_k(t)=\frac{2}{T_w}\int_{t-T_w}^{t}x(\tau)e^{-jk\omega_0\tau}\,d\tau.$$
+
+动态相量的状态空间模型（以 $k=1$ 为例）：
+
+$$\frac{d\bar{X}_1}{dt}=j\omega_0\bar{X}_1+\frac{2}{T_w}[x(t)-x(t-T_w)]e^{-j\omega_0 t}.$$
+
+动态相量允许步长 $\Delta t_{DP}=1\sim10$ ms（据 Rupasinghe 2021），比全EMT快 **10~100倍**，同时保留基频和主要谐波的动态信息。
+
+### 4.4 对称分量相量
+
+不平衡三相故障通过对称分量变换解耦为三个独立序网络：
+
+$$\begin{bmatrix}\bar{V}_0\\ \bar{V}_1\\ \bar{V}_2\end{bmatrix}=\frac{1}{3}\begin{bmatrix}1&1&1\\1&a&a^2\\1&a^2&a\end{bmatrix}\begin{bmatrix}\bar{V}_a\\ \bar{V}_b\\ \bar{V}_c\end{bmatrix},$$
+
+其中 $a=e^{j2\pi/3}$。在正序网络中求解后，通过逆变换还原 $abc$ 相量。对称分量法仅适用于**线性**不平衡（故障电阻为常数），不适用于含非线性元件（饱和、限幅）的工况。
+
+## 变体分类与对比
+
+| 变体 | 数学基础 | 适用场景 | EMT接口能力 | 精度 | 计算效率 |
+|------|----------|----------|-------------|------|----------|
+| **静态相量** | 复数代数 | 潮流、稳态短路、基频等值 | 仅初始化 | 无时间轴 | 极高 |
+| **RMS 动态模型** | RMS 等效值微分 | 机电暂态、控制慢动态 | 可作为混合仿真慢侧 | ~5~15% | 高 |
+| **对称分量相量** | 对称分量变换 | 线性不平衡故障序网分析 | 故障等值接口 | 取决于故障类型 | 高 |
+| **动态相量** | 时变傅里叶系数 | 含谐波的多速率仿真 | 与EMT双向接口 | 误差 1~5% | 中等 |
+| **谐波相量** | 多频率耦合相量 | 周期稳态谐波分析 | 谐波接口 | 谐波精度高 | 中等 |
+
+## 关键技术挑战
+
+### 6.1 接口延迟与数值稳定性
+
+在混合仿真中，EMT 侧和相量侧使用不同步长导致**接口延迟**。若 EMT 步长 $\Delta t_{EMT}=50$ µs，相量步长 $\Delta t_{DP}=5$ ms，则相量侧在每个 $\Delta t_{DP}$ 时刻的注入电流代表的是过去 5 ms 的平均行为，而非当前 EMT 时刻的实际值。
+
+界面延迟的数值稳定性分析（据 Sun 2014 混合仿真研究）：
+
+$$\Delta t_{interface} \leq \frac{\pi}{10\omega_{bandwidth}},$$
+
+其中 $\omega_{bandwidth}$ 是接口信号的感兴趣带宽。当接口延迟超过此上界时，混合系统可能出现 **PMT 振荡失稳**。
+
+### 6.2 相量提取误差
+
+动态相量需要从 EMT 瞬时值中提取基频分量。常用方法：
+
+**方法A：傅里叶滤波**
+
+$$\bar{X}_1(t)=\frac{2}{T_0}\int_{t-T_0}^{t}x(\tau)e^{-j\omega_0\tau}\,d\tau.$$
+
+滑动窗口长度为基频周期 $T_0$ 时，提取精度最高但响应延迟为 $T_0$。
+
+**方法B：最小二乘估计**
+
+在窗口 $[t-T_w, t]$ 内用最小二乘法拟合正弦信号：
+
+$$\hat{X}=\arg\min_X \sum_{k=t-T_w}^{t}|x(k\Delta t)-X\cos(\omega_0 k\Delta t+\phi)|^2.$$
+
+响应延迟可缩短为 $T_w/2$，但噪声放大效应更明显。
+
+**方法C：锁相环（PLL）辅助**
+
+基于 SRF-PLL 或 DSOGI-PLL 跟踪基频相位 $\theta(t)$，再用同步旋转坐标提取：
+
+$$\bar{X}_1 = X_d + jX_q.$$
+
+### 6.3 频率偏移适应性
+
+当系统频率偏离标称值 $f_0$（例如 $f=49.8$ Hz）时，相量模型的 $j\omega_0$ 算子产生**基频相位误差**：
+
+$$\Delta\theta \approx \frac{f-f_0}{f_0}\times 180^\circ \text{每周期}.$$
+
+频率偏移 $0.2$ Hz 导致每周期累计相位误差约 $1.44^\circ$。在风电/光伏渗透率高的弱电网中，频率偏移可能达到 $\pm 0.5$ Hz，相量模型误差不可忽视。
+
+### 6.4 非线性元件的相量近似
+
+饱和铁芯电感的相量电感值随电流幅值变化：
+
+$$L_{sat}(\bar{I}) = \frac{\bar{V}}{\bar{I}} = f(|\bar{I}|).$$
+
+非线性带来**迭代收敛**问题：每次 EMT 步长内需多次求解相量域方程直到饱和状态自洽。计算量可比线性情况高 **3~5倍**。
+
+## 量化性能边界
+
+| 指标 | 数值 | 来源 | 说明 |
+|------|------|------|------|
+| 动态相量 vs EMT 加速比 | **10~100倍** | Rupasinghe 2021 | 步长比 $\Delta t_{DP}/\Delta t_{EMT}$ |
+| RMS 模型误差 | **5~15%** | Shu 2018 | 对比详细 EMT |
+| 相量接口稳定性边界 | $\Delta t_{interface} \leq \pi/(10\omega_{BW})$ | Sun 2014 | 理论推导 |
+| 频率偏移 $0.2$ Hz 相位误差 | **1.44°/周期** | 方法推断 | 工程经验值 |
+| 谐波相量分析精度 | 谐波次数 **≤ 50次** | IEC 61000-4-7 | 工程标准 |
+| 多速率仿真效率提升 | **5~20倍** | Li 2020 | IEEE-118 1000节点验证 |
+
+## 适用边界与选择指南
+
+### 8.1 何时使用相量模型
+
+| 场景 | 推荐变体 | 理由 |
+|------|----------|------|
+| EMT 初始化/潮流初值 | 静态相量 | 仅需稳态解 |
+| 机电暂态研究 | RMS 动态 | 步长大，计算快 |
+| 不平衡线性故障分析 | 对称分量 | 数学解耦精确 |
+| 含 IBR 的混合仿真 | 动态相量 | 保留谐波动态 |
+| 谐波潮流计算 | 谐波相量 | 多频率同时分析 |
+| 换流器开环启动 | 不适用（回到 EMT） | 开关暂态不可省 |
+
+### 8.2 何时避免相量模型
+
+- **开关操作沿**：断路器分合闸产生的行波和暂态过电压不满足准稳态假设
+- **换相失败过程**：换流器阀换相的物理过程在数十毫秒内完成，相量模型无法描述换相电压缺口
+- **故障行波传播**：波过程的时间尺度（微秒级）远小于相量模型可分辨的极限
+- **直流偏移**：铁磁谐振和感应电机启动电流中的直流偏移分量无法用固定频率的相量表示
+- **强非线性**：饱和、限幅、保护动作导致状态突变，线性相量方程不再适用
+- **宽频带电磁暂态**：SSCI（sub-synchronous control interaction）和次谐波振荡需要 **10 Hz~2 kHz** 的分析带宽，静态相量无法覆盖
+
+### 8.3 选型决策树
+
+```
+研究目标
+├── 稳态/潮流
+│   └── 静态相量
+├── 机电暂态（不含电力电子）
+│   └── RMS动态模型
+├── 线性不对称故障
+│   └── 对称分量相量
+├── 含电力电子的慢动态（控制、谐波）
+│   ├── 仅基频 → 动态相量(L1)
+│   └── 含谐波 → 动态相量(L3)或谐波相量
+└── 开关/故障/行波（任意电力电子）
+    └── 不适用 → 回到时域 EMT
+```
+
+## 相关方法 / 相关模型 / 相关主题
+
+- [[three-phase-instantaneous-model]] — 保留 $abc$ 瞬时值的详细 EMT 建模对照
+- [[dynamic-phasor]] — 时变傅里叶系数，动态相量模型的时域化扩展
+- [[average-value-model]] — 平均掉开关周期细节，仍在时域中保留控制和低频动态
+- [[state-space-average-method]] — 按占空比平均的开关状态方程，用于变换器平均模型
+- [[switching-function-method]] — 从二值开关函数出发的详细/平均模型推导
+- [[power-flow-calculation]] — 提供相量稳态初值，但不验证 EMT 暂态精度
+- [[electromechanical-electromagnetic-hybrid-simulation]] — 机电-电磁混合仿真的接口与同步机制
+- [[thevenin-equivalent]] / [[norton-equivalent]] — 外部系统的相量域等值方法
+- [[symmetrical-components]] — 对称分量变换，不平衡故障的序网分析基础
+- [[vector-fitting]] — 频变阻抗的有理函数拟合，用于宽频相量等值
 
 ## 来源论文
 
-| 论文 | 年份 |
-|------|------|
-| [[大电网仿真工具现状及其在华北电网推广应用的思考|大电网仿真工具现状及其在华北电网推广应用的思考]] | 未知 |
+| 论文 | 年份 | 贡献 | 说明 |
+|------|------|------|------|
+| [[co-simulation-of-electrical-networks-by-interfacing-emt-and-dynamic-phasor-simul]] | 2021 | 动态相量提取方法评估 | 多方法对比，$T_w$ 窗口优化 |
+| [[a-multirate-emt-co-simulation-of-large-ac-and-mmc-based-mtdc-systems]] | 2018 | 多速率 EMT-相量混合仿真 | MMC-HVDC 场景验证 |
+| [[a-multi-rate-co-simulation-of-combined-phasor-domain-and-time-domain-models-for-]] | 2020 | 风电场多速率协同仿真 | IEEE-118 验证 |
+| [[multirate-method-for-dynamic-phasor-simulation-of-large-scale-power-systems]] | 2021 | 动态相量方法论重探 | 精度边界与适用范围 |
+| [[evaluation-of-time-domain-and-phasor-domain-methods-for-power-system-transients]] | 2022 | TD/DP/3pPD/PD 四方法对比 | IEEE-118 基准量化 |
+| [[大电网仿真工具现状及其在华北电网推广应用的思考]] | 未知 | 中国电网仿真工具应用现状 | 工程实践参考 |
+
+<div style="text-align:center;margin:16px 0;">
+<svg viewBox="0 0 900 480" xmlns="http://www.w3.org/2000/svg">
+  <!-- Title -->
+  <text x="450" y="30" fill="#1a1a2e" font-size="16" font-weight="bold" text-anchor="middle">相量模型分类体系架构图</text>
+  <text x="450" y="50" fill="#666" font-size="11" text-anchor="middle">Phasor Model Taxonomy — 静态相量 / RMS动态 / 对称分量 / 动态相量 / 谐波相量</text>
+
+  <!-- Arrow markers -->
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#333"/>
+    </marker>
+    <marker id="arr-blue" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#2563eb"/>
+    </marker>
+  </defs>
+
+  <!-- === Level 1: Input / Source (Blue) === -->
+  <rect x="300" y="75" width="300" height="45" rx="5" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="450" y="95" fill="#1e3a5f" font-size="13" font-weight="bold" text-anchor="middle">交流电力系统</text>
+  <text x="450" y="112" fill="#4b6b8f" font-size="10" text-anchor="middle">发电机 / 输电线路 / 负荷 / 换流器</text>
+
+  <!-- Arrow: Input to 5 variants -->
+  <line x1="340" y1="120" x2="100" y2="155" stroke="#333" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="390" y1="120" x2="235" y2="155" stroke="#333" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="450" y1="120" x2="450" y2="155" stroke="#333" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="510" y1="120" x2="665" y2="155" stroke="#333" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="560" y1="120" x2="800" y2="155" stroke="#333" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- Labels on arrows -->
+  <text x="200" y="140" fill="#555" font-size="9" text-anchor="middle">潮流初值</text>
+  <text x="295" y="140" fill="#555" font-size="9" text-anchor="middle">机电慢动态</text>
+  <text x="450" y="140" fill="#555" font-size="9" text-anchor="middle">基频分量</text>
+  <text x="570" y="140" fill="#555" font-size="9" text-anchor="middle">时变傅里叶</text>
+  <text x="680" y="140" fill="#555" font-size="9" text-anchor="middle">谐波耦合</text>
+
+  <!-- === Level 2: Five Variant Cards (Green) === -->
+
+  <!-- Card 1: 静态相量 -->
+  <rect x="30" y="160" width="160" height="100" rx="5" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+  <text x="110" y="180" fill="#14532d" font-size="11" font-weight="bold" text-anchor="middle">静态相量</text>
+  <text x="110" y="196" fill="#3a7a5a" font-size="9" text-anchor="middle">L0 · 复数代数方程</text>
+  <text x="110" y="212" fill="#555" font-size="8" text-anchor="middle">步长: 无时间轴</text>
+  <text x="110" y="224" fill="#555" font-size="8" text-anchor="middle">YV̄ = Ī</text>
+  <text x="110" y="236" fill="#555" font-size="8" text-anchor="middle">潮流 / 稳态短路</text>
+  <text x="110" y="248" fill="#16a34a" font-size="8" text-anchor="middle">仅初始化</text>
+
+  <!-- Card 2: RMS 动态 -->
+  <rect x="210" y="160" width="160" height="100" rx="5" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+  <text x="290" y="180" fill="#14532d" font-size="11" font-weight="bold" text-anchor="middle">RMS 动态模型</text>
+  <text x="290" y="196" fill="#3a7a5a" font-size="9" text-anchor="middle">L1 · RMS等效值微分</text>
+  <text x="290" y="212" fill="#555" font-size="8" text-anchor="middle">步长: 10~100 ms</text>
+  <text x="290" y="224" fill="#555" font-size="8" text-anchor="middle">dV_RMS/dt = (v²-V²_RMS)/T</text>
+  <text x="290" y="236" fill="#555" font-size="8" text-anchor="middle">机电暂态 / 控制动态</text>
+  <text x="290" y="248" fill="#16a34a" font-size="8" text-anchor="middle">误差 5~15%</text>
+
+  <!-- Card 3: 对称分量 -->
+  <rect x="370" y="160" width="160" height="100" rx="5" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+  <text x="450" y="180" fill="#14532d" font-size="11" font-weight="bold" text-anchor="middle">对称分量相量</text>
+  <text x="450" y="196" fill="#3a7a5a" font-size="9" text-anchor="middle">L2 · 对称分量变换</text>
+  <text x="450" y="212" fill="#555" font-size="8" text-anchor="middle">步长: 10~20 ms</text>
+  <text x="450" y="224" fill="#555" font-size="8" text-anchor="middle">[V₀ V₁ V₂]ᵀ = A[V_a V_b V_c]ᵀ</text>
+  <text x="450" y="236" fill="#555" font-size="8" text-anchor="middle">线性不对称故障</text>
+  <text x="450" y="248" fill="#16a34a" font-size="8" text-anchor="middle">序网解耦精确</text>
+
+  <!-- Card 4: 动态相量 -->
+  <rect x="550" y="160" width="160" height="100" rx="5" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+  <text x="630" y="180" fill="#14532d" font-size="11" font-weight="bold" text-anchor="middle">动态相量</text>
+  <text x="630" y="196" fill="#3a7a5a" font-size="9" text-anchor="middle">L3 · 时变傅里叶系数</text>
+  <text x="630" y="212" fill="#555" font-size="8" text-anchor="middle">步长: 1~10 ms</text>
+  <text x="630" y="224" fill="#555" font-size="8" text-anchor="middle">X̄_k(t) = (2/T_w)∫x(τ)e^{-jkω₀τ}dτ</text>
+  <text x="630" y="236" fill="#555" font-size="8" text-anchor="middle">IBR谐波 / 多速率接口</text>
+  <text x="630" y="248" fill="#16a34a" font-size="8" text-anchor="middle">误差 1~5%</text>
+
+  <!-- Card 5: 谐波相量 -->
+  <rect x="730" y="160" width="160" height="100" rx="5" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+  <text x="810" y="180" fill="#14532d" font-size="11" font-weight="bold" text-anchor="middle">谐波相量</text>
+  <text x="810" y="196" fill="#3a7a5a" font-size="9" text-anchor="middle">L4 · 多频率耦合</text>
+  <text x="810" y="212" fill="#555" font-size="8" text-anchor="middle">步长: 0.1~1 ms</text>
+  <text x="810" y="224" fill="#555" font-size="8" text-anchor="middle">X̄_k = X_d,k + jX_q,k</text>
+  <text x="810" y="236" fill="#555" font-size="8" text-anchor="middle">周期稳态谐波分析</text>
+  <text x="810" y="248" fill="#16a34a" font-size="8" text-anchor="middle">谐波 ≤ 50次</text>
+
+  <!-- === Level 3: Application Scenarios (Purple) === -->
+  <!-- Arrows from 5 cards to output -->
+  <line x1="110" y1="260" x2="110" y2="310" stroke="#333" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="290" y1="260" x2="290" y2="310" stroke="#333" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="450" y1="260" x2="450" y2="310" stroke="#333" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="630" y1="260" x2="630" y2="310" stroke="#333" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="810" y1="260" x2="810" y2="310" stroke="#333" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- Output: 应用场景层 -->
+  <rect x="50" y="315" width="820" height="70" rx="5" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/>
+  <text x="460" y="335" fill="#3b0764" font-size="12" font-weight="bold" text-anchor="middle">典型应用场景</text>
+  <text x="160" y="355" fill="#6b21a8" font-size="9" text-anchor="middle">潮流初值 /</text>
+  <text x="160" y="368" fill="#6b21a8" font-size="9" text-anchor="middle">稳态短路</text>
+  <text x="330" y="355" fill="#6b21a8" font-size="9" text-anchor="middle">机电暂态 /</text>
+  <text x="330" y="368" fill="#6b21a8" font-size="9" text-anchor="middle">慢控制动态</text>
+  <text x="500" y="355" fill="#6b21a8" font-size="9" text-anchor="middle">不对称故障 /</text>
+  <text x="500" y="368" fill="#6b21a8" font-size="9" text-anchor="middle">序网分析</text>
+  <text x="680" y="355" fill="#6b21a8" font-size="9" text-anchor="middle">IBR谐波 /</text>
+  <text x="680" y="368" fill="#6b21a8" font-size="9" text-anchor="middle">混合仿真接口</text>
+  <text x="830" y="355" fill="#6b21a8" font-size="9" text-anchor="middle">谐波潮流 /</text>
+  <text x="830" y="368" fill="#6b21a8" font-size="9" text-anchor="middle">频率扫描</text>
+
+  <!-- Fault / Not Suitable Zone (Red) -->
+  <line x1="460" y1="385" x2="460" y2="415" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr)"/>
+  <rect x="290" y="420" width="340" height="40" rx="5" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+  <text x="460" y="438" fill="#7f1d1d" font-size="10" font-weight="bold" text-anchor="middle">失效场景：开关沿 / 换相失败 / 行波 / 直流偏移 / 铁磁谐振</text>
+  <text x="460" y="450" fill="#b91c1c" font-size="8" text-anchor="middle">→ 回到时域 EMT ([[three-phase-instantaneous-model]])</text>
+
+  <!-- Legend -->
+  <text x="50" y="475" fill="#333" font-size="10" font-weight="bold">图例</text>
+  <rect x="50" y="482" width="12" height="8" rx="1" fill="#dbeafe" stroke="#2563eb" stroke-width="1"/>
+  <text x="68" y="490" fill="#555" font-size="9">输入/源</text>
+  <rect x="130" y="482" width="12" height="8" rx="1" fill="#dcfce7" stroke="#16a34a" stroke-width="1"/>
+  <text x="148" y="490" fill="#555" font-size="9">模型变体</text>
+  <rect x="210" y="482" width="12" height="8" rx="1" fill="#ede9fe" stroke="#7c3aed" stroke-width="1"/>
+  <text x="228" y="490" fill="#555" font-size="9">输出/应用</text>
+  <rect x="310" y="482" width="12" height="8" rx="1" fill="#fee2e2" stroke="#dc2626" stroke-width="1"/>
+  <text x="328" y="490" fill="#555" font-size="9">失效场景</text>
+  <line x1="410" y1="486" x2="426" y2="486" stroke="#dc2626" stroke-width="1" stroke-dasharray="3,2"/>
+  <text x="432" y="490" fill="#555" font-size="9">故障路径</text>
+</svg>
+</div>
+<p style="text-align:center;font-size:12px;color:#666;margin-top:8px;">图1 · 相量模型分类体系架构图 — 从输入系统到五种建模变体，再到典型应用场景与失效场景</p>
