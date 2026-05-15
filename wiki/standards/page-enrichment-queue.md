@@ -140,7 +140,7 @@ updated: "2026-05-13"
 || 112 | interface-technique.md | methods | methods/simulation-technology/interface-technique.md | P2 | 33 | 1833 | 6 | 23 | completed |
 || 113 | equivalent-fault-loop.md | methods | methods/protection-fault/equivalent-fault-loop.md | P2 | 32 | 8920 | 77 | 13 | completed |
 || 114 | chb-dab.md | methods | methods/power-electronics/chb-dab.md | P2 | 32 | 1600 | 15 | 4 | completed |
-|| 115 | fourier-filtering.md | methods | methods/signal-processing/fourier-filtering.md | P2 | 32 | 1451 | 13 | 21 | pending |
+|| 115 | fourier-filtering.md | methods | methods/signal-processing/fourier-filtering.md | P2 | 32 | 6033 | 109 | 33 | completed |
 || 116 | power-electronics.md | topics | topics/component-modeling/power-electronics.md | P2 | 31 | 2518 | 9 | 64 | pending |
 || 117 | peralta-2012-detailed-mmc.md | models | models/equivalent/peralta-2012-detailed-mmc.md | P2 | 31 | 1089 | 14 | 5 | pending |
 || 118 | hardware-acceleration.md | methods | methods/simulation-technology/hardware-acceleration.md | P2 | 31 | 1633 | 10 | 22 | pending |
@@ -494,6 +494,7 @@ updated: "2026-05-13"
 ||||||| 113 | equivalent-fault-loop.md | methods/protection-fault/equivalent-fault-loop.md | 完成 | 8920字/77公式/13wikilinks/10章节/5种EMT建模方法+4类故障回路方程+量化性能边界表+3篇来源论文 | 2026-05-16 |
 
 |||||||| 99 | cloudpss.md | entities/software/cloudpss.md | 跳过 | 内容完整（技术演进脉络+ANSYS对比表+关键发现），实体页skip | 2026-05-16 |
+||||||||| 115 | fourier-filtering.md | methods/signal-processing/fourier-filtering.md | 完成 | 6033字/109公式/33wikilinks/0SVG/10章节/6篇来源论文/DFT+滑动DFT+正交滤波器+插值DFT+线性中点插值+窗函数体系 | 2026-05-16 |
 ||||||| 100 | power-flow-calculation.md | methods/system-studies/power-flow-calculation.md | 完成 | 7100字/102公式/13wikilinks/0SVG/11章节/6篇来源论文/潮流方程+节点分类+主流算法+EMT初始化体系 | 2026-05-16 |
 |||| 50 | emt-simulation.md | topics/simulation/emt-simulation.md | 完成 | 4695字/51公式/40wikilinks/16章节/6篇来源论文/核心机制+多速率混合仿真+分网并行+精度评估 | 2026-05-14 |
 ||||| 43 | model-compatibility-layer.md | methods/system-studies/model-compatibility-layer.md | 完成 | 5385字/21公式/24wikilinks/10章节/5表格/4类映射/6篇来源论文 | 2026-05-15 |
