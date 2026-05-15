@@ -134,7 +134,7 @@ updated: "2026-05-13"
 || 108 | optimal-power-flow.md | methods | methods/system-studies/optimal-power-flow.md | P2 | 33 | 6622 | 33 | 13 | completed |
 || 109 | finite-element-method.md | methods | methods/network-solution/finite-element-method.md | P2 | 33 | 19438 | 60 | 26 | completed |
 ||| 110 | sequence-network-model.md | methods | methods/protection-fault/sequence-network-model.md | P2 | 33 | 7131 | 83 | 17 | completed |
-|| 111 | fault-analysis.md | methods | methods/protection-fault/fault-analysis.md | P2 | 33 | 1942 | 1 | 16 | pending |
+|| 111 | fault-analysis.md | methods | methods/protection-fault/fault-analysis.md | P2 | 4388 | 25 | 15 | completed | |
 || 112 | interface-technique.md | methods | methods/simulation-technology/interface-technique.md | P2 | 33 | 1833 | 6 | 23 | pending |
 || 113 | equivalent-fault-loop.md | methods | methods/protection-fault/equivalent-fault-loop.md | P2 | 32 | 1578 | 8 | 15 | pending |
 || 114 | chb-dab.md | methods | methods/power-electronics/chb-dab.md | P2 | 32 | 1989 | 1 | 18 | pending |
@@ -582,3 +582,4 @@ updated: "2026-05-13"
 ||| 108 | optimal-power-flow.md | methods | methods/system-studies/optimal-power-flow.md | 完成 | 6622字/33公式/13wikilinks/6种EMT-OPF协同方法/9章节/6篇来源论文(混合GA-Simplex/并行GA/筛选/多相潮流/MMC限流器/风电场优化) | 2026-05-16 |
 |||| 109 | 1 | 1 | 0 | finite-element-method页面完成（19438字，60公式（14块级+46行内），26wikilinks（全部验证有效），1SVG图，11章节，5种FEM-EMT耦合模式（离线参数提取/查表耦合/场路联合仿真/模型降阶/FDNE），8篇来源论文（ Dennetière2009/Parametric2011/Taheri2011/GroundElectrodes2020/TowerFoot2023/GroundingGrids2020/Efficient2019/Computation2019））
 |||||| 110 | sequence-network-model.md | methods/protection-fault/sequence-network-model.md | 完成 | 7131字/83公式(10块级+73行内)/17wikilinks(全部验证有效)/11章节/5个关键技术挑战/4篇来源论文(Fortescue对称分量/Meng2023 CSD-scan/Mao2025 dq-SDP/Marques da Costa 2011修正Clarke/Rosołowski1997距离保护)/序网五边界条件/零序网络拓扑/IBR序阻抗等值/MIIF计算/非换位模态解耦/域间接口
+|||||| 111 | fault-analysis.md | methods/protection-fault/fault-analysis.md | 完成 | 4388字/25公式/15wikilinks/0SVG/11章节/4种EMT建模方法(对称分量阻抗测量/CSD-scan/dq-SDP/状态空间线路)+5个关键技术挑战+量化性能边界表 | 2026-05-16 |
