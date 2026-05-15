@@ -113,7 +113,7 @@ updated: "2026-05-13"
 || 88 | phase-domain-model.md | topics | topics/modeling-methods/phase-domain-model.md | P2 | 4684 | 35 | 15 | 20 | completed |
 || 89 | model-compatibility-layer.md | methods | methods/system-studies/model-compatibility-layer.md | P2 | 0 | 305 | 21 | 24 | completed |
 || 90 | small-signal-stability.md | methods | methods/stability-analysis/small-signal-stability.md | P2 | 39 | 7558 | 97 | 21 | completed |
-|| 91 | gnanarathna-2011-efficient-mmc.md | models | models/equivalent/gnanarathna-2011-efficient-mmc.md | P2 | 39 | 1048 | 14 | 7 | pending |
+|| 91 | gnanarathna-2011-efficient-mmc.md | models | models/equivalent/gnanarathna-2011-efficient-mmc.md | P2 | 39 | 1048 | 14 | 7 | completed |
 || 92 | excitation-system.md | methods | methods/stability-analysis/excitation-system.md | P2 | 39 | 1438 | 9 | 14 | pending |
 || 93 | electromagnetic-transient.md | topics | topics/stability-analysis/electromagnetic-transient.md | P2 | 38 | 1715 | 10 | 30 | pending |
 || 94 | folded-line-equivalent.md | methods | methods/transmission-line/folded-line-equivalent.md | P2 | 38 | 1396 | 10 | 14 | pending |
@@ -486,6 +486,7 @@ updated: "2026-05-13"
 
 |||| 50 | emt-simulation.md | topics/simulation/emt-simulation.md | 完成 | 4695字/51公式/40wikilinks/16章节/6篇来源论文/核心机制+多速率混合仿真+分网并行+精度评估 | 2026-05-14 |
 ||||| 43 | model-compatibility-layer.md | methods/system-studies/model-compatibility-layer.md | 完成 | 5385字/21公式/24wikilinks/10章节/5表格/4类映射/6篇来源论文 | 2026-05-15 |
+|||||| 91 | gnanarathna-2011-efficient-mmc.md | models/equivalent/gnanarathna-2011-efficient-mmc.md | 完成 | 4577字/90公式/11wikilinks/0SVG/7章节 | 2026-05-15 |
 | 轮次 | 处理页面数 | 完成数 | 跳过数 | 备注 |
 |------|-----------|--------|--------|------|
 || 1 | 2 | 2 | 0 | MPC和TSC页面完成 |
