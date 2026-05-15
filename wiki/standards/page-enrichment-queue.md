@@ -109,7 +109,7 @@ updated: "2026-05-13"
 || 84 | passivity-enforcement.md | methods | methods/signal-processing/passivity-enforcement.md | P2 | 42 | 4497 | 121 | 19 | completed |
 || 85 | power-system-stabilizer.md | methods | methods/stability-analysis/power-system-stabilizer.md | P2 | 42 | 2500 | 21 | 12 | completed |
 || 86 | pss-model.md | methods | methods/stability-analysis/pss-model.md | P2 | 41 | 1296 | 85 | 12 | completed |
-|| 87 | multithreaded-parallel-computing.md | methods | methods/simulation-technology/multithreaded-parallel-computing.md | P2 | 41 | 1598 | 7 | 18 | pending |
+|| 87 | multithreaded-parallel-computing.md | methods | methods/simulation-technology/multithreaded-parallel-computing.md | P2 | 41 | 986 | 45 | 15 | completed |
 || 88 | phase-domain-model.md | topics | topics/modeling-methods/phase-domain-model.md | P2 | 40 | 1454 | 11 | 20 | pending |
 || 89 | model-compatibility-layer.md | methods | methods/system-studies/model-compatibility-layer.md | P2 | 39 | 1726 | 4 | 16 | pending |
 || 90 | small-signal-stability.md | methods | methods/stability-analysis/small-signal-stability.md | P2 | 39 | 1587 | 8 | 19 | pending |
@@ -562,4 +562,5 @@ updated: "2026-05-13"
 
 |||||| 82 | digital-distance-protection.md | methods/protection-fault/digital-distance-protection.md | 完成 | 726字/70公式(23块级+47行内)/18wikilinks(全部验证有效)/2表格/9章节/6篇来源论文/数字距离保护+DFT+矩阵束+小波奇异熵+行波法+双端定位 
 ||||||| 83 | vector-fitting.md | methods/signal-processing/vector-fitting.md | 完成 | 6307字/56公式(15块级+41行内)/14wikilinks(全部验证有效)/1SVG图/10章节/6篇来源论文/VF两阶段极点重定位+MVF模态加权+CVF复数极点+无源性强制+Partitioned Fitting+并行VF | 2026-05-15 ||
-||| 84 | passivity-enforcement.md | methods/signal-processing/passivity-enforcement.md | 完成 | 4497字/121公式/19wikilinks/1表格/11章节/7篇来源论文/5种方法体系 | 2026-05-15 |
+|||| 84 | passivity-enforcement.md | methods/signal-processing/passivity-enforcement.md | 完成 | 4497字/121公式/19wikilinks/1表格/11章节/7篇来源论文/5种方法体系 | 2026-05-15 |
+||||| 87 | multithreaded-parallel-computing.md | methods/simulation-technology/multithreaded-parallel-computing.md | 完成 | 986字/45公式(3块级+42行内)/15wikilinks(全部验证有效)/8章节/5种线程级任务划分(BTF/设备解耦/诺顿等效/多速率/场景级)/7篇来源论文/Abusalah2018 KLU-BTF 4线程1.39×/Xu2025 80×串行+2-3×并行/ParaEMT 25-36× | 2026-05-15 |
