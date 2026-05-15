@@ -123,6 +123,8 @@ updated: "2026-05-13"
 || 98 | eeac.md | methods | methods/stability-analysis/eeac.md | P2 | 36 | 10522 | 48 | 8 | completed |
 || 99 | ieee-39-bus-system.md | topics | topics/test-system/ieee-39-bus-system.md | P2 | 36 | 161 | 34 | 11 | completed |
 ||| 100 | cloudpss.md | entities | entities/software/cloudpss.md | P2 | 36 | 2360 | 0 | 36 | completed |
+||||| 112 | interface-technique.md | methods/simulation-technology/interface-technique.md | 完成 | 9127字/59公式/22wikilinks/0SVG/11章节/8篇来源论文/MATE+DPIM+CM+SFA-EMT+ESPRIT五类接口机制+量化性能边界表+选择指南决策表 | 2026-05-16 |
+
 ||| 101 | complex-differential-equation-solving.md | methods | methods/system-studies/complex-differential-equation-solving.md | P2 | 36 | 1833 | 5 | 22 | completed |
 || 102 | state-space-average-method.md | methods | methods/numerical-methods/state-space-average-method.md | P2 | 1754 | 140 | 17 | 17 | completed |
 || 103 | concurrent-commutation-failure.md | methods | methods/power-electronics/concurrent-commutation-failure.md | P2 | 35 | 8149 | 74 | 15 | completed |
@@ -135,7 +137,7 @@ updated: "2026-05-13"
 || 109 | finite-element-method.md | methods | methods/network-solution/finite-element-method.md | P2 | 33 | 19438 | 60 | 26 | completed |
 ||| 110 | sequence-network-model.md | methods | methods/protection-fault/sequence-network-model.md | P2 | 33 | 7131 | 83 | 17 | completed |
 || 111 | fault-analysis.md | methods | methods/protection-fault/fault-analysis.md | P2 | 4388 | 25 | 15 | completed | |
-|| 112 | interface-technique.md | methods | methods/simulation-technology/interface-technique.md | P2 | 33 | 1833 | 6 | 23 | pending |
+|| 112 | interface-technique.md | methods | methods/simulation-technology/interface-technique.md | P2 | 33 | 1833 | 6 | 23 | completed |
 || 113 | equivalent-fault-loop.md | methods | methods/protection-fault/equivalent-fault-loop.md | P2 | 32 | 1578 | 8 | 15 | pending |
 || 114 | chb-dab.md | methods | methods/power-electronics/chb-dab.md | P2 | 32 | 1989 | 1 | 18 | pending |
 || 115 | fourier-filtering.md | methods | methods/signal-processing/fourier-filtering.md | P2 | 32 | 1451 | 13 | 21 | pending |
