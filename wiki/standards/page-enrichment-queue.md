@@ -129,7 +129,7 @@ updated: "2026-05-13"
 || 104 | grid-forming-inverter.md | models | models/converter/grid-forming-inverter.md | P2 | 34 | 1547 | 87 | 12 | completed |
 || 105 | automatic-code-generation.md | methods | methods/simulation-technology/automatic-code-generation.md | P2 | 34 | 9530 | 94 | 14 | completed |
 
-|| 106 | power-flow-calculation.md | methods | methods/system-studies/power-flow-calculation.md | P2 | 34 | 1694 | 7 | 19 | pending |
+|| 106 | power-flow-calculation.md | methods | methods/system-studies/power-flow-calculation.md | P2 | 34 | 7100 | 102 | 13 | completed |
 || 107 | large-scale-power-system.md | topics | topics/simulation/large-scale-power-system.md | P2 | 34 | 1625 | 10 | 23 | pending |
 || 108 | optimal-power-flow.md | methods | methods/system-studies/optimal-power-flow.md | P2 | 33 | 1507 | 8 | 12 | pending |
 || 109 | finite-element-method.md | methods | methods/network-solution/finite-element-method.md | P2 | 33 | 1568 | 12 | 25 | pending |
@@ -491,6 +491,7 @@ updated: "2026-05-13"
 ||||||| 98 | ieee-39-bus-system.md | topics/test-system/ieee-39-bus-system.md | 完成 | 161字/34公式/11wikilinks/10章节/1篇来源论文/IEEE-39节点系统完整描述+发电机EMT模型+变压器模型+关键技术挑战+量化性能边界 | 2026-05-16 |
 
 |||||||| 99 | cloudpss.md | entities/software/cloudpss.md | 跳过 | 内容完整（技术演进脉络+ANSYS对比表+关键发现），实体页skip | 2026-05-16 |
+||||||| 100 | power-flow-calculation.md | methods/system-studies/power-flow-calculation.md | 完成 | 7100字/102公式/13wikilinks/0SVG/11章节/6篇来源论文/潮流方程+节点分类+主流算法+EMT初始化体系 | 2026-05-16 |
 |||| 50 | emt-simulation.md | topics/simulation/emt-simulation.md | 完成 | 4695字/51公式/40wikilinks/16章节/6篇来源论文/核心机制+多速率混合仿真+分网并行+精度评估 | 2026-05-14 |
 ||||| 43 | model-compatibility-layer.md | methods/system-studies/model-compatibility-layer.md | 完成 | 5385字/21公式/24wikilinks/10章节/5表格/4类映射/6篇来源论文 | 2026-05-15 |
 |||||| 91 | gnanarathna-2011-efficient-mmc.md | models/equivalent/gnanarathna-2011-efficient-mmc.md | 完成 | 4577字/90公式/11wikilinks/0SVG/7章节 | 2026-05-15 |
