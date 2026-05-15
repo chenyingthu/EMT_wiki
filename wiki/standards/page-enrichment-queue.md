@@ -117,7 +117,7 @@ updated: "2026-05-13"
 || 92 | excitation-system.md | methods | methods/stability-analysis/excitation-system.md | P2 | 39 | 4164 | 98 | 19 | completed |
 || 93 | electromagnetic-transient.md | topics | topics/stability-analysis/electromagnetic-transient.md | P2 | 38 | 11524 | 46 | 26 | completed |
 || 94 | folded-line-equivalent.md | methods | methods/transmission-line/folded-line-equivalent.md | P2 | 1067 | 69 | 10 | completed |
-|| 95 | comsol.md | entities | entities/software/comsol.md | P2 | 38 | 1824 | 4 | 20 | pending |
+|| 95 | comsol.md | entities | entities/software/comsol.md | P2 | 38 |  493|   4|  16| completed |
 || 96 | offline-to-realtime-porting.md | methods | methods/simulation-technology/offline-to-realtime-porting.md | P2 | 37 | 2587 | 23 | 19 | completed |
 || 97 | network-partitioning.md | topics | topics/modeling-methods/network-partitioning.md | P2 | 37 | 1611 | 12 | 29 | pending |
 || 98 | eeac.md | methods | methods/stability-analysis/eeac.md | P2 | 36 | 1256 | 12 | 11 | pending |
