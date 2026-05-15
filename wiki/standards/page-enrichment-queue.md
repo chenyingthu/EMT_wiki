@@ -115,7 +115,7 @@ updated: "2026-05-13"
 || 90 | small-signal-stability.md | methods | methods/stability-analysis/small-signal-stability.md | P2 | 39 | 7558 | 97 | 21 | completed |
 || 91 | gnanarathna-2011-efficient-mmc.md | models | models/equivalent/gnanarathna-2011-efficient-mmc.md | P2 | 39 | 1048 | 14 | 7 | completed |
 || 92 | excitation-system.md | methods | methods/stability-analysis/excitation-system.md | P2 | 39 | 4164 | 98 | 19 | completed |
-|| 93 | electromagnetic-transient.md | topics | topics/stability-analysis/electromagnetic-transient.md | P2 | 38 | 1715 | 10 | 30 | pending |
+|| 93 | electromagnetic-transient.md | topics | topics/stability-analysis/electromagnetic-transient.md | P2 | 38 | 11524 | 46 | 26 | completed |
 || 94 | folded-line-equivalent.md | methods | methods/transmission-line/folded-line-equivalent.md | P2 | 38 | 1396 | 10 | 14 | pending |
 || 95 | comsol.md | entities | entities/software/comsol.md | P2 | 38 | 1824 | 4 | 20 | pending |
 || 96 | offline-to-realtime-porting.md | methods | methods/simulation-technology/offline-to-realtime-porting.md | P2 | 37 | 1657 | 5 | 14 | pending |
@@ -484,6 +484,7 @@ updated: "2026-05-13"
 ||||| 85 | power-system-stabilizer.md | methods/stability-analysis/power-system-stabilizer.md | 完成 | 2500字/21公式/12wikilinks/1SVG/9章节/3篇来源论文/PSS控制链路+IEEE标准结构+Anderson变体+EMT离散化+参数整定+限幅处理 |
 ||||| 86 | pss-model.md | methods/stability-analysis/pss-model.md | 完成 | 1296字/85公式(13块级+72行内)/12wikilinks(全部验证有效)/1SVG图/11章节/3篇来源论文/PSS控制链路+IEEE标准结构+Anderson变体+EMT离散化+参数整定+限幅处理 | 2026-05-15
 ||||| 92 | excitation-system.md | methods/stability-analysis/excitation-system.md | 完成 | 4164字/98公式/19wikilinks/0SVG/10章节/5种EMT建模方法/IEEE421.5分类+SM1/SM2接口+饱和Park+dq导纳辨识+混合AVM | 2026-05-16 |
+||||| 93 | electromagnetic-transient.md | topics/stability-analysis/electromagnetic-transient.md | 完成 | 11524字/46公式/26wikilinks/1SVG/9章节/5篇来源论文/五分支体系+仿真精度频谱+数值阻尼+步长阈值 | 2026-05-16 |
 
 |||| 50 | emt-simulation.md | topics/simulation/emt-simulation.md | 完成 | 4695字/51公式/40wikilinks/16章节/6篇来源论文/核心机制+多速率混合仿真+分网并行+精度评估 | 2026-05-14 |
 ||||| 43 | model-compatibility-layer.md | methods/system-studies/model-compatibility-layer.md | 完成 | 5385字/21公式/24wikilinks/10章节/5表格/4类映射/6篇来源论文 | 2026-05-15 |
