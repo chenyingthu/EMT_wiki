@@ -119,7 +119,7 @@ updated: "2026-05-13"
 || 94 | folded-line-equivalent.md | methods | methods/transmission-line/folded-line-equivalent.md | P2 | 1067 | 69 | 10 | completed |
 || 95 | comsol.md | entities | entities/software/comsol.md | P2 | 38 |  493|   4|  16| completed |
 || 96 | offline-to-realtime-porting.md | methods | methods/simulation-technology/offline-to-realtime-porting.md | P2 | 37 | 2587 | 23 | 19 | completed |
-|| 97 | network-partitioning.md | topics | topics/modeling-methods/network-partitioning.md | P2 | 37 | 1611 | 12 | 29 | pending |
+|| 97 | network-partitioning.md | topics | topics/modeling-methods/network-partitioning.md | P2 | 37 | 7056 | 36 | 27 | completed |
 || 98 | eeac.md | methods | methods/stability-analysis/eeac.md | P2 | 36 | 1256 | 12 | 11 | pending |
 || 99 | ieee-39-bus-system.md | topics | topics/test-system/ieee-39-bus-system.md | P2 | 36 | 1748 | 9 | 28 | pending |
 || 100 | cloudpss.md | entities | entities/software/cloudpss.md | P2 | 36 | 2360 | 0 | 36 | pending |
@@ -570,3 +570,4 @@ updated: "2026-05-13"
 |||| 84 | passivity-enforcement.md | methods/signal-processing/passivity-enforcement.md | 完成 | 4497字/121公式/19wikilinks/1表格/11章节/7篇来源论文/5种方法体系 | 2026-05-15 |
 ||||| 87 | multithreaded-parallel-computing.md | methods/simulation-technology/multithreaded-parallel-computing.md | 完成 | 986字/45公式(3块级+42行内)/15wikilinks(全部验证有效)/8章节/5种线程级任务划分(BTF/设备解耦/诺顿等效/多速率/场景级)/7篇来源论文/Abusalah2018 KLU-BTF 4线程1.39×/Xu2025 80×串行+2-3×并行/ParaEMT 25-36× | 2026-05-15 |
 |||||| 90 | small-signal-stability.md | methods/stability-analysis/small-signal-stability.md | 完成 | 7558字/97公式(17块级+80行内)/21wikilinks(全部验证有效)/10章节/6表格/4条分析路径(伴随电路-DAE-Floquet-频域扫描)/6篇来源论文(Chindu2023/Sajjadi2026/Jiang2025/Cifuentes2025/Masoom2025/Carreño2026)/伪特征值剔除/Floquet参与因子/CSCR 3.7/电流源型VSG强网稳定 | 2026-05-15 |
+|||||| 98 | network-partitioning.md | topics/modeling-methods/network-partitioning.md | 完成 | 7056字/36公式/27wikilinks(全部验证有效)/9章节/4类分区原理(图划分负载均衡/电气边界/Schur补/LDE-Woodbury)/5项量化性能边界表/5个关键技术挑战/补偿法无延迟并行/MATE-TLM/SFA-MATE/7篇来源论文 | 2026-05-16 |
