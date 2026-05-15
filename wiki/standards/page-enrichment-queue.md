@@ -84,7 +84,7 @@ updated: "2026-05-13"
 || 59 | impedance-measurement.md | methods | methods/signal-processing/impedance-measurement.md | P1 | 59 | 1468 | 6 | 18 | completed |
 || 60 | power-system-network.md | topics | topics/tools-software/power-system-network.md | P1 | 59 | 1223 | 9 | 13 | completed |
 || 61 | heidler-function.md | methods | methods/signal-processing/heidler-function.md | P1 | 59 | 713 | 18 | 10 | completed |
-|| 62 | mutual-impedance.md | methods | methods/transmission-line/mutual-impedance.md | P1 | 58 | 1202 | 10 | 14 | completed |
+|| 62 | mutual-impedance.md | methods | methods/transmission-line/mutual-impedance.md | P1 | 58 | 2901 | 113 | 10 | completed |
 || 63 | energy-storage-system.md | topics | topics/renewable-storage/energy-storage-system.md | P1 | 56 | 1549 | 5 | 18 | pending |
 || 64 | hybrid-modeling.md | methods | methods/simulation-technology/hybrid-modeling.md | P1 | 56 | 1580 | 6 | 22 | pending |
 || 65 | emt-simulation-verification.md | methods | methods/system-studies/emt-simulation-verification.md | P1 | 55 | 1672 | 2 | 16 | pending |
