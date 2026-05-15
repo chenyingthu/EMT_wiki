@@ -99,7 +99,7 @@ updated: "2026-05-13"
 || 74 | harmonic-interaction.md | methods | methods/signal-processing/harmonic-interaction.md | P2 | 48 | 1763 | 6 | 27 | completed |
 || 75 | siemens.md | entities | entities/industry/siemens.md | P2 | 46 | 1878 | 0 | 17 | completed |
 || 76 | transmission-line-theory.md | topics | topics/modeling-methods/transmission-line-theory.md | P2 | 45 | 832 | 20 | 14 | completed |
-|| 77 | transposed-three-phase-line.md | methods | methods/transmission-line/transposed-three-phase-line.md | P2 | 44 | 1477 | 6 | 11 | pending |
+|| 77 | transposed-three-phase-line.md | methods | methods/transmission-line/transposed-three-phase-line.md | P2 | 44 | 1477 | 6 | 11 | completed |
 || 78 | fault-ride-through.md | topics | topics/hvdc-facts/fault-ride-through.md | P2 | 44 | 1369 | 9 | 13 | pending |
 || 79 | single-phase-line-model.md | methods | methods/transmission-line/single-phase-line-model.md | P2 | 43 | 1586 | 8 | 21 | pending |
 || 80 | high-frequency-transient-analysis.md | methods | methods/protection-fault/high-frequency-transient-analysis.md | P2 | 43 | 1548 | 10 | 24 | pending |
