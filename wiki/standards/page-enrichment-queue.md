@@ -106,7 +106,7 @@ updated: "2026-05-13"
 || 81 | unbalanced-fault-analysis.md | topics | topics/protection-lightning/unbalanced-fault-analysis.md | P2 | 43 | 1491 | 10 | 21 | completed |
 || 82 | digital-distance-protection.md | methods | methods/protection-fault/digital-distance-protection.md | P2 | 42 | 726 | 70 | 18 | completed |
 || 83 | vector-fitting.md | methods | methods/signal-processing/vector-fitting.md | P2 | 42 | 3397 | 8 | 111 | completed |
-|| 84 | passivity-enforcement.md | methods | methods/signal-processing/passivity-enforcement.md | P2 | 42 | 1959 | 6 | 34 | pending |
+|| 84 | passivity-enforcement.md | methods | methods/signal-processing/passivity-enforcement.md | P2 | 42 | 4497 | 121 | 19 | completed |
 || 85 | power-system-stabilizer.md | methods | methods/stability-analysis/power-system-stabilizer.md | P2 | 42 | 1370 | 9 | 12 | pending |
 || 86 | pss-model.md | methods | methods/stability-analysis/pss-model.md | P2 | 41 | 1306 | 12 | 16 | pending |
 || 87 | multithreaded-parallel-computing.md | methods | methods/simulation-technology/multithreaded-parallel-computing.md | P2 | 41 | 1598 | 7 | 18 | pending |
@@ -560,3 +560,4 @@ updated: "2026-05-13"
 
 |||||| 82 | digital-distance-protection.md | methods/protection-fault/digital-distance-protection.md | 完成 | 726字/70公式(23块级+47行内)/18wikilinks(全部验证有效)/2表格/9章节/6篇来源论文/数字距离保护+DFT+矩阵束+小波奇异熵+行波法+双端定位 
 ||||||| 83 | vector-fitting.md | methods/signal-processing/vector-fitting.md | 完成 | 6307字/56公式(15块级+41行内)/14wikilinks(全部验证有效)/1SVG图/10章节/6篇来源论文/VF两阶段极点重定位+MVF模态加权+CVF复数极点+无源性强制+Partitioned Fitting+并行VF | 2026-05-15 ||
+||| 84 | passivity-enforcement.md | methods/signal-processing/passivity-enforcement.md | 完成 | 4497字/121公式/19wikilinks/1表格/11章节/7篇来源论文/5种方法体系 | 2026-05-15 |
