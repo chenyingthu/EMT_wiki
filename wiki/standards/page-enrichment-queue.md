@@ -96,7 +96,7 @@ updated: "2026-05-13"
 || 71 | abb.md | entities | entities/industry/abb.md | P1 | 50 | 1797 | 0 | 15 | completed |
 || 72 | phasor-model.md | methods | methods/system-studies/phasor-model.md | P2 | 5050 | 102 | 25 | 16 | completed |
 || 73 | fdtd.md | methods | methods/simulation-technology/fdtd.md | P2 | 48 | 3680 | 135 | 14 | completed |
-|| 74 | harmonic-interaction.md | methods | methods/signal-processing/harmonic-interaction.md | P2 | 48 | 1763 | 6 | 27 | pending |
+|| 74 | harmonic-interaction.md | methods | methods/signal-processing/harmonic-interaction.md | P2 | 48 | 1763 | 6 | 27 | completed |
 || 75 | siemens.md | entities | entities/industry/siemens.md | P2 | 46 | 1878 | 0 | 17 | pending |
 || 76 | transmission-line-theory.md | topics | topics/modeling-methods/transmission-line-theory.md | P2 | 45 | 832 | 20 | 14 | pending |
 || 77 | transposed-three-phase-line.md | methods | methods/transmission-line/transposed-three-phase-line.md | P2 | 44 | 1477 | 6 | 11 | pending |
@@ -552,3 +552,4 @@ updated: "2026-05-13"
 ||||| 71 | abb.md | entities/industry/abb.md | 完成 | 1797字/0公式/15wikilinks(全部验证有效)/已验证质量良好/实体页面(公司历史/技术演进/工程案例/竞争对比) | 2026-05-15 |
 |||||| 72 | phasor-model.md | methods/system-studies/phasor-model.md | 完成 | 5050字(中)/102公式(21块级+81行内)/25wikilinks(全部验证有效)/10章节/5种相量模型变体(静态/RMS/对称分量/动态相量/谐波相量)/1SVG图/6篇来源论文/接口延迟与数值稳定性/频率偏移适应性/量化性能边界表/选型决策树 | 2026-05-15 |
 ||||||| 73 | fdtd.md | methods/simulation-technology/fdtd.md | 完成 | 3680字/135公式(19块级+116行内)/14wikilinks(全部验证有效)/10章节/6篇来源论文/FDTD核心机制+Yee网格蛙跳+CFL稳定性+数值色散+PML边界+外部场耦合+频变土壤递归卷积+FDTD-EMTP接口方法+5个量化性能数据点
+||| 74 | harmonic-interaction.md | methods/methods/signal-processing/harmonic-interaction.md | 完成 | 5378字/63公式/12wikilinks/9章节/7表格/6种谐波交互机制 |
