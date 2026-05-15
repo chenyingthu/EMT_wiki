@@ -108,7 +108,7 @@ updated: "2026-05-13"
 || 83 | vector-fitting.md | methods | methods/signal-processing/vector-fitting.md | P2 | 42 | 3397 | 8 | 111 | completed |
 || 84 | passivity-enforcement.md | methods | methods/signal-processing/passivity-enforcement.md | P2 | 42 | 4497 | 121 | 19 | completed |
 || 85 | power-system-stabilizer.md | methods | methods/stability-analysis/power-system-stabilizer.md | P2 | 42 | 2500 | 21 | 12 | completed |
-|| 86 | pss-model.md | methods | methods/stability-analysis/pss-model.md | P2 | 41 | 1306 | 12 | 16 | pending |
+|| 86 | pss-model.md | methods | methods/stability-analysis/pss-model.md | P2 | 41 | 1296 | 85 | 12 | completed |
 || 87 | multithreaded-parallel-computing.md | methods | methods/simulation-technology/multithreaded-parallel-computing.md | P2 | 41 | 1598 | 7 | 18 | pending |
 || 88 | phase-domain-model.md | topics | topics/modeling-methods/phase-domain-model.md | P2 | 40 | 1454 | 11 | 20 | pending |
 || 89 | model-compatibility-layer.md | methods | methods/system-studies/model-compatibility-layer.md | P2 | 39 | 1726 | 4 | 16 | pending |
@@ -482,6 +482,7 @@ updated: "2026-05-13"
 |||| 56 | hybrid-acdc-system.md | topics/hvdc-facts/hybrid-acdc-system.md | 完成 | 7629字/85公式/10wikilinks/2SVG/9章节/8篇来源论文/四层次仿真体系+多速率协同+EM-EMT混合+异构计算 |
 ||||| 59 | impedance-measurement.md | methods/signal-processing/impedance-measurement.md | 完成 | 4787字/80公式/13wikilinks/6表格/12章节/6篇来源论文/6种测量方法体系（单频注入/多频注入/CSD-scan/测量重构/VNA扫频/离散阻抗）
 ||||| 85 | power-system-stabilizer.md | methods/stability-analysis/power-system-stabilizer.md | 完成 | 2500字/21公式/12wikilinks/1SVG/9章节/3篇来源论文/PSS控制链路+IEEE标准结构+Anderson变体+EMT离散化+参数整定+限幅处理 |
+||||| 86 | pss-model.md | methods/stability-analysis/pss-model.md | 完成 | 1296字/85公式(13块级+72行内)/12wikilinks(全部验证有效)/1SVG图/11章节/3篇来源论文/PSS控制链路+IEEE标准结构+Anderson变体+EMT离散化+参数整定+限幅处理 | 2026-05-15
 
 |||| 50 | emt-simulation.md | topics/simulation/emt-simulation.md | 完成 | 4695字/51公式/40wikilinks/16章节/6篇来源论文/核心机制+多速率混合仿真+分网并行+精度评估 | 2026-05-14 |
 | 轮次 | 处理页面数 | 完成数 | 跳过数 | 备注 |
