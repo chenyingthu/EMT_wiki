@@ -132,7 +132,7 @@ updated: "2026-05-13"
 || 106 | power-flow-calculation.md | methods | methods/system-studies/power-flow-calculation.md | P2 | 34 | 7100 | 102 | 13 | completed |
 || 107 | large-scale-power-system.md | topics | topics/simulation/large-scale-power-system.md | P2 | 6847 | 58 | 26 | completed |
 || 108 | optimal-power-flow.md | methods | methods/system-studies/optimal-power-flow.md | P2 | 33 | 6622 | 33 | 13 | completed |
-|| 109 | finite-element-method.md | methods | methods/network-solution/finite-element-method.md | P2 | 33 | 1568 | 12 | 25 | pending |
+|| 109 | finite-element-method.md | methods | methods/network-solution/finite-element-method.md | P2 | 33 | 19438 | 60 | 26 | completed |
 || 110 | sequence-network-model.md | methods | methods/protection-fault/sequence-network-model.md | P2 | 33 | 1631 | 6 | 13 | pending |
 || 111 | fault-analysis.md | methods | methods/protection-fault/fault-analysis.md | P2 | 33 | 1942 | 1 | 16 | pending |
 || 112 | interface-technique.md | methods | methods/simulation-technology/interface-technique.md | P2 | 33 | 1833 | 6 | 23 | pending |
@@ -580,3 +580,4 @@ updated: "2026-05-13"
 ||||||| 103 | concurrent-commutation-failure.md | methods/power-electronics/concurrent-commutation-failure.md | 完成 | 8149字/74公式(9块级+65行内)/15wikilinks(全部验证有效)/9章节/4种EMT建模方法(PAVM自动检测/MIIF电压灵敏度/负序相位修正/谐波传递等效电路)/5个关键技术挑战/3篇来源论文(Hong2022/Yao2023/Zhang2018)/量化性能边界表/适用边界与选择指南 | 2026-05-16 |
 ||||||| 104 | grid-forming-inverter.md | models | models/converter/grid-forming-inverter.md | 完成 | 1547字/87公式(20块级+67行内)/12wikilinks(全部验证有效)/9章节/6种EMT建模方法(DSM/AVM/VSM/CISS/DI/PQ边界)/5个关键技术挑战/4篇来源论文(Nurunnabi2025/Misyris2021/Nguyen2021/Allabadi2024)/量化性能边界表/适用边界与选择指南 | 2026-05-16 |
 ||| 108 | optimal-power-flow.md | methods | methods/system-studies/optimal-power-flow.md | 完成 | 6622字/33公式/13wikilinks/6种EMT-OPF协同方法/9章节/6篇来源论文(混合GA-Simplex/并行GA/筛选/多相潮流/MMC限流器/风电场优化) | 2026-05-16 |
+||| 109 | 1 | 1 | 0 | finite-element-method页面完成（19438字，60公式（14块级+46行内），26wikilinks（全部验证有效），1SVG图，11章节，5种FEM-EMT耦合模式（离线参数提取/查表耦合/场路联合仿真/模型降阶/FDNE），8篇来源论文（ Dennetière2009/Parametric2011/Taheri2011/GroundElectrodes2020/TowerFoot2023/GroundingGrids2020/Efficient2019/Computation2019））
