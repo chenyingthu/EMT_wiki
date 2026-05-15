@@ -97,7 +97,7 @@ updated: "2026-05-13"
 || 72 | phasor-model.md | methods | methods/system-studies/phasor-model.md | P2 | 5050 | 102 | 25 | 16 | completed |
 || 73 | fdtd.md | methods | methods/simulation-technology/fdtd.md | P2 | 48 | 3680 | 135 | 14 | completed |
 || 74 | harmonic-interaction.md | methods | methods/signal-processing/harmonic-interaction.md | P2 | 48 | 1763 | 6 | 27 | completed |
-|| 75 | siemens.md | entities | entities/industry/siemens.md | P2 | 46 | 1878 | 0 | 17 | pending |
+|| 75 | siemens.md | entities | entities/industry/siemens.md | P2 | 46 | 1878 | 0 | 17 | completed |
 || 76 | transmission-line-theory.md | topics | topics/modeling-methods/transmission-line-theory.md | P2 | 45 | 832 | 20 | 14 | pending |
 || 77 | transposed-three-phase-line.md | methods | methods/transmission-line/transposed-three-phase-line.md | P2 | 44 | 1477 | 6 | 11 | pending |
 || 78 | fault-ride-through.md | topics | topics/hvdc-facts/fault-ride-through.md | P2 | 44 | 1369 | 9 | 13 | pending |
