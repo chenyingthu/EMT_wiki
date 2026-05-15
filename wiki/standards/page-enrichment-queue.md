@@ -141,7 +141,7 @@ updated: "2026-05-13"
 || 113 | equivalent-fault-loop.md | methods | methods/protection-fault/equivalent-fault-loop.md | P2 | 32 | 8920 | 77 | 13 | completed |
 || 114 | chb-dab.md | methods | methods/power-electronics/chb-dab.md | P2 | 32 | 1600 | 15 | 4 | completed |
 || 115 | fourier-filtering.md | methods | methods/signal-processing/fourier-filtering.md | P2 | 32 | 6033 | 109 | 33 | completed |
-|| 116 | power-electronics.md | topics | topics/component-modeling/power-electronics.md | P2 | 31 | 2518 | 9 | 64 | pending |
+|| 116 | power-electronics.md | topics | topics/component-modeling/power-electronics.md | P2 | 31 | 5333 | 78 | 33 | completed |
 || 117 | peralta-2012-detailed-mmc.md | models | models/equivalent/peralta-2012-detailed-mmc.md | P2 | 31 | 1089 | 14 | 5 | pending |
 || 118 | hardware-acceleration.md | methods | methods/simulation-technology/hardware-acceleration.md | P2 | 31 | 1633 | 10 | 22 | pending |
 || 119 | thyristor-control.md | methods | methods/control/thyristor-control.md | P2 | 30 | 1647 | 7 | 15 | pending |
@@ -587,4 +587,4 @@ updated: "2026-05-13"
 |||| 109 | 1 | 1 | 0 | finite-element-method页面完成（19438字，60公式（14块级+46行内），26wikilinks（全部验证有效），1SVG图，11章节，5种FEM-EMT耦合模式（离线参数提取/查表耦合/场路联合仿真/模型降阶/FDNE），8篇来源论文（ Dennetière2009/Parametric2011/Taheri2011/GroundElectrodes2020/TowerFoot2023/GroundingGrids2020/Efficient2019/Computation2019））
 |||||| 110 | sequence-network-model.md | methods/protection-fault/sequence-network-model.md | 完成 | 7131字/83公式(10块级+73行内)/17wikilinks(全部验证有效)/11章节/5个关键技术挑战/4篇来源论文(Fortescue对称分量/Meng2023 CSD-scan/Mao2025 dq-SDP/Marques da Costa 2011修正Clarke/Rosołowski1997距离保护)/序网五边界条件/零序网络拓扑/IBR序阻抗等值/MIIF计算/非换位模态解耦/域间接口
 |||||| 111 | fault-analysis.md | methods/protection-fault/fault-analysis.md | 完成 | 4388字/25公式/15wikilinks/0SVG/11章节/4种EMT建模方法(对称分量阻抗测量/CSD-scan/dq-SDP/状态空间线路)+5个关键技术挑战+量化性能边界表 | 2026-05-16 |
-|||||| 114 | chb-dab.md | methods/power-electronics/chb-dab.md | 完成 | 8020字/15公式(块级)/4wikilinks(全部验证有效)/9章节/6篇来源论文/四路线对比+量化性能边界表+选择指南决策表 | 2026-05-16 |
+|||||| 114 | chb-dab.md | methods/power-electronics/chb-dab.md | 完成 | 8020字/15公式(块级)/4wikilinks(全部验证有效)/9章节/6篇来源论文/四路线对比+量化性能边界表+选择指南决策表 | 2026-05-16 ||||| 116 | power-electronics.md | completed | 5333字/78公式/33wikilinks | 2026-05-16 |

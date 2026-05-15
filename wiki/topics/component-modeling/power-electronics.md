@@ -1,387 +1,359 @@
 ---
 title: "电力电子 (Power Electronics)"
 type: topic
-tags: [power-electronics, converter, inverter, rectifier, switching]
+tags: [power-electronics, converter, inverter, rectifier, switching, emt, pwm, vsc, mmc, hvdc]
 created: "2026-05-02"
+updated: "2026-05-16"
 ---
 
 # 电力电子 (Power Electronics)
 
+## 定义
 
-```mermaid
-graph TD
-    subgraph Ncmp[电力电子 (Power Electronics)]
-        N0[换流器建模: ★★★★★]
-        N1[新能源并网: ★★★★★]
-        N2[电机驱动: ★★★★★]
-        N3[直流输电: ★★★★★]
-        N4[电能质量控制: ★★★★☆]
-        N5[储能系统: ★★★★☆]
-    end
-```
+电力电子是研究利用电力电子器件进行电能变换与控制的学科，通过功率半导体器件的开通与关断实现电能的 AC-DC、DC-DC、DC-AC、AC-AC 变换。作为连接弱电控制回路与强电系统的桥梁，电力电子技术是现代电力系统实现新能源并网、柔性输电、电能质量控制的核心支撑技术。
 
+在电磁暂态（EMT）仿真领域，电力电子变流器的建模面临"精度—效率"这一根本矛盾：详细开关模型（SW）保留器件级开关行为，能捕捉开关纹波、死区效应和谐波交互，但需要微秒级步长；平均值模型（AV）牺牲开关细节换取仿真速度，却可能丢失控制回路与电网的交互动态。
 
-## 概述
+## EMT 中的角色
 
-电力电子是研究利用电力电子器件进行电能变换和控制的学科，是连接弱电控制与强电系统的桥梁。电力电子技术广泛应用于新能源并网、电机驱动、直流输电、电能质量控制等领域，是现代电力系统的核心技术之一。
+电力电子设备在 EMT 仿真中扮演双重角色：
 
-## 基本器件
+1. **系统级被仿真对象**：光伏/风电逆变器、HVDC 换流站、储能变流器等需要精确的暂态波形以评估故障穿越能力和谐波特性
+2. **计算瓶颈来源**：大量开关器件导致节点导纳矩阵频繁重构，单次仿真耗时可能长达数小时
+
+**核心挑战**在于如何在保证关键动态精度的前提下最小化求解规模。具体而言：
+- **开关纹波**：PWM 载波频率（2–20 kHz）对应的开关谐波需要细步长捕捉
+- **换相过程**：LCC 换流器的换相失败暂态涉及多变量耦合
+- **控制交互**：电流控制器带宽（1–5 kHz）与网络动态的相互作用
+- **故障穿越**：Crowbar 投入、直流侧故障、闭锁行为需要瞬时响应
+
+**关键需求**是从器件级开关到系统级等效的多粒度建模体系，覆盖从微秒级开关事件到毫秒级机电暂态的时间尺度。
+
+## 电力电子器件分类
 
 ### 半控型器件
-- **晶闸管(SCR)**: 可控导通，不可控关断
-- [[thyristor-control]] - 晶闸管
-- **门极可关断晶闸管(GTO)**: 可关断
-- `gto-model` - GTO
+
+**晶闸管（SCR）**：不可关断器件，仅能控制导通时刻，广泛应用于 LCC-HVDC 和相控整流。其换相过程由交流侧电压过零自然完成，换相失败是其主要故障模式。EMT 建模中需用详细开关模型逐器件仿真换相动态。
+
+**门极可关断晶闸管（GTO）**：早期全控器件，已被 IGBT 取代，仅在超大功率（如数 MW 级感应加热）场景仍有应用。
 
 ### 全控型器件
-- **绝缘栅双极晶体管(IGBT)**: 主流器件
-- [[igbt-model]] - IGBT
-- **电力MOSFET**: 高频应用
-- `power-mosfet` - 电力MOSFET
-- **集成门极换流晶闸管(IGCT)**: 大功率
-- `igct-model` - IGCT
+
+**绝缘栅双极晶体管（IGBT）**：当前主流的中高功率开关器件，额定电压 0.6–6.5 kV，额定电流 0.5–3 kA。IGBT 的开通过程包含正向压降和电流上升段，关断过程包含电压上升和电流下降段，均需在 EMT 详细模型中精确建模。
+
+**电力 MOSFET**：高频应用首选，开关频率可达数百 kHz，但耐压受限（通常 < 600 V），适用于光伏逆变器 DC-DC 升压级和消费电子领域。
+
+**集成门极换流晶闸管（IGCT）**：介于 IGBT 和 GTO 之间的大功率器件，用于 HVDC 和中压传动，额定电压 4.5–6 kV，额定电流 1–4 kA。
 
 ### 宽禁带器件
-- **碳化硅(SiC)**: 高温、高频
-- `sic-device` - SiC器件
-- **氮化镓(GaN)**: 超高速
-- `gan-device` - GaN器件
 
-## 基本变换器
+**碳化硅（SiC）**：禁带宽度 3.26 eV（硅为 1.12 eV），允许工作在更高温度（结温 > 200°C）和更高电压（> 10 kV），开关损耗显著低于硅器件。在 EMT 仿真中需要宽频等效电路模型（DC–10 MHz）以捕捉 SiC 的高频开关暂态。
 
-### AC-DC变换
-- **整流器**: 交流变直流
-- `rectifier-model` - 整流器
-- **可控整流**: 晶闸管整流
-- `controlled-rectifier` - 可控整流
-- **PWM整流**: 四象限运行
-- `pwm-rectifier` - PWM整流
+**氮化镓（GaN）**：禁带宽度 3.4 eV，电子迁移率是硅的 2 倍，适合超高速开关（> 1 MHz）。GaN HEMT 的建模重点是栅极电容的非线性特性和动态导通电阻。
 
-### DC-AC变换
-- **逆变器**: 直流变交流
-- [[inverter-model]] - 逆变器
-- **电压源型**: VSI
-- `vsi-model` - 电压源逆变器
-- **电流源型**: CSI
-- `csi-model` - 电流源逆变器
+## 基本变换器拓扑
 
-### DC-DC变换
-- **斩波器**: 直流变压
-- [[dc-dc-converter]] - DC-DC变换器
-- **Buck**: 降压
-- `buck-converter` - Buck变换器
-- **Boost**: 升压
-- `boost-converter` - Boost变换器
-- **双向**: 能量双向
-- `bidirectional-converter` - 双向变换器
+### AC-DC 变换
 
-### AC-AC变换
-- **交流调压**: 相位控制
-- `ac-voltage-controller` - 交流调压
-- **周波变流**: 降频
-- `cycloconverter` - 周波变换器
-- **矩阵变换**: 直接变换
-- `matrix-converter` - 矩阵变换器
+**二极管整流器**：不可控拓扑，输出直流电压取决于交流电压峰值和滤波电容。其 EMT 模型通常用平均值模型以捕捉谐波电流注入。
+
+**晶闸管整流器（可控整流）**：通过调节触发角 α 控制输出电压，输出电压 $V_d = V_{do} \cos\alpha$，其中 $V_{do}$ 为空载直流电压。EMT 建模需详细开关模型以仿真换相过程。
+
+**PWM 整流器**：四象限运行，可控制有功和无功功率。通过 PWM 调制产生期望的电压矢量，控制功率流向。典型开关频率 2–10 kHz，EMT 建模可选择 SW、VI 或 AVM。
+
+### DC-AC 变换（逆变器）
+
+**电压源型逆变器（VSI）**：直流侧为大电容，输出电压波形取决于 PWM 调制策略。广泛用于光伏逆变器、风电变流器、储能 PCS。典型拓扑包括两电平、三电平 NPC 和 MMC。
+
+**电流源型逆变器（CSI）**：直流侧为大电感，输出电流波形取决于调制策略。高功率场合（如 HVDC 送端）仍有应用，EMT 建模需注意直流侧电感的暂态特性。
+
+### DC-DC 变换
+
+**Buck 变换器**：降压型，输出电压 $V_o = D \cdot V_{in}$（D 为占空比）。EMT 建模需区分 CCM 和 DCM 模式。
+
+**Boost 变换器**：升压型，输出电压 $V_o = V_{in} / (1-D)$。EMT 建模需考虑电感电流连续条件。
+
+**双向 DC-DC 变换器**：用于储能系统的 DC-DC 接口，支持能量双向流动。EMT 建模需同时考虑正向和反向功率流。
+
+### AC-AC 变换
+
+**交流调压器**：通过晶闸管相位控制调节交流电压有效值，无频率变换。
+
+**周波变流器**：直接 AC-AC 变换，输出频率为输入频率的分数倍（如 1/3、1/5），用于大功率低速驱动。
+
+**矩阵变换器**：直接 AC-AC 变换，无中间直流环节，9 个双向开关构成 3×3 开关矩阵。EMT 建模复杂度高，需要全部 9 个开关状态的详细模型。
 
 ## 多电平变换器
 
-### 二极管箝位型
-- **NPC**: 中性点箝位
-- `npc-converter` - NPC变换器
-- **三电平**: 最常用
+### 二极管箝位型（NPC）
 
-### 飞跨电容型
-- **FC**: 电容箝位
-- `flying-capacitor` - 飞跨电容
+**中性点箝位三电平逆变器**：每个桥臂串联 4 个器件，中点通过箝位二极管实现第三电平输出。NPC 的主要优点是输出谐波低、开关电压应力小；主要挑战是中性点电位平衡和器件开关时序。
 
-### 级联型
-- **CHB**: 级联H桥
-- `cascaded-h-bridge` - 级联H桥
-- **MMC**: 模块化多电平
-- [[mmc-model]] - MMC换流器
+EMT 建模方法：
+- **详细开关模型**：每个 IGBT/二极管独立建模，需处理中性点电位平衡算法
+- **平均值模型**：用等效占空比表示三电平输出，保留基波动态但丢失谐波信息
+
+### 飞跨电容型（FC）
+
+**飞跨电容箝位多电平**：用飞跨电容代替箝位二极管，电容电压需预充电至额定值。拓扑灵活性高于 NPC，但电容数量多（对于 m 电平需要 m(m-1)/2 个飞跨电容）。
+
+EMT 建模需考虑电容电压平衡控制策略，电容电压偏移会影响输出谐波和器件电压应力。
+
+### 级联型（H 桥）
+
+**级联 H 桥（CHB）**：多个 H 桥单元串联，每个单元独立直流电源（通常来自光伏阵列）。CHB 无需箝位器件或电容电压平衡，但需要多个独立 DC 电源。
+
+EMT 建模方法：
+- **子模块级等效**：每个 H 桥用 4 个开关+1 个电容建模
+- **桥臂级聚合**：同一相的多个 H 桥等效为单点端口诺顿模型接入网络
+
+### 模块化多电平（MMC）
+
+**MMC 拓扑**：每个桥臂由 N 个子模块（SM）和一个桥臂电感串联组成。子模块可为半桥（HB）或全桥（FB）结构。MMC 通过调节子模块投切数量实现多电平输出，子模块电容电压需主动平衡。
+
+MMC 的 EMT 建模是电力电子建模的核心难题之一，涉及三种典型建模粒度：
+
+| 模型类型 | 精度 | 步长 | 计算效率 | 适用场景 |
+|---------|------|------|---------|---------|
+| 详细开关模型 | ★★★★★ | 1–10 μs | ★☆☆☆☆ | 子模块故障、闭锁瞬态 |
+| 戴维南等效模型 | ★★★★☆ | 10–100 μs | ★★★☆☆ | 正常运行、故障穿越 |
+| 平均值模型 | ★★★☆☆ | 100–500 μs | ★★★★★ | 系统级暂态、潮流初始化 |
+
+**戴维南等效模型**（Gnanarathna 2011）将每个子模块的开关状态和电容离散为等效电阻与历史电压源，同一桥臂内多个子模块串联叠加为一个桥臂等效电阻和电压源，再接入网络求解。该模型在数学上等价于全开关模型，但计算效率提升数十倍。
 
 ## 控制技术
 
-### PWM技术
-- **SPWM**: 正弦脉宽调制
-- [[pwm-modulator-model]] - SPWM
-- **SVPWM**: 空间矢量调制
-- `svpwm` - SVPWM
-- **特定谐波消除**: SHEPWM
-- `shepwm` - SHEPWM
+### PWM 调制技术
 
-### 矢量控制
-- **FOC**: 磁场定向控制
-- [[vector-control-model]] - 磁场定向控制
-- **DTC**: 直接转矩控制
-- `direct-torque-control` - 直接转矩控制
+**正弦 PWM（SPWM）**：载波为三角波，参考波为正弦波，输出电压基波与调制比 M 成正比。谐波含量决定于载波频率，开关频率通常为基波频率的 10–50 倍。
+
+**空间矢量 PWM（SVPWM）**：基于电压空间矢量的合成，开关损耗低于 SPWM，直流电压利用率提高 15%。SVPWM 的 EMT 建模需实现矢量选择逻辑和零序分量注入。
+
+**特定谐波消除（SHEPWM）**：通过预计算开关角度消除特定次谐波（如 5、7、11、13 次），适合大功率低开关频率场合。EMT 建模需要预计算的开关角度表。
+
+### 矢量控制（FOC）
+
+**磁场定向控制**：将交流电机电流分解为转矩电流 $i_q$ 和励磁电流 $i_d$，分别控制。FOC 的 EMT 建模需要 Park 变换、反 Park 变换和 SVPWM 调制器。
+
+**直接转矩控制（DTC）**：基于定子磁链和电磁转矩的滞环控制，响应速度快但转矩脉动大。EMT 建模需实现磁链估算器和滞环比较器。
 
 ### 先进控制
-- **模型预测控制**: MPC
-- `model-predictive-control` - 模型预测控制
-- **自适应控制**: 参数自适应
-- `adaptive-control` - 自适应控制
 
-## 应用领域
+**模型预测控制（MPC）**：利用系统模型预测未来状态，优化控制动作。电力电子中常用有限集 MPC（如 FCS-MPC），每个采样周期枚举所有开关状态选择最优电压矢量。
 
-### 新能源
-- **光伏**: 光伏逆变器
-- [[pv-inverter-test-system]] - 光伏逆变器
-- **风电**: 风电变流器
-- `wind-converter` - 风电变流器
-- **储能**: 储能变流器
-- [[energy-storage-converter-model]] - 储能变流器
+**自适应控制**：控制器参数随运行工况自适应调整，适应电网阻抗变化和器件老化。
 
-### 直流输电
-- **HVDC**: 高压直流
-- [[cigre-hvdc-benchmark]] - 高压直流
-- **柔性直流**: VSC-HVDC
-- [[vsc-hvdc]] - 柔性直流
-- [[mtdc-model]] - 多端直流
+## EMT 仿真建模方法
 
-### 电机驱动
-- **变频调速**: 交流调速
-- `variable-frequency-drive` - 变频驱动
-- **伺服驱动**: 精密控制
-- `servo-drive` - 伺服驱动
+### 开关模型（SW）
 
-### 电能质量
-- **有源滤波**: APF
-- `active-power-filter` - 有源滤波
-- **无功补偿**: STATCOM/SVC
-- [[statcom-model]] - STATCOM
-- [[svc-model]] - SVC模型
+**理想开关模型**：开关闭合时电阻为零，断开时电阻无穷大。用于初步仿真，忽略导通压降和开关损耗。
 
-## EMT仿真建模
+**详细开关模型**：考虑 IGBT/二极管的正向压降 $V_{on}$、导通电阻 $R_{on}$、结电容 $C_j$ 和反向恢复电荷 $Q_{rr}$。每个器件对应两个状态变量，分别描述开通和关断动态。
 
-### 开关模型
-- **理想开关**: 简化模型
-- [[ideal-switch-model]] - 理想开关
-- **详细开关**: 含导通电阻
-- [[detailed-switch-model]] - 详细开关
-- **平均值**: 连续模型
-- [[average-value-model]] - 平均值模型
+开关模型的 EMT 求解需要：
+- 小步长（通常 1–10 μs）以捕捉开关瞬态
+- 过零检测和插值以精确捕捉开通/关断时刻
+- 节点导纳矩阵在每次开关事件时重构
 
-### 换流器模型
-- [[current-source-modular-multilevel-converter-modeling-and-control]] - 换流器建模
-- **详细模型**: 开关级
-- **平均值模型**: 占空比
-- **等效模型**: 线性化
+**计算复杂度**：设系统有 $n$ 个开关器件，每步求解需要 $O(n)$ 次开关状态判断，节点导纳矩阵 LU 分解复杂度为 $O(m^3)$（$m$ 为节点数）。
 
-### 损耗计算
-- **导通损耗**: I²R
-- **开关损耗**: 开关过程
-- `loss-calculation` - 损耗计算
+### 平均值模型（AVM）
 
-## 设计考虑
+**控制信号型 AVM**：用调制占空比直接给出相电压平均值 $v_{sa} = d_a v_{dc}$，保留控制器与基波动态，但滤除开关纹波和死区相关谐波。适合关注较慢的功率/电压动态的场景。
 
-### 热设计
-- **散热**: 散热器设计
-- `thermal-design` - 热设计
-- **结温**: 最高允许温度
+**增强型 AVM（EAVM）**：在控制信号 AVM 中为桥臂电感配置受控电流源，在闭锁触发时用闭锁前直流故障电流初始化桥臂电感电流，解决模型切换时的磁链状态缺失问题。
 
-### EMC设计
-- **电磁兼容**: 干扰抑制
-- `emc-design` - EMC设计
-- **滤波器**: EMI滤波
-- [[emi-filter-model]] - EMI滤波器
+**参数化平均值模型（PAVM）**：将交流侧正序/负序谐波和直流侧纹波作为随不平衡条件变化的对象来建模，扩展到交流网络不平衡工况。
 
-### 保护设计
-- **过流保护**: 快速保护
-- **过压保护**: 浪涌保护
-- `converter-protection` - 换流器保护
+### 受控电流注入模型（CCI）
 
-## 发展趋势
-- **高频化**: 提高开关频率
-- **高效率**: 降低损耗
-- **高功率密度**: 体积小型化
-- **智能化**: AI控制
+把逆变器交流侧等效为受控电流源，输入主要是有功/无功或电流参考，直流侧通过功率平衡计算电流。适合关注较慢功率交换、粗略等值大系统中大量逆变器的聚合响应。
 
-## 相关主题
-- [[power-electronics]] - 电力电子换流器建模
-- [[switching-function-method]] - 开关函数法
-- `modulation-techniques` - 调制技术
-- `semiconductor-device` - 半导体器件
+### 五模型精度-效率映射
 
-## 来源论文
+根据 Sano 2022 的研究，同一光伏并网逆变器在五种建模粒度下的表现：
 
-| 论文 | 年份 |
-|------|------|
-| [[power-converter-simulation-module-connected-to-the-emtp-power-systems-ieee-trans|Power converter simulation module connected to the EMTP - Po]] | 2004 |
-| [[interfacing-techniques-for-transient-stability-and-electromagnetic-transient-hyb|Interfacing Techniques for Transient Stability and Electroma]] | 2009 |
-| [[efcient-modeling-of-modular-multilevel-hvdc-15|Efﬁcient Modeling of Modular Multilevel HVDC]] | 2010 |
-| [[supplementary-techniques-for-2s-dirk-based-emt-simulations|Supplementary techniques for 2S-DIRK-based EMT simulations]] | 2014 |
-| [[improved-accuracy-average-value-models-of-modular-multilevel-converters|Improved Accuracy Average Value Models of Modular Multilevel]] | 2016 |
-| [[34tpwrd20172749427|34/TPWRD.2017.2749427]] | 2017 |
-| [[dynamic-phasor-based-interface-model-for-emt-and-transient-stability-hybrid-simu|Dynamic Phasor Based Interface Model for EMT and Transient S]] | 2017 |
-| [[flexible-extended-harmonic-domain-approach-for-transient-state-analysis-of-switc|Flexible extended harmonic domain approach for transient sta]] | 2017 |
-| [[advanced-emt-and-phasor-domain-hybrid-simulation-with-simulation-mode-switching-|Advanced EMT and Phasor-Domain Hybrid Simulation With Simula]] | 2018 |
-| [[co-simulation-of-electrical-networks-by-interfacing-emt-and-dynamic-phasor-simul|Co-simulation of electrical networks by interfacing EMT and ]] | 2018 |
-| [[2169-3536-c-2018-ieee-translations-and-content-mining-are-permitted-for-academic|Efficient GPU-based Electromagnetic Transient Simulation for]] | 2018 |
-| [[fpga-based-sub-microsecond-level-real-time-simulation-for-microgrids-with-a-netw|FPGA-Based Sub-Microsecond-Level Real-Time Simulation for Mi]] | 2020 |
-| [[gpu-based-power-converter-transient-simulation-with-matrix-exponential-integrati|GPU-based power converter transient simulation with matrix e]] | 2020 |
-| [[interface-displacement-and-mapping-equivalence-based-hybrid-simulation-for-hvacd|Interface Displacement and Mapping Equivalence Based Hybrid ]] | 2020 |
-| [[hierarchical-modeling-scheme-for-high-speed-electromagnetic-transient-emt-simula|Hierarchical Modeling Scheme for High-Speed Electromagnetic ]] | 2021 |
-| [[exhaustive-modal-analysis-of-large-scale-power-systems-using-model-order-reducti|Exhaustive modal analysis of large-scale power systems using]] | 2022 |
-| [[faster-than-real-time-hardware-emulation-of-extensive-contingencies-for-dynamic-|Faster-Than-Real-Time Hardware Emulation of Extensive Contin]] | 2022 |
-| [[a-novel-decoupled-emt-approach-and-parallel-simulation-framework-for-modularized|A Novel Decoupled EMT Approach and Parallel Simulation Frame]] | 2023 |
-| [[a-multi-solver-framework-for-co-simulation-of-transients-in-modern-power-systems|A multi-solver framework for co-simulation of transients in ]] | 2023 |
-| [[faster-than-real-time-hardware-emulation-of-transients-and-dynamics-of-a-grid-of|Faster-Than-Real-Time Hardware Emulation of Transients and D]] | 2023 |
-| [[massively-parallel-modeling-of-battery-energy-storage-systems-for-acdc-grid-high|Massively Parallel Modeling of Battery Energy Storage System]] | 2023 |
-| [[portal-analysis-approach-used-for-the-efficient-electromagnetic-transient-emt-si|Portal Analysis Approach Used for the Efficient Electromagne]] | 2023 |
-| [[多有源桥型电力电子变压器简化电磁暂态等效模型|多有源桥型电力电子变压器简化电磁暂态等效模型]] | 2023 |
-| [[comprehensive-formula-omitted-impedance-modeling-of-ac-power-electronics-based-p|Comprehensive [formula omitted] impedance modeling of AC pow]] | 2024 |
-| [[a-bridge-arm-module-based-fixed-admittance-adc-model-for-converters-in-emt-simul|A Bridge-Arm-Module-Based Fixed-Admittance ADC Model for Con]] | 2025 |
-| [[a-component-level-modeling-and-fine-grained-simulation-method-for-renewable-ener-1|A Component-Level Modeling and Fine-Grained Simulation Metho]] | 2025 |
-| [[a-state-variables-elimination-based-emtp-type-constant-admittance-equivalent-mod|A State Variables Elimination-Based EMTP-Type Constant Admit]] | 2025 |
-| [[a-state-variables-elimination-based-emtp-type-constant-admittance-equivalent-mod|A State Variables Elimination-Based EMTP-Type Constant Admit]] | 2025 |
-| [[an-equivalent-dynamic-phasor-model-for-a-single-phase-boost-power-factor-correct|An Equivalent Dynamic Phasor Model for a Single-Phase Boost ]] | 2025 |
-| [[electromagnetic-transient-modeling-and-simulation-of-large-power-systems-emt-sim|Electromagnetic Transient Modeling and Simulation of Large P]] | 2025 |
-| [[multirate-emt-simulation-of-power-electronic-transformers-with-high-precision-fi|Multirate EMT Simulation of Power Electronic Transformers Wi]] | 2025 |
-| [[multirate-emt-simulation-of-power-electronic-transformers-with-high-precision-fi|Multirate EMT Simulation of Power Electronic Transformers Wi]] | 2025 |
-| [[electromechanical-transientelectromagnetic-transient-hybrid-simulation-method-co|Electromechanical transientelectromagnetic transient hybrid ]] | 2026 |
-| [[gpu-parallel-rate-exponential-integrator-algorithm-for-efficient-simulation-of-p|GPU Parallel-Rate Exponential Integrator Algorithm for Effic]] | 2026 |
+| 模型 | 计算时间比 | 最大步长 | 精度损失 | 适用场景 |
+|------|-----------|---------|---------|---------|
+| SW（详细开关） | 100% | 2 μs | 无 | 开关频率谐振、死区谐波 |
+| VI（电压插值） | 19% | 10 μs | < 1% | PWM 量化误差分析 |
+| AV（平均值） | 1.5% | 100 μs | 5–10% | 基波控制动态 |
+| CCI（受控电流） | 0.20% | 600 μs | 10–20% | 大系统功率注入 |
+| SCI（简化电流） | 0.12% | 600 μs | > 20% | 近似潮流等值 |
+
+## 损耗计算
+
+### 导通损耗
+
+$$P_{cond} = I^2 R_{on} \cdot t_{on}$$
+
+IGBT 的导通损耗主要由通态电阻 $R_{on}$ 决定，功率器件 datasheet 通常提供 $V_{ce(on)}$ 和 $R_{on}$ 参数。
+
+### 开关损耗
+
+开关损耗包括开通损耗 $E_{on}$ 和关断损耗 $E_{off}$：
+
+$$P_{sw} = f_{sw} \cdot (E_{on} + E_{off})$$
+
+开关损耗与开关频率 $f_{sw}$ 成正比，与负载电流、温度相关。SiC 器件的开关损耗显著低于硅器件，在高频应用中优势明显。
+
+### 器件热设计
+
+结温 $T_j$ 由热阻网络决定：
+
+$$T_j = T_{case} + (P_{cond} + P_{sw}) \cdot R_{th(jc)}$$
+
+热设计的核心是确保 $T_j < T_{j(max)}$，通常 IGBT 的 $T_{j(max)} = 150°C$，SiC 可达 200°C。
+
 ## 形式化表达
 
-### 核心数学表达
+### 核心电路方程
 
-$$J_i\frac{d\Delta\omega_i}{dt}=\frac{P_{mi}}{\omega_0}-\frac{P_{0i}}{\omega_0}-D_i(\omega_i-\omega_0),\qquad P_{mi}=P_{refi}+k_{\omega i}(\omega_0-\omega)$$
+**单相全桥逆变器输出电压**：
 
-$$E_i=\frac{1}{K_{qi}s}\left[Q_{refi}-Q_{0i}+D_{qi}(U_{cni}-U_c)\right]$$
+$$v_o(t) = \sum_{k=1}^{N} S_k(t) \cdot V_{dc}$$
 
-$$P_{0i}=\frac{3U_{ci}U_g\sin\delta_i}{2\omega_0L_i}\approx\frac{3U_{ci}U_g}{2X_i}\delta_i\approx K_i\delta_i,\qquad \delta_i=\int(\omega_i-\omega_{bus})dt$$
+其中 $S_k \in \{+1, -1, 0\}$ 为第 k 个开关函数。
+
+**三相 VSI 输出电压**（Park 变换后）：
+
+$$v_d = \frac{2}{3} \left( v_a \cos\theta + v_b \cos(\theta - 120°) + v_c \cos(\theta + 120°) \right)$$
+$$v_q = \frac{2}{3} \left( v_a \sin\theta + v_b \sin(\theta - 120°) + v_c \sin(\theta + 120°) \right)$$
+
+**PWM 调制比与输出电压关系**：
+
+$$V_{o,fund} = M \cdot \frac{V_{dc}}{2}$$
+
+其中 $M \in [0, 1]$ 为调制比。
+
+**功率计算**：
+
+$$P = \frac{3}{2}(v_d i_d + v_q i_q)$$
+$$Q = \frac{3}{2}(v_q i_d - v_d i_q)$$
+
+**开关纹波估算**：
+
+$$\Delta v_{ripple} = \frac{I_{load}}{f_{sw} \cdot C_{dc}}$$
 
 ### 符号说明
 
-- $\mathbf{x}$：状态向量
-- $\mathbf{u}$：输入向量
-- $t$：时间变量
+- $V_{dc}$：直流侧电压
+- $I_{load}$：负载电流
+- $f_{sw}$：开关频率
+- $C_{dc}$：直流侧电容
+- $M$：PWM 调制比
+- $S_k$：开关函数
+- $v_d, v_q$：dq 轴电压
+- $i_d, i_q$：dq 轴电流
 
-## 适用边界 (Applicable Boundaries)
+## 量化性能边界
 
-### 适用场景
+| 器件类型 | 电压等级 | 电流等级 | 开关频率 | EMT 步长 |
+|---------|---------|---------|---------|---------|
+| SiC MOSFET | 0.6–6.5 kV | 20–200 A | 50–500 kHz | 0.1–1 μs |
+| IGBT 模块 | 0.6–6.5 kV | 100–3000 A | 2–20 kHz | 1–10 μs |
+| IGCT | 4.5–6 kV | 1000–4000 A | 0.5–2 kHz | 10–50 μs |
+| SiC H-bridge | 1.2–3.3 kV | 50–500 A | 20–100 kHz | 1–5 μs |
 
-| 应用场景 | 适用性 | 说明 |
-|---------|-------|------|
-| 换流器建模 | ★★★★★ | VSC/LCC/MMC等换流器核心基础 |
-| 新能源并网 | ★★★★★ | 光伏、风电变流器设计 |
-| 电机驱动 | ★★★★★ | 变频器、伺服控制 |
-| 直流输电 | ★★★★★ | HVDC换流站设计 |
-| 电能质量控制 | ★★★★☆ | STATCOM、APF等装置 |
-| 储能系统 | ★★★★☆ | 储能变流器设计 |
+| 模型类型 | 误差范围 | 最大步长 | 计算加速比 |
+|---------|---------|---------|-----------|
+| 详细开关模型 | < 1% | 2 μs | 1× |
+| 戴维南等效 | < 2% | 20 μs | 10–50× |
+| 平均值模型 | 5–10% | 100 μs | 100–500× |
+| 受控电流源 | 10–20% | 600 μs | 500–1000× |
 
-### 不适用场景
+## 关键技术挑战
 
-- **纯交流系统分析**: 不含电力电子设备的传统交流系统
-- **电磁场详细分析**: 需要场路耦合的精细电磁场问题
-- **器件级物理研究**: 半导体物理层面的载流子分析
-- **热力学系统**: 纯热管理问题
+### 挑战 1：开关模型计算瓶颈
 
-### 关键假设
+大规模 MMC（如 400 子模块/桥臂）详细模型的节点数可达数万个，每次开关事件导致节点导纳矩阵重构，LU 分解耗时急剧增加。
 
-1. **开关理想化**: 通常采用理想开关或简化开关模型
-2. **参数集中**: 器件参数视为集总参数
-3. **温度恒定**: 短期仿真忽略温度变化
-4. **线性化可行**: 小信号分析时可线性化
+**应对策略**：矩阵指数缓存（GPU-based matrix exponential）、开关状态预计算、并行子模块等效。
 
-### 精度边界
+### 挑战 2：宽禁带器件宽频建模
 
-| 模型类型 | 开关细节 | 适用频率 | 误差范围 |
-|---------|---------|---------|---------|
-| 详细开关模型 | 完整 | DC-100kHz | <1% |
-| 平均值模型 | 无 | <开关频率/10 | 5-10% |
-| 等效电路 | 简化 | 工频 | 10-20% |
+SiC/GaN 器件的开关暂态包含 MHz 级振荡，传统的 EMT 节点分析无法捕捉这些高频动态。需要从器件物理级的宽频等效电路出发，结合电磁场仿真获取寄生参数。
 
-### 设计约束
+**应对策略**：frequency-dependentnetwork equivalent (FDNE)、子循环 EM-circuit co-simulation。
 
-- **开关频率**: 受器件损耗和EMI限制
-- **散热能力**: 决定最大持续功率
-- **电压等级**: 受器件耐压限制
-- **成本控制**: 影响拓扑选择
+### 挑战 3：变流器与网络动态交互
 
----
+逆变器控制系统（PPLL、电流控制器）与交流网络的交互可能导致次同步振荡（SSO）或谐波不稳定。传统的平均值模型无法分析这些交互，需要详细开关模型配合小步长。
 
-## 研究前沿
+**应对策略**：阻抗扫描分析法（频率扫描）、动态相量-EMT 混合仿真。
 
-### 当前研究热点
-- **人工智能与仿真**：利用机器学习加速仿真计算
-- **数字孪生技术**：构建电力系统的数字孪生模型
-- **实时仿真技术**：满足硬件在环仿真的时效性要求
-- **云仿真平台**：基于云计算的大规模并行仿真
+### 挑战 4：大规模新能源并网等值
 
-### 开放问题
-- 超大规模系统的实时仿真能力
-- 多物理场耦合建模方法
-- 不确定性量化和风险评估
-- 模型验证和标定方法
+含有数百台光伏/风电变流器的场站，EMT 详细仿真的节点规模超出计算能力。需要对同型设备进行聚合等值，同时保留聚合后的控制交互特性。
 
-### 未来发展方向
-- 更高效的数值算法
-- 更精确的模型降阶技术
-- 更智能的参数优化方法
-- 更完善的验证和确认框架
+**应对策略**：相同变流器聚合、基于矢量拟合的等效阻抗建模、动态相量等值。
 
-## 代表性来源 (Representative Sources)
+### 挑战 5：模型切换瞬态一致性
 
-### 经典文献
+正常运行模式到故障闭锁模式的切换过程中，传统平均值模型存在磁链状态突变，导致数值不稳定或结果不连续。
 
-| 文献 | 年份 | 核心贡献 |
-|------|------|---------|
-| Mohan, "Power Electronics" | 2003 | 电力电子经典教材 |
-| Rashid, "Power Electronics Handbook" | 2017 | 电力电子手册 |
-| Kolar, "Modeling of Power Electronic Systems" | 2010s | 电力电子系统建模 |
+**应对策略**：EAVM 的受控电流源初始化、状态变量插值预测。
 
-### 相关模型
+## 适用边界与选择指南
 
-- [[mmc-model]] - MMC换流器模型
-- [[vsc-model]] - VSC模型
-- [[igbt-model]] - IGBT器件模型
+| 仿真目标 | 推荐模型 | 步长 | 说明 |
+|---------|---------|------|------|
+| 开关频率谐波分析 | SW 或 VI | 1–2 μs | 必须用详细开关模型 |
+| 死区效应分析 | SW | 1–2 μs | 需要详细开关模型 |
+| 故障穿越能力评估 | SW 或 VI | 5–10 μs | VI 可接受 |
+| 控制回路设计 | AVM | 50–100 μs | 基波动态为主 |
+| 大系统潮流初始化 | SCI | 500–1000 μs | 仅需功率注入 |
+| HVDC 系统级暂态 | AVM 或 CCI | 100–500 μs | 换流器平均值 |
+| MMC 子模块故障分析 | 详细开关 | 1 μs | 需要模块级精度 |
+| 谐波稳定性分析 | SW | 2–5 μs | 需要阻抗扫描 |
+
+## 相关主题
+
+### 器件与模型
+
+- [[mmc-model]] - 模块化多电平换流器
+- [[vsc-model]] - 电压源换流器
+- [[igbt-model]] - IGBT 器件模型
 - [[average-value-model]] - 平均值模型
+- [[thyristor-control]] - 晶闸管控制
+- [[inverter-model]] - 逆变器模型
+
+### 变换器拓扑
+
+- [[pwm-modulator-model]] - PWM 调制器
+- [[vsc-model]] - 三电平变换器
+- [[inverter-model]] - 矩阵变换器
+- [[solid-state-transformer]] - 固态变压器
 
 ### 应用领域
 
 - [[vsc-hvdc]] - 柔性直流输电
-- [[wind-farm-modeling]] - 风电场建模
-- [[pv-system-model]] - 光伏系统建模
-- `motor-drive` - 电机驱动
+- [[pv-inverter-test-system]] - 光伏逆变器
+- [[dfig-model]] - 风电变流器
+- [[energy-storage-converter-model]] - 储能变流器
+- [[statcom-model]] - STATCOM 模型
+- [[svc-model]] - SVC 模型
 
-参见 [[index]] 获取更多相关文献。
+### 仿真技术
+
+- [[co-simulation]] - 协同仿真
+- [[hybrid-modeling]] - 混合建模
+- [[gpu-parallel-acceleration]] - GPU 并行加速
+- [[real-time-simulation]] - 实时仿真
+- [[average-value-modeling-of-line-commutated-ac-dc-converters-with-unbalanced-ac-ne]] - LCC 换流器平均值建模
 
 ## 来源论文
 
-| 论文 | 年份 |
-|------|------|
-| [[power-converter-simulation-module-connected-to-the-emtp-power-systems-ieee-trans|Power converter simulation module connected to the EMTP - Po]] | 2004 |
-| [[interfacing-techniques-for-transient-stability-and-electromagnetic-transient-hyb|Interfacing Techniques for Transient Stability and Electroma]] | 2009 |
-| [[efcient-modeling-of-modular-multilevel-hvdc-15|Efﬁcient Modeling of Modular Multilevel HVDC]] | 2010 |
-| [[supplementary-techniques-for-2s-dirk-based-emt-simulations|Supplementary techniques for 2S-DIRK-based EMT simulations]] | 2014 |
-| [[improved-accuracy-average-value-models-of-modular-multilevel-converters|Improved Accuracy Average Value Models of Modular Multilevel]] | 2016 |
-| [[34tpwrd20172749427|34/TPWRD.2017.2749427]] | 2017 |
-| [[dynamic-phasor-based-interface-model-for-emt-and-transient-stability-hybrid-simu|Dynamic Phasor Based Interface Model for EMT and Transient S]] | 2017 |
-| [[flexible-extended-harmonic-domain-approach-for-transient-state-analysis-of-switc|Flexible extended harmonic domain approach for transient sta]] | 2017 |
-| [[advanced-emt-and-phasor-domain-hybrid-simulation-with-simulation-mode-switching-|Advanced EMT and Phasor-Domain Hybrid Simulation With Simula]] | 2018 |
-| [[co-simulation-of-electrical-networks-by-interfacing-emt-and-dynamic-phasor-simul|Co-simulation of electrical networks by interfacing EMT and ]] | 2018 |
-| [[2169-3536-c-2018-ieee-translations-and-content-mining-are-permitted-for-academic|Efficient GPU-based Electromagnetic Transient Simulation for]] | 2018 |
-| [[fpga-based-sub-microsecond-level-real-time-simulation-for-microgrids-with-a-netw|FPGA-Based Sub-Microsecond-Level Real-Time Simulation for Mi]] | 2020 |
-| [[gpu-based-power-converter-transient-simulation-with-matrix-exponential-integrati|GPU-based power converter transient simulation with matrix e]] | 2020 |
-| [[interface-displacement-and-mapping-equivalence-based-hybrid-simulation-for-hvacd|Interface Displacement and Mapping Equivalence Based Hybrid ]] | 2020 |
-| [[hierarchical-modeling-scheme-for-high-speed-electromagnetic-transient-emt-simula|Hierarchical Modeling Scheme for High-Speed Electromagnetic ]] | 2021 |
-| [[exhaustive-modal-analysis-of-large-scale-power-systems-using-model-order-reducti|Exhaustive modal analysis of large-scale power systems using]] | 2022 |
-| [[faster-than-real-time-hardware-emulation-of-extensive-contingencies-for-dynamic-|Faster-Than-Real-Time Hardware Emulation of Extensive Contin]] | 2022 |
-| [[a-novel-decoupled-emt-approach-and-parallel-simulation-framework-for-modularized|A Novel Decoupled EMT Approach and Parallel Simulation Frame]] | 2023 |
-| [[a-multi-solver-framework-for-co-simulation-of-transients-in-modern-power-systems|A multi-solver framework for co-simulation of transients in ]] | 2023 |
-| [[faster-than-real-time-hardware-emulation-of-transients-and-dynamics-of-a-grid-of|Faster-Than-Real-Time Hardware Emulation of Transients and D]] | 2023 |
-| [[massively-parallel-modeling-of-battery-energy-storage-systems-for-acdc-grid-high|Massively Parallel Modeling of Battery Energy Storage System]] | 2023 |
-| [[portal-analysis-approach-used-for-the-efficient-electromagnetic-transient-emt-si|Portal Analysis Approach Used for the Efficient Electromagne]] | 2023 |
-| [[多有源桥型电力电子变压器简化电磁暂态等效模型|多有源桥型电力电子变压器简化电磁暂态等效模型]] | 2023 |
-| [[comprehensive-formula-omitted-impedance-modeling-of-ac-power-electronics-based-p|Comprehensive [formula omitted] impedance modeling of AC pow]] | 2024 |
-| [[a-bridge-arm-module-based-fixed-admittance-adc-model-for-converters-in-emt-simul|A Bridge-Arm-Module-Based Fixed-Admittance ADC Model for Con]] | 2025 |
-| [[a-component-level-modeling-and-fine-grained-simulation-method-for-renewable-ener-1|A Component-Level Modeling and Fine-Grained Simulation Metho]] | 2025 |
-| [[a-state-variables-elimination-based-emtp-type-constant-admittance-equivalent-mod|A State Variables Elimination-Based EMTP-Type Constant Admit]] | 2025 |
-| [[a-state-variables-elimination-based-emtp-type-constant-admittance-equivalent-mod|A State Variables Elimination-Based EMTP-Type Constant Admit]] | 2025 |
-| [[an-equivalent-dynamic-phasor-model-for-a-single-phase-boost-power-factor-correct|An Equivalent Dynamic Phasor Model for a Single-Phase Boost ]] | 2025 |
-| [[electromagnetic-transient-modeling-and-simulation-of-large-power-systems-emt-sim|Electromagnetic Transient Modeling and Simulation of Large P]] | 2025 |
-| [[multirate-emt-simulation-of-power-electronic-transformers-with-high-precision-fi|Multirate EMT Simulation of Power Electronic Transformers Wi]] | 2025 |
-| [[multirate-emt-simulation-of-power-electronic-transformers-with-high-precision-fi|Multirate EMT Simulation of Power Electronic Transformers Wi]] | 2025 |
-| [[electromechanical-transientelectromagnetic-transient-hybrid-simulation-method-co|Electromechanical transientelectromagnetic transient hybrid ]] | 2026 |
-| [[gpu-parallel-rate-exponential-integrator-algorithm-for-efficient-simulation-of-p|GPU Parallel-Rate Exponential Integrator Algorithm for Effic]] | 2026 |
+- [[average-value-modeling-of-line-commutated-ac-dc-converters-with-unbalanced-ac-ne]] - LCC 不平衡工况 PA VM 建模（Ebrahimi 2021）
+- [[efcient-modeling-of-modular-multilevel-hvdc-15]] - MMC 高效戴维南等效建模（Gnanarathna 2011）
+- [[comparison-and-selection-of-grid-tied-inverter-models-for-accurate-and-efficient]] - 并网逆变器五模型对比（Sano 2022）
+- [[co-simulation-of-electrical-networks-by-interfacing-emt-and-dynamic-phasor-simul]] - EMT-DP 协同仿真（Shu 2018）
+- [[gpu-based-power-converter-transient-simulation-with-matrix-exponential-integrati]] - GPU 矩阵指数加速（Mao 2020）
+- [[advancing-grid-forming-inverter-technology-comprehensive-pq-capability-and-perfo]] - GFM 逆变器 PQ 能力边界（Nurunnabi 2025）
+- [[a-novel-decoupled-emt-approach-and-parallel-simulation-framework-for-modularized]] - MSST 解耦并行仿真（Feng 2023）
+- [[a-state-variables-elimination-based-emtp-type-constant-admittance-equivalent-mod]] - 状态变量消去恒导纳等效（Gao 2025）
+- [[a-review-of-efficient-modeling-methods-for-modular-multilevel-converters]] - MMC 建模方法综述（Li 2022）
+- [[an-enhanced-average-value-model-of-modular-multilevel-converter-for-accurate-rep]] - MMC 增强型平均值模型（Herath 2021）
+- [[equivalent-grid-following-inverter-based-generator-model-for-atpatpdraw-simulati]] - GFL 逆变器等效模型（Allabadi 2023）
+- [[msemt-an-advanced-modelica-library-for-power-system-electromagnetic-transient-st]] - Modelica EMT 建模库（Sun 2024）
