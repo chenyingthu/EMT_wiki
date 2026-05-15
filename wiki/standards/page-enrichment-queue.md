@@ -138,7 +138,7 @@ updated: "2026-05-13"
 ||| 110 | sequence-network-model.md | methods | methods/protection-fault/sequence-network-model.md | P2 | 33 | 7131 | 83 | 17 | completed |
 || 111 | fault-analysis.md | methods | methods/protection-fault/fault-analysis.md | P2 | 4388 | 25 | 15 | completed | |
 || 112 | interface-technique.md | methods | methods/simulation-technology/interface-technique.md | P2 | 33 | 1833 | 6 | 23 | completed |
-|| 113 | equivalent-fault-loop.md | methods | methods/protection-fault/equivalent-fault-loop.md | P2 | 32 | 1578 | 8 | 15 | pending |
+|| 113 | equivalent-fault-loop.md | methods | methods/protection-fault/equivalent-fault-loop.md | P2 | 32 | 8920 | 77 | 13 | completed |
 || 114 | chb-dab.md | methods | methods/power-electronics/chb-dab.md | P2 | 32 | 1989 | 1 | 18 | pending |
 || 115 | fourier-filtering.md | methods | methods/signal-processing/fourier-filtering.md | P2 | 32 | 1451 | 13 | 21 | pending |
 || 116 | power-electronics.md | topics | topics/component-modeling/power-electronics.md | P2 | 31 | 2518 | 9 | 64 | pending |
@@ -491,6 +491,7 @@ updated: "2026-05-13"
 |||||| 96 | offline-to-realtime-porting.md | methods/simulation-technology/offline-to-realtime-porting.md | 完成 | 2587字/23公式/19wikilinks/0SVG/22章节/4篇来源论文/七步移植工作流+五类映射方案+5项关键技术挑战+EMT-RMS域间接口 | 2026-05-16 |
 |||||| 97 | eeac.md | methods/stability-analysis/eeac.md | 完成 | 10522字/48公式/8wikilinks/1SVG/9章节/5类EEAC变体+OMIB等效+面积裕度+稳定性分析框架 | 2026-05-16 |
 ||||||| 98 | ieee-39-bus-system.md | topics/test-system/ieee-39-bus-system.md | 完成 | 161字/34公式/11wikilinks/10章节/1篇来源论文/IEEE-39节点系统完整描述+发电机EMT模型+变压器模型+关键技术挑战+量化性能边界 | 2026-05-16 |
+||||||| 113 | equivalent-fault-loop.md | methods/protection-fault/equivalent-fault-loop.md | 完成 | 8920字/77公式/13wikilinks/10章节/5种EMT建模方法+4类故障回路方程+量化性能边界表+3篇来源论文 | 2026-05-16 |
 
 |||||||| 99 | cloudpss.md | entities/software/cloudpss.md | 跳过 | 内容完整（技术演进脉络+ANSYS对比表+关键发现），实体页skip | 2026-05-16 |
 ||||||| 100 | power-flow-calculation.md | methods/system-studies/power-flow-calculation.md | 完成 | 7100字/102公式/13wikilinks/0SVG/11章节/6篇来源论文/潮流方程+节点分类+主流算法+EMT初始化体系 | 2026-05-16 |
