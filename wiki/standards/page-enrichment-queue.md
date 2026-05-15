@@ -86,7 +86,7 @@ updated: "2026-05-13"
 || 61 | heidler-function.md | methods | methods/signal-processing/heidler-function.md | P1 | 59 | 713 | 18 | 10 | completed |
 || 62 | mutual-impedance.md | methods | methods/transmission-line/mutual-impedance.md | P1 | 58 | 2901 | 113 | 10 | completed |
 ||| 63 | energy-storage-system.md | topics | topics/renewable-storage/energy-storage-system.md | P1 | 56 | 3116 | 50 | 19 | completed |
-|| 64 | hybrid-modeling.md | methods | methods/simulation-technology/hybrid-modeling.md | P1 | 56 | 1580 | 6 | 22 | pending |
+|| 64 | hybrid-modeling.md | methods | methods/simulation-technology/hybrid-modeling.md | P1 | 56 | 783 | 66 | 8 | completed |
 || 65 | emt-simulation-verification.md | methods | methods/system-studies/emt-simulation-verification.md | P1 | 55 | 1672 | 2 | 16 | pending |
 || 66 | frequency-control.md | methods | methods/control/frequency-control.md | P1 | 54 | 1341 | 8 | 14 | pending |
 || 67 | power-electronics-modeling.md | models | models/converter/power-electronics-modeling.md | P1 | 52 | 1105 | 11 | 9 | pending |
@@ -541,3 +541,4 @@ updated: "2026-05-13"
 ||| 61 | heidler-function.md | methods/signal-processing/heidler-function.md | 完成 | 1339字/121公式/10wikilinks/9章节/9篇来源论文/Heidler原始公式+多函数叠加+CIGRE/IEC标准参数/实测数据 |
 |||| 62 | mutual-impedance.md | methods/transmission-line/mutual-impedance.md | 完成 | 2901字/113公式/10wikilinks/10章节/7篇来源论文/Carson-Pollaczek大地返回积分+多层土壤广义公式+模态揭示变换+DSFTL非平行模型+6种EMT建模方法体系
 |||| 63 | energy-storage-system.md | topics/renewable-storage/energy-storage-system.md | 完成 | 3116字/50公式/19wikilinks/11章节/10篇来源论文/7表格/储能介质层(电池/超级电容/飞轮)+变流器层(传统PCS/MMC-BESS/MMC-STATCOM/MPT)+控制系统(VSG/自适应惯量/暂态功率补偿)+大规模并行(CPU-GPU/多速率/切换插值)
+||||| 64 | hybrid-modeling.md | methods/simulation-technology/hybrid-modeling.md | 完成 | 783字/66公式/8wikilinks/9章节/6种混合建模方法体系(详细简化/平均开关/EMT机电/EMT-DP协同/场路/软硬件)/5表格/量化性能边界表/5篇来源论文 | 2026-05-15 |
