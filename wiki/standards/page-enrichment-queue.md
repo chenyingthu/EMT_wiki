@@ -91,7 +91,7 @@ updated: "2026-05-13"
 || 66 | frequency-control.md | methods | methods/control/frequency-control.md | P1 | 54 | 8556 | 120 | 11 | completed |
 || 67 | power-electronics-modeling.md | models | models/converter/power-electronics-modeling.md | P1 | 52 | 1105 | 11 | 9 | completed |
 || 68 | curve-fitting.md | methods | methods/signal-processing/curve-fitting.md | P1 | 52 | 918 | 18 | 17 | completed |
-|| 69 | phasor-measurement-unit.md | methods | methods/system-studies/phasor-measurement-unit.md | P1 | 52 | 1649 | 3 | 16 | pending |
+|| 69 | phasor-measurement-unit.md | methods | methods/system-studies/phasor-measurement-unit.md | P1 | 52 | 1649 | 3 | 16 | completed 
 || 70 | gruson-2011-reduced-mmc.md | models | models/equivalent/gruson-2011-reduced-mmc.md | P1 | 51 | 1059 | 11 | 6 | pending |
 || 71 | abb.md | entities | entities/industry/abb.md | P1 | 50 | 1797 | 0 | 15 | pending |
 || 72 | phasor-model.md | methods | methods/system-studies/phasor-model.md | P2 | 50 | 1320 | 10 | 16 | pending |
@@ -547,3 +547,4 @@ updated: "2026-05-13"
 
 ||||| 66 | frequency-control.md | methods/control/frequency-control.md | 完成 | 8556字/120公式(15块级+105行内)/11wikilinks/9章节/5种核心机制(同步机调速器/P-f下垂/VSG/自适应惯量/构网型PQ边界)/5表格/5篇来源论文/GFM vs GFL对比表/EMT初始化加速6.9倍 | 2026-05-15 |
 |||||| 67 | power-electronics-modeling.md | models/converter/power-electronics-modeling.md | 完成 | 2700字(中)/65公式(15块级+50行内)/15wikilinks/10章节/6篇来源论文/五类模型精度-效率映射/SW-VI-AV-CCI-SCI框架
+||||| 69 | phasor-measurement-unit.md | methods/system-studies/phasor-measurement-unit.md | 完成 | 3578字(中)/52公式(12块级+40行内)/16wikilinks(全部验证有效)/9章节/6种核心方法(DFT/MFPM/GAM/SFA/BFDP/DP)+4类估计算法对比表+量化性能边界表/6篇来源论文 | 2026-05-15 |
