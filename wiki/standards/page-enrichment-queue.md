@@ -83,7 +83,7 @@ updated: "2026-05-13"
 || 58 | distributed-parameter-model.md | methods | methods/transmission-line/distributed-parameter-model.md | P1 | 61 | 1241 | 9 | 15 | completed |
 || 59 | impedance-measurement.md | methods | methods/signal-processing/impedance-measurement.md | P1 | 59 | 1468 | 6 | 18 | completed |
 || 60 | power-system-network.md | topics | topics/tools-software/power-system-network.md | P1 | 59 | 1223 | 9 | 13 | completed |
-|| 61 | heidler-function.md | methods | methods/signal-processing/heidler-function.md | P1 | 59 | 713 | 18 | 10 | pending |
+|| 61 | heidler-function.md | methods | methods/signal-processing/heidler-function.md | P1 | 59 | 713 | 18 | 10 | completed |
 || 62 | mutual-impedance.md | methods | methods/transmission-line/mutual-impedance.md | P1 | 58 | 1202 | 10 | 14 | pending |
 || 63 | energy-storage-system.md | topics | topics/renewable-storage/energy-storage-system.md | P1 | 56 | 1549 | 5 | 18 | pending |
 || 64 | hybrid-modeling.md | methods | methods/simulation-technology/hybrid-modeling.md | P1 | 56 | 1580 | 6 | 22 | pending |
@@ -538,3 +538,4 @@ updated: "2026-05-13"
 |||| 57 | corona-effect-modeling.md | methods/transmission-line/corona-effect-modeling.md | 完成 | 874字/130公式/12wikilinks/0SVG/11章节/5种建模方法/9量化数据点/4篇来源论文 | 2026-05-14
 |||| 58 | distributed-parameter-model.md | methods/transmission-line/distributed-parameter-model.md | 完成 | 4761字/114公式/13wikilinks/0SVG/10章节/6篇来源论文/三大建模方法体系(FD-Line/ULM/扩展Bergeron) | 2026-05-14
 ||| 60 | power-system-network.md | topics/tools-software/power-system-network.md | 完成 | 1021字/60公式/10wikilinks/9章节/9篇来源论文/五层网络建模体系架构/KLU+BTF并行/BBD-MPI/多速率SFP-EMT
+||| 61 | heidler-function.md | methods/signal-processing/heidler-function.md | 完成 | 1339字/121公式/10wikilinks/9章节/9篇来源论文/Heidler原始公式+多函数叠加+CIGRE/IEC标准参数/实测数据 |
