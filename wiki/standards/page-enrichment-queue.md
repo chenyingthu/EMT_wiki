@@ -130,7 +130,7 @@ updated: "2026-05-13"
 || 105 | automatic-code-generation.md | methods | methods/simulation-technology/automatic-code-generation.md | P2 | 34 | 9530 | 94 | 14 | completed |
 
 || 106 | power-flow-calculation.md | methods | methods/system-studies/power-flow-calculation.md | P2 | 34 | 7100 | 102 | 13 | completed |
-|| 107 | large-scale-power-system.md | topics | topics/simulation/large-scale-power-system.md | P2 | 34 | 1625 | 10 | 23 | pending |
+|| 107 | large-scale-power-system.md | topics | topics/simulation/large-scale-power-system.md | P2 | 6847 | 58 | 26 | completed |
 || 108 | optimal-power-flow.md | methods | methods/system-studies/optimal-power-flow.md | P2 | 33 | 1507 | 8 | 12 | pending |
 || 109 | finite-element-method.md | methods | methods/network-solution/finite-element-method.md | P2 | 33 | 1568 | 12 | 25 | pending |
 || 110 | sequence-network-model.md | methods | methods/protection-fault/sequence-network-model.md | P2 | 33 | 1631 | 6 | 13 | pending |
@@ -577,5 +577,6 @@ updated: "2026-05-13"
 |||||| 90 | small-signal-stability.md | methods/stability-analysis/small-signal-stability.md | 完成 | 7558字/97公式(17块级+80行内)/21wikilinks(全部验证有效)/10章节/6表格/4条分析路径(伴随电路-DAE-Floquet-频域扫描)/6篇来源论文(Chindu2023/Sajjadi2026/Jiang2025/Cifuentes2025/Masoom2025/Carreño2026)/伪特征值剔除/Floquet参与因子/CSCR 3.7/电流源型VSG强网稳定 | 2026-05-15 |
 ||||||||| 98 | network-partitioning.md | topics/modeling-methods/network-partitioning.md | 完成 | 7056字/36公式/27wikilinks(全部验证有效)/9章节/4类分区原理(图划分负载均衡/电气边界/Schur补/LDE-Woodbury)/5项量化性能边界表/5个关键技术挑战/补偿法无延迟并行/MATE-TLM/SFA-MATE/7篇来源论文 | 2026-05-16 |
 |||||||||| 102 | state-space-average-method.md | methods/numerical-methods/state-space-average-method.md | 完成 | 1754字/140公式(30块级+110行内)/17wikilinks(全部验证有效)/11章节/8篇来源论文/6种方法体系(基本SSA/P-SSA/GSSA/P-GSSA/混合SSA-GSSA/死区补偿)/Berger2018 SSA在d>30°精度失效/Wang2019 P-GSSA 1.32%误差/量化性能边界表/选择指南 | 2026-05-16 |
+||| 107 | large-scale-power-system.md | topics/simulation/large-scale-power-system.md | 完成 | 6847字(中)/58公式(11块级+47行内)/26wikilinks(全部验证有效)/9章节/4类大规模EMT仿真方法体系(分区协同/并行计算/实时HIL/多速率)+9篇来源论文/12.8倍加速比(Rupasinghe2023)/faster-than-real-time SFA(Zhang2024)/Nelson River RTDS平台构建经验/Hydro-Québec离线→实时移植流程 | 2026-05-16 |
 |||||| 103 | concurrent-commutation-failure.md | methods/power-electronics/concurrent-commutation-failure.md | 完成 | 8149字/74公式(9块级+65行内)/15wikilinks(全部验证有效)/9章节/4种EMT建模方法(PAVM自动检测/MIIF电压灵敏度/负序相位修正/谐波传递等效电路)/5个关键技术挑战/3篇来源论文(Hong2022/Yao2023/Zhang2018)/量化性能边界表/适用边界与选择指南 | 2026-05-16 |
 |||||| 104 | grid-forming-inverter.md | models | models/converter/grid-forming-inverter.md | 完成 | 1547字/87公式(20块级+67行内)/12wikilinks(全部验证有效)/9章节/6种EMT建模方法(DSM/AVM/VSM/CISS/DI/PQ边界)/5个关键技术挑战/4篇来源论文(Nurunnabi2025/Misyris2021/Nguyen2021/Allabadi2024)/量化性能边界表/适用边界与选择指南 | 2026-05-16 |
