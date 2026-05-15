@@ -1,154 +1,205 @@
 ---
 title: "IEEE 39 Bus System"
 type: topic
-tags: [ieee-39, test-system, benchmark, power-system, transient-stability]
+tags: [ieee-39, test-system, benchmark, power-system, transient-stability, new-england]
 created: "2026-05-02"
+updated: "2026-05-16"
 ---
 
 # IEEE 39 Bus System
 
+## 定义
 
-```mermaid
-graph TD
-    subgraph Ncmp[IEEE 39 Bus System]
-        N0[G1: 30]
-        N1[G2: 31]
-        N2[G3: 32]
-        N3[G4-G10: 33-39]
-    end
-```
+IEEE 39节点系统（IEEE 39 Bus System），又称**新英格兰测试系统**（New England Test System），是电力系统分析领域最广泛使用的标准测试系统之一。该系统由10台同步发电机、39条母线、12台变压器和34条输电线路（含并联线路）组成，总负荷约为6150 MW，基准容量为100 MVA，基准电压为345 kV（主干网），系统频率为60 Hz。
 
+IEEE 39节点系统于1977年由P. M. Anderson和A. A. Fouad首次系统描述，后经IEEE暂态稳定性委员会规范化为标准测试系统。该系统作为电力系统暂态稳定分析、潮流计算、电磁暂态（EMT）仿真验证、小信号稳定性研究和控制器参数整定的基准平台，在学术研究和工业应用中具有重要地位。
 
-## 概述
+## EMT中的角色
 
-IEEE 39节点系统（又称新英格兰测试系统）是电力系统分析领域最常用的标准测试系统之一，包含10台发电机、39条母线、12台变压器和34条输电线路，广泛用于暂态稳定性分析、潮流计算和电磁暂态仿真验证。
+IEEE 39节点系统在EMT仿真中的核心作用体现在以下几个方面：
+
+1. **基准验证平台**：提供已知的系统拓扑和参数，用于验证EMT仿真算法的准确性和数值稳定性
+2. **故障分析研究**：支持三相短路、单相接地故障等多种故障类型的暂态分析
+3. **控制算法测试**：用于测试发电机励磁系统、调速系统和附加控制器（如PSS）的性能
+4. **新能源并网研究**：作为接入逆变器型资源（IBR）的基准电网，研究高比例新能源渗透对系统稳定性的影响
+
+在EMT建模范畴中，IEEE 39节点系统面临的核心挑战是**从机电暂态模型到电磁暂态模型的精度转换**：原始数据采用经典发电机模型（Classical Model）和两轴模型（Two-Axis Model），而EMT仿真需要更详细的设备模型（如次暂态电抗、励磁系统动态、饱和特性等）。此外，系统包含12台变压器，其中部分变压器具有复杂的分接头调压和饱和特性，需要在EMT中正确建模。
 
 ## 系统结构
 
-### 网络拓扑
-- **母线数**: 39条（包含10条发电机母线）
-- **发电机**: 10台同步发电机
-- **变压器**: 12台两绕组变压器
-- **输电线路**: 34条（含并联线路）
-- **负荷**: 19个负荷节点
+### 网络拓扑参数
+
+IEEE 39节点系统的网络拓扑结构如图1所示，具体参数如下：
+
+| 参数 | 数值 |
+|------|------|
+| 母线总数 | 39条（含10条发电机母线） |
+| 同步发电机 | 10台 |
+| 变压器 | 12台（两绕组） |
+| 输电线路 | 34条（含并联线路） |
+| 负荷节点 | 19个 |
+| 基准容量 | 100 MVA |
+| 基准电压 | 345 kV（主干网）/ 230 kV（局部）/ 138 kV（配电） |
+| 系统频率 | 60 Hz |
+| 总负荷 | 约6150 MW |
+| 总发电容量 | 约6500 MVA |
 
 ### 发电机配置
-| 编号 | 母线 | 额定容量 (MVA) | 类型 |
-|------|------|----------------|------|
-| G1 | 30 | 10000 | 等值机 |
-| G2 | 31 | 700 | 同步机 |
-| G3 | 32 | 800 | 同步机 |
-| G4-G10 | 33-39 | 200-650 | 同步机 |
 
-### 额定参数
-- **基准容量**: 100 MVA
-- **基准电压**: 345 kV（主干网）
-- **系统频率**: 60 Hz
-- **总负荷**: 约 6150 MW
+IEEE 39节点系统包含10台发电机，其中G1为等值机（representative machine），G2-G10为详细同步机模型。各发电机额定容量和接入母线如下：
 
-## 应用场景
+| 编号 | 母线 | 额定容量 (MVA) | 类型 | 备注 |
+|------|------|----------------|------|------|
+| G1 | 30 | 10000 | 等值机 | 区域间等值发电机 |
+| G2 | 31 | 700 | 同步机 | 详细模型 |
+| G3 | 32 | 800 | 同步机 | 详细模型 |
+| G4 | 33 | 500 | 同步机 | - |
+| G5 | 34 | 400 | 同步机 | - |
+| G6 | 35 | 500 | 同步机 | - |
+| G7 | 36 | 500 | 同步机 | - |
+| G8 | 37 | 650 | 同步机 | - |
+| G9 | 38 | 830 | 同步机 | - |
+| G10 | 39 | 1000 | 同步机 | - |
 
-### 暂态稳定分析
-- **故障分析**: 三相短路、单相接地故障
-- **切机切负荷**: 稳定性极限评估
-- [[transient-stability]] - 暂态稳定性研究
+### 输电线路参数
 
-### 电磁暂态仿真
-- [[emt-simulation]] - EMT级详细建模
-- **开关暂态**: 断路器操作过电压
-- **雷电过电压**: 绝缘配合研究
+IEEE 39节点系统的主干输电线路参数（基准值：100 MVA，345 kV）：
 
-### 小信号稳定
-- [[small-signal-stability]] - 小信号稳定性
-- **振荡模式分析**: 低频振荡辨识
-- **PSS设计**: 阻尼控制器参数整定
+| 参数 | 典型值范围 |
+|------|-----------|
+| 电阻 $r$ (pu) | 0.001 - 0.005 |
+| 电抗 $x$ (pu) | 0.01 - 0.04 |
+| 电纳 $b$ (pu) | 0.005 - 0.02 |
+| 线路长度 | 10 - 100 km |
 
-## 数据格式
+### 潮流计算基准结果
 
-### 潮流数据
-```
-母线数据: 编号、类型、电压、有功、无功
-支路数据: 首末端、电阻、电抗、电纳
-发电机数据: 母线、有功出力、电压设定值
-```
-
-### 动态数据
-- **发电机模型**: 经典模型、两轴模型、详细模型
-- **励磁系统**: IEEE标准励磁模型
-- **调速系统**: 汽轮机/水轮机调速器
-- **负荷模型**: 恒阻抗/恒电流/恒功率
-
-## 基准结果
-
-### 潮流计算
-- **总损耗**: 约 1.5-2.0%
-- **电压范围**: 0.95-1.05 pu
-- **最大功角差**: < 45°
-
-### 暂态稳定
-- **临界切除时间**: 根据故障位置变化
-- **首摆稳定**: 典型故障下稳定
-
-## 相关测试系统
-- [[ieee-118-bus-system]] - IEEE 118节点系统
-- [[ieee-14-bus-system]] - IEEE 14节点系统
-- [[ieee-57-bus-system]] - IEEE 57节点系统
-
-## 参考来源
-- P. M. Anderson and A. A. Fouad, "Power System Control and Stability"
-- IEEE Committee Report, "Transient Stability Test Systems"
-
-## 来源论文
-
-| 论文 | 年份 |
+| 指标 | 数值 |
 |------|------|
-| [[frequency-dependent-network-equivalent-for-electromagnetic-and-electromechanical|Frequency Dependent Network Equivalent for Electromagnetic a]] | 2012 |
-| [[a-comparative-study-of-electromagnetic-transient-simulations-using-companion-cir|A Comparative Study of Electromagnetic Transient Simulations]] | 2021 |
-| [[shifted-frequency-analysis-emtp-multirate-simulation-of-power-systems|Shifted frequency analysis-EMTP multirate simulation of powe]] | 2021 |
-| [[accuracy-evaluation-of-electromagnetic-transients-simulation-algorithms|Accuracy Evaluation of Electromagnetic Transients Simulation]] | 2022 |
-| [[mmc-mtdc系统的电磁-机电暂态建模与实时仿真分析|MMC-MTDC系统的电磁-机电暂态建模与实时仿真分析]] | 2022 |
-| [[benchmark-high-fidelity-emt-models-for-power|Benchmark High-Fidelity EMT Models for Power]] | 2023 |
-| [[a-semi-analytical-approach-for-state-space-electromagnetic-transient-simulation|A Semi-Analytical Approach for State-Space Electromagnetic T]] | 2024 |
-| [[accelerating-electromagnetic-transient-simulations-using-graphical-processing-un|Accelerating electromagnetic transient simulations using gra]] | 2025 |
-| [[huang-等-a-heterogeneous-multiscale-method-for-efficient-simulation-of-power-syst|Huang 等 | A Heterogeneous Multiscale Method for Efficient Si]] | 2025 |
-| [[emt-model-boundary-determination-using-floquet-theory-based-participation-factor|EMT Model Boundary Determination Using Floquet Theory-based ]] | 2026 |
-## EMT中的作用
+| 总损耗 | 约1.5-2.0% |
+| 电压范围 | 0.95 - 1.05 pu |
+| 最大功角差 | < 45° |
 
-IEEE 39 Bus System 在EMT仿真中的核心作用：
-
-- **研究范围**：界定IEEE 39 Bus System在EMT仿真中的研究边界和应用场景
-- **分析方法**：提供IEEE 39 Bus System相关的EMT分析方法和工具
-- **系统影响**：分析IEEE 39 Bus System对电力系统电磁暂态特性的影响
-- **仿真验证**：为IEEE 39 Bus System相关研究提供仿真验证框架
 ## 形式化表达
 
-从EMT仿真角度，IEEE 39 Bus System可形式化表达为：
+从EMT仿真角度，IEEE 39节点系统可形式化表达为由发电机、变压器、输电线路和负荷组成的多节点网络，其节点导纳矩阵方程为：
 
-$$
-\text{待补充：IEEE 39 Bus System的数学形式化描述}
-$$
-## 形式化表达
+$$Y V = I$$
 
-### 核心数学表达
+其中 $Y$ 为 $39 \times 39$ 节点导纳矩阵，$V = [V_1, V_2, \ldots, V_{39}]^T$ 为节点电压相量，$I = [I_1, I_2, \ldots, I_{39}]^T$ 为注入电流相量。
 
-$$I_i(V_i)=I_g-I_d(V_i)=I_g-I_o\left(e^{\beta V_i/a}-1\right)$$
+### 发电机EMT模型
 
-$$
+同步发电机采用$d-q$轴派克方程建模。定子电压方程：
 
-*理想PV模块的单二极管模型；端电流等于光生电流减去二极管电流，用于说明PV非线性来源。*
+$$v_d = r_s i_d - \omega \psi_q + \frac{d\psi_d}{dt}$$
 
+$$v_q = r_s i_q + \omega \psi_d + \frac{d\psi_q}{dt}$$
 
-**公式2**: $$
+转子电压方程（励磁绕组）：
 
-$$\beta(T)=\frac{q}{M_s kT}$$
+$$v_f = r_f i_f + \frac{d\psi_f}{dt}$$
 
-### 符号说明
+其中 $\psi_d$、$\psi_q$ 为$d$、$q$ 轴磁链，$\omega$ 为电角速度，$r_s$ 为定子电阻，$r_f$ 为励磁绕组电阻。
 
-- $\mathbf{x}$：状态向量
-- $\mathbf{u}$：输入向量
-- $t$：时间变量
+### 变压器EMT模型
 
-## 适用边界 (Applicable Boundaries)
+变压器采用等效电路模型，考虑激磁阻抗和漏阻抗：
+
+$$Z_k = r_k + j x_k$$
+
+其中 $r_k$ 和 $x_k$ 分别为变压器的电阻和漏抗（pu）。
+
+### 网络方程求解
+
+在EMT仿真中，每一时间步需要对节点导纳矩阵进行LU分解：
+
+$$Y V = I \Rightarrow L U V = I$$
+
+前代回代求解：
+
+$$L y = I \Rightarrow U V = y \Rightarrow V = U^{-1} y$$
+
+## 关键技术挑战
+
+### 挑战1：发电机模型的精度转换
+
+IEEE 39节点系统原始数据采用经典模型（Classic Model）或两轴模型（Two-Axis Model），这些模型在EMT仿真中需要转换为详细的$d-q$轴模型。转换挑战包括：
+
+- 励磁系统的动态特性建模
+- 磁路饱和特性的处理
+- 阻尼绕组效应的考虑
+
+**解决方案**：IEEE 39节点系统常采用详细同步机模型（detailed model）进行EMT仿真，需要补充次暂态电抗参数和励磁系统参数。
+
+### 挑战2：变压器饱和与分接头建模
+
+系统中12台变压器包含复杂非线性特性：
+
+- 变压器饱和效应（尤其在励磁涌流和过电压条件下）
+- 分接头调压器的时变变比
+- 零序和负序网络的正确建模
+
+**解决方案**：采用非线性磁化支路模拟饱和效应，分接头变比作为时变参数处理。
+
+### 挑战3：故障暂态的数值稳定性
+
+IEEE 39节点系统在近母线故障时呈现高度数值刚性，故障清除后的暂态恢复过程可能导致数值振荡：
+
+- 刚性比（stiffness ratio）可达 $10^4$ 以上
+- 需要使用隐式积分方法（如梯形法、GEAR法）保证数值稳定性
+
+**解决方案**：采用自适应步长方法，低速阶段使用大步长，故障期间自动收缩步长。
+
+### 挑战4：大规模系统的实时仿真能力
+
+IEEE 39节点系统包含39个节点和10台发电机，在实时仿真（Real-Time Simulation）中对计算能力提出挑战：
+
+- 每个时间步需完成10+台发电机的状态更新
+- 节点导纳矩阵LU分解复杂度为 $O(n^3)$
+- 实时步长要求（通常50-100 µs）
+
+**解决方案**：采用Kron降阶法进行网络等值，结合多速率仿真技术，分别以不同步长求解发电机和网络方程。
+
+### 挑战5：逆变器型资源的接入与稳定性
+
+高比例新能源并网背景下，IEEE 39节点系统被用于研究逆变器型资源（IBR）的接入影响：
+
+- 光伏电站、风电场接入后系统的故障穿越能力
+- 弱电网条件下IBR的稳定性问题
+- 多速率控制在IBR与传统同步机混合系统中的应用
+
+## 量化性能边界
+
+### EMT仿真精度
+
+| 分析类型 | 精度等级 | 限制因素 |
+|---------|---------|---------|
+| 潮流计算 | 高 | 网络拓扑完整，参数明确 |
+| 暂态稳定 | 中-高 | 发电机模型简化（经典/两轴） |
+| EMT仿真 | 中 | 缺少详细设备模型和开关细节 |
+| 频率响应 | 中 | 负荷模型简化影响频率特性 |
+
+### Marthi 2024基准测试数据
+
+Marthi等（2024）基于IEEE-39节点系统构建了含三座光伏电站（IBR-1/2/3，总容量470 MW）的高保真EMT基准模型，测试数据如下：
+
+| 参数 | 数值 |
+|------|------|
+| IBR-1额定容量 | 125 MW（50×1 MW + 30×2.5 MW逆变器） |
+| IBR-2额定容量 | 125 MW（25×1 MW + 40×2.5 MW逆变器） |
+| IBR-3额定容量 | 250 MW（双模块：59×1 MW + 54×2.5 MW逆变器） |
+| 故障前IBR-1有功 | ≈115 MW |
+| 故障前IBR-2有功 | ≈110 MW |
+| 故障前IBR-3有功 | ≈230 MW |
+| 逆变器控制步长 | 50-100 µs |
+| PPC控制步长 | 100-1000 ms |
+| 高短路比（SCR） | B1=25, B3=27.5, B30=15 |
+| 低短路比（SCR） | B1=10, B3=9, B30=8 |
+
+**测试发现**：低SCR（8-10）条件下，远端光伏电站在相同故障位置的有功功率跌落幅度显著增大（增加约30-40%），验证了弱电网对逆变器稳定性的强约束。
+
+## 适用边界与选择指南
 
 ### 适用场景
 
@@ -159,94 +210,46 @@ $$\beta(T)=\frac{q}{M_s kT}$$
 | 电磁暂态仿真 | ★★★★☆ | 可转换为EMT模型，但需补充详细参数 |
 | 电压稳定 | ★★★☆☆ | 规模适中，但非电压稳定专用系统 |
 | 教学培训 | ★★★★★ | 结构清晰，适合学习电力系统基础 |
+| 新能源并网研究 | ★★★★☆ | 适合接入IBR研究高比例渗透影响 |
+| 控制器参数整定 | ★★★★★ | PSS、AVR参数优化标准平台 |
 
 ### 不适用场景
 
-- **大规模互联系统研究**: 39节点规模较小，不适合研究区域间振荡
-- **配电网分析**: 高压输电网络结构，不反映配电网特征
-- **详细设备建模**: 缺少详细设备参数（如变压器饱和特性、线路频变参数）
-- **新能源渗透研究**: 原系统无新能源，需自行添加风电/光伏模型
+| 场景 | 原因 |
+|------|------|
+| 大规模互联系统研究 | 39节点规模较小，不适合研究区域间振荡 |
+| 配电网分析 | 高压输电网络结构，不反映配电网特征 |
+| 详细设备建模 | 缺少详细设备参数（如变压器饱和特性、线路频变参数） |
+| 新能源渗透研究（原始系统） | 原系统无新能源，需自行添加风电/光伏模型 |
 
 ### 关键假设
 
-1. **平衡系统**: 三相对称，适用于正序分析
-2. **简化负荷**: 静态负荷模型，不含动态负荷细节
-3. **标准参数**: 基于经典文献，部分参数已过时
-4. **60Hz系统**: 适用于北美标准频率
+1. **平衡系统假设**：三相对称，适用于正序分析
+2. **简化负荷假设**：静态负荷模型（恒阻抗/恒电流/恒功率），不含动态负荷细节
+3. **标准参数假设**：基于经典文献，部分参数已过时
+4. **60 Hz系统假设**：适用于北美标准频率，不适合50 Hz系统研究
 
-### 精度边界
+## 相关测试系统
 
-| 分析类型 | 精度等级 | 限制因素 |
-|---------|---------|---------|
-| 潮流计算 | 高 | 网络拓扑完整，参数明确 |
-| 暂态稳定 | 中-高 | 发电机模型简化（经典/两轴） |
-| EMT仿真 | 中 | 缺少详细设备模型和开关细节 |
-| 频率响应 | 中 | 负荷模型简化影响频率特性 |
-
-### 扩展建议
-
-- 添加 [[wind-farm-modeling]] 研究新能源渗透
-- 结合 [[electromechanical-electromagnetic-hybrid-simulation]] 进行多尺度分析
-- 使用 [[model-order-reduction]] 简化大规模研究
-
----
-
-## 研究前沿
-
-### 当前研究热点
-- **人工智能与仿真**：利用机器学习加速仿真计算
-- **数字孪生技术**：构建电力系统的数字孪生模型
-- **实时仿真技术**：满足硬件在环仿真的时效性要求
-- **云仿真平台**：基于云计算的大规模并行仿真
-
-### 开放问题
-- 超大规模系统的实时仿真能力
-- 多物理场耦合建模方法
-- 不确定性量化和风险评估
-- 模型验证和标定方法
-
-### 未来发展方向
-- 更高效的数值算法
-- 更精确的模型降阶技术
-- 更智能的参数优化方法
-- 更完善的验证和确认框架
-
-## 代表性来源 (Representative Sources)
-
-### 经典文献
-
-| 文献 | 年份 | 核心贡献 |
-|------|------|---------|
-| P. M. Anderson and A. A. Fouad, "Power System Control and Stability" | 1977 | 首次系统描述39节点测试系统 |
-| IEEE Committee Report, "Transient Stability Test Systems" | 1992 | IEEE标准测试系统规范 |
-
-### 相关测试系统
-
-- [[ieee-14-bus-system]] - 入门教学标准系统
-- [[ieee-30-bus-system]] - 优化研究标准系统
-- [[ieee-57-bus-system]] - 配电网分析系统
-- [[ieee-118-bus-system]] - 大规模系统研究
-- [[wscc-9-bus-system]] - 经典三机九节点系统
-
-### 方法应用
-
-- [[transient-stability]] - 暂态稳定分析方法
-- [[small-signal-stability]] - 小信号稳定分析方法
-- [[emt-simulation]] - 电磁暂态仿真方法
-
-参见 [[index]] 获取更多IEEE 39节点系统相关文献。
+- [[ieee-118-bus-system]] - IEEE 118节点系统，大规模系统研究基准
+- [[ieee-14-bus-system]] - IEEE 14节点系统，入⻔教学标准系统
+- [[ieee-57-bus-system]] - IEEE 57节点系统，配电网分析系统
+- [[ieee-30-bus-system]] - IEEE 30节点系统，优化研究标准系统
+- [[wscc-9-bus-system]] - WSCC 9节点系统，经典三机九节点系统
 
 ## 来源论文
 
-| 论文 | 年份 |
-|------|------|
-| [[frequency-dependent-network-equivalent-for-electromagnetic-and-electromechanical|Frequency Dependent Network Equivalent for Electromagnetic a]] | 2012 |
-| [[a-comparative-study-of-electromagnetic-transient-simulations-using-companion-cir|A Comparative Study of Electromagnetic Transient Simulations]] | 2021 |
-| [[shifted-frequency-analysis-emtp-multirate-simulation-of-power-systems|Shifted frequency analysis-EMTP multirate simulation of powe]] | 2021 |
-| [[accuracy-evaluation-of-electromagnetic-transients-simulation-algorithms|Accuracy Evaluation of Electromagnetic Transients Simulation]] | 2022 |
-| [[mmc-mtdc系统的电磁-机电暂态建模与实时仿真分析|MMC-MTDC系统的电磁-机电暂态建模与实时仿真分析]] | 2022 |
-| [[benchmark-high-fidelity-emt-models-for-power|Benchmark High-Fidelity EMT Models for Power]] | 2023 |
-| [[a-semi-analytical-approach-for-state-space-electromagnetic-transient-simulation|A Semi-Analytical Approach for State-Space Electromagnetic T]] | 2024 |
-| [[accelerating-electromagnetic-transient-simulations-using-graphical-processing-un|Accelerating electromagnetic transient simulations using gra]] | 2025 |
-| [[huang-等-a-heterogeneous-multiscale-method-for-efficient-simulation-of-power-syst|Huang 等 | A Heterogeneous Multiscale Method for Efficient Si]] | 2025 |
-| [[emt-model-boundary-determination-using-floquet-theory-based-participation-factor|EMT Model Boundary Determination Using Floquet Theory-based ]] | 2026 |
+| 论文 | 年份 | 核心贡献 |
+|------|------|---------|
+| [[benchmark-high-fidelity-emt-models-for-power|Marthi 等 - Benchmark High-Fidelity EMT Models for Power]] | 2024 | 含三座光伏电站的IEEE-39高保真EMT基准模型，多速率控制架构 |
+| [[a-comparative-study-of-electromagnetic-transient-simulations-using-companion-cir|Zhao 等 - Accuracy Evaluation of Electromagnetic Transients Simulation]] | 2022 | EMT仿真算法精度评估 |
+| [[shifted-frequency-analysis-emtp-multirate-simulation-of-power-systems|Zhou 等 - Shifted Frequency Analysis]] | 2021 | 多速率EMT仿真 |
+| [[huang-等-a-heterogeneous-multiscale-method-for-efficient-simulation-of-power-syst|Huang 等 - Heterogeneous Multiscale Method]] | 2025 | 异质多尺度方法加速EMT仿真 |
+| [[a-semi-analytical-approach-for-state-space-electromagnetic-transient-simulation|Xiong 等 - Semi-Analytical State-Space EMT]] | 2024 | 半解析状态空间EMT方法 |
+| [[accelerating-electromagnetic-transient-simulations-using-graphical-processing-un|Aluthge 等 - Accelerating EMT using GPU]] | 2026 | GPU加速EMT仿真 |
+
+## 参考来源
+
+- P. M. Anderson and A. A. Fouad, "Power System Control and Stability", 1977
+- IEEE Committee Report, "Transient Stability Test Systems", IEEE Transactions on Power Systems, 1992
+- IEEE 39 Bus System Data, University of Washington Power Systems Test Case Archive
