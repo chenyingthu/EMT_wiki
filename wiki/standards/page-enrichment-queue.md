@@ -127,7 +127,8 @@ updated: "2026-05-13"
 || 102 | state-space-average-method.md | methods | methods/numerical-methods/state-space-average-method.md | P2 | 1754 | 140 | 17 | 17 | completed |
 || 103 | concurrent-commutation-failure.md | methods | methods/power-electronics/concurrent-commutation-failure.md | P2 | 35 | 8149 | 74 | 15 | completed |
 || 104 | grid-forming-inverter.md | models | models/converter/grid-forming-inverter.md | P2 | 34 | 1547 | 87 | 12 | completed |
-|| 105 | automatic-code-generation.md | methods | methods/simulation-technology/automatic-code-generation.md | P2 | 34 | 1772 | 5 | 18 | pending |
+|| 105 | automatic-code-generation.md | methods | methods/simulation-technology/automatic-code-generation.md | P2 | 34 | 9530 | 94 | 14 | completed |
+
 || 106 | power-flow-calculation.md | methods | methods/system-studies/power-flow-calculation.md | P2 | 34 | 1694 | 7 | 19 | pending |
 || 107 | large-scale-power-system.md | topics | topics/simulation/large-scale-power-system.md | P2 | 34 | 1625 | 10 | 23 | pending |
 || 108 | optimal-power-flow.md | methods | methods/system-studies/optimal-power-flow.md | P2 | 33 | 1507 | 8 | 12 | pending |
