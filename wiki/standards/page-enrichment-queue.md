@@ -102,7 +102,7 @@ updated: "2026-05-13"
 || 77 | transposed-three-phase-line.md | methods | methods/transmission-line/transposed-three-phase-line.md | P2 | 44 | 1477 | 6 | 11 | completed |
 || 78 | fault-ride-through.md | topics | topics/hvdc-facts/fault-ride-through.md | P2 | 44 | 1369 | 9 | 13 | completed |
 || 79 | single-phase-line-model.md | methods | methods/transmission-line/single-phase-line-model.md | P2 | 43 | 6340 | 97 | 12 | completed |
-|| 80 | high-frequency-transient-analysis.md | methods | methods/protection-fault/high-frequency-transient-analysis.md | P2 | 43 | 1548 | 10 | 24 | pending |
+|| 80 | high-frequency-transient-analysis.md | methods | methods/protection-fault/high-frequency-transient-analysis.md | P2 | 574 | 111 | 18 | 24 | completed |
 || 81 | unbalanced-fault-analysis.md | topics | topics/protection-lightning/unbalanced-fault-analysis.md | P2 | 43 | 1491 | 10 | 21 | pending |
 || 82 | digital-distance-protection.md | methods | methods/protection-fault/digital-distance-protection.md | P2 | 42 | 1706 | 3 | 14 | pending |
 || 83 | vector-fitting.md | methods | methods/signal-processing/vector-fitting.md | P2 | 42 | 3397 | 8 | 111 | pending |
@@ -554,3 +554,5 @@ updated: "2026-05-13"
 ||||||| 73 | fdtd.md | methods/simulation-technology/fdtd.md | 完成 | 3680字/135公式(19块级+116行内)/14wikilinks(全部验证有效)/10章节/6篇来源论文/FDTD核心机制+Yee网格蛙跳+CFL稳定性+数值色散+PML边界+外部场耦合+频变土壤递归卷积+FDTD-EMTP接口方法+5个量化性能数据点
 ||||||| 75 | single-phase-line-model.md | methods/transmission-line/single-phase-line-model.md | 完成 | 6340字/97公式(25块级+72行内)/12wikilinks(全部验证有效)/9章节/4种EMT建模方法：集中参数R-L/π型等值/单相Bergeron/频变单相模型/3篇来源论文：Torrez-Caballero-2014频变Bergeron/Kurokawa-2006参数反演/Duarte-2023-FDTD验证，单相模型选择决策表+量化性能边界表
 ||| 74 | harmonic-interaction.md | methods/methods/signal-processing/harmonic-interaction.md | 完成 | 5378字/63公式/12wikilinks/9章节/7表格/6种谐波交互机制 |
+
+||||| 78 | high-frequency-transient-analysis.md | methods/protection-fault/high-frequency-transient-analysis.md | 完成 | 574字/111公式/18wikilinks/10章节/4篇来源论文(De Conti 2026/Camilo 2020/Camara 2024/Li 2016)/6大核心机制：频变传输线端口关系+VF拟合+场路耦合接口+直流校正+双有损介质海缆+频变土壤地回路 | 2026-05-15 |
