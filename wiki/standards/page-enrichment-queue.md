@@ -112,7 +112,7 @@ updated: "2026-05-13"
 || 87 | multithreaded-parallel-computing.md | methods | methods/simulation-technology/multithreaded-parallel-computing.md | P2 | 41 | 986 | 45 | 15 | completed |
 || 88 | phase-domain-model.md | topics | topics/modeling-methods/phase-domain-model.md | P2 | 4684 | 35 | 15 | 20 | completed |
 || 89 | model-compatibility-layer.md | methods | methods/system-studies/model-compatibility-layer.md | P2 | 0 | 305 | 21 | 24 | completed |
-|| 90 | small-signal-stability.md | methods | methods/stability-analysis/small-signal-stability.md | P2 | 39 | 1587 | 8 | 19 | pending |
+|| 90 | small-signal-stability.md | methods | methods/stability-analysis/small-signal-stability.md | P2 | 39 | 7558 | 97 | 21 | completed |
 || 91 | gnanarathna-2011-efficient-mmc.md | models | models/equivalent/gnanarathna-2011-efficient-mmc.md | P2 | 39 | 1048 | 14 | 7 | pending |
 || 92 | excitation-system.md | methods | methods/stability-analysis/excitation-system.md | P2 | 39 | 1438 | 9 | 14 | pending |
 || 93 | electromagnetic-transient.md | topics | topics/stability-analysis/electromagnetic-transient.md | P2 | 38 | 1715 | 10 | 30 | pending |
@@ -565,3 +565,4 @@ updated: "2026-05-13"
 ||||||| 83 | vector-fitting.md | methods/signal-processing/vector-fitting.md | 完成 | 6307字/56公式(15块级+41行内)/14wikilinks(全部验证有效)/1SVG图/10章节/6篇来源论文/VF两阶段极点重定位+MVF模态加权+CVF复数极点+无源性强制+Partitioned Fitting+并行VF | 2026-05-15 ||
 |||| 84 | passivity-enforcement.md | methods/signal-processing/passivity-enforcement.md | 完成 | 4497字/121公式/19wikilinks/1表格/11章节/7篇来源论文/5种方法体系 | 2026-05-15 |
 ||||| 87 | multithreaded-parallel-computing.md | methods/simulation-technology/multithreaded-parallel-computing.md | 完成 | 986字/45公式(3块级+42行内)/15wikilinks(全部验证有效)/8章节/5种线程级任务划分(BTF/设备解耦/诺顿等效/多速率/场景级)/7篇来源论文/Abusalah2018 KLU-BTF 4线程1.39×/Xu2025 80×串行+2-3×并行/ParaEMT 25-36× | 2026-05-15 |
+|||||| 90 | small-signal-stability.md | methods/stability-analysis/small-signal-stability.md | 完成 | 7558字/97公式(17块级+80行内)/21wikilinks(全部验证有效)/10章节/6表格/4条分析路径(伴随电路-DAE-Floquet-频域扫描)/6篇来源论文(Chindu2023/Sajjadi2026/Jiang2025/Cifuentes2025/Masoom2025/Carreño2026)/伪特征值剔除/Floquet参与因子/CSCR 3.7/电流源型VSG强网稳定 | 2026-05-15 |
