@@ -125,7 +125,7 @@ updated: "2026-05-13"
 ||| 100 | cloudpss.md | entities | entities/software/cloudpss.md | P2 | 36 | 2360 | 0 | 36 | completed |
 ||| 101 | complex-differential-equation-solving.md | methods | methods/system-studies/complex-differential-equation-solving.md | P2 | 36 | 1833 | 5 | 22 | completed |
 || 102 | state-space-average-method.md | methods | methods/numerical-methods/state-space-average-method.md | P2 | 1754 | 140 | 17 | 17 | completed |
-|| 103 | concurrent-commutation-failure.md | methods | methods/power-electronics/concurrent-commutation-failure.md | P2 | 35 | 1863 | 1 | 13 | pending |
+|| 103 | concurrent-commutation-failure.md | methods | methods/power-electronics/concurrent-commutation-failure.md | P2 | 35 | 8149 | 74 | 15 | completed |
 || 104 | grid-forming-inverter.md | models | models/converter/grid-forming-inverter.md | P2 | 34 | 1067 | 15 | 8 | pending |
 || 105 | automatic-code-generation.md | methods | methods/simulation-technology/automatic-code-generation.md | P2 | 34 | 1772 | 5 | 18 | pending |
 || 106 | power-flow-calculation.md | methods | methods/system-studies/power-flow-calculation.md | P2 | 34 | 1694 | 7 | 19 | pending |
@@ -575,3 +575,4 @@ updated: "2026-05-13"
 |||||| 90 | small-signal-stability.md | methods/stability-analysis/small-signal-stability.md | 完成 | 7558字/97公式(17块级+80行内)/21wikilinks(全部验证有效)/10章节/6表格/4条分析路径(伴随电路-DAE-Floquet-频域扫描)/6篇来源论文(Chindu2023/Sajjadi2026/Jiang2025/Cifuentes2025/Masoom2025/Carreño2026)/伪特征值剔除/Floquet参与因子/CSCR 3.7/电流源型VSG强网稳定 | 2026-05-15 |
 ||||||||| 98 | network-partitioning.md | topics/modeling-methods/network-partitioning.md | 完成 | 7056字/36公式/27wikilinks(全部验证有效)/9章节/4类分区原理(图划分负载均衡/电气边界/Schur补/LDE-Woodbury)/5项量化性能边界表/5个关键技术挑战/补偿法无延迟并行/MATE-TLM/SFA-MATE/7篇来源论文 | 2026-05-16 |
 |||||||||| 102 | state-space-average-method.md | methods/numerical-methods/state-space-average-method.md | 完成 | 1754字/140公式(30块级+110行内)/17wikilinks(全部验证有效)/11章节/8篇来源论文/6种方法体系(基本SSA/P-SSA/GSSA/P-GSSA/混合SSA-GSSA/死区补偿)/Berger2018 SSA在d>30°精度失效/Wang2019 P-GSSA 1.32%误差/量化性能边界表/选择指南 | 2026-05-16 |
+|||||| 103 | concurrent-commutation-failure.md | methods/power-electronics/concurrent-commutation-failure.md | 完成 | 8149字/74公式(9块级+65行内)/15wikilinks(全部验证有效)/9章节/4种EMT建模方法(PAVM自动检测/MIIF电压灵敏度/负序相位修正/谐波传递等效电路)/5个关键技术挑战/3篇来源论文(Hong2022/Yao2023/Zhang2018)/量化性能边界表/适用边界与选择指南 | 2026-05-16 |
