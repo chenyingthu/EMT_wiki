@@ -118,7 +118,7 @@ updated: "2026-05-13"
 || 93 | electromagnetic-transient.md | topics | topics/stability-analysis/electromagnetic-transient.md | P2 | 38 | 11524 | 46 | 26 | completed |
 || 94 | folded-line-equivalent.md | methods | methods/transmission-line/folded-line-equivalent.md | P2 | 1067 | 69 | 10 | completed |
 || 95 | comsol.md | entities | entities/software/comsol.md | P2 | 38 | 1824 | 4 | 20 | pending |
-|| 96 | offline-to-realtime-porting.md | methods | methods/simulation-technology/offline-to-realtime-porting.md | P2 | 37 | 1657 | 5 | 14 | pending |
+|| 96 | offline-to-realtime-porting.md | methods | methods/simulation-technology/offline-to-realtime-porting.md | P2 | 37 | 2587 | 23 | 19 | completed |
 || 97 | network-partitioning.md | topics | topics/modeling-methods/network-partitioning.md | P2 | 37 | 1611 | 12 | 29 | pending |
 || 98 | eeac.md | methods | methods/stability-analysis/eeac.md | P2 | 36 | 1256 | 12 | 11 | pending |
 || 99 | ieee-39-bus-system.md | topics | topics/test-system/ieee-39-bus-system.md | P2 | 36 | 1748 | 9 | 28 | pending |
@@ -485,6 +485,7 @@ updated: "2026-05-13"
 ||||| 86 | pss-model.md | methods/stability-analysis/pss-model.md | 完成 | 1296字/85公式(13块级+72行内)/12wikilinks(全部验证有效)/1SVG图/11章节/3篇来源论文/PSS控制链路+IEEE标准结构+Anderson变体+EMT离散化+参数整定+限幅处理 | 2026-05-15
 ||||| 92 | excitation-system.md | methods/stability-analysis/excitation-system.md | 完成 | 4164字/98公式/19wikilinks/0SVG/10章节/5种EMT建模方法/IEEE421.5分类+SM1/SM2接口+饱和Park+dq导纳辨识+混合AVM | 2026-05-16 |
 ||||| 93 | electromagnetic-transient.md | topics/stability-analysis/electromagnetic-transient.md | 完成 | 11524字/46公式/26wikilinks/1SVG/9章节/5篇来源论文/五分支体系+仿真精度频谱+数值阻尼+步长阈值 | 2026-05-16 |
+|||||| 96 | offline-to-realtime-porting.md | methods/simulation-technology/offline-to-realtime-porting.md | 完成 | 2587字/23公式/19wikilinks/0SVG/22章节/4篇来源论文/七步移植工作流+五类映射方案+5项关键技术挑战+EMT-RMS域间接口 | 2026-05-16 |
 
 |||| 50 | emt-simulation.md | topics/simulation/emt-simulation.md | 完成 | 4695字/51公式/40wikilinks/16章节/6篇来源论文/核心机制+多速率混合仿真+分网并行+精度评估 | 2026-05-14 |
 ||||| 43 | model-compatibility-layer.md | methods/system-studies/model-compatibility-layer.md | 完成 | 5385字/21公式/24wikilinks/10章节/5表格/4类映射/6篇来源论文 | 2026-05-15 |
