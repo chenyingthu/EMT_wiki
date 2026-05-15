@@ -100,7 +100,7 @@ updated: "2026-05-13"
 || 75 | siemens.md | entities | entities/industry/siemens.md | P2 | 46 | 1878 | 0 | 17 | completed |
 || 76 | transmission-line-theory.md | topics | topics/modeling-methods/transmission-line-theory.md | P2 | 45 | 832 | 20 | 14 | completed |
 || 77 | transposed-three-phase-line.md | methods | methods/transmission-line/transposed-three-phase-line.md | P2 | 44 | 1477 | 6 | 11 | completed |
-|| 78 | fault-ride-through.md | topics | topics/hvdc-facts/fault-ride-through.md | P2 | 44 | 1369 | 9 | 13 | pending |
+|| 78 | fault-ride-through.md | topics | topics/hvdc-facts/fault-ride-through.md | P2 | 44 | 1369 | 9 | 13 | completed |
 || 79 | single-phase-line-model.md | methods | methods/transmission-line/single-phase-line-model.md | P2 | 43 | 1586 | 8 | 21 | pending |
 || 80 | high-frequency-transient-analysis.md | methods | methods/protection-fault/high-frequency-transient-analysis.md | P2 | 43 | 1548 | 10 | 24 | pending |
 || 81 | unbalanced-fault-analysis.md | topics | topics/protection-lightning/unbalanced-fault-analysis.md | P2 | 43 | 1491 | 10 | 21 | pending |
