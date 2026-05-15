@@ -81,7 +81,7 @@ updated: "2026-05-13"
 || 56 | hybrid-acdc-system.md | topics | topics/hvdc-facts/hybrid-acdc-system.md | P1 | 62 | 7629 | 85 | 10 | completed |
 || 57 | corona-effect-modeling.md | methods | methods/transmission-line/corona-effect-modeling.md | P1 | 62 | 1057 | 12 | 14 | completed |
 || 58 | distributed-parameter-model.md | methods | methods/transmission-line/distributed-parameter-model.md | P1 | 61 | 1241 | 9 | 15 | completed |
-|| 59 | impedance-measurement.md | methods | methods/signal-processing/impedance-measurement.md | P1 | 59 | 1468 | 6 | 18 | pending |
+|| 59 | impedance-measurement.md | methods | methods/signal-processing/impedance-measurement.md | P1 | 59 | 1468 | 6 | 18 | completed |
 || 60 | power-system-network.md | topics | topics/tools-software/power-system-network.md | P1 | 59 | 1223 | 9 | 13 | pending |
 || 61 | heidler-function.md | methods | methods/signal-processing/heidler-function.md | P1 | 59 | 713 | 18 | 10 | pending |
 || 62 | mutual-impedance.md | methods | methods/transmission-line/mutual-impedance.md | P1 | 58 | 1202 | 10 | 14 | pending |
@@ -480,6 +480,7 @@ updated: "2026-05-13"
 |||| 54 | quasi-tem-approximation.md | methods/transmission-line/quasi-tem-approximation.md | 完成 | 3719字/138公式/10wikilinks/8表格/9章节/7篇来源论文/准TEM框架+大地回路阻抗+ULM行波模型 | 2026-05-14
 |||| 55 | dispatch-operation.md | topics/renewable-storage/dispatch-operation.md | 完成 | 3705字/26公式/16wikilinks/2表格/9章节/15篇来源论文/超实时仿真+混合时间尺度+数字孪生接口 | 2026-05-14
 |||| 56 | hybrid-acdc-system.md | topics/hvdc-facts/hybrid-acdc-system.md | 完成 | 7629字/85公式/10wikilinks/2SVG/9章节/8篇来源论文/四层次仿真体系+多速率协同+EM-EMT混合+异构计算 |
+||||| 59 | impedance-measurement.md | methods/signal-processing/impedance-measurement.md | 完成 | 4787字/80公式/13wikilinks/6表格/12章节/6篇来源论文/6种测量方法体系（单频注入/多频注入/CSD-scan/测量重构/VNA扫频/离散阻抗）
 
 |||| 50 | emt-simulation.md | topics/simulation/emt-simulation.md | 完成 | 4695字/51公式/40wikilinks/16章节/6篇来源论文/核心机制+多速率混合仿真+分网并行+精度评估 | 2026-05-14 |
 | 轮次 | 处理页面数 | 完成数 | 跳过数 | 备注 |
