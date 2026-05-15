@@ -1,105 +1,242 @@
 ---
 title: "不平衡故障分析 (Unbalanced Fault Analysis)"
 type: topic
-tags: [fault-analysis, unbalanced, sequence-components, power-system, short-circuit]
+tags: [fault-analysis, unbalanced, sequence-components, power-system, short-circuit, symmetrical-components, high-impedance-fault]
 created: "2026-05-02"
+updated: "2026-05-15"
 ---
 
 # 不平衡故障分析 (Unbalanced Fault Analysis)
 
+## 定义
 
-```mermaid
-graph LR
-    N0[定义与边界]
-    N1[EMT 中的作用]
-    N0 --> N1
-    N2[主要分支与机制]
-    N1 --> N2
-    N3[适用边界与失败模式]
-    N2 --> N3
-    N4[代表性来源]
-    N3 --> N4
-    N5[与相关页面的关系]
-    N4 --> N5
-    N6[开放问题]
-    N5 --> N6
-```
+不平衡故障（Unbalanced Fault Analysis）指电力系统中相别之间存在显著电气量差异的非对称扰动，包括单相接地（SLG）、两相短路（phase-to-phase）、两相接地（double-line-to-ground）、断相（open conductor）和高阻接地（high impedance fault, HIF）等类型。在 EMT 仿真中，不平衡故障的准确模拟是检验相域模型、接地系统、保护逻辑和电力电子设备故障响应的核心工况。
 
+不对称故障的核心特征在于零序和负序通道的参与：对于单相接地故障，正序、负序、零序三序串联构成故障回路；对于两相短路，零序通道通常不开通；对于两相接地故障，零序和负序均参与故障电流构成。传统短路计算基于工频相量给出稳态结果；而 EMT 分析还需考虑故障施加时刻的直流偏置、控制器限流、CT 饱和、保护采样延迟和开关动作时序等因素。
 
-## 定义与边界
+## EMT 中的角色
 
-不平衡故障分析（Unbalanced Fault Analysis）研究单相接地、两相短路、两相接地、断相、高阻接地和非全相运行等非对称扰动下的电压、电流和保护测量量。它关注相别差异、零序和负序通道、故障阻抗、接地方式以及暂态分量。
+在 EMT 仿真框架下，不平衡故障分析承担以下核心功能：
 
-本页是 topic 页，讨论不平衡故障在 EMT 语境下的概念边界。它不同于 [[fault-analysis]] 或 [[fault-analysis-methods]] 的方法页，也不替代保护装置模型。传统短路计算可给出工频相量和序网结果；EMT 分析还需要故障施加时刻、直流偏置、控制器限流、CT 饱和、保护采样和开关动作。
+**1. 故障暂态波形验证**：EMT 输出包括相电压 $\mathbf{v}_{abc}(t)$、相电流 $\mathbf{i}_{abc}(t)$、序分量输出、保护滤波后的测量值、故障点能量耗散和断路器开断指令。若仅报告稳态故障电流最大值，则缺失了故障暂态初期（0-10 ms）内的直流偏置分量和非周期衰减特性。
 
-## EMT 中的作用
+**2. 序网建模边界检验**：正序等值网络无法保留零序通道、非换位耦合和暂态波形。对于含大量电力电子设备（IBR、LCC、MMC）的网络，控制限流和频变耦合会改变传统序网假设。EMT 仿真需要在相域或序-相混合域中显式建模这些耦合通道。
 
-不平衡故障是 EMT 中检验相域模型、接地系统、保护逻辑和电力电子故障响应的重要工况。对于单相接地和两相故障，正序等值无法保留零序通道、非换位耦合和暂态波形；对于 IBR、LCC、MMC 或含大量电缆的网络，控制限流和频变耦合还会改变传统序网假设。
+**3. 保护系统动作逻辑验证**：继电保护的动作判据（如阻抗圆、电流增量、方向判据）需要在真实暂态波形和保护滤波器输出上验证。仅用稳态相量测试的保护逻辑可能在暂态干扰下发生误动或拒动。
 
-EMT 输出通常包括相电压 $\mathbf{v}_{abc}(t)$、相电流 $\mathbf{i}_{abc}(t)$、序分量、保护滤波后的测量值、故障点能量和断路器开断量。若只报告稳态故障电流最大值，应说明它不是完整的 EMT 证据。
+**4. 电力电子设备故障响应**：IBR 设备在不平衡故障下的故障穿越能力（LVRT、HVRT）受控制器限流、PLL 同步误差、保护闭锁和直流侧动态影响。传统短路公式不覆盖这些控制边界，必须通过 EMT 仿真验证。
 
-## 主要分支与机制
+## 形式化表达
 
-对称分量法（Symmetrical Components）把相量映射为零序、正序和负序：
+### 对称分量变换
+
+对称分量法将三相相量映射为零序、正序和负序分量：
 
 $$
-\begin{bmatrix} I_0 \\ I_1 \\ I_2 \end{bmatrix}
-=\frac{1}{3}
-\begin{bmatrix}
-1&1&1\\
-1&a&a^2\\
-1&a^2&a
-\end{bmatrix}
-\begin{bmatrix} I_a \\ I_b \\ I_c \end{bmatrix},
-\qquad a=e^{j2\pi/3}.
+\begin{bmatrix} I_0 \\ I_1 \\ I_2 \end{bmatrix} = \frac{1}{3} \begin{bmatrix} 1 & 1 & 1 \\ 1 & a & a^2 \\ 1 & a^2 & a \end{bmatrix} \begin{bmatrix} I_a \\ I_b \\ I_c \end{bmatrix}, \quad a = e^{j\frac{2\pi}{3}}
 $$
 
-其中 $I_a,I_b,I_c$ 是相电流相量，$I_0,I_1,I_2$ 分别为零序、正序和负序分量。对于稳态或准稳态短路，这一变换能清楚说明序网连接；对于 EMT 波形，可对基波相量、滑动窗口或动态相量使用类似分解，但窗口和滤波会影响结果。
+其中 $I_a, I_b, I_c$ 为相电流相量，$I_0, I_1, I_2$ 分别为零序、正序和负序分量。旋转算子 $a = -1/2 + j\sqrt{3}/2$ 满足 $a^3 = 1$ 和 $1 + a + a^2 = 0$。
 
-典型故障边界条件可写为：
+该变换的物理意义在于：正序分量产生正向旋转磁场，负序分量产生反向旋转磁场，零序分量不产生磁场耦合。在 EMT 稳态分析中，序分量可独立求解；在 EMT 暂态分析中，序分量通过故障边界条件耦合。
 
-- 单相接地：$I_b=I_c=0,\; V_a=Z_f I_a$，常对应三序串联。
-- 两相短路：$I_a=0,\; I_b=-I_c,\; V_b=V_c$，零序通道通常不开通。
-- 两相接地：$I_a=0,\; V_b=Z_f I_b,\; V_c=Z_f I_c$，零序和负序均参与。
-- 断相：开路相电流为零，残余相的电压和电流由负荷、接地和保护动作决定。
+### 故障边界条件
 
-在相域 EMT 中，更一般的写法是直接对三相节点方程施加故障支路：
+不同故障类型对应不同的序网连接方式和边界条件：
+
+**单相接地故障（a-g）**：
 
 $$
-\mathbf{Y}_{abc,n}\mathbf{v}_{abc,n}
-=\mathbf{i}_{abc,n}^{\mathrm{src}}+\mathbf{i}_{abc,n}^{\mathrm{hist}}
-\mathbf{Y}_{f,n}\mathbf{v}_{abc,n}.
+I_b = I_c = 0, \quad V_a = Z_f \cdot I_a
 $$
 
-其中 $\mathbf{Y}_{f,n}$ 是故障支路导纳矩阵，可表示单相接地、相间短路、弧光电阻或时变故障阻抗。
+对应的序网连接为三序串联，正序、负序、零序阻抗在故障点串联后接地。故障点正序电压 $V_1 = -Z_f \cdot I_1$，零序通道开放使故障电流流经接地阻抗。
 
-## 适用边界与失败模式
+**两相短路故障（b-c）**：
 
-- 序网公式依赖线性、频率固定和参数对称等假设；非换位线路、多导体电缆和饱和变压器可能需要 [[phase-domain-model]]。
-- 零序通道取决于变压器接线、接地方式、线路回流路径和土壤参数，不能只从正序阻抗推断。
-- 故障阻抗和电弧模型缺失时，故障电流、保护灵敏度和重燃风险只能做保守场景分析。
-- 电力电子设备故障响应受控制器限流、PLL、保护闭锁和直流侧动态影响；传统短路公式通常不覆盖这些控制边界。
-- 保护结论应绑定测量链、采样率、滤波窗口和动作逻辑；仅有一次 EMT 波形不能证明继电保护总体可靠性。
+$$
+I_a = 0, \quad I_b = -I_c, \quad V_b = V_c
+$$
 
-## 代表性来源
+零序通道通常不开通，正序和负序网络在故障点并联，故障电流仅由正序和负序分量组成。
 
-- [[average-value-modeling-of-line-commutated-ac-dc-converters-with-unbalanced-ac-ne]] 可作为 LCC 在不平衡交流网络中平均值建模的来源入口；结论应限定在原文控制和网络假设内。
-- [[modeling-and-application-of-dq-sequence-dynamic-phasors-under-unbalanced-ac-cond]] 支撑不平衡条件下 dq 序动态相量建模的讨论，适合连接 EMT 与动态相量方法。
-- [[decision-tree-based-methodology-for-high-impedance-fault-detection]] 是高阻故障检测的代表来源；其高准确率应限于作者 EMTP 仿真数据和特征集。
-- [[analysis-and-general-calculation-of-dc-fault-currents-in-mmc-mtdc-grids]] 与 [[a-method-to-calculate-short-circuit-faults-in-high-voltage-dc-grids]] 可作为直流电网故障电流分析入口，但后者页面存在文献串页风险，使用前需复核 PDF。
-- [[an-ultra-fast-mmc-hvdc-fault-location-algorithm-based-on-transient-voltage-featu]] 可作为 MMC-HVDC 暂态故障定位的来源入口，不能外推为所有交流不平衡故障保护。
+**两相接地故障（b-c-g）**：
 
-## 与相关页面的关系
+$$
+I_a = 0, \quad V_b = Z_f \cdot I_b, \quad V_c = Z_f \cdot I_c
+$$
 
-- [[fault-analysis]] 和 [[fault-analysis-methods]] 承载故障计算方法；本页承载不平衡故障主题边界。
-- [[symmetrical-components]]、[[sequence-component-method]] 和 [[sequence-network-model]] 解释序域分析工具。
-- [[phase-domain-model]] 提供相域建模路线，适合非换位、强耦合和严重不平衡场景。
-- [[fault-impedance-model]]、[[grounding-system-model]] 和 [[grounding-system-modeling]] 决定故障支路和回流路径。
-- [[relay-protection]]、[[distance-relay]] 和 [[differential-protection]] 使用故障波形，但保护动作还需要测量和逻辑模型。
+零序和负序均参与故障电流构成，故障点三序电压满足 $V_0 = V_1 = V_2 = Z_f \cdot (I_1 + I_2)$，零序网络必须包含在故障回路中。
 
-## 开放问题
+**高阻接地故障（HIF）**：
 
-- 如何在含 IBR 和 HVDC 的系统中定义可复现的不平衡故障基准。
-- 如何把序域解释、相域 EMT 波形和保护滤波输出一致地报告。
-- 如何校核高阻故障、电弧接地和间歇性故障的参数，而不把仿真训练集结果外推到现场。
-- 如何在大规模配电网中同时保留零序回流、非换位耦合和可承受的计算规模。
+HIF 的故障阻抗 $Z_f$ 通常为非线性弧光电阻，数值在 10 Ω 至 500 Ω 范围，远高于金属性短路的毫欧级阻抗。HIF 的识别不依赖故障电流幅值，而依赖暂态波形中的谐波特征。Sheng & Rovnyak（2004）提出的 HIF 检测特征向量为：
+
+$$
+\mathbf{x} = \left[ I_{\text{rms}}, \frac{|I_2|}{I_{\text{rms}}}, \frac{|I_3|}{I_{\text{rms}}}, \frac{|I_5|}{I_{\text{rms}}}, \angle I_3 \right]
+$$
+
+该 5 维特征向量基于基波 RMS 值和 2/3/5 次谐波归一化幅值及 3 次谐波相位构成，经 CART 决策树分类器实现 HIF 与负荷扰动的区分。Sheng & Rovnyak（2004）在 138/12.5 kV 配电系统（50 km 线路、4 条架空馈线、工业用户含 1800 kVar 并联电容，功率因数 0.80 滞后）上验证，采样率 1920 Hz（32 点/周期），训练集 468 个事件共 26676 个样本，测试集 100 个事件共 5700 个样本，EMTP 仿真测试集分类准确率 100%，HIF 检测延迟 ≤ 2 个周期（60 Hz 系统下约 33.3 ms）。
+
+### 相域故障导纳方程
+
+在相域 EMT 中，直接对三相节点方程施加故障支路：
+
+$$
+\mathbf{Y}_{abc,n} \mathbf{v}_{abc,n} = \mathbf{i}_{abc,n}^{\text{src}} + \mathbf{i}_{abc,n}^{\text{hist}} - \mathbf{Y}_{f,n} \mathbf{v}_{abc,n}
+$$
+
+其中 $\mathbf{Y}_{f,n}$ 是故障支路 3×3 导纳矩阵，可表示单相接地（仅对角元非零）、相间短路（非对角元耦合）、弧光电阻（时变对角元）或任意不对称故障阻抗矩阵。故障导纳矩阵的构造不依赖于对称分量变换，直接在相域方程中注入不对称约束。
+
+### 等效故障回路复数微分方程（Rosołowski 1997）
+
+针对对称分量域的阻抗测量，Rosołowski 等（1997）提出复数微分方程形式的等效故障回路：
+
+$$
+\underline{v}(t) = R_1 \underline{i}_{LR}(t) + L_1 \frac{d\underline{i}_{LL}(t)}{dt} + \underline{v}_{ef}(t)
+$$
+
+其中 $\underline{v}(t)$ 和 $\underline{i}(t)$ 为故障点复数电压和电流，$R_1$、$L_1$ 为正序电阻和电感，$\underline{v}_{ef}(t)$ 为故障点附加电压。该方程在复数域而非实数域建模，复数微分方程可拆分为实部和虚部两个代数方程组：
+
+$$
+R_1 = \frac{S[v_{ex}(k)]D[i_{eLy}(k)] - S[v_{ey}(k)]D[i_{eLx}(k)]}{S[i_{eRx}(k)]D[i_{eLy}(k)] - S[i_{eRy}(k)]D[i_{eLx}(k)]}
+$$
+
+$$
+L_1 = \frac{S[v_{ey}(k)]S[i_{eRx}(k)] - S[v_{ex}(k)]S[i_{eRy}(k)]}{S[i_{eRx}(k)]D[i_{eLy}(k)] - S[i_{eRy}(k)]D[i_{eLx}(k)]}
+$$
+
+其中 $S[\cdot]$ 为梯形平均算子，$D[\cdot]$ 为一阶差分算子。该方法仅需单个采样时刻数据即可直接求解正序阻抗，无需等待完整数据窗。
+
+Rosołowski 等（1997）在 400 kV/50 Hz 双回输电线路系统（线路 A 长 208 km，线路 B 长 180 km，含正序/零序/互感参数及两端电源模型）上验证，故障测距响应时间 ≤ 10 ms（半个周波），高阻故障（$R_f = 50\ \Omega$）检测时间：近端母线 2 ms，远端母线 7 ms，采样率 1 kHz，计算延迟 < 1 ms。
+
+### dq 序动态相量建模（Mao 2025）
+
+对于含 dq 坐标系控制器的电力电子设备，Mao（2025）提出 dq 序动态相量（dq-SDP）建模方法，专门处理不平衡交流故障条件下的状态空间建模。
+
+首先进行瞬时对称分量分解：
+
+$$
+\begin{bmatrix} x^+ \\ x^- \\ x^0 \end{bmatrix}(\tau) = \mathbf{S} \cdot \begin{bmatrix} x_a \\ x_b \\ x_c \end{bmatrix}(\tau), \quad \mathbf{S} = \frac{1}{3}\begin{bmatrix} 1 & a & a^2 \\ 1 & a^2 & a \\ 1 & 1 & 1 \end{bmatrix}
+$$
+
+正序分量经 Park 变换到 dq 旋转坐标系，负序分量经 $\mathbf{T}_{dq}(-\theta)$ 反向变换：
+
+$$
+\begin{bmatrix} x_{dq}^+ \\ x_{dq}^- \end{bmatrix} = \mathbf{T}_{dq}(\theta) x^+ + \mathbf{T}_{dq}(-\theta) x^-
+$$
+
+dq 序动态相量的乘法性质（处理电力电子设备中变量乘积的关键）为：
+
+$$
+\langle xy \rangle_k(t) = \sum_{i=-\infty}^{\infty} \langle x \rangle_{k-i}(t) \langle y \rangle_i(t)
+$$
+
+动态相量方法通常允许采用比详细 EMT 仿真大 10-100 倍的仿真步长（如 0.1-1 ms vs. 10-50 μs），从而在保持一定精度的前提下显著提高计算效率。
+
+Mao（2025）在两端 MMC-HVDC 系统上验证，dq-SDP 方法在非对称工况下建立了含正负序耦合的状态空间模型，相比传统序动态相量（SDP）方法提供了统一的乘法性质表达，避免了控制方程从 dq 坐标系向 abc 坐标系的复杂转换。原文未给出具体误差百分比或加速倍数等可核验数值。
+
+## 关键技术挑战
+
+### 挑战一：零序通道的准确建模
+
+零序通道的开放状态取决于变压器接线组别（Y/Δ、Y/Y、Δ/Δ）、接地方式（直接接地、电抗接地、消弧线圈接地）、线路回流路径（架空地线、电缆金属护套、大地阻抗）和土壤参数（频率相关的大地回路阻抗）。不能仅从正序阻抗推算零序阻抗——对于非换位线路或电缆，零序阻抗与正序阻抗的比值可达 2-5 倍，且随频率显著变化。
+
+在 EMT 中，零序通道建模涉及：(1) 变压器零序等效电路（考虑磁路饱和和三角形接线隔离）；(2) 线路零序自阻抗和互阻抗（频变特性）；(3) 接地系统模型（大地回路阻抗、接地电极电位升高）。任意环节的建模误差都会导致零序电流计算偏差。
+
+### 挑战二：高阻故障（HIF）的可靠检测
+
+HIF 故障电流幅值可能接近负荷扰动水平（10-100 A vs. 负荷电流 kA 级），且负荷投切、电容器投切、变压器励磁涌流也会产生谐波和暂态特征。Sheng & Rovnyak（2004）指出，基于单一阈值的方法容易发生误动或拒动，需要采用多特征融合和时序确认逻辑。
+
+HIF 检测的主要难点包括：(1) 弧光电阻的强非线性（V-I 特性呈磁滞回线）；(2) 接地表面特性差异（沥青、沙地、混凝土、草地）；(3) 随机间歇性燃弧导致的波形不对称和随机性；(4) 不同接地材料和弧长组合形成的多样故障样本分布。
+
+### 挑战三：电力电子设备控制与故障回路的耦合
+
+对于 IBR 设备（光伏逆变器、风电 DFIG/PMSG、储能 PCS），故障期间控制器的限流环节会改变换流器的输出外特性，使传统短路公式中的复合序网模型失效。典型控制保护动作包括：
+
+- **低电压穿越（LVRT）**：直流侧 Chopper 投入， crowbar 触发（DFIG）
+- **过电流保护闭锁**：IGBT 门极封锁，防止换流器过流损坏
+- **PLL 同步失败**：负序提取环节失效，dq 变换出现直流偏移
+- **直流侧动态**：电容放电引起的低频振荡
+
+这些控制边界条件在 EMT 仿真中需要准确建模换流器的内部控制环路（PLL、QPLL、VPQ 控制、电流内环）和保护闭锁逻辑。
+
+### 挑战四：并行线路互感耦合的高阻故障检测
+
+对于平行共塔输电线路，故障线路和健康线路之间存在零序互感耦合，导致远端高阻故障时传统阻抗法测量轨迹偏离实际位置。Rosołowski 等（1997）提出的选线判据为：
+
+$$
+|\underline{v}_A| - |\underline{v}_B| > \Delta v
+$$
+
+通过比较双回线的等效压降幅值差，识别故障线路。在 50 Ω 高阻、远端（7 ms 检测延迟）工况下，传统阻抗圆判据失效（轨迹远离保护 I 段区域），该方法实现 100% 可靠选线。
+
+### 挑战五：故障施加时刻与直流偏置
+
+故障施加时刻（相位角 $\phi_f$）对暂态电流的直流分量衰减特性有显著影响。直流偏置电流的初始值为：
+
+$$
+i_{dc}(0^+) = \frac{\sqrt{2} V_m}{Z_{th}} \sin(\phi_f - \theta_{th})
+$$
+
+其中 $Z_{th}$ 和 $\theta_{th}$ 为故障点戴维南等效阻抗的幅值和相角。对于含高 X/R 比的系统（输电线路 X/R ≈ 10-15），直流分量衰减时间常数 $\tau = L/R$ 可达 100-300 ms，在故障后 1-2 个周波内仍会影响电流波形的过零点和峰值计算。
+
+## 量化性能边界
+
+| 指标 | 数值 | 来源 |
+|------|------|------|
+| HIF 采样率要求 | 1920 Hz（32 点/周期） | Sheng & Rovnyak 2004 |
+| HIF 检测延迟 | ≤ 2 个周期（60 Hz 下 33.3 ms） | Sheng & Rovnyak 2004 |
+| HIF 仿真测试集准确率 | 100%（100 事件/5700 样本） | Sheng & Rovnyak 2004 |
+| 距离保护响应时间 | ≤ 10 ms（半个周波） | Rosołowski 1997 |
+| 高阻故障检测时间 | 近端 2 ms / 远端 7 ms（$R_f=50\ \Omega$） | Rosołowski 1997 |
+| 计算延迟 | < 1 ms @ 1 kHz 采样率 | Rosołowski 1997 |
+| 阻抗测量幅值误差 | < 2% | Rosołowski 1997 |
+| 动态相量步长增大倍数 | 10-100× vs. 详细 EMT | Mao 2025 |
+
+## 适用边界与选择指南
+
+### 方法选择决策表
+
+| 故障类型 | 推荐方法 | 适用条件 | 失效场景 |
+|---------|---------|---------|---------|
+| 金属性 SLG 短路 | 对称分量法 + 序网求解 | 线性网络、工频分析 | 含饱和变压器、非线性接地 |
+| 两相短路 | 正序-负序网络并联 | 零序通道不重要 | 存在零序电流（如双回线耦合） |
+| 两相接地 | 三序网络联立方程 | 需要零序通道建模 | 强耦合电缆网络 |
+| 高阻接地（HIF） | 多谐波特征 + CART 决策树 | 低采样率配电馈线 | 电力电子设备高频谐波干扰 |
+| IBR 设备故障穿越 | dq-SDP 动态相量法 | dq 坐标控制、电力电子换流器 | 需要开关细节的高频谐振 |
+| 并行线路远端高阻故障 | 复数微分方程 + 双回线压降比较 | 互感耦合输电线路 | 单回线系统 |
+| 相域强耦合场景 | 直接相域节点导纳方程 | 非换位线路、电缆、高不对称 | 计算量大于序域方法 |
+
+### EMT 建模层级选择
+
+**详细开关模型（SW）**：适用于需要最高精度但计算量大的场景，如保护设备选型、绝缘配合分析、高频暂态研究（雷电、操作过电压）。时间步长通常为 1-10 μs。
+
+**平均值模型（AV）**：适用于电力电子换流器的基波频率响应研究，如故障穿越能力验证、控制策略验证。忽略开关细节，时间步长可为 50-100 μs。
+
+**动态相量模型（DP）**：适用于含控制环路的电力电子设备在不平衡工况下的中等精度仿真，如 dq-SDP 建模。正弦稳态假设下步长可为 0.1-1 ms。
+
+## 相关方法
+
+- [[symmetrical-components]]：对称分量变换基础理论
+- [[sequence-component-method]]：序分量计算方法
+- [[sequence-network-model]]：序网等效电路建模
+- [[phase-domain-model]]：相域建模（适用于强耦合和非换位场景）
+- [[fault-impedance-model]]：故障阻抗建模
+- [[high-impedance-fault-detection]]：高阻故障检测方法
+- [[distance-relay]]：距离保护继电器
+- [[grounding-system-model]]：接地系统模型
+- [[grounding-system-modeling]]：接地系统建模方法
+- [[differential-protection]]：差动保护原理
+- [[dynamic-phasor]]：动态相量法
+- [[pq-controllable-inverter]]：可编程逆变器控制
+- [[mmc-model]]：模块化多电平换流器模型
+- [[lcc-model]]：线换相换流器模型
+- [[emt-simulation-verification]]：EMT 仿真验证流程
+
+## 来源论文
+
+- [[modeling-and-application-of-dq-sequence-dynamic-phasors-under-unbalanced-ac-cond|Mao 2025]] - dq 序动态相量法，专为非对称交流工况下 dq 坐标控制设备设计，在两端 MMC-HVDC 上验证，提供了统一的乘法性质和复数状态方程实数化方法
+- [[decision-tree-based-methodology-for-high-impedance-fault-detection|Sheng & Rovnyak 2004]] - 基于决策树的高阻故障检测，采样率 1920 Hz，100% 仿真测试准确率，HIF 检测延迟 ≤ 2 周期
+- [[a-new-distance-relaying-algorithm-based-on-complex-differential-equation-for-sym|Rosołowski 1997]] - 融合对称分量滤波与复数微分方程的距离保护算法，10 ms 响应，1 kHz 采样率，适合并行线路高阻远端故障
+- [[average-value-modeling-of-line-commutated-ac-dc-converters-with-unbalanced-ac-ne|Ebrahimi 2021]] - 不平衡交流网络中 LCC 换流器的平均值建模，适合与不对称故障分析联用

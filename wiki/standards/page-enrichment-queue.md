@@ -103,7 +103,7 @@ updated: "2026-05-13"
 || 78 | fault-ride-through.md | topics | topics/hvdc-facts/fault-ride-through.md | P2 | 44 | 1369 | 9 | 13 | completed |
 || 79 | single-phase-line-model.md | methods | methods/transmission-line/single-phase-line-model.md | P2 | 43 | 6340 | 97 | 12 | completed |
 || 80 | high-frequency-transient-analysis.md | methods | methods/protection-fault/high-frequency-transient-analysis.md | P2 | 574 | 111 | 18 | 24 | completed |
-|| 81 | unbalanced-fault-analysis.md | topics | topics/protection-lightning/unbalanced-fault-analysis.md | P2 | 43 | 1491 | 10 | 21 | pending |
+|| 81 | unbalanced-fault-analysis.md | topics | topics/protection-lightning/unbalanced-fault-analysis.md | P2 | 43 | 1491 | 10 | 21 | completed |
 || 82 | digital-distance-protection.md | methods | methods/protection-fault/digital-distance-protection.md | P2 | 42 | 1706 | 3 | 14 | pending |
 || 83 | vector-fitting.md | methods | methods/signal-processing/vector-fitting.md | P2 | 42 | 3397 | 8 | 111 | pending |
 || 84 | passivity-enforcement.md | methods | methods/signal-processing/passivity-enforcement.md | P2 | 42 | 1959 | 6 | 34 | pending |
@@ -556,3 +556,4 @@ updated: "2026-05-13"
 ||| 74 | harmonic-interaction.md | methods/methods/signal-processing/harmonic-interaction.md | 完成 | 5378字/63公式/12wikilinks/9章节/7表格/6种谐波交互机制 |
 
 ||||| 78 | high-frequency-transient-analysis.md | methods/protection-fault/high-frequency-transient-analysis.md | 完成 | 574字/111公式/18wikilinks/10章节/4篇来源论文(De Conti 2026/Camilo 2020/Camara 2024/Li 2016)/6大核心机制：频变传输线端口关系+VF拟合+场路耦合接口+直流校正+双有损介质海缆+频变土壤地回路 | 2026-05-15 |
+||||| 79 | unbalanced-fault-analysis.md | topics/protection-lightning/unbalanced-fault-analysis.md | 完成 | 610字(中)/39公式(14块级+25行内)/19wikilinks(全部验证有效)/8章节/4篇来源论文(对称分量变换/高阻故障检测/距离保护算法/dq序动态相量)/5项量化性能数据 | 2026-05-15 |
