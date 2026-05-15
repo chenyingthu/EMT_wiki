@@ -1151,7 +1151,7 @@ updated: "2026-05-13"
 
 
 || 117 | peralta-2012-detailed-mmc.md | models | models/equivalent/peralta-2012-detailed-mmc.md | P2 | 31 | 4092 | 44 | 11 | completed |
-|| 118 | hardware-acceleration.md | methods | methods/simulation-technology/hardware-acceleration.md | P2 | 31 | 1633 | 10 | 22 | pending |
+|| 118 | hardware-acceleration.md | methods | methods/simulation-technology/hardware-acceleration.md | P2 | 31 | 6851 | 25 | 22 | completed |
 
 
 
@@ -4705,3 +4705,4 @@ updated: "2026-05-13"
 
 |||||| 114 | chb-dab.md | methods/power-electronics/chb-dab.md | 完成 | 8020字/15公式(块级)/4wikilinks(全部验证有效)/9章节/6篇来源论文/四路线对比+量化性能边界表+选择指南决策表 | 2026-05-16 ||||| 116 | power-electronics.md | completed | 5333字/78公式/33wikilinks | 2026-05-16 |
 |||||| 117 | peralta-2012-detailed-mmc.md | models/equivalent/peralta-2012-detailed-mmc.md | 完成 | 4092字/44公式/11wikilinks/10章节/4种EMT建模方法(TDM/DEM/MAVM/AM-EAM)/5篇来源论文/401电平MMC基准体系 | 2026-05-16 |
+|||||| 118 | hardware-acceleration.md | methods/simulation-technology/hardware-acceleration.md | 完成 | 6851字/25公式/22wikilinks/9章节/5种硬件路线(GPU/FPGA/SoC-FPGA/细粒度FPGA/CPU-GPU异构)/3个核心公式/量化性能边界表 |

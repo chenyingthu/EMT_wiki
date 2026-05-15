@@ -1,123 +1,177 @@
 ---
 title: "硬件加速 (Hardware Acceleration)"
 type: method
-tags: [hardware-acceleration, fpga, gpu, asic, parallel-processing, cuda, opencl, multicore]
+tags: [hardware-acceleration, fpga, gpu, asic, parallel-processing, cuda, opencl, multicore, real-time-simulation, heterogeneous-computing]
 created: "2026-05-02"
-updated: "2026-05-03"
+updated: "2026-05-16"
 ---
 
 # 硬件加速 (Hardware Acceleration)
 
+## 定义
 
-```mermaid
-graph LR
-    N0[定义与边界]
-    N1[EMT 中的作用]
-    N0 --> N1
-    N2[核心工作流]
-    N1 --> N2
-    N3[主要硬件路线]
-    N2 --> N3
-    N4[复杂度与性能边界]
-    N3 --> N4
-    N5[适用边界与失败模式]
-    N4 --> N5
-    N6[代表性证据]
-    N5 --> N6
-    N7[与相关页面的关系]
-    N6 --> N7
-```
+硬件加速是把电磁暂态（EMT）仿真中的一部分计算或接口任务映射到 CPU 以外的专用执行资源（GPU、FPGA、DSP、专用实时仿真硬件）的技术领域。它不是单一算法，也不等同于"自动实时化"——加速是否成立取决于模型规模、数据搬运、数值格式、接口时序和可并行部分比例。
 
+从计算架构角度，EMT 时间步可分解为：
 
-## 定义与边界
+$$
+\mathbf{Y}(\mathbf{s}_k)\mathbf{v}_k = \mathbf{i}_{src,k} + \mathbf{i}_{hist,k} \tag{1}
+$$
 
-硬件加速是把 EMT 仿真中的一部分计算或接口任务映射到 CPU 以外的专用执行资源，例如 GPU、FPGA、DSP 或专用实时仿真硬件。它不是单一算法，也不等同于“自动实时化”；加速是否成立取决于模型规模、数据搬运、数值格式、接口时序和可并行部分比例。
+其中 $\mathbf{Y}$ 为节点导纳矩阵，$\mathbf{s}_k$ 为开关状态向量，$\mathbf{v}_k$ 为节点电压，$\mathbf{i}_{src,k}$ 为电源注入，$\mathbf{i}_{hist,k}$ 为历史电流源。硬件加速的核心问题是：$\mathbf{Y}$ 的结构是否稳定、$\mathbf{i}_{hist,k}$ 是否可并行更新、开关事件是否会频繁触发重新排序或重新分解。
 
 本页关注硬件执行层的职责划分。通用算法优化见 [[computational-acceleration]]，GPU 编程与稀疏核函数见 [[gpu-parallel-acceleration]]，集群和多节点并行见 [[high-performance-computing]]，CPU/GPU/FPGA 协同调度见 [[heterogeneous-computing]]。
 
-## EMT 中的作用
+## EMT 中的角色
 
 固定步长 EMT 仿真在每个步长通常包含伴随模型更新、网络方程组装、线性方程求解、非线性或开关状态处理、输出与 I/O。硬件加速常用于其中可重复、结构稳定、数据并行或低延迟要求高的环节：
 
-- 网络矩阵或子网络方程求解，与 [[nodal-admittance-matrix]]、[[sparse-matrix-techniques]] 直接相关。
-- 大量同构电力电子子模块、风机、线路段或负荷模型的状态更新。
-- HIL 场景中的低抖动 I/O、PWM、保护逻辑和控制器接口，相关背景见 [[hil-simulation]] 与 [[real-time-simulation]]。
-- 多场景离线扫描中的批量仿真吞吐提升。
-
-硬件加速应被写成“把哪些任务放到哪些资源上，并保持哪些数值约束”，而不是无条件的性能承诺。
-
-## 核心工作流
-
-典型硬件加速 EMT 工作流为：
-
-1. 划分任务：区分串行控制、矩阵求解、元件更新、I/O、数据记录。
-2. 固定接口变量：例如节点电压 $\mathbf{v}$、注入电流 $\mathbf{i}$、元件历史项 $\mathbf{h}$ 和开关状态 $\mathbf{s}$。
-3. 选择执行资源：CPU 执行复杂控制和调度，GPU 执行高吞吐数据并行，FPGA 执行固定延迟流水线或外设接口。
-4. 验证数值一致性：比较时间步、电压电流波形、事件时刻、离散状态和能量误差，而不只比较总运行时间。
-
-简化的每步方程可写为：
-
-$$
-\mathbf{Y}(\mathbf{s}_k)\mathbf{v}_k =
-\mathbf{i}_{src,k} + \mathbf{i}_{hist,k}
-$$
-
-硬件加速的关键问题是 $\mathbf{Y}$ 的结构是否足够稳定、$\mathbf{i}_{hist,k}$ 是否可并行更新、开关事件是否会频繁触发重新排序或重新分解。
+- **网络矩阵求解**：与 [[nodal-admittance-matrix]]、[[sparse-matrix-techniques]] 直接相关的大量稀疏线性方程求解
+- **同构元件批量更新**：大量电力电子子模块、风机、线路段或负荷模型的状态更新
+- **实时 HIL 接口**：低抖动 I/O、PWM、保护逻辑和控制器接口（见 [[hil-simulation]] 与 [[real-time-simulation]]）
+- **批量离线扫描**：多场景参数扫描中的批量仿真吞吐提升
 
 ## 主要硬件路线
 
-### GPU
+### GPU 加速
 
-GPU 适合大批量同构操作，例如稀疏矩阵-向量乘、批量元件模型更新、参数扫描和部分迭代求解器。其限制是主机-设备数据传输、稀疏矩阵不规则访问、分支发散和双精度吞吐差异。详细设计见 [[gpu-parallel-acceleration]]。
+GPU 适合大批量同构操作，例如稀疏矩阵-向量乘（SpMV）、批量元件模型更新、参数扫描和部分迭代求解器。其限制是主机-设备数据传输延迟、稀疏矩阵不规则访问模式、分支发散和双精度吞吐差异。
 
-### FPGA
+**MT-EMTP 架构**（Zhou & Dinavahi 2014）：面向 GPU massive-thread 架构重构线性无源元件（R/L/C）、通用线路模型和通用电机模型，并用节点映射结构把原始导纳矩阵转换为 block-node diagonal sparse 格式，以适配 GPU SIMT 执行模式。测试系统规模最高达 2458 三相母线，与商业软件 EMTP-RV 对比验证精度和执行时间（原文未报告具体加速倍数）。详细设计见 [[gpu-parallel-acceleration]]。
 
-FPGA 适合确定性流水线、固定拓扑子系统、PWM/IO 接口、定点或定制浮点计算。它的优势来自定制数据通路和固定时序，但代价是开发周期、资源约束、数值字长验证和模型灵活性。实时 FPGA 建模细节见 [[fpga-real-time-simulation]]，定点表达见 [[fixed-point-conversion]]。
+**矩阵指数积分法**（GPU-based power converter）：把状态空间 EMT 模型中随开关状态变化的矩阵指数缓存在 GPU 显存中，避免同一开关组合下重复构造指数矩阵，通过复用缓存减少 CPU-GPU 异构传输。
+
+### FPGA 加速
+
+FPGA 适合确定性流水线、固定拓扑子系统、PWM/IO 接口、定点或定制浮点计算。其优势来自定制数据通路和固定时序，但代价是开发周期长、资源约束紧、数值字长验证复杂和模型灵活性受限。
+
+**单片 FPGA 实时 EMTP**（FPGA-based real-time EMTP）：利用硬件天然并行和深度流水线，把 EMTP 每个时间步中的元件等值、历史项更新、网络方程求解和输出更新拆成可并行的硬件计算单元，采用浮点运算保持精度。验证对象为 15 条全频变输电线路样例系统，实现 **12 μs 实时步长**，FPGA 时钟周期 12.5 ns（据原文摘要）。
+
+**SoC-FPGA 配电网 EMT**（FPGA-based distribution network analysis）：选择适合对称正定矩阵的 CG/PCG 网络求解器，围绕稀疏矩阵存储和矩阵-向量乘法做硬件实现优化。用印度古瓦哈提市 Jail 变电站配电网算例验证，相对 MATLAB 实现约 **12.5 倍加速**（据原文摘要）。
+
+**自动化 FPGA 实时 EMT 求解器**（Automated FPGA real-time simulator）：集成 Modified Augmented Nodal Analysis（MANA）、FAMNM 开关电导参数优化和稀疏矩阵-向量乘法，使电路网表到 FPGA 求解器的生成拓扑无关。用三相两电平逆变器和三相电力网络验证，对比 EMTP-RV 离线结果和硬件在环测试。
+
+**细粒度 FPGA 资源优化**（Fine-grained FPGA hardware optimization）：把 REG（新能源）控制系统拆成浮点算术运算节点，在最小求解时间和 FPGA 资源上限共同约束下进行时空并行调度，自动生成 HDL 模块。量化结果：
+- PV-REG 系统：**步长 9 μs**
+- WT-REG 系统：**步长 10 μs**
+- 相对传统硬件设计，**资源占用降低约 30%**
+- 与 PSCAD/EMTDC 相比，**相对误差 < 0.5%**（据原文）
 
 ### 多核 CPU 与 DSP
 
 多核 CPU 适合共享内存并行、复杂模型控制、事件处理和与工程软件集成。DSP 或嵌入式处理器常作为实时设备的控制或接口侧资源。多线程方法见 [[multithreaded-parallel-computing]]。
 
-### 专用平台
+### 异构并行（CPU-GPU-FPGA 协同）
 
-RTDS、OPAL-RT、Typhoon HIL 等平台可提供工程化实时仿真环境，但具体模型容量、步长、I/O 延迟和许可条件应以官方资料和项目配置为准。相关实体页包括 [[rtds]]。
+**E-FGOAM 最优分配**（Fine-grained optimal allocation）：把风电场解耦模型到 CPU-GPU 的映射从经验调度转化为步级整数非线性规划（INLP），用 E-FGOAM 减少整数变量。测试对象为 400 台风机风电场，**仿真速度提高两个数量级**（100 倍，据原文摘要）。
 
-## 复杂度与性能边界
+**混合并行算法**（Chen 等 hybrid parallel computation）：把并行化从单纯网络层推进到"元件级+网络级"的混合层次，将多相电机按绕组结构分解为多个相互耦合的小电机，再利用拆分结果重新设计 MATE 系统分区，并通过任务重叠减少网络级等待时间。
+
+### 专用实时平台
+
+RTDS、OPAL-RT、Typhoon HIL 等平台提供工程化实时仿真环境，具体模型容量、步长、I/O 延迟和许可条件应以官方资料和项目配置为准。相关实体页包括 [[rtds]]。
+
+## 形式化表达
+
+### Amdahl 型性能分解
 
 硬件加速的理论上限可用 Amdahl 型分解表达：
 
 $$
-T_{step}=T_{serial}+T_{transfer}+T_{parallel}/p+T_{sync}
+T_{step} = T_{serial} + T_{transfer} + \frac{T_{parallel}}{p} + T_{sync} \tag{2}
 $$
 
-其中 $T_{transfer}$ 和 $T_{sync}$ 在 GPU、分布式加速和 HIL 接口中经常成为瓶颈。若每步数据量很小、开关事件导致控制流频繁变化，或矩阵结构需要反复重建，峰值 FLOPS 对总仿真时间的解释力会很弱。
+其中 $T_{serial}$ 为串行控制部分，$T_{transfer}$ 为主机-设备或跨设备数据传输时间，$T_{parallel}$ 为可并行部分，$p$ 为并行核心数，$T_{sync}$ 为同步开销。$T_{transfer}$ 和 $T_{sync}$ 在 GPU、分布式加速和 HIL 接口中经常成为瓶颈。
 
-## 适用边界与失败模式
+### FPGA 时序约束
 
-- 矩阵或模型结构频繁变化时，预处理、重排序和重新部署会吞掉加速收益。
-- 稀疏矩阵行长差异大时，GPU 线程负载可能不均衡。
-- FPGA 定点实现若字长不足，可能引入溢出、量化噪声或保护动作误判。
-- HIL 场景中即使平均计算时间满足步长，最坏时延和抖动仍可能破坏闭环测试。
-- 只给出“加速比”而不说明 CPU/GPU 型号、精度、步长、模型规模、I/O 是否计入，证据边界不足。
+对于 FPGA 实时 EMT，时序约束决定最小稳定步长：
 
-## 代表性证据
+$$
+T_{step} \geq T_{pipeline} + T_{memory} + T_{io} \tag{3}
+$$
 
-- [[real-time-simulation-of-power-system-electromagnetic-transients-on-fpga-using-ad]] 可作为 FPGA EMT 实时化路线的单篇来源；其中结果不应外推为所有 FPGA 平台能力。
-- [[real-time-simulation-for-detailed-wind-turbine-model-based-on-heterogeneous-comp]] 可作为风机详细模型与异构实时仿真的代表性来源。
-- [[improving-numerical-efficiency-of-frequency-dependent-transmission-line-models-f]] 支撑“模型和算法改写也可带来加速”的边界提醒，避免把加速全部归因于硬件。
+其中 $T_{pipeline}$ 为计算流水线的时钟周期数 × 时钟周期，$T_{memory}$ 为稀疏矩阵读取延迟，$T_{io}$ 为外部接口数据传输时间。当步长小于该下界时，FPGA 无法在时限内完成当前步计算。
 
-这些证据应按算例、平台、步长和指标阅读；没有页面内来源绑定时，不写固定倍数或普适实时结论。
+### CPU-GPU 分配优化模型
 
-## 与相关页面的关系
+E-FGOAM 的目标函数为：
 
-- [[computational-acceleration]]：总览算法、并行和硬件加速的分层关系。
-- [[gpu-parallel-acceleration]]：专门讨论 GPU 核函数、内存层次和稀疏求解。
-- [[heterogeneous-computing]]：讨论 CPU/GPU/FPGA 的协同调度和数据迁移。
-- [[high-performance-computing]]：讨论多节点集群、MPI、强弱扩展和批量任务。
-- [[sparse-matrix-techniques]]：提供矩阵格式、排序、分解和预处理基础。
+$$
+\min \sum_{i} t_i^{(CPU)} x_i^{(CPU)} + t_i^{(GPU)} x_i^{(GPU)} \tag{4}
+$$
 
-## 开放问题
+约束条件包括显存上限、CPU 线程数上限和跨设备通信代价。通过优化分配矩阵 $\mathbf{x}$ 使总仿真时间最小。
 
-- 如何为含大量开关的 EMT 模型建立可复现实测基准，而不是只报告厂商平台或单一算例。
-- 如何在硬件加速中同时记录数值误差、事件时刻误差、最坏时延和 I/O 抖动。
-- 如何在模型自动生成、[[automatic-code-generation]] 和硬件部署之间保持可审核的等价性。
+## 量化性能边界
+
+| 硬件路线 | 代表工作 | 测试规模 | 性能指标 | 来源 |
+|---------|---------|---------|---------|------|
+| 单片 FPGA | FPGA-based real-time EMTP | 15 条全频变线路 | 步长 12 μs，时钟 12.5 ns | Zhou 等（原文摘要）|
+| SoC-FPGA | FPGA distribution network | 古瓦哈提 Jail 变电站 | 12.5× vs MATLAB | An FPGA-based...（原文摘要）|
+| 自动化 FPGA | Automated FPGA simulator | 三相两电平逆变器 + 三相网络 | HIL 验证 | EMTP-RV 对比 |
+| 细粒度 FPGA | Fine-grained FPGA optimization | 15 台 PV / 15 台 WT | 步长 9-10 μs，误差 <0.5% | Fine-grained...（原文）|
+| GPU 众核 | MT-EMTP (Zhou 2014) | 2458 三相母线 | vs EMTP-RV 精度等效 | Zhou & Dinavahi 2014 |
+| 时间并行 | Parallel-in-time MMC | MMC-HVdc | 5 核 3.47× 加速 | Parallel-in-time... |
+| CPU-GPU | E-FGOAM (400 风机) | 400 台 DFIG 风机 | 100× 加速 | Fine-grained optimal... |
+| 多速率 | Multi-rate transmission line | 传输线分网 | 稳定判据保证 | Mu 等 2014 |
+
+## 关键技术挑战
+
+### 挑战一：数据传输瓶颈
+
+CPU-GPU 异构系统中，每步数据量很小但传输频繁时，$T_{transfer}$ 可能远超计算时间 $T_{parallel}/p$，导致加速收益被通信吞掉。GPU 矩阵指数缓存策略（Song 等）通过在显存中缓存开关状态对应的矩阵指数来减少重复传输，但显存容量约束限制了可缓存的开关组合数。
+
+### 挑战二：稀疏矩阵不规则访存
+
+电力系统导纳矩阵是稀疏、对称正定但结构不规则的矩阵。GPU 线程负载不均衡（行长差异大）和不规则访存模式会导致 GPU 利用率低。MT-EMTP 的 block-node diagonal sparse 格式通过重排节点编号改善了访存规则性，但增加了预处理开销。
+
+### 挑战三：FPGA 资源与字长约束
+
+FPGA 定点实现若字长不足，可能引入溢出、量化噪声或保护动作误判。细粒度 FPGA 资源优化方法在算术运算级建模资源需求，但浮点运算单元的资源消耗远高于定点单元，在资源受限平台上需要在精度和资源占用之间折中。
+
+### 挑战四：HIL 实时性边界
+
+即使平均计算时间满足步长约束，最坏情况时延和抖动仍可能破坏闭环测试。HIL 场景中必须保证 $T_{step} \geq T_{worst-case}$，而非仅满足平均步长要求。
+
+### 挑战五：可复现基准缺失
+
+含大量开关的 EMT 模型缺少可复现的标准化实测基准，导致不同硬件加速方案的性能对比缺乏可信度。多数论文只报告单一算例的加速比，不能代表所有平台和所有模型配置的普遍性能。
+
+## 适用边界与选择指南
+
+| 应用场景 | 推荐硬件路线 | 关键依据 |
+|---------|------------|---------|
+| 大规模离线批量仿真（>1000 母线）| GPU 众核（MT-EMTP）| 批量同构操作，SpMV 吞吐高 |
+| 实时 HIL（微秒级步长）| FPGA 单片或 SoC-FPGA | 固定流水线，低抖动 |
+| 控制系统快速原型（HIL）| 细粒度 FPGA 资源优化 | 自动 HDL 生成，步长 9-10 μs |
+| 风电场/新能源批量变流器仿真| CPU-GPU 异构（E-FGOAM）| 细粒度分配优化，100× 加速 |
+| 多速率仿真接口加速| 时间并行（MGRIT/Parareal）| 时间方向并行度 |
+| 配电网络 EMT 快速求解| SoC-FPGA + CG/PCG | 12.5× vs MATLAB，稀疏 SPD 矩阵适配 |
+| 大规模 MMC-HVdc 详细开关仿真| 时间并行 + 空间并行 | 3.47× on 5 核（额外时间并行度）|
+
+## 相关方法
+
+- [[computational-acceleration]]：总览算法、并行和硬件加速的分层关系
+- [[gpu-parallel-acceleration]]：专门讨论 GPU 核函数、内存层次和稀疏求解
+- [[heterogeneous-computing]]：讨论 CPU/GPU/FPGA 的协同调度和数据迁移
+- [[high-performance-computing]]：讨论多节点集群、MPI、强弱扩展和批量任务
+- [[sparse-matrix-techniques]]：提供矩阵格式、排序、分解和预处理基础
+- [[fpga-real-time-simulation]]：FPGA 实时仿真专题
+- [[fixed-point-conversion]]：FPGA 定点表达与字长设计
+- [[multithreaded-parallel-computing]]：CPU 多线程并行
+- [[parallel-in-time]]：时间并行方法（MGRIT、Parareal 等）
+- [[real-time-simulation]]：实时仿真系统架构
+- [[hil-simulation]]：硬件在环仿真
+
+## 来源论文
+
+- [[fpga-based-real-time-emtp]] — 单片 FPGA 实时 EMTP，12 μs 步长
+- [[an-fpga-based-electromagnetic-transient-analysis-of-power-distribution-network]] — SoC-FPGA 配电网 EMT，12.5× 加速
+- [[an-automated-fpga-real-time-simulator-for-power-electronics-and-power-systems-el]] — 自动化 FPGA 实时 EMT 求解器
+- [[fine-grained-hardware-resource-optimization-and-design-for-fpga-based-real-time-]] — 细粒度 FPGA 资源优化，9-10 μs 步长，<0.5% 误差
+- [[parallel-massive-thread-electromagnetic-transient-simulation-on-gpu]] — MT-EMTP，2458 母线 vs EMTP-RV
+- [[parallel-in-time-simulation-algorithm-for-power-electronics-mmc-hvdc-system]] — 时间并行 MMC，3.47× on 5 核
+- [[fine-grained-optimal-allocation-of-wind-farm-decoupled-models-for-cpu-gpu-parall]] — E-FGOAM，400 风机 100× 加速
+- [[chen-等-a-hybrid-parallel-computation-algorithm-and-its-application-to-multi-phas]] — 元件级+网络级混合并行
+- [[gpu-based-power-converter-transient-simulation-with-matrix-exponential-integrati]] — GPU 矩阵指数缓存方法
