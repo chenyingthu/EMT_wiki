@@ -1498,7 +1498,7 @@ updated: "2026-05-13"
 
 
 
-|| 161 | tsinghua-university.md | entities | entities/institution/tsinghua-university.md | P3 | 10 | 1874 | 9 | 21 | pending |
+|| 161 | tsinghua-university.md | entities | entities/institution/tsinghua-university.md | P3 | 10 | 1874 | 9 | 21 | completed |
 
 
 
@@ -1514,7 +1514,7 @@ updated: "2026-05-13"
 
 
 
-|| 163 | sensitivity-analysis.md | methods | methods/stability-analysis/sensitivity-analysis.md | P3 | 9 | 1618 | 13 | 18 | pending |
+|| 163 | sensitivity-analysis.md | methods | methods/stability-analysis/sensitivity-analysis.md | P3 | 9 | 3225 | 13 | 13 | completed |
 
 
 
@@ -1522,7 +1522,7 @@ updated: "2026-05-13"
 
 
 
-|| 164 | characteristic-method.md | methods | methods/transmission-line/characteristic-method.md | P3 | 8 | 1565 | 17 | 25 | pending |
+|| 164 | characteristic-method.md | methods | methods/transmission-line/characteristic-method.md | P3 | 8 | 3532 | 17 | 19 | completed |
 
 
 
@@ -1530,7 +1530,7 @@ updated: "2026-05-13"
 
 
 
-|| 165 | mmc-hvdc-5-level.md | models | models/submodule/mmc-hvdc-5-level.md | P3 | 8 | 1305 | 17 | 12 | pending |
+|| 165 | mmc-hvdc-5-level.md | models | models/submodule/mmc-hvdc-5-level.md | P3 | 8 | 3817 | 35 | 12 | completed |
 
 
 
