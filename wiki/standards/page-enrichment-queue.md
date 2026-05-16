@@ -1400,7 +1400,7 @@ updated: "2026-05-13"
 
 
 
-|| 149 | swing-equation.md | methods | methods/stability-analysis/swing-equation.md | P3 | 13 | 1291 | 16 | 11 | pending |
+|| 149 | swing-equation.md | methods | methods/stability-analysis/swing-equation.md | P3 | 13 | 1291 | 16 | 11 | completed |
 
 
 
@@ -4730,3 +4730,4 @@ updated: "2026-05-13"
 |||||| 144 | numerical-damping-optimization.md | methods/numerical-methods/numerical-damping-optimization.md | 完成 | 4936字/123公式(17块级+106行内)/12wikilinks(全部验证有效)/10章节/5种EMT建模方法(CDA/BE/BDF/DIRK/插值+BE)/5个关键技术挑战+量化性能边界表+来源论文4篇(Marti&Lin2004/Melgoza2026/Na2023/Kocar2010) | 2026-05-16 |
 ||||||| 146 | symmetrical-components.md | methods/protection-fault/symmetrical-components.md | 完成 | 11993字/112公式(7块级+105行内)/17wikilinks(全部验证有效)/1SVG图/10章节/5篇来源论文/Fortescue变换+序网等效电路+5类EMT建模方法(相量域静态/序域阻抗测量/dq-SDP/序域距离保护/零序互感补偿)+5个关键技术挑战+量化性能边界表+适用边界选择指南 | 2026-05-16 |
 ||| 205 | nearest-level-control.md | completed | 3302字/119公式/13wikilinks/9章节/NLC三种EMT建模方法/2篇来源论文 | 2026-05-16 |
+| 206 | swing-equation.md | completed | 4952字(中)/63公式(18块级+45行内)/14wikilinks(全部验证有效)/10章节/多机扩展+等面积准则+5类关键技术挑战 | 
