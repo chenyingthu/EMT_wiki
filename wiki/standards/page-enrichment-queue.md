@@ -1175,7 +1175,7 @@ updated: "2026-05-13"
 
 
 
-|| 121 | distribution-transformer.md | models | models/transformer/distribution-transformer.md | P2 | 30 | 1241 | 14 | 12 | pending |
+|| 121 | distribution-transformer.md | models | models/transformer/distribution-transformer.md | P2 | 30 | 7048 | 38 | 21 | completed |
 
 
 
@@ -4672,6 +4672,8 @@ updated: "2026-05-13"
 
 
 ||| 108 | optimal-power-flow.md | methods | methods/system-studies/optimal-power-flow.md | 完成 | 6622字/33公式/13wikilinks/6种EMT-OPF协同方法/9章节/6篇来源论文(混合GA-Simplex/并行GA/筛选/多相潮流/MMC限流器/风电场优化) | 2026-05-16 |
+||| 119 | 1 | 1 | 0 | enrich distribution-transformer.md (P2, 7048 chars, 38 formulas, 21 wikilinks) |
+
 
 
 
