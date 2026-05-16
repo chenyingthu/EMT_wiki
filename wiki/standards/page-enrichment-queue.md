@@ -1102,7 +1102,7 @@ updated: "2026-05-13"
 
 
 
-|| 45 | weak-grid-vsc.md | models | models/equivalent/weak-grid-vsc.md | P1 | 73 | 1291 | 4 | 11 | completed |
+|| 45 | weak-grid-vsc.md | models | models/equivalent/weak-grid-vsc.md | P1 | 73 | 11433 | 113 | 14 | completed |
 
 
 
@@ -9754,3 +9754,4 @@ updated: "2026-05-13"
 
 |||| 212 | 1 | 1 | 0 | enrich | sequence-component-method.md |
 |||||| 214 | 1 | 1 | 0 | enrich: pmsg-single-unit.md | skipped | P3 hollow_score=0/质量达标(5143字(中)/18块级+55公式/5wikilinks/10章节/恒导纳+虚拟阻抗+ADC建模+量化性能指标完整) |
+||||| 231 | 1 | 1 | 0 | enrich: weak-grid-vsc.md | completed | P1 hollow_score=73→32block+81inline/11433字(中)/14wikilinks(全部验证有效)/11章节/5类EMT建模方法(EIBR/DIBM/RMS+/DSOGI-PLL/GFM)+量化性能边界+关键技术挑战4项+来源论文6篇 |
