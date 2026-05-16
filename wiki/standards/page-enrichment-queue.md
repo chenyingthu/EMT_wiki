@@ -1546,7 +1546,7 @@ updated: "2026-05-13"
 
 
 
-|| 167 | adaptive-droop.md | methods | methods/control/adaptive-droop.md | P3 | 7 | 1801 | 7 | 11 | pending |
+|| 167 | adaptive-droop.md | methods | methods/control/adaptive-droop.md | P3 | 3279 | 37 | 17 | completed |
 
 
 
@@ -4742,3 +4742,4 @@ updated: "2026-05-13"
 |||||| 209 | current-injection.md | methods/network-solution/current-injection.md | 完成 | 6347字/94公式(16块级+78行内)/13wikilinks(全部验证有效)/10章节/5种EMT建模方法(诺顿等效/受控源/开关函数/延迟接口/功率平衡)+量化性能边界表+关键技术挑战5项+来源论文4篇 |
 ||||||| 210 | parallel-line-protection.md | methods | methods/protection-fault/parallel-line-protection.md | 完成 | 6220字(中)/38公式(17块级+21行内)/8wikilinks(全部验证有效)/10章节/5种EMT建模方法(零序互感补偿+对称分量复数微分方程+行波+交叉差动+双端阻抗测距)+量化性能边界表+关键技术挑战5项+来源论文5篇 | 2026-05-16
 |||||| 166 | small-perturbation-linearization.md | methods/stability-analysis/small-perturbation-linearization.md | 跳过 | P3 hollow_score=8/质量达标(13公式/14wikilinks/6章节) |
+||||| 211 | 1 | 1 | 0 | enrich: adaptive-droop.md | completed | 3279字(中)/37公式(9块级+28行内)/17wikilinks(去重后)/12章节/4类EMT建模方法+量化性能边界 |
