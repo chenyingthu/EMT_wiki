@@ -1570,7 +1570,7 @@ updated: "2026-05-13"
 
 
 
-|| 170 | distributed-parameter-line.md | methods | methods/transmission-line/distributed-parameter-line.md | P3 | 6 | 1691 | 15 | 25 | pending |
+|| 170 | distributed-parameter-line.md | methods | methods/transmission-line/distributed-parameter-line.md | P3 | 6 | 4997 | 133 | 8 | completed |
 
 
 
