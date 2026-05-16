@@ -1554,7 +1554,7 @@ updated: "2026-05-13"
 
 
 
-|| 168 | dual-loop-pi-controller.md | methods | methods/control/dual-loop-pi-controller.md | P3 | 6 | 1655 | 12 | 16 | pending |
+|| 168 | dual-loop-pi-controller.md | methods | methods/control/dual-loop-pi-controller.md | P3 | 6 | 4581 | 41 | 14 | completed |
 
 
 
