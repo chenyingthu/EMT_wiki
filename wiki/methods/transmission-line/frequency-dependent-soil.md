@@ -297,9 +297,9 @@ $$Z_g(s) = \sum_{i=1}^{N_r} \frac{r_i}{s - p_i} + d + s h \quad (8)$$
 
 ## 来源论文
 
-- [[de Lima和Portela - 2007 - Inclusion of Frequency-Dependent Soil Parameters in Transmission-Line Modeling|de Lima & Portela 2007]] — 提出一阶模型综合频变土壤参数，扩展 Carson/Pollaczek 公式，包含 Gauss 求积数值计算无穷积分
-- [[Schroeder 等 - 2018 - Evaluation of the impact of different frequency dependent soil models on lightning overvoltages|Schroeder et al. 2018]] — 系统比较 Alipio-Visacro/Portela/Longmire-Smith 模型对 GPR 和绝缘子过电压的影响，提供量化边界数据
-- [[Alipio 等 - 2023 - Tower-foot grounding model for EMT programs based on transmission line theory and Marti\'s model|Alipio et al. 2023]] — 将杆塔接地建模为传输线，ATP-Marti 模型实现，验证精度 < 3%
-- [[Azevedo 等 - 2024 - Comparison of soil modeling concerning physical factors Application to transient analysis in wind t|Azevedo et al. 2024]] — 评估土壤物理因素（湿度、孔隙率、温度）对风机接地暂态的影响，比较六种土壤模型
-- [[multi-layer-earth-structure-approximation-by-a-homogeneous-conductivity-soil-for-ground-return-impedance-calculations|Lima et al. 2026]] — N 层水平分层土壤递归等效为均匀电导率土壤，扩展 Carson 公式可用
-- [[Li 等 - 2016 - Influence of frequency characteristics of soil parameters on ground-return transmission line parameters|Li et al. 2016]] — 分析土壤参数频率特性对地返回线路参数的影响
+- [[inclusion-of-frequency-dependent-soil-parameters-in|de Lima & Portela 2007]] — 提出一阶模型综合频变土壤参数，扩展 Carson/Pollaczek 公式，包含 Gauss 求积数值计算无穷积分
+- [[grounding-grids-in-electro-magnetic-transient-simulations-with-frequency-depende|Schroeder et al. 2018]] — 系统比较 Alipio-Visacro/Portela/Longmire-Smith 模型对 GPR 和绝缘子过电压的影响，提供量化边界数据
+- [[tower-foot-grounding-model-for-emt-programs-based-on-transmission-line-theory-an|Alipio et al. 2023]] — 将杆塔接地建模为传输线，ATP-Marti 模型实现，验证精度 < 3%
+- [[comparison-of-soil-modeling-concerning-physical-factors-application-to-transient|Azevedo et al. 2024]] — 评估土壤物理因素（湿度、孔隙率、温度）对风机接地暂态的影响，比较六种土壤模型
+- [[multi-layer-earth-structure-approximation-by-a-homogeneous-conductivity-soil-for|Lima et al. 2026]] — N 层水平分层土壤递归等效为均匀电导率土壤，扩展 Carson 公式可用
+- [[influence-of-frequency-characteristics-of-soil-on-lightning-transient-response-o|Li et al. 2016]] — 分析土壤参数频率特性对地返回线路参数的影响
