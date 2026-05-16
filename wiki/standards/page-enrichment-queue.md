@@ -1215,7 +1215,7 @@ updated: "2026-05-13"
 
 
 
-|| 126 | fourier-series.md | methods | methods/signal-processing/fourier-series.md | P2 | 26 | 1455 | 12 | 16 | pending |
+|| 126 | fourier-series.md | methods | methods/signal-processing/fourier-series.md | P2 | 26 | 4266 | 74 | 15 | completed |
 
 
 
@@ -4712,3 +4712,4 @@ updated: "2026-05-13"
 |||||| 122 | parallel-transmission-line.md | methods/transmission-line/parallel-transmission-line.md | 完成 | 7184字/59公式(9块级+50行内)/14wikilinks(全部验证有效)/10章节/4篇来源论文/独立FD-line+宽频互耦补偿(Gustavsen)/模态揭示变换/常数模态矩阵与线长关系(Torrez)/双回线新型相模变换(Shu)
 ||||||| 124 | ansys.md | entities/software/ansys.md | 完成 | 4982字/4公式/16wikilinks(全部验证有效)/13章节/wikilink路径修正(16个链接全部补全子目录路径)/1986-2025技术演进脉络/ANSYS-Maxwell与COMSOL对比表/变压器/电机/电抗器白盒建模流程 | 2026-05-16 |
 ||||| 125 | lightning-overvoltage.md | topics/protection-lightning/lightning-overvoltage.md | 完成 | 12721字/110公式(17块级+93行内)/22wikilinks(全部验证有效)/9章节/5类EMT建模方法(雷电流源/场线耦合/频变土壤接地/杆塔冲击阻抗/电晕效应)/避雷器限压模型/13篇来源论文/量化性能边界表+方法选择决策树 | 2026-05-16 |
+|||||| 126 | fourier-series.md | methods/signal-processing/fourier-series.md | 完成 | 4266字/74公式/15wikilinks(全部验证有效)/10章节/5类核心机制(正交积分/截断误差/时变跟踪/非线性耦合/谐波传播)/量化性能边界表+方法选择决策表+来源论文对比表 | 2026-05-16 |
