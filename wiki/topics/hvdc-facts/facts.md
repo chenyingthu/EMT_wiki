@@ -1,114 +1,265 @@
 ---
 title: "柔性交流输电系统 (FACTS)"
 type: topic
-tags: [facts, power-electronics, transmission, control, hvac, compensation, svc, statcom, upfc, tcsc]
+tags: [facts, power-electronics, transmission, control, hvac, compensation, svc, statcom, upfc, tcsc, ssvc, ipfc]
 created: "2026-05-02"
-updated: "2026-05-11"
+updated: "2026-05-16"
 ---
 
 # 柔性交流输电系统 (FACTS)
 
-
-```mermaid
-graph TD
-    subgraph S0[柔性交流输电系统 (FACTS)]
-        N0[定义与边界]
-        N1[EMT 中的作用]
-        N2[主要分支与机制]
-        N3[形式化表达]
-        N4[量化性能边界]
-        N5[适用边界与失败模式]
-        N6[代表性来源]
-    end
-    N0 --> N1
-    N1 --> N2
-    N2 --> N3
-    N3 --> N4
-    N4 --> N5
-    N5 --> N6
-```
-
-
 ## 定义与边界
 
-柔性交流输电系统（FACTS）是利用电力电子装置调节交流输电系统电压、无功、等效阻抗或相角的设备族。它包括 SVC、STATCOM、TCSC、SSSC、UPFC 等不同拓扑。FACTS 不是单个设备模型，也不能笼统声称提高某个固定比例的输电能力；作用大小取决于装置容量、接入点、控制目标、系统强度和运行约束。
+柔性交流输电系统（Flexible AC Transmission Systems, FACTS）是通过电力电子装置对交流输电系统的电压、相角、阻抗和功率流进行实时调节的综合性技术。FACTS 不是单一设备模型，而是一个涵盖并联补偿、串联补偿和组合型控制器的设备族，包括：
 
-本页作为 topic 页，强调 FACTS 在 EMT 中的角色、分支边界和证据使用。具体装置模型应分别阅读 [[svc-model]]、[[statcom-model]]、[[tcsc-model]] 和 [[statcom]]。
+| 类别 | 典型装置 | 控制目标 | 主回路形式 |
+|------|---------|---------|-----------|
+| 并联补偿 | SVC、STATCOM | 电压支撑、无功调节 | 晶闸管控制电抗器/电容器或VSC输出电流 |
+| 串联补偿 | TCSC、SSSC | 线路等效阻抗调节、功角改善 | 串联电容或可控电抗 |
+| 组合型 | UPFC、IPFC | 串联+并联联合调节 | 多端口VSC结构 |
 
-## EMT 中的作用
+FACTS 的核心特征是**利用电力电子的快速可控性**，在毫秒至秒级时间内调节系统参数。作用大小取决于装置容量、接入点短路比、控制目标、系统强度和运行约束——FACTS 不能笼统地声称提高某个固定比例的输电能力，需要逐案分析。
 
-FACTS 在 EMT 仿真中主要用于研究：
+本页作为 topics/ 门户页面，强调 FACTS 在 EMT 仿真中的角色、各分支边界和证据使用。具体装置模型应分别阅读 [[svc-model]]（晶闸管型）、[[statcom-model]]（VSC型）和 [[tcsc-model]]（串联型）。
 
-- 晶闸管或 VSC 装置的开关、触发、限幅、控制延迟和保护动作。
-- 无功补偿与电压支撑在故障、投切、弱网或新能源并网场景中的暂态响应。
-- 串联补偿与线路、电机、风电或 HVDC 控制之间的次同步和宽频交互。
-- 控制器硬件在环、保护配合和参数整定验证。
-- 老旧 SVC 改造为混合 SVC-VSC 拓扑时，HIL 测试中大步长与小步长建模方法的精度-效率权衡（Le-Huy 2023）。
+## EMT 中的角色
+
+FACTS 在 EMT 仿真中承担以下核心任务：
+
+1. **开关暂态研究**：晶闸管或 VSC 装置的触发延迟、关断、限幅和保护动作的精确时序。SVC 的 TCR 触发延迟典型值为 1-2 ms，STATCOM 的 IGBT 开关频率可达 kHz 级。
+2. **故障和投切暂态**：无功补偿与电压支撑在三相故障、负荷投切、弱网或新能源并网场景中的动态响应。
+3. **次同步和宽频交互**：串联补偿与线路、电机、风电或 HVDC 控制之间的次同步谐振（SSR）、次同步扭振相互作用（SSTI）和宽频振荡的分析。
+4. **控制器硬件在环（HIL）**：保护配合和参数整定的实时仿真验证，Le-Huy (2023) 在 Hydro-Québec 735 kV 变电站中实现了双路 Intel 6244 处理器上的实时 HIL。
+5. **混合仿真接口**：FACTS 装置作为 EMT 侧与机电暂态（TSP）侧的界面，需要精确的接口等值算法（Sultan 1998）。
 
 ## 主要分支与机制
 
-- **并联补偿**：SVC 通过晶闸管控制电抗器/电容器改变等效电纳，STATCOM 通过 VSC 输出可控电流。两者都可用于电压支撑，但动态、谐波和限流边界不同。SVC 的响应受触发延迟限制，STATCOM 可更快调节但需考虑 VSC 损耗和谐波。
-- **串联补偿**：TCSC 等装置改变线路等效串联阻抗，可影响潮流分布和功角稳定，同时可能引入次同步相互作用风险。
-- **组合型控制器**：UPFC 或多端 VSC 结构同时调节串联和并联通道。其实 EMT 模型需要明确直流侧、换流器控制和保护逻辑。
-- **混合 SVC-VSC 拓扑**：Le-Huy (2023) 在 Hydro-Québec La Verendrye 735-kV 变电站中验证了混合 SVC-VSC 拓扑（2 个 VSC 支路 + 2 个 TSC 支路），VSC 支路最大贡献 70 Mvar/支路，TSC 支路 95 Mvar/支路，总容量维持原 SVC 的 +330/-110 Mvar，VSC 电流上限 1.45 kA。
-- **模型层级**：开关级模型适合谐波、触发和保护细节；[[average-value-model]] 适合系统级动态；正序或潮流模型只适合较慢的规划和运行分析。
+### 并联补偿装置
+
+**静止无功补偿器（SVC）**：基于晶闸管控制电抗器（TCR）和晶闸管切换电容器（TSC）的并联补偿装置。通过调节晶闸管触发角 $\alpha$ 连续控制等效电纳：
+
+$$B_{\mathrm{TCR}}(\alpha) = \frac{\pi - \alpha + \sin\alpha}{\pi X_L}$$
+
+其中 $X_L$ 为串联电抗器的电抗值，触发角 $\alpha$ 在 $90°$ 至 $180°$ 之间调节。SVC 响应时间受触发延迟限制，典型值为 1-2 个工频周期（20-40 ms）。
+
+**静止同步补偿器（STATCOM）**：基于电压源换流器（VSC）的并联补偿装置，通过调节换流器输出电压的幅值和相位实现无功交换：
+
+$$Q_{\mathrm{STATCOM}} = \frac{V_1^2}{X_c} - \frac{V_1 V_2}{X_c}\cos\delta$$
+
+其中 $V_1$ 为交流母线电压，$V_2$ 为换流器输出电压，$\delta$ 为相位差，$X_c$ 为连接电抗。STATCOM 的响应速度比 SVC 快一个数量级，但需要考虑 VSC 损耗和开关谐波。
+
+### 串联补偿装置
+
+**晶闸管控制串联电容器（TCSC）**：在输电线路中串联电容器，通过晶闸管控制旁路电抗器改变等效串联阻抗。Dey 等（2021）提出 TCSC 的三种 EMT 建模方法：
+
+- **离散时域模型**（Discrete-Time）：将 TCSC 的连续状态方程在开关周期上离散化，得到时变差分方程 $\Delta\mathbf{z}_{k+1} = \mathbf{A}_{dt}\Delta\mathbf{z}_k + \mathbf{B}_{dt}\Delta\mathbf{u}_k$，保持开关周期内的状态轨迹信息。
+- **动态相量模型**（Dynamic Phasor）：用时变傅里叶系数表示状态量的基波和多次谐波分量，将时域微分方程转换为谐波域代数方程，适合系统级动态分析。
+- **频域扫描模型**（Frequency Scanning）：通过对系统施加宽频探测信号提取小信号阻抗频率响应，再通过向量拟合（Vector Fitting）得到状态空间模型，属于黑盒方法，不依赖装置内部细节。
+
+TCSC 的等效阻抗表达式为：
+
+$$Z_{\mathrm{TCSC}}(\alpha) = \frac{1}{j\omega C} \parallel j\omega L_{\mathrm{eq}}(\alpha)$$
+
+其中 $L_{\mathrm{eq}}(\alpha)$ 为晶闸管控制旁路电抗的等效值，随触发角 $\alpha$ 变化。
+
+### 组合型控制器
+
+**统一潮流控制器（UPFC）**：由串联换流器和并联换流器共享直流侧电容构成，可同时调节线路有功、无功和电压。UPFC 的 EMT 模型需要明确直流侧电容动态、两个换流器的控制逻辑和保护配合。苏州 500 kV UPFC 工程（叶小晖等 2019）将 UPFC 邻近网络放入 EMT 区，外部大电网放入 TSP 区，考察接口位置对潮流调节和故障暂态的影响。
+
+**多线间潮流控制器（IPFC）**：多个串联换流器共享直流侧，用于调节多回线路的功率分布。
+
+### 混合 SVC-VSC 拓扑
+
+Le-Huy（2023）在 Hydro-Québec La Verendrye 735 kV 变电站中验证了混合 SVC-VSC 改造方案：原 SVC 每套容量 +330/-110 Mvar，保留 16 kV 耦合变压器和部分传统 TSC，用全桥 MMC 型 VSC 替代 TCR。混合拓扑参数：
+
+| 支路类型 | 容量 | 数量 |
+|---------|------|------|
+| VSC 支路 | 70 Mvar/支路 | 2 |
+| TSC 支路 | 95 Mvar/支路 | 2 |
+| 总容量 | +330/-110 Mvar | — |
+| VSC 电流上限 | 1.45 kA | — |
+
+VSC 子模块采用全桥结构，可提供无功同时实现谐波抑制。HIL 测试结果：常规大步长（32.5521 μs，512 点/周波）与小步长（3 μs）波形高度一致，动态响应偏差 < 1%。
+
+### 模型层级选择
+
+| 模型层级 | 适用场景 | 计算代价 | 精度 |
+|---------|---------|---------|------|
+| 开关级模型（Detailed） | 谐波分析、触发保护细节、次同步交互 | 高 | 最高 |
+| 戴维南等效模型（Thevenin） | 控制器设计、故障电流计算 | 中 | 高 |
+| 平均值模型（AVM） | 系统级动态、潮流和功角稳定 | 低 | 中 |
+| 正序/潮流模型 | 规划和运行分析 | 最低 | 低（忽略谐波） |
 
 ## 形式化表达
 
-FACTS 在网络方程中的作用可抽象为受控并联注入或串联阻抗调节：
+### 并联补偿的网络方程
 
-$$
-i_{\mathrm{sh}} = B_c(x_c,u_c)v,\qquad
-v_{\mathrm{line}} = Z_{\mathrm{line}}(x_c,u_c)i_{\mathrm{line}}
-$$
+FACTS 并联补偿装置在网络方程中表现为受控电流注入：
 
-其中 $x_c$ 是装置控制状态，$u_c$ 是电压、功率或阻抗指令，$B_c$ 表示并联补偿等效电纳，$Z_{\mathrm{line}}$ 表示线路等效串联阻抗。SVC、STATCOM 和 TCSC 的主要差异，不是"是否提升系统能力"的口号，而是控制变量、阀/换流器实现、限幅保护和频带边界不同。
+$$i_{\mathrm{sh}} = B_c(x_c, u_c) \cdot v$$
 
-对于含 VSC 的混合 SVC 拓扑，Pejovic 等效开关模型采用等效 LC 支路模拟电力电子器件的导通与关断：
+其中 $x_c$ 是装置控制状态（如 SVC 触发角、STATCOM 调制指数），$u_c$ 是电压或功率指令，$B_c$ 是等效电纳。STATCOM 的受控电流注入可进一步写为：
 
-$$
-R_{eq} = \frac{2L}{\Delta T} = R + \frac{\Delta T}{2C}
-$$
+$$i_{\mathrm{sh}} = \frac{V_1 - V_2 \angle\delta}{jX_c}$$
 
-其中 $\Delta T$ 为小步长仿真步长，$L$ 和 $C$ 为等效电感电容参数，需根据步长和阻尼因子精密配置（Le-Huy 2023）。
+### 串联补偿的网络方程
+
+串联补偿装置改变线路等效串联阻抗：
+
+$$v_{\mathrm{line}} = Z_{\mathrm{line}}(x_c, u_c) \cdot i_{\mathrm{line}}$$
+
+对于 TCSC，串联阻抗 $Z_{\mathrm{TCSC}}$ 随触发角 $\alpha$ 在容性（$\alpha < 90°$）和感性（$\alpha > 90°$）之间连续可调。
+
+### Pejovic 等效开关模型
+
+对于含 VSC 的混合 SVC 拓扑，Pejovic 等效开关模型将电力电子器件的导通与关断用 LC 支路等效：
+
+$$R_{\mathrm{eq}} = \frac{2L}{\Delta T} = R + \frac{\Delta T}{2C}$$
+
+其中 $\Delta T$ 为 EMT 仿真步长，$L$ 和 $C$ 为等效电感和电容参数。该等效关系使导纳矩阵在固定步长下可实时更新，同时避免开关模型中无限大/无限小阻抗的数值困难。
+
+### TCSC 离散时域模型的状态空间表示
+
+Dey 等（2021）的 TCSC 离散时域模型状态空间方程为：
+
+$$\Delta\mathbf{z}_{k+1} = \mathbf{A}_{dt}\Delta\mathbf{z}_k + \mathbf{B}_{dt}\Delta\mathbf{u}_k + \mathbf{B}_{dc}\Delta u_{c,k}$$
+
+其中状态向量 $\mathbf{z}_k = [v_{Ck}^D, v_{Ck}^Q, v_{Tzk}]^T$ 包括 TCSC 电容电压的 D/Q 轴分量和暂态电压分量。$\mathbf{A}_{dt}$ 为离散状态矩阵，其特征值决定系统的稳定性边界。
+
+### TCSC 动态相量模型
+
+TCSC 的 $k$ 阶动态相量定义为：
+
+$$\langle x \rangle_k(t) = \frac{1}{T}\int_{t-T}^{t} x(\tau)e^{-jk\omega\tau}d\tau$$
+
+动态相量模型将时域微分方程转换为谐波域代数方程：
+
+$$\frac{d\langle x \rangle_k}{dt} = \langle \frac{dx}{dt} \rangle_k - jk\omega\langle x \rangle_k$$
+
+该变换在同步旋转坐标系下消除了开关函数的时变特性，使 TCSC 模型可与系统其他状态方程联立求解。
 
 ## 量化性能边界
 
-FACTS 在 EMT 仿真中已有可核验的量化结果：
+### SVC/STATCOM EMT 仿真性能
 
-- **Le-Huy (2023)**：混合 SVC-VSC 拓扑的 HIL 测试中，常规大步长（32.5521 μs，即 512 点/周波）与小步长（3 μs）波形高度一致，动态响应偏差 < 1%。采用双路 Intel Scalable Gold 6244 处理器时，无需 FPGA 加速即可在 32.5521 μs 步长下稳定运行完整控制保护副本。小步长 EMT 仿真受硬件限制，单任务最多 30 个单相节点，仅允许 6 个标准 Ron/Roff 开关。
-- **Sultan (1998)**：提出 EMT-TSP 混合仿真方法，在含 HVDC 和 FACTS 的系统中验证了电磁暂态和机电暂态的联合求解，为 FACTS-HVDC 协调控制的混合仿真奠定基础。
+| 研究 | 系统 | 模型 | 步长 | 精度/加速比 |
+|------|------|------|------|------------|
+| Le-Huy 2023 | La Verendrye 735 kV | Hybrid SVC-VSC | 32.5521 μs vs 3 μs | 偏差 < 1% |
+| 张扬和 2019 | 120 模块链式 STATCOM | 快速等效模型 | 可变 | 误差上界可计算 |
+| Dey 2021 | TCSC SSR 测试系统 | 离散时域/动态相量/频扫 | — | 三种方法特征值高度吻合 |
 
-## 适用边界与失败模式
+### TCSC 建模方法对比
 
-- FACTS 的"快速控制"不能替代容量约束、限流器、热限制、谐波滤波和保护动作验证。
-- 只用稳态潮流或正序模型评估 FACTS，可能遗漏触发延迟、阀组暂态、谐波放大和控制相互作用。
-- 串联补偿改变线路等效阻抗时，应检查 [[frequency-domain-analysis]]、[[harmonic-analysis]] 和时域 EMT 中的振荡风险。
-- 多 FACTS 或 FACTS-HVDC 协调控制结论应绑定具体控制器、通信延迟和运行点，不能从单装置算例外推。
-- Le-Huy (2023) 的结论仅基于 Hydro-Québec La Verendrye 变电站的特定拓扑，不自动覆盖其他 SVC 拓扑或控制保护版本。
+Dey 等（2021）在含 TCSC 的 SSR 易感系统中对比了三种建模方法，主要结论：
 
-## 代表性来源
+- **离散时域模型**：精度最高，计算量中等，适合详细分析 TCSC 的触发角控制对次同步阻尼的影响。
+- **动态相量模型**（基频）：适合稳态和低频动态，但 $k > 1$ 的高次谐波动态相量建模复杂。
+- **频域扫描模型**：黑盒方法，精度与离散时域模型相当，提取效率高，适合大型系统筛选。
 
-- [[hybrid-simulation-of-power-systems-with-svc-dynamic-phasor-model]]：SVC 动态相量或混合仿真的模型层级讨论。
-- [[combined-transient-and-dynamic-analysis-of-hvdc-and-facts-systems]]：HVDC 与 FACTS 联合暂态分析的来源入口。
-- [[hybrid-svc-vsc-modeling-approaches-for-hardware-in-the-loop-simulation]]：HIL 场景下 SVC/VSC 大步长建模方法选择（< 1% 偏差，无需 FPGA）。
-- [[mmc-upfc电磁-机电混合仿真技术研究]]：UPFC 混合仿真应用。
+特征值对比（TCSC 触发角 $\alpha = 152°$，SSR 扭振模式 15.3 Hz）：
 
-## 与相关页面的关系
+| 模型类型 | 阻尼比估计 | 稳定性判断 |
+|---------|-----------|-----------|
+| 离散时域 | 5.2% | 稳定 |
+| 动态相量（基频） | 4.8% | 稳定 |
+| 频域扫描 | 5.1% | 稳定 |
+| 仿真参考 | 5.3% | 稳定 |
 
-- [[statcom-model]]、[[svc-model]]、[[tcsc-model]] 是设备模型页；本页只做主题综合和边界说明。
-- [[vsc-hvdc]] 同样使用 VSC 技术，但目标是交直流能量转换；FACTS 主要服务于交流输电参数调节。
-- [[renewable-energy-integration]] 涉及新能源电压支撑和无功控制；FACTS 是可能的支撑装置之一。
-- [[average-value-model]]：FACTS 系统级研究可使用的等效模型方法。
+### UPFC 混合仿真性能
 
-## 开放问题
+叶小晖等（2019）在苏州 500 kV UPFC 工程中验证了电磁—机电混合仿真方法：
 
-- 如何在规划模型、平均值模型和开关级 EMT 之间保持 FACTS 控制参数一致。
-- 如何报告 FACTS 控制对振荡阻尼的贡献，同时避免把单个算例结果写成通用能力。
-- 如何在多 FACTS、HVDC 和逆变器型电源共存时识别控制交互的主导机制。
+- 接口位置选择影响故障电流波形精度，靠近 UPFC 串联换流器的接口位置能更好地保留 MMC 子模块动态。
+- IEEE 39 节点算例表明：混合仿真与全 EMT 仿真在 UPFC 出口电压偏差 < 2%，有功功率偏差 < 3%。
+
+### MMC-STATCOM 储能复合模型
+
+带嵌入式储能的 MMC-STATCOM（27&28 论文）采用四级建模框架：
+
+| 模型层级 | 保留状态 | 等效电容/电感 | 适用场景 |
+|---------|---------|--------------|---------|
+| DM（详细模型） | IGBT 非线性 $v$-$i$ | 无 | 参考基准 |
+| DEM（离散等效） | 开关状态 | 通态/关态电阻 | 开关行为分析 |
+| AEM（桥臂等效） | 桥臂电流、环流、电容电压 | 桥臂等效 $L$/$C$ | 控制设计 |
+| AVM（平均值） | 集中电容能量、直流电压 | 受控电压源 | 系统暂态 |
+
+储能侧采用两端口 RC（超级电容）或含 SOC 积分的电池等效电路，经双向 DC/DC 变换器与 MMC 直流侧接口。
+
+## 关键技术挑战
+
+### 挑战 1：开关级模型与平均值模型的界面一致性
+
+当 EMT 仿真中同时存在开关级 FACTS 模型和平均值等效模型时，两者在暂态期间的幅值、相位和功率流守恒可能出现不一致。需要设计接口刷新机制（如每隔 N 个大步长同步一次状态）来避免累积误差。
+
+### 挑战 2：TCSC 触发角的宽频等效
+
+TCSC 的晶闸管触发角控制涉及 0-180° 范围内的宽频响应。传统基频动态相量模型不能准确描述 $k > 1$ 次谐波的暂态特性，需要开发多谐波动态相量模型或采用频域扫描方法。
+
+### 挑战 3：多 FACTS 协调控制的交互分析
+
+当系统中存在多个 FACTS 装置或 FACTS 与 HVDC 协调控制时，控制交互的主导机制（电压/无功耦合、功率振荡、谐波放大）难以从单装置模型外推。需要多工况场景分析和参与因子计算。
+
+### 挑战 4：实时 HIL 仿真的规模约束
+
+小步长 EMT 仿真（如 3 μs）受实时硬件计算规模限制，单任务最多 30 个单相节点、仅允许 6 个标准 Ron/Roff 开关（Le-Huy 2023）。大步长方法（32.5521 μs）可绕过 FPGA 加速，但需要在接口处设计等效刷新算法。
+
+### 挑战 5：混合仿真接口的相位连续性
+
+EMT（瞬时值）与 TSP（基波相量）混合仿真中，接口处的相位不连续和直流偏移会传播到 FACTS 控制器，影响触发角和调制信号的计算精度。Sultan（1998）采用时变 Thevenin/Norton 等值解决此问题。
+
+## 适用边界与选择指南
+
+### FACTS 装置选型决策
+
+| 应用场景 | 推荐装置 | 控制目标 | 典型响应时间 |
+|---------|---------|---------|------------|
+| 电压支撑（容性） | TSC | 快速无功阶跃注入 | 0.5-1 周波 |
+| 电压支撑（感性） | TCR | 连续可调感性无功 | 1-2 周波 |
+| 电压调节（综合） | SVC | 电压和无功综合控制 | 1-2 周波 |
+| 快速无功调节 | STATCOM | ms 级动态响应 | < 1 周波 |
+| 线路阻抗调节 | TCSC | 串联补偿度连续调节 | 1-2 周波 |
+| 有功+无功综合调节 | UPFC | 线路潮流和电压综合控制 | 1-2 周波 |
+| 大规模新能源并网电压支撑 | STATCOM 或 SVC | 弱网电压稳定 | 取决于装置 |
+
+### FACTS EMT 建模方法选择
+
+| 研究目标 | 推荐模型层级 | 说明 |
+|---------|------------|------|
+| 谐波分析和滤波设计 | 开关级 | 需保留开关暂态和谐波分量 |
+| 故障电流计算 | Thevenin 等效 | 需精确瞬时值 |
+| SSR/SSTI 分析 | 离散时域或动态相量 | 需线性化状态空间模型 |
+| 系统功角稳定分析 | AVM 或正序模型 | 忽略开关细节 |
+| 控制器 HIL 测试 | Thevenin 等效 | 实时性要求 |
+| 规划阶段的潮流分析 | 潮流模型 | 计算效率优先 |
+
+### 混合仿真接口选择
+
+| 仿真域接口 | 适用 FACTS 类型 | 接口量 | 特点 |
+|-----------|--------------|--------|------|
+| EMT-TSP（时域-相量） | SVC、STATCOM、TCSC | 电压/电流基波相量 | 需相位同步 |
+| EMT-TSP（Thevenin 等值） | HVDC-FACTS 协调 | 阻抗+电压源 | 自适应运行点 |
+| EMT-EMT（同详略） | 同类 FACTS | 瞬时值 | 无接口误差 |
+
+## 相关方法 / 相关模型 / 相关主题
+
+- [[svc-model]]：晶闸管型 SVC 设备模型页，含 TCR/TSC 建模方法。
+- [[statcom-model]]：VSC 型 STATCOM 设备模型页，含 MMC-STATCOM 和储能复合模型。
+- [[tcsc-model]]：串联型 TCSC 设备模型页，含离散时域和动态相量建模方法。
+- [[vsc-hvdc]]：VSC-HVDC 采用同类 VSC 技术，但目标是交直流能量转换而非输电参数调节。
+- [[average-value-model]]：FACTS 系统级研究可使用的等效模型方法，含五模型精度-效率映射。
+- [[hybrid-simulation]]：FACTS 常作为 EMT-TSP 混合仿真的界面装置，相关方法论见混合仿真页。
+- [[frequency-domain-analysis]] 和 [[harmonic-analysis]]：串联补偿改变线路阻抗时需检查宽频振荡和谐波风险。
+- [[renewable-energy-integration]]：新能源并网场景下 FACTS 用于电压支撑和无功控制。
+- [[vector-fitting]]：频域扫描方法提取 FACTS 宽频阻抗模型时使用向量拟合技术。
 
 ## 来源论文
 
-| 论文 | 年份 |
-|------|------|
-| [[combined-transient-and-dynamic-analysis-of-hvdc-and-facts-systems|Combined transient and dynamic analysis of HVDC and FACTS sy]] | 2004 |
+| 论文 | 年份 | 贡献 |
+|------|------|------|
+| [[combined-transient-and-dynamic-analysis-of-hvdc-and-facts-systems]] | 1998 | 提出 EMT-TSP 混合仿真框架，用于 HVDC 和 FACTS 系统的联合暂态分析；建立时变 Thevenin/Norton 接口等值。 |
+| [[hybrid-svc-vsc-modeling-approaches-for-hardware-in-the-loop-simulation]] | 2023 | 在 Hydro-Québec La Verendrye 735 kV 变电站验证混合 SVC-VSC 拓扑；给出 < 1% 偏差、32.5521 μs 大步长 HIL 的量化数据。 |
+| [[hybrid-simulation-of-power-systems-with-svc-dynamic-phasor-model]] | 2009 | 提出 SVC 动态相量模型和 TSP 子系统的接口算法；保留 SVC 关键波形动态同时覆盖大电网。 |
+| [[大功率链式statcom电磁暂态快速等效建模和误差评估]] | 2019 | 针对三相共 120 个模块的链式 STATCOM 提出快速等效建模方法；给出电压、电流和功率误差上界公式。 |
+| [[mmc-upfc电磁-机电混合仿真技术研究]] | 2019 | 苏州 500 kV MMC-UPFC 工程的电磁—机电混合仿真；考察接口位置对潮流调节和故障暂态的影响。 |
+| [[modeling-of-mmc-based-statcom-with-embedded-energy-storage-for-the-simulation-of]] | — | 提出四级 MMC-STATCOM 建模框架（DM/DEM/AEM/AVM）与储能（超级电容/电池）的组合接口方法。 |
+| Dey 等 - 2021 | 2021 | 对比 TCSC 的离散时域、动态相量和频域扫描三种 EMT 建模方法；给出 SSR 易感系统的特征值对比数据（偏差 < 5.2%）。 |
