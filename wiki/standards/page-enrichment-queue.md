@@ -1159,7 +1159,7 @@ updated: "2026-05-13"
 
 
 
-|| 119 | thyristor-control.md | methods | methods/control/thyristor-control.md | P2 | 30 | 1647 | 7 | 15 | pending |
+|| 119 | thyristor-control.md | methods | methods/control/thyristor-control.md | P2 | 30 | 3885 | 77 | 10 | completed |
 
 
 
