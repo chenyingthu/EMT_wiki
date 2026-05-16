@@ -1490,7 +1490,7 @@ updated: "2026-05-13"
 
 
 
-|| 160 | parallel-line-protection.md | methods | methods/protection-fault/parallel-line-protection.md | P3 | 10 | 1724 | 8 | 11 | pending |
+||| 160 | parallel-line-protection.md | methods | methods/protection-fault/parallel-line-protection.md | P3 | 10 | 6220 | 38 | 8 | completed |
 
 
 
@@ -4740,3 +4740,4 @@ updated: "2026-05-13"
 ||||| 205 | distance-protection.md | methods | methods/protection-fault/distance-protection.md | 完成 | 6653字(中)/67公式(16块级+51行内)/11wikilinks(全部验证有效)/9章节/5种EMT建模方法(对称分量+微分方程+频域参数辨识+决策树+矩阵束)+量化性能边界表+超越率拒动率数据表+选择指南决策表 | 2026-05-16 |
 ||||| 157 | cable-modeling.md | topics | topics/component-modeling/cable-modeling.md | 完成 | 10146字/83公式(14块级+69行内)/26wikilinks(全部验证有效)/12章节/5种EMT建模方法(恒定参数+FD+ULM+FLE+宽频Krylov)+量化性能边界表+关键技术挑战5项+技术演进脉络 | 2026-05-16 |
 |||||| 209 | current-injection.md | methods/network-solution/current-injection.md | 完成 | 6347字/94公式(16块级+78行内)/13wikilinks(全部验证有效)/10章节/5种EMT建模方法(诺顿等效/受控源/开关函数/延迟接口/功率平衡)+量化性能边界表+关键技术挑战5项+来源论文4篇 |
+||||||| 210 | parallel-line-protection.md | methods | methods/protection-fault/parallel-line-protection.md | 完成 | 6220字(中)/38公式(17块级+21行内)/8wikilinks(全部验证有效)/10章节/5种EMT建模方法(零序互感补偿+对称分量复数微分方程+行波+交叉差动+双端阻抗测距)+量化性能边界表+关键技术挑战5项+来源论文5篇 | 2026-05-16
