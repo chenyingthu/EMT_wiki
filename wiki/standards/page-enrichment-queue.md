@@ -1506,7 +1506,7 @@ updated: "2026-05-13"
 
 
 
-|| 162 | frequency-dependent-soil.md | methods | methods/transmission-line/frequency-dependent-soil.md | P3 | 10 | 1615 | 13 | 18 | pending |
+|| 162 | frequency-dependent-soil.md | methods | methods/transmission-line/frequency-dependent-soil.md | P3 | 10 | 3200 | 25 | 16 | completed |
 
 
 
