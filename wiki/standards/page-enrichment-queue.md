@@ -1239,7 +1239,7 @@ updated: "2026-05-13"
 
 
 
-|| 129 | circulating-current-suppression.md | methods | methods/control/circulating-current-suppression.md | P2 | 23 | 1268 | 14 | 10 | pending |
+|| 129 | circulating-current-suppression.md | methods | methods/control/circulating-current-suppression.md | P2 | 23 | 4062 | 109 | 15 | completed |
 
 
 
