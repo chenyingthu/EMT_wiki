@@ -1562,7 +1562,7 @@ updated: "2026-05-13"
 
 
 
-|| 169 | small-signal-analysis.md | methods | methods/stability-analysis/small-signal-analysis.md | P3 | 6 | 1875 | 16 | 37 | pending |
+|| 169 | small-signal-analysis.md | methods | methods/stability-analysis/small-signal-analysis.md | P3 | 6 | 5334 | 8 | 31 | completed |
 
 
 
@@ -4728,6 +4728,7 @@ updated: "2026-05-13"
 |||| 200 | 1 | 1 | 0 | energy-function页面完成（3000字，55公式（17块级+38行内），13wikilink，1SVG，9章节，能量函数法五类变体+PEBS+BCU+UEP对比表+量化性能边界+选择指南 | 2026-05-16 |
 ||| 201 | cs-dam-model.md | completed |
 |||| 143 | grounding-system-modeling.md | completed | 6546字(中)/76公式(30块级+46行内)/11wikilinks(全部验证有效)/1SVG图(5类方法体系图)/10章节/5种EMT建模方法(集总R/传输线Marti/多端口FDNE/场模型MoM/非线性土壤电离)+量化性能边界表+来源论文5篇(Alipio2023/Lima2026/Salarieh2020/Araujo2021/Manunza) | 2026-05-16 |
+||| 210 | 1 | 1 | 0 | enrich: small-signal-analysis.md skipped (already complete) |
 ||||| 145 | time-domain-impedance-estimation.md | 7491字/60公式/13wikilinks/无SVG/26章节/6篇来源论文/5类扰动设计+4类估计算法+MIMO矩阵+量化性能边界表+选择指南决策表 | 2026-05-16 |
 |||||| 144 | numerical-damping-optimization.md | methods/numerical-methods/numerical-damping-optimization.md | 完成 | 4936字/123公式(17块级+106行内)/12wikilinks(全部验证有效)/10章节/5种EMT建模方法(CDA/BE/BDF/DIRK/插值+BE)/5个关键技术挑战+量化性能边界表+来源论文4篇(Marti&Lin2004/Melgoza2026/Na2023/Kocar2010) | 2026-05-16 |
 ||||||| 146 | symmetrical-components.md | methods/protection-fault/symmetrical-components.md | 完成 | 11993字/112公式(7块级+105行内)/17wikilinks(全部验证有效)/1SVG图/10章节/5篇来源论文/Fortescue变换+序网等效电路+5类EMT建模方法(相量域静态/序域阻抗测量/dq-SDP/序域距离保护/零序互感补偿)+5个关键技术挑战+量化性能边界表+适用边界选择指南 | 2026-05-16 |
