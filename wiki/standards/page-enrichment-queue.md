@@ -1449,7 +1449,7 @@ updated: "2026-05-13"
 
 
 
-|| 155 | fft.md | methods | methods/signal-processing/fft.md | P3 | 12 | 1314 | 19 | 19 | pending |
+|| 155 | fft.md | methods | methods/signal-processing/fft.md | P3 | 12 | 1314 | 19 | 19 | completed |
 
 
 
@@ -4733,6 +4733,7 @@ updated: "2026-05-13"
 ||| 205 | nearest-level-control.md | completed | 3302字/119公式/13wikilinks/9章节/NLC三种EMT建模方法/2篇来源论文 | 2026-05-16 |
 | 206 | swing-equation.md | completed | 4952字(中)/63公式(18块级+45行内)/14wikilinks(全部验证有效)/10章节/多机扩展+等面积准则+5类关键技术挑战 | 
 |||| 151 | magnetic-saturation-modeling.md | completed | 6964字/97公式(25块级+72行内)/18wikilinks(全部验证有效)/10章节/6篇来源论文/JA磁滞+对偶磁路+MEC+交叉饱和+量化性能边界表 | 2026-05-16 |
-||| 207 | voltage-interpolation.md | completed | 3687字(中)/34公式(13块级+21行内)/19wikilinks(全部验证有效)/12章节/5类EMT建模方法+量化性能边界+选择指南 |
+|||| 207 | voltage-interpolation.md | completed | 3687字(中)/34公式(13块级+21行内)/19wikilinks(全部验证有效)/12章节/5类EMT建模方法+量化性能边界+选择指南 |
+|||||| 208 | fft.md | methods/signal-processing/fft.md | 跳过 | P3 hollow_score=12/质量达标(19公式/19wikilinks/9章节) |
 
 ||||| 205 | distance-protection.md | methods | methods/protection-fault/distance-protection.md | 完成 | 6653字(中)/67公式(16块级+51行内)/11wikilinks(全部验证有效)/9章节/5种EMT建模方法(对称分量+微分方程+频域参数辨识+决策树+矩阵束)+量化性能边界表+超越率拒动率数据表+选择指南决策表 | 2026-05-16 |
