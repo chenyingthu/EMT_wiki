@@ -1352,7 +1352,7 @@ updated: "2026-05-13"
 
 
 
-|| 143 | grounding-system-modeling.md | methods | methods/protection-fault/grounding-system-modeling.md | P3 | 15 | 1633 | 10 | 14 | pending |
+|| 143 | grounding-system-modeling.md | methods | methods/protection-fault/grounding-system-modeling.md | P3 | 15 | 6546 | 76 | 11 | completed |
 
 
 
@@ -4725,3 +4725,4 @@ updated: "2026-05-13"
 
 |||| 200 | 1 | 1 | 0 | energy-function页面完成（3000字，55公式（17块级+38行内），13wikilink，1SVG，9章节，能量函数法五类变体+PEBS+BCU+UEP对比表+量化性能边界+选择指南 | 2026-05-16 |
 ||| 201 | cs-dam-model.md | completed |
+|||| 143 | grounding-system-modeling.md | completed | 6546字(中)/76公式(30块级+46行内)/11wikilinks(全部验证有效)/1SVG图(5类方法体系图)/10章节/5种EMT建模方法(集总R/传输线Marti/多端口FDNE/场模型MoM/非线性土壤电离)+量化性能边界表+来源论文5篇(Alipio2023/Lima2026/Salarieh2020/Araujo2021/Manunza) | 2026-05-16 |
