@@ -1408,7 +1408,7 @@ updated: "2026-05-13"
 
 
 
-|| 150 | transient-stability.md | methods | methods/stability-analysis/transient-stability.md | P3 | 13 | 1822 | 7 | 15 | pending |
+|| 150 | transient-stability.md | methods | methods/stability-analysis/transient-stability.md | P3 | 13 | 11662 | 52 | 20 | completed |
 
 
 
