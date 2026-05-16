@@ -1465,7 +1465,7 @@ updated: "2026-05-13"
 
 
 
-|| 157 | cable-modeling.md | topics | topics/component-modeling/cable-modeling.md | P3 | 11 | 2499 | 1 | 33 | pending |
+|| 157 | cable-modeling.md | topics | topics/component-modeling/cable-modeling.md | P3 | 11 | 2499 | 1 | 33 | completed |
 
 
 
@@ -4737,3 +4737,4 @@ updated: "2026-05-13"
 |||||| 208 | fft.md | methods/signal-processing/fft.md | 跳过 | P3 hollow_score=12/质量达标(19公式/19wikilinks/9章节) |
 
 ||||| 205 | distance-protection.md | methods | methods/protection-fault/distance-protection.md | 完成 | 6653字(中)/67公式(16块级+51行内)/11wikilinks(全部验证有效)/9章节/5种EMT建模方法(对称分量+微分方程+频域参数辨识+决策树+矩阵束)+量化性能边界表+超越率拒动率数据表+选择指南决策表 | 2026-05-16 |
+||||| 157 | cable-modeling.md | topics | topics/component-modeling/cable-modeling.md | 完成 | 10146字/83公式(14块级+69行内)/26wikilinks(全部验证有效)/12章节/5种EMT建模方法(恒定参数+FD+ULM+FLE+宽频Krylov)+量化性能边界表+关键技术挑战5项+技术演进脉络 | 2026-05-16 |
