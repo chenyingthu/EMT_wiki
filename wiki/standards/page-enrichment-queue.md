@@ -1586,7 +1586,7 @@ updated: "2026-05-13"
 
 
 
-|| 172 | tools-comparison-guide.md | topics | topics/tools-software/tools-comparison-guide.md | P3 | 4 | 2203 | 2 | 17 | pending |
+|| 172 | tools-comparison-guide.md | topics | topics/tools-software/tools-comparison-guide.md | P3 | 4 | 3800 | 13 | 21 | completed |
 
 
 
@@ -4745,3 +4745,4 @@ updated: "2026-05-13"
 |||||| 166 | small-perturbation-linearization.md | methods/stability-analysis/small-perturbation-linearization.md | 跳过 | P3 hollow_score=8/质量达标(13公式/14wikilinks/6章节) |
 ||||| 211 | 1 | 1 | 0 | enrich: adaptive-droop.md | completed | 3279字(中)/37公式(9块级+28行内)/17wikilinks(去重后)/12章节/4类EMT建模方法+量化性能边界 |
 ||||| 171 | upfc-model.md | models | models/compensation/upfc-model.md | 完成 | 9000字(中)/48公式(16块级+32行内)/14wikilinks(全部验证有效)/12章节/5类EMT建模方法+量化性能边界+关键技术挑战5项+来源论文更新(Ye2019/Sultan1998) |
+||||| 172 | tools-comparison-guide.md | topics | topics/tools-software/tools-comparison-guide.md | 完成 | 3800字(中)/13公式(3块级+10行内)/21wikilinks(全部验证有效)/9章节/6类工具平台对比+量化性能边界+选择指南决策表+6篇来源论文(Xiong2024/Zhou2021/Lehn1995/Le-Huy2023/Mathur2004/Cao2007) | 2026-05-16 |
