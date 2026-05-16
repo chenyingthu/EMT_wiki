@@ -1000,6 +1000,7 @@ updated: "2026-05-13"
 
 ||||| 112 | interface-technique.md | methods/simulation-technology/interface-technique.md | 完成 | 9127字/59公式/22wikilinks/0SVG/11章节/8篇来源论文/MATE+DPIM+CM+SFA-EMT+ESPRIT五类接口机制+量化性能边界表+选择指南决策表 | 2026-05-16 |
 
+|||||| 142 | hil-simulation.md | topics | topics/simulation/hil-simulation.md | 完成 | 3227字/9公式/37wikilinks/去重23来源论文 | 2026-05-16 |
 
 
 
@@ -1343,7 +1344,7 @@ updated: "2026-05-13"
 
 
 
-|| 142 | hil-simulation.md | topics | topics/simulation/hil-simulation.md | P3 | 15 | 2143 | 9 | 37 | pending |
+|| 142 | hil-simulation.md | topics | topics/simulation/hil-simulation.md | P3 | 15 | 3227 | 9 | 37 | completed |
 
 
 
