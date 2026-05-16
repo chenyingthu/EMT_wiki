@@ -1006,7 +1006,7 @@ updated: "2026-05-13"
 
 
 
-|| 39 | phase-domain-modeling.md | topics | topics/modeling-methods/phase-domain-modeling.md | P1 | 78 | 1440 | 2 | 14 | completed |
+|| 39 | phase-domain-modeling.md | topics | topics/modeling-methods/phase-domain-modeling.md | P1 | 78 | 3463 | 24 | 14 | completed |
 
 
 
