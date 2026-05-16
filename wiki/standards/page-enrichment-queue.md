@@ -1247,7 +1247,7 @@ updated: "2026-05-13"
 
 
 
-|| 130 | impedance-relay.md | methods | methods/protection-fault/impedance-relay.md | P2 | 23 | 1469 | 10 | 10 | pending |
+|| 130 | impedance-relay.md | methods | methods/protection-fault/impedance-relay.md | P2 | 23 | 9849 | 51 | 30 | completed |
 
 
 
@@ -4716,3 +4716,4 @@ updated: "2026-05-13"
 |||||| 127 | facts.md | topics/hvdc-facts/facts.md | 完成 | 4099字/52公式/16wikilinks(全部验证有效)/10章节/主要分支与机制(SVC/STATCOM/TCSC/UPFC/混合SVC-VSC)/TCSC三种EMT建模方法(离散时域/动态相量/频域扫描)/TCSC特征值对比表/Dey2021SSR量化数据/Pejovic等效开关模型/4篇来源论文/5类关键技术挑战/适用边界与选择指南决策表 | 2026-05-16 |
 
 |||||| 128 | distributed-control.md | methods/control/distributed-control.md | 完成 | 7216字/92公式/13wikilinks
+|||||| 129 | impedance-relay.md | methods/protection-fault/impedance-relay.md | 完成 | 9849字/51公式(17块级+34行内)/30wikilinks(全部验证有效)/10章节/5种EMT建模方法(恒定采样/CT-CVT暂态/相量提取/参数辨识/互感补偿)+量化性能边界表+5类关键技术挑战+6篇来源论文
