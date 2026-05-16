@@ -1287,7 +1287,7 @@ updated: "2026-05-13"
 
 
 
-|| 135 | energy-function.md | methods | methods/stability-analysis/energy-function.md | P3 | 20 | 1431 | 13 | 14 | pending |
+|| 135 | energy-function.md | methods | methods/stability-analysis/energy-function.md | P3 | 20 | 3000 | 55 | 13 | completed |
 
 
 
@@ -4722,3 +4722,4 @@ updated: "2026-05-13"
 ||||||| 134 | 1 | 1 | 0 | enrich: numerical-stability.md |
 |||| 134 | 1 | 1 | 0 | enrich: numerical-stability.md |
 
+|||| 200 | 1 | 1 | 0 | energy-function页面完成（3000字，55公式（17块级+38行内），13wikilink，1SVG，9章节，能量函数法五类变体+PEBS+BCU+UEP对比表+量化性能边界+选择指南 | 2026-05-16 |
