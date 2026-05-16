@@ -1886,8 +1886,7 @@ updated: "2026-05-13"
 
 
 
-|| 94 | folded-line-equivalent.md | methods | methods/transmission-line/folded-line-equivalent.md | P2 | 1067 | 69 | 10 | completed |
-
+|| 94 | folded-line-equivalent.md | methods | methods/transmission-line/folded-line-equivalent.md | P2 | 1067 | 69 | 10 | completed | completed 
 
 
 
@@ -2144,8 +2143,7 @@ updated: "2026-05-13"
 
 
 
-|| 107 | large-scale-power-system.md | topics | topics/simulation/large-scale-power-system.md | P2 | 6847 | 58 | 26 | completed |
-
+|| 107 | large-scale-power-system.md | topics | topics/simulation/large-scale-power-system.md | P2 | 6847 | 58 | 26 | completed | completed 
 
 
 
@@ -2208,7 +2206,7 @@ updated: "2026-05-13"
 
 
 
-|| 111 | fault-analysis.md | methods | methods/protection-fault/fault-analysis.md | P2 | 4388 | 25 | 15 | completed | |
+|| 111 | fault-analysis.md | methods | methods/protection-fault/fault-analysis.md | P2 | 4388 | 25 | 15 | completed | completed |
 
 
 
@@ -2786,8 +2784,7 @@ updated: "2026-05-13"
 
 
 
-|| 148 | nearest-level-control.md | methods | methods/power-electronics/nearest-level-control.md | P3 | 3302 | 119 | 13 | completed |
-
+|| 148 | nearest-level-control.md | methods | methods/power-electronics/nearest-level-control.md | P3 | 3302 | 119 | 13 | completed | completed 
 
 
 
@@ -3094,8 +3091,7 @@ updated: "2026-05-13"
 
 
 
-|| 167 | adaptive-droop.md | methods | methods/control/adaptive-droop.md | P3 | 3279 | 37 | 17 | completed |
-
+|| 167 | adaptive-droop.md | methods | methods/control/adaptive-droop.md | P3 | 3279 | 37 | 17 | completed | completed 
 
 
 
@@ -9661,7 +9657,7 @@ updated: "2026-05-13"
 
 
 
-|||||| 111 | fault-analysis.md | methods/protection-fault/fault-analysis.md | 完成 | 4388字/25公式/15wikilinks/0SVG/11章节/4种EMT建模方法(对称分量阻抗测量/CSD-scan/dq-SDP/状态空间线路)+5个关键技术挑战+量化性能边界表 | 2026-05-16 |
+|||||| 111 | fault-analysis.md | methods/protection-fault/fault-analysis.md | 完成 | 4388字/25公式/15wikilinks/0SVG/11章节/4种EMT建模方法(对称分量阻抗测量/CSD-scan/dq-SDP/状态空间线路)+5个关键技术挑战+量化性能边界表 | completed |
 
 
 
