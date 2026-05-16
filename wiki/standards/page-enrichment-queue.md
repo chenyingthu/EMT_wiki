@@ -1578,7 +1578,7 @@ updated: "2026-05-13"
 
 
 
-|| 171 | upfc-model.md | models | models/compensation/upfc-model.md | P3 | 4 | 2132 | 3 | 16 | pending |
+|| 171 | upfc-model.md | models | models/compensation/upfc-model.md | P3 | 4 | 9000 | 48 | 14 | completed |
 
 
 
@@ -4744,3 +4744,4 @@ updated: "2026-05-13"
 ||||||| 210 | parallel-line-protection.md | methods | methods/protection-fault/parallel-line-protection.md | 完成 | 6220字(中)/38公式(17块级+21行内)/8wikilinks(全部验证有效)/10章节/5种EMT建模方法(零序互感补偿+对称分量复数微分方程+行波+交叉差动+双端阻抗测距)+量化性能边界表+关键技术挑战5项+来源论文5篇 | 2026-05-16
 |||||| 166 | small-perturbation-linearization.md | methods/stability-analysis/small-perturbation-linearization.md | 跳过 | P3 hollow_score=8/质量达标(13公式/14wikilinks/6章节) |
 ||||| 211 | 1 | 1 | 0 | enrich: adaptive-droop.md | completed | 3279字(中)/37公式(9块级+28行内)/17wikilinks(去重后)/12章节/4类EMT建模方法+量化性能边界 |
+||||| 171 | upfc-model.md | models | models/compensation/upfc-model.md | 完成 | 9000字(中)/48公式(16块级+32行内)/14wikilinks(全部验证有效)/12章节/5类EMT建模方法+量化性能边界+关键技术挑战5项+来源论文更新(Ye2019/Sultan1998) |
