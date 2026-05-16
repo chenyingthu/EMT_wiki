@@ -3256,7 +3256,7 @@ updated: "2026-05-13"
 
 
 
-|| 177 | three-phase-instantaneous-model.md | methods | methods/system-studies/three-phase-instantaneous-model.md | P3 | 0 | 1553 | 17 | 15 | pending |
+|| 177 | three-phase-instantaneous-model.md | methods | methods/system-studies/three-phase-instantaneous-model.md | P3 | 0 | 5814 | 19 | 13 | completed |
 
 
 
