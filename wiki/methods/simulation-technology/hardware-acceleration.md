@@ -3,7 +3,7 @@ title: "硬件加速 (Hardware Acceleration)"
 type: method
 tags: [hardware-acceleration, fpga, gpu, asic, parallel-processing, cuda, opencl, multicore, real-time-simulation, heterogeneous-computing]
 created: "2026-05-02"
-updated: "2026-05-16"
+updated: "2026-05-17"
 ---
 
 # 硬件加速 (Hardware Acceleration)
@@ -103,7 +103,19 @@ $$
 
 约束条件包括显存上限、CPU 线程数上限和跨设备通信代价。通过优化分配矩阵 $\mathbf{x}$ 使总仿真时间最小。
 
+### GPU 稀疏矩阵块对角化格式
+
+MT-EMTP 将原始节点导纳矩阵重排为块-节点对角稀疏格式：
+
+$$
+\mathbf{Y}_{BND} = \begin{bmatrix} \mathbf{Y}_{11} & 0 & \cdots & 0 \\ 0 & \mathbf{Y}_{22} & \cdots & 0 \\ \vdots & \vdots & \ddots & \vdots \\ 0 & 0 & \cdots & \mathbf{Y}_{nn} \end{bmatrix}
+$$
+
+各对角块 $\mathbf{Y}_{ii}$ 可独立分配到 GPU 线程束执行 SpMV，减少线程发散。
+
 ## 量化性能边界
+
+### 硬件路线性能对比
 
 | 硬件路线 | 代表工作 | 测试规模 | 性能指标 | 来源 |
 |---------|---------|---------|---------|------|
@@ -115,6 +127,17 @@ $$
 | 时间并行 | Parallel-in-time MMC | MMC-HVdc | 5 核 3.47× 加速 | Parallel-in-time... |
 | CPU-GPU | E-FGOAM (400 风机) | 400 台 DFIG 风机 | 100× 加速 | Fine-grained optimal... |
 | 多速率 | Multi-rate transmission line | 传输线分网 | 稳定判据保证 | Mu 等 2014 |
+| SoC-FPGA CG | CG/PCG 配电网 | 稀疏 SPD 矩阵 | 12.5× vs MATLAB | FPGA distribution... |
+
+### FPGA 步长与资源关系
+
+FPGA 步长与资源占用的关系可表示为：
+
+$$
+T_{step} = \frac{N_{ALU} \cdot T_{clk}}{f_{clk}} + T_{io} \tag{5}
+$$
+
+其中 $N_{ALU}$ 为运算管线深度，$T_{clk}$ 为时钟周期数，$f_{clk}$ 为时钟频率。当 $N_{ALU}$ 增加（更多并行运算单元）时，$T_{step}$ 减少但资源占用增加。
 
 ## 关键技术挑战
 
@@ -166,12 +189,14 @@ FPGA 定点实现若字长不足，可能引入溢出、量化噪声或保护动
 
 ## 来源论文
 
-- [[fpga-based-real-time-emtp]] — 单片 FPGA 实时 EMTP，12 μs 步长
-- [[an-fpga-based-electromagnetic-transient-analysis-of-power-distribution-network]] — SoC-FPGA 配电网 EMT，12.5× 加速
-- [[an-automated-fpga-real-time-simulator-for-power-electronics-and-power-systems-el]] — 自动化 FPGA 实时 EMT 求解器
-- [[fine-grained-hardware-resource-optimization-and-design-for-fpga-based-real-time-]] — 细粒度 FPGA 资源优化，9-10 μs 步长，<0.5% 误差
-- [[parallel-massive-thread-electromagnetic-transient-simulation-on-gpu]] — MT-EMTP，2458 母线 vs EMTP-RV
-- [[parallel-in-time-simulation-algorithm-for-power-electronics-mmc-hvdc-system]] — 时间并行 MMC，3.47× on 5 核
-- [[fine-grained-optimal-allocation-of-wind-farm-decoupled-models-for-cpu-gpu-parall]] — E-FGOAM，400 风机 100× 加速
-- [[chen-等-a-hybrid-parallel-computation-algorithm-and-its-application-to-multi-phas]] — 元件级+网络级混合并行
-- [[gpu-based-power-converter-transient-simulation-with-matrix-exponential-integrati]] — GPU 矩阵指数缓存方法
+| 论文 | 年份 | 主要贡献 |
+|------|------|----------|
+| [[fpga-based-real-time-emtp]] | 2017 | 单片 FPGA 实时 EMTP，12 μs 步长 |
+| [[an-fpga-based-electromagnetic-transient-analysis-of-power-distribution-network]] | 2019 | SoC-FPGA 配电网 EMT，12.5× 加速 |
+| [[an-automated-fpga-real-time-simulator-for-power-electronics-and-power-systems-el]] | 2023 | 自动化 FPGA 实时 EMT 求解器 |
+| [[fine-grained-hardware-resource-optimization-and-design-for-fpga-based-real-time-]] | 2024 | 细粒度 FPGA 资源优化，9-10 μs 步长，<0.5% 误差 |
+| [[parallel-massive-thread-electromagnetic-transient-simulation-on-gpu]] | 2014 | MT-EMTP，2458 母线 vs EMTP-RV |
+| [[parallel-in-time-simulation-algorithm-for-power-electronics-mmc-hvdc-system]] | 2019 | 时间并行 MMC，3.47× on 5 核 |
+| [[fine-grained-optimal-allocation-of-wind-farm-decoupled-models-for-cpu-gpu-parall]] | 2024 | E-FGOAM，400 风机 100× 加速 |
+| [[chen-等-a-hybrid-parallel-computation-algorithm-and-its-application-to-multi-phas]] | 2024 | 元件级+网络级混合并行 |
+| [[gpu-based-power-converter-transient-simulation-with-matrix-exponential-integrati]] | 2019 | GPU 矩阵指数缓存方法 |
