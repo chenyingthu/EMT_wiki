@@ -1231,7 +1231,7 @@ updated: "2026-05-13"
 
 
 
-|| 128 | distributed-control.md | methods | methods/control/distributed-control.md | P2 | 24 | 1458 | 10 | 10 | pending |
+|| 128 | distributed-control.md | methods | methods/control/distributed-control.md | P2 | 24 | 7216 | 92 | 13 | completed |
 
 
 
@@ -4714,3 +4714,5 @@ updated: "2026-05-13"
 ||||| 125 | lightning-overvoltage.md | topics/protection-lightning/lightning-overvoltage.md | 完成 | 12721字/110公式(17块级+93行内)/22wikilinks(全部验证有效)/9章节/5类EMT建模方法(雷电流源/场线耦合/频变土壤接地/杆塔冲击阻抗/电晕效应)/避雷器限压模型/13篇来源论文/量化性能边界表+方法选择决策树 | 2026-05-16 |
 |||||| 126 | fourier-series.md | methods/signal-processing/fourier-series.md | 完成 | 4266字/74公式/15wikilinks(全部验证有效)/10章节/5类核心机制(正交积分/截断误差/时变跟踪/非线性耦合/谐波传播)/量化性能边界表+方法选择决策表+来源论文对比表 | 2026-05-16 |
 |||||| 127 | facts.md | topics/hvdc-facts/facts.md | 完成 | 4099字/52公式/16wikilinks(全部验证有效)/10章节/主要分支与机制(SVC/STATCOM/TCSC/UPFC/混合SVC-VSC)/TCSC三种EMT建模方法(离散时域/动态相量/频域扫描)/TCSC特征值对比表/Dey2021SSR量化数据/Pejovic等效开关模型/4篇来源论文/5类关键技术挑战/适用边界与选择指南决策表 | 2026-05-16 |
+
+|||||| 128 | distributed-control.md | methods/control/distributed-control.md | 完成 | 7216字/92公式/13wikilinks
