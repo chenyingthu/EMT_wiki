@@ -1473,8 +1473,9 @@ updated: "2026-05-13"
 
 
 
-|| 158 | distance-relay.md | models | models/protection/distance-relay.md | P3 | 11 | 1840 | 7 | 15 | pending |
+|| 158 | distance-relay.md | models | models/protection/distance-relay.md | P3 | 11 | 1345 | 25 | 14 | completed |
 
+|||||| 158 | distance-relay.md | models/protection/distance-relay.md | 完成 | 1345字(中)/25公式(10块级+15行内)/14wikilinks(全部验证有效)/11章节/5种EMT建模方法(静态阻抗区/数字继电器/频域参数辨识/高频距离保护/EMTP闭环)+量化性能边界表+关键技术挑战5项+3篇来源论文(Rosołowski1997/Suonan2012/Jia2019) | 2026-05-16 |
 
 
 
