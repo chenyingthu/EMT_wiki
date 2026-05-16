@@ -1384,7 +1384,7 @@ updated: "2026-05-13"
 
 
 
-|| 147 | wide-area-monitoring-protection.md | methods | methods/protection-fault/wide-area-monitoring-protection.md | P3 | 14 | 1844 | 6 | 14 | pending |
+|| 147 | wide-area-monitoring-protection.md | methods | methods/protection-fault/wide-area-monitoring-protection.md | P3 | 14 | 9635 | 36 | 14 | completed |
 
 
 
