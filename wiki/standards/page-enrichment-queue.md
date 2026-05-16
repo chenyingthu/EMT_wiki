@@ -1255,7 +1255,7 @@ updated: "2026-05-13"
 
 
 
-|| 131 | dae-solvers.md | methods | methods/numerical-methods/dae-solvers.md | P2 | 22 | 1823 | 10 | 27 | pending |
+|| 131 | dae-solvers.md | methods | methods/numerical-methods/dae-solvers.md | P2 | 22 | 5050 | 53 | 25 | completed |
 
 
 
@@ -4717,3 +4717,4 @@ updated: "2026-05-13"
 
 |||||| 128 | distributed-control.md | methods/control/distributed-control.md | 完成 | 7216字/92公式/13wikilinks
 |||||| 129 | impedance-relay.md | methods/protection-fault/impedance-relay.md | 完成 | 9849字/51公式(17块级+34行内)/30wikilinks(全部验证有效)/10章节/5种EMT建模方法(恒定采样/CT-CVT暂态/相量提取/参数辨识/互感补偿)+量化性能边界表+5类关键技术挑战+6篇来源论文
+||||||| 130 | dae-solvers.md | methods/numerical-methods/dae-solvers.md | 完成 | 5050字/53公式(11块级+42行内)/25wikilinks(全部验证有效)/8章节/5类核心机制(指标问题/变步长历史项/牛顿发散/接口延迟误差/初值不一致)+5个关键技术挑战+量化性能边界表+6篇来源论文 |
