@@ -1167,7 +1167,7 @@ updated: "2026-05-13"
 
 
 
-|| 120 | companion-model.md | methods | methods/numerical-methods/companion-model.md | P2 | 30 | 1670 | 7 | 16 | pending |
+|| 120 | companion-model.md | methods | methods/numerical-methods/companion-model.md | P2 | 30 | 7161 | 11 | 16 | completed |
 
 
 
