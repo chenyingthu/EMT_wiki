@@ -3240,7 +3240,7 @@ updated: "2026-05-13"
 
 
 
-|| 176 | sequence-component-method.md | methods | methods/protection-fault/sequence-component-method.md | P3 | 2 | 1648 | 11 | 11 | pending |
+|| 176 | sequence-component-method.md | methods | methods/protection-fault/sequence-component-method.md | P3 | 2 | 1182 | 85 | 11 | completed |
 
 
 
@@ -9497,3 +9497,5 @@ updated: "2026-05-13"
 ||||| 172 | tools-comparison-guide.md | topics | topics/tools-software/tools-comparison-guide.md | 完成 | 3800字(中)/13公式(3块级+10行内)/21wikilinks(全部验证有效)/9章节/6类工具平台对比+量化性能边界+选择指南决策表+6篇来源论文(Xiong2024/Zhou2021/Lehn1995/Le-Huy2023/Mathur2004/Cao2007) | 2026-05-16 |
 
 ||| 175 | 1 | 1 | 0 | enrich | small-signal-stability-analysis.md |
+
+|||| 212 | 1 | 1 | 0 | enrich | sequence-component-method.md |
