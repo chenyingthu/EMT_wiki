@@ -328,35 +328,35 @@ $$Z(s)=Z_C(s)+Z_E(s)+Z_G(s)$$
 
 ## 代表性来源
 
-- [[emt-simulation]] - EMT仿真基础
-- [[power-system]] - 电力系统建模
-- [[electromagnetic-transient]] - 电磁暂态分析
-- [[control-system]] - 控制系统设计
-- [[real-time-simulation]] - 实时仿真技术
+- [[topics/simulation/emt-simulation]] - EMT仿真基础
+- [[topics/tools-software/power-system]] - 电力系统建模
+- [[topics/stability-analysis/electromagnetic-transient]] - 电磁暂态分析
+- [[methods/control/control-system]] - 控制系统设计
+- [[topics/simulation/real-time-simulation]] - 实时仿真技术
 - ANSYS Maxwell官方文档
 - 变压器有限元建模论文
 - IEEE Transactions on Power Delivery中涉及Maxwell的论文
 - ANSYS应用案例库
 
 ## 相关实体
-- [[comsol|COMSOL]]
-- [[pscad-emtdc]]
-- [[emtp|EMTP-RV]]
-- [[transformer-model|变压器模型]]
-- [[synchronous-machine-model|同步电机模型]]
+- [[entities/software/comsol|COMSOL]]
+- [[entities/software/pscad-emtdc]]
+- [[entities/software/atp-emtp|EMTP-RV]]
+- [[models/transformer/transformer-model|变压器模型]]
+- [[models/rotating-machine/synchronous-machine-model|同步电机模型]]
 
 ## 相关模型
-- [[transformer-model|变压器模型]] - Maxwell核心应用场景，三维磁场分析与参数提取
-- [[synchronous-machine-model|同步电机模型]] - 旋转电机电磁场建模与参数计算
-- [[pmsm-model|PMSM模型]] - 永磁同步电机详细建模，用于参数提取
-- [[cable-model|电缆模型]] - 电缆电磁场分析与宽频参数建模
+- [[models/transformer/transformer-model|变压器模型]] - Maxwell核心应用场景，三维磁场分析与参数提取
+- [[models/rotating-machine/synchronous-machine-model|同步电机模型]] - 旋转电机电磁场建模与参数计算
+- [[models/rotating-machine/pmsm-model|PMSM模型]] - 永磁同步电机详细建模，用于参数提取
+- [[models/transmission-line/cable-model|电缆模型]] - 电缆电磁场分析与宽频参数建模
 
 ## 相关方法
-- [[vector-fitting]]
-- [[state-space-method]]
-- [[frequency-dependent-modeling]]
+- [[methods/signal-processing/vector-fitting]]
+- [[methods/numerical-methods/state-space-method]]
+- [[topics/modeling-methods/frequency-dependent-modeling]]
 
 ## 相关主题
-- [[transformer-model]]
-- [[synchronous-machine-model]]
-- [[co-simulation]]
+- [[models/transformer/transformer-model]]
+- [[models/rotating-machine/synchronous-machine-model]]
+- [[topics/simulation/co-simulation]]

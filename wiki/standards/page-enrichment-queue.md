@@ -1199,7 +1199,7 @@ updated: "2026-05-13"
 
 
 
-|| 124 | ansys.md | entities | entities/software/ansys.md | P2 | 27 | 1929 | 4 | 20 | pending |
+|| 124 | ansys.md | entities | entities/software/ansys.md | P2 | 27 | 4982 | 4 | 16 | completed |
 
 
 
@@ -4709,4 +4709,5 @@ updated: "2026-05-13"
 |||||| 117 | peralta-2012-detailed-mmc.md | models/equivalent/peralta-2012-detailed-mmc.md | 完成 | 4092字/44公式/11wikilinks/10章节/4种EMT建模方法(TDM/DEM/MAVM/AM-EAM)/5篇来源论文/401电平MMC基准体系 | 2026-05-16 |
 |||||| 118 | hardware-acceleration.md | methods/simulation-technology/hardware-acceleration.md | 完成 | 6851字/25公式/22wikilinks/9章节/5种硬件路线(GPU/FPGA/SoC-FPGA/细粒度FPGA/CPU-GPU异构)/3个核心公式/量化性能边界表 |
 
-||||| 122 | parallel-transmission-line.md | methods/transmission-line/parallel-transmission-line.md | 完成 | 7184字/59公式(9块级+50行内)/14wikilinks(全部验证有效)/10章节/4篇来源论文/独立FD-line+宽频互耦补偿(Gustavsen)/模态揭示变换/常数模态矩阵与线长关系(Torrez)/双回线新型相模变换(Shu)
+|||||| 122 | parallel-transmission-line.md | methods/transmission-line/parallel-transmission-line.md | 完成 | 7184字/59公式(9块级+50行内)/14wikilinks(全部验证有效)/10章节/4篇来源论文/独立FD-line+宽频互耦补偿(Gustavsen)/模态揭示变换/常数模态矩阵与线长关系(Torrez)/双回线新型相模变换(Shu)
+||||||| 124 | ansys.md | entities/software/ansys.md | 完成 | 4982字/4公式/16wikilinks(全部验证有效)/13章节/wikilink路径修正(16个链接全部补全子目录路径)/1986-2025技术演进脉络/ANSYS-Maxwell与COMSOL对比表/变压器/电机/电抗器白盒建模流程 | 2026-05-16 |
