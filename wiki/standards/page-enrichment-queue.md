@@ -1191,7 +1191,7 @@ updated: "2026-05-13"
 
 
 
-|| 123 | ieee.md | entities | entities/institution/ieee.md | P2 | 28 | 2015 | 0 | 15 | pending |
+|| 123 | ieee.md | entities | entities/institution/ieee.md | P2 | 28 | 2015 | 0 | 15 | completed |
 
 
 
