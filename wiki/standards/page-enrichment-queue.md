@@ -3272,7 +3272,7 @@ updated: "2026-05-13"
 
 
 
-|| 178 | algebraic-characterization.md | methods | methods/system-studies/algebraic-characterization.md | P3 | 0 | 1700 | 16 | 16 | pending |
+|| 178 | algebraic-characterization.md | methods | methods/system-studies/algebraic-characterization.md | P3 | 0 | 6257 | 23 | 11 | completed |
 
 
 
