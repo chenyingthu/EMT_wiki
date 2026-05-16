@@ -3304,7 +3304,7 @@ updated: "2026-05-13"
 
 
 
-|| 180 | pmsg-single-unit.md | methods | methods/system-studies/pmsg-single-unit.md | P3 | 0 | 2478 | 55 | 5 | pending |
+|| 180 | pmsg-single-unit.md | methods | methods/system-studies/pmsg-single-unit.md | P3 | 0 | 2478 | 55 | 5 | completed |
 
 
 
@@ -9500,3 +9500,4 @@ updated: "2026-05-13"
 ||| 175 | 1 | 1 | 0 | enrich | small-signal-stability-analysis.md |
 
 |||| 212 | 1 | 1 | 0 | enrich | sequence-component-method.md |
+|||||| 214 | 1 | 1 | 0 | enrich: pmsg-single-unit.md | skipped | P3 hollow_score=0/质量达标(5143字(中)/18块级+55公式/5wikilinks/10章节/恒导纳+虚拟阻抗+ADC建模+量化性能指标完整) |
