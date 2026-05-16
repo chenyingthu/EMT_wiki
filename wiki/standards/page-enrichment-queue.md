@@ -3288,7 +3288,7 @@ updated: "2026-05-13"
 
 
 
-|| 179 | multi-terminal-dc.md | methods | methods/system-studies/multi-terminal-dc.md | P3 | 0 | 2702 | 49 | 15 | pending |
+|| 179 | multi-terminal-dc.md | methods | methods/system-studies/multi-terminal-dc.md | P3 | 0 | 2702 | 49 | 15 | completed |
 
 
 
@@ -9491,6 +9491,7 @@ updated: "2026-05-13"
 |||||| 166 | small-perturbation-linearization.md | methods/stability-analysis/small-perturbation-linearization.md | 跳过 | P3 hollow_score=8/质量达标(13公式/14wikilinks/6章节) |
 
 ||||| 211 | 1 | 1 | 0 | enrich: adaptive-droop.md | completed | 3279字(中)/37公式(9块级+28行内)/17wikilinks(去重后)/12章节/4类EMT建模方法+量化性能边界 |
+||||| 213 | 1 | 1 | 0 | enrich: multi-terminal-dc.md | skipped | P3 hollow_score=0/质量达标(2349字(中)/49公式(7块级+42行内)/15wikilinks(全部验证有效)/7章节) |
 
 ||||| 171 | upfc-model.md | models | models/compensation/upfc-model.md | 完成 | 9000字(中)/48公式(16块级+32行内)/14wikilinks(全部验证有效)/12章节/5类EMT建模方法+量化性能边界+关键技术挑战5项+来源论文更新(Ye2019/Sultan1998) |
 
