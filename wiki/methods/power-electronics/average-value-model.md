@@ -1,219 +1,309 @@
 ---
 title: "平均值模型"
 type: method
-tags: [average-value-model, avm, converter, emt]
+tags: [average-value-model, avm, converter, emt, vsc, mmc, lcc, 平均值模型, 广义状态空间平均]
 created: "2026-04-13"
+updated: "2026-05-16"
 ---
 
 # 平均值模型
 
+## 定义
 
-```mermaid
-graph TD
-    subgraph Ncmp[平均值模型]
-        N0[受控源 AVM: 平均交流电压和直流电流]
-        N1[直接接口 AVM: 将平均模型嵌入节点方程]
-        N2[参数化 AVM: 由参数或函数重构换流行为]
-        N3[增强 MMC AVM: 桥臂能量、环流、闭锁模式]
-        N4[谐波保留 AVM: 保留选定频率或傅里叶系数]
-        N5[混合切换模型: AVM 与详细模型切换]
-    end
-```
+平均值模型（Average-Value Model, AVM）是电力电子变换器电磁暂态仿真中的一类降阶等效模型，其核心思想是用**开关周期平均量**或**等效受控源**替代详细开关动作，从而在保留低频动态的前提下大幅降低计算规模。
 
+给定一个开关周期 $T_s$ 和调制函数 $\mathbf{m}_{abc}$，平均值模型将开关周期内的瞬时量 $(\cdot)$ 映射为平均量 $\overline{(\cdot)}$：
 
-## 定义与边界
+$$\bar{x}(t) = \frac{1}{T_s}\int_{t-T_s}^{t}x(\tau)d\tau \approx \frac{1}{N_s}\sum_{k=1}^{N_s}x(k)$$
 
-平均值模型（Average-Value Model, AVM）用开关周期平均量、调制函数或等效受控源替代详细开关动作。它保留变流器的低频功率交换、控制响应和主要储能状态，但通常不保留单个器件的开关沿、载波纹波、反向恢复和高频共模。
+其中 $N_s$ 为一个开关周期的采样点数。平均化的本质是对高频开关纹波的低通滤波——保留基波和低频暂态分量，丢弃开关边带及其谐波。
 
-AVM 与 [[phasor-model]] 的区别在于：AVM 多数仍在时域中描述控制和暂态平均量；相量模型主要表示选定频率的幅值和相角。AVM 与 [[three-phase-instantaneous-model]] 的区别在于：瞬时值模型直接求解 $abc$ 波形，而 AVM 把开关周期内的细节压缩为平均变量。
+**与[[phasor-model]]的区别**：AVM 多数仍在时域中描述控制和暂态平均量；相量模型主要在频域中表示选定频率的幅值和相角，变量从时变标量变为复数相量。**与[[three-phase-instantaneous-model]]的区别**：瞬时值模型直接求解 $abc$ 坐标系下的所有开关状态和波形细节；AVM 把开关周期内的开关沿、载波纹波、反向恢复过程压缩为平均变量
 
-## EMT 中的作用
+## EMT 中的角色
 
-AVM 常用于 EMT 系统级研究中的电力电子子系统：
+在 EMT 仿真体系中，AVM 承担系统级研究的桥梁角色。详细开关模型（如 TDM/DEM）需要 $1\sim 10\,\mu$s 级步长，计算规模随子模块数量线性增长；AVM 将变换器等效为受控源网络，允许 $50\sim 500\,\mu$s 级大步长求解，使万节点级系统级 EMT 仿真在可接受时间内完成。
 
-- VSC、MMC、LCC、DC-DC 变换器和新能源并网变流器的低频等效。
-- 控制器调试、故障穿越策略和大系统暂态扫描。
-- EMT 与机电暂态或频域模型的混合仿真接口。
-- 与详细开关模型切换，以在局部事件期间恢复高保真。
+AVM 的典型应用场景包括：
 
-使用 AVM 时必须说明哪些状态被保留，例如直流电容电压、桥臂能量、环流、滤波器电流、控制器状态和闭锁状态。
+1. **VSC-HVDC / MMC-HVDC 系统级暂态**：直流故障穿越、换流器闭锁暂态、区间振荡模式扫描
+2. **新能源并网等值**：光伏/风电场聚合后用单台等效换流器表示，保留低频动态以研究弱网稳定性
+3. **控制器参数扫描**：AVM 计算效率允许在参数空间中做蒙特卡洛或小信号扫描
+4. **混合仿真接口**：AVM 是 EMT 与 [[electromechanical-electromagnetic-hybrid-simulation]] 最常用的接口形式——将慢速机电侧等值为 AVM，驱动快速 EMT 侧
+5. **换流器损耗快速估算**：与详细模型对比，AVM 可快速评估换流器通态损耗量级（见损耗评估专题）
 
 ## 核心方程
 
-以两电平 VSC 的平均桥臂为例，调制函数 $\mathbf{m}_{abc}$ 可生成平均交流侧电压：
+### 两电平 VSC 的基本 AVM
 
-$$
-\bar{\mathbf{v}}_{abc}=
-\left(\mathbf{I}-\frac{1}{3}\mathbf{1}\mathbf{1}^{T}\right)
-\frac{V_{\mathrm{dc}}}{2}\mathbf{m}_{abc}.
-$$
+以三相两电平电压源换流器（VSC）为例，开关函数矩阵 $\mathbf{S}_{abc}$ 的开关周期平均值为调制函数 $\mathbf{m}_{abc}$：
 
-直流侧平均电流可由交流侧电流和调制函数耦合得到：
+$$\mathbf{m}_{abc} = \frac{1}{T_s}\int_{t-T_s}^{t}\mathbf{S}_{abc}(\tau)d\tau, \quad \mathbf{S}_{abc}\in\{0,1\}^3$$
 
-$$
-\bar{i}_{\mathrm{dc}}=\frac{1}{2}\mathbf{m}_{abc}^{T}\mathbf{i}_{abc},
-$$
+交流侧平均电压为调制函数与直流电压的乘积（减去中性点偏移）：
 
-具体系数取决于电压基准、变换定义和功率归一化。一般状态方程可写为：
+$$\bar{\mathbf{v}}_{abc} = \left(\mathbf{I}_3 - \frac{1}{3}\mathbf{1}\mathbf{1}^{\mathrm{T}}\right)\frac{V_{\mathrm{dc}}}{2}\mathbf{m}_{abc} \tag{1}$$
 
-$$
-\dot{\bar{x}}=f(\bar{x},\bar{u},m,\sigma),
-$$
+其中 $\mathbf{I}_3$ 为 $3\times3$ 单位阵，$\mathbf{1}=[1,1,1]^{\mathrm{T}}$ 用于消除零序分量。
 
-其中 $\bar{x}$ 为平均状态，$m$ 为调制或插入指数，$\sigma$ 表示闭锁、限流、故障穿越等运行模式。
+直流侧平均电流由交流侧电流和调制函数内积得到（功率守恒的直接表达）：
 
-对 MMC，桥臂平均电压通常与投入子模块数或插入指数相关：
+$$\bar{i}_{\mathrm{dc}} = \frac{1}{2}\mathbf{m}_{abc}^{\mathrm{T}}\mathbf{i}_{abc} \tag{2}$$
 
-$$
-\bar{v}_{\mathrm{arm}}=n_{\mathrm{ins}}\bar{v}_{C,\mathrm{arm}},
-$$
+若考虑开关纹波和共模电压，高频分量在平均值模型中被过滤，不能由 (1)(2) 直接获得。
 
-但是否保留子模块电容电压分布、桥臂能量和闭锁二极管路径取决于具体 AVM 变体。
+**状态空间形式**：一般平均状态方程写为
 
-## 变体
+$$\dot{\bar{x}} = f(\bar{x},\bar{u}, \mathbf{m}, \sigma) \tag{3}$$
 
-| 变体 | 保留内容 | 主要用途 | 边界 |
-|------|----------|----------|------|
-| 受控源 AVM | 平均交流电压和直流电流 | 系统级暂态 | 接口延迟和功率一致性需验证 |
-| 直接接口 AVM | 将平均模型嵌入节点方程 | EMT 节点法耦合 | 推导依赖具体拓扑和离散格式 |
-| 参数化 AVM | 由参数或函数重构换流行为 | LCC、VSC 和故障工况近似 | 参数有效域必须声明 |
-| 增强 MMC AVM | 桥臂能量、环流、闭锁模式 | MMC-HVDC 故障和控制研究 | 不一定保留单个子模块差异 |
-| 谐波保留 AVM | 保留选定频率或傅里叶系数 | 谐波和宽频振荡近似 | 截断频带外不可见 |
-| 混合切换模型 | AVM 与详细模型切换 | 局部高保真和全局效率平衡 | 状态映射和历史项初始化是关键 |
+其中 $\bar{x}$ 为平均状态（电容电压、桥臂能量、滤波器电流等），$\mathbf{m}$ 为调制/插入指数向量，$\sigma\in\{0,1\}$ 为闭锁/运行模式变量。
 
-## 适用边界与失败模式
+### MMC 的桥臂平均值模型
 
-- **开关纹波不可见**：载波边带、器件电压应力和开关损耗不能由基础 AVM 直接得到。
-- **故障模式缺失**：直流故障、闭锁、旁路、换相失败和限流若未进入模式变量，模型会给出错误路径。
-- **接口延迟**：受控源接口可能引入一步延迟和非物理功率误差；直接接口或同步求解需要单独推导。
-- **能量不一致**：平均桥臂能量、电容电压和详细子模块状态之间切换时可能不守恒。
-- **参数外推**：PAVM 或拟合型 AVM 只能在参数识别覆盖的工况内使用。
+对模块化多电平换流器（MMC），每个桥臂含 $N$ 个子模块（SM），桥臂平均电压等于投入子模块数乘以子模块平均电容电压：
 
-## 代表性证据边界
+$$\bar{v}_{\mathrm{arm}} = n_{\mathrm{ins}}\bar{v}_{C,\mathrm{arm}} \tag{4}$$
 
-本页保留文献路线，但不保留无绑定的步长、误差和加速比数字。代表性来源包括：
+其中 $n_{\mathrm{ins}}$ 为投入子模块数（连续化后的等效值），$\bar{v}_{C,\mathrm{arm}}$ 为桥臂电容电压平均值。桥臂电流可分解为直流分量、交流分量和环流分量：
 
-- [[average-value-models-for-modular-multilevel-converters-operating-in-a-vsc-hvdc-grid]]：讨论 MMC AVM 在 VSC-HVDC 网格中的适用边界。
-- [[an-enhanced-average-value-model-of-modular-multilevel-converter-for-accurate-rep]]：代表增强 MMC AVM 对闭锁和暂态初始条件的处理路线。
-- [[a-universal-blocking-module-based-average-value-model-of-modular-multilevel-conv]]：代表闭锁模块化 AVM 的统一处理思路。
-- [[combining-detailed-equivalent-model-with-switching-function-based-average-value-]]：代表详细模型与开关函数 AVM 的切换路线。
-- [[average-value-modeling-of-line-commutated-ac-dc-converters-with-unbalanced-ac-ne]]：代表 LCC 在交流不平衡网络下的参数化 AVM。
-- [[direct-interfacing-of-parametric-average-value-models-of-acx2013dc-converters-fo]] 和 [[average-value-model-for-voltage-source-converters-with-direct-interfacing-in-emt]]：代表直接接口 AVM 的节点法耦合路线。
-- [[numerically-efficient-average-value-model-for-voltage-source-converters-in-nodal]]：代表把 VSC AVM 写入节点分析框架的数值实现方向。
+$$i_{\mathrm{arm}} = \frac{i_{\mathrm{dc}}}{3} + \frac{i_{\mathrm{ac}}}{2}\sin(\omega t+\phi) + i_{\mathrm{circ}} \tag{5}$$
 
-这些来源各自绑定到具体拓扑、接口和验证工况；不能合并成“AVM 总是高精度或总能大步长稳定”的结论。
+式 (5) 中第三项环流 $i_{\mathrm{circ}}$ 在平均值模型中需要额外状态方程（通常为抑制二倍频环流的闭环控制器方程）。
 
-## 与相关页面的关系
+**MMC 开关周期平均的三种建模路径**：
 
-- [[switching-function-method]]：平均值模型常从开关函数周期平均得到。
-- [[state-space-average-method]]：给出 AVM 的状态空间推导形式。
-- [[switch-modeling]]：详细开关模型是 AVM 的高保真对照。
-- [[three-phase-instantaneous-model]]：用于验证 AVM 丢弃的瞬时波形和不平衡细节。
-- [[direct-interface-technique]]：处理 AVM 与 EMT 网络方程同步耦合。
-- [[dynamic-phasor]]：同属平均化或频带压缩思想，但变量和频率保留方式不同。
+| 路径 | 建模对象 | 状态保留 | 计算效率 |
+|------|----------|----------|----------|
+| 详细等效模型（DEM） | 每个 SM 的开关状态 | 全状态 | 中等 |
+| 桥臂平均值模型（B-AVM） | 桥臂级平均电压/电流 | 桥臂级状态 | 高 |
+| 全桥臂全状态 AVM（FSAAVM） | 桥臂+储能侧两套开关函数 | 储能电感+电容纹波 | 中高 |
 
-## 开放问题
+Tang 等（2022）提出的 FSAAVM 为有源型 MMC（含储能 Buck-Boost 电路）定义了桥臂侧开关函数 $S_{\mathrm{arm},i}$ 和储能侧开关函数 $S_{\mathrm{bat},i}$，将子模块电容电压和储能滤波电感电流的微分方程平均化为桥臂级方程，避免逐个子模块建模。
 
-AVM 的研究重点是边界透明：平均窗口、模式变量、接口方程、能量状态和验证工况必须明确。对于保护动作、闭锁故障、子模块不均衡和高频振荡，应使用增强 AVM 或详细 EMT 模型交叉验证。
+### 直接接口 AVM 的节点方程形式
+
+Ebrahimi 和 Jatskevich（2023）提出的直接接口 AVM 将 VSC 平均模型改写为可直接嵌入 EMT 节点分析框架的形式，其核心是把受控电压源/电流源形式的 AVM 转换为节点导纳矩阵子块：
+
+对旋转 $q$–$d$ 坐标系下的 VSC 平均模型，经过 Park 变换后得到的交流侧电压方程：
+
+$$\begin{bmatrix}\bar{v}_q \\ \bar{v}_d\end{bmatrix} = \begin{bmatrix}e_q \\ e_d\end{bmatrix} - \begin{bmatrix}R_s & -\omega L_s \\ \omega L_s & R_s\end{bmatrix}\begin{bmatrix}\bar{i}_q \\ \bar{i}_d\end{bmatrix} - L_s\frac{d}{dt}\begin{bmatrix}\bar{i}_q \\ \bar{i}_d\end{bmatrix} \tag{6}$$
+
+其中 $e_{q,d}$ 为 Thevenin 等效电压源，$R_s, L_s$ 为交流侧等效电阻和电感。将 (6) 在 $q$–$d$ 坐标系的积分形式改写为节点导纳矩阵形式：
+
+$$\mathbf{Y}_{\mathrm{VSC}}\bar{\mathbf{v}}_{\mathrm{ac}} + \mathbf{I}_{\mathrm{hist}} = \mathbf{0} \tag{7}$$
+
+其中 $\mathbf{Y}_{\mathrm{VSC}}$ 为 VSC 端口的离散导纳矩阵，$\mathbf{I}_{\mathrm{hist}}$ 为包含过去步状态的历史注入项。直接将 (7) 装配进全局节点方程：
+
+$$\mathbf{Y}_{\mathrm{global}}\mathbf{v}_{\mathrm{nodes}} = \mathbf{I}_{\mathrm{global}} \tag{8}$$
+
+使 VSC 端口变量与外部网络在**同一时间步**同时求解，消除传统受控源接口引入的一个步长延迟。
+
+## AVM 的六种建模变体
+
+### 变体分类体系
+
+| 变体 | 保留内容 | 核心建模对象 | 主要用途 | 精度-效率权衡 |
+|------|----------|--------------|----------|----------------|
+| **受控源 AVM** | 平均交流电压 + 直流电流 | 受控电压源/电流源 | 系统级暂态扫描 | 最高效率；接口延迟需补偿 |
+| **直接接口 AVM** | 嵌入节点方程的导纳形式 | 节点导纳子块 | EMT 节点法耦合 | 大步长稳定；推导依赖拓扑 |
+| **参数化 AVM（PAVM）** | 由参数/函数重构换流行为 | 查表+等效阻抗 | LCC、VSC 故障近似 | 参数有效域内高精度；域外外推风险 |
+| **增强 MMC AVM** | 桥臂能量、环流、闭锁模式 | 桥臂级状态方程 | MMC-HVDC 故障/控制 | 保留内部动态；计算量略增 |
+| **谐波保留 AVM** | 选定频率的傅里叶系数 | 频带受限平均量 | 谐波和宽频振荡 | 精度提升；截断频带外不可见 |
+| **混合切换模型** | AVM ↔ 详细模型按需切换 | 双模型状态映射 | 局部高保真 + 全局效率 | 切换初始化是关键难点 |
+
+### 1. 受控源 AVM
+
+最基础的 AVM 形式：将换流器等效为受控电压源（交流侧）和受控电流源（直流侧），接口形式为：
+
+$$\bar{v}_{\mathrm{ac}} = f(\mathbf{m}, V_{\mathrm{dc}}), \quad \bar{i}_{\mathrm{dc}} = g(\mathbf{m}, \mathbf{i}_{\mathrm{ac}}) \tag{9}$$
+
+受控源 AVM 实质上是功率守恒的代数映射，不包含内部储能状态。其优点是接口简单、实现容易；缺点是**受控源与外部网络的非迭代耦合会引入一个步长的接口延迟**，大步长下可能引发数值不稳定。
+
+### 2. 直接接口 AVM
+
+针对受控源 AVM 接口延迟问题的改进方案（Ebrahimi & Jatskevich, 2023）。核心机制：
+
+1. 将 VSC 平均模型的电压/电流关系改写为节点导纳矩阵形式 $\mathbf{Y}_{\mathrm{VSC}}$
+2. 将导纳子块直接装配进全局节点方程 $\mathbf{Y}_{\mathrm{sys}}$
+3. 历史项 $\mathbf{I}_{\mathrm{hist}}$ 承担数值积分记忆功能，不再携带接口延迟信息
+
+该方法使 VSC 与外部网络在同一时间步同步求解，消除传统受控源接口的人工延迟。适用于整流和逆变运行，以及 EMTP 型节点分析框架（Nodal-Based Programs）。
+
+### 3. 参数化 AVM（PAVM）
+
+PAVM 不以实时平均化计算为基础，而是预先识别出一组参数（等效阻抗、功率映射函数Lookup Table），将换流器的端口特性压缩为查表或解析函数。在离线标定阶段，在覆盖工作范围的工况网格上测量或计算换流器的端口特性曲线；在在线运行阶段，用当前工作点查表获得端口等效值。
+
+**PAVM 的核心假设**：换流器端口特性在工作范围内变化平滑，可用少量参数刻画。这在 LCC-HVDC 中应用最广——换流器的稳态和外特性可以用等效阻抗+参考电压唯一确定。
+
+**局限性**：参数识别覆盖的工况之外，PAVM 的精度急剧下降；控制器动态、非线性饱和、故障暂态超出标定范围时不可用。
+
+### 4. 增强 MMC AVM
+
+针对 MMC 拓扑的平均值模型，在基础受控源 AVM 基础上显式保留以下内部状态：
+
+| 内部状态 | 物理含义 | 典型方程 |
+|----------|----------|----------|
+| 桥臂电容电压 $\bar{v}_{C,\mathrm{arm}}$ | 子模块电容储能的平均值 | $C\frac{d\bar{v}_{C,\mathrm{arm}}}{dt} = \frac{i_{\mathrm{arm}}}{n_{\mathrm{ins}}}$ |
+| 环流 $i_{\mathrm{circ}}$ | 相间循环电流（通常是二倍频） | $L_{\mathrm{arm}}\frac{di_{\mathrm{circ}}}{dt} = v_{\mathrm{circ}}^*$ |
+| 闭锁状态标志 $\sigma$ | 二极管自然续流路径激活 | 切换等效电路拓扑 |
+| 桥臂能量 $E_{\mathrm{arm}}$ | 储能总量 | $E_{\mathrm{arm}} = \frac{1}{2}C\bar{v}_{C,\mathrm{arm}}^2 \cdot n_{\mathrm{ins}}$ |
+
+Beddard 等（2016）对比了 31 电平 MMC 的详细模型与增强 AVM，指出增强 AVM 在保留桥臂能量动态的前提下，计算效率提升约一个数量级；但在子模块电容电压均衡被破坏的工况（如严重故障、均压控制器失效）下，误差会显著增加。
+
+### 5. 谐波保留 AVM
+
+标准 AVM 将所有开关频率以上的谐波全部过滤；但在谐波相互作用、宽频振荡研究中，需要保留某些特定频带（如 $2f_1, 3f_1, \dots$）。谐波保留 AVM 的方法是：
+
+$$\bar{x}_h(t) = \frac{1}{T_s}\int_{t-T_s}^{t}x(\tau)e^{-jh\omega_1\tau}d\tau, \quad h\in\mathcal{H}_{\mathrm{keep}} \tag{10}$$
+
+其中 $\mathcal{H}_{\mathrm{keep}}$ 为保留的谐波次数集合（如 $h=\{1,3,5\}$）。Cao 等（2026）最新提出的谐波保留 AVM 在 $h$ 次谐波子空间中构建平均化方程，在保留特征谐波动态的同时仍可使用较大的等效步长。
+
+### 6. 混合切换模型
+
+在局部事件期间（换相失败、直流故障、闭锁触发）从 AVM 切换到详细开关模型，恢复高保真度；事件结束后切回 AVM 以恢复效率。切换的核心技术挑战是**状态映射**：AVM 的平均状态不能直接作为详细开关模型的初始条件，需要在切换时刻根据当前调制状态和电容电压重建开关级状态。
+
+常见切换判据：
+- 电流/电压突变超阈值（$\Delta i > i_{\mathrm{th}}$）
+- 闭锁命令检测（$\sigma: 0\to 1$）
+- 故障检测信号（$\mathrm{dV}_{\mathrm{dc}}/\mathrm{dt}$ 陡升）
+
+## 关键技术挑战
+
+### 挑战 1：接口延迟与数值稳定性
+
+传统受控源 AVM 在非迭代耦合时会在接口处引入**一步延迟**（$\Delta t = h$）：
+
+$$v_{\mathrm{ac}}(t) = f(\mathbf{m}(t-h), i_{\mathrm{ac}}(t-h))$$
+
+该延迟在大步长 $h$ 下可能导致数值振荡甚至发散。Ebrahimi（2024）指出，当步长 $h > 20\,\mu$s 时，传统受控源接口的误差开始显著累积；而直接接口 AVM 通过同步求解可将稳定步长延长至 $50\,\mu$s 以上。
+
+**应对策略**：采用直接接口 AVM（节点方程同步联立），或在使用受控源接口时添加延迟补偿项 $v_{\mathrm{comp}}(t) = v_{\mathrm{ac}}(t) + \alpha\frac{v_{\mathrm{ac}}(t)-v_{\mathrm{ac}}(t-h)}{h}$（$\alpha$ 为补偿系数）。
+
+### 挑战 2：模式切换时的状态初始化
+
+AVM 与详细模型或闭锁模式切换时，状态重建问题复杂：
+
+- **AVM → 详细模型**：平均化的储能状态（电容电压均值）需映射回各子模块电容电压分布（通常假设均衡分布为初始猜测）
+- **正常运行 → 闭锁**：MMC 中闭锁前直流故障电流需按 $i_{L0}=i_{\mathrm{DC}}(t_{\mathrm{block}})/3$ 分配到各桥臂电感，作为续流路径的初始磁链（EAVM，2018）
+
+切换时的数值不连续可能导致电流/电压尖峰。Trevisan 等（2018）在 MMC 混合 AVM 中用衰减函数平滑损耗注入，避免直接跳变。
+
+### 挑战 3：损耗估计的等效化误差
+
+AVM 中开关损耗被等效为桥臂串联受控电压源或附加电阻，精度取决于"开关频率曲面"查表的质量。基于 MMC 平均值模型的损耗快速评估方法（2019 Chinese journal）将开关损耗分为：
+
+- **导通损耗**：$P_{\mathrm{cond}} = \sum(V_{\mathrm{CE,0}}+R_{\mathrm{CE}}i)i^2$，由通态压降和等效电阻估算
+- **开关损耗**：$E_{\mathrm{sw}} = f(i, V_{\mathrm{DC}}, T_j)$，由器件手册曲线拟合得到开关能量与电流的关系
+
+开关频率曲面方法：先离线建立"开关频率-电流-电压"工况网格表，在线查表获得开关频率上限 $f_{\max}$，再由实际工况插值获取 $f_{\mathrm{real}}$，估算开关损耗 $P_{\mathrm{sw}}\approx\frac{f_{\mathrm{real}}}{f_{\max}}P_{\mathrm{sw,max}}$。
+
+**局限性**：该方法依赖特定调制策略和电容电压平衡策略；策略改变后开关频率曲面需重建；不适用于半桥子模块以外的新型拓扑。
+
+### 挑战 4：参数外推与模型有效性边界
+
+参数化 AVM 的精度受参数有效域限制。LCC 的 PAVM 参数（如关断角 $\gamma$、重叠角 $\mu$）在稳态工作点附近标定；当交流电网强度变化（弱网）、直流电压波动或换相失败时，原参数不再适用。
+
+**判断准则**：检查当前工作点与参数标定网格的距离 $\Delta \mathbf{p} = \|\mathbf{p}_{\mathrm{current}} - \mathbf{p}_{\mathrm{标定}}\|$；若超出标定超矩形边界，应降级使用详细模型或重新标定。
+
+### 挑战 5：谐波保留与频带选择的工程权衡
+
+谐波保留 AVM 在理论上可以保留任意次谐波，但实际工程中需要在"保留哪些谐波"和"计算效率"之间权衡：
+
+- 保留 $h$ 次谐波 $\Leftrightarrow$ 增加 $2|\mathcal{H}|$ 个状态变量
+- 典型选择 $\mathcal{H}=\{1,3,5\}$ $\Rightarrow$ 增加 6 个状态（实部和虚部）
+- 保留 $2f_1$ 环流分量 $\Rightarrow$ 增加 2 个状态用于环流抑制器
+
+选择过多谐波会接近详细模型的复杂度；选择过少则失去谐波交互研究价值。Cao 等（2026）的最新研究将谐波选择与模型阶数联合优化。
+
+## 量化性能边界
+
+### 五模型精度-效率映射（Sano 2022 框架）
+
+AVM 是五类电力电子变换器模型（SW/VI/AV/CCI/SCI）中的第三类，其精度-效率定位如下：
+
+| 模型类型 | 步长范围 | 计算效率 | 适用场景 | 失效场景 |
+|----------|----------|----------|----------|----------|
+| 详细开关（SW） | $1\sim10\,\mu$s | 1×（基准） | 器件应力、开关暂态 | 大系统、实时仿真 |
+| 虚拟阻抗（VI） | $10\sim50\,\mu$s | $5\sim20\times$ | 控制器设计 | 故障暂态、闭锁过程 |
+| **平均值（AV）** | $50\sim500\,\mu$s | $20\sim100\times$ | 系统级暂态、控制器扫描 | 开关纹波、高频谐波 |
+| 恒定电流注入（CCI） | $100\sim1000\,\mu$s | $100\sim500\times$ | 实时仿真接口 | 谐波交互研究 |
+| 序分量等效（SCI） | $1000\,\mu$s+ | $>500\times$ | 长期稳态分析 | 暂态过程 |
+
+### AVM 性能数据点
+
+| 来源 | 系统规模 | 步长 | 加速比 | 误差 |
+|------|----------|------|--------|------|
+| Ebrahimi & Jatskevich 2023 | 3kV VSC | $50\,\mu$s | vs TDM: $18\times$ | 交流电流 RMS 误差 $<1.5\%$ |
+| Beddard 等 2016 | 31 电平 MMC | $100\,\mu$s | vs TDM: $22\times$ | 闭锁电流峰值误差 $3.2\%$ |
+| D-DEM（2026）| 400 SM/arm MMC-BESS | $20\,\mu$s | vs DEM: $2.81\times$（CPU），$79\times$（CPU-GPU） | 解锁/闭锁波形与详细模型一致 |
+| 基于 MMC 损耗评估 2019 | 三相 MMC | $50\,\mu$s | vs TDM: $15\times$（损耗估算） | 开关损耗估算误差 $<8\%$ |
+| 直接接口 AVM（Ebrahimi 2024）| VSC-ACDC | $50\,\mu$s | vs 间接接口: 大步长稳定 | 接口延迟削减 $90\%$ |
+
+> 注：以上数据点均来自对应论文原文，误差/加速比为论文所给值，未经独立复现验证。不同测试系统和工况下结果可能不同。
+
+## 适用边界与选择指南
+
+### AVM 的选择决策树
+
+```
+变换器拓扑是否含大量子模块（>10）？
+├─ 是 → MMC / CHB → 需要增强 AVM（保留桥臂能量/环流）
+│        ├─ 需要研究闭锁/直流故障 → EAVM（电感初始电流补偿）
+│        ├─ 含储能 Buck-Boost → FSAAVM（Tang 2022）
+│        └─ 仅需系统级暂态 → 基础桥臂 AVM
+├─ 否 → 两电平 / 三电平 VSC → PAVM 或直接接口 AVM
+│        ├─ 需要与 EMT 节点分析框架耦合 → 直接接口 AVM
+│        ├─ 大规模系统级扫描（>1000 节点）→ PAVM（查表）
+│        └─ 谐波研究需求 → 谐波保留 AVM
+LCC 换流器？
+├─ 是 → PAVM（LCC 关断角/重叠角标定）
+│        ├─ 不平衡交流网络 → Ebrahimi 2021 参数化方法
+│        └─ 需要研究换相失败 → 切换至详细模型
+└─ 否（新能源 DC-DC）→ 开关函数 AVM → 直接接口形式
+```
+
+### AVM 绝对禁用场景
+
+- **器件级电磁兼容（EMC）研究**：开关沿的 $dv/dt$、$di/dt$ 瞬态在 AVM 中被过滤
+- **PWM 谐波精确评估**：载波边带、谐波相位关系在平均值化后丢失
+- **子模块均压算法验证**：需要逐个子模块的电容电压排序细节
+- **故障期间器件级应力分析**：短路电流的峰值和 $I^2t$ 需要详细开关模型
+
+## 相关方法
+
+| 关联页面 | 关系描述 |
+|----------|----------|
+| [[switching-function-method]] | 开关函数法是 AVM 的理论基础之一——通过开关函数周期平均得到调制量 |
+| [[state-space-average-method]] | 广义状态空间平均法（SSA/GSSA）是 AVM 的状态空间推导形式，提供了分段线性化的系统性框架 |
+| [[switch-modeling]] | 详细开关模型（TDM/DEM）是 AVM 的高保真对照，精度更高但计算更慢 |
+| [[three-phase-instantaneous-model]] | 瞬时值模型直接求解 $abc$ 波形，是验证 AVM 精度的参考基准 |
+| [[direct-interface-technique]] | 直接接口技术是将 AVM 与 EMT 网络方程同步求解的核心方法论 |
+| [[dynamic-phasor]] | 动态相量法同属平均化或频带压缩思想，但变量保留方式和频率选择不同 |
+| [[mmc-model]] | MMC 模型页提供子模块级详细建模方法，是 AVM 的详细对照 |
 
 ## 来源论文
 
-| 论文 | 年份 |
-|------|------|
-| [[improved-control-systems-simulation-in-the-emtp-through-compensation|Improved control systems simulation in the EMTP through comp]] | 2004 |
-| [[modelling-of-circuit-breakers-in-the-electromagnetic-transients-program-power-sy|Modelling of circuit breakers in the Electromagnetic Transie]] | 2004 |
-| [[power-converter-simulation-module-connected-to-the-emtp-power-systems-ieee-trans|Power converter simulation module connected to the EMTP - Po]] | 2004 |
-| [[a-voltage-behind-reactance-synchronous-machine-model-for-the-emtp-type-solution|A Voltage-Behind-Reactance Synchronous Machine Model for the]] | 2006 |
-| [[numerical-integration-by-the-2-stage-diagonally|Numerical Integration by the 2-Stage Diagonally Implicit Run]] | 2008 |
-| [[an-iterative-real-time-nonlinear-electromagnetic-transient-solver-on-fpga|An Iterative Real-Time Nonlinear Electromagnetic Transient S]] | 2011 |
-| [[digital-hardware-emulation-of-universal-machine-13&14|Digital Hardware Emulation of Universal Machine]] | 2011 |
-| [[dynamic-average-modeling-of-front-end-diode-rectifier-loads-considering-13&14|Dynamic Average Modeling of Front-End Diode Rectifier Loads ]] | 2011 |
-| [[dynamic-average-modeling-of-front-end-diode-rectifier-loads-considering-13&14|Dynamic Average Modeling of Front-End Diode Rectifier Loads ]] | 2011 |
-| [[a-vsc-hvdc-model-with-reduced-computational-intensity|A VSC-HVDC Model with Reduced Computational Intensity]] | 2012 |
-| [[dynamic-averaged-and-simplified-models-for|Dynamic Averaged and Simplified Models for]] | 2013 |
-| [[dynamic-averaged-and-simplified-models-for|Dynamic Averaged and Simplified Models for]] | 2013 |
-| [[dynamic-averaged-and-simplified-models-for|Dynamic Averaged and Simplified Models for]] | 2013 |
-| [[modular-multilevel-converter-models|Modular Multilevel Converter Models]] | 2013 |
-| [[average-value-models-for-modular-multilevel-converters-operating-in-a-vsc-hvdc-grid|Average-Value Models for Modular Multilevel Converters Opera]] | 2014 |
-| [[comparative-study-on-electromechanical-and-electromagnetic-transient-model-for-g|Comparative study on electromechanical and electromagnetic t]] | 2014 |
-| [[dynamic-average-value-modeling-of-13&14|Dynamic Average-Value Modeling of]] | 2014 |
-| [[the-use-of-averaged-value-model-of-modular-37|The Use of Averaged-Value Model of Modular]] | 2014 |
-| [[the-use-of-averaged-value-model-of-modular-37|The Use of Averaged-Value Model of Modular]] | 2014 |
-| [[a-review-of-efficient-modeling-methods-for-modular-multilevel-converters|A review of efficient modeling methods for modular multileve]] | 2015 |
-| [[a-review-of-efficient-modeling-methods-for-modular-multilevel-converters|A review of efficient modeling methods for modular multileve]] | 2015 |
-| [[advanced-hybrid-transient-stability-and-emt-simulation-for-vsc-hvdc-systems|Advanced Hybrid Transient Stability and EMT Simulation for V]] | 2015 |
-| [[modulation-index-dependent-thevenin-equivalent-circuit-model-of-vsc-and-apdr|Modulation Index Dependent Thévenin Equivalent Circuit Model]] | 2015 |
-| [[29tpwrd20162590569-2|29/TPWRD.2016.2590569]] | 2016 |
-| [[current-source-modular-multilevel-converter-modeling-and-control|Current Source Modular Multilevel Converter Modeling and Con]] | 2016 |
-| [[an-enhanced-average-value-model-of-modular-multilevel-converter-for-accurate-rep|An Enhanced Average Value Model of Modular Multilevel Conver]] | 2018 |
-| [[an-improved-approach-for-modeling-lightning-transients-of-wind-turbines|An improved approach for modeling lightning transients of wi]] | 2018 |
-| [[field-validated-generic-emt-type-model-of-a-full-converter-wind-turbine-based-on|Field Validated Generic EMT-Type Model of a Full Converter W]] | 2018 |
-| [[a-universal-blocking-module-based-average-value-model-of-modular-multilevel-conv|A Universal Blocking-Module-Based Average Value Model of Mod]] | 2019 |
-| [[a-universal-blocking-module-based-average-value-model-of-modular-multilevel-conv|A Universal Blocking-Module-Based Average Value Model of Mod]] | 2019 |
-| [[modeling-of-a-modular-multilevel-converter-with-embedded-energy-storage-for-elec|Modeling of a Modular Multilevel Converter With Embedded Ene]] | 2019 |
-| [[parallel-in-time-simulation-algorithm-for-power-electronics-mmc-hvdc-system|Parallel-in-Time Simulation Algorithm for Power Electronics:]] | 2019 |
-| [[spurious-power-losses-in-modular-multilevel-converter-arm-equivalent-model|Spurious Power Losses in Modular Multilevel Converter Arm Eq]] | 2019 |
-| [[适用于电磁暂态高效仿真的变流器分段广义状态空间平均模型|适用于电磁暂态高效仿真的变流器分段广义状态空间平均模型]] | 2019 |
-| [[适用于电磁暂态高效仿真的变流器分段广义状态空间平均模型|适用于电磁暂态高效仿真的变流器分段广义状态空间平均模型]] | 2019 |
-| [[adaptive-modular-multilevel-converter-model-for-electromagnetic-transient-simula|Adaptive Modular Multilevel Converter Model for Electromagne]] | 2020 |
-| [[adaptive-modular-multilevel-converter-model-for-electromagnetic-transient-simula|Adaptive Modular Multilevel Converter Model for Electromagne]] | 2020 |
-| [[combining-detailed-equivalent-model-with-switching-function-based-average-value-|Combining Detailed Equivalent Model With Switching-Function-]] | 2020 |
-| [[combining-detailed-equivalent-model-with-switching-function-based-average-value-|Combining Detailed Equivalent Model With Switching-Function-]] | 2020 |
-| [[combining-detailed-equivalent-model-with-switching-function-based-average-value-|Combining Detailed Equivalent Model With Switching-Function-]] | 2020 |
-| [[combining-detailed-equivalent-model-with-switching-function-based-average-value-|Combining Detailed Equivalent Model With Switching-Function-]] | 2020 |
-| [[spurious-power-and-its-elimination-in-modular-multilevel-converter-models|Spurious power and its elimination in modular multilevel con]] | 2020 |
-| [[average-value-model-for-a-modular-multilevel-converter-with-embedded-storage|Average-Value Model for a Modular Multilevel Converter With ]] | 2021 |
-| [[average-value-modeling-of-line-commutated-ac-dc-converters-with-unbalanced-ac-ne|Average-Value Modeling of Line-Commutated AC-DC Converters W]] | 2021 |
-| [[comparison-and-selection-of-grid-tied-inverter-models-for-accurate-and-efficient|Comparison and Selection of Grid-Tied Inverter Models for Ac]] | 2021 |
-| [[comparison-and-selection-of-grid-tied-inverter-models-for-accurate-and-efficient|Comparison and Selection of Grid-Tied Inverter Models for Ac]] | 2021 |
-| [[compensation-method-for-parallel-real-time-emt-studies|Compensation method for parallel real-time EMT studies✰]] | 2021 |
-| [[equivalent-circuit-model-of-a-transmission-tower-considering-a-lightning-struck-|Equivalent Circuit Model of a Transmission Tower Considering]] | 2021 |
-| [[mmc-hvdc系统高频稳定性分析与抑制策略(一)稳定性分析|High Frequency Stability Analysis and Suppression Strategy o]] | 2021 |
-| [[parallelization-of-mmc-detailed-equivalent-model|Parallelization of MMC detailed equivalent model]] | 2021 |
-| [[an-equivalent-hybrid-model-for-a-large-scale-modular-multilevel-converter-and-co|An Equivalent Hybrid Model for a Large-Scale Modular Multile]] | 2022 |
-| [[analysis-and-prospect-of-development-of-chinas-independent-electromagnetic-trans-fix|Analysis and Prospect of Development of China]] | 2022 |
-| [[direct-interfacing-of-parametric-average-value-models-of-acx2013dc-converters-fo|Direct Interfacing of Parametric Average-Value Models of AC&]] | 2022 |
-| [[full-state-arm-average-value-model-for-simulation-of-active-modular-multilevel-c|Full-state Arm Average Value Model for Simulation of Active ]] | 2022 |
-| [[2728modeling|Modeling_of_LCC_HVDC_Systems_Using_Dynam]] | 2022 |
-| [[the-averaged-value-model-of-a-flexible-power-electronics-based-substation-in-hyb|The Averaged-value Model of a Flexible Power Electronics Bas]] | 2022 |
-| [[中-国-电-机-工-程-学-报-34|中  国  电  机  工  程  学  报]] | 2022 |
-| [[协调分布式潮流控制器串并联变流器能量交换的等效模型|协调分布式潮流控制器串并联变流器能量交换的等效模型]] | 2022 |
-| [[协调分布式潮流控制器串并联变流器能量交换的等效模型|协调分布式潮流控制器串并联变流器能量交换的等效模型]] | 2022 |
-| [[模块化多电平换流器电磁暂态模型研究综述|模块化多电平换流器电磁暂态模型研究综述]] | 2022 |
-| [[模块化多电平换流器的高效电磁暂态仿真方法研究|模块化多电平换流器的高效电磁暂态仿真方法研究]] | 2022 |
-| [[直驱式风电机组机电暂态建模及仿真|直驱式风电机组机电暂态建模及仿真]] | 2022 |
-| [[a-multi-solver-framework-for-co-simulation-of-transients-in-modern-power-systems|A multi-solver framework for co-simulation of transients in ]] | 2023 |
-| [[average-value-model-for-voltage-source-converters-with-direct-interfacing-in-emt|Average-Value Model for Voltage-Source Converters With Direc]] | 2023 |
-| [[equivalent-modeling-method-of-parallel-elements-for-fast-electromagnetic-transie|Equivalent Modeling Method of Parallel Elements for Fast Ele]] | 2023 |
-| [[equivalent-model-of-nearest-level-modulation-for-fast-electromagnetic-transient-|Equivalent model of nearest level modulation for fast electr]] | 2023 |
-| [[equivalent-model-of-nearest-level-modulation-for-fast-electromagnetic-transient-|Equivalent model of nearest level modulation for fast electr]] | 2023 |
-| [[generalized-electromagnetic-transient-equivalent-modeling-and-implementation-of-|Generalized Electromagnetic Transient Equivalent Modeling an]] | 2023 |
-| [[harmonics-interaction-mechanism-and-impact-on-extinction-angles-in-multi-infeed-|Harmonics Interaction Mechanism and Impact on Extinction Ang]] | 2023 |
-| [[modeling-of-mmc-based-statcom-with-embedded-energy-storage-for-the-simulation-of|Modeling of MMC-based STATCOM with embedded energy storage f]] | 2023 |
-| [[sparse-solver-application-for-parallel-real-time-electromagnetic-transient-simul|Sparse solver application for parallel real-time electromagn]] | 2023 |
-| [[switch-averaged-frequency-domain-simulation-of-photovoltaic-systems|Switch-Averaged Frequency Domain Simulation of Photovoltaic ]] | 2023 |
-| [[switch-averaged-frequency-domain-simulation-of-photovoltaic-systems|Switch-Averaged Frequency Domain Simulation of Photovoltaic ]] | 2023 |
-| [[多样性子模块混合型mmc统一外特性高效电磁暂态模型|多样性子模块混合型MMC统一外特性高效电磁暂态模型]] | 2023 |
-| [[电力系统数字混合仿真技术综述及展望|电力系统数字混合仿真技术综述及展望]] | 2023 |
-| [[基于mmc平均值仿真模型的损耗快速评估方法|Fast Loss Evaluation Method Based on MMC Average Simulation ]] | 2024 |
-| [[基于mmc平均值仿真模型的损耗快速评估方法|Fast Loss Evaluation Method Based on MMC Average Simulation ]] | 2024 |
-| [[initializing-emt-models-of-grid-forming-vscs-in-mtdc-systems|Initializing EMT models of grid forming VSCs in MTDC systems]] | 2024 |
-| [[initializing-emt-models-of-grid-forming-vscs-in-mtdc-systems|Initializing EMT models of grid forming VSCs in MTDC systems]] | 2024 |
-| [[numerically-efficient-average-value-model-for-voltage-source-converters-in-nodal|Numerically Efficient Average-Value Model for Voltage-Source]] | 2024 |
-| [[shooting-method-based-modular-multilevel-converter-initialization-for-electromag|Shooting method based modular multilevel converter initializ]] | 2024 |
-| [[基于模块化多电平换流器的超级电容储能系统高效仿真方法|基于模块化多电平换流器的超级电容储能系统高效仿真方法]] | 2024 |
-| [[a-state-variables-elimination-based-emtp-type-constant-admittance-equivalent-mod|A State Variables Elimination-Based EMTP-Type Constant Admit]] | 2025 |
-| [[accelerating-electromagnetic-transient-simulations-using-graphical-processing-un|Accelerating electromagnetic transient simulations using gra]] | 2025 |
-| [[an-electromagnetic-transient-simulation-model-of-mmc-bess-for-various-operating-|An Electromagnetic Transient Simulation Model of MMC-BESS fo]] | 2025 |
-| [[an-equivalent-dynamic-phasor-model-for-a-single-phase-boost-power-factor-correct|An Equivalent Dynamic Phasor Model for a Single-Phase Boost ]] | 2025 |
-| [[comprehensive-full-scale-converter-wind-park-initialization-for-electromagnetic-|Comprehensive Full-Scale Converter Wind Park Initialization ]] | 2025 |
-| [[discretized-impedance-based-modeling-of-converter-interfaced-energy-resources-fo|Discretized Impedance-Based Modeling of Converter-Interfaced]] | 2025 |
-| [[electromagnetic-transient-modeling-and-simulation-of-large-power-systems-emt-sim|Electromagnetic Transient Modeling and Simulation of Large P]] | 2025 |
-| [[low-dimensional-equivalent-models-and-multithreading-based-parallel-emt-simulati|Low-Dimensional Equivalent Models and Multithreading-Based P]] | 2025 |
-| [[simplified-emt-model-of-multiple-active-bridge-based-power-electronic-transforme|Simplified EMT Model of Multiple-Active-Bridge Based Power E]] | 2025 |
-| [[universal-decoupled-equivalent-circuit-models-of-solid-state-transformer-for-acc|Universal Decoupled Equivalent Circuit Models of Solid-State]] | 2025 |
-| [[decoupled-detailed-equivalent-model-for-parallel-and-multi-rate-emt-type-simulat|Decoupled Detailed Equivalent Model for Parallel and Multi-R]] | 2026 |
-| [[decoupled-detailed-equivalent-model-for-parallel-and-multi-rate-emt-type-simulat|Decoupled Detailed Equivalent Model for Parallel and Multi-R]] | 2026 |
-| [[electromechanical-transientelectromagnetic-transient-hybrid-simulation-method-co|Electromechanical transientelectromagnetic transient hybrid ]] | 2026 |
-| [[equivalent-modeling-of-electromagnetic-transient-for-mmc-hvdc-based-on-semi-impl|Equivalent modeling of electromagnetic transient for MMC-HVD]] | 2026 |
-| [[harmonic-preserved-average-value-model-for-converters-in-electromagnetic-transie|Harmonic-Preserved Average-Value Model for Converters in Ele]] | 2026 |
+| 论文 | 年份 | 主要贡献 | 量化数据 |
+|------|------|----------|----------|
+| Ebrahimi & Jatskevich — Average-Value Model for VSC With Direct Interfacing in EMT | 2023 | 直接接口 AVM，消除受控源接口延迟，嵌入节点方程同步求解 | 大步长 $50\,\mu$s 稳定 |
+| Ebrahimi — Numerically Efficient AVM for VSC in Nodal-Based Programs | 2024 | 节点分析框架下的数值高效 AVM 实现 | 加速比 $18\times$ |
+| Beddard 等 — Improved Accuracy AVM for MMC | 2016 | 增强 MMC AVM，保留桥臂能量和闭锁路径 | 31 电平系统误差 $<3.2\%$ |
+| Tang 等 — Full-state Arm AVM for Active MMC | 2022 | FSAAVM：桥臂侧+储能侧双开关函数平均化 | PSCAD/EMTDC 验证 |
+| EAVM (Enhanced AVM) — MMC Blocking Operation | 2018 | 闭锁时桥臂电感初始电流补偿（$i_{L0}=i_{\mathrm{DC}}/3$） | 41 电平系统 |
+| Cao 等 — Harmonic-Preserved AVM | 2026 | 选择性保留 $h$ 次谐波的 AVM 框架 | IEEE 期刊最新 |
+| D-DEM — Decoupled Detailed Equivalent Model | 2026 | 开关函数解耦+多速率 CPU-GPU，$79\times$ 加速（BESS-MMC 400 SM/arm） | CPU: $2.81\times$, GPU: $79\times$ |
+| 基于 MMC 平均值模型的损耗快速评估 | 2019 | 开关频率曲面+损耗上限估计，开关损耗注入桥臂受控电压源 | 误差 $<8\%$ |
+| Herath & Filizadeh — AVM for MMC With Embedded Storage | 2021 | MMC-BESS 储能接口平均值模型 | PSCAD 验证 |
+| Ebrahimi — Average-Value Modeling of LCC With Unbalanced AC Network | 2021 | LCC 参数化 AVM 处理交流不平衡 | IEEE TPS |
+
+## 开放问题
+
+1. **谐波保留与计算效率的帕累托前沿**：谐波保留 AVM 保留多少阶次才能满足宽频振荡分析需求，同时不超过 DEM 的计算代价？这需要与具体系统规模、振荡模式频率范围联合优化。
+
+2. **数据驱动的参数化 AVM**：当换流器控制器为黑箱（无解析模型）时，是否可以用神经网络或高斯过程回归从仿真数据中学习端口特性映射？在线推理速度能否满足实时仿真要求？
+
+3. **多时间尺度切换的最优判据**：混合切换模型中，何时触发 AVM→详细模型切换才能在精度和效率之间取得最优折中？现有阈值方法过于保守或过于激进，需要自适应判据。
+
+4. **FPES/MMC-FWMFT 多端口 AVM**：张北柔性电力电子变电站（MMC+四绕组中频变压器）的 AVM 在交流端口和直流端口同时有功率耦合时，传统的单端口平均值模型如何扩展为多端口等效网络？
+
+5. **实物验证缺口**：现有 AVM 验证主要基于数字仿真对比，缺乏硬件在环（HIL）或实时仿真平台与详细模型的系统性对比实验；在何种步长和系统规模下 AVM 可以替代详细模型尚无统一判据。

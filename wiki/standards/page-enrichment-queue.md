@@ -1295,7 +1295,7 @@ updated: "2026-05-13"
 
 
 
-|| 136 | average-value-model.md | methods | methods/power-electronics/average-value-model.md | P3 | 19 | 3621 | 9 | 113 | pending |
+|| 136 | average-value-model.md | methods | methods/power-electronics/average-value-model.md | P3 | 19 | 6551 | 131 | 9 | completed |
 
 
 
