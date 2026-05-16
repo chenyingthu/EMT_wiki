@@ -1335,7 +1335,7 @@ updated: "2026-05-13"
 
 
 
-|| 141 | cs-dam-model.md | models | models/submodule/cs-dam-model.md | P3 | 15 | 1437 | 11 | 7 | pending |
+|| 141 | cs-dam-model.md | models | models/submodule/cs-dam-model.md | P3 | 15 | 1437 | 11 | 7 | completed |
 
 
 
@@ -4723,3 +4723,4 @@ updated: "2026-05-13"
 |||| 134 | 1 | 1 | 0 | enrich: numerical-stability.md |
 
 |||| 200 | 1 | 1 | 0 | energy-function页面完成（3000字，55公式（17块级+38行内），13wikilink，1SVG，9章节，能量函数法五类变体+PEBS+BCU+UEP对比表+量化性能边界+选择指南 | 2026-05-16 |
+||| 201 | cs-dam-model.md | completed |
