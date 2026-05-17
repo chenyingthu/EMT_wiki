@@ -207,104 +207,62 @@ IBR 系统中同时存在微秒级电磁暂态和毫秒/秒级机电动态，Hua
 ## 方法体系架构
 
 <div style="text-align:center;margin:16px 0;">
-<svg viewBox="0 0 900 480" xmlns="http://www.w3.org/2000/svg">
-  <!-- Title -->
-  <text x="450" y="28" text-anchor="middle" font-size="16" font-weight="bold" fill="#333">EMT 异构计算架构体系</text>
-
-  <!-- Layer 1: Input - EMT Simulation Tasks -->
-  <rect x="300" y="48" width="300" height="40" rx="6" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
-  <text x="450" y="73" text-anchor="middle" font-size="13" fill="#1e3a5f">EMT 仿真任务图谱</text>
-
-  <!-- Layer 2: Task Categories -->
-  <rect x="30" y="118" width="155" height="36" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
-  <text x="107" y="141" text-anchor="middle" font-size="11" fill="#166534">网络求解</text>
-
-  <rect x="200" y="118" width="155" height="36" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
-  <text x="277" y="141" text-anchor="middle" font-size="11" fill="#166534">元件模型更新</text>
-
-  <rect x="370" y="118" width="155" height="36" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
-  <text x="447" y="141" text-anchor="middle" font-size="11" fill="#166534">控制系统</text>
-
-  <rect x="540" y="118" width="155" height="36" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
-  <text x="617" y="141" text-anchor="middle" font-size="11" fill="#166534">拓扑事件 / I/O</text>
-
-  <rect x="710" y="118" width="160" height="36" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
-  <text x="790" y="141" text-anchor="middle" font-size="11" fill="#166534">文件 I/O / 后处理</text>
-
-  <!-- Arrows from Layer 1 to Layer 2 -->
-  <line x1="400" y1="88" x2="107" y2="118" stroke="#333" stroke-width="1.5" marker-end="url(#arrowBlack)"/>
-  <line x1="430" y1="88" x2="277" y2="118" stroke="#333" stroke-width="1.5" marker-end="url(#arrowBlack)"/>
-  <line x1="450" y1="88" x2="447" y2="118" stroke="#333" stroke-width="1.5" marker-end="url(#arrowBlack)"/>
-  <line x1="470" y1="88" x2="617" y2="118" stroke="#333" stroke-width="1.5" marker-end="url(#arrowBlack)"/>
-  <line x1="500" y1="88" x2="790" y2="118" stroke="#333" stroke-width="1.5" marker-end="url(#arrowBlack)"/>
-
-  <!-- Layer 3: Hardware Accelerators -->
-  <rect x="30" y="190" width="155" height="50" rx="6" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
-  <text x="107" y="212" text-anchor="middle" font-size="12" font-weight="bold" fill="#92400e">GPU</text>
-  <text x="107" y="228" text-anchor="middle" font-size="10" fill="#78716c">SIMT 并行</text>
-  <text x="107" y="242" text-anchor="middle" font-size="10" fill="#78716c">批量矩阵运算</text>
-
-  <rect x="200" y="190" width="155" height="50" rx="6" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
-  <text x="277" y="212" text-anchor="middle" font-size="12" font-weight="bold" fill="#92400e">FPGA</text>
-  <text x="277" y="228" text-anchor="middle" font-size="10" fill="#78716c">固定延迟流水线</text>
-  <text x="277" y="242" text-anchor="middle" font-size="10" fill="#78716c">混合精度浮点</text>
-
-  <rect x="370" y="190" width="155" height="50" rx="6" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
-  <text x="447" y="212" text-anchor="middle" font-size="12" font-weight="bold" fill="#92400e">CPU</text>
-  <text x="447" y="228" text-anchor="middle" font-size="10" fill="#78716c">控制流 / 调度</text>
-  <text x="447" y="242" text-anchor="middle" font-size="10" fill="#78716c">非线性迭代</text>
-
-  <rect x="540" y="190" width="155" height="50" rx="6" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
-  <text x="617" y="212" text-anchor="middle" font-size="12" font-weight="bold" fill="#92400e">集群节点</text>
-  <text x="617" y="228" text-anchor="middle" font-size="10" fill="#78716c">MPI 通信</text>
-  <text x="617" y="242" text-anchor="middle" font-size="10" fill="#78716c">大规模分区</text>
-
-  <rect x="710" y="190" width="160" height="50" rx="6" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
-  <text x="790" y="212" text-anchor="middle" font-size="12" font-weight="bold" fill="#92400e">DSP</text>
-  <text x="790" y="228" text-anchor="middle" font-size="10" fill="#78716c">固定点滤波</text>
-  <text x="790" y="242" text-anchor="middle" font-size="10" fill="#78716c">控制算法</text>
-
-  <!-- Arrows from Layer 2 to Layer 3 -->
-  <line x1="107" y1="154" x2="107" y2="190" stroke="#333" stroke-width="1.5" marker-end="url(#arrowBlack)"/>
-  <line x1="277" y1="154" x2="107" y2="190" stroke="#333" stroke-width="1.5" marker-end="url(#arrowBlack)"/>
-  <line x1="447" y1="154" x2="447" y2="190" stroke="#333" stroke-width="1.5" marker-end="url(#arrowBlack)"/>
-  <line x1="617" y1="154" x2="277" y2="190" stroke="#333" stroke-width="1.5" marker-end="url(#arrowBlack)"/>
-  <line x1="790" y1="154" x2="617" y2="190" stroke="#333" stroke-width="1.5" marker-end="url(#arrowBlack)"/>
-
-  <!-- Layer 4: Task Allocation -->
-  <rect x="250" y="280" width="400" height="40" rx="6" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/>
-  <text x="450" y="300" text-anchor="middle" font-size="13" font-weight="bold" fill="#5b21b6">任务分配策略</text>
-  <text x="450" y="316" text-anchor="middle" font-size="10" fill="#7c3aed">图划分 / 最优分配(INLP) / 自适应边界</text>
-
-  <line x1="107" y1="240" x2="350" y2="280" stroke="#333" stroke-width="1.5" marker-end="url(#arrowBlack)"/>
-  <line x1="277" y1="240" x2="350" y2="280" stroke="#333" stroke-width="1.5" marker-end="url(#arrowBlack)"/>
-  <line x1="447" y1="240" x2="450" y2="280" stroke="#333" stroke-width="1.5" marker-end="url(#arrowBlack)"/>
-  <line x1="617" y1="240" x2="550" y2="280" stroke="#333" stroke-width="1.5" marker-end="url(#arrowBlack)"/>
-  <line x1="790" y1="240" x2="550" y2="280" stroke="#333" stroke-width="1.5" marker-end="url(#arrowBlack)"/>
-
-  <!-- Layer 5: Output -->
-  <rect x="250" y="350" width="400" height="40" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
-  <text x="450" y="370" text-anchor="middle" font-size="13" font-weight="bold" fill="#166534">加速仿真结果</text>
-  <text x="450" y="386" text-anchor="middle" font-size="10" fill="#166534">波形误差 / 残差 / 事件时刻 / 最坏步长时间</text>
-
-  <line x1="450" y1="320" x2="450" y2="350" stroke="#333" stroke-width="1.5" marker-end="url(#arrowBlack)"/>
-
-  <!-- Arrow marker -->
-  <defs>
-    <marker id="arrowBlack" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
-      <polygon points="0 0, 10 3.5, 0 7" fill="#333"/>
-    </marker>
-  </defs>
-
-  <!-- Legend -->
-  <rect x="50" y="420" width="12" height="12" fill="#dbeafe" stroke="#2563eb" stroke-width="1"/>
-  <text x="68" y="430" font-size="10" fill="#666">输入/源</text>
-  <rect x="140" y="420" width="12" height="12" fill="#dcfce7" stroke="#16a34a" stroke-width="1"/>
-  <text x="158" y="430" font-size="10" fill="#666">处理/模型</text>
-  <rect x="230" y="420" width="12" height="12" fill="#fef3c7" stroke="#d97706" stroke-width="1"/>
-  <text x="248" y="430" font-size="10" fill="#666">算法/方法</text>
-  <rect x="320" y="420" width="12" height="12" fill="#ede9fe" stroke="#7c3aed" stroke-width="1"/>
-  <text x="338" y="430" font-size="10" fill="#666">输出/结果</text>
+<svg viewBox="0 0 900 440" xmlns="http://www.w3.org/2000/svg">
+  <text x="450" y="24" text-anchor="middle" font-size="14" font-weight="bold" fill="#333">EMT 异构计算架构体系</text>
+  <rect x="300" y="38" width="300" height="36" rx="5" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="450" y="62" text-anchor="middle" font-size="12" fill="#1e3a5f">EMT 仿真任务图谱</text>
+  <rect x="30" y="108" width="148" height="32" rx="5" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+  <text x="104" y="128" text-anchor="middle" font-size="11" fill="#166534">网络求解</text>
+  <rect x="195" y="108" width="148" height="32" rx="5" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+  <text x="269" y="128" text-anchor="middle" font-size="11" fill="#166534">元件模型更新</text>
+  <rect x="360" y="108" width="148" height="32" rx="5" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+  <text x="434" y="128" text-anchor="middle" font-size="11" fill="#166534">控制系统</text>
+  <rect x="525" y="108" width="148" height="32" rx="5" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+  <text x="599" y="128" text-anchor="middle" font-size="11" fill="#166534">拓扑事件 / I/O</text>
+  <rect x="690" y="108" width="148" height="32" rx="5" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+  <text x="764" y="128" text-anchor="middle" font-size="11" fill="#166534">文件 I/O / 后处理</text>
+  <line x1="450" y1="74" x2="104" y2="108" stroke="#333" stroke-width="1.5" marker-end="url(#ab)"/>
+  <line x1="450" y1="74" x2="269" y2="108" stroke="#333" stroke-width="1.5" marker-end="url(#ab)"/>
+  <line x1="450" y1="74" x2="434" y2="108" stroke="#333" stroke-width="1.5" marker-end="url(#ab)"/>
+  <line x1="450" y1="74" x2="599" y2="108" stroke="#333" stroke-width="1.5" marker-end="url(#ab)"/>
+  <line x1="450" y1="74" x2="764" y2="108" stroke="#333" stroke-width="1.5" marker-end="url(#ab)"/>
+  <rect x="30" y="178" width="148" height="44" rx="5" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+  <text x="104" y="198" text-anchor="middle" font-size="12" font-weight="bold" fill="#92400e">GPU</text>
+  <text x="104" y="212" text-anchor="middle" font-size="10" fill="#78716c">SIMT并行 / 矩阵</text>
+  <rect x="195" y="178" width="148" height="44" rx="5" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+  <text x="269" y="198" text-anchor="middle" font-size="12" font-weight="bold" fill="#92400e">FPGA</text>
+  <text x="269" y="212" text-anchor="middle" font-size="10" fill="#78716c">固定延迟流水线</text>
+  <rect x="360" y="178" width="148" height="44" rx="5" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+  <text x="434" y="198" text-anchor="middle" font-size="12" font-weight="bold" fill="#92400e">CPU</text>
+  <text x="434" y="212" text-anchor="middle" font-size="10" fill="#78716c">控制流 / 非线性迭代</text>
+  <rect x="525" y="178" width="148" height="44" rx="5" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+  <text x="599" y="198" text-anchor="middle" font-size="12" font-weight="bold" fill="#92400e">集群节点</text>
+  <text x="599" y="212" text-anchor="middle" font-size="10" fill="#78716c">MPI / 大规模分区</text>
+  <rect x="690" y="178" width="148" height="44" rx="5" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+  <text x="764" y="198" text-anchor="middle" font-size="12" font-weight="bold" fill="#92400e">DSP</text>
+  <text x="764" y="212" text-anchor="middle" font-size="10" fill="#78716c">固定点滤波</text>
+  <line x1="104" y1="140" x2="104" y2="178" stroke="#333" stroke-width="1.5" marker-end="url(#ab)"/>
+  <line x1="269" y1="140" x2="269" y2="178" stroke="#333" stroke-width="1.5" marker-end="url(#ab)"/>
+  <line x1="434" y1="140" x2="434" y2="178" stroke="#333" stroke-width="1.5" marker-end="url(#ab)"/>
+  <line x1="599" y1="140" x2="599" y2="178" stroke="#333" stroke-width="1.5" marker-end="url(#ab)"/>
+  <line x1="764" y1="140" x2="764" y2="178" stroke="#333" stroke-width="1.5" marker-end="url(#ab)"/>
+  <rect x="250" y="260" width="400" height="36" rx="5" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/>
+  <text x="450" y="278" text-anchor="middle" font-size="12" font-weight="bold" fill="#5b21b6">任务分配策略</text>
+  <text x="450" y="292" text-anchor="middle" font-size="10" fill="#7c3aed">图划分 / INLP最优分配 / 自适应边界</text>
+  <line x1="104" y1="222" x2="340" y2="260" stroke="#333" stroke-width="1.5" marker-end="url(#ab)"/>
+  <line x1="269" y1="222" x2="340" y2="260" stroke="#333" stroke-width="1.5" marker-end="url(#ab)"/>
+  <line x1="434" y1="222" x2="450" y2="260" stroke="#333" stroke-width="1.5" marker-end="url(#ab)"/>
+  <line x1="599" y1="222" x2="560" y2="260" stroke="#333" stroke-width="1.5" marker-end="url(#ab)"/>
+  <line x1="764" y1="222" x2="560" y2="260" stroke="#333" stroke-width="1.5" marker-end="url(#ab)"/>
+  <rect x="250" y="324" width="400" height="36" rx="5" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+  <text x="450" y="342" text-anchor="middle" font-size="12" font-weight="bold" fill="#166534">加速仿真结果</text>
+  <text x="450" y="356" text-anchor="middle" font-size="10" fill="#166534">波形误差 / 残差 / 事件时刻 / 最坏步长时间</text>
+  <line x1="450" y1="296" x2="450" y2="324" stroke="#333" stroke-width="1.5" marker-end="url(#ab)"/>
+  <defs><marker id="ab" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="#333"/></marker></defs>
+  <rect x="50" y="385" width="10" height="10" fill="#dbeafe" stroke="#2563eb" stroke-width="1"/><text x="66" y="393" font-size="10" fill="#666">输入/源</text>
+  <rect x="140" y="385" width="10" height="10" fill="#dcfce7" stroke="#16a34a" stroke-width="1"/><text x="156" y="393" font-size="10" fill="#666">处理/模型</text>
+  <rect x="230" y="385" width="10" height="10" fill="#fef3c7" stroke="#d97706" stroke-width="1"/><text x="246" y="393" font-size="10" fill="#666">算法/方法</text>
+  <rect x="320" y="385" width="10" height="10" fill="#ede9fe" stroke="#7c3aed" stroke-width="1"/><text x="336" y="393" font-size="10" fill="#666">输出/结果</text>
 </svg>
 </div>
 

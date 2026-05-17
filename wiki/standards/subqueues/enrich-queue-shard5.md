@@ -40,7 +40,7 @@
 | 240 | haileselassie-2012-mtdc-control.md | methods | methods/system-studies/haileselassie-2012-mtdc-control.md | P1 | 999 | 11201 | 8 | 10 | completed |
 || 80 | harmonic-analysis-methods.md | methods | methods/signal-processing/harmonic-analysis-methods.md | P0 | 999 | 7981 | 18 | 36 | completed |
 
-| 219 | heterogeneous-computing.md | methods | methods/simulation-technology/heterogeneous-computing.md | P0 | 999 | 10303 | 7 | 9 | pending |
+| 219 | heterogeneous-computing.md | methods | methods/simulation-technology/heterogeneous-computing.md | P0 | 999 | 10303 | 7 | 9 | completed |
 | 58 | hilbert-transform.md | methods | methods/signal-processing/hilbert-transform.md | P0 | 999 | 1665 | 10 | 14 | pending |
 | 171 | hybrid-modeling.md | methods | methods/simulation-technology/hybrid-modeling.md | P0 | 999 | 4792 | 20 | 8 | pending |
 | 60 | ieee-1547.md | methods | methods/protection-fault/ieee-1547.md | P0 | 999 | 1695 | 3 | 5 | pending |
