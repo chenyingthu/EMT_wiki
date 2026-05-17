@@ -31,7 +31,7 @@
 | 22 | gfm-inverter-model.md | models | models/converter/gfm-inverter-model.md | P0 | 999 | 3575 | 15 | 14 | completed |
 | 23 | grounding-system-model.md | models | models/protection/grounding-system-model.md | P0 | 999 | 2765 | 17 | 18 | completed |
 | 24 | tcsc-model.md | models | models/compensation/tcsc-model.md | P0 | 999 | 3928 | 9 | 14 | completed |
-| 25 | ideal-switch-model.md | models | models/submodule/ideal-switch-model.md | P0 | 999 | 952 | 2 | 25 | pending |
+| 25 | ideal-switch-model.md | models | models/submodule/ideal-switch-model.md | P0 | 999 | 952 | 3402 | 39 | 18 | completed 
 | 26 | vsc-model.md | models | models/converter/vsc-model.md | P0 | 999 | 989 | 13 | 99 | pending |
 | 27 | simulation-tools-status.md | methods | methods/system-studies/simulation-tools-status.md | P0 | 999 | 1034 | 0 | 11 | pending |
 | 28 | fft.md | methods | methods/signal-processing/fft.md | P0 | 999 | 1043 | 4 | 18 | pending |
