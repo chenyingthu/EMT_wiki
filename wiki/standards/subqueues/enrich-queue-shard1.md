@@ -22,7 +22,7 @@
 | 306 | delarue-enhanced-avm.md | methods | methods/power-electronics/delarue-enhanced-avm.md | P1 | 999 | 2685 | 10 | 13 | completed |
 
 | 291 | digital-simulator.md | topics | topics/simulation/digital-simulator.md | P1 | 999 | 3338 | 10 | 20 | completed |
-| 256 | dispatch-operation.md | topics | topics/renewable-storage/dispatch-operation.md | P1 | 999 | 5941 | 6 | 16 | pending |
+| 256 | dispatch-operation.md | topics | topics/renewable-storage/dispatch-operation.md | P1 | 999 | 5941 | 6 | 16 | completed |
 | 271 | distributed-parameter-line.md | methods | methods/transmission-line/distributed-parameter-line.md | P1 | 999 | 4337 | 27 | 15 | pending |
 | 255 | droop-control-model.md | models | models/control/droop-control-model.md | P1 | 999 | 6254 | 38 | 6 | pending |
 | 225 | earth-return-impedance.md | methods | methods/transmission-line/earth-return-impedance.md | P0 | 999 | 12075 | 17 | 15 | pending |
