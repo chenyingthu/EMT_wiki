@@ -1,172 +1,199 @@
 ---
 title: "电池储能系统 (BESS)"
 type: model
-tags: [bess, battery, energy-storage, lithium-ion, bms, pcs]
+tags: [bess, battery, energy-storage, lithium-ion, bms, pcs, thevenin, norton, vectorized, gpu-parallel]
 created: "2026-04-29"
-updated: "2026-05-12"
+updated: "2026-05-18"
 ---
 
 # 电池储能系统 (Battery Energy Storage System, BESS)
 
+## 定义
 
+电池储能系统（BESS）将电能以化学能形式存储并在需要时释放，是电力系统重要的灵活性资源，通过电池管理系统（BMS）和储能变流器（PCS）实现充放电控制。其EMT建模覆盖电化学电池等效电路、荷电状态（SOC）估计、热管理和变流器控制，适用于电网侧储能、用户侧储能和新能源配套储能的电磁暂态仿真分析。
 
-## 定义与概述
+**核心公式** — 电池戴维南等效电路：
 
-电池储能系统（BESS）是将电能以化学能形式存储并在需要时释放的电力系统设备，通过电池管理系统（BMS）和储能变流器（PCS）实现充放电控制。作为电力系统重要的灵活性资源，BESS在削峰填谷、频率调节、可再生能源平滑和备用电源等方面发挥关键作用。本模型涵盖电化学电池等效电路模型、SOC估计、热模型、PCS变流器控制，适用于电网侧储能、用户侧储能和新能源配套储能的EMT仿真分析。
+$$V_{bat} = E_0 + E_{pol} + E_{exp} + S_{ch} E_{chg} + (1-S_{ch})E_{dsc}$$
 
-## 1. 物理对象概述
+其中 $S_{ch}$ 为二进制充电状态指示变量（1=充电，0=放电）；$E_0$ 为恒压源，$E_{pol}$ 为极化电压，$E_{exp}$ 为指数区电压，$E_{chg}$/$E_{dsc}$ 分别为充放电动态电压。
 
-### 1.1 功能与结构
+## EMT中的角色
 
-电池储能系统是电力系统重要的灵活性资源，主要功能：
+BESS在EMT仿真中面临三重挑战：
 
-**核心功能**：
-- **削峰填谷**：负荷低谷充电，高峰放电
-- **频率调节**：快速响应频率偏差（AGC）
-- **可再生能源平滑**：平抑风电/光伏波动
-- **备用电源**：提供紧急功率支撑
-- **电能质量改善**：抑制电压闪变、谐波
+1. **规模挑战**：大型储能电站包含数百至数千个电池单元，每个单元独立建模计算量巨大
+2. **多速率耦合**：电池电化学动态（秒级）与电力电子开关（微秒级）时间尺度分离
+3. **异构性**：不同电池类型（LFP/NCM/LTO）的参数各异，向量化并行处理困难
 
-**系统组成**：
-```
-AC Grid ←→ 变压器 ←→ PCS ←→ DC Bus ←→ BMS ←→ Battery Pack
-                            ↕
-                         HVAC (温控)
-```
+BESS的EMT建模需要解决：**如何在保持电池内部动态细节的同时实现大规模并行加速**（Lin 2023）。
 
-- **电池簇 (Battery Cluster)**：多节电池串并联
-- **BMS (电池管理系统)**：SOC估计、均衡控制、保护
-- **PCS (储能变流器)**：AC/DC双向变换
-- **温控系统**：维持电池工作温度（15-25°C）
+## 物理模型与数学描述
 
-### 1.2 电池技术类型
+### 1. 电池等效电路
 
-| 技术 | 能量密度 | 循环寿命 | 响应速度 | 应用场景 |
-|------|---------|---------|---------|---------|
-| **磷酸铁锂(LFP)** | 130-160 Wh/kg | 3000-6000次 | <100ms | 电网储能 |
-| **三元锂(NCM)** | 200-250 Wh/kg | 1000-2000次 | <100ms | 电动汽车 |
-| **钛酸锂(LTO)** | 70-80 Wh/kg | 15000+次 | <10ms | 调频 |
-| **钠离子** | 100-150 Wh/kg | 2000-4000次 | <100ms | 成本敏感 |
-| **液流电池** | 20-40 Wh/kg | 10000+次 | <1s | 长时储能 |
+#### 1.1 戴维南（Thevenin）等效电路
 
-### 1.3 运行激励
+电池模型可表示为电压源 $V_{bat}$ 串联内阻 $Z_B$ 的戴维南等效形式：
 
-**电气激励**：
-- 电压：500-1500V（大型储能）
-- 电流：充放电倍率C-rate（0.5C-3C）
-- 功率：MW级（电网侧）至kW级（用户侧）
+$$V_{Bat} = E_0 + E_{pol} + E_{exp} + S_{ch}E_{chg} + (1-S_{ch})E_{dsc}$$
 
-**控制激励**：
-- 调度指令：AGC信号、计划曲线
-- 本地控制：频率/电压下垂响应
-- 保护动作：过压、欠压、过温保护
+其中各部分电压的物理含义：
 
-## 2. 物理模型与数学描述
+$$E_{exp}(t) = A e^{-B \cdot i_{sat}}, \quad L^{-1}\left\{\frac{A/s}{B \cdot |i|/s + 1}\right\}$$
 
-### 2.1 等效电路模型
+充放电动态电压的向量形式（并行计算用）：
 
-#### 2.1.1 Thevenin模型
+$$E_{chg}(t) = \frac{K \cdot Q \cdot \bar{\iota}}{i_{sat} + K_Q Q}, \quad E_{dsc}(t) = \frac{K \cdot Q \cdot \bar{\iota}}{Q - i_{sat}}$$
 
-等效电路：开路电压串联电阻和RC网络
+充放电动态方程的时间域形式（经拉普拉斯反变换得）：
 
-$$V_{bat} = V_{oc}(SOC) - I_{bat} R_0 - V_{RC1} - V_{RC2}$$
+$$\frac{dE_{exp}(t)}{dt} = (B \cdot |i(t)|)(S_{ch}A - E_{exp}(t))$$
 
-**RC网络动态**：
-$$\tau_1 \frac{dV_{RC1}}{dt} + V_{RC1} = I_{bat} R_1$$
-$$\tau_2 \frac{dV_{RC2}}{dt} + V_{RC2} = I_{bat} R_2$$
+离散化（后向欧拉法）：
 
-其中：
-- $V_{oc}(SOC)$：开路电压（SOC函数）
-- $R_0$：欧姆内阻
-- $R_1, C_1$：电化学极化
-- $R_2, C_2$：浓差极化
+$$E_{exp}(t) = (1 - |i(t)|B\Delta t)E_{exp}(t-\Delta t) + B \cdot |i(t)|S_{ch}A\Delta t$$
 
-#### 2.1.2 二阶RC模型
+#### 1.2 诺顿（Norton）等效电路
 
-状态空间形式：
-$$\frac{d}{dt} \begin{bmatrix} V_{RC1} \\ V_{RC2} \\ SOC \end{bmatrix} =
-\begin{bmatrix} -1/\tau_1 & 0 & 0 \\ 0 & -1/\tau_2 & 0 \\ 0 & 0 & 0 \end{bmatrix}
-\begin{bmatrix} V_{RC1} \\ V_{RC2} \\ SOC \end{bmatrix} +
-\begin{bmatrix} 1/C_1 \\ 1/C_2 \\ -\eta/Q_{nom} \end{bmatrix} I_{bat}$$
+戴维南等效转换为诺顿等便于节点分析：
 
-**输出方程**：
-$$V_{bat} = V_{oc}(SOC) - I_{bat} R_0 - V_{RC1} - V_{RC2}$$
+$$I_{Beq} = V_{Bat} \circ G_B$$
 
-### 2.2 SOC估计
+其中 $G_B = [G_{B1}, G_{B2}, ...]$ 为内阻导纳向量。
 
-#### 2.2.1 Coulomb计数法
+#### 1.3 向量化并行电池阵列
 
-$$SOC(t) = SOC_0 - \frac{1}{Q_{nom}} \int_0^t \eta \cdot I_{bat}(\tau) d\tau$$
+将多个电池单元组织为 $N_p \times N_s$ 阵列（$N_p$ 并联支路，$N_s$ 串联单元），通过向量化的元素级运算实现GPU并行加速：
 
-其中：
-- $Q_{nom}$：额定容量（Ah）
-- $\eta$：库仑效率（充电<1，放电=1）
+$$V_{Bat} = E_0 + E_{pol} + E_{exp} + S_{ch} \circ E_{chg} + (I - S_{ch}) \circ E_{dsc}$$
 
-#### 2.2.2 开路电压法
+$$V_{Bat} \in [V_{Bmin}, V_{Bmax}]$$
 
-$$SOC = f^{-1}(V_{oc})$$
+元素级运算符号 $\circ$（Hadamard积）和 $\div$（元素级除法）使所有电池单元的计算可并行执行。
 
-典型LFP电池OCV-SOC关系：
-| SOC | 0% | 20% | 50% | 80% | 100% |
-|-----|-----|-----|-----|-----|------|
-| V_oc(V) | 2.5 | 3.25 | 3.3 | 3.32 | 3.6 |
+### 2. SOC估计
 
-**特点**：LFP平台区（30%-80% SOC）电压变化小，难以准确估计
+#### 2.1 Coulomb计数法
 
-### 2.3 热模型
+$$SOC(t) = SOC(t_0) + \frac{1}{Q_{nom}}\int_{t_0}^{t}\eta \cdot i(\tau)d\tau$$
 
-**能量平衡方程**：
-$$C_{th} \frac{dT}{dt} = Q_{gen} - Q_{loss}$$
+其中 $Q_{nom}$ 为额定容量（Ah），$\eta$ 为库仑效率（充电<1，放电=1）。
 
-**生热功率**：
+#### 2.2 指数区电压查表法
+
+LFP电池的OCV-SOC关系在平台区（30%-80% SOC）电压变化极小，需用指数区电压补偿：
+
+$$E_{exp} = A e^{-B \cdot i_{sat}}$$
+
+### 3. 热模型
+
+电池生热功率（Hirsch等人）：
+
 $$Q_{gen} = I_{bat}^2 R_0 + I_{bat}^2 R_1 + I_{bat}^2 R_2 + I_{bat} T \frac{dV_{oc}}{dT}$$
 
-**散热功率**：
-$$Q_{loss} = h A (T - T_{amb})$$
+热平衡方程：
 
-## 3. EMT仿真模型
+$$C_{th}\frac{dT}{dt} = Q_{gen} - hA(T - T_{amb})$$
 
-### 3.1 电池详细模型
+## 形式化表达
 
-**二阶RC模型实现**：
-- 时变电感/电阻元件
-- 考虑温度依赖参数
-- 老化模型（容量衰减、内阻增加）
+### 3.1 电池详细模型（Detailed Switching Model, DSM）
 
-**老化模型**：
-$$Q_{aging} = Q_0 \cdot (1 - \alpha \cdot N_{cycle}^\beta \cdot e^{-E_a/(RT)})$$
+开关级模型保留电池内部电化学动态和Buck-Boost变流器的开关暂态，需要在每个开关状态变化时更新导纳矩阵（重三角化）。
 
-### 3.2 PCS变流器模型
+### 3.2 戴维南等效模型（Thevenin Equivalent Model, TEM）
 
-**两电平VSC**：
-- 双向AC/DC变换
-- PWM调制（载波频率2-8kHz）
-- LCL滤波器
+将每个子模块等效为戴维南电路（电压源+电阻），大幅降低导纳矩阵维度，同时通过反计算保留子模块内部变量信息。
 
-**控制策略**：
+**IDEM改进**（Wang 2025）：在传统DEM基础上增加辅助开关以处理同臂上下开关同时关断的工况（换流器闭锁和电池断开场景），结合PSCAD内置插值算法实现闭锁瞬态模拟。
+
+### 3.3 平均值模型（Average Value Model, AVM）
+
+将多电平换流器视为闭合黑箱，用平均电容电压和电池电流代替开关状态。无法捕捉子模块内部电气变量，但计算效率高。
+
+### 3.4 仿真步长与精度权衡
+
+| 模型 | 步长 | 精度 | 适用场景 |
+|------|------|------|---------|
+| DSM | 1-10 μs | 最高 | 换流器闭锁、故障分析 |
+| TEM/IDEM | 10-50 μs | 高 | 稳态运行、响应特性 |
+| AVM | 100-500 μs | 中 | 系统级聚合仿真 |
+
+## 关键技术挑战
+
+### 挑战1：GPU异构并行调度
+
+GPU并非总是优于CPU——当系统异构性突出或缺乏完美拓扑对称性时，CPU顺序处理反而更高效。Lin 2023提出CPU-GPU异构架构：以同质性（homogeneity）为核心准则分配任务——BESS电池阵列高度同质→GPU SIMT并行；IEEE 118节点系统和直流电网异构→CPU顺序处理。
+
+### 挑战2：大规模BESS的SOC管理
+
+500个BESS单元（每个2.0 MVA）在IEEE 118节点系统中参与二次调频时，各单元SOC不一致导致功率分配优先级动态变化。需设计自适应功率补偿序列（Bus 56→63→43→33→83）。
+
+### 挑战3：MMC-BESS换流器闭锁模拟
+
+当上下臂开关同时关断时，传统DEM失效（依赖互补脉冲假设）。IDEM用辅助PSCAD开关选择对应工况支路，结合内置插值算法实现闭锁瞬态仿真。
+
+### 挑战4：电池断开瞬态
+
+电池深度放电或故障时需断开连接，断开瞬间电容电压冲击影响系统直流动态。IDEM引入补充决策公式处理此类工况。
+
+### 挑战5：多速率耦合
+
+EMT仿真步长（10-50 μs）与TS仿真步长（1-10 ms）不同，多速率耦合降低计算冗余但增加接口复杂度。
+
+## 量化性能边界
+
+### Lin 2023：GPU并行BESS加速
+
+- **加速比**：CPU-GPU异构架构在IEEE 118节点系统+分布式BESS中实现 **>200倍** 加速（相对于纯CPU计算）
+- **多流GPU执行**：相对于CPU获得约 **1.8倍** 加速（当计算对象为100个BESS单元时）
+- **向量化一致性**：将异构电池参数统一为同构向量，消除GPU并行分支发散
+- **EMT步长**：10-50 μs（电池阵列），TS步长：1-10 ms
+
+### Wang 2025：MMC-BESS的IDEM
+
+- **IDEM vs DSM**：在稳态运行、暂态响应、故障工况下轨迹与DSM基准高度吻合
+- **闭锁瞬态**：上下臂同时关断时，IDEM波形偏差<0.5%，电池断开冲击误差<0.8%
+- **加速**：简化模型后，加法与乘法运算减少约50%-70%，整体仿真速度较DSM提升 **10倍以上**
+- **仿真步长**：10 μs（基准），闭锁瞬态稳定
+
+### Cao 2023：FPGA超实时硬件仿真
+
+- **超实时加速比**：51倍超实时（FTRT）加速
+- **时间步长**：亚微秒级（sub-μs），满足电力电子开关级EMT精度
+
+### Nguyen 2021：构网型BESS黑启动
+
+- **黑启动时长**：光储混合电站18秒内完成7次时序投切
+- **稳态精度**：仿真稳态电压幅值与数值优化解匹配误差<1%
+- **电压恢复**：母线电压恢复时间<0.2秒
+
+## 储能变流器（PCS）EMT建模方法
+
+### 两电平VSC变流器
 
 **PQ控制模式**：
-- $P_{ref}$：有功功率指令（充电/放电）
-- $Q_{ref}$：无功功率指令（电压支撑）
+$$P_{ref} = P_{set}, \quad Q_{ref} = Q_{set}$$
 
 **下垂控制模式**：
-$$P = P_0 - k_f (f - f_0)$$
-$$Q = Q_0 - k_v (V - V_0)$$
+$$P = P_0 - k_f(f - f_0), \quad Q = Q_0 - k_v(V - V_0)$$
 
-**虚拟同步机(VSM)模式**：
-- 模拟同步机惯量响应
-- 提供虚拟惯量和阻尼
+**虚拟同步机（VSM）模式**：模拟同步机惯量响应，提供虚拟惯量和阻尼。
 
-### 3.3 系统级模型
+### MMC-BESS换流器
 
-**等效模型**：
-- 受控功率源：$P_{out} = P_{ref} \cdot \eta(P)$
-- 一阶惯性：$\tau \frac{dP_{out}}{dt} + P_{out} = P_{ref}$
-- 响应时间：100ms-1s
+MMC-BESS每相桥臂由多个串联子模块（SM）构成，每个SM通过Buck-Boost变流器嵌入电池。SM操作状态由四个IGBT的触发脉冲FP1-4决定，组合出9种工作状态和4种电池工作模式（放电/充电/续流/断开）。
 
-## 4. 典型参数
+**IDEM建模框架**（Wang 2025）：
+1. 将每个SM替换为戴维南等效电路
+2. 每步长根据开关状态更新戴维南等效参数
+3. 附加辅助开关处理同臂上下开关同时关断
+4. 补充决策公式处理电池断开工况
 
-### 4.1 磷酸铁锂(LFP)电池参数
+## 典型参数
+
+### 磷酸铁锂(LFP)电池
 
 | 参数 | 数值 | 单位 |
 |------|------|------|
@@ -180,7 +207,7 @@ $$Q = Q_0 - k_v (V - V_0)$$
 | 工作温度 | -20~55 | °C |
 | 最佳温度 | 15-25 | °C |
 
-### 4.2 储能变流器(PCS)参数
+### PCS参数
 
 | 参数 | 小型(100kW) | 中型(1MW) | 大型(10MW+) |
 |------|-------------|-----------|-------------|
@@ -190,7 +217,7 @@ $$Q = Q_0 - k_v (V - V_0)$$
 | 谐波THD | <3% | <3% | <3% |
 | 功率因数 | ±0.95可调 | ±0.95可调 | ±0.95可调 |
 
-### 4.3 模型选择指南
+### 模型选择指南
 
 | 应用场景 | 推荐模型 | 说明 |
 |---------|---------|------|
@@ -198,88 +225,30 @@ $$Q = Q_0 - k_v (V - V_0)$$
 | 能量管理 | SOC模型+效率曲线 | 关注能量 |
 | 电能质量 | 平均值PCS模型 | 关注谐波 |
 | 系统级仿真 | 等效功率源 | 大规模系统 |
-
-## 5. 适用边界与限制
-
-### 5.1 适用条件
-- **时间尺度**：毫秒级至小时级（电磁暂态至能量管理）
-- **频率范围**：DC至开关频率（通常<10kHz）
-- **温度范围**：-20°C至55°C（超出需特殊考虑）
-- **SOC范围**：10%-90%（超出范围参数非线性增强）
-
-### 5.2 模型限制
-- **电化学细节**：Thevenin模型不捕捉内部电化学过程
-- **老化效应**：需要额外的老化模型叠加
-- **热耦合**：简化热模型，复杂热管理需多物理场仿真
-- **故障模式**：不涵盖内部短路等故障机理
-
-## 量化性能边界
-
-**电池等效电路模型精度**（Thevenin/二阶RC，Wang 2025）：
-- 正常工况下 IDEM 仿真波形与详细开关模型(DSM)高度吻合，电压/电流跟踪误差 < 1%（Wang 2025）
-- 闭锁瞬态波形偏差 < 0.5%，电池断开冲击误差 < 0.8%（Wang 2025）
-- 仿真步长可稳定维持在 50-100 μs（Wang 2025）
-- 加速计算方法使单步长加法与乘法运算减少约 50%-70%，整体仿真速度较 DSM 提升 10 倍以上（Wang 2025）
-
-**BESS 大规模并行仿真**（Lin 2023）：
-- CPU-GPU 异构架构在 IEEE 118 节点系统中实现仿真加速比 > 200 倍
-- 向量化电池戴维南等效模型将异构电池参数统一为同构向量，消除 GPU 并行分支发散
-- EMT 仿真步长 10-50 μs，TS 仿真步长 1-10 ms，多速率耦合降低计算冗余
-
-**BESS 超实时硬件仿真**（Cao 2023）：
-- FPGA 平台实现 51 倍超实时（FTRT）加速
-- 仿真时间步长达到亚微秒级（sub-μs），满足电力电子开关级 EMT 精度
-
-**DC-DC 有源阻尼与谐振抑制**（Luo 2022）：
-- 系统自然串联谐振频率理论值 118 Hz，阻抗幅值交点频率 115.5 Hz，模型误差 < 2.5%
-- 支撑电容 > 0.5 mF 时在 100 Hz 以上呈无源电容特性
-- Buck 模式下阻尼控制器增益须严格满足上限约束，否则在 50-100 Hz 频段产生负电阻区域
-
-**构网型 BESS 黑启动**（Nguyen 2021）：
-- 光储混合电站黑启动全过程 18 s，完成 7 次时序投切
-- 仿真稳态电压幅值与数值优化解匹配误差 < 1%
-- 母线电压恢复时间 < 0.2 s
-
-**数据缺口声明**：锂电池等效电路模型参数（R0、R1、C1、R2、C2）随 SOC、温度和老化的完整实验数据集缺乏统一公开数据库。不同电池化学体系（LFP/NCM/LTO/钠离子/液流）在 EMT 仿真中的模型选择和参数校准缺乏系统性对比研究。BMS 中卡尔曼滤波 SOC 估计的收敛速度和鲁棒性在不同工况下的定量数据不足。大规模 BESS 聚合模型（数百至数千单元）在 EMT 仿真中的精度-计算代价权衡缺乏公认评估基准。
+| MMC-BESS换流器 | IDEM | 兼顾精度与效率 |
 
 ## 相关方法
-- [[numerical-integration|数值积分]] - SOC计算与电池模型离散化
-- [[state-space-method|状态空间法]] - 电池状态空间建模
-- [[average-value-model|平均值模型]] - 系统级简化仿真
-- [[droop-control-model|下垂控制模型]] - 一次调频控制实现
+
+- [[numerical-integration|数值积分]] — SOC计算与电池模型离散化
+- [[state-space-method|状态空间法]] — 电池状态空间建模
+- [[average-value-model|平均值模型]] — 系统级简化仿真
+- [[droop-control-model|下垂控制模型]] — 一次调频控制实现
+- [[gpu-parallel-acceleration|GPU并行加速]] — CPU-GPU异构计算架构
 
 ## 相关模型
-- [[energy-storage-converter-model|储能变流器]] - PCS详细控制模型
-- [[vsc-model|VSC模型]] - 电压源变换器拓扑
-- [[igbt-model|IGBT模型]] - 开关器件模型
-- [[inductor-model|电感模型]] - 滤波电感设计
-- [[capacitor-model|电容模型]] - 直流电容模型
 
-## 相关主题
-- [[real-time-simulation|实时仿真]] - 储能系统实时仿真
-- 微电网 - 储能微电网应用
-- 频率调节 - 一次/二次调频
-- 新能源并网 - 风光储联合运行
-
----
-
-*本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*
+- [[energy-storage-converter-model|储能变流器]] — PCS详细控制模型
+- [[vsc-model|VSC模型]] — 电压源变换器拓扑
+- [[mmc-model|MMC模型]] — 模块化多电平换流器
+- [[igbt-model|IGBT模型]] — 开关器件模型
+- [[real-time-simulation|实时仿真]] — 储能系统实时仿真
 
 ## 来源论文
 
-| 论文 | 年份 |
-|------|------|
-| [[modeling-of-a-modular-multilevel-converter-with-embedded-energy-storage-for-elec|Modeling of a Modular Multilevel Converter With Embedded Ene]] | 2019 |
-| [[control-and-simulation-of-a-grid-forming-inverter-for-hybrid-pv-battery-plants-i|Control and Simulation of a Grid-Forming Inverter for Hybrid]] | 2021 |
-| [[active-damping-control-and-parameter-calculation-for-resonance-suppression-in-dc-distribution|Active Damping Control and Parameter Calculation for Resonan]] | 2022 |
-| [[faster-than-real-time-hardware-emulation-of-transients-and-dynamics-of-a-grid-of|Faster-Than-Real-Time Hardware Emulation of Transients and D]] | 2023 |
-| [[design-and-implementation-of-scalable-communication-interfaces-for-reliable-and-|Design and Implementation of Scalable Communication Interfac]] | 2025 |
-## 来源论文
-
-| 论文 | 年份 |
-|------|------|
-| [[modeling-of-a-modular-multilevel-converter-with-embedded-energy-storage-for-elec|Modeling of a Modular Multilevel Converter With Embedded Ene]] | 2019 |
-| [[control-and-simulation-of-a-grid-forming-inverter-for-hybrid-pv-battery-plants-i|Control and Simulation of a Grid-Forming Inverter for Hybrid]] | 2021 |
-| [[active-damping-control-and-parameter-calculation-for-resonance-suppression-in-dc-distribution|Active Damping Control and Parameter Calculation for Resonan]] | 2022 |
-| [[faster-than-real-time-hardware-emulation-of-transients-and-dynamics-of-a-grid-of|Faster-Than-Real-Time Hardware Emulation of Transients and D]] | 2023 |
-| [[design-and-implementation-of-scalable-communication-interfaces-for-reliable-and-|Design and Implementation of Scalable Communication Interfac]] | 2025 |
+| 论文 | 年份 | 贡献说明 |
+|------|------|---------|
+| [[massively-parallel-modeling-of-battery-energy-storage-systems-for-acdc-grid-high|Lin 等 2023]] | 2023 | 向量化电池模型+CPU-GPU异构并行，200倍加速 |
+| [[an-electromagnetic-transient-simulation-model-of-mmc-bess-for-various-operating-|Wang 等 2025]] | 2025 | IDEM改进戴维南模型，涵盖闭锁和电池断开场景 |
+| [[control-and-simulation-of-a-grid-forming-inverter-for-hybrid-pv-battery-plants-i|Nguyen 等 2021]] | 2021 | 构网型PV-BESS黑启动控制，18秒7步时序 |
+| [[herath-2019-modeling-of-mmc-with-embedded-energy-storage|Herath 等 2019]] | 2019 | MMC嵌入BESS的EMT建模方法 |
+| [[decoupled-detailed-equivalent-model-for-mmc-bess|Cao 等 2023]] | 2023 | MMC-BESS解耦详细等效模型与多速率EMT仿真 |

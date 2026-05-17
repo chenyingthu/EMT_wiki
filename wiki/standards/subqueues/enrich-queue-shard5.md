@@ -10,7 +10,7 @@
 
 | 164 | algebraic-characterization.md | methods | methods/system-studies/algebraic-characterization.md | P0 | 999 | 4465 | 23 | 8 | completed |
 | 128 | back-to-back-hvdc.md | methods | methods/system-studies/back-to-back-hvdc.md | P0 | 999 | 3370 | 8 | 20 | completed |
-| 380 | bess-model.md | models | models/renewable-storage/bess-model.md | P1 | 999 | 1262 | 13 | 15 | pending |
+| 380 | bess-model.md | models | models/renewable-storage/bess-model.md | P1 | 999 | 1262 | 13 | 15 | completed |
 | 218 | ccvt.md | methods | methods/protection-fault/ccvt.md | P0 | 999 | 10207 | 18 | 13 | pending |
 | 153 | circulating-current-suppression.md | methods | methods/control/circulating-current-suppression.md | P0 | 999 | 4112 | 20 | 15 | pending |
 | 263 | companion-model.md | methods | methods/numerical-methods/companion-model.md | P1 | 999 | 4966 | 11 | 15 | pending |
