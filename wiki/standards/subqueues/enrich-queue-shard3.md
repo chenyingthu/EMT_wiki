@@ -9,7 +9,7 @@
 |------|------|------|------|--------|-----------|-----------|----|---------|------|
 
 | 44 | ac-transmission-line.md | models | models/transmission-line/ac-transmission-line.md | P0 | 999 | 6401 | 31 | 15 | completed |
-| 174 | automatic-code-generation.md | methods | methods/simulation-technology/automatic-code-generation.md | P0 | 999 | 4910 | 18 | 14 | pending |
+| 174 | automatic-code-generation.md | methods | methods/simulation-technology/automatic-code-generation.md | P0 | 999 | 4910 | 18 | 14 | completed |
 | 349 | bergeron-line-model.md | methods | methods/transmission-line/bergeron-line-model.md | P1 | 999 | 1702 | 7 | 14 | pending |
 | 135 | cable-modeling.md | topics | topics/component-modeling/cable-modeling.md | P0 | 999 | 3576 | 14 | 26 | pending |
 | 198 | chb-dab.md | methods | methods/power-electronics/chb-dab.md | P0 | 999 | 6022 | 15 | 4 | pending |
