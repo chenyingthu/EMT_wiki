@@ -12,9 +12,9 @@
 | 128 | back-to-back-hvdc.md | methods | methods/system-studies/back-to-back-hvdc.md | P0 | 999 | 3370 | 8 | 20 | completed |
 | 380 | bess-model.md | models | models/renewable-storage/bess-model.md | P1 | 999 | 1262 | 13 | 15 | completed |
 | 218 | ccvt.md | methods | methods/protection-fault/ccvt.md | P0 | 999 | 10207 | 18 | 13 | completed |
-| 153 | circulating-current-suppression.md | methods | methods/control/circulating-current-suppression.md | P0 | 999 | 4112 | 20 | 15 | pending |
-| 263 | companion-model.md | methods | methods/numerical-methods/companion-model.md | P1 | 999 | 4966 | 11 | 15 | pending |
-| 323 | control-system.md | methods | methods/control/control-system.md | P1 | 999 | 2393 | 8 | 13 | pending |
+| 153 | circulating-current-suppression.md | methods | methods/control/circulating-current-suppression.md | P0 | 999 | 4112 | 20 | 15 | completed |
+| 263 | companion-model.md | methods | methods/numerical-methods/companion-model
+| 323 | control-system.md | methods | methods/control/control-system.md | P1 | 9
 | 266 | corona-effect-modeling.md | methods | methods/transmission-line/corona-effect-modeling.md | P1 | 999 | 4680 | 29 | 15 | pending |
 | 216 | current-trajectory-similarity.md | methods | methods/system-studies/current-trajectory-similarity.md | P0 | 999 | 9880 | 10 | 10 | pending |
 | 132 | dc-fcl.md | methods | methods/power-electronics/dc-fcl.md | P0 | 999 | 3489 | 6 | 13 | pending |
@@ -25,8 +25,8 @@
 | 298 | dq-transformation.md | methods | methods/control/dq-transformation.md | P1 | 999 | 3231 | 6 | 8 | pending |
 | 134 | dual-loop-pi-controller.md | methods | methods/control/dual-loop-pi-controller.md | P0 | 999 | 3554 | 16 | 12 | pending |
 | 247 | electromagnetic-transient.md | topics | topics/stability-analysis/electromagnetic-transient.md | P1 | 999 | 8780 | 10 | 26 | pending |
-| 54 | electromechanical-simulation.md | methods | methods/system-studies/electromechanical-simulation.md | P0 | 999 | 1572 | 2 | 11 | pending |
-| 41 | emt-software-history.md | topics | topics/tools-software/emt-software-history.md | P0 | 999 | 1239 | 4 | 20 | pending |
+| 54 | electromechanical-simulation.md | methods | methods/system-studies/electromechanical-simulation.md | P0 | 999 | 1572 | 2 | 11 | completed |
+| 41 | emt-software-history.md | topics | topics/tools-software/emt-software-history.md | P0 | 999 | 1239 | 4 | 20 | completed |
 | 258 | energy-storage-system.md | topics | topics/renewable-storage/energy-storage-system.md | P1 | 999 | 5390 | 11 | 19 | pending |
 | 120 | excitation-system.md | methods | methods/stability-analysis/excitation-system.md | P0 | 999 | 3176 | 19 | 17 | pending |
 | 334 | fault-analysis-methods.md | methods | methods/protection-fault/fault-analysis-methods.md | P1 | 999 | 1945 | 5 | 24 | pending |
