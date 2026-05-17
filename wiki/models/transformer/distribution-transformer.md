@@ -264,5 +264,3 @@ $$
 | [[accelerated-electromagnetic-transient-emt-equivalent-model-of-solid-state-transf]] | 2022 | SST高频链路DAB模块加速EMT等效，节点导纳预处理+Kron消元 |
 
 ---
-
-*本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*

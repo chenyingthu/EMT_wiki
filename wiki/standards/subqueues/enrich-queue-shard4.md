@@ -25,7 +25,7 @@
 | 297 | dfig-offshore-wind-farm.md | methods | methods/system-studies/dfig-offshore-wind-farm.md | P1 | 999 | 3163 | 35 | 4 | completed |
 | 402 | discrete-fourier-transform.md | methods | methods/signal-processing/discrete-fourier-transform.md | P1 | 999 | 909 | 7 | 22 | completed |
 | 138 | distributed-control.md | methods | methods/control/distributed-control.md | P0 | 999 | 3641 | 25 | 11 | completed |
-| 93 | distribution-transformer.md | models | models/transformer/distribution-transformer.md | P0 | 999 | 2420 | 13 | 21 | pending |
+| 93 | distribution-transformer.md | models | models/transformer/distribution-transformer.md | P0 | 999 | 2357 | 13 | 28 | completed |
 | 78 | dual-active-bridge.md | methods | methods/power-electronics/dual-active-bridge.md | P0 | 999 | 2040 | 7 | 12 | pending |
 | 353 | eigenvalue-analysis.md | methods | methods/stability-analysis/eigenvalue-analysis.md | P1 | 999 | 1605 | 7 | 18 | pending |
 | 345 | electromechanical-modeling.md | methods | methods/stability-analysis/electromechanical-modeling.md | P1 | 999 | 1773 | 4 | 14 | pending |
