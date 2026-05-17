@@ -17,7 +17,7 @@
 | 9 | backward-euler.md | methods | methods/numerical-methods/backward-euler.md | P0 | 999 | 4711 | 92 | 10 | completed |
 | 10 | wind-farm-modeling.md | topics | topics/renewable-storage/wind-farm-modeling.md | P0 | 999 | 13244 | 34 | 15 | completed |
 | 11 | emt-mathematical-foundation.md | topics | topics/simulation/emt-mathematical-foundation.md | P0 | 999 | 6997 | 14 | 15 | completed |
-| 12 | frequency-dependent-modeling.md | topics | topics/modeling-methods/frequency-dependent-modeling.md | P0 | 999 | 769 | 0 | 171 | pending |
+| 12 | frequency-dependent-modeling.md | topics | topics/modeling-methods/frequency-dependent-modeling.md | P0 | 999 | 769 | 0 | 171 | completed |
 | 13 | reactive-compensation-device.md | models | models/compensation/reactive-compensation-device.md | P0 | 999 | 775 | 0 | 17 | pending |
 | 14 | harmonic-analysis.md | topics | topics/stability-analysis/harmonic-analysis.md | P0 | 999 | 783 | 4 | 16 | pending |
 | 15 | differential-protection.md | models | models/protection/differential-protection.md | P0 | 999 | 795 | 2 | 13 | pending |
