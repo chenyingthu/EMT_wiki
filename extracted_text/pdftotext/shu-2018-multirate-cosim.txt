@@ -1,0 +1,1262 @@
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRS.2017.2734690, IEEE
+                                                                                                 Transactions on Power Systems
+                                                                                                                                                                                                             1
+
+
+
+
+               A Multirate EMT Co-simulation of Large AC and
+                         MMC-based MTDC Systems
+                   Dewu Shu, Student Member, IEEE, Xiaorong Xie, Senior Member, IEEE, Qirong Jiang, Member, IEEE
+                                                      Gaopeng Guo, Ke Wang
+
+
+
+              Abstract—This paper proposes a novel multi-rate co-simulation                                    become an important subject. Electromagnetic transient (EMT)
+           method to improve simulation efficiency of large-scale AC plus                                      simulation is widely used for this purpose due to its capability
+           multi-terminal DC (MTDC) grids. In this method, the whole                                           of capturing the detailed dynamics of both converters and large
+           system is partitioned into different AC and MTDC subsystems.
+           They each are simulated with different time-steps according                                         AC systems [3]-[4].
+           to their requirements of accuracy. Unlike existing methods                                             Unfortunately, most established EMT software only allows
+           where simplified models are adopted, the proposed approach                                          users to simulate a large AC and MTDC system with the same
+           fully reserves both the detailed behavior of converters and                                         time step, which is normally as small as several microseconds
+           the nonlinear dynamics of large-scale AC systems. To realize                                        [3]. Such an unanimous small step would result in enormous
+           the coordination between different subsystems, updating and
+           discretization of the interface models are significant to guarantee                                 computational burden. So it is generally insufficient for the
+           the overall numerical accuracy and stability of the co-simulation                                   conventional EMT software to simulate a huge AC system
+           method. Accordingly, the interface models of the partitioned AC                                     integrating MMC-based MTDC transmissions. Several system
+           and DC networks are represented by time-varying Thevenin and                                        equivalent methods have been proposed to improve simulation
+           Norton equivalents. To eliminate the aliasing or time delay errors,                                 efficiency. For instance, in [5], the DC grid is fully represented
+           their parameters are derived using moving-window prediction,
+           stepwise correction and averaging techniques. A numerical oscil-                                    while the AC system is simplified into a fixed Norton or
+           lation suppression algorithm is developed for the discretization of                                 Thevenin equivalent. However, this method is of the obvious
+           the interface model. Thus numerical stability is well guaranteed.                                   drawbacks of decreased accuracy and loss of nonlinear dy-
+           The variables inside each subsystem as well as the interfaces,                                      namics. Even worse, it would sometimes lead to misleading
+           which are derived by augmented network equations (ANEs),                                            results [6]. MMC equivalent models, such as switch-function
+           are calculated simultaneously. The rate ratio of large AC and
+           MTDC systems is determined based on our proposed criterion                                          model [7], Thevenin equivalent model [8], have also been
+           of electromagnetic transient (EMT) simulation accuracy. The                                         adopted for the same purpose. However, even if a simplified
+           effectiveness of the co-simulation method is validated on a                                         equivalent MMC model is used, the simulation would still
+           practical system integrating large AC and modular multilevel                                        be computationally cumbersome due to the huge scale of the
+           converter (MMC) based MTDC grids.                                                                   external system. Therefore, a multirate co-simulation method
+              Index Terms—Interface model, Interface error, Multirate co-                                      is preferable when simulating large AC and MMC-based
+           simulation, MTDC system, Numerical stability.                                                       MTDC systems. In doing so, the entire system is divided
+                                                                                                               into fast subsystems that contain MMC converters and slow
+                                            I. I NTRODUCTION                                                   subsystems including the AC systems. They each are simulated
+                                                                                                               with different time steps instead of an unanimous one. As a
+           M      ODULAR multilevel converters (MMC) have received
+                  wide acceptance in high-voltage direct-current (HVDC)
+           transmission schemes due to its additional benefits include
+                                                                                                               result, computational efficiency can be considerably improved.
+                                                                                                                  However, the modeling, updating and discretizing of the
+           simple realization of redundancy, low losses, and most im-                                          interfaces between different subsystems are key issues to
+           portantly, easy extension to multi-terminal (MTDC) config-                                          guarantee the numerical accuracy and stability of the whole
+           urations [1]. Many MMC-based MTDC transmissions have                                                simulation. Typical multirate methods applied in power sys-
+           been carried out in China in recent years, such as Zhoushan                                         tem EMT simulation include the waveform relaxation (WR)
+           and Nanao Project [2]. Therefore, studying the interaction                                          method [9] and the multi-area Thevenin equivalent (MATE)
+           between MMC-based MTDC systems and AC systems has                                                   method [10]. One typical variation of multirate simulations is
+                                                                                                               the hardware-in-the-loop (HIL) simulation [11], where these
+              This work was supported in part by the Major Program of the National                             methods are particularly designed to improve the accuracy
+           Natural Science Foundation of China (51490683), the National Natural                                and efficiency of power electronic devices. Typical interface
+           Science Foundation of China (51577097), and the Research Project on Key
+           Technologies and Demonstration Application of Flexible Coordinated Control                          methods between subsystems include the ideal transformer
+           of Electromagnetic Loop Network in Metropolitan Power Grid with High Load                           (ITM) method [12], the time-variant first-order approximation
+           Density under Grant GZHKJ 00000101 (Corresponding author: Q. Jiang)                                 (TFA) method [13], the transmission line (TLM) method
+              Dewu Shu , Xiaorong Xie, Qirong Jiang and Gaopeng Guo
+           are with the State Key Lab. of Power System, Department of                                          [14], etc. One problem encountered for the WR method and
+           Electrical Engineering, Tsinghua University, Beijing, 100084, China                                 those methods for HIL simulations are the errors caused by
+           (e-mail:      shudw13@mails.tsinghua.edu.cn,        xiexr@tsinghua.edu.cn,                          sampling (aliasing) or time delays. These errors are generally
+           qrjiang@tsinghua.edu.cn, guogaopeng@mail. tsinghua.edu.cn).
+              Ke Wang is with Guangzhou Power Supply Co. Ltd., Guangzhou, China.                               induced by interface variables, which are updated only on
+                                                                                                               the occasion of re-synchronization that happens at the end
+
+
+  0885-8950 (c) 2017 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRS.2017.2734690, IEEE
+                                                                                                 Transactions on Power Systems
+                                                                                                                                                                                                             2
+
+
+
+           of the largest time step. Since the contribution of the slow                                                II. M ULTIRATE EMT C O - SIMULATION M ETHOD
+           subsystem to the dynamics of the fast subsystem is either                                              The basic idea of the multirate EMT co-simulation method
+           neglected or just taken into account after the longest time                                         is to separate the entire system into an AC subsystem and
+           interval of all subsystems, sampling errors (aliasing errors) and                                   several MTDC subsystems. Once partitioned, different sub-
+           time-delay errors would be introduced. These errors would                                           systems are simulated in parallel to improve the simulation
+           even be exaggerated for subsystems with fast rates [15].                                            efficiency. The MTDC subsystems are simulated with an
+           Specifically, the WR method uses the previous waveforms as                                          identical smaller integration step, while the AC subsystem is
+           the predicted values to calculate the current state for each                                        simulated with a larger integration step. For each subsystem,
+           subsystem. However, it cannot be simply applied in EMT                                              the dynamics of other neighboring subsystems are replaced
+           simulations due to aliasing errors. Moreover, its convergence                                       with those of their interface models, which is represented with
+           depends on the partitioning strategy used and the time intervals                                    time-varying Thevenin or Norton equivalents. The variables of
+           of re-synchronization [16]. As far as the MATE method is                                            the interface models are predicted at an interval corresponding
+           concerned, it solves each subsystem independently and then                                          to the simulation step of each subsystems. And then they are
+           calculates the link currents using Thevenin equivalents. The                                        corrected in a coordinated way when the largest iteration step
+           aliasing errors can be reduced considerably with the linear                                         is finished.
+           interpolation [10]. But only simple electric circuits are tested
+           on MATE. Its performance on practical power systems under
+           large disturbances has not yet fully validated. In [17]-[19], a                                                                                                MTDC
+                                                                                                                                        AC                   ..        subsystem 1
+           state-space nodal (SSN) method is proposed to simulate the                                                                subsystem
+                                                                                                                                                              .
+
+           MMCs in single-rate and multirate simulation environment                                                                                                       MTDC
+           successfully. The SSN method is a two layer method, where                                                                                                   subsystem N
+           each subsystem is derived by state space equations and inter-
+                                                                                                                                                                         v 1f
+           faces are further calculated by the global network equations.                                                                                           1
+                                                                                                                                                                  if            MTDC
+           However, whether each subsystem can be derived by the
+                                                                                                                                   AC
+                                                                                                                                                                  z 1f subsystem 1
+           nodal analysis approach is not given. More importantly, when                                                                                      1 +    1
+           studying the dynamic interactions between MTDC and AC                                                                subsystem
+                                                                                                                                                   ys1      is - u f N
+                                                                                                                                                              ..
+                                                                                                                                                               .
+                                                                                                                                                                        vf
+           grids, the capacitor voltages and arm currents are sensitive to                                                                                                 MTDC
+                                                                                                                                                             i Nf N subsystem    N
+           the AC voltages of converters. Therefore, additional research                                                                                          zf
+                                                                                                                                                 yNs         N +    N
+           is required to improve the accuracy of interfaces. Besides                                                                                       is - u f
+           the issue of accuracy and efficiency, another noticeable point
+           is the numerical stability of the interface model, which is                                         Fig. 1. Network partitioning.
+           vulnerable to numerical oscillation problems aroused by the
+           diverse disturbances [20].
+              In this paper, a new multirate EMT co-simulation method is
+           proposed and implemented in the cross-platform architecture,                                        A. Network Partitioning
+           to analyze the interactions between large AC and MMC-based                                             The process of multirate co-simulation starts with the sep-
+           MTDC systems. Its salient features include:                                                         aration of the whole system into different subsystems. For
+           1) the proposed method is a one-layer method, where the                                             network partitioning, two methods are widely used, namely
+           variables inside each subsystem as well as the interfaces,                                          transmission-line-based partitioning [14] and latency insertion-
+           which are derived by augmented network equations (ANEs),                                            based partitioning [21]. The first method decouples the system
+           are calculated simultaneously;                                                                      at the end of the transmission line using the wave propagation
+           2) the interface models are represented with time-varying                                           delay [14]. So the length of the transmission line should be
+           Thevenin and Norton equivalents so as to effectively eliminate                                      at least 15 to 30 km, corresponding to a time step of 50 µs
+           the errors caused by aliasing and time delay. Where their                                           to 100 µs. However, this is not always satisfied in practice
+           model parameters can be efficiently derived using moving-                                           [22]. The second method adds an artificial delay to separate
+           window prediction, stepwise correction and averaging tech-                                          the system. This probably makes the simulation less accurate
+           niques;                                                                                             or even unstable as the phase drift accumulates [20]-[21]. To
+           3) by incorporating the root-matching algorithm into the                                            address these issues, a different approach is used to partition
+           method for numerical oscillation suppression, the proposed                                          the network more naturally, just by considering the different
+           method as a whole, which can be regarded as a hybrid                                                time scale of large AC and MTDC systems. As shown in Fig.
+           simulation method, is highly efficient and easy to implement.                                       1, the whole system is split at the interconnection point of
+              The rest of the paper is organized as follows: Section                                           the AC and MTDC subsystems. For each subsystem, time-
+           II presents the multirate EMT co-simulation method as a                                             varying Thevenin and Norton equivalents are used to represent
+           whole. The computation scheme of interface models is given                                          the dynamics of its neighboring subsystems. Generally, each
+           in Section III. The selection of rate ratio is discussed in                                         MTDC subsystem contains power electronic modules that has
+           Section IV. And then Section V verifies the method on a                                             much faster dynamics than AC power components. So they
+           practical MMC-based MTDC system. Brief conclusions are                                              should be simulated with a faster rate. In contrast, simulation
+           finally made in Section VI.                                                                         of the AC subsystem can be carried out with a slower rate.
+
+
+  0885-8950 (c) 2017 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRS.2017.2734690, IEEE
+                                                                                                 Transactions on Power Systems
+                                                                                                                                                                                                                3
+
+
+
+           The interactions between them are modeled as single- or                                                                                        Start simulation
+           multi-port circuits, through which the interface variables are
+           conveyed during each step of EMT simulation. The impedance                                                                                   Power flow calculation and
+                                                                                                                                                           system initialization
+           or admittance of each equivalent is given by
+                                                                                                                                                           Network partitioning
+                                   
+                                   zl = Rl + jωLl ,                                                                               MTDC                                                              AC
+                                      f    f      f
+                                                                                                      (1)                         subsystem                                                       subsystem
+                                   yl = (Rl + jωLl )−1 ,                                                                                       Set h                 Coordination          Set hac
+                                         f        s           s
+
+           where Rl , Ll are the equivalent resistance and inductance of                                                                Time-varying
+                                                                                                                                     Thevenin equivalent
+                                                                                                                                                                                     Time-varying Norton
+                                                                                                                                                                                         equivalent
+           the l th interface; the subscripts f and s denote MTDC and
+                                                                                                                                                        prediction                        averaging
+           AC subsystems, respectively. For simplicity, the superscript l                                                           zf (tk+h)     u~f (tk+h)
+           will be omitted hereinafter if not specially mentioned. Our                                                             EMT simulation tk+h
+                                                                                                                                                                                         ys(tk) is(tk)
+
+           proposed interface model originates from the TFA model                                                                                       prediction
+           and the ITM model. The time-varying Thevenin and Norton                                                                 zf (tk+2h)           u~f (tk+2h)                         EMT
+           equivalents are added to enhance the numerical stability of the                                                         EMT simulation tk+2h                                  simulation
+                                                                                                                                                                                         during kth
+           interface model [11]. Parameters of the time-varying Thevenin                                                                         ..     prediction
+                                                                                                                                                                                           period
+                                                                                                                                                  .
+           and Norton equivalents are derived by Gaussian elimination.                                                              zf (tk+nh)          u~f (tk+nh)
+              Correspondingly, the differential equation of the interface                                                          EMT simulation tk+nh
+           in each MTDC subsystem is written as
+                                                                                                                                                                      Coordination
+
+                           d        −1
+                              if = Lf     (v f − R f i f − u f ),      (2)                                                                            ∑ Δf k
+                                                                                                                                                         u (t +nh)
+                           dt
+                                                                                                                                         zf (tk+1) uf (tk+1)                         ys(tk+1) is(tk+1)
+           where if , vf are the voltages and currents of the interface;
+           u f is the parameters of the Thevenin voltage, and its updating                                                                                           t=Tmax ?
+           method should be specially designed.
+              After discretized by the root matching algorithm, (2) is                                                                                                End
+           derived as
+                                       v f (tk + ih) = α −1 {i f (tk + ih)                                     Fig. 2. Flow chart of the multirate co-simulation method.
+                                                                                                      (3)
+                                 +β i f [tk + (i − 1)h]} + u f (tk + ih),
+           where                                                                                               is the node voltage vector inside the MTDC subsystem;
+                                     
+                                     α = 1 − e−R f h/L f ,                                                    i f (tk + ih) is the interface current.
+                                                                                                      (4)          Similarly, the updating equation for the AC subsystem is
+                                     β = e−R f h/L f .                                                        written as:
+
+              And tk is the kth steps of AC subsystem; h is the time step of                                                         [G̃s + Gs ]vs (tk ) = ĩh,s (tk ) + ih,s (tk ),                          (8)
+           the MTDC subsystem; tk +ih, i = 1, 2...n refers to ith sub-step                                     where G̃s , ĩh,s (tk ) are the conductance matrix and the equiv-
+           between [tk ,tk+1 ]. At each sub-step, parameters of interfaces                                     alent current vector inside the AC subsystem; Gs , ih,s (tk ) is
+           in the MTDC subsystems should be updated.                                                           the conductance and equivalent current terms of interfaces;
+              (3) is rewritten as the impedance and equivalent voltage                                         vs (tk ) are the node voltage vector of the AC subsystem. (7)-
+           term, i.e., Z f , vh, f (tk + ih):                                                                  (8) constitutes the the proposed ANEs.
+                           v f (tk + ih) = Z f i f (tk + ih) + vh, f (tk + ih),                       (5)
+                                                                                                               B. Framework of the Co-simulation Method
+           where
+                                                                                                                 Fig. 2 illustrates the framework of the co-simulation method.
+                                   −1
+                        Z f = α ,                                                                             The target system is first initialized based on power flow cal-
+                        
+                        
+                         vh, f (tk + ih) = α −1 β i f [tk + (i − 1)h]                                 (6)      culations and next partitioned into an AC and several MTDC
+                        
+                                                                                                              subsystems. Then all the MTDC subsystems are simulated
+                         +u f (tk + ih)
+                        
+                                                                                                               with an identical smaller step h, while the AC subsystem is
+              Finally, according to Kirchhoff’s laws, the updating equa-                                       simulated with a larger step hac . The rate ratio is defined as
+           tion for each MTDC subsystem is rewritten as:                                                       n = hac /h. The simulations of the decoupled AC and MTDC
+                 "            #"                 # "                  #                                        subsystems are carried out in parallel but independently based
+                    G̃ f I        ṽ f (tk + ih)     ĩh, f (tk + ih)                                          on their common starting points.
+                                                  =                     , (7)
+                    −I Z f        i f (tk + ih)      vh, f (tk + ih)                                              For the AC subsystem, all its neighboring DC subsystems
+                                                                                                               are replaced with time-varying Norton equivalents, the pa-
+           where G̃ f , ĩh, f (tk +ih) is the conductance matrix and equiva-                                  rameters of which are calculated by averaging the results of
+           lent current vector inside the MTDC subsystem; ṽh, f (tk +ih)                                      the previous iteration. During the current step, only a single
+
+
+  0885-8950 (c) 2017 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRS.2017.2734690, IEEE
+                                                                                                 Transactions on Power Systems
+                                                                                                                                                                                                             4
+
+
+
+           iterative operation is required to advance the simulation to the
+           next time interval, or from tk to tk+1 , where tk , tk+1 refer to the                                                Moving window                           Cubic Spline
+
+           simulation time of kth and k + 1th steps in the AC subsystem.
+              Meanwhile, for the DC subsystems, their interface models                                                                                           LP
+           are represented with time-varying Thevenin equivalents. The
+           simulation from tk to tk+1 are divided into n sub-steps, namely
+           tk + ih, i = 1, 2, ...n. At each subs-step, the parameters of the                                             h
+           interface model are predicted by moving-window prediction.                                               uf(tk-m)                            uf(tk)
+                                                                                                                                                                      uf(tk+ih),i=1,2..n
+              After completing both types of iterations, a coupled oper-
+           ation called coordination is executed to exchange interactive
+           signals, update interface variables and correct the simulation                                      Fig. 3. Illustration of Moving-window prediction and linear prediction.
+           results if necessary.
+              Such decoupled and coupled iterations are continued until
+                                                                                                               first to get the following piecewise cubic spline functions
+           the predefined simulation time (Tmax ) is reached. Finally, the
+                                                                                                               during the n sub-steps:
+           EMT simulation is fulfilled and the obtained results are output.
+              Noticeably, several key issues should be properly addressed                                                         [tk +(i−1)h−t]3 Mi−2 +[t−tk−1 −(i−2)h]3 Mi−1
+                                                                                                                       Fi (t) =                         6h                       +
+           in order to implement the multirate co-simulation method: 1)                                                [tk +(i−1)h−t]u f [tk +(i−2)h]+[t−tk−1 −(i−2)h]u f [tk +(i−1)h]                    (9)
+           how to coordinate or update the interface parameters so as to                                                                              h
+                                                                                                                           h{[t +(i−1)h−t]Mi−2 +[t−tk −(i−2)h]Mi−1 }
+           effectively eliminate simulation errors caused by aliasing and                                              − k                       6                    , i = 1, 2...n,
+           time delay; 2) how to discretize the interface model so as to
+                                                                                                               where       t stands       for a certain sub-step; Mi =
+           guarantee numerical stability; and 3) how to determine the rate
+                                                                                                               d 2 u f (nk + ih) /dt 2 are parameters that can be derived
+                                                                                                                               
+           ratio n so as to improve the efficiency as well as accuracy. The
+                                                                                                               by solving the tridiagonal matrix equation [25];
+           following section deals with the first two issues and the third
+                                                                                                               u f [tk + (i − 2)h], u f [tk + (i − 1)h] are previously obtained
+           issue will be discussed in Section IV.
+                                                                                                               Thevenin voltages; tk denotes the simulation time of kth step.
+                                                                                                                   As shown in Fig. 3, then the new Thevenin voltage for each
+           III. C OMPUTATION S CHEME FOR THE I NTERFACE M ODELS                                                sub-step can be calculated using spline interpolation, or
+           A. Update of Interface Models
+                                                                                                                                   ũ f (tk + ih) = Fi (tk + ih), i = 1, 2...n,                         (10)
+              The interface models are illustrated in Fig. 1. For the
+           simulation of the DC subsystem, its connected AC subsystem                                              The errors of Thevenin voltages are quantified as
+           is equivalent to a time-varying Thevenin source u f , com-
+           plemented with a network equivalent z f . Correspondingly,                                                            ẽ(tk + ih) = ||u f (tk + ih) − ũ f (tk + ih)||.                      (11)
+           to solve the AC subsystem, each of its neighboring MTDC
+           subsystems is transformed into a changing Norton equivalent                                             According to [24],
+           including a current source is and an admittance ys . At each
+                                                                                                                                             h4       (4)
+           simulation step, these interface variables should be properly                                               ẽ(tk + ih) =≤           max||u f (tk + ih)||, i = 1, 2...n.                     (12)
+           updated and coordinated in order to reflect the interaction                                                                       4!
+           between AC and DC subsystems. So the strategy of such a                                                That is to say, the predicted Thevenin has fourth-order
+           update operation is essential to achieve efficient and precise                                      accuracy. For comparison, the linear prediction (LP) technique
+           simulation of the whole system.                                                                     is also illustrated in Fig. 3. Their performances will be detailed
+              1) Update of the Thevenin equivalents: As shown in Fig. 2,                                       in Section V.
+           the simulation of each MTDC subsystem from step tk to step                                             At the end of each step, the Thevenin voltages should be
+           tk+1 is fulfilled with n sub-steps, namely tk + ih, i = 1, 2, ...n.                                 further adjusted to include the interactions between different
+           To improve simulation accuracy as well as numerical stability,                                      interfaces. This is done with the so-called stepwise correction.
+           the interface variables should be properly updated at each sub-                                     Suppose a Thevenin impedance matrix ZInt = {Zi j , i, j =
+           step. Generally, the equivalent Thevenin impedance remain                                           1, 2, ...N} is derived with the Gaussian elimination technique
+           almost constant and is not necessary to refresh except there is                                     from the system impedance matrix by only keeping the inter-
+           a topological change in the neighboring AC subsystem (if this                                       face buses. The Thevenin voltage is revised as
+           is the case, a new Thevenin impedance can be obtained from
+           the bus impedance matrix). But the Thevenin voltage should be
+           continuously updated to reflect the constantly changing exter-                                              ulf (tk+1 ) = ũlf (tk+1 ) + ∆ulf (tk+1 )
+                                                                                                                                                                                                        (13)
+           nal dynamics. Otherwise, the time delay would cause apparent                                                            = ũlf (tk+1 ) + ∑Nm=1,m6=l Zlm imf (tk+1 ),
+           numerical errors, which in turn would be exaggerated during
+           the solution of the MTDC subsystems [23]. To solve this                                             where ũlf (tk+1 ) is the new Thevenin voltage at time tk+1 ;
+           problem, the proposed method uses moving-window prediction                                          imf (tk+1 ) is the interface current of the mth interface, as shown
+           and stepwise correction to update the Thevenin voltage.                                             in Fig. 1.
+              As shown in Fig. 3, a moving window consisting of m latest                                           2) Update of Norton equivalents: Similarly, Norton currents
+           Thevenin voltages, or u f (tk − m), . . . u f (tk − 1), is employed                                 are updated during each simulation step for the AC subsystem,
+
+
+  0885-8950 (c) 2017 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRS.2017.2734690, IEEE
+                                                                                                 Transactions on Power Systems
+                                                                                                                                                                                                             5
+
+
+
+           however with a much simpler averaging technique as in (3)                                              First, based on the discretized model of its own, the
+           [10]-[15].                                                                                          impedances of typical branches in either MTDC or AC sub-
+                                      1 n−1                                                                    systems can be derived. Taking an RL branch as an example,
+                          is (nk+1 ) = ∑ i f (tk + mh),         (14)                                           its differential equation is
+                                      n m=0
+                                                                                                                                                 di
+           where i f (tk + mh), m = 0, 1, ...n − 1 are interface currents                                                                          u − Ri = L
+                                                                                                                                                    ,               (15)
+                                                                                                                                                 dT
+           obtained at each simulation sub-steps of the MTDC subsystem.
+           This technique prevents the quasi-randomness or spikes, when                                        where R, L are branch parameters.
+           only taking into account the single value of the last calculated                                       If this RL branch is located in the AC subsystem, it is
+           solution of the fast MTDC subsystems [10].                                                          discretized using the TR algorithm. (15) becomes
+                                                                                                                         2L                    2L
+                                                                                                                     (R +   )i(tk+1 ) + (R − )i(tk ) = u(tk+1 ) + u(tk ),     (16)
+                                                                                                                         nh                    nh
+           B. Discretization of Interface Models                                                               where u(tk ), i(tk ) are discrete voltage and current at the simu-
+              The simulation of each subsystem is carried out in indepen-                                      lation time tk .
+           dent EMT programs, where Trapezoidal (TR) approximation is                                             The AC impedance is given by
+           used to discretize the AC and DC subsystems. As is known that                                                                                         2L −n
+                                                                                                                                             û (R + 2L
+                                                                                                                                                     nh ) + (R − nh )z
+           TR algorithm tends to cause undesirable numerical oscillation                                                           Zac =        =                      ,                                (17)
+                                                                                                                                             î         1 + z−n
+           in the case of abrupt disturbances [26]. The EMT program,
+           such as PSCAD/EMTDC, has embedded interpolation method                                              where û, î are the Fourier transform of the voltage and current
+           [27] to suppress such numerical oscillation. For the interface                                      and z = e jωh .
+           model, however, TR algorithm cannot be used due to the lack                                             However, if the same RL branch is placed in the MTDC
+           of mechanism to detect and mitigate the possible numerical                                          subsystem, after discretized within the same time interval
+           oscillation [26]. Instead, we try to develop a new hybrid                                           [tk , tk+1 ], it changes to
+           simulation method with the intention of requiring little modifi-                                         1
+           cation of EMT models and suppressing numerical oscillations.                                             2 [u(tk+1 ) − Ri(tk+1 ) + u(tk ) − Ri(tk )]
+                                                                                                                       n−1                                                                              (18)
+           According to [28]-[29], the root matching algorithm is selected                                          + ∑ [u(tk + mh) − Ri(tk + mh)] = Lh [i(tk+1 ) − i(tk )].
+           to discrete the interface models due to its ability to suppress the                                         m=1
+
+           numerical oscillation and higher accuracy than the backward                                             A similar impedance in the MTDC subsystem is derived as
+           algorithm. And the rest of the systems is still discretized by the                                                                                                         n−1
+                                                                                                                                              L
+           efficient TR algorithm. Since most of the systems is discretized                                                         h             (zn − 1) + R2 (1 + zn ) + R ∑ zm
+                                                                                                                                 û                                                  m=1
+           with the efficient TR algorithm and only the interface models                                                    Zdc = =                                                             .       (19)
+                                                                                                                                 î                                        n−1
+           is solved with root matching algorithm, the proposed method                                                                                   1       n
+                                                                                                                                                         2 (1 + z ) +       ∑ zm
+           as a whole, which can be regarded as a hybrid simulation                                                                                                        m=1
+           method, is highly efficient and easy to implement.                                                    Then, the impedance ratio is defined as ς (n, ω) = Zac /Zdc
+                                                                                                               and when R → 0, it can be simplified into
+                     IV. S ELECTION OF THE O PTIMAL R ATE R ATIO                                                                                                 n−1
+                                                                                                                       lim ς (n, ω) = [(1 + zn ) + 2 ∑ zm ]/[n · (1 + zn )].                            (20)
+                                                                                                                       R→0                                      m=1
+              The optimal rate ratio n should be properly determined to
+           achieve efficient and accurate simulations. For the MMC-based                                          The impedance ratio is used to measure the consistence of
+           MTDC subsystem, the time step h is determined according                                             simulation accuracy among different subsystems. The closer
+           to the total sub-module number of each MMC arm, the                                                 |ς (n, ω)| is to unity, the more consistent the compared simula-
+           modulation ratio and the fundamental frequency of the MTDC                                          tion accuracy becomes. (20) implies that ς (n, ω) only depends
+           subsystem. In our simulation, each MMC is represented with                                          on the rate ratio (n) and the frequency (ω) provided that the
+           an arm equivalent model [30] instead of the detailed switch                                         branch resistance is sufficiently small (this generally holds for
+           model. So the step size can be set as h = 50 µs to keep a good                                      power networks). Similar observations can be made for other
+           balance between accuracy and efficiency [30].                                                       types of branch, such as RC branches or transmission lines. It
+              With h settled, the time step of the AC subsystem, or hac =                                      should be noted that when selecting the rate ratio n, the models
+           nh, is only governed by the rate ratio n. It is selected in the                                     in the slow AC subsystem are represented by their simplified
+           light of two criteria: 1) n ≤ hac,max /h, where hac,max is the                                      models [32]. Therein, the transmission line is represented by
+           maximum time step that can maintain numerical stability of                                          the PI model; transformers are represented by suitable leakage
+           the AC subsystem; 2) n should be properly chosen to make                                            inductances and generators by transient inductances.
+           the simulation accuracy of the AC subsystem consistent with                                            So, finally to follow the second criterion, the rate ration
+           that of the MTDC subsystem.                                                                         should satisfy
+              To implement the second criterion, an index namely
+                                                                                                                                 0.9 ≤ |ς (n, ω)| ≤ 1.1, ω ∈ [0, 0.2 fNy ],                             (21)
+           impedance ratio is proposed to compare the simulation ac-
+           curacy between AC and MTDC subsystems. It is calculated                                             where fNy is the Nyquist frequency; and the maximum fre-
+           by the following several steps.                                                                     quency concerned is 0.2 fNy [31]. It should be noted that
+
+
+  0885-8950 (c) 2017 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRS.2017.2734690, IEEE
+                                                                                                 Transactions on Power Systems
+                                                                                                                                                                                                                                                     6
+
+
+
+
+                                       1            AC Subsystem                                      I8-9        I9-10
+                                                                4                  5             8           9            Fault
+                                  G1               20        3                                            11 10                                                        MTDC Subsystem
+                                                                                             7
+                                                                               6                                                                              MMC1                                      MMC2
+
+                                                                 2                               G3                           10 km                                         DC line1
+
+
+                                           21 22                 13        14           15                        16
+                                                                                                                                                                                                              DC line4
+                                                                                                                  17
+                                            23
+                                                                     12    19               18                                                         DC line2
+                                            G2                                                               25
+
+                                                                                                                                                                                                        MMC4
+                                                                           35               34                                10 km
+                                                                                       G5                 G4
+                                                                          30                         31          32
+                                     G1-G8:             24
+                                    Generators                                                                                                                MMC3
+
+                                   1-36: Buses          25                36                                 33
+                                                        G6                G7                                 G8
+
+
+           Fig. 4. Partitioning of the studied power system
+
+
+
+           the proposed criterion is equivalent that proposed in [9]                                                                                EMT
+                                                                                                                                                                                  Coordinator                               PSCAD/EMTDC
+           mathematically, however our criterion preserves better physical                                                                   subsystem simulator
+
+           meanings.                                                                                                                                 is (tk),ys (tk)               Interface                                 uf (tk),zf (tk)
+                                                                                                                                                                                   parameter
+                                                                                                                                                                                   calculator
+
+                                            V. C ASE S TUDIES                                                                                       Communication                   Network                                  Communication
+                                                                                                                                                       Server                      equivalent                                   Client
+           A. Case Study Settings                                                                                                                                                  calculator
+                                                                                                                                                AC subsystem                    Interface                                 MTDC subsystem
+              To evaluate the performance of the multirate co-simulation                                                                        (TR algorithm)                (RM algorithm)                               (TR algorithm)
+           method, a practical MMC-based HVDC project is used as the
+           target system for case studies [33]. Its schematic diagram is                                                     Fig. 5. The developed cross-platform architecture for the multirate co-
+           shown in Fig. 4. The 36-bus AC system has 8 generators. A                                                         simulation.
+           four-terminal 400kV MMC-MTDC system is connected to the
+           AC systems at Bus 10 and Bus 32. Each MMC has 250 half-
+           bridge sub-modules in a single arm. MMC2 regulates the DC                                                         data and information. The communication network can be
+           voltage while other MMCs control power flowing into or out                                                        realized by Socket, shared memory techniques [35].
+           of the DC grid. Parameters of MTDC subsystems are given                                                              As discussed in Section IV, the time step for MTDC
+           in Appendix. For EMT simulation, generators are represented                                                       subsystems is 50 µs. And the maximum step of AC subsystem
+           by classical dq0 models [34] and MMCs are represented by                                                          or hac,max , is normally 500µs, due to the numerical stability
+           the arm equivalent models with DC-fault blocking capability                                                       criterion [31]. Thus the rate ratio n should be a number less
+           [30].                                                                                                             than 10. Fig. 6 show the impedance ratio of two typical
+                                                                                                                             branches (RL and RC) varying with rate ratio and frequency. It
+           B. Implementation of the Co-simulation Method                                                                     can be seen that, in our special case, when n is between 2 and
+                                                                                                                             6, the criterion of accuracy consistence (10) can be satisfied.
+              The whole system is firstly partitioned at the interconnection                                                 Naturally, the most efficient rate ratio should be 6.
+           point of the AC and MTDC subsystems. Then, to implement
+           the simulation function, a cross-platform architecture is devel-
+           oped. As illustrated in Fig. 5, it is made up of three part: the                                                                     1                                                       1.12
+
+           commercial PSCAD/EMTDC software used for the simulation                                                                           0.98                                                       1.1
+                                                                                                                                                            RL branch
+           of MTDC subsystems, a specially designed EMT simulator for                                                                        0.96      (R=2.87Ω ,L=0.12H)                                               RC branch
+                                                                                                                                  |ζ(n,ω)|
+
+
+
+
+                                                                                                                                                                                             |ζ(n,ω)|
+
+
+
+
+                                                                                                                                                                                                        1.08
+           the AC subsystem, and a coordinator between them. As the                                                                                                                                                (R=0.1Ω ,C=0.01mF)
+                                                                                                                                             0.94                                                       1.06              n=2
+           key part of the co-simulation platform, the coordinator has                                                                                         n=2                                                        n=3
+                                                                                                                                             0.92              n=3                                      1.04              n=4
+           two basic functions for the interface models: 1) an interface                                                                                       n=4
+                                                                                                                                                               n=5
+                                                                                                                                                                                                                          n=5
+                                                                                                                                                                                                                          n=6
+                                                                                                                                              0.9                                                       1.02
+           parameter calculator to update model parameters, and 2) a                                                                                           n=6
+
+           network equivalent calculator to discretize the Thevenin and                                                                      0.880       0.04 0.08 0.12 0.16           0.2                1
+                                                                                                                                                                                                               0      0.04 0.08 0.12      0.16 0.2
+                                                                                                                                                          Normalized frequency ω                                      Normalized frequency ω
+           Norton equivalents. The coordinator is also responsible for the
+           exchange of interactive signals and the correction of simulation                                                  Fig. 6. The impedance ratio varying with rate ratio and frequency.
+           results if necessary. All the three parts of the co-simulation
+           platform have their own communication modules to exchange
+
+
+  0885-8950 (c) 2017 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRS.2017.2734690, IEEE
+                                                                                                 Transactions on Power Systems
+                                                                                                                                                                                                                                                                             7
+
+
+
+           C. Comparisons of the Updating Techniques for Thevenin                                                                                             1.15                    traditional
+
+
+
+
+                                                                                                                                                     Idc/kA
+                                                                                                                                                              1.05                    proposed
+           Equivalents
+                                                                                                                                                              0.95                    ref
+              Different updating techniques of Thevenin equivalents are                                                                                       0.85
+                                                                                                                                                                                                                            See Fig. 9(b)
+
+           compared. As an example, Fig. 7 shows the voltages of Bus                                                                                             3.2       3.4             3.6          3.8        4            4.2          4.4           4.6        4.8
+                                                                                                                                                                                                                 Time/s
+           10 and the AC terminal of MMC1. They are obtained with our
+                                                                                                                                                               1.12
+           method (moving-window prediction and stepwise correction),                                                                                                                                                                      traditional
+
+
+
+
+                                                                                                                                                      Idc/kA
+                                                                                                                                                               1.08                        Fig. 9(b)                                       proposed
+           line-prediction (LP) method and the method without time                                                                                                                                                                          ref
+                                                                                                                                                               1.04
+           delay correction [23], respectively. As a reference, the results
+                                                                                                                                                                 1
+           obtained by simulating the whole system with an unanimous                                                                                                    4.08         4.1         4.12         4.14      4.16
+                                                                                                                                                                                                                     Time/s
+                                                                                                                                                                                                                                    4.18           4.2         4.22   4.24
+           time step of 50µs are also displayed in the figure with the                                                                                     404
+           legends of “Ref”. From these curves, it can be seen that                                                                                                                  Fig. 9(c)
+
+
+
+
+                                                                                                                                                     Udc/kV
+                                                                                                                                                           400
+           the proposed method can effectively suppress errors caused                                                                                                                                                                     traditional
+           by time delays and has higher accuracy than other methods.                                                                                      396                                                                            proposed
+                                                                                                                                                                                                                                          ref
+           However, when the rate ratio as an integer is above 6,                                                                                          392
+           unacceptable errors will be produced. Therefore, to meet the                                                                                           3.9            4                4.1                4.2
+                                                                                                                                                                                                                           Time/s
+                                                                                                                                                                                                                                    4.3                  4.4          4.5
+           accuracy requirement the rate ratio is recommended to be 6.
+                                                                                                                                                  Fig. 9. DC currents and voltages of MMC converters following the fault .
+                                 Proposed method(n=6)
+                                                                                    100 Proposed method(n=6)
+                                                                                                                             Uncompensated
+                          85                                Uncompensated
+                                      Ref
+                                 LP                                                              Ref
+                                                                                                                                                    The DC currents and voltages of MMC converters following
+                                                                               UA-MMC1/kV
+
+
+
+
+                                                                                            80
+                          80                                                                                                                      the fault are shown in Fig. 9, which also confirm the proposed
+                U10A/kV
+
+
+
+
+                                                                                                                       LP
+
+
+                                            Proposed method(n=7)
+                                                                                                          Proposed method(n=7)                    method’s advantage in achieving higher simulation accuracy
+                          75
+                                                                                            60                                                    than the traditional method.
+                          70
+                                                                                                 4.061    4.062   4.063 4.064       4.065
+                            4.064       4.065    4.066 4.067       4.068                                          Time/s
+                                                   Time/s                                                                                         E. Accuracy and Efficiency of the Proposed Method
+           Fig. 7. Voltages obtained with different updating techniques for the Thevenin                                                             As a case study, a DC line fault is triggered to demonstrate
+           Equivalents.
+                                                                                                                                                  the accuracy and efficiency of the proposed multirate co-
+                                                                                                                                                  simulation method. At the time t = 2.0s, the fault occurs on
+                                                                                                                                                  DC line 1. As a result, the DC voltage drops dramatically and
+                            180                                              proposed
+                                                traditional                                                                                       the fault current grows rapidly. When the current threshold
+                      U10A/kV
+
+
+
+
+                                90                                           ref
+                                                                                                                                                  (three times of the rated dc-link current [36]) is reached, the
+                                 0
+                                -90
+                                                                                                                                                  protection scheme block all MMCs immediately. Thus MMC
+                                                                       See Fig. 8(b)                                                              operates in the rectifier mode until at t = 2.1s the AC circuit
+                          -1803.9                 3.95             4     Time/s4.05                        4.1              4.15            4.2
+                                                                                                                                                  breaker (CB) opens to isolate the MMCs. After another 0.1 s,
+                            150
+                      U10A/kV
+
+
+
+
+                                                                                                         traditional
+                            100                                                                          proposed                                 the DC fault is cleared. Next, the AC CBs reclose at t = 2.3s
+                             50                                                                          ref
+                              0                                                                                                                   and the AC voltages of MMC is restored. After t = 2.5s, all
+                            -50                                                                                                                   MMCs are restarted sequentially. MMC2 is powered first to re-
+                           -100                 Fig. 8(b)
+                                4.064                 4.068             4.072 Time/s 4.076                         4.08             4.084         establish the DC voltage. Other MMCs follow to increase their
+                                                                                                                                                  input/output to the preset loading levels. Finally, the whole
+           Fig. 8. Voltages of the interface Bus 10 following a three-phase-to-ground                                                             system returns to its steady state at about t = 2.7s.
+           fault.
+                                                                                                                                                     Cases of short (10km) interface lines and long (200km) in-
+                                                                                                                                                  terface lines are shown in Figs. 10-14. Here, “TLM” is referred
+                                                                                                                                                  to the TLM method [11]. The improvement in accuracy of the
+           D. Comparisons of the Discretization Methods for Interface                                                                             proposed method for the short interface line is more obvious
+           Models                                                                                                                                 than that for the long interface line. Take the AC voltages
+              A temporary three-phase-to-ground fault is triggered on Bus                                                                         as an example, the maximum errors of the proposed/TLM
+           9 to check the numerical stability of the interface models. As                                                                         method for the short interface line are 0.0523/0.2677 pu; and
+           shown in Fig. 8, the voltages of Bus 10 obtained with the                                                                              those of the proposed/TLM method for the long interface line
+           discretization method of traditional and proposed method are                                                                           are 0.0315/0.1981 pu. The reason for such improvement is
+           compared. Here, the interfaces of traditional/proposed method                                                                          that: the TLM method is less accurate when the interface
+           are discretized by the trapezoidal/root matching algorithm, re-                                                                        circuit is a short transmission line [14]. Unlike the TLM
+           spectively. Obviously, the traditional method causes numerical                                                                         method, our proposed method calculate the current time value
+           oscillation immediately after the switch-off of circuit breaker.                                                                       of Thevenin voltage based on the moving-window prediction
+           In contrast, the proposed suppress numerical oscillation effec-                                                                        technique. Thus, the time delay errors are reduced. Also, the
+           tively and produce results that are highly consistent with the                                                                         interactions between different interfaces are reflected in our
+           reference.                                                                                                                             proposed interface model by the stepwise correction technique.
+
+
+  0885-8950 (c) 2017 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRS.2017.2734690, IEEE
+                                                                                                 Transactions on Power Systems
+                                                                                                                                                                                                                                                                                                                                                8
+
+
+
+                          4                                                                         0.4                                                                                                                                                                    1
+                                                                                                                                                                                                 3                                            MMC1
+                                                                            MMC1
+                          3                                                 MMC2                                                                                                                                    ac CB opens               MMC2
+                                             ac CB opens                                            0.2                                                                                          2                                            MMC3
+                                                                            MMC3                                                                                                                                       at 2.1s                                          0.5
+                                                at 2.1s                                                                                                                                                                                       MMC4
+                                                                            MMC4
+
+
+
+
+                                                                                                    Idc/kA
+                          2                                                                                                                                                                                                                   ref
+
+
+
+
+                                                                                                                                                                                        Idc/kA
+                                                                            ref
+
+
+
+
+                                                                                                                                                                                                                                                                  Idc/kA
+                                                                                                                                                                                                 1
+                 Idc/kA
+
+
+
+
+                                                                                                           0
+                                                                                                                                                                                                                                                                           0
+                          1                                      See Fig. 10(b)
+                                                                                                                                                                                                 0
+
+                                                                                                  -0.2                                                                                                                          See Fig. 10(d)
+                          0                                                                                                                                                                  -1                                                                        -0.5
+                                                                    TLM                                                                              TLM                                             Fig. 10(c)                 proposed method
+                               Fig. 10(a)                                                                           Fig. 10(b)                                                                                                                                                                         Fig. 10(d) proposed method
+                          -1                                                                                                                                                                 -2
+                                        2            2.5              3             3.5                               2.74        2.76 2.78        2.8          2.82                          1.5              2          2.5      3             3.5       4                     2.62    2.64      2.66 2.68            2.7      2.72 2.74
+                                                           Time/s                                                                     Time/s                                                                                 Time/s                                                                   Time/s
+
+
+
+           Fig. 10. DC current (short interface lines).
+
+                    200                                                                             150                                                                                 300
+                                                                                                                                          TLM
+                    100                                                                             100                                                                                 250
+                                                                                                                                                                                                                                                                           200
+
+                                                                                                                                                                                        200                                                                                                                  TLM
+                Uac /kV
+
+
+
+
+                                                                                                                                                                               Udc/kV
+                          0                                                                               50
+                                                                                                 Uac /kV
+
+
+
+
+                                                                                                                      proposed                                                                                                                                             190
+
+
+
+
+                                                                                                                                                                                                                                                                 Udc/kV
+                                                                                                                                                                                        150
+                                                                                                              0                                                                                                                              See Fig. 11(d)
+                 -100
+                                                                                                                                                   ref                                  100                               proposed
+                                                                                                                                                                                                                                                                           180
+                                                                           proposed                     -50                                                                                                               TLM
+                  -200                        See Fig. 11(b)                                                                                                                                                              ref
+                                                                           TLM                                      Fig. 11(b)                                                          50
+                                                                           ref                                                                                                                                                                                                                      proposed             Fig. 11(d)
+                               Fig. 11(a)
+                                                                                                                                                                                                                                         Fig. 11(c)                        170                    ref
+                                                                                                  -100
+                  -300              2.1        2.15 2.2             2.25     2.3                                                                                                           0
+                                                                                                                    2.12      2.13     2.14 2.15         2.16     2.17                                 2       2.1 2.2 2.3 2.4 2.5 2.6 2.7                                             2.52     2.54     2.56 2.58              2.6    2.62
+                                                  Time/s                                                                                 Time/s                                                                         Time/s                                                                             Time/s
+
+
+           Fig. 11. AC voltage and DC voltage of MMC1(short interface lines)
+
+                    200                                                                                                                                                                 300
+                                                                                                                                                                                                                                                                                                                                     ref
+                    100                                                                                                                                                                                                                                                                                                              proposed
+                                                                                                 100                                                                                    250                                                                                200
+                Uac/kV
+
+
+
+
+                                                                                                                                                                ref                                                                                                                                     TLM
+                          0                                                                                                                                                             200
+                                                                                                                                                                               Udc/kV
+
+
+
+
+                                                                                                    50                               proposed                                                                                                                              190
+                                                                                              Uac /kV
+
+
+
+
+                                                                                                                                                                                                                                                                        Udc/kV
+                 -100                                                                                                                                                                   150
+                                                           See Fig. 12(b)                                                                                                                                                                     See Fig. 12(d)
+                                                                                                          0                                                                                                                 proposed
+                 -200                                                                                                                                                                   100                                                                                180
+                                                                  proposed                                                                                                                                                  TLM
+                                                                                                                                                           TLM                                                              ref
+                                                                  TLM
+                 -300                                                                             -50                                                                                   50
+                                  Fig. 12(a)
+                                                                  ref                                                                                                                                                                        Fig. 12(c)                    170                                            Fig. 12(d)
+                                                                                                                       Fig. 12(b)
+                 -400                                                                                         2.1          2.12          2.14        2.16              2.18                            2       2.1 2.2 2.3 2.4 2.5 2.6 2.7
+                                     2.1       2.15 2.2             2.25      2.3                                                                                                                                                                                                         2.54     2.56 2.58              2.6         2.62
+                                                  Time/s                                                                                        Time/s                                                                  Time/s                                                                        Time/s
+
+
+           Fig. 12. AC voltage and DC voltage of MMC1(long interface lines)
+
+                  250                                                                                                                                                                 250
+                                                                                                        175                           TLM
+                                                                                                                                                                proposed                                           DC fault occurs                                                                      TLM
+                  200                                                                                                                                                                 240                              at 2.0s                                         235
+                                                                                                        150
+                                                 proposed
+                                                 TLM                                                    125                                                                                                                                                            230
+                  150                                                                                                                               ref
+                                                                                          Uap /kV
+
+
+
+
+                                                 ref                                                                                                                                  230
+                                                                                                                                                                              Uc/kV
+              Uap /kV
+
+
+
+
+                                                                                                                                                                                                                                                                Uc/kV
+
+
+
+
+                                                                                                        100                                                                                                                                                            225
+                                                                                                                                                                                                               See Fig. 13(d)
+                  100                                                                                                                                                                 220
+                                                                                                          75                                                                                                                                                           220
+                                               See Fig. 13(b)
+                                                                                                                                                                                                                           proposed
+                    50                                                                                    50                                                                          210                                  TLM                                         215
+                                                                                                                                                                                                                                                                                                           ref
+                                                                                                                                                                                                                           ref                                                    proposed
+                               Fig. 13(a)                                                                  25        Fig. 13(b)                                                                                                              Fig. 13(c)                210                                                     Fig. 13(d)
+                          0                                                               3                                                                                           200                  2        2.2     2.4        2.6        2.8                            1.9     1.92     1.94 1.96             1.98      2
+                                    2                Time/s         2.6      2.7                                    2.315 2.32 2.325 2.33 2.335 2.34 2.345
+                                                                                                                                  Time/s                                                                               Time/s                                                                        Time/s
+
+
+           Fig. 13. Arm voltages and capacitor voltages of MMC1(short interface lines)
+
+                  250                                                                                                                                                                 250
+                                                                                                                                                                                                                   DC fault occurs                                                                     TLM
+                                                                                                        181                                                                                                                                                            235                                                     Fig. 14(d)
+                  200                                                                                                   ref                                                           240                              at 2.0s
+                                                                                                                                                  proposed
+                                                 proposed
+                                                 TLM                                                    180                                                                                                                                                            230
+                  150
+                                                                                                Uap /kV
+
+
+
+
+                                                 ref                                                                                                                                  230
+                                                                                                                                                                              Uc/kV
+              Uap /kV
+
+
+
+
+                                                                                                                                                                                                                                                               Uc/kV
+
+
+
+
+                                                                                                                                                                                                                                                                       225
+                                                                                                                                     TLM                                                                       See Fig. 14(d)
+                  100                                                                                   179                                                                           220
+                                               See Fig. 14(b)                                                                                                                                                                                                          220
+                                                                                                                                                                                                                           proposed
+                    50                                                                                  178                                                                           210                                  TLM
+                                                                                                                                 Fig. 14(b)                                                                                ref                                         215
+                                        Fig. 14(a)                                                                                                                                                                                           Fig. 14(c)                          proposed                  ref
+                          0                                                               3                                                                                           200                                                                                                1.92      1.94          1.96         1.98       2
+                                    2                Time/s         2.6      2.7                                  2.3142 2.3146        2.315 2.3154 2.3158                                                 2        2.2      2.4       2.6        2.8
+                                                                                                                                          Time/s
+
+
+           Fig. 14. Arm voltages and capacitor voltages of MMC1(long interface lines)
+
+
+
+  0885-8950 (c) 2017 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRS.2017.2734690, IEEE
+                                                                                                 Transactions on Power Systems
+                                                                                                                                                                                                             9
+
+
+
+                                                                                 TABLE I
+                       C OMPARISON OF CPU T IME AND AVERAGE S IMULATION E RRORS (U NIT: IN PU ) WITH D IFFERENT R ATE R ATIOS (P ROPOSED M ETHOD :S HORT
+                                                                            I NTERFACE L INE )
+
+                                                                    AC subsystem                 Interface variable         DC subsystem variables         DC subsystem MMC variables
+                                Rate ratio n CPU Time/s
+                                                                      variables
+                                                                        U8A                      U10A              I9−10A   Idc−MMC1   Udc−MMC1          Uap−MMC1 Iarm−MMC1 Uc−MMC1
+                                   1                5925                  /                        /                  /         /         /                 /         /        /
+                                   2                2370               0.006                     0.013             0.023      0.011     0.011             0.005     0.005    0.005
+                                   3                799                0.012                     0.018             0.026      0.017     0.012             0.011     0.006    0.008
+                                   4                680                0.017                     0.024             0.032      0.019     0.013             0.017     0.009    0.009
+                                   5                530                0.023                     0.031             0.039      0.022     0.014             0.021     0.012    0.012
+                                   6                 450               0.050                     0.037             0.043      0.026     0.017             0.026     0.014    0.013
+
+
+                                                                         TABLE II
+             C OMPARISON OF CPU T IME AND AVERAGE S IMULATION E RRORS (U NIT: IN PU ) WITH D IFFERENT R ATE R ATIOS (TLM M ETHOD :S HORT I NTERFACE
+                                                                           L INE )
+
+                                                                    AC subsystem                 Interface variable         DC subsystem variables         DC subsystem MMC variables
+                                Rate ratio n CPU Time/s
+                                                                      variables
+                                                                        U8A                      U10A              I9−10A   Idc−MMC1   Udc−MMC1          Uap−MMC1 Iarm−MMC1 Uc−MMC1
+                                   1                5925                  /                        /                  /         /         /                 /         /        /
+                                   2                2573               0.014                     0.023             0.037      0.012     0.014             0.009     0.006    0.006
+                                   3                811                0.021                     0.044             0.042      0.018     0.015             0.019     0.007    0.008
+                                   4                694                0.027                     0.058             0.052      0.020     0.016             0.023     0.010    0.009
+                                   5                520                0.040                     0.074             0.063      0.023     0.018             0.028     0.013    0.012
+                                   6                 474               0.084                     0.092             0.070      0.028     0.021             0.031     0.018    0.012
+
+
+
+             Simulation outputs of the quantities at the boundaries, i.e.,                                             where xi,m , xi,u are the ith sample of the monitored variable x in
+           curves of Gen 8 are shown in Figs. 15 and 16. It is shown that                                              per unit that are produced by the multirate and unanimous-rate
+           the proposed method is more accurate the traditional method.                                                simulations respectively; N is the number of the samples.
+                                                                                                                          With different rate ratios, the average simulation errors and
+                       2
+                                                                                                                       CPU time with short interface lines are given in Tables I
+                       1                                                                                               (proposed method) and Table II (TLM method), where n = 1
+              PG8/pu
+
+
+
+
+                       0                                                                                               corresponds to the unanimous time step or the reference case.
+                       -1                                                                                              It is found that as the rate ratio n increases, the CPU times of
+                       -2                                                                                              both the proposed method and TLM method drop dramatically
+                       -3                                                                        proposed              while the average simulation errors become a little bit larger.
+                                                                             TLM           ref                         For the proposed method, when the proposed rate ratio is used
+                       -4
+                        2.28             2.3                 2.32
+                                                                    Time/s
+                                                                             2.34            2.36                      or n = 6, the multirate simulation spends only 450s. But it
+                                                                                                                       takes about 5925s for the method with the unanimous step (or
+           Fig. 15. Power curves of G8.                                                                                n=1). In other words, the proposed multirate method is more
+                                                                                                                       than 13 times faster. Since the root matching and trapezoidal
+                       1.005                                                                                           algorithms are both single-step algorithms. With the proposed
+                                                                                                                       method, only the interfaces are solved with root matching
+                       1.004
+                                                                                                                       algorithm. This does not add much computation burden. So the
+                                                                                TLM
+                                                                                                                       simulation efficiency of the proposed method is comparable
+             ωG8/pu
+
+
+
+
+                       1.003
+
+                                                                                                                       with TLM method. However, the proposed method gains more
+                       1.002
+                                              ref                                                                      advantages in simulation accuracy than the TLM method,
+                       1.001                               proposed                                                    especially for the short interface circuits. As shown in Tables
+                            1
+                                                                                                                       I and II, the average simulation errors of the interface voltage
+                                                                                                                       (U10A ) for the proposed/TLM method are about 0.037/0.092
+                            2.35        2.4           2.45             2.5          2.55         2.6        2.65       pu, respectively.
+                                                              Time/s
+
+
+           Fig. 16. Angular velocity of G8.                                                                                 VI. C OMPARISONS ON U PDATING OF I NTERFACES
+                                                                                                                          The accuracy of the interfaces is important when studying
+              To quantify the accuracy, a metric called average simulation                                             the dynamic interactions between the MTDC and AC grids,
+           error is defined as                                                                                         as the capacitor voltages and arm currents are sensitive to
+                                                             1 N                                                       the AC voltages of converters [37]. For our proposed method,
+                                                Eavg =         ∑ |xi,m − xi,u |,
+                                                             N i=1
+                                                                                                            (22)
+                                                                                                                       different updating techniques of interface parameters during
+
+
+  0885-8950 (c) 2017 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRS.2017.2734690, IEEE
+                                                                                                 Transactions on Power Systems
+                                                                                                                                                                                                                                                         10
+
+
+
+           the transient state are further compared based on the practical
+           scenario, which is the same as that in Section V(E). Fig. 17                                                                                                    ref
+                                                                                                                                                                                 proposed                               Without stepwise
+           shows that significant errors caused by time delay will be                                                                      100
+                                                                                                                                                                                                                           correction
+           produced if the moving window prediction technique is not
+
+
+
+
+                                                                                                                                          Uac /kV
+                                                                                                                                                    0
+           adopted. As shown in Fig. 18, errors of both methods will
+           increase as the rate ratio n rises. However, with the proposed
+                                                                                                                                          -100
+           moving window prediction technique, errors of interface volt-
+           ages has been reduced almost 4 times and are all below 0.03                                                                                   2.1        2.12            2.14         2.16            2.18         2.2          2.22   2.24
+                                                                                                                                                                                                        Time/s
+           pu.
+
+                400                                                             10
+                                                                                                                                    Fig. 19. Voltages obtained with/without stepwise correction technique.
+
+                300                                                                 0
+                                             See Fig. 17(b)                    -10
+                 200
+             Uac /kV
+
+
+
+
+                                                                               -20
+                                                                          Uac /kV
+
+
+
+
+                100                                                                                                                             0.08
+                                                                               -30
+                       0
+                                                                               -40                                                              0.06
+                                                                                                               Fig. 17(b)
+
+
+
+
+                                                                                                                                      Eavg/pu
+                -100                                                                                                                                                                                              Without stepwise
+                                                       Fig. 17(a)              -50                                                                                                                                   correction
+
+                -200                                                        -60                                                                 0.04
+                    2.05               2.1            2.15               2.2            2.126   2.127  2.128         2.129   2.13
+                                             Time/s                                                 Time/s
+
+                                     proposed                  Without time delay correction                   ref                              0.02
+
+
+           Fig. 17. Voltages obtained with/without time delay correction technique.                                                                  0
+                                                                                                                                                    40
+                                                                                                                                                                                                                                                   400
+                                                                                                                                                               30                    Proposed method
+                                                                                                                                                                                                                                      300
+                         0.2
+                                                                                                                                                                             20                                         200
+
+                                                                                                                                                                                            10   100
+                       0.15                                                                         Without time
+                                                                                                   delay correction
+               Eavg/pu
+
+
+
+
+                         0.1                                                                                                        Fig. 20. Eavg versus self-/mutual- impedance curves with/without stepwise
+                                                                                                                                    correction technique.
+                                                                                                          proposed
+                       0.05
+
+
+                           0                                                                                                        interfaces cannot be neglected. Thus, the stepwise correction
+                               1                2                   3                     4               5                     6
+                                                                        Rate ratio n                                                technique is important to improve the accuracy of the inter-
+                                                                                                                                    faces.
+           Fig. 18. Eavg versus rate ratio n curves with/without time delay correction                                                 Table IV gives the comparisons between the proposed
+           technique.
+                                                                                                                                    method and the SSN method under the same condition. All
+              According to Fig. 4, the self- and mutual impedances of                                                               simulation results are carried out on a 2.67 GHz Intel i7
+           interfaces are given in Table III. As shown in Fig. 19, the                                                              CPU; with 8 GB of RAM and a 64-b Windows 7 operating
+           proposed method has significant improved accuracy when                                                                   system. As can be seen, the proposed method has improved
+           considering interactions between different interfaces using the                                                          accuracy in interfaces. This make the errors of capacitor
+           stepwise technique. This advantage is even more pronounced                                                               voltages reduce from 0.085 pu to 0.013 pu. This is because
+           after the fault is cleared. The underlying reason for such                                                               when there is strong dynamic interactions beween MTDC
+           improvement is that: the parameters of interfaces have fully                                                             and AC grids, capacitor voltages, as well as arm currents,
+           considered the impact between different interfaces and thus                                                              are sensitive to the waveforms of the AC side. Moreover,
+           the Thevenin voltages will be more accurate.                                                                             the proposed method is 2 times faster than the SSN method.
+                                                                                                                                    This is due to two reasons: 1) the proposed method is a one
+                                                     TABLE III                                                                      layer method, where calculations of interfaces do not require
+                                   S ELF - AND MUTUAL IMPEDANCES OF INTERFACES                                                      additional global network equations as the SSN method; 2) the
+                                                                                                                                    modeling of the proposed nodal analysis based method is more
+                                        self impedances/Ω
+                                                                                          mutual impedance/Ω                        efficient than that of the SSN method especially for the MTDC
+                               interface bus 10    interface bus 32
+                                                                                                                                    subsystems. To sum up, the proposed multirate co-simulation
+                                 1.95+j36.16         2.31+j28.18                                37.39+j146.32
+                                                                                                                                    method improves its simulation efficiency dramatically without
+              Fig. 20 shows the Eavg versus magintudes of self-/mutual                                                              sacrificing the simulation accuracy, especially for the studies
+           impedance curves with/without the stepwise correction tech-                                                              of dynamic interactions between MTDC and AC grids.
+           nique. As can be seen, with the stepwise corection technique,
+           errors of interface voltages have been reduced significantly.                                                                                                          VII. C ONCLUSION
+           Moreover, Eavg will increase as the magnitude of self-/mutual-                                                             In this paper, a multirate EMT co-simulation method is
+           impedances drops. That is to say, when the magnitude of                                                                  proposed to improve the simulation efficiency of large AC and
+           self-/mutual- impedances is small, the interactions between                                                              MMC-based multi-terminal DC (MTDC) systems. It partitions
+
+
+  0885-8950 (c) 2017 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRS.2017.2734690, IEEE
+                                                                                                 Transactions on Power Systems
+                                                                                                                                                                                                            11
+
+
+
+                                     TABLE IV                                                                   [4] N. Trinh, M. Zeller, K. Wuerflinger, and I. Erlich, “Generic model of
+           C OMPARISONS BETWEEN THE PROPOSED METHOD AND THE SSN METHOD                                              MMC-VSC-HVDC for interaction study with AC power system,” IEEE
+                                                                                                                    Trans. Power Syst., vol. 31, no. 1, pp. 27-34, Jan. 2016.
+               Method         CPU Time/s          U10A        I9−10A      Udc−MMC1         Uc−MMC1              [5] N. R. Chaudhuri and B. Chaudhuri, “Adaptive droop control for effective
+                SSN              960              0.112       0.903         0.045           0.085                   power sharing in multi-terminal DC (MTDC) grids,” IEEE Trans. Power
+                                                                                                                    Syst., vol. 28, no. 1, pp. 21-29, Feb. 2013.
+              proposed           450              0.037       0.043         0.017           0.013               [6] D. Z. Fang, W. Liwei, T. S. Chung, and K. P. Wong, “New techniques
+                                                                                                                    for enhancing accuracy of EMTP/TSP hybrid simulation,” Elect. Power
+                                                                                                                    Energy Syst., vol. 28, no. 10, pp. 707-711, 2006.
+           the whole system into multiple AC and MTDC subsystems                                                [7] J. Xu, C. Zhao, W. Liu, and C. Guo, “Accelerated model of modular
+                                                                                                                    multilevel converters in PSCAD/EMTDC,” IEEE Trans. Power Del., vol.
+           and assigns them different time steps. To coordinate the sim-                                            28, no. 1, pp. 129-136, Jan. 2013.
+           ulation of different subsystems, we develop a cross-platform                                         [8] U. N. Gnanarathna, A. M. Gole, and R. P. Jayasinghe, “Efficient model-
+           framework, in which their interfaces are modelled as time-                                               ing of modular multilevel HVDC converters (MMC) on electromagnetic
+                                                                                                                    transient simulation programs,” IEEE Trans. Power Del., vol. 26, no. 1,
+           varying Thevenin and Norton equivalents. The parameters of                                               pp. 316-324, Jan. 2011.
+           the equivalents are updated through moving-window predic-                                            [9] J. Chen, M. L. Crow, “A variable partitioning strategy for the multirate
+           tion, stepwise correction and averaging techniques. Further,                                             method in power systems,” IEEE Trans. Power Syst., vol. 23, no. 2, pp.
+                                                                                                                    259-266, May 2008.
+           by discretizing the interface model with RM algorithm and                                           [10] F. A. Moreira, J. R. Marti, L. C. Zaneta, and L. Linares, “Multirate
+           selecting the best rate ratio, the numerical accuracy and                                                simulations with simultaneous-solution using direct integration methods
+           stability of the co-simulation method is guaranteed Variables                                            in a partitioned network environment,” IEEE Trans. Circuits Syst. I,
+                                                                                                                    Reg. Papers , vol. 53, no. 12, pp. 2765-2778, Dec. 2006.
+           inside each subsystem and interface variables are obtained                                          [11] W. Ren, M. Steurer, and T. L. Baldwin, “Improve the stability of
+           simultaneously by the proposed augmented network equations                                               power hardware-in-the-loop simulation by selecting appropriate interface
+           (ANEs).                                                                                                  algorithm,” IEEE Trans. Ind. Appl.,vol. 44, no. 4, pp. 1286-1294, Aug.
+                                                                                                                    2008.
+              A practical AC/MTDC system including 36 AC buses,                                                [12] R. Kuffel, R. P. Wierckx, H. Duchen, M. Lagerkvist, X. Wang, P.
+           8 generators and 4 MMC-based HVDC terminals is used                                                      Forsyth, and P. Holmberg, “Expanding an analogue HVDC simulator’s
+           to demonstrate the performance of the proposed method.                                                   modelling capability using a real-time digital simulator (RTDS),” in
+                                                                                                                    Proc. 1st ICDS, Apr. 1995, pp. 199-204.
+           Simulation results have fully validated the effectiveness of the                                    [13] X. Wu, S. Lentijo, A. Deshmuk, A. Monti, and F. Ponci, “Design and
+           method for updating and discretizing the interface model. The                                            implementation of a power-hardware-in-the-loop interface: A nonlinear
+           simulation efficiency of the proposed method is comparable                                               load case study,” in Proc. 20th Annu. IEEE Appl. Power Electron. Conf.
+                                                                                                                    Expo., Mar. 2005, vol. 2, pp. 1332–1338.
+           with TLM method. Compared with the traditional simulation                                           [14] A. Benigni, A. Monti, and R. Dougal, “Latency based approach to
+           with an unanimous simulation step, the multirate co-simulation                                           the simulation of large power electronics systems,” IEEE Trans. Power
+           has improved the efficiency by 12 times. At the same time, the                                           Electron., vol. 29, no. 6, pp. 3201-3213, Jun. 2014.
+                                                                                                               [15] S. D. Pekarek et al., “An efficient multi-rate simulation technique for
+           proposed method gains more advantages in simulation accu-                                                power-electronic-based systems,” IEEE Trans. Power Syst., vol. 19, no.1,
+           racy than the TLM method, especially for the short interface                                             pp. 399-409, Feb. 2004.
+           circuits. The average simulation errors of the proposed method                                      [16] F. Pruvost, P. Laurent-Gengoux, F. Magoules, and B. Haut, “Accelerated
+                                                                                                                    waveform relaxation methods for power systems,” in Proc. 2011 Int.
+           are limited below 0.05 pu, indicating that there is no sacrifice                                         Conf. Electrical and Control Eng., Wuhan, China, 2011, pp. 2877-2880.
+           of simulation accuracy. Future research work focuses on real                                        [17] C. Dufour, J., Mahseredjian, J., Belanger, “A Combined State-Space
+           time implementations of the multirate simulation method.                                                 Nodal Method for the Simulation of Power System Transients,” IEEE
+                                                                                                                    Trans. Power Del., vol. 26, no, 2, pp. 928-935, 2011.
+                                                                                                               [18] H. Saad, T. Ould-Bachir, J. Mahseredjian, C. Dufour, S. Dennetiere, and
+                                             VIII. A PPENDIX                                                        S. Nguefeu, “Real-time simulation of MMCs using CPU and FPGA,”
+                                                                                                                    IEEE Trans. Power Electron., vol. 30, no. 1, pp. 259-267, Jan. 2015.
+                                                                                                               [19] Saad, H., Dufour, C., Mahseredjian, J., Dennetière, S., Nguefeu, S.
+                                           TABLE V                                                                  “Real time simulation of MMCs using the state-space nodal approach,”
+                               PARAMETERS OF THE MTDC S UBSYSTEM                                                    In Proceedings of the IPST, vol. 13, pp. 18-20,July. 2013.
+                                                                                                               [20] S. Oh, S. Chae, “A Co-Simulation Framework for Power System
+                                                                       Values                                       Analysis,” Energies, vol. 9, no. 3, Feb. 2016.
+                       Parameters
+                                                   MMC1           MMC2      MMC3                 MMC4          [21] C. Dufour, J. Paquin, V. Lapointe, J. Belanger, L. Schoen, “PC cluster
+                Rated DC power/MW                   400            300         100                100               based real-time simulation of an 8-synchronous machine network with
+                                                                                                                    HVDC link using RT-LAB and Test Drive,” Proc. Int. Conf. Power
+                Rated DC voltage/kV                ±200           ±200        ±200               ±200               Systems Transients, Lyon, France, Jun. 2007,pp. 4-7.
+                Rated AC voltage/kV                 220            220        110                 110          [22] B. Gustavsen, “Time delay identification for transmission line model-
+                    SM number                       250            250        250                 250               ing,” in Proc. 8th IEEE Workshop Signal Propagation Interconnects,
+                 SM capacitor/ mF                    6              6          2.5                 2                Heidelberg, Germany, May 9—12, 2004, pp. 103-106.
+                                                                                                               [23] M. L. Crow, J. G. Chen, “The multirate simulation of FACTS devices
+                                                                                                                    in power system dynamics,” IEEE Trans. Power Syst., vol. 11, no.1, pp.
+                                                                                                                    376-382, Feb.1996.
+                                                R EFERENCES                                                    [24] W. Gautschi, Numerical Analysis. New York, NY, USA: Springer, 2011.
+                                                                                                               [25] R.M. Corless, N. Fillion, A Graduate Introduction to Numerical Meth-
+            [1] S. Debnath, J. Qin, B. Bahrani, M. Saeedifard, and P. Barbosa, “Opera-                              ods, New York: Springer, 2013, ch. 8.
+                tion, control, applications of the modular multilevel converter: A review,”                    [26] T. Noda, K. Takenaka, and T. Inoue, “Numerical integration by the
+                IEEE Trans. Power Electron., [1] vol. 30, no. 1, pp. 37-53, Jan. 2015.                              2-stage diagonally implicit Runge-Kutta method for electromagnetic
+            [2] S. Liu, Z. Xu, W. Hua, G. Tang, and Y. Xue, “Electromechanical                                      transient simulations,” IEEE Trans. Power Del., vol. 24, no. 1, pp. 390-
+                transient modeling of modular multilevel converter based multi-terminal                             399, Jan. 2009.
+                HVDC systems,” IEEE Trans. Power Syst., vol. 29, no. 1, pp. 72-83,                             [27] D. A. Woodford, PSCAD User’s Guide. Winnipeg, MB, USA: Manitoba
+                Jan. 2014.                                                                                          HVDC Research Centre, 2003.
+            [3] J. Mahseredjian, V. Dinavahi, and J. A. Martinez, “Simulation tools for                        [28] N.R.Watson, G.D. Irwin, “Comparison of root-matching techniques for
+                electromagnetic transients in power systems: Overview and challenges,”                              electromagnetic transient simulation,” IEEE Trans. Power Del., vol. 15,
+                IEEE Trans. Power Del., vol. 24, no. 3, pp. 1657-1669, Jul. 2009.                                   no. 2, pp.629-634, Apr 2000.
+
+
+  0885-8950 (c) 2017 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+This article has been accepted for publication in a future issue of this journal, but has not been fully edited. Content may change prior to final publication. Citation information: DOI 10.1109/TPWRS.2017.2734690, IEEE
+                                                                                                 Transactions on Power Systems
+                                                                                                                                                                                                            12
+
+
+
+           [29] D. Shu, X. Xie, S. Zhang, et al., “Hybrid method for numerical                                 Ke Wang received the M.E. degree in electrical engineering from North China
+                oscillation suppression based on rational-fraction approximations to                           Electric Power University, Beijing, China, in 2003. He works as the deputy
+                exponential functions,” IET Generation, Transmission Distribution, vol.                        director in Guangzhou Power Supply Co. Ltd.. His research interests include
+                10, no. 11, pp. 2825-2832, Aug. 2016.                                                          power system analysis and control.
+           [30] A. Beddard, M. Barnes, and R. Preece, “Comparison of Detailed
+                Modeling Techniques for MMC Employed on VSC-HVDC Schemes,”
+                IEEE Trans. Power Del., vol. 30, no. 2, pp. 579-589, Jun. 2014.
+           [31] J. C. G. de Siqueira, B. D. Bonatto, J. R. Marti, et al, “A discussion
+                about optimum time step size and maximum simulation time in EMTP-
+                11 based programs,” Int. J.of Electrical Power Energy Syst., vol. 72, pp.
+                24–32, 2015.
+           [32] Y. Zhang et al., “Development and analysis of applicability of a hybrid
+                transient simulation platform combining TSA and EMT elements,” IEEE
+                Trans. Power Syst., vol. 28, no. 1, pp. 357-366, Feb. 2013.
+           [33] X. Duan, S. Su, and N. Mei, “Transmitting electric power system
+                dynamics in SCADA using polynomial fitting,” Sci. China E, Tech. Sci.,
+                vol. 52, no. 4, pp. 937-943, 2008.
+           [34] U. Karaagac; J. Mahseredjian; et al., “Synchronous Machine Modeling
+                Precision and Efficiency in Electromagnetic Transients,” IEEE Trans.
+                Power Del., vol. 26, no. 2, pp.1072-1082, Apr. 2011.
+           [35] A.-J.N. Yzelman and D. Roose, “High-Level Strategies for Parallel
+                Shared-Memory Sparse Matrix-Vector Multiplication,” IEEE Trans. Par-
+                allel and Distributed Systems, vol. 25, no. 1, pp. 116-125, Jan. 2014.
+           [36] X. Li, Q. Song, W. Liu, H. Rao, S. Xu, and L. Li, “Protection of
+                nonpermanent faults on DC overhead lines in MMC-Based HVDC
+                systems,” IEEE Trans. Power Del., vol. 28, no. 1, pp. 483-490, Jan.
+                2013.
+           [37] H. Yang, Y. Dong,W. LI, and X. He, “Average-value model of modular
+                multilevel converters considering capacitor voltage ripple,” IEEE Trans.
+                Power Del., vol. 32, no. 2, pp. 723-732, 2017.
+
+
+
+
+           Dewu Shu (S’14) received the B.Sc. degree in Electrical Engineering from
+           Tsinghua University in 2013. Currently, he is pursuing the Ph.D. degree in the
+           Dept. of Electrical Engineering, Tsinghua University. His research interests
+           include multirate EMT/TS simulations, power system stability.
+
+
+
+
+           Xiaorong Xie received the B.Sc. degree from Shanghai Jiao Tong University,
+           Shanghai, China, in 1996 and the Ph.D./M. Eng. degrees from Tsinghua
+           University, Beijing, China, in 2001. From 2001 to 2005, he was a Lecturer
+           with the Department of Electrical Engineering, Tsinghua University. Since
+           2005, he works as an Associate Professor in the same department. His current
+           research interests focus on power system analysis and control, and flexible ac
+           transmission systems.
+
+
+
+
+           Qirong Jiang (M’98) received the B.S. and Ph.D. degrees in electrical
+           engineering from Tsinghua University, Beijing, China, in 1992 and 1997,
+           respectively. Since 2006, he has been a Professor at Tsinghua University. His
+           research interests include power system analysis and control, modeling and
+           control of exible ac transmission systems, power quality analysis and mitiga-
+           tion, power-electronic equipment, and renewable energy power conversion.
+
+
+
+
+           Gaopeng Guo received the B.Sc. degree from Tianjin University, Tianjin,
+           China, in 2008 and received the Master degree from Chinese Academy of
+           Sciences (CAS), Hefei, China, in 2011. He received the Ph.D. degree from
+           the China Electrical Power Research Institute (CEPRI), Beijing, China, 2015.
+           He is currently engaged in postdoctoral research in Department of Electrical
+           Engineering of Tsinghua University. His current research interests include
+           offshore wind farm and MMC based HVDC.
+
+
+  0885-8950 (c) 2017 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission. See http://www.ieee.org/publications_standards/publications/rights/index.html for more information.
+

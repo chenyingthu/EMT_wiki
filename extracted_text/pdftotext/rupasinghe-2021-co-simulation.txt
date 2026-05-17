@@ -1,0 +1,712 @@
+                                                                Electric Power Systems Research 197 (2021) 107319
+
+
+                                                                      Contents lists available at ScienceDirect
+
+
+                                                          Electric Power Systems Research
+                                                             journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Assessment of dynamic phasor extraction methods for power system
+co-simulation applications☆
+Janesh Rupasinghe a, Shaahin Filizadeh *, a, Kai Strunz b
+a
+    Department of Electrical and Computer Engineering, University of Manitoba, Winnipeg, Canada
+b
+    Technische Universität Berlin, Berlin, Germany
+
+
+
+
+A R T I C L E I N F O                                       A B S T R A C T
+
+Keywords:                                                   The paper examines a number of methods for extracting dynamic phasors from samples of natural waveforms
+Base-frequency dynamic phasors                              that are generated using electromagnetic transient (EMT) simulators. It delves into the theory underlying each
+Generalized averaging                                       phasor extraction method and the numerical routines used for their implementation. The paper performs an in-
+Shifted frequency analysis
+                                                            depth analysis of the properties of the extracted phasors for general power system signals that may include
+Time-varying phasors
+                                                            electromechanical oscillations, dc and harmonic components, imbalances, and arbitrary transients. Simulation
+                                                            results are presented to demonstrate any limitations of these methods and to assess the resulting harmonic
+                                                            spectra of the phasors. An EMT-dynamic phasor co-simulation example is also included, in which various phasor
+                                                            extraction methods are implemented. The paper’s findings are essential in selecting and implementing phasor
+                                                            extraction methods used in co-simulations of large power systems using EMT and dynamic phasors solvers.
+
+
+
+
+1. Introduction                                                                                   shown to be a viable solution for accurate, computationally efficient
+                                                                                                  modeling and simulation of large networks.
+    Assessment of transients is vital for design and operation of a power                             Conversion of signals from time-domain to dynamic phasors is a
+system. The study of transients relies chiefly on simulation tools, such as                       necessary step in interfacing co-simulation solvers [7–12]. This task
+electromagnetic transient (EMT) and transient stability (TS) simulators.                          involves creating a phasor, or a series of phasors if harmonics are
+In the analysis of slow transients, conventional phasors have been used                           included, to represent a natural waveform or a subset of its harmonics
+to represent the network dynamics based upon the quasi-steady state                               using instantaneous time-domain samples of the natural waveform.
+assumption [1]. The uptake of fast-acting systems such as HVDC, FACTS,                            Several methods to perform this task are available. This paper provides
+and converter-tied distribution generation, has resulted in transients                            an in-depth look into their underlying principles and studies the prop­
+with a wider frequency spectrum for which quasi-steady state assump­                              erties of the markedly different phasors they extract.
+tions are no longer valid. Although EMT-type simulators [2,3] are able
+to provide detailed representations of wide-band transients, they are                             2. Steady-State phasor representation
+computationally inefficient for large system studies.
+    The notion of a dynamic phasor is an alternative to the quasi-                                    All currents and voltages in an AC linear circuit in steady state are
+stationary phasors and improves the bandwidth of pahsor-type tran­                                sinusoidal, and can be characterized by their magnitudes and phase
+sient simulations [4–6]. A dynamic phasor provides low-pass, fre­                                 angles on a common frequency equal to the frequency of the excitation.
+quency-domain representations of a band-pass, time-domain, natural                                The aim of phasor analysis is to gain computational convenience and
+signal. As a result, dynamic phasors substantially reduce the computa­                            efficiency [13].
+tional burden of discrete-time transient simulations by allowing sam­                                 Consider a time-domain sinusoid x(t) with a frequency of ω0 ,
+pling at a lower rate while retaining accuracy. In recent years,                                  magnitude of A, and phase angle of δ as follows.
+co-simulations using upon EMT and phasor-type solvers has been
+
+
+
+    This work was supported in part by Mitacs, Manitoba HVDC Research Center, and Natural Sciences and Engineering Research Council (NSERC) of Canada. Paper
+    ☆
+
+submitted to the International Conference on Power Systems Transients (IPST2021) in Belo Horizonte, Brazil June 6–10, 2021.
+  * Corresponding author.
+    E-mail addresses: rupasira@myumanitoba.ca (J. Rupasinghe), shaahin.filizadeh@umanitoba.ca (S. Filizadeh), kai.strunz@tu-berlin.de (K. Strunz).
+
+https://doi.org/10.1016/j.epsr.2021.107319
+Received 30 November 2020; Received in revised form 23 February 2021; Accepted 23 April 2021
+Available online 12 May 2021
+0378-7796/© 2021 Elsevier B.V. All rights reserved.
+J. Rupasinghe et al.                                                                                                       Electric Power Systems Research 197 (2021) 107319
+
+         √̅̅̅
+x(t) =    2Acos(ω0 t + δ)                                             (1)         (    )
+                                                                                          1
+                                                                                 P x(t) = √̅̅̅ ( 1         j   0 )B− 1 (t)x(t)                                          (8)
+Using Euler’s identity, one can represent this signal as                                   3
+      √̅̅̅ {          } √̅̅̅ {→         }
+                                                                                 Using (4), (7), and (8) it is readily seen that
+x(t) = 2Re Aej(ω0 t+δ) = 2Re X ejω0 t                                 (2)
+                                                                                   (    )
+                                                                                             →
+        →                                                                        P x(t) = X (t) = A(t)ejδ(t)                                                            (9)
+where, X = Aejδ is a time-invariant complex quantity and is called the
+“phasor” corresponding to x(t). One of the main benefits that phasors                The phasor transformation in (8) takes balanced three-phase quan­
+offer is that the time-domain differential equations that describe the           tities, and decomposes them into symmetrical components to represent
+behaviour of elements such as inductors and capacitors become alge­              them as time-varying complex values. When the three-phase system is
+braic equations in the phasor domain. This is due to the following               unbalanced, the transformation produces a non-zero zero-sequence
+relationship between a time-domain signal and its phasor:                        component in addition to the time-varying phasor. This increases the
+d          →                                                                     complexity of phasor analysis; therefore, applications of this concept are
+   x(t)⟷jω0 X                                                         (3)        strictly limited to balanced three-phase systems.
+dt
+                                                                                     Although (8) uses the Blondel transformation matrix, it is possible to
+Note that the frequency of the signal is not included in its phasor;             use alternative transformations as well. For example, in [14], αβ-trans­
+therefore, conventional phasor analysis applies only when the frequency          formation, which is based on Clark’s transformation [15], is used to
+remains unchanged and when the circuit is in steady state. In order to           produce dynamic phasors.
+improve the frequency-bandwidth of frequency-domain representation,
+the concept of a dynamic phasor is developed.                                    3.2. Time-Varying phasor properties
+
+3. Fast time-varying phasors                                                         The following properties of time-varying phasors prove to be useful
+                                                                                 in the analysis of dynamic systems.
+   A concept referred to as “fast time-varying phasors” was one of the
+earliest instances of dynamic phasors in power system applications [5].          1. The operator P (⋅) is a linear transformation, i.e.,
+The following provides the mathematical basis of this concept.                         (          )       (     )      (    )
+                                                                                     P x(t) + y(t) = P x(t) + P y(t)                                                  (10)
+3.1. Phasor transformation
+                                                                                      (     )    (    )
+    Consider an arbitrary set of balanced three-phase quantities x(t) with           P αx(t) = αP x(t)                                                                (11)
+a time-varying amplitude and a time-varying phase angle at a carrier
+frequency of ω0 as in (4).
+       ⎛      √̅̅̅                      ⎞                                        2. The operator P (⋅) is bijective, i.e., each real signal is paired with a
+               2A(t)cos(ω0 t + δ(t))                                                unique time-varying phasor, and vice versa.
+       ⎜ √̅̅̅       (                 )
+       ⎜                           2π ⎟ ⎟                                        3. The phasor transformation of the derivative is given by
+       ⎜ 2A(t)cos ω0 t + δ(t) −         ⎟
+x(t) = ⎜                            3 ⎟                                (4)             (        )       (     )           (    )
+       ⎜                              )⎟                                                 d         d
+       ⎝ √̅̅̅       (
+                                   2π
+                                        ⎠                                            P      x(t) = P x(t) + jω0 P x(t)                                  (12)
+           2A(t)cos ω0 t + δ(t) +                                                        dt        dt
+                                    3
+
+The fast time-varying phasor for x(t) is defined as
+→                                                                                   It is seen from (12) that the conventional phasor is a subclass of
+X (t) = A(t)ejδ(t)                                                    (5)
+                                                                                 dynamic phasors wherein the derivative term on the right-hand side is
+This definition for a time-varying phasor is based on the conventional           absent because it is either zero or negligible.
+phasor definition. However, conversion to a time-varying phasor is not a
+trivial task; therefore, a mathematical transformation to extract phasors        4. Generalized averaging method
+from time-domain signals is also introduced. For this, the three-phase
+signal x(t) is rewritten in the following form:                                      “Generalized (state space) averaging method” (GAM), first introduced
+                ⎛               ⎞                                                in [4] in the early1990′ s, is based on the notion that a real signal can be
+        √̅̅̅      A(t)cos(δ(t))                                                  represented by a series of time-varying Fourier coefficients assuming
+x(t) = 3 B(t)⎝ A(t)sin(δ(t)) ⎠                                        (6)        quasi-periodicity of the signal.
+                        0
+                                                                                 4.1. Mathematical background
+where
+             ⎛
+                                                 1
+                                                     ⎞                              Consider an arbitrary time-domain signal, x(t), with a fundamental
+                       cos(ω0 t)   − sin(ω0 t)  √̅̅̅                             period of T over the time window (t − T, t). The Fourier series of the
+           ⎜                                      2⎟
+       √̅̅̅⎜
+           ⎜    (          )      (           )
+                                                     ⎟
+                                                     ⎟                           signal at a particular time is as follows.
+        2⎜              2π                2 π    1   ⎟
+B(t) =     ⎜
+           ⎜ cos ω0 t −      − sin ω0 t −       √̅̅̅ ⎟                (7)
+        3⎜               3                 3      2⎟ ⎟                                            ∑
+                                                                                                  +∞
+                                                                                                     〈
+           ⎜    (          )      (           )      ⎟                           x(t − T + s) =           x〉k (t)ejkω0 (t− T+s)                                       (13)
+           ⎝            2π                2π     1 ⎠                                              k=− ∞
+             cos ω0 t +      − sin ω0 t +       √̅̅̅
+                         3                 3      2
+                                                                                 where s ∈ (0, T], k is the harmonic order, and ω0 = 2π/T is the funda­
+is an orthonormal matrix and referred to as the Blondel-Park trans­              mental frequency. The kth Fourier coefficient of x(t) is
+formation. Then a phasor transformation operator, P (.), which maps the
+time-domain balanced three-phase signals to the time-varying phasor, is
+defined as
+
+                                                                             2
+J. Rupasinghe et al.                                                                                                     Electric Power Systems Research 197 (2021) 107319
+
+                    ∫T
+〈               1                                                                       〈              〈
+    x〉k (t) =            x(t − T + s)e− jkω0 (t− T+s) ds                (14)                x〉− k (t) = x〉∗k (t)                                                    (19)
+                T   0
+
+
+The coefficient 〈x〉k (t) is a time-dependent complex value and referred to
+as the dynamic phasor of the kth harmonic of x(t). Unlike the previous
+                                                                                   where * is the complex conjugate. This method also preserves all the
+method, this method is able to represent all the harmonics of the
+                                                                                   properties of dynamic phasors given in Section 3.2.
+waveform. Note that this method may be computationally expensive
+when including a large number of harmonic components as it requires to
+                                                                                   5. Shifted-frequency analysis
+compute each coefficient individually using (14). This should be
+weighted, however, against the selectivity of this method to include or
+                                                                                      The relationship between “analytic signals” and dynamic phasors is
+exclude any number of frequency components based on the desired level
+                                                                                   well explained in [16] and later formalized in “shifted-frequency analysis”
+of accuracy. Owing to this, this notion of a dynamic phasor is used in
+                                                                                   (SFA) solution framework [6,10].
+many power system and power electronic modeling applications where
+several frequency components exist.
+                                                                                   5.1. Mathematical background
+
+4.2. Extracting dynamic phasor coefficients                                           Power system waveforms, in general, are band-pass and centered
+                                                                                   around frequencies ω0 and − ω0 . They can be represented in terms of
+   Assuming that the signal consists of N samples per window, the                  two low-pass signals and two sinusoidal carriers using Fourier decom­
+definition in (14) can be readily discretized as                                   position as:
+                1 ∑                                                                                                                                                 (20)
+                  N− 1
+〈                                                                                  x(t) = uI (t)cos(ω0 t) − uQ (t)sin(ω0 t)
+    x〉k (t) =          x(t − iΔt)e− jkω0 (t− iΔt)                       (15)
+                N i=0
+                                                                                   where uI and uQ are referred to as in-phase and quadrature components of
+which needs N additions and N multiplications to extract a single coef­            x(t), respectively. These two low-pass signals provide all the information
+ficient at a given time. This window then slides along the time axis in            about x(t) with a frequency-spectrum shifted down by ω0 to around zero.
+discrete steps repeating the same computation. This can be done more               Therefore, the dynamic phasor of x(t) can be described as follows.
+efficiently utilizing the overlap of windows when moving from one point
+                                                                                   D [x(t)] = uI (t) + j uQ (t)                                                     (21)
+to the next as illustrated in Fig. 1.
+    Consider that the dynamic phasor coefficient at t − Δt was previously          Another representation of x(t) is by its analytic signal:
+calculated and is known. Then, the dynamic phasor coefficient for the                      [    ]
+present time, t, can be extracted as                                               z(t) = D x(t) ejω0 t                                                             (22)
+
+〈x〉k (t) = 〈x〉k (t − Δt)                                                           Substituting (21) in (22) and further simplifying yields:
+    (                                        )
+  1                                                                     (16)
++ x(t)e− jkω0 t − x(t − NΔt)e− jkω0 (t− NΔt)                                       z(t) = x(t) + j H [x(t)]                                                         (23)
+  N
+                                                                                   where
+which requires only two additions and two multiplications.
+                                                                                                     ∫∞
+                                                                                                 1    x(τ)
+                                                                                   H [x(t)] =              dτ                                                       (24)
+4.3. GAM properties                                                                              π − ∞t− τ
+
+                                                                                   is the Hilbert transformation [17] of x(t). The SFA procedure is illustrated
+      The following properties of GAM can be readily proved [4].
+                                                                                   in Fig. 2 wherein F denotes the Fourier decomposition.
+1. The time-derivative of the kth Fourier coefficient is
+                  〈 〉                                                              5.2. Extracting the analytic signal
+    d              d
+       〈x〉k (t) =    x (t) − jkω0 〈x〉k (t)                              (17)
+    dt             dt k                                                                In power system simulations, all signals are unknown initially and
+                                                                                   are generated during the course of the simulation; therefore, the Hilbert
+                                                                                   transformation of the signal has to be calculated starting from steady-
+2. The dynamic phasors of the product of the two signals:                          state initial conditions and system equations assuming that all signals
+               〈       〈                                                           are sinusoidal and have only the fundamental frequency at steady-state,
+            ∑
+            +∞
+    〈xy〉k =      x〉k− i y〉i                                             (18)       as is the case virtually in all AC power system simulations [16].
+                    i=− ∞
+
+
+
+
+3. Negative-frequency coefficients:
+
+
+
+
+                            Fig. 1. Coefficient extraction using GAM.                                  Fig. 2. Shifted-frequency analysis illustration.
+
+                                                                               3
+J. Rupasinghe et al.                                                                                                                    Electric Power Systems Research 197 (2021) 107319
+
+
+   Contrary to the fast time-varying phasors, SFA can be applied to any                              [             ]
+                                                                                                              1
+arbitrary number of signals or phases. However, since the vast majority                        zabc = ̂I + j √̅̅̅ M xabc                                                           (32)
+of applications are three-phase systems, this paper explains a method                                          3
+that can be used for any three-phase signal to extract its corresponding                                                                            ⎛      ⎞
+                                                                                                                                            0      1 − 1
+analytic signal.
+                                                                                               where ̂I is the identity matrix and M = ⎝ − 1 0          1 ⎠. At this point
+    Consider a three-phase signal xabc = [xa , xb , xc ] . Denote the corre­
+                                                                       ′
+                                                                                                                                            1 − 1 0
+sponding analytic signal as zabc = [za , zb , zc ]                    and the signal in
+                                                                  ′
+                                                                                               one can readily shift the analytic signal, zabc , by multiplying it by e− jω0 t
+dq0-domain as xdq0 = [xd , xq , x0 ] . It is readily obvious that that                         to form a dynamic phasor.
+                                              ′
+
+
+
+  { }                                                                                              SFA provides a framework to analyze real signals with bandwidths
+Re zabc = xabc                                                                      (25)       around the carrier frequency, in shifted-frequency domain. This concept
+                                                                                               can be extended to signals consisting of multiple harmonics by calcu­
+  { }      [ ]      [ { }]                                                                     lating respective Fourier coefficients as described in Section 6.
+Im zabc = H xabc = H Re zabc                                                        (26)
+                                                                                               6. Base-frequency dynamic phasors
+Taking the original signal to the dq0-domain yields:
+                                                                                                   “Base-frequency dynamic phasor” (BFDP) is a concept established on
+xdq0 = K(t) xabc                                                                    (27)       the notion that all the coefficients in the GAM can be combined to
+                                                                                               represent the entire frequency spectrum of a time-domain signal using a
+where                                                                                          single dynamic phasor at the fundamental frequency [18]. This method,
+           ⎛                     (          )    (         )                                   similar to the SFA, produces a low-bandwidth dynamic phasor through
+                                         2π              2π ⎞
+               cos(ω0 t)      cos ω0 t −      cos ω0 t +                                       shifting each frequency component of the time-domain signal to a lower
+        ⎜                                 3               3 ⎟
+      2⎜                         (          )    (         )⎟                                  frequency.
+        ⎜                                                    ⎟
+K(t) = ⎜                                 2π              2π ⎟                       (28)
+      3 ⎜ sin(ω0 t)           sin ω0 t −      sin ω0 t +     ⎟
+        ⎝                                 3               3 ⎠                                  6.1. Mathematical background
+                 1/2                   1/2                  1/2
+                                                                                                    The Fourier series in (13) may be rewritten as follows:
+Combining (25) and (27) yields the following relationship.                                                    〈             {     〈                        }
+  { }                                                                                                                          ∑
+                                                                                                                               +∞
+                                                                                               x(t − T + s) = x〉0 (t) + Re 2        x〉k (t)e jkω0 (t− T+s)
+                                                                                                                                                                                   (33)
+Re zabc = xabc = K− 1 (t)xdq0                                                       (29)                                               k=1
+
+
+   In steady-state, xd and xq are constants. Assuming that the signal                          This can be represented as a single dynamic phasor at the fundamental
+consists of only the fundamental component in steady-state, the Hilbert                        frequency as:
+transformation of xabc can be derived as:                                                                       {                      }
+                                                                                               x(t − T + s) = Re 〈X〉B (t)ejω0 (t− T+s)                          (34)
+    { }            [ { }]
+ Im zabc      = H Re zabc                                                                      where
+                       ⎛
+                       sin(ω0 t)        − cos(ω0 t)                        0⎞                                             ∑
+                                                                                                                          +∞
+                                                                                                                             〈                     )
+                  ⎜ (                                     ⎟                                    〈X〉B (t) = (〈x〉0 (t) + 2       x〉k (t)ejkω0 (t− T+s) e− jω0 (t− T+s)                (35)
+                                  )       (           )
+                  ⎜
+                  ⎜ sin ω t − 2π                   2π     ⎟
+                                                          ⎟                         (30)                                  k=1
+                  ⎜       0         − cos  ω 0 t −      0 ⎟
+                 =⎜             3                   3     ⎟ xqd0
+                  ⎜                                       ⎟                                    is termed the BFDP and represents the entire frequency range of x(t).
+                  ⎜ (                                     ⎟
+                  ⎝            2π
+                                  )       (
+                                                   2π
+                                                      )   ⎠                                    This method ensures that the network needs to be modeled only for its
+                    sin ω0 t +
+                                3
+                                    − cos ω0 t +
+                                                    3
+                                                        0                                      fundamental frequency rather than for each harmonic, as is the case
+                                                                                               with GAM; therefore, it offers both efficiency and accuracy. Two algo­
+Note that the Hilbert transformation of a constant is zero; thus, the zero-                    rithms for extracting the BFDP from real signals are described next.
+sequence component is cancelled out in (30). Then the analytic signal
+can be derived as:                                                                             6.2. Extracting a base-frequency dynamic phasor
+           { }            { }
+zabc = Re zabc + j Im zabc                                                                     6.2.1. Method-I
+                                                                                                   An obvious method for BFDP calculation is to extract the coefficients
+                ⎛                                                     0⎞
+                           sin(ω0 t)              − cos(ω0 t)                                  corresponding to positive-frequency and dc components of the signal
+               ⎜ (             )                  (          )          ⎟                      individually and then merge them before shifting the spectrum down as
+               ⎜                                                        ⎟
+               ⎜ sin ω t − 2π                − cos ω0 t −
+                                                          2π
+                                                                      0⎟                       in (35). This is depicted in Fig. 3. Recursive integration to obtain co­
+               ⎜       0                                                ⎟
+=      xabc + j⎜
+               ⎜
+                             3                             3            ⎟xqd0
+                                                                        ⎟                      efficients can be effectively done using (16). The drawback of this
+               ⎜ (             )                  (          )          ⎟
+               ⎝            2π                            2π            ⎠
+                 sin ω0 t +                  − cos ω0 t +             0             (31)
+                             3                             3
+               ⎛    sin(ω t)                      − cos(ω0 t)         0⎞
+                                 0
+               ⎜ (             )                  (          )          ⎟
+               ⎜                                                        ⎟
+               ⎜ sin ω t − 2π                − cos ω0 t −
+                                                          2π
+                                                                      0⎟
+               ⎜      0                                                 ⎟
+=      xabc + j⎜             3                             3            ⎟K(t)xabc
+               ⎜                                                        ⎟
+               ⎜ (             )                  (          )          ⎟
+               ⎝            2π                            2π            ⎠
+                 sin ω0 t +                  − cos ω0 t +             0
+                             3                             3
+
+Substituting K(t) and further simplifying (31) yields
+                                                                                                                      Fig. 3. BFDP extraction: method-I.
+
+                                                                                           4
+J. Rupasinghe et al.                                                                                               Electric Power Systems Research 197 (2021) 107319
+
+
+method is that the frequency contents of the real signal are generally             one scenario may be exhibited in (39); however, for better under­
+unknown beforehand, which may cause difficulty when deciding the                   standing, each scenario is considered separately. In the following, each
+number of coefficients required to achieve the desired accuracy.                   dynamic phasor is extracted in a causal manner; i.e., only using present
+                                                                                   and past values of the natural signal, as is the case with power system
+6.2.2. Method-II                                                                   simulations.
+   One can express the series given in (33) in the following form
+separating the fundamental component from the rest:                                7.1. Electromechanical oscillation
+x(t − T + s)
+          ⎧
+          ⎪
+                                ⎫
+                                ⎪                                                      One of the most common scenarios in power systems is electrome­
+          ⎪                     ⎪
+          ⎪
+          ⎪
+          ⎪  〈                  ⎪
+                                ⎪
+                                ⎪        〈                                         chanical oscillations, which typically befall in the frequency range of
+          ⎨                     ⎬   ∑
+                                                                                   0.1-3 Hz. Fig. 5 displays the representations of a decaying electrome­
+                                    +∞
+     = Re 2 x〉1 (t)ejω0 (t− T+s) +        x〉k (t)ejkω0 (t− T+s)
+          ⎪
+          ⎪
+          ⎪
+                                ⎪
+                                ⎪
+                                ⎪                                                  chanical oscillation with a = 20, ae, max = 15, fe = 3 Hz, and δ = π/6
+          ⎪                     ⎪  k=− ∞
+          ⎪
+          ⎩                     ⎪
+                                ⎭                                                  rad using various dynamic phasor extraction techniques. It can be seen
+                                                    k∕
+                                                     =− 1,1
+                                                                                   that for a signal with a frequency contents around the fundamental
+          { 〈                    }                                                 component, f0 ( = ω0 /2π), all extraction methods produce essentially
+      = Re 2 x〉1 (t)ejω0 (t− T+s) + Xh (t)ejω0 (t− T+s)                (36)
+                                                                                   identical representations of the envelope waveform. For GAM several
+                                                                                   frequency components are computed, which are unnecessary in this case
+where
+                                                                                   as slow dynamics are attributed to the fundamental coefficient only. It is
+                                                                                   clear from the frequency spectra in Fig. 6 that the frequency spectrum of
+                     〈
+            ∑
+            +∞                                                                     x(t), which is originally in f0 ± fe and − f0 ± fe is now shifted to 0 ± fe
+Xh (t) =               x〉k (t)ej(k− 1)ω0 (t− T+s)                      (37)        yielding a low-pass signal.
+           k=− ∞
+
+                                                                                   7.2. DC offset and harmonics
+           k∕
+            =− 1,1
+
+
+is a complex signal that comprises dc component and all harmonic
+                                                                                       DC offsets and harmonics commonly occur in power electronic
+contents of x(t) except for the fundamental component. The steps for
+                                                                                   converters and can be expected in a power system during a disturbance.
+extracting BFDP can be described using (36) as follows and the pro­
+                                                                                   Fig. 7 shows the result of each extraction technique to replicate such
+cedure illustrated in Fig. 4.
+                                                                                   information in the frequency domain. The signal x(t) has a dc offset with
+    First, the fundamental component, 〈x〉1 (t), is calculated using (16)
+                                                                                   a0 = 5, during t ∈ [0, 0.1] s and a second-order harmonic with a
+with k = 1. It is then used to form the first term on the right-hand side of
+                                                                                   magnitude of ah = 10 during t ∈ [0.15, 0.25] s. Fourier decomposition of
+(36), which is then subtracted from the original signal, x(t). This yields
+                                                                                   dynamic phasor waveforms when the original signal consists of dc and
+the second term on the right-hand side of (36), from which Xh (t) is
+                                                                                   harmonics are shown in Figs. 8 and 9, respectively.
+readily obtained. Finally, the BFDP is computed as:
+                                                                                       A dc offset results in a zero sequence component; thus, a fast time-
+〈X〉B (t) = 2〈x〉1 (t) + Xh (t)                                          (38)        varying phasor, which focuses only on the positive sequence,
+                                                                                   completely ignores it and generates an envelope corresponding to the
+    While this method provides both efficiency and accuracy, if the
+                                                                                   fundamental component. In GAM, the dc component is readily captured
+network consists of higher order harmonics, it shifts negative frequency
+                                                                                   by calculating the coefficient corresponding to k = 0. The frequency
+components of Xh (t) further away from the imaginary axis, generating a
+                                                                                   shifting in SFA and both BFDP methods mean that the dc component of
+high-frequency oscillating complex signal, which is less useful in large
+                                                                                   magnitude a0 (t) in the time domain results in a0 (t)e− jω0 t in the phasor
+time-step simulations. Therefore, for systems with harmonics that need
+                                                                                   domain (a shift of − f0 ); hence, oscillations at the fundamental fre­
+to be retained, it is recommended to extract BFDPs using method-I.
+                                                                                   quency in the envelope waveforms generated by these latter methods are
+                                                                                   observed in Fig. 7.
+7. Illustrative examples
+                                                                                       When the real signal consists of harmonics with different phase se­
+                                                                                   quences, a fast time-varying phasor faces difficulty as it is tied with
+    This section demonstrates the dynamic phasor extraction methods
+                                                                                   positive-sequence signals only. GAM, on the other hand, shifts all its
+using representative power system waveforms. Firstly, a time-domain
+signal that illustrates a wide range of typical power system waveforms
+is defined as:
+x(t) = a0 (t) + (a(t) + ae (t)cos(2πfe t))cos(ω0 t + δ(t))
+                                                                       (39)
+                                           +ah cos(hω0 t)
+
+where a0 , a, ae , and ah are magnitudes of the dc, fundamental, electro­
+mechanical, and higher order harmonic components, respectively. ω0 is
+the fundamental frequency, fe is the frequency of the electromechanical
+component, and δ is the phase angle. During a disturbance, more than
+
+
+
+
+                                                                                   Fig. 5. DP representations of a real signal consisting of fundamental and
+                             Fig. 4. BFDP extraction: method-II.                   electromechanical oscillation frequencies
+
+                                                                               5
+J. Rupasinghe et al.                                                                                                    Electric Power Systems Research 197 (2021) 107319
+
+
+
+
+Fig. 6. Frequency spectrum of DPs when the real signal consists of fundamental
+                                                                                     Fig. 9. Frequency spectrum of DPs when the real signal contains harmonics.
+and electromechanical oscillation frequencies
+
+                                                                                     natural signal is a periodic fundamental-frequency sinusoid. For other
+                                                                                     signals, it may generate negative-frequency components as well. Note
+                                                                                     that (32) is a computationally efficient and causal method to approxi­
+                                                                                     mate an analytic signal during a simulation, and as such is not a uni­
+                                                                                     versal replacement for (23). The BFDP method-I uses only the positive-
+                                                                                     frequency coefficients; this implies that the frequency shifting process
+                                                                                     always creates a low-pass spectrum in frequency domain compared to
+                                                                                     the original signal and does not yield any negative frequency compo­
+                                                                                     nent, thus, making it a favourable method for large time-step simulation
+                                                                                     of harmonic-rich systems in a single frequency frame. The BFDP method-
+                                                                                     II creates a third-order harmonic component of the dynamic phasor
+                                                                                     envelope due to the frequency shifting process of Xh .
+
+                                                                                     7.3. Frequency variation
+
+                                                                                        Consider a signal with a time-varying amplitude and phase angle at
+                                                                                     the frequency of ω0 + Δω.
+                                                                                     x(t) = A(t)cos((ω0 + Δω)t + δ(t))                                             (40)
+
+                                                                                     The change in the frequency of the natural signal can represented as a
+                                                                                     phase shift to the dynamic phasor obtained in the frame of its carrier
+                                                                                     frequency as
+                                                                                     →′                         →
+                                                                                     X (t) = A(t)ej(δ(t)+Δωt) = X (t)ejΔωt                                         (41)
+Fig. 7. DP representations of a real signal consisting of dc offset
+                                                                                        This can be further verified by the following example. Consider the
+and harmonics..
+                                                                                     signal given in (42) with a frequency ramp, Δω(t) = mt, where m de­
+                                                                                     notes the slope of the ramp.
+                                                                                     x(t)   = 20cos((ω0 + mt)t + δ(t))
+                                                                                                                     )                                             (42)
+                                                                                            = 20cos(ω0 t + mt2 + δ(t)
+
+                                                                                         Let m = − 0.5π during the interval t ∈ [0.2, 0.4] and m = 0 otherwise.
+                                                                                     Real and imaginary parts of dynamic phasor representations of (42) is
+                                                                                     illustrated in Fig. 10. It can be seen that during the frequency ramp, the
+                                                                                     real and imaginary parts of each method’s phasor change to imitate the
+                                                                                     frequency change. Despite the changes in the phase angle, the magni­
+                                                                                     tude of each dynamic phasor remains constant.
+
+                                                                                     7.4. Unbalanced operation
+
+                                                                                         Fast time-varying phasors are not readily applicable to unbalanced
+                                                                                     system representations as unbalanced conditions produce negative- and
+                                                                                     zero-sequence components. On the contrary, all other methods are
+Fig. 8. Frequency spectrum of DPs when the real signal contains a dc offset..
+                                                                                     defined in such a way that they can be independently used with any
+                                                                                     arbitrary number of phases. As such, they are capable of accurately
+harmonic components to around zero, which makes it suitable in                       replicating any unbalanced three-phase signal in the frequency domain.
+modeling power electronic systems where multiple harmonics may
+exist. However, each frequency component must be evaluated sepa­
+rately, which makes it computationally cumbersome. The analytic signal
+generated using (32) has a positive-frequency spectrum only when the
+
+                                                                                 6
+J. Rupasinghe et al.                                                                                                        Electric Power Systems Research 197 (2021) 107319
+
+
+                                                                                   Table 1
+                                                                                   Co-Simulation Test System Specifications. .
+                                                                                     Component                                    Value
+
+                                                                                     s1                                           230 kV, 60 Hz, ∠11.5∘
+                                                                                     s2                                           230 kV, 60 Hz, ∠0∘
+                                                                                     rs1 , rs2 , g, r                             0.375 Ω, 0.375 Ω, 0.01 S, 0.05 Ω
+                                                                                     r1 , r2 , r3 , r4                            0.6083 Ω, 1.7774 Ω, 0.8887 Ω, 0.8887 Ω
+                                                                                     l1 , l2 , l3 , l4                            0.0128 H, 0.0414 H, 0.0137 H, 0.0187 H
+                                                                                     c1 , c 2 , c 3                               0.0459 μF, 0.1850 μF, 0.1191 μF
+                                                                                     c4 , c 5 , c 6                               0.0495 μF, 0.1389 μF, 0.0695 μF
+
+
+
+
+Fig. 10. DP representations when the real signal undergoes a frequency ramp.
+
+
+8. Co-simulation example
+
+    The performance of dynamic phasor extraction methods in co-
+simulation applications is further demonstrated with the simple test
+system given in Fig. 11, for which system parameters are listed in
+Table 1.
+    The system is partitioned into two subsystems; one subsystem is
+modeled with dynamic phasors while the other subsystem is modeled
+using time-domain EMT models. The interface between the two sub­
+systems is formed using dependent current and voltage sources that are
+updated as follows.
+→      →                →
+H (t) = I m (t − Δt) + g V k (t − Δt)                                  (43)
+
+u(t) = vk (t − Δt) − rim (t − Δt)                                      (44)
+
+        →
+where I m denotes the dynamic phasors of im and vk is the time-domain
+                                           →                        →
+representation of the dynamic phasor V k . In each time-step, I m is                                                                              →
+                                                                                                         Fig. 12. DP subsystem interface current ( I k (t)).
+                                                               →
+extracted from the time-domain EMT samples of im , while V k is con­
+verted to time-domain to yield vk . Note that both the EMT and DP                  clearing of the fault causes a high-frequency transient for a small period
+subsystems are modeled as three-phase systems; however, when the fast-             of time. It is clear from Fig. 12 that different extraction techniques
+                                           →
+time varying phasors are used to extract I m , only the positive-sequence          provide dissimilar representations of the transient depending on their
+is modeled for the DP subsystem.                                                   capabilities. The accuracy of each method can be examined by recon­
+    A disturbance is given to the network by applying a line-to-ground             structing the natural waveform using the simulated dynamic phasors as
+unbalanced fault at location F in the EMT subsystem at t = 1 s. The                shown in the Fig. 13.
+simulation is repeated several times by changing the dynamic phasor                    The inability to capture dc and high frequency contents, and to
+                                        →                                          represent unbalanced scenarios using the fast-varying phasor method
+extraction technique used to acquire I m at the interface. The resultant
+                             →                                                     causes severe errors at the interface. This is clearly visible from the EMT-
+DP-side interface current, I k , for each method is shown in Fig. 12. For          side interface currents shown in Fig. 14. Other methods do not
+validation purposes, the co-simulation results are compared against                demonstrate such an issue since they include all three phases explicitly.
+standalone EMT simulation results obtained using PSCAD/EMTDC.                      For the GAM, only the fundamental frequency component is extracted as
+    As it can be seen, the steady-state dynamic phasor representations of          the DP subsystem is modeled in a single frequency frame. As such, the dc
+→
+ I k are identical in all methods as the waveform consists of only the             component and the post-fault high frequencies are not simulated in the
+fundamental component. The applied disturbance causes a change in the              dynamic phasor waveform. The proper way to include them is to model
+magnitude of the fundamental component, and also introduces a                      the DP subsystem for different frequencies and then combine them using
+decaying dc component in the magnitude of the interface current. The               superposition. For the BFDP-method I, the dc component and harmonics
+                                                                                   up to the third order are considered; therefore, it simulates the fault
+                                                                                   transient with a reasonable accuracy but the post-fault fast dynamics are
+                                                                                   not captured fully. This can be made more accurate by including more
+                                                                                   frequency components to the BFDP coefficients. The method used in
+                                                                                   (32) for SFA and the BFDP-method II are able to simulate all the fre­
+                                                                                                             →
+                                                                                   quency contents of the I k waveform, which make them the most ac­
+                                                                                   curate methods. However, as depicted in Fig. 9, they need to contain
+                                                                                   non-positive high-frequency components in dynamic phasor waveforms
+                                                                                   to represent harmonics.
+                       Fig. 11. Co-simulation test system.
+
+                                                                               7
+J. Rupasinghe et al.                                                                                                    Electric Power Systems Research 197 (2021) 107319
+
+
+                                                                                  observations using a power system transient study. The findings of this
+                                                                                  paper are instrumental in enabling an in-depth, quantitative analysis of
+                                                                                  various phasor extraction methods that form the underlying component
+                                                                                  of EMT-dynamic phasor co-simulations of large electric networks.
+
+                                                                                  Credit Author Statement
+
+                                                                                     All people who have contributed to the work reported in this paper
+                                                                                  and to the preparation of this paper are listed as co-authors.
+
+
+                                                                                  Declaration of Competing Interest
+
+                                                                                     On behalf of the authors of the manuscript entitled Dynamic Phasors
+                                                                                  and Dynamic Phasor Extraction Methods for Power System Co-
+                                                                                  Simulation Applications submitted to IPST 2021, I would like to
+                                                                                  declare no interest of any sort with regard to the contents of this paper
+                                                                                  and any external organization of individual. Sincerely,
+
+                                                                                  References
+
+                                                                                   [1] V. Venkatasubramanian, H. Schattler, J. Zaborszky, Fast time-varying phasor
+                                                                                       analysis in the balanced three-phase large electric power system,, IEEE Trans.
+                                                                                       Autom. Cont. 40 (1995) 1975–1982.
+                                                                                   [2] N. Watson, J. Arrillaga, Power systems electromagnetic transients simulation, IET
+                                                            →                          Digital Library, London, United Kingdom, 2003.
+            Fig. 13. Reconstructed time-domain waveforms of I k (t).
+                                                                                   [3] H.W. Dommel, Digital computer solution of electromagnetic transients in single-
+                                                                                       and multiphase networks,, IEEE Trans. Power Appar. Syst. PAS-88 (1969)
+                                                                                       388–399.
+                                                                                   [4] S.R. Sanders, J.M. Noworolski, X.Z. Liu, G.C. Verghese, Generalized averaging
+                                                                                       method for power conversion circuits,, IEEE Trans. Pow. Electron. 6 (1991)
+                                                                                       251–259.
+                                                                                   [5] V. Venkatasubramanian, Tools for dynamic analysis of the general large power
+                                                                                       system using time-varying phasors,, Int. J. Electr. Power Energy Syst. 16 (1994)
+                                                                                       365–376.
+                                                                                   [6] P. Zhang, J.R. Marti, H.W. Dommel, Shifted-frequency analysis for EMTP
+                                                                                       simulation of power-system dynamics,, IEEE Trans. Circuits Syst. Regul. Pap. 57
+                                                                                       (2010) 2564–2574.
+                                                                                   [7] M. Daryabak, S. Filizadeh, J. Jatskevich, et al., Modeling of LCC-HVDC systems
+                                                                                       using dynamic phasors,, IEEE Trans. on Power Deliv. 29 (2014) 1989–1998.
+                                                                                   [8] J. Rupasinghe, S. Filizadeh, L. Wang, A dynamic phasor model of an MMC with
+                                                                                       extended frequency range for EMT simulations,, IEEE J. Emerg. Sel. Top. Power
+                                                                                       Electron. 7 (2019) 30–40.
+                                                                                   [9] Y. Xia, K. Strunz, Multi-scale induction machine model in the phase domain with
+                                                                                       constant inner impedance,, IEEE Trans. on Power Syst. 35 (2020) 2120–2132.
+                                                                                  [10] K. Strunz, R. Shintaku, F. Gao, Frequency-adaptive network modeling for
+                                                                                       integrative simulation of natural and envelope waveforms in power systems and
+                                                                                       circuits,, IEEE Trans. Circuits Syst. Regul. Pap. 53 (2006) 2788–2803.
+                                                                                  [11] M. Kulasza, Generalized dynamic phasor-based simulation for power systems, m.sc.
+Fig. 14. EMT-side interface current when fast time-varying phasors are used
+                                                                                       thesis, Univ. of Manitoba, Manitoba, Canada, 2015.
+for DP subsystem.                                                                 [12] J. Rupasinghe, S. Filizadeh, A. Gole, K. Strunz, Multi-rate co-simulation of power
+                                                                                       system transients using dynamic phasor and EMT solvers,, The Journal of Eng.
+                                                                                  [13] C. Alexander, M. Sadiku, Fundamentals of electric circuits, 4th ed, McGraw-Hill,
+9. Conclusions                                                                         Inc., New York, NY, USA, 2009.
+                                                                                  [14] H.K. Mudiyanselage, Interfacing a transient stability model to a real-time
+    This paper investigated the underlying theory of several dynamic                   electromagnetic transient simulation using dynamic phasors, ph.d. dissertation,
+                                                                                       Univ. of Manitoba, Canada, 2020.
+phasor extraction methods. Merits and drawbacks of each method were               [15] C.J. O’Rourke, M.M. Qasim, M.R. Overlin, J.L. Kirtley, A geometric interpretation
+assessed based on the ability to replicate general power system condi­                 of reference frames and transformations: dq0, clarke, and park,, IEEE Trans. Energy
+tions that included electromechanical frequencies, harmonics, dc off­                  Convers. 34 (2019) 2070–2083.
+                                                                                  [16] S. Henschel, Analysis of electromagnetic and electromechanical power system
+sets, imbalance, and other transient conditions such as magnitude and
+                                                                                       transients with dynamic phasors, Ph.D. dissertation, Univ. of British Columbia,
+frequency variations. The paper demonstrated the underlying differ­                    Canada, 1999.
+ences that the resulting phasors have, and proved that under certain              [17] A.D. Poularikas, The transforms and applications handbook, 2nd ed, CRC Press,
+conditions phasors may emerge that do not necessarily contain positive-                Boca Raton, Fla, USA, 2000.
+                                                                                  [18] K. Mudunkotuwa, S. Filizadeh, Co-simulation of Electrical Networks by Interfacing
+only frequency components as is expected from a bona fide phasor. The                  EMT and Dynamic-phasor Simulators,. International Conf. on Power Systems
+co-simulation example included in the paper further demonstrated these                 Transients, Seoul, Republic of Korea, 2017.
+
+
+
+
+                                                                              8
+

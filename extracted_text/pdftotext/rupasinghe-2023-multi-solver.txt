@@ -1,0 +1,574 @@
+                                                             Electric Power Systems Research 223 (2023) 109659
+
+
+                                                                  Contents lists available at ScienceDirect
+
+
+                                                       Electric Power Systems Research
+                                                          journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+A multi-solver framework for co-simulation of transients in modern
+power systems☆,☆☆
+Janesh Rupasinghe a, Shaahin Filizadeh b, *, Dharshana Muthumuni c, Ramin Parvari b
+a
+  RTDS Technologies, Winnipeg, MB R3T 2E1, Canada
+b
+  Department of Electrical and Computer Engineering, University of Manitoba, Winnipeg, MB R3T 5V6, Canada
+c
+  Manitoba Hydro International, Winnipeg, MB R3P 1A3, Canada
+
+
+
+
+A R T I C L E I N F O                                    A B S T R A C T
+
+Keywords:                                                This paper develops a novel multi-rate, multi-solver co-simulation framework combining dynamic phasors,
+Co-simulation                                            transient stability, base-frequency dynamic phasors for frequency-adaptive simulation of transients, and elec­
+Dynamic phasors                                          tromagnetic transient (EMT) models. This framework subdivides a given power network into several types of
+Electromagnetic transient simulation
+                                                         subsystems based on the connected devices, required accuracy in representing dynamic details, electrical dis­
+Multi-rate simulation
+Transient stability
+                                                         tance from perturbations, and the intended purpose of the study; as such, the paper describes methods and
+                                                         guidelines to simulate each subsystem using the most appropriate solver and time-step size to maximize simu­
+                                                         lation efficiency and accuracy. It also addresses the tasks of multiple interfacing and solver interactions that are
+                                                         essential in coupling different solvers. The proposed framework is built around an industrial-grade EMT simu­
+                                                         lator, to which other solvers are interfaced, enabling access to a variety of power system models and distinct
+                                                         features. The accuracy and efficiency of the framework are demonstrated through co-simulations carried out on a
+                                                         modified version of the 118-bus network, which includes an MMC-HVDC system.
+
+
+
+
+1. Introduction                                                                              offer better computational efficiency. The EMT solvers are recognized
+                                                                                             for greater accuracy; they require small simulation time-steps (μs) that
+    Transients in modern power systems differ markedly in terms of                           render them computationally prohibitive for simulating very large net­
+frequency content and time scale, leading to a wide range of impacts on                      works. Due to converter-tied resources and HVDC systems, and hence
+the system. Disturbance occurring at a particular location of the network                    the reduced inertia, modern power systems are expected to contain a
+often causes dissimilar dynamic responses in different network seg­                          much richer spectrum of harmonics, and are more susceptible to far-
+ments. The close electrical vicinity of the disturbance experiences a                        reaching transients. The limitations these aspects imposed on tradi­
+great amount of fast electromagnetic transients (EMT) while the rest of                      tional solvers have led to co-simulators, which aptly employ proper
+the network experiences far less or no noticeable dynamics depending                         solvers for different network segments to maintain simulation accuracy
+on the electrical distance from the disturbance. In addition to transients                   and efficiency [1]. As the demand mounts, alternative solution methods
+caused by temporary events such as faults or control actions, there may                      such as dynamic phasors (DPs) [2,3] and frequency-adaptive simulation
+be regions of the network that experience fast dynamics continually,                         of transients (FAST) [4] have been devised. DPs have sparked much
+such as the ones created by high-frequency power electronic systems                          interest as they allow to retain a considerable amount of waveform
+that generate fast dynamics even during normal operation.                                    dynamics without compromising the computational benefits given by
+    Among the tools used for power system transient simulations, the                         conventional phasors. The FAST method switches between an EMT so­
+transient stability (TS) solvers focus on steady-state and low-frequency                     lution with a small time-step and a DP solution with a large time-step by
+events; therefore, they allow large simulation time-steps (ms) and                           observing the network status. Challenges such as continuously occurring
+
+
+ ☆
+   This work was supported by MITACS, Manitoba HVDC Research Center, the University of Manitoba, Canada, and the Natural Sciences and Engineering Research
+Council (NSERC) of Canada .☆☆ Paper submitted to the International Conference on Power Systems Transients (IPST2023) in Thessaloniki, Greece, June 12–15,
+2023.
+ * Corresponding author.
+   E-mail addresses: janesh@rtds.com (J. Rupasinghe), shaahin.filizadeh@umanitoba.ca (S. Filizadeh), dharshana@mhi.ca (D. Muthumuni), parvarir@
+myumanitoba.ca (R. Parvari).
+
+https://doi.org/10.1016/j.epsr.2023.109659
+Received 10 December 2022; Received in revised form 24 March 2023; Accepted 21 June 2023
+Available online 14 July 2023
+0378-7796/© 2023 Elsevier B.V. All rights reserved.
+J. Rupasinghe et al.                                                                                               Electric Power Systems Research 223 (2023) 109659
+
+
+fast events and non-linear phenomena pose difficulties for both DP- and           2.1. Subsystems types
+FAST-based methods to operate as standalone simulators.
+    Despite recent advances in EMT-TS co-simulation platforms [5–8],                  The proposed framework relies on EMT models to provide the
+problems such as interaction delays, inaccuracies, and numerical in­              highest level of accuracy; thus, the study areas that require high levels of
+stabilities, on the one hand, and the rapid rise of fast-acting systems, on       accuracy are implemented in an EMT simulator. The rest of the network
+the other hand, have necessitated further development of alternative              is segmented into several types of subsystems as follows:
+solvers such as DP-EMT co-simulators [9,10] to improve the frequency
+bandwidth of simulations. Works in [11,12] show that co-simulation of             2.1.1. EMT subsystem type 1
+EMT and TS solvers, with an intermediate DP layer, offers greatly                     This is the area that undergoes continuous and high-frequency
+enhanced accuracy. According to the findings in [13], co-simulation               transients. This subsystem may include non-linear devices, power elec­
+using FAST and EMT solvers yields a sophisticated multi-rate platform             tronic systems, or other high-frequency device. Therefore, this subsys­
+with unique benefits such as multi-modal operations, enhanced tran­               tem needs to be solved using an adequately small simulation time-step
+sient accuracy, and the ability to retain fast dynamics in all subsystems.        (e.g., a few μs). This type of a subsystem is typically confined to small
+    Incorporation of latest techniques into simulation tools is critical as       areas within a large network.
+the nature of modern power systems has changed and conventional                       Segmentation of EMT subsystem 1 depends on the location of power
+dynamic simulation algorithms are no longer adequate. Modern power                electronic converters; however, if the guidelines to partition and inter­
+systems require modern and drastically more capable simulation pro­               face each subsystem are followed, it does not affect the accuracy of the
+grams. Thus, this paper develops a novel multi-solver co-simulation               simulation. For different locations for the converter, the electrical dis­
+framework for the next generation of co-simulation engines. It combines           tance between the converter and the other buses is the crucial factor for
+multiple EMT subsystems with a base-frequency dynamic phasor solver               the time gain for it determines how many buses can be included in each
+for frequency-adaptive simulation of transients (BFAST solver) [13].              type of subsystem. For a relatively small system, it is possible that there
+Additionally, a conventional TS solution is obtained at far enough por­           will not be enough electrical distance between the converter and the
+tions of the network where fast network transients are essentially non-           buses at the far ends of the network to include in the TS subsystems if the
+existing. A set of guidelines for identifying subsystems, selecting mul­          fast-acting devices are located, for instance, at a central location.
+tiple interfacing topologies, and developing interaction algorithms have          However, this is not the case for larger systems with thousands of
+also been presented.                                                              electrical buses, and hence the impact of location, if any, will be
+                                                                                  negligible.
+2. Multi-solver co-simulation framework
+                                                                                  2.1.2. EMT subsystem type 2
+    The proposed multi-solver co-simulation architecture is illustrated in            This subsystem is subjected to continuous or moderately fast tran­
+Fig. 1. In this context, several solvers are interfaced, each with distinct       sients, which are not as severe as in the EMT subsystem type 1. Thus, this
+numerical features and algorithms. Solver interfacing schemes are                 subsystem is simulated using EMT models, but with a time-step larger
+classified broadly as core-type, chain-type, and loop-type according to           than of the EMT subsystem 1 (e.g., tens of μs).
+[14]; the proposed framework uses a combination of core- and chain-                   When segmenting EMT1 and EMT2, there is no specific rule to
+type interfaces. The EMT subsystems are implemented inside an                     determine how many buses must be modeled in each EMT subsystem,
+industrial-grade simulator (PSCAD/EMTDC), which serves as the core of             other than there must be enough electrical distance between fast-acting
+the multi-solver co-simulator.                                                    devices and the interface buses. It is also worthwhile to note that it is not
+    Use of multiple simulation time-steps and solution methods poses              mandatory to have two EMT subsystems. If there are no extremely fast-
+challenges, especially in interfacing the solvers and handling the in­            acting devices in the network or if the study does not require specially
+teractions between them as time-delays and unequal granularity of                 small time-steps, then the user may opt to include all the EMT models in
+samples on the opposite sides of interfaces cause complications. These            a single subsystem.
+difficulties may have an adverse effect on the numerical stability and                If additional power electronic converter are present in other areas of
+accuracy of the overall solution, particularly during transients. Thus, in        the network, extra EMT subsystems must be included in the multi-
+the context of a multi-solver environment, subsystems, interfaces, and            domain solver in order to address their unique modeling re­
+interaction algorithms must be properly defined.                                  quirements. One must note that some converters may be modeled using
+                                                                                  average-value models if their switching transients are not of interest and
+                                                                                  they could be modeled in subsystems that use large time-steps.
+
+                                                                                  2.1.3. BFAST subsystem
+                                                                                      In this subsystem, fast dynamics occur intermittently. For example, a
+                                                                                  fault in one of the EMT subsystems may affect adjacent areas for a short
+                                                                                  period, and for the rest of the time this subsystem operates in steady-
+                                                                                  state or with relatively slow dynamics. Therefore, it is simulated with
+                                                                                  an adaptive solver known as the BFAST (see Section 2.2) that changes its
+                                                                                  simulation method and solution time-step depending on whether fast
+                                                                                  transients are present or not.
+
+                                                                                  2.1.4. Dynamic phasor (DP) subsystem
+                                                                                      In this subsystem, transients are slower than those observed in the
+                                                                                  EMT subsystems. Disturbances applied at the EMT subsystems have low
+                                                                                  dynamic impact on this region. Therefore, it is simulated with DPs using
+                                                                                  a large simulation time-step for the entire duration. DP subsystem(s)
+                                                                                  may be used as a buffer region between EMT and TS solvers.
+
+
+
+          Fig. 1. The proposed multi-solver co-simulation architecture.
+
+                                                                              2
+J. Rupasinghe et al.                                                                                                  Electric Power Systems Research 223 (2023) 109659
+
+
+2.1.5. TS subsystem
+    Areas of the network that operate in steady-state or near steady-state
+throughout the simulation are assigned to this subsystem. Typically,
+these subsystems fall far from EMT subsystems where fast transients are
+not prevalent. In these subsystems, only the positive-sequence solution
+is obtained using conventional phasor models. Therefore, any unbal­
+                                                                                             Fig. 2. Discretized BFDP equivalent of basic circuit elements.
+anced condition is essentially ignored and a large simulation time-step is
+used.
+    Dynamic phasors capture both slow and moderately fast dynamics                   is termed as the BFDP of x(t). Note that (3) shows the complete signal as
+more accurately than a TS solver and more efficiently than an EMT                    the real part of a complex quantity at the frequency of ωs ; and therefore,
+solver. Moreover, the DP solver uses a large and fixed simulation time-              the network needs to be modeled only at ωs rather than individually for
+step for its solution as it operates in the phasor domain. Therefore, the            each harmonic. Network simulation based upon BFDPs requires devel­
+DP solver is suitable to be used as a buffer zone between an EMT sub­                opment of discretized companion models for basic circuit components in
+system and a TS subsystem rather than directly linking a TS to the EMT               the form of Norton equivalents as given in Fig. 2 [15]. Table 1 shows
+solver, which may provide complications in terms of accuracy and sta­                models for basic elements.
+bility. The BFAST solver, on the other hand, adapts its solution method
+and the simulation time-step according to the frequency contents of the
+waveforms being simulated. When it detects a relatively high frequency               2.2.2. Changeover between EMT and BFDP solutions
+transients, it uses a detailed EMT solution with a small time-step, and                  In the element models given in Table 1, ωs is referred to as the shift
+during steady-state or slowly varying dynamics, it reverts to a dynamic              frequency and is used as a simulation parameter, along with the time-
+phasor solution with a large time-step. This implies that the BFAST                  step, Δt. With such element models, the network’s nodal admittance
+solver is particularly effective when simulating subsystems that undergo             matrix depends on both ωs and Δt:
+fast transients for a short duration of the overall simulation.
+                                                                                     Y = f (Δt, ωs )                                                               (5)
+    For a given simulation, the network may consist of zero or multiple
+subsystem of a particular type. Assignment of subsystem types depends                The ωs is normally equal to the fundamental frequency, ω0 , and the
+on such factors as the size of the network, presence of high-frequency               resulting models are suited for DP solution; however, if ωs is set to zero,
+and non-linear devices, and the expected dynamic details of various                  i.e., no frequency shifting, the element models in Table 1 reduce to
+sub-regions of the network. While TS and EMT simulators are used to                  typical EMT companion models. Therefore, the task of altering between
+solve steady state and detailed behaviors of network subsystems,                     DP and EMT solutions in the BFAST solver is simply achieved by setting
+respectively, this framework needs more flexible simulator(s) to build a             the value of the shift frequency. The decision on setting shift-frequency
+more versatile co-simulation engine. The BFAST solver developed in                   and time-step size is made based on the state of the network being
+[13] provides such freedom by giving options to operate in different                 simulated. If the system is experiencing a transient, ωs is set to zero to
+solution methods (BFAST, DP, and EMT) and to adjust time-step size                   obtain the EMT solution for the network; this also calls for a small Δt to
+based on the state of the network. The multi-solver co-simulation                    be used. Before and after transient events, the solver operates with a DP
+framework utilizes several simulation modes of this solver; thus, the                solution by setting ωs = ω0 . Since DPs provide a low-pass representation
+basis of the BFAST simulator is explained below.                                     of time-domain signals, a large Δt can be employed. Additional details
+                                                                                     about the changeover algorithm between the two solution methods in
+2.2. Operating principle of the BFAST solver                                         BFAST solver are available in [13].
+                                                                                          The BFAST solver’s ability to acquire both the EMT and DP solutions
+2.2.1. Definition of a base-frequency dynamic phasor                                 allows it to operate in three simulation modes:
+    A base-frequency dynamic phasor (BFDP) is a mathematical artifact
+that represents the entire harmonic spectrum of a time-domain signal as              a. EMT mode: the solver operates with the EMT solution with a small
+a single DP defined at a single frequency that is often selected to be the              time-step for the entire simulation;
+fundamental frequency of the network. Consider a time-domain signal,                 b. DP mode: the solver operates with the BFDP solution with a large
+x(t), over the time window (t − T, t). The Fourier series expansion and                 time-step for the entire simulation; and
+the Fourier coefficients of this signal over this interval are as follows [2].       c. BFAST mode: the solver switches between EMT and DP solutions by
+                      ∑
+                      +∞                                                                changing the shift-frequency and simulation time-step according to
+x(t − T + s) =                〈x〉k (t)ejkωs (t− T+s)                      (1)           the state of the network.
+                      k=− ∞
+
+                                                                                     2.2.3. Representation of power system components
+                                                                                         Considering numerical robustness, ability to use large time-steps,
+                 ∫T
+             1                                                                       and ease of interfacing with the electric network, synchronous ma­
+〈x〉k (t) =            x(t − T + s)e− jkωs (t− T+s) ds                     (2)
+             T   0                                                                   chine in the BFAST solver is represented as a voltage-source behind an
+                                                                                     impedance with a constant-parameter stator interface [16]. Trans­
+where ωs = 2π/T, s ∈ (0, T], and k is the harmonic order. The window                 formers are included using the basic transformer model [17], for which
+length T may be arbitrarily selected, although in the analysis of ac-dc              the discretized equivalent circuit is developed in BFAST domain. The
+systems it is often set to the fundamental period. The series given in               transmission lines are modeled as lumped-parameter π-sections to pre­
+(1) can be readily written as:                                                       serve its ability to use large simulation time-steps and retain benefits
+                 (                      )                                            such as ease of modeling with BFAST and zero wave propagation time
+x(t − T + s) = Re 〈X〉B (t)ejωs (t− T+s)                             (3)
+                                                                                     interpolations.
+where
+                                                                                     3. Multiple interfacing and solver interactions
+〈X〉B (t) = 〈x〉0 (t)e− jωs (t− T+s)
+   ∑
+   +∞                                                                     (4)            Network partitioning and solver interface topologies have implica­
++2      〈x〉k (t)ej(k− 1)ωs (t− T+s)                                                  tions on several aspects of co-simulations including accuracy, speed, and
+     k=1
+
+
+
+                                                                                 3
+J. Rupasinghe et al.                                                                                                                        Electric Power Systems Research 223 (2023) 109659
+
+
+ Table 1
+ Discretized BFDP equivalents of RLC elements.
+   Element                            Discretized BFDP equivalents
+
+   Resistor                           y = R1 Ih (t) = 0 (No history current source)
+   Inductor                           y = 2L(1+jΔtωs Δt/2)
+                                      Ih (t) = (1−
+                                                1+jωs Δt/2)〈I〉B (t− Δt) − y〈V〉B (t− Δt)
+                                                   jωs Δt/2
+
+   Capacitor                          y = 2C     jωs Δt
+                                          Δt (1 + 2 )
+                                      Ih (t) = − 〈I〉B (t − Δt) − y* 〈V〉B (t − Δt)
+                                                                                                    Fig. 4. Explicit coupling of BFAST and PSCAD/EMTDC solvers using a trans­
+                                                                                                    mission line interface.
+stability. Also of importance are whether or not they could be imple­
+mented at arbitrary places within a network and the capability to
+facilitate multi-rate simulations. For example, an internal interface can
+only be used when the user has access to the internal algorithms of the
+solvers, which may not be readily possible for most commercial-grade
+simulators. External interfaces eliminate such difficulties and allow to
+implement and solve subsystems independently. In the following sub­
+sections, various interfacing methods that are used in the multi-solver
+framework in Fig. 1 are explained.
+                                                                                                                                Fig. 5. EMT-BFAST interaction.
+3.1. EMT-EMT multi-rate interaction
+                                                                                                        When the BFAST solver is operating with the EMT solution and once
+    PSCAD/EMTDC allows to simulate different subsystems of a network                                it switches to the DP solution, the interface current source at node K is
+simultaneously as dependent projects and with multiple time-steps.                                  updated using (7) and (8), respectively.
+Interaction between these subsystems are established via the electrical
+network interface (ENI) [18] wherein boundaries of each subsystem are                               hK (t) =
+                                                                                                               2vM (t − τ)
+                                                                                                                           − hM (t − τ)                                                  (7)
+defined using transmission lines. Fig. 3 shows how the proposed multi-                                             ZC
+solver framework employs ENI to segment EMT subsystems.
+
+                                                                                                                   (
+                                                                                                                    2〈vM 〉B (t − τ)
+                                                                                                    〈hK 〉B (t) =                    −
+3.2. EMT-BFAST interface and interaction                                                                           (
+                                                                                                                           ZC
+                                                                                                                                                       )        )                        (8)
+                                                                                                                     2〈vK 〉B (t − 2τ)
+                                                                                                                                      − 〈hK 〉B (t − 2τ) e− jωs τ e− jωs τ
+    The interface between PSCAD/EMTDC and BFAST subsystems is                                                              ZC
+formed using a lossless Bergeron transmission line model [17] as
+interfacing to an industrial software whose internal algorithm is not                               The delay compensation and the explicit implementation of the Ber­
+attainable calls for an external interface. It uses the propagation time of                         geron model allow two solvers to operate in parallel.
+waves through the transmission line to compensate for the time delay
+caused by the partitioning and interaction between solvers and hence,                               3.3. EMT-DP interface and interaction
+does not insert any time delay to the solution [9,13]. Fig. 4 shows the
+Bergeron model of a lossless transmission line between nodes K and M,                                  The simulation of the DP subsystem is attained by enforcing the DP
+wherein ZC is the surge impedance of the line.                                                      mode (see Section 2.2.2) of the BFAST solver. Therefore, the EMT and
+    Assume that the simulation time-step of the EMT subsystem is ΔtEMT ;                            DP interface is also formed using the same transmission lines model
+the BFAST subsystem has time-steps of ΔtDP1 and ΔtT for its DP and EMT                              given in Fig. 4, and the same interaction procedure. However, in this
+solutions, respectively. Time-steps ΔtDP1 and ΔtT are chosen to be integer                          mode the DP solver operates entirely with ωs = ω0 , and with a fixed
+multiples of ΔtEMT , and interpolation is enabled at the BFAST-side                                 simulation time-step, ΔtDP2 .
+interface to balance the data granularity. The boundary values calcu­
+lated by each solver are transformed to respective domains and injected                             3.4. DP-TS interface and interaction
+to the opposite side of the interface bus after a delay equal to the wave
+propagation time, τ, of the transmission line as depicted in Fig. 5. The                                The transmission line interface restricts the maximum simulation
+current injection to the EMT-side of the interface, i.e. node M, is                                 time-step that can be used in either side of the line to its wave propa­
+calculated as follows.                                                                              gation time. This greatly hinders the practicality of the TS solver using a
+                                                                                                    large simulation time-step in the milliseconds range. Furthermore, both
+hM (t) =
+           2vK (t − τ)
+                       − hK (t − τ)                                                       (6)       the DP and TS subsystems are implemented external to PSCAD/EMTDC,
+               ZC                                                                                   which implies that internal algorithms and the admittance matrices of
+                                                                                                    both subsystems are readily accessible. Therefore, in the proposed multi-
+                                                                                                    solver framework, the DP-TS interface is established using the Multi-
+                                                                                                    Area Thévenin Equivalent (MATE) method [19], whose mathematical
+                                                                                                    foundation is described next.
+                                                                                                        Assume that DP and TS subsystems consist of N and M number of
+                                                                                                    nodes, respectively, and that they are connected by u number of
+                                                                                                    branches as shown in Fig. 6. The network equations of the entire system
+                                                                                                    can be written using modified nodal analysis in the following form:
+
+
+
+      Fig. 3. EMT-EMT multi-rate interaction in PSCAD/EMTDC via ENI.
+
+                                                                                                4
+J. Rupasinghe et al.                                                                                                   Electric Power Systems Research 223 (2023) 109659
+
+
+                                                                                            The complete solution for DP subsystem at t = ti is obtained by
+                                                                                            injecting Iα (ti ) to the interface nodes and solving it indepen­
+                                                                                            dently. The same process is repeated at all other intermediate
+                                                                                            instances of the DP subsystem.
+                                                                                       (IV) At t = tk , the interface branch current vector is calculated in the
+                                                                                            same manner. It is then injected to both the DP and TS sub­
+                                                                                            systems, and complete solutions of both are computed
+                                                                                            simultaneously.
+                Fig. 6. Coupling of DP and TS solvers using MATE.
+                                                                                         This algorithm neither inserts a time-step delay to the solution nor
+                                                                                      imposes restriction on the maximum simulation time-step; therefore, an
+⎡                   ⎤⎡    ⎤ ⎡ ⎤
+ YA      0       P     VA       hA                                                    appropriately large time-step can be used to solve the subsystems
+⎣ 0      YB      Q  ⎦⎣ VB ⎦ = ⎣ hB ⎦                                       (9)        involved. Additionally, It provides benefits such as a reduced-size
+ PT      QT     − Z    Iα        0                                                    admittance matrices and parallel solution as subsystems are fully
+                                                                                      decoupled.
+where Z and Iα are the link impedance matrix (u × u) and the link
+current vector (u × 1). Matrices P and Q are the connectivity arrays of
+                                                                                      3.5. EMT-TS interface and interaction
+the link currents to each subsystem, with N × u and M× u dimensions,
+respectively. They are constructed based on the direction of current flow
+                                                                                          The interface between the PSCAD/EMTDC (the employed EMT
+in the linking branches. If the current flow of a particular branch is out of
+                                                                                      solver) and a TS solver is a well-established one at an industrial level [8].
+the node, then it is assigned a ＋1 and if flow is into the node, then it is
+                                                                                      In a situation where an EMT subsystem should be directly connected to a
+assigned a − 1. If there is no connectivity to a node, it is assigned a value
+                                                                                      TS subsystem in the proposed multi-domain co-simulator, such an
+of 0. Rearranging (9) yields:
+                                                                                      interface may be readily used.
+⎡               ⎤⎡ ⎤ ⎡ ⎤
+                    vA        eA
+⎣ ̂I0A0̂IB00Zα ⎦⎣ vB ⎦ = ⎣ eB ⎦                                          (10)         4. Simulations and validation
+                    iα        eα
+                                                                                          The accuracy and the efficiency of the proposed method are verified
+where A = Y−A1 P; B = Y−B 1 Q; eA = Y−A1 hA ; eB = Y−B 1 hB ; Zα = Zth_A +            by simulating a modified version of the IEEE 118-bus system as illus­
+Zth_B + Z; e = e
+               α    + e , and ̂I is the identity matrix. Matrices Zth_A
+                       th_A      th_B                                                 trated in Fig. 8 and comparing against standalone EMT simulations
+and Zth_B represent the Thévenin impedances and eth_A and eth_B repre­               performed in PSCAD/EMTDC.
+sent the Thévenin voltage vectors of corresponding subsystems. They are
+calculated as Zth_A = PT A; Zth_B = QT B; eth_A = PT eA ; eth_B = QT eB . The
+admittance matrices and the Thévenin impedances of subsystems, and                   4.1. Subsystem divisions of the test system
+the link impedance matrix are calculated and stored prior to the simu­
+lation to minimize run-time computations. The need to re-compute those                    The generator at bus 62 is replaced with an MMC-HVDC system as
+matrices arises only if the configuration of a subsystem changes.                     shown in Fig. 9; it is controlled to maintain the same active power and
+    Consider the case shown in Fig. 7, for which the simulation time-                 bus voltage levels. Areas in the IEEE 118-bus system are segmented
+steps of the TS and DP solvers are ΔtTS , and ΔtDP2 , respectively, and               based on various criteria such as presence of high frequency and non-
+the solutions at t = tk− 1 corresponding to both subsystems are obtained.             linear devices and their locations, location of the disturbance, inten­
+Then the following algorithm takes place within the interval [tk− 1 , t].             ded area of study, electrical distance form the disturbance location and
+                                                                                      from high-frequency devices, and requirements for dynamic details. The
+      (I) Partial solutions, i.e. without linking branches, of TS subsystem at        MMC and the network buses in its vicinity are included in the EMT
+          t = tk and the DP subsystem at t = ti are obtained simultaneously           subsystem 1 as it is constantly subjected to switching events that require
+          by solving them independently.                                              a small time-step. The MMC parameters are listed in Table 2. The area
+     (II) The TS subsystem’s partial solution is linearly interpolated to t =         around this subsystem is included in the EMT subsystem 2 and it is
+           ti . The interpolated positive-sequence solution is transformed to a
+          three-phase one for interfacing with the three-phase DP subsys­
+                    [                    ]T
+          tem as V, Ve− j2π/3 , Vej2π/3 .
+    (III) Using the DP subsystem’s partial solution at t = ti and the inter­
+          polated TS subsystem’s partial solution (three-phase), the
+          Thévenin equivalent voltages are computed for each subsystem.
+          Then the interface branch current vector is computed as follows.
+
+         Iα (i) = Z−α 1 eα (i)                                            (11)
+
+
+
+
+                                 Fig. 7. DP-TS interaction.                                                   Fig. 8. 118-bus test system.
+
+                                                                                  5
+J. Rupasinghe et al.                                                                                                  Electric Power Systems Research 223 (2023) 109659
+
+
+                                                                                    Table 2
+                                                                                    MMC parameters.
+                                                                                     Parameter                                                    Value
+
+                                                                                     Ratings                                                      230 kV, 300 MW
+                                                                                     Dc-bus voltage                                               400 kV
+                                                                                     Number of sub-modules per arm                                20
+                                                                                     Sub-module capacitance                                       5 mF
+                                                                                     Arm inductance, arm resistance                               0.001 H, 0.025 Ω
+
+
+
+
+                                                                                  Table 3
+               Fig. 9. EMT subsystem 1 of the 118-bus test system.                Subsystem allocation of 118-bus test system.
+                                                                                   Subsystem          Bus composition                  Simulation time-Step
+
+                                                                                   EMT 1              59–67                            ΔtEMT1 = 10 μs
+                                                                                   EMT 2              24, 33-58, 68-75, 116            ΔtEMT2 = 50 μs
+                                                                                   BFAST              76-112, 118                      ΔtT = 50 μs, ΔtDP1 = 200 μs
+                                                                                   DP                 13-23, 25-32, 113–115            ΔtDP2 = 250 μs
+chosen as the study area of interest of the simulation. The rest of the            TS                 1-12, 117                        ΔtTS = 5 ms
+network is segmented as follows: the regions that may be highly affected
+by the study area disturbances are included in the BFAST subsystem;
+moderately affected areas are included in the DP subsystem, and un­               Table 4
+disturbed areas are included in the TS subsystem. Table 3 shows the               Interface branches of partitioned 118-bus network.
+breaking of subsystems and respective simulation time-step(s). The
+                                                                                   Solver 1         Solver 2            Interface Branches
+benchmark PSCAD/EMTDC case is simulated with a 10-μs time-step.                    EMT 1            EMT 2               lines 38-65, 49-66, 54-59, 55-59, 56-59, 65-68
+     The DP and BFAST subsystems are developed independently as two                EMT 2            BFAST               lines 69-77, 75-77, 68-81, 75-118
+external simulation projects using Microsoft Visual Studio and are pro­            EMT 2            DP                  lines 15-33, 19-34, 23-24, 30-38
+                                                                                   DP               TS                  lines 8-30, 11-13, 12-14, 12-16
+grammed in C++ and interfaced to PSCAD/EMTDC using the trans­
+mission line models. Run-time communication between these projects
+and the PSCAD/EMTDC is established via the built-in cosimulation
+component. The TS subsystem is also separately programmed in C++
+using Microsoft Visual Studio and linked to the DP project using the
+MATE method. The transmission lines used to form interfaces between
+subsystems are listed in Table 4.
+
+
+
+4.2. Simulations results
+
+    A solid line-to-ground unbalanced fault is applied at bus 47 at t = 5 s
+for 0.2 s. According to EMT subsystem 1 waveforms shown in Fig. 10, the
+MMC’s output contains a slight amount of harmonics. However, the fault
+appears to have no major effect on the MMC operation. Nevertheless,
+this subsystems has to be simulated with a small time-step considering
+the harmonics and number of switching events taking place in the MMC.
+The MMC’s internal and external waveforms and control variables
+simulated by the multi-domain solver show identical behavior to the
+benchmark simulation results.
+     Fig. 11 shows that the waveforms obtained from EMT subsystem 2
+using the multi-solver co-simulator and PSCAD/EMTDC are essentially
+identical. Despite this EMT subsystem being directly connected to the DP                          Fig. 10. Waveforms from EMT subsystem 1.
+and the BFAST subsystems via transmission line interfaces, the in­
+terfaces retain such accuracy that solving the network in different do­
+mains and using different time-steps has no perceptible implications for
+the simulation accuracy.
+    The interface line 69–77 current and the corresponding boundary
+bus voltages simulated by the BFAST solver are compared in Fig. 12. The
+solver changes its solution method from DP to EMT right before the
+transient begins, and changes back to DP solution at the end of the
+transient, which is automatically detected by the BFAST solver. As such,
+details of the transient caused by the fault are accurately retained in the
+BFAST waveforms. A small oscillation is visible in the line current
+waveform just after it is changed to the DP solution due to a presence of a
+small dc offset in the waveform. The ability to change the solution                               Fig. 11. Waveforms from EMT subsystem 2.
+method and the time-step of the BFAST solver provides more flexibility
+for network partitioning locations and interfacing as it ensures accurate
+interactions between solvers, particularly during transients when co-
+simulators are mostly vulnerable to fail.
+
+                                                                              6
+J. Rupasinghe et al.                                                                                                  Electric Power Systems Research 223 (2023) 109659
+
+
+                                                                                  4.3. Computational gain
+
+                                                                                      Fast acting devices such as MMCs force standalone EMT simulations
+                                                                                  to use very small time-steps. The proposed multi-solver framework
+                                                                                  greatly enhances the simulation speed by simulating different network
+                                                                                  segments with larger time-steps, using efficient modeling techniques,
+                                                                                  and simultaneous solutions of subsystems. For example, in the 118-bus
+                                                                                  example, the TS subsystem uses a 5 ms time-step for its phasor solu­
+                                                                                  tion, which is 500 times larger than that of the standalone EMT solver.
+                                                                                  This was visible from a simulation time comparison of the 118-bus case,
+                                                                                  which showed that the benchmark simulation takes 1126 s to run a 10-s
+                                                                                  simulation, whereas the multi-domain solver takes only 88 s. In addi­
+                                                                                  tion, a multirate full-EMT simulation was performed for the benchmark
+                                                                                  118 bus case using a 10 μs time-step for the EMT1 subsystem and a
+                  Fig. 12. Waveforms from the BFAST subsystem.
+                                                                                  50 μs time-step for the rest of the 118-bus network. It was found that
+                                                                                  this multirate EMT simulation takes approximately 358 s to complete a
+                                                                                  10-s simulation. This is a time gain of four times for the proposed
+                                                                                  method compared to the multirate EMT simulation of the 118 bus sys­
+                                                                                  tem. The multi-solver co-simulator will be particularly advantageous in
+                                                                                  large networks, where the EMT pockets will represent a much smaller
+                                                                                  percentage of the whole network.
+
+                                                                                  5. Conclusion
+
+                                                                                      A multi-solver framework for co-simulation of power system tran­
+                                                                                  sients combining the prospects of EMT, TS, DP, and BFAST solvers was
+                                                                                  implemented and validated. In this framework, a given network is par­
+                                                                                  titioned into several subsystems taking the expected dynamic behaviors
+                                                                                  into account; they are then assigned to distinct solvers and solved
+                                                                                  simultaneously using multi-rate techniques. It was noted that a multi-
+                                                                                  solver environment requires multiple interfacing topologies and inter­
+                       Fig. 13. Waveforms from the DP subsystem.                  action algorithms as well as special guidelines to determine which lo­
+                                                                                  cations are most suited for segmentation given the network topology and
+                                                                                  study purposes. Implementation of the algorithm centralized around an
+    As expected, no fast transients are present in the DP subsystem as            industrial EMT simulator (PSCAD/EMTDC) enabled EMT-EMT multi-
+seen from Fig. 13, which displays the DP-EMT interface transmission               rate simulation, access to a large number of component and control
+line 19–34 current and the voltage of the corresponding DP-side inter­            models, and parallel processing, which substantially increase the
+face bus. A small level of dynamics is visible in the current waveform            applicability of the co-simulator. The illustrative simulations performed
+during t ∈ (5, 5.2) s due to the fault and the fault clearing events in the       using the proposed multi-solver co-simulator demonstrated a great deal
+EMT subsystem 2. The harmonic-rich BFDPs capture this transient and               of accuracy and efficiency; hence, the legitimacy of its methods and the
+follow the envelope of the waveform accurately as seen in the enlarged            guideline developed for mixed EMT-BFAST-DP-TS algorithm were
+view of the envelope.                                                             confirmed. It is expected that, compared with existing simulators, the
+    Waveforms associated with the TS subsystem are displayed in                   proposed framework will be able to simulate complex and large net­
+Fig. 14. Despite the large time-step of 5 ms, the TS solver produces              works with high levels of accuracy and computational gain.
+identical results to those of the benchmark simulation since it mostly
+operates in steady state and feels no noticeable impact from the applied          Declaration of competing interest
+fault. Inclusion of rotating plants may bring electromechanical dynamics
+to the subsystem; however, they are unlikely to cause any complication                The authors declare that they have no known competing financial
+to the simulation or the time-step, except for the requirement of inter­          interests or personal relationships that could have appeared to influence
+mediate iterations, as those dynamics are much slower than the power              the work reported in this paper.
+system frequency.
+                                                                                  Data availability
+
+                                                                                     No data was used for the research described in the article.
+
+                                                                                  References
+
+                                                                                  [1] M.D. Heffernan, K. Turner, J. Arrillaga, C.P. Arnold, Computation of A.C.-D.C.
+                                                                                      system disturbances - Part I, II, and III, IEEE Trans. Power Appar. Syst. PAS-100
+                                                                                      (1981) 4341–4363.
+                                                                                  [2] S.R. Sanders, J.M. Noworolski, X.Z. Liu, G.C. Verghese, Generalized averaging
+                                                                                      method for power conversion circuits, IEEE Trans. Power Electron. 6 (2) (1991)
+                                                                                      251–259.
+                                                                                  [3] V. Venkatasubramanian, Tools for dynamic analysis of the general large power
+                                                                                      system using time-varying phasors, Int. J. Elect. Power Energy Syst. 16 (6) (1994)
+                                                                                      365–376.
+
+
+                       Fig. 14. Waveforms from the TS subsystem.
+
+                                                                              7
+J. Rupasinghe et al.                                                                                                                   Electric Power Systems Research 223 (2023) 109659
+
+ [4] K. Strunz, R. Shintaku, F. Gao, Frequency-adaptive network modeling for                          models: A practical LCC HVDC simulation study, IEEE Trans. Ind. Electron. (2020)
+     integrative simulation of natural and envelope waveforms in power systems and                    1.
+     circuits, IEEE Trans. Circuits Syst. I Regul. Pap. 53 (12) (2006) 2788–2803.                [12] K.M.H.K. Konara, Interfacing a Transient Stability Model to a Real-Time
+ [5] Y. Li, D. Shu, F. Shi, Z. Yan, Y. Zhu, N. Tai, A multi-rate co-simulation of combined            Electromagnetic Transient Simulation Using Dynamic Phasors (Ph.D. thesis),
+     phasor-domain and time-domain models for large-scale wind farms, IEEE Trans.                     University of Manitoba, Winnipeg, Canada, 2020.
+     Energy Convers. 35 (1) (2020) 324–335.                                                      [13] J. Rupasinghe, S. Filizadeh, A. Gole, K. Strunz, Multi-rate co-simulation of power
+ [6] P. Le-Huy, G. Sybille, P. Giroux, L. Loud, J. Huang, I. Kamwa, Real-time                         system transients using dynamic phasor and EMT solvers, J. Eng. (2020) 1–9.
+     electromagnetic transient and transient stability co-simulation based on hybrid line        [14] S. Filizadeh, Interfacing methods for electromagnetic transient simulation: New
+     modelling, IET Gen. Trans. Dist. 11 (12) (2017) 2983–2990.                                       possibilities for analysis and design, in: Transient Analysis of Power Systems, John
+ [7] F. Plumier, P. Aristidou, C. Geuzaine, T.V. Cutsem, Co-simulation of                             Wiley & Sons, Ltd, 2015, pp. 552–567.
+     electromagnetic transients and phasor models: A relaxation approach, IEEE Trans.            [15] T. Noda, T. Kikuma, T. Nagashima, R. Yonezawa, A Dynamic-Phasor Simulation
+     Power Del. 31 (5) (2016) 2360–2369.                                                              Method with Sparse Tableau Formulation for Distribution System Analysis: A
+ [8] G.D. Irwin, C. Amarasinghe, N. Kroeker, D. Woodford, Parallel processing and                     Preliminary Result, in: 2018 Power Systems Computation Conference, PSCC,
+     hybrid simulation for HVDCNSC PSCAD studies, in: 10th IET Int. Conf. on AC and                   Dublin, Ireland, 2018, pp. 1–7.
+     DC Power Trans, ACDC 2012, 2012.                                                            [16] M. Chapariha, F. Therrien, J. Jatskevich, H.W. Dommel, Explicit formulations for
+ [9] K. Mudunkotuwa, S. Filizadeh, U. Annakkage, Development of a hybrid simulator                    constant-parameter voltage-behind-reactance interfacing of synchronous machine
+     by interfacing dynamic phasors with electromagnetic transient simulation, IET                    models, IEEE Trans. Energy Convers. 28 (4) (2013) 1053–1063.
+     Gen. Trans. Dist. 11 (12) (2017) 2991–3001.                                                 [17] N. Watson, J. Arrillaga, Power Systems Electromagnetic Transients Simulation,
+[10] D. Shu, X. Xie, Z. Yan, V. Dinavahi, K. Strunz, A multi-domain co-simulation                     first ed., IET Digital Library, London, UK, 2003.
+     method for comprehensive shifted-frequency phasor DC-grid models and EMT AC-                [18] Manitoba HVDC Research Center, Winnipeg, MB, Canada, PSCAD/EMTDC User’s
+     grid models, IEEE Trans. Power Electron. 34 (11) (2019) 10557–10574.                             Guide.
+[11] D. Shu, Z. Ouyang, Z. Yan, Multi-rate and mixed solver based co-simulation of               [19] M.A. Tomim, J.R. Martí, J.A.P. Filho, Parallel transient stability simulation based
+     combined transient stability, shifted-frequency phasor and electro-magnetic                      on multi-area Thévenin equivalents, IEEE Trans. Smart Grid 8 (3) (2017)
+                                                                                                      1366–1377.
+
+
+
+
+                                                                                             8
+

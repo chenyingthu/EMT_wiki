@@ -1,0 +1,506 @@
+                                                              Electric Power Systems Research 163 (2018) 423–429
+
+
+                                                                    Contents lists available at ScienceDirect
+
+
+                                                           Electric Power Systems Research
+                                                           journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Co-simulation of electrical networks by interfacing EMT and dynamic-                                                                                      T
+phasor simulators☆,☆☆
+                                                       ⁎
+K. Mudunkotuwaa, S. Filizadehb,
+a
+    Electranix Corp., Winnipeg, MB R3Y 1P6, Canada
+b
+    Department of Electrical and Computer Engineering, University of Manitoba, Winnipeg, MB, R3T 5V6, Canada
+
+
+
+
+A R T I C LE I N FO                                         A B S T R A C T
+
+Keywords:                                                   The paper presents a hybrid co-simulator comprising EMT and dynamic phasor-based simulators. The EMT
+Co-simulation                                               simulator models portion(s) of the network wherein fast transients are prevalent and detailed modeling is ne-
+Electromagnetic transient simulation                        cessary. The dynamic phasor solver models the rest of the network using extended-frequency Fourier compo-
+Dynamic phasors                                             nents. Specialized algorithms are developed and presented to accurately map instantaneous EMT and counter-
+Interfacing
+                                                            part dynamic phasor samples. Interfacing requirements for co-simulation using diﬀerent time-steps in the two
+                                                            solvers are also discussed along with implications on accuracy and numerical stability. The paper demonstrates
+                                                            the developed co-simulation algorithm using an example of the IEEE three-phase 118-bus network in which a
+                                                            wind farm is included. The wind farm and the network in its vicinity are modeled in the PSCAD/EMTDC
+                                                            electromagnetic transient simulator, and are interfaced to the rest of the system modeled in a dynamic phasor-
+                                                            based solver. The paper demonstrates the accuracy of the proposed co-simulation for a range of time-step ratios
+                                                            of the two solvers, and also reports the substantial computational time savings obtained using the hybrid si-
+                                                            mulator.
+
+
+
+
+1. Introduction                                                                                 Simpliﬁcations to individual component models and systems, which is
+                                                                                                widely applied to high-frequency power electronic converters and is
+    Electromagnetic transient (EMT) simulation of large electrical net-                         referred to as averaging, is one such method [1,2,3]. Alternatively,
+works is a challenging task due to the inherent computational intensity                         dynamic equivalents represent a portion of a large network by ag-
+of EMT models and solution methods. EMT simulation of fast transients,                          gregating several components in a reduced-order model to relieve the
+e.g., switching events of high-power electronic converters, is particu-                         computational intensity of simulation of the whole network [4–6].
+larly cumbersome as it needs small simulation time-steps to accurately                          Dynamic equivalents often yield substantial reduction in the number of
+capture high-frequency components. This leads to large computational                            nodes to be included in the system’s equivalent admittance matrix,
+burden. In a conventional EMT simulator the entire network is simu-                             which in turn relieves matrix inversion and computation tasks. In both
+lated with a small time-step, even though fast transients may only be                           the averaged-value and dynamic equivalent modeling approaches, a
+conﬁned to small portions where faults occur or fast-acting systems                             single EMT simulator will solve the entire network containing regular
+such as power-electronic converters exist. This limitation has led to the                       EMT-type and averaged or dynamic equivalent models.
+use of EMT solvers primarily for studies of moderately small networks.                              Co-simulation is another approach to enable EMT-type simulation of
+With the proliferation of switching converters in modern power sys-                             a large network. Co-simulation is based upon an interface established
+tems, it is increasingly necessary to use EMT simulations for larger                            between an EMT simulator and another solver. The two simulators will
+systems to the extent that the required computational resources have                            each solve a distinct portion of the large network under consideration
+nearly always outpaced the computing power of contemporary com-                                 concurrently. The core beneﬁt of co-simulation is that it allows better
+puters.                                                                                         matching between the constituent simulators and the properties of the
+    Several methods have been proposed to extend the applicability of                           network subsections they simulate. For example, portions of the net-
+EMT simulators in the study of large and complex power systems.                                 work wherein fast transients may be reasonably ignored will be
+
+
+    ☆
+       This manuscript is a signiﬁcantly extended version of a conference paper presented at IPST 2017.
+    ☆☆
+        This work was supported in part by the University of Manitoba, and in part by the Natural Sciences and Engineering Research Council (NSERC) of Canada.
+    ⁎
+      Corresponding author.
+      E-mail addresses: km@electranix.com (K. Mudunkotuwa), shaahin.ﬁlizadeh@umanitoba.ca (S. Filizadeh).
+
+https://doi.org/10.1016/j.epsr.2018.06.010
+Received 17 October 2017; Received in revised form 18 June 2018; Accepted 20 June 2018
+Available online 23 July 2018
+0378-7796/ © 2018 Elsevier B.V. All rights reserved.
+K. Mudunkotuwa, S. Filizadeh                                                                                                   Electric Power Systems Research 163 (2018) 423–429
+
+
+assigned to and solved by a simulator with less computational demand                                                             +∞
+                                                                                                                     ⎛                2π             ⎞
+than an EMT solver.                                                                 x (t − T + s ) = x 0 (t ) + 2 Re ⎜ ∑ x k (t ) e jh T (t − T + s) ⎟
+                                                                                                                     ⎝ h=1                           ⎠                         (3)
+    Since constituent simulators may not necessarily simulate networks
+in the same domain (i.e., time or frequency), simulated waveform                        Therefore, it is seen that the dynamic phasor corresponding to the h-
+samples need to be properly transferred from one simulator to another;              th harmonic component is 2 x h (t ) , which shows the time-varying
+this requires speciﬁc mapping algorithms to ensure that critical in-                magnitude and phase of a single harmonic that has an angular fre-
+formation and accuracy are preserved. Examples of co-simulation have                             2π
+                                                                                    quency of h T . Note that once the waveform x (⋅) settles into full peri-
+been reported by interfacing EMT simulation with transient-stability                odicity, its harmonic components will be of constant magnitude and
+(TS) programs [7–9], ﬁnite-element simulation [10], and software- and               phase angle and the time-dependence of 2 x h (t ) will disappear, as is
+processor-in-loop simulation [11,12]. Real-time EMT simulation with                 expected from conventional Fourier components.
+control and power hardware-in-loop interfaces are reported and re-                      Basic circuit components (i.e., resistors, inductors, and capacitors)
+viewed in Ref. [13].                                                                can be readily expressed using extended-frequency dynamic phasors by
+    This paper proposes a co-simulation environment by interfacing an               applying the above formulae to their characteristic time-domain
+EMT simulator with an extended-frequency dynamic phasor-based                       equations as shown in Ref. [18]. Once obtained, elements’ character-
+solver. Although previous studies have alluded to and shown the ben-                istic equations can be discretized using a suitable integration method,
+eﬁts of a hybrid EMT and dynamic phasor simulator [14,15], the pre-                 such as the trapezoidal method, for discrete-time simulations on a di-
+sent work is the ﬁrst hybrid simulator with robust numerical stability,             gital computer. Using this method, each element will have a unique
+and the ability to include an arbitrarily large number of harmonics in              dynamic-phasor domain equivalent for every harmonic component.
+the network solution. The EMT simulator is used to simulate parts of the            This implies that solution of a network will involve solving several
+network where fast transients are present, e.g., in the electrical vicinity         networks each representing a certain harmonic component.
+of fast-acting controllers and switching power-electronic converters.                   Other circuit components, such as machines and converters, may
+Such portions of the network require detailed modeling and small si-                also be similarly modeled using dynamic phasors [19,20] and con-
+mulation time-steps. The dynamic-phasor solver represents the rest of               nected to the rest of the network as dynamic current-injecting sources
+the network, where fast transients are less pronounced or their re-                 similar to a conventional EMT solver, which is based upon an ad-
+presentation is not necessary and can be avoided for computational                  mittance matrix formulation.
+gains. Segmentation of a large network into EMT and dynamic-phasor                      It is important to note that the formulations in Eqs. (1) and (3) are
+portions enables use of simulation algorithms that are best suited for              based upon individual harmonic components (denoted by h); alter-
+each individual portion without having to incur either large computa-               natively, one may re-formulate Eq. (3) into an equivalent form shown in
+tional burdens or large inaccuracies. The work presented in this paper is           Eq. (4), which eﬀectively represents all harmonic components as con-
+an extension of Ref. [16]. Factors limiting multi-rate simulations are              tributors to a single harmonic component at the base angular frequency
+identiﬁed and methods for ensuring numerical accuracy and stability                 of 2π/T [16].
+are introduced.
+                                                                                                                                2π
+    Following a detailed description of the developed interface, an al-                                 ⎛ ⎛ x 0 (t ) e−j T (t − T + s) + ...         ⎞                     ⎞
+gorithm is proposed to provide mapping between EMT and dynamic                      x (t − T + s ) = Re ⎜ ⎜ +∞                         2π            ⎟ e j 2Tπ (t − T + s) ⎟
+phasor samples across the interface. Interfacing requirements to ac-                                    ⎜ ⎜⎜ 2 ∑ x h (t ) e j (h − 1) T (t − T + s) ⎟⎟                     ⎟
+                                                                                                        ⎜                                                                  ⎟
+commodate large time-step ratios are also described and implications                                    ⎝ ⎝ h=1                                      ⎠                     ⎠   (4)
+on numerical accuracy and stability are outlined. The eﬃcacy of the
+                                                                                       Using Eq. (4) one can deﬁne a base-frequency dynamic phasor in-
+proposed interface is demonstrated via co-simulation of the IEEE 118-
+                                                                                    volving all harmonic components (including dc) as follows.
+bus system wherein a wind farm is embedded.
+                                                                                                                               +∞
+                                                                                                             2π                                         2π
+                                                                                    X (t ) = x 0 (t ) e−j T (t − T + s) + 2 ∑ x h (t ) e j (h − 1) T (t − T + s)
+2. Mathematical principles of dynamic phasors                                                                                  k=1                                             (5)
+
+     A dynamic phasor represents a harmonic component of the Fourier                    A direct beneﬁt of the new base-frequency dynamic phasor in Eq.
+spectrum of a waveform. Consider a real-valued waveform x (⋅) over the              (5) is that it combines the eﬀect of all harmonic components of the
+interval (t − T , T ) . The length of the interval T may be selected arbi-          original waveform in to a single complex number at the base frequency.
+trarily, although in the study of power-electronic converters it is nor-            Therefore, network elements, such as inductors and capacitors, that
+mally chosen to be the converter’s switching period [17]. The waveform              have a diﬀerent model for every harmonic component are only modeled
+x (⋅) is represented over the considered interval using the following               once for the base frequency, instead of several models for several fre-
+Fourier series:                                                                     quency components. Unlike Ref. [18] this will allow solution of a single
+                                                                                    equivalent network (at the base frequency) to obtain the entire fre-
+                     +∞
+                                         2π                                         quency spectrum of the circuit’s response. This oﬀers signiﬁcant time
+x (t − T + s ) =     ∑      x h (t ) e jh T (t − T + s)   s ∈ (0, T )
+                                                                        (1)         savings in the simulation of large networks.
+                    h =−∞
+                                                                                        It is straightforward to see that a reasonable approximation of a
+where x h (t ) is the Fourier coeﬃcient corresponding to the h-th har-              waveform may be obtained by considering only a subset of constituent
+monic; x h (t ) is shown as an explicit function of time to emphasize the           harmonics in its Fourier expansion in Eq. (1) [17]. For example, 0-th
+fact that the waveform’s harmonics may indeed change with time as the               (h = 0) and 1-st (h = 1) components may be adequate to represent dc
+sliding window moves along the time axis. These Fourier coeﬃcients                  and ac quantities in a power-electronic converter, respectively. Addi-
+are determined using conventional Fourier formulation shown below.                  tional accuracy is obtained merely by including higher frequency
+                                                                                    components, thus the notion of extended-frequency dynamic phasors
+                T
+            1                            2π                                         [18]. For example, a 12-pulse line-commutated converter may be re-
+ x h (t ) = T   ∫ x (t − T + s) e−jh (t−T+s) ds
+                                         T
+                                                                                    presented on its ac side using 1-st, 11-th, and 13-th harmonic compo-
+                0
+ x −h (t ) = ( x h (t ))*                                               (2)         nents. This observation can be readily extended to Eq. (5) as well. In
+                                                                                    other words, one may include only a small subset or as many harmonic
+where * denotes complex conjugate.                                                  components as desired in Eq. (5) to represent the base-frequency
+   It is straightforward to note that Eq. (1) can be re-written as an               composite dynamic phasor of a waveform. Naturally, inclusion of a
+explicitly real-valued inﬁnite series as follows.                                   larger number of harmonics will yield a more accurate representation of
+
+                                                                              424
+K. Mudunkotuwa, S. Filizadeh                                                                                                   Electric Power Systems Research 163 (2018) 423–429
+
+
+                                                                                   formulations. The components at both sides are replaced with compa-
+                                                                                   nion models that are obtained using integration routines such as tra-
+                                                                                   pezoidal method (see Ref. [16] for companion models of basic circuit
+                                                                                   elements). Use of companion models for DP-based simulation is also
+                                                                                   reported in Refs. [22,23]. The transmission-line format of the proposed
+                                                                                   interface also avoids having to deal with network equivalents as in Ref.
+                                                                                   [24] wherein iterative intermediate steps need to be taken to attain
+                                                                                   convergence of DP-side and EMT-side equivalents before co-simulation
+                                                                                   can proceed.
+                Fig. 1. A lossless transmission line segment model.
+
+                                                                                   3.2. Sample conversion (DP to EMT and EMT to DP)
+a waveform.
+    Full harmonic preservation is adopted in the following section                     Conversion of a dynamic phasor X(t) to time-domain is simply done
+where an interface between a dynamic-phasor solver and an EMT solver               using the following formula, which directly results from Eq. (4).
+(hereinafter called a DP-EMT simulator) is described. All dynamic
+                                                                                                             2π
+phasor quantities in the following sections are similar to Eq. (5) and
+include the entire simulated harmonic spectrum, which is determined
+                                                                                                 (
+                                                                                   x (t ) = Re X (t ) e j T t     )                                                          (9)
+
+by the bandwidth of the underlying component models and also the                       Conversion of EMT simulation samples, however, is more challen-
+simulation time-step.                                                              ging. Note that Eq. (5) shows how a fully-augmented dynamic phasor at
+                                                                                   the base frequency can be obtained. It is, however, noted that calcu-
+3. DP-EMT interface: layout and algorithm                                          lation of X(t) requires that all individual Fourier components, x h (t ) be
+                                                                                   available in order to calculate the summation term in Eq. (5). Although
+3.1. Interface layout                                                              calculation of these components is possible, it is not desirable to do so
+                                                                                   as it entails ﬁrstly numerical integration using Eq. (2) for each com-
+    The functional form of the established DP-EMT interface is a                   ponent and secondly their summation in Eq. (5). This will create a large
+transmission line with EMT and dynamic-phasor quantities at its two                and inconvenient computational burden, which is undesirable. Alter-
+ends. EMT-type programs conventionally use traveling wave models to                natively, it is noted that the following equality holds.
+represent transmission lines. Traveling wave models introduce natural
+decoupling to the nodal equations of an EMT simulator [21]. More                                                  (            2π
+                                                                                   x (t − T + s ) = 2 Re x 1 (t ) e j T (t − T + s) + ...
+                                                                                                    
+                                                                                                                                           )
+speciﬁcally, the two networks at the sending and receiving ends of a                                           fundamental component
+transmission line are isolated due to the line’s ﬁnite travel-time or
+                                                                                   ⎛ +∞                                     ⎞
+transportation-time delay, also known as transmission line latency.
+                                                                                   ⎜ ∑ x h (t ) e−j (h − 1) 2Tπ (t − T + s) ⎟ e j 2Tπ (t − T + s)
+Fig. 1 shows the equivalent impedance representation of a Bergeron
+                                                                                   ⎜ h =−∞                                  ⎟
+lossless line model. This model is used to establish an interface between              ≠−1,1
+                                                                                   ⎝ h                                 ⎠
+                                                                                            
+EMT and dynamic phasor solvers.                                                                   dc + harmonics                                                           (10)
+    Current-source injections at the two ends are as follows.
+                                                                                       Eq. (10) describes the waveform in terms of two complex numbers
+            2vm (t − τ )                                                           (both at the fundamental frequency): the ﬁrst is the actual fundamental-
+hk (t ) =                − hm (t − τ )
+                 Zc                                                   (6)          frequency component of the waveform and the second is a term that
+            2vk (t − τ )                                                           combines all other harmonic components (including the dc component)
+hm (t ) =                − hk (t − τ )                                             into a single complex number. Therefore, if x 1 (t ) is calculated using
+                 Zc                                                   (7)
+                                                                                   Eq. (2), then the ﬁrst term on the right-hand side of Eq. (10) can be
+where τ is the travel-time delay, and Zc is the line’s characteristic im-          readily calculated and then subtracted from the already available left-
+pedance. According to Eqs. (6) and (7), current injections at nodes k              hand side. Doing so yields the second term on the right-hand side of Eq.
+and m at time t are calculated using quantities at the other node at time          (10), which includes all dc and harmonic contents of the EMT wave-
+t − τ. This natural latency allows that the two sides of the line to be            form. Once obtained, the corresponding fully-augmented fundamental-
+simulated using diﬀerent modeling approaches such as EMT and dy-                   frequency dynamic phasor can be readily calculated as per Eq. (5). This
+namic phasor solvers.                                                              method circumvents direct calculation of Eq. (5) using individual har-
+   Consider a situation where the nodes k and m represent the dy-                  monic components and yields the same fully augmented fundamental-
+namic-phasor and EMT network segments, respectively. The equivalent                frequency dynamic phasor with much reduced complexity.
+impedance model of such a DP-EMT model is similar to Fig. 1; however,
+the corresponding quantities on the node-k side are dynamic phasors                3.3. Two time-step co-simulation
+and quantities on the node-m side are EMT samples.
+   The DP form of Eq. (6) is as follows:                                               In order to achieve signiﬁcant simulation speed gain using the
+              2Vm (t − τ )                     2π
+                                                                                   proposed DP-EMT co-simulation approach, it is desirable to simulate
+Hk (t ) = ⎡                − Hm (t − τ ) ⎤ e−jτ T                                  the DP subsystem using larger time-steps than that of the EMT sub-
+          ⎢
+          ⎣       Zc                     ⎥
+                                         ⎦                            (8)
+                                                                                   system. This is also motivated by the fact that the DP side of the net-
+    According to Eq. (8), in order to calculate the current injection at           work is likely to manifest slower dynamics than the EMT part, if net-
+node k, instantaneous quantities at the EMT side (i.e., nd need to be              work segmentation is done at an appropriate location. In general there
+converted to equivalent DP quantities. Similarly, to determine the                 is no universal rule as to where segmentation must occur. However, it is
+current injection at node m using Eq. (7), the DP quantities at node k             recommended that a network be split into EMT and DP subsystems at a
+need to be converted to instantaneous time-domain quantities. There-               point that is electrically far from high-frequency transients (for example
+fore, bi-directional signal conversion is required to realize the proposed         far from power-electronic converters) so that the inductive nature of
+DP-EMT hybrid transmission line.                                                   system lines and loads introduces damping to high-frequency contents.
+    It must be noted that the two networks on the EMT and DP sides are             If segmented in this manner, the voltages and currents at the point of
+modeled using conventional admittance matrix (nodal analysis)                      segmentation will be largely devoid of excessive amounts of high-
+
+                                                                             425
+K. Mudunkotuwa, S. Filizadeh                                                                                     Electric Power Systems Research 163 (2018) 423–429
+
+
+
+
+           Fig. 2. Time line of a two time-step DP-EMT simulation.
+
+
+frequency contents and as such high levels of accuracy will be retained
+even if the DP side of the network is simulated with a large time-step. It
+must, however, be noted that the location of segmentation in the pro-
+posed method does not have any implications on its numerical stability,
+and it only manifests itself in the retention of high-frequency contents
+in the DP side of the network for multi-rate co-simulations.                               Fig. 3. Segmented IEE118-bus test system with a wind farm.
+    A two time-step simulation approach using the latency of the
+transmission line was ﬁrst proposed in Ref. [25]. Assume that the DP               line where segmentation occurs. This method produces accurate results
+and EMT sides of the network are simulated using time-steps of ΔT and              [16], as long as adequate inductance and capacitance is available
+Δt, respectively. Without signiﬁcant practical limitation, it is further           through neighboring lines.
+assumed that ΔT is an integer multiple of Δt. The time-step ratio, n, is               In the following section, a case study of co-simulation using the
+deﬁned as follows.                                                                 developed DP-EMT interface is shown. The example demonstrates the
+                                                                     (11)          accuracy and computational advantages of the proposed co-simulation
+ΔT = nΔt
+                                                                                   method.
+    If the two subsystems are connected via a transmission line that has
+a travel time delay of τ, then a two time-step simulation strategy can be
+implemented if the condition is satisﬁed. Fig. 2 shows the time line of a          4. Co-simulation example case
+two time-step DP-EMT simulation.
+    The DP subsystem is only solved at every integer multiple of the                   The IEEE 118-bus test system [26] is used to illustrate the accuracy
+large time-step, ΔT, and EMT subsystem is solved at every integer                  and eﬃcacy of the proposed DP-EMT co-simulator. As shown schema-
+multiple of the small time-step, Δt. As a result of (11), DP and EMT               tically in Fig. 3 a small portion (3 buses) of the system containing a
+solutions are synchronized at kΔT, where k is an integer. Furthermore,             Type-4 wind farm of 75 turbines (6 MW each) [27] is modeled in an
+between two consecutive complete DP solutions, there are n-1 instants              EMT simulator (PSCAD/EMTDC) including detailed switching-level
+of the small time-steps where only the EMT solution is calculated. To              models of power electronic converters. An aggregate representation is
+calculate the DP solution at kΔT, past information from the EMT side               used to model the wind farm, where only one wind turbine is simulated
+calculated at kΔT − τ is required. Similarly, to calculate the EMT so-             and is then scaled up to represent the concurrent operation of several
+lution at kΔT + Δt, DP-side information at kΔT + Δt − τ is required.               wind turbines in the farm. The total capacity of the wind farm is
+This information may not be readily available as the DP solution at                450 MW. Fig. 4 shows the block diagram representation of the Type-4
+kΔT + Δt − τ is not necessarily ‘calculated’. The required intermediate            aggregated windfarm in an EMT platform. All power-electronic con-
+data points, however, can be estimated by linearly interpolating the DP            troller feedback signals are retained within the EMT portion of the
+solutions at kΔT and (k − 1)ΔT. in this scheme, interpolation is done for          network to avoid unrealistic conversions between DP and EMT signals
+the dynamic phasor quantities; as a result, the error is less for low-             for feeding controllers.
+frequency transients around the base frequency.                                        The remaining 115 buses of the system are modeled in the dynamic
+    The maximum DP-side time-step of the DP-EMT co-simulation ap-                  phasor domain in a custom simulation environment and the proposed
+proach discussed in this paper is dependent on the transmission line               DP-EMT interface is used to connect the two simulators. The existing
+delay. In order to have large traveling delays, long transmission lines            150-km transmission line between buses 9 and 8 is used as the DP-EMT
+need to be considered. For instance, a transmission line of 300 km                 interface. The positive-sequence parameters of this line are shown in
+(minimum) must be available to simulate the DP-side network at a                   Table 1. Communication between the two simulators is established
+1000-μs time-step. This limits the ﬂexibility of choosing time-steps due           using the control network interface (TCP/IP-based) of PSCAD/EMTDC.
+to the fact that long transmission lines are not always available at the               Three sets of simulations are conducted: (1) a DP-EMT co-simula-
+location of the interface. Further, the transmission line models found in          tion with a 20-μs time step for both simulators; (2) a DP-EMT co-si-
+the literature that enable use of larger time-steps than the travel time           mulation with 500-μs and 20-μs time-steps for the DP and EMT seg-
+delay do not provide decoupling between their two ends. Therefore                  ments, respectively; and (3) a full EMT simulation with a 20-μs time
+such transmission line models are not suitable for use in this approach            step. The full EMT simulation is used to validate the results of the DP-
+to achieve large time-step ratios.                                                 EMT co-simulations.
+    Consider the speed of light at 3 × 105 km/s; then the approximate                  The ﬁrst co-simulation with equal 20-μs time-steps for both
+minimum length (lmin) of the transmission line to satisfy the condition
+ΔT ≤ τ is as follows:
+l min ≈ 3 × 105 × ΔT                                                 (12)
+
+    For example, this implies that in order to run the DP-side of co-
+simulator at a 500-μs time-step, a 150-km (minimum) transmission line
+must be available. Obviously, larger time-step ratios require longer
+transmission lines. A simple way to circumvent this limitation, at least
+in part, is to ‘borrow’ line inductance and capacitance from neighboring
+transmission lines in order to artiﬁcially elongate a short transmission                                Fig. 4. Type-4 wind farm model.
+
+
+                                                                             426
+K. Mudunkotuwa, S. Filizadeh                                                                                          Electric Power Systems Research 163 (2018) 423–429
+
+
+Table 1
+Transmission line (B8–B9). Positive-sequence parameters.
+  Parameter                             Value [pu] on a 138 kV/100 MVA base
+
+  R (series resistance)                 0.0025
+  X (series reactance)                  0.0305
+  B (shunt admittance)                  1.1620
+
+
+
+
+                                                                                      Fig. 6. Instantaneous current and voltage waveforms at bus 10 (top two plots)
+                                                                                      and bus 30 (bottom two plots) for EMT (20-μs) and DP-EMT (500-μs:20-μs)
+                                                                                      simulations.
+
+
+
+
+Fig. 5. Instantaneous current and voltage waveforms at bus 10 (top two plots)
+and bus 30 (bottom two plots) for EMT (20-μs) and DP-EMT (20-μs:20-μs) si-
+mulations.
+
+
+simulators is meant to verify that the co-simulator is able to replicate
+full EMT results. The second co-simulation with a 25:1 time-step ratio is
+meant to show that signiﬁcant acceleration will be achieved with the
+use of a larger time step for the dynamic phasor segment while main-
+taining the accuracy of representation of low-frequency oscillations.
+    In all simulations, a three-phase-to-ground fault is applied at bus 8
+(see Fig. 3) at t = 1.8 s and cleared 6 cycles later. Current and voltage
+                                                                                      Fig. 7. Terminal voltage (rms, fundamental), and real and reactive power at the
+measurements are captured at bus 10 (within the EMT segment) and                      wind farm terminal for EMT (20-μs) and DP-EMT (500-μs:20-μs) simulations.
+bus 30 (within the DP segment).
+    Fig. 5 shows a comparison between the results of the hybrid DP-
+EMT (20-μs:20-μs) co-simulation and the fully detailed EMT model of                   Table 2
+                                                                                      Simulation time comparison.
+the whole network. The plots show that the DP-EMT simulator has
+complete conformity with the full EMT simulator when equal time-steps                  Simulator                                       Time taken for a 3-s simulation
+are used. This is due to the fact that fully-augmented fundamental-
+                                                                                       EMT for the whole network                       694 s
+component dynamic phasors of EMT waveforms at the interface
+                                                                                       DP-EMT                                          132 s
+boundary are calculated and transferred to the dynamic phasor seg-                     Simulation time gain                            694/132 = 5.26
+ment, thereby preserving the entire simulated harmonic spectrum. This                  DP-EMT (voltage source)                         32 s
+illustrates a clear advantage of the developed extended-frequency dy-                  Simulation time gain                            694/32 = 21.69
+namic phasor notion as conventional DP-based simulators, in which
+only the fundamental component is considered, are not able to achieve
+EMT-grade accuracy even if small simulation time-steps are used.                      replicates the results obtained using the full EMT model of the whole
+    Fig. 6 shows a comparison between the results of the hybrid DP-                   network for these slowly varying quantities.
+EMT (500-μs:20-μs) and the fully detailed EMT model of the whole                          Table 2 shows the simulation time comparison between the full EMT
+network. These plots show that the DP-EMT simulator is able to capture                (the entire network at 20 μs) and the DP-EMT (500 μs:20 μs) simula-
+the low-frequency contents of the waveforms before, during, and after                 tions for a simulation duration of 3 s. As seen, the DP-EMT co-simula-
+the fault; some high-frequency transients are not observed in the DP-                 tion is more than 5 times faster than the EMT solver, thereby oﬀering
+EMT results due to the fact that use of a larger time-step to gain si-                signiﬁcant computational relief. This reduction in simulation time is
+mulation speed results in less harmonic bandwidth in the simulated                    while maintaining the accuracy of simulated results in terms of low-
+waveforms.                                                                            frequency dynamics, as is shown in Figs. 5 and 6. The results in this
+    Fig. 7 shows a comparison of the per-unit (positive sequence, fun-                section show that the developed simulator oﬀers the user the ability to
+damental frequency only) rms voltage as well as real and reactive                     control the accuracy and computational burden of the co-simulation
+power at the wind farm terminal for the DP-EMT (500-μs:20-μs) co-                     depending on the time-step ratio of the EMT and DP-based solvers.
+simulation. These traces clearly show the DP-EMT co-simulator closely                     It must be noted that the speed-up gain shown in Table 2 is due to
+                                                                                      the reduction of the number of ﬂoating point operations required to
+
+                                                                                427
+K. Mudunkotuwa, S. Filizadeh                                                                                    Electric Power Systems Research 163 (2018) 423–429
+
+
+                                                                                  running at a much larger time-step. These high-frequency transients
+                                                                                  have to be absorbed by some means such as additional ﬁlters at the
+                                                                                  EMT side of the interface. The signal conversion method in Ref. [16],
+                                                                                  which is used in this paper, oﬀers ﬂexibility to introduce damping to
+                                                                                  the dynamic phasor extraction process, thereby controlling the level of
+                                                                                  high-frequency contents of the waveform to be converted to a dynamic
+                                                                                  phasor. Fig. 8 shows a damping factor, α, introduced to perform this
+                                                                                  task. As seen α controls the magnitude of the high-frequency compo-
+                                                                                  nents of signal x(t) that are superimposed onto the fundamental com-
+                                                                                  ponent. For α = 1, high-frequency components are included with no
+                                                                                  attenuation; for α = 0, they are completely ignored.
+                  Fig. 8. DP extraction method with damping.
+                                                                                      The need for damping is mostly present in TS-EMT interfacing,
+                                                                                  which is a special case of DP-EMT co-simulation wherein network dy-
+simulate the external subsystem (i.e., the DP side). The overall speed is         namics in the non-EMT part of the network is entirely ignored. Fig. 9
+still heavily contributed to by the EMT side, where detailed re-                  shows simulation results of a radial system (see Ref. [16] for details)
+presentation of power electronic switching events in the wind farm                wherein part of the network is simulated in EMT and part of is simu-
+converters consumes considerable time. In fact, replacement of the                lated in TS. At the point where TS and EMT subnetworks are interfaced,
+wind farm in the considered network with a controlled and dynami-                 high-frequency components are prevalent, and as such instabilities may
+cally-adjusted voltage source resulted in a speed-gain of more than 22,           occur due to the fact that the TS portion of the network is unable to
+which is due the simpliﬁed switching converter model (simulation                  absorb high-frequency components in its fundamental-frequency (only)
+traces are not shown for brevity).                                                representation. As a result of this, when EMT and TS simulators are
+                                                                                  interfaced there will be a large mismatch between two solutions due to
+5. Stability and damping                                                          the diﬀerences in modeling between two simulators. Hence, the TS-
+                                                                                  EMT interface has to absorb high-frequency components of the EMT
+    The signal conversion method used in the paper has shown nu-                  signals to maintain numerical stability and accuracy of the simulation.
+merical stability in all DP-EMT simulation scenarios considered, which            As seen in Fig. 9 traces, small levels of damping are able to rectify the
+is an important quality. In multi-rate co-simulations in this paper, in-          problem and result in high levels of accuracy in the co-simulated traces.
+terpolation is used to determine intermediate points, and as such data-               Note that the need for damping arises when TS-EMT interfacing is
+point granularity between the two sides of the interface is diﬀerent. In          done at a point where high-frequency components are signiﬁcant. In
+rare cases this may lead to numerical instability. For instance, the EMT          general segmentation of a network at such a point is not a proper
+side of a simulation running at a small time-step can capture high-fre-           practice. Segmentation is best achieved, without any damping, a point
+quency transients that may not be represented at the non-EMT side
+
+
+
+
+Fig. 9. Current through line-segment π2 [16] in TS-EMT co-simulation. (a) TS-EMT interface with α = 0.97, (b) TS-EMT interface with α = 0.95, and (c) TS-EMT
+interface with α = 0.93.
+
+
+                                                                            428
+K. Mudunkotuwa, S. Filizadeh                                                                                                        Electric Power Systems Research 163 (2018) 423–429
+
+
+where high-frequency contents have been naturally attenuated. DP-                                   T. Noda, H. Ghasemi, A. Monti, M. Matar, R. Iravani, J.A. Martinez, Dynamic
+EMT co-simulation, on the other hand, does not need damping for                                     system equivalents: a survey of available techniques, IEEE Trans. Power Deliv. 27
+                                                                                                    (January (1)) (2012) 411–420.
+virtually all cases due to the ability of dynamic phasors to absorb high-                       [6] F. Ma, V. Vittal, Right-sized power system dynamic equivalents for power system
+frequency contents.                                                                                 operation, IEEE Trans. Power Syst. 26 (November (4)) (2011) 1998–2005.
+                                                                                                [7] J.M. Zavahir, J. Arrillaga, N.R. Watson, Hybrid electromagnetic transient simula-
+                                                                                                    tion with the state variable representation of HVDC converter plant, IEEE Trans.
+6. Conclusions                                                                                      Power Deliv. 8 (July (3)) (1993) 1591–1598.
+                                                                                                [8] V.J. Marandi, V. Dinavahi, K. Strunz, J.A. Martinez, A. Ramirez, Interfacing tech-
+    The paper proposed and implemented an interface between an EMT                                  niques for transient stability and electromagnetic transient programs, IEEE Trans.
+                                                                                                    Power Deliv. 24 (October (4)) (2009) 2385–2395.
+and a dynamic-phasor based solver for co-simulation of electrical net-                          [9] X. Wang, P. Zhang, Z. Wang, V. Dinavahi, G. Chang, J.A. Martinez, A. Davoudi,
+works. The rationale for development of such a co-simulator is to en-                               A. Mehrizi-Sani, S. Abhyankar, Interfacing issues in multiagent simulation for smart
+able and expedite EMT-type simulation of large electrical networks                                  grid applications, IEEE Trans. Power Deliv. 28 (July (3)) (2013) 1918–1927.
+                                                                                               [10] B. Asghari, V. Dinavahi, M. Rioual, J.A. Martinez, R. Iravani, Interfacing techniques
+wherein fast-acting controllers and switching power-electronic con-
+                                                                                                    for electromagnetic ﬁeld and circuit simulation programs, IEEE Trans. Power Deliv.
+verters are embedded. By taking advantage of the harmonic selectivity                               24 (April (2)) (2009) 939–950.
+of dynamic phasor-based modeling, the proposed co-simulator can oﬀer                           [11] H. Vardhan, B. Akin, H. Jin, A low-cost, high-ﬁdelity processor-in-the-loop plat-
+signiﬁcant computational relief and selectivity compared with an EMT                                form, IEEE Power Electron. Mag. 3 (June (2)) (2016) 18–28.
+                                                                                               [12] G. Chongva, S. Filizadeh, Non-real-time hardware-in-loop electromagnetic transient
+simulator.                                                                                          simulation of microcontroller-based power electronic control systems, Proc. 2013
+    The paper described how simulated samples are converted from the                                IEEE Power Engineering Society General Meeting (2018) 1–5.
+EMT domain to counterpart dynamic phasors and vice versa, and                                  [13] W. Ren, M. Sloderbeck, V. Dinavahi, S. Filizadeh, A.R. Chevreﬁls, M. Matar,
+                                                                                                    R. Iravani, C. Dufour, J. Belanger, M.O. Faruque, K. Strunz, J.A. Martinez,
+transmitted across the transmission line interface. In particular, a                                Interfacing issues in real-time digital simulators, IEEE Trans. Power Deliv. 26 (April
+computationally eﬃcient method was described for conversion of EMT                                  (2)) (2011) 1221–1230.
+samples to dynamic phasors, which retained the full harmonic spectrum                          [14] F. Plumier, Co-simulation of Electromagnetic Transients and Phasor Models of
+                                                                                                    Electric Power Systems. Ph.D. Dissertation, University of Liège, 2015.
+of the EMT waveform and represented it as a dynamic phasor at fun-                             [15] K.M.H.K. Konara, Interfacing Dynamic Phasor Based System Equivalents to an
+damental frequency. The implications of two time-step co-simulation on                              Electromagnetic Transient Simulation. M.Sc. Thesis, University of Manitoba, 2014.
+the length of the interfacing transmission line were described.                                [16] S. Mudunkotuwa, Development of a hybrid simulator by interfacing dynamic
+                                                                                                    phasors with electromagnetic transient simulation, IET Gener. Transm. Distrib. 11
+    The paper showed co-simulation results of a representative network                              (12) (2017) 2991–3001.
+in which a large wind farm was embedded. It was shown that de-                                 [17] S.R. Sanders, J.M. Noworolski, X.Z. Liu, G.C. Verghese, Generalized averaging
+pending on the simulation time-steps used, the developed DP-EMT co-                                 method for power conversion circuits, IEEE Trans. Power Electron. 6 (April (2))
+                                                                                                    (1991) 251–259.
+simulator is able to capture both the low- and the high-frequency
+                                                                                               [18] M.A. Kulasza, Generalized Dynamic Phasor-Based Simulation for Power Systems.
+contents of waveforms in both the EMT and dynamic phasor segments                                   M.Sc. Thesis, Department of Electrical & Computer Engineering. Engineering
+of the network, and oﬀer signiﬁcant computational relief; a speed gain                              University of Manitoba, 2014.
+of larger than 5 was obtained in the shown example.                                            [19] S. Henschel, Analysis of Electromagnetic and Electromechanical Power System
+                                                                                                    Transient with Dynamic Phasors. Ph.D. dissertation, University of British Colombia,
+    The implications of ignoring network dynamics in the non-EMT part                               1999.
+of the network (i.e., TS-EMT interfacing) were discussed and a damping                         [20] P. Zhang, J.R. Martí, H.W. Dommel, Synchronous machine modeling based on
+factor to absorb small amounts of high-frequency contents to ensure                                 shifted frequency analysis, IEEE Trans. Power Syst. 22 (3) (2007) 1139–1147.
+                                                                                               [21] D.M. Falcao, E. Kaszkurewicz, H.L.S. Almeida, Application of parallel processing
+accuracy and prevent numerical instability was introduced.                                          techniques to the simulation of power system electromagnetic transients, IEEE
+                                                                                                    Trans. Power Syst. 8 (February (1)) (1993) 90–96.
+References                                                                                     [22] K. Strunz, R. Shintaku, F. Gao, Frequency-adaptive network modeling for in-
+                                                                                                    tegrative simulation of natural and envelope waveforms in power systems and
+                                                                                                    circuits, IEEE Trans. Circuits Syst. I: Regul. Pap. 53 (12) (2006) 2788–2803.
+ [1] S. Chiniforoosh, J. Jatskevich, A. Yazdani, V. Sood, V. Dinavahi, J.A. Martinez,          [23] F. Gao, K. Strunz, Frequency-adaptive power system modeling for multiscale si-
+     A. Ramirez, Deﬁnitions and applications of dynamic average models for analysis of              mulation of transients, IEEE Trans. Power Syst. 24 (May (2)) (2009) 561–571.
+     power systems, IEEE Trans. Power Deliv. 25 (October (4)) (2010) 2655–2669.                [24] F.J. Plumier, P. Aristidou, C. Geuzaine, T. Van Cutsem, A relaxation scheme to
+ [2] H. Ouquelle, L.A. Dessaint, S. Casoria, An average value model-based design of a               combine phasor-mode and electromagnetic transients simulations, Proc. Power
+     deadbeat controller for VSC-HVDC transmission link, Proc. 2009 IEEE Power &                    Systems Computation Conference, Wroclaw, Poland, 2014.
+     Energy Society General Meeting (2018) 1–6.                                                [25] A. Semlyen, F. de Leon, Computation of electro-magnetic transients using dual or
+ [3] H. Saad, S. Dennetiere, J. Mahseredjian, P. Delarue, X. Guillaud, J. Peralta,                  multiple time steps, IEEE Trans. Power Syst. 8 (August (3)) (1993) 1274–1281.
+     S. Nguefeu, Modular multilevel converter models for electromagnetic transients,           [26] IEEE 118-Bus System, Available: http://icseg.iti.illinois.edu/ieee-118-bus-system/.
+     IEEE Trans. Power Deliv. 29 (June (3)) (2014) 1481–1489.                                  [27] Wind Turbines—Part 27-1: Electrical Simulation Models—Wind Turbines, IEC
+ [4] S.E.M. de Oliveira, A.G. Massaud, Modal dynamic equivalent for electric power                  Standard 61400-27-1, ed. 1, February 2015.
+     systems I: theory, IEEE Trans. Power Syst. 3 (November (4)) (1988) 1731–1737.
+ [5] U.D. Annakkage, N.K.C. Nair, Y. Liang, A.M. Gole, V. Dinavahi, B. Gustavsen,
+
+
+
+
+                                                                                         429
+
