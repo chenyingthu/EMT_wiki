@@ -1,28 +1,16 @@
 ---
 title: "故障分析方法 (Fault Analysis Methods)"
 type: method
-tags: [fault-analysis, short-circuit, grounding, protection, emt-simulation]
+tags: [fault-analysis, short-circuit, grounding, protection, emt-simulation, distance-relaying, traveling-wave, commutation-failure]
 created: "2026-05-04"
+updated: "2026-05-18"
 ---
 
 # 故障分析方法 (Fault Analysis Methods)
 
-
-```mermaid
-graph TD
-    subgraph Ncmp[故障分析方法 (Fault Analysis Metho…]
-        N0[相域时控开关: 故障相别、时刻、阻抗]
-        N1[序分量诊断: 三相量、基波提取窗口]
-        N2[行波分析: 高频采样电压电流、线路参数]
-        N3[控制保护闭环仿真: 控制器、限流、保护逻辑]
-        N4[批量故障扫描: 故障位置、阻抗、起始角集合]
-    end
-```
-
-
 ## 定义与边界
 
-故障分析方法是在 EMT 仿真中描述短路、接地、断线、换流器闭锁、保护切除和重合闸等异常工况的建模与计算方法集合。它的输入通常包括故障类型、故障位置、故障阻抗、投入与切除时刻、故障前稳态、保护动作逻辑和被观测端口；输出是相电压电流、序分量、故障电流峰值、直流偏移、恢复电压、行波到达时刻或保护判据量。
+故障分析方法是 EMT 仿真中描述短路、接地、断线、换流器闭锁、保护切除和重合闸等异常工况的建模与计算方法集合。输入包括故障类型、故障位置、故障阻抗、投入与切除时刻、故障前稳态、保护动作逻辑和被观测端口；输出是相电压电流、序分量、故障电流峰值、直流偏移、恢复电压、行波到达时刻或保护判据量。
 
 本页讨论 EMT 中的故障建模与后处理方法，不替代 [[relay-protection]] 的保护原理页，也不替代 [[fault-impedance-model]] 对故障电阻、电弧和接地路径的模型化说明。若研究对象是大电网同步稳定筛查，应区分 EMT 故障波形和机电暂态正序故障模型的边界。
 
@@ -30,45 +18,190 @@ graph TD
 
 EMT 故障分析的价值在于保留相域瞬时量、开关时刻、直流偏移、控制器限幅和非线性元件响应。它常用于：
 
-- 评估断路器、避雷器、换流器和变压器在故障期间的电压电流应力。
-- 验证保护元件在故障投入、故障发展、切除和重合闸过程中的动作逻辑。
-- 分析 VSC-HVDC、MMC、风电场和配电网中故障电流受控制器、限流器和电力电子拓扑约束后的形态。
-- 为 [[prony-analysis]]、[[fft]] 或行波定位等后处理方法提供高分辨率波形。
+- 评估断路器、避雷器、换流器和变压器在故障期间的电压电流应力
+- 验证保护元件在故障投入、故障发展、切除和重合闸过程中的动作逻辑
+- 分析 VSC-HVDC、MMC、风电场和配电网中故障电流受控制器、限流器和电力电子拓扑约束后的形态
+- 为 [[prony-analysis]]、[[fft]] 或行波定位等后处理方法提供高分辨率波形
 
 这些结果不能自动外推为所有系统短路容量或保护可靠性；每个结论都应绑定具体网络、故障类型、过渡阻抗、采样率、步长和控制保护设置。
 
 ## 核心机制
 
-故障在 EMT 网络中通常表现为拓扑或参数的离散变化。对接地短路，可把故障点相电压与地之间接入时变导纳：
+### 故障支路导纳模型
 
-$$i_f(t)=G_f(t)v_f(t), \quad G_f(t)=1/R_f(t)$$
+故障在 EMT 网络中表现为拓扑或参数的离散变化。对接地短路，可把故障点相电压与地之间接入时变导纳：
 
-其中 $v_f$ 是故障点端口电压，$i_f$ 是故障支路电流，$R_f$ 是等效故障电阻。金属性故障可用小电阻近似；高阻接地和电弧故障需要把 $R_f$ 视为随电流、弧长、介质和时间变化的模型参数。
+$$i_f(t) = G_f(t) v_f(t), \quad G_f(t) = \frac{1}{R_f(t)}$$
+
+其中 $v_f$ 是故障点端口电压，$i_f$ 是故障支路电流，$R_f$ 是等效故障电阻。金属性故障可用小电阻近似（$R_f = 0.001\sim0.01\,\Omega$）；高阻接地和电弧故障需要把 $R_f$ 视为随电流、弧长、介质和时间变化的模型参数。
+
+金属性短路的分段函数模型：
+
+$$G_f(t) = \begin{cases} 0 & t < t_f \\ G_{sc} = 1/R_{sc} & t_f \leq t < t_c \\ 0 & t \geq t_c \end{cases}$$
+
+其中 $t_f$ 为故障投入时刻，$t_c$ 为故障切除时刻。
 
 不对称交流故障可用 [[sequence-network-model]] 解释正序、负序和零序网络的关系；但在 EMT 中，实际求解仍通常在相域网络中进行，以便保留非正弦波形、开关事件和控制器饱和。对直流线路和 MMC 直流故障，故障电流路径还取决于二极管、子模块电容、桥臂电抗和闭锁策略，不能直接套用交流三序网络。
 
-故障后处理常见步骤包括：选取故障窗口，分离基波和暂态分量，计算 RMS 或峰值，提取直流偏移，计算 $I^2t$ 热应力，识别首波头或行波到达时间。若用频谱或模态结果解释故障波形，应同时说明窗口长度、滤波器和扰动是否足够小。
+### 故障电流直流偏移分量
 
-## 分类与变体
+短路电流中的直流偏移分量（故障投入角 $\theta$ 决定衰减初值）：
 
-| 方法路线 | 主要输入 | 主要输出 | 适用对象 |
-|----------|----------|----------|----------|
-| 相域时控开关 | 故障相别、时刻、阻抗 | 瞬时电压电流 | EMT 通用短路和接地故障 |
-| 序分量诊断 | 三相量、基波提取窗口 | 正负零序量 | 不对称交流故障解释 |
-| 行波分析 | 高频采样电压电流、线路参数 | 波头时间、故障距离估计 | 长线路、直流线路和保护研究 |
-| 控制保护闭环仿真 | 控制器、限流、保护逻辑 | 动作时刻、闭锁和恢复过程 | VSC、MMC、风电和 HIL |
-| 批量故障扫描 | 故障位置、阻抗、起始角集合 | 包络、最坏工况、统计分布 | 保护整定和设备应力筛查 |
+$$i_{dc}(t) = \left(\frac{V_m}{|Z|}\sin\theta - \frac{V_m}{|Z|}\sin(\omega t + \theta)\right) e^{-t/\tau}$$
 
-## 适用边界与失败模式
+其中 $\theta$ 为故障投入角，$\tau = L/R$ 为时间常数，决定直流衰减速度。直流偏移在故障初期可使峰值电流达到稳态短路电流峰值的 $1.5\sim2.0$ 倍。
 
-- 故障电阻、接地路径和电弧模型不确定时，电流幅值和保护裕度应以参数扫描表达，而不是给单一强结论。
-- 梯形积分在开关突变后可能产生数值振荡；应检查 [[discretization-methods]]、[[numerical-integration]] 和开关插值设置。
-- 故障前初始化错误会把人工暂态混入故障响应；应先核查 [[steady-state-initialization]] 和故障投入前的潮流/控制状态。
-- 相量或 RMS 后处理会抹去首波头、高频振荡和直流偏移，不适合直接评价行波保护和器件级应力。
-- 故障电阻、接地路径和电弧模型不确定时，电流幅值和保护裕度应以参数扫描表达，而不是给单一强结论。
-- 单个 PSCAD、RTDS 或自编 EMT 算例只能支撑该算例的故障行为；不能写成所有电压等级、线路类型或控制策略下的通用结论。
+## EMT 建模方法分类
 
-### 关键假设
+### 1. 相域时控开关法
+
+最基本的故障建模方法：在指定故障相别、时刻和阻抗的条件下，通过 EMT 网络拓扑切换（接入或切除故障导纳支路）实现故障投入与清除。
+
+**数学表达**：在 $t_f$ 时刻将故障支路接入节点导纳矩阵：
+
+$$\mathbf{G}_{n+1} = \mathbf{G}_n + \Delta \mathbf{G}_f, \quad \Delta \mathbf{G}_f = \frac{1}{R_f} \mathbf{e}_k \mathbf{e}_k^{\mathrm{T}}$$
+
+其中 $\mathbf{e}_k$ 为第 $k$ 个故障节点的选择向量。
+
+**特点**：实现简单，每步计算量低；但步长 $h$ 决定了故障投入的最小时间分辨率，对于高频暂态（如行波传播）可能精度不足。
+
+### 2. 序分量阻抗测量法
+
+利用故障后电气量（电压和电流）的基波分量计算等效正序阻抗，进而推算故障距离。Rosołowski 等（1997）提出的复数微分方程法是典型代表，将序分量变换与时域微分方程求解相结合：
+
+$$\begin{bmatrix} V_0 \\ V_1 \\ V_2 \end{bmatrix} = \frac{1}{3} \begin{bmatrix} 1 & 1 & 1 \\ 1 & a & a^2 \\ 1 & a^2 & a \end{bmatrix} \begin{bmatrix} V_a \\ V_b \\ V_c \end{bmatrix}, \quad a = e^{j2\pi/3}$$
+
+距离保护测量阻抗（含零序补偿）：
+
+$$Z_m = \frac{V_m}{I_m + k_0 I_0}, \quad k_0 = \frac{Z_0 - Z_1}{3Z_1}$$
+
+其中 $k_0$ 为零序补偿系数，$I_0$ 为零序电流，$Z_1$ 和 $Z_0$ 分别为正序和零序阻抗。
+
+**复数微分方程法（Rosołowski 1997）**：将故障回路等效为串联 R-L 电路，利用复数微分方程直接求解：
+
+$$v_1(t) = R_1 i_{1f}(t) + L_1 \frac{di_{1f}(t)}{dt}$$
+
+通过实时求解该方程得到正序电阻 $R_1$ 和电抗 $X_1 = \omega L_1$，进而计算故障距离 $d = X_1 / X_{1,pu}$（$X_{1,pu}$ 为线路单位长度电抗）。该方法在单采样时刻即可完成阻抗计算，具有极高响应速度。
+
+### 3. 行波分析法
+
+利用故障发生时产生的暂态行波在线路上的传播特性（波速、到达时间差）进行故障定位。高频采样（通常 $1\sim10\,$MHz）是行波分析的前提。
+
+**单端行波定位**：利用首波头到达时间 $t_1$ 与故障距离 $d$ 的关系：
+
+$$d = \frac{v_p \cdot t_1}{2}$$
+
+其中 $v_p \approx c/\sqrt{\varepsilon_r}$ 为线模波速，$c$ 为光速，$\varepsilon_r$ 为相对介电常数。
+
+**双端行波定位**：利用首波头到达时间差 $\Delta t = t_2 - t_1$：
+
+$$d = \frac{v_p \cdot (L - v_p \cdot \Delta t)}{2}$$
+
+其中 $L$ 为线路长度。双端法不受波速误差影响，但需要严格时钟同步（同步精度需 $<1\,\mu$s）。
+
+**Zhang 2024（MMC-HVDC 故障定位）**指出：由于 MMC-HVDC 系统配备了快速动作保护和高频直流断路器（HDCCB），在故障后仅有极短的数据窗口（$<1\,$ms）可用于故障定位。提出了基于暂态电压特征（TWPV）和回归分析的快速定位算法，在 $0.1\sim0.9\,$pu 故障电阻、$0\sim200\,$km 故障距离条件下，回归决定系数 $R^2 \geq 0.97$，单极接地故障定位误差 $<1\,$%。
+
+### 4. 控制保护闭环仿真法
+
+将保护控制器的限流、闭锁和恢复策略纳入 EMT 仿真，形成完整的故障时序闭环。典型应用场景包括 VSC/MMC 换流器故障穿越、风电场低电压穿越和 HIL 硬件在环测试。
+
+**MMC 直流故障电流计算（Wang 2023）**：在 MMC-HVDC 直流侧故障时，子模块电容通过二极管放电产生故障电流：
+
+$$i_{sc}(t) = \frac{V_{dc}}{R_{dc}} \left(1 - e^{-t/\tau_{dc}}\right), \quad \tau_{dc} = \frac{L_{arm}}{R_{dc}}$$
+
+其中 $V_{dc}$ 为直流电压，$L_{arm}$ 为桥臂电抗，$R_{dc}$ 包括故障电阻和桥臂电阻。故障电流峰值可达稳态直流电流的 $5\sim10$ 倍。
+
+### 5. 换相失败快速判别法
+
+针对多馈入直流系统的逆变器换相失败，Zhang 2018 提出的判据基于换流阀换相方程，考虑负序电压分量对换相电压角度偏移的影响：
+
+$$\mu = \arccos\left(\frac{\sqrt{2}I_d X_c}{V_{ac}}\right) - \arccos\left(\frac{\sqrt{2}I_d X_c}{V_{ac}(1-k_u)}\right)$$
+
+其中 $\mu$ 为换相角变化量，$I_d$ 为直流电流，$X_c$ 为换相电抗，$V_{ac}$ 为交流电压幅值，$k_u$ 为负序电压系数。当 $\gamma_{min} = \arccos\left(\frac{\sqrt{2}I_d X_c}{V_{ac}(1-k_u)}\right) < \gamma_{cr}$（临界关断角，通常 $\gamma_{cr} \approx 15^{\circ}$）时判定为换相失败。该判据在现有高压直流准稳态模型基础上稍加修改即可实现，便于与机电暂态仿真接口。
+
+### 6. 批量故障扫描法
+
+对故障位置、阻抗和起始角的组合空间进行系统扫描，获取保护整定所需的包络曲线和最坏工况。该方法本质上是参数化 EMT 仿真的批量执行，结果以统计分布形式给出，用于：
+- 确定保护电流/阻抗整定值的上下界
+- 评估设备热应力（$I^2t$ 积分）的最大值
+- 识别最苛刻故障场景供系统设计参考
+
+## 形式化表达汇总
+
+### 故障支路导纳（金属性短路）
+
+$$G_f(t) = \begin{cases} 0 & t < t_f \\ G_{sc} & t_f \leq t < t_c \\ 0 & t \geq t_c \end{cases}, \quad G_{sc} = \frac{1}{R_{sc}} \approx 100\sim1000\,\text{S}$$
+
+### 序分量变换（Fortescue 变换）
+
+$$\begin{bmatrix} V_0 \\ V_1 \\ V_2 \end{bmatrix} = \frac{1}{3} \begin{bmatrix} 1 & 1 & 1 \\ 1 & a & a^2 \\ 1 & a^2 & a \end{bmatrix} \begin{bmatrix} V_a \\ V_b \\ V_c \end{bmatrix}, \quad a = e^{j2\pi/3}$$
+
+### 直流偏移电流
+
+$$i_{dc}(t) = \left(\frac{V_m}{|Z|}\sin\theta - \frac{V_m}{|Z|}\sin(\omega t + \theta)\right) e^{-t/\tau}, \quad \tau = \frac{L}{R}$$
+
+### 距离保护测量阻抗（含零序补偿）
+
+$$Z_m = \frac{V_m}{I_m + k_0 I_0}, \quad k_0 = \frac{Z_0 - Z_1}{3Z_1}$$
+
+### MMC 直流故障电流
+
+$$i_{sc}(t) = \frac{V_{dc}}{R_{dc}}\left(1 - e^{-t/\tau_{dc}}\right), \quad \tau_{dc} = \frac{L_{arm}}{R_{dc}}$$
+
+### 单端行波定位
+
+$$d = \frac{v_p \cdot t_1}{2}, \quad v_p \approx \frac{c}{\sqrt{\varepsilon_r}}$$
+
+### 双端行波定位
+
+$$d = \frac{v_p \cdot (L - v_p \cdot \Delta t)}{2}, \quad \Delta t = t_2 - t_1$$
+
+## 量化性能边界
+
+| 方法 | 响应速度 | 精度 | 采样要求 | 适用场景 |
+|------|---------|------|---------|---------|
+| 相域时控开关 | 取决于步长 | 步长分辨率 | $<1\,\mu$s 步长 | EMT 通用短路和接地故障 |
+| 序分量阻抗测量（Rosołowski） | 单采样时刻 | 取决于噪声和建模精度 | 基波提取窗口 $1\sim3\,$周期 | 距离保护、故障距离估算 |
+| 复数微分方程法（Rosołowski） | $<1\,$ms | $R$/$X$ 误差 $<5\,$% | 短窗傅里叶滤波 | 快速距离保护 |
+| 行波分析（单端） | 波头检测延迟 | 精度 $\propto$ 采样率和波速精度 | $1\sim10\,$MHz | 长线路直流线路 |
+| 行波分析（双端） | 取决于同步精度 | 与波速无关，精度 $\pm 100\,$m | 同步 $<1\,\mu$s | 高压直流线路 |
+| MMC-HVDC 故障定位（Zhang 2024） | $<1\,$ms 数据窗 | $R^2 \geq 0.97$，误差 $<1\,$% | 高频暂态采样 | MMC-HVDC 电网 |
+| 换相失败判别（Zhang 2018） | 准稳态模型实时 | 与 EMT-TS 混合仿真对比验证 | 基波提取 | 多馈入 HVDC 不对称故障 |
+| 控制保护闭环仿真 | 实时步长 | 取决于控制器模型精度 | 控制链路采样率 | VSC/MMC 故障穿越 |
+
+## 关键技术挑战
+
+### 挑战 1：故障电阻的不确定性
+高阻接地故障（$R_f > 100\,\Omega$）和电弧故障的电阻呈非线性、时变特性。电弧电阻的经验模型（如 Mayr 电弧方程）：
+
+$$\frac{dR_a}{dt} = \frac{1}{\tau_a}\left(\frac{v_a^2}{P_{arc}} - R_a\right)$$
+
+其中 $\tau_a$ 为电弧时间常数，$P_{arc}$ 为电弧功率。模型参数需根据实验数据拟合，不确定性强。
+
+### 挑战 2：开关动作后的数值振荡
+梯形积分在故障投入瞬间产生电压突变时可能激发持续数值振荡（$\lim_{z\to-\infty} R(z) = -1$）。应检查 [[discretization-methods]] 中的阻尼特性，必要时切换为后向欧拉或 2S-DIRK 方法。
+
+### 挑战 3：故障前初始化的正确性
+故障前系统处于稳态运行点是 EMT 故障分析的基本假设。初始化错误会在故障响应中叠加人为暂态，影响故障电流峰值和时间常数的计算。参见 [[steady-state-initialization]]。
+
+### 挑战 4：多端 MMC-HVDC 故障电流的耦合路径
+多端 MMC-HVDC 系统中，故障电流通过公共直流网络耦合，各站的子模块电容放电电流相互影响。故障电流峰值和衰减时间常数不仅取决于故障站参数，还受邻站控制策略（限流、闭锁、HDCCB 动作时序）的强烈影响。
+
+### 挑战 5：行波定位的波速与色散
+频率相关线路参数导致不同频率成分的波速不同（色散现象），使行波波形在传播过程中发生畸变。在 $0.5\sim 1.0\,$MHz 采样下，波速误差可达 $\pm 5\,$%，导致定位误差达到线路长度的 $\pm 5\,$%。需要采用模态解耦或自适应波速校正。
+
+## 适用边界与选择指南
+
+| 场景 | 推荐方法 | 不推荐方法 | 原因 |
+|------|---------|-----------|------|
+| 交流输电线路距离保护测试 | 序分量阻抗测量/复数微分方程法 | 行波分析 | 线路较短，行波衰减明显 |
+| 直流线路故障定位 | 双端行波定位/MMC故障定位算法 | 单端行波 | 需要同步和波速校正 |
+| MMC-HVDC 换相失败分析 | 换相失败快速判别法 | 相域时控开关 | 需保留换相过程细节 |
+| 电力电子设备故障穿越验证 | 控制保护闭环仿真 | 序分量法 | 需保留开关事件和控制器响应 |
+| 保护整定值评估 | 批量故障扫描 | - | 需统计包络而非单一算例 |
+| 高阻接地和电弧故障 | 电弧模型+批量扫描 | 金属性短路假设 | 电阻非线性、时变 |
+
+## 关键假设
 
 1. **线性假设**：序分量分析假设系统在故障前后保持线性
 2. **对称假设**：三相线路参数对称，互感相等
@@ -76,65 +209,21 @@ $$i_f(t)=G_f(t)v_f(t), \quad G_f(t)=1/R_f(t)$$
 4. **稳态初始**：故障前系统处于稳态运行点
 5. **集中故障**：故障建模为集中参数，不考虑故障发展过程
 
-## 代表性来源
-
-| 来源 | 可支撑的内容 | 使用边界 |
-|------|--------------|----------|
-| [[a-new-distance-relaying-algorithm-based-on-complex-differential-equation-for-sym]] | 对称和不对称故障下距离保护算法的 EMT 测试入口 | 结论应限定在原文线路、故障和保护设置 |
-| [[transient-stability-analysis-of-mmc-hvdc-system-considering-dc-side-fault]] | MMC-HVDC 直流侧故障对暂态稳定的分析入口 | 不等同于所有 MMC 拓扑或保护策略 |
-| [[an-ultra-fast-mmc-hvdc-fault-location-algorithm-based-on-transient-voltage-featu]] | 直流故障定位中暂态电压特征和数据窗的案例 | 阈值、采样率和噪声结论需绑定原文系统 |
-| [[a-novel-ultra-high-speed-traveling-wave-protection-principle-for-vsc-based-dc-gr]] | VSC 直流电网行波保护和故障极选择的代表性来源 | 不应外推到电缆、混合线路或不同测量链路 |
-| [[protection-system-representation-in-the-electromagnetic-transients-program-power]] | EMT 中保护系统表示的来源入口 | 保护模型细节需按具体程序和装置核验 |
-
-## 形式化表达
-
-### 故障支路导纳模型
-
-金属性短路故障可用时变导纳表示：
-
-$$G_f(t) = \begin{cases} 0 & t < t_f \\ G_{sc} & t_f \leq t < t_c \\ 0 & t \geq t_c \end{cases}$$
-
-其中 $t_f$ 为故障投入时刻，$t_c$ 为故障切除时刻，$G_{sc} = 1/R_{sc}$ 为短路导纳（典型值 $R_{sc} = 0.001\sim0.01\,\Omega$）。
-
-### 不对称故障序分量变换
-
-三相量到序分量的变换矩阵：
-
-$$\begin{bmatrix} V_0 \\ V_1 \\ V_2 \end{bmatrix} = \frac{1}{3}\begin{bmatrix} 1 & 1 & 1 \\ 1 & a & a^2 \\ 1 & a^2 & a \end{bmatrix}\begin{bmatrix} V_a \\ V_b \\ V_c \end{bmatrix}$$
-
-其中 $a = e^{j2\pi/3}$，$V_0$、$V_1$、$V_2$ 分别为零序、正序、负序电压。
-
-### 故障电流直流偏移
-
-短路电流中的直流偏移分量：
-
-$$i_{dc}(t) = \left(\frac{V_m}{|Z|}\sin\theta - \frac{V_m}{|Z|}\sin(\omega t + \theta)\right)e^{-t/\tau}$$
-
-其中 $\theta$ 为故障投入角，$\tau = L/R$ 为时间常数，决定直流衰减速度。
-
-### 距离保护测量阻抗
-
-故障定位常用的距离保护测量阻抗：
-
-$$Z_m = \frac{V_m}{I_m + k_0 I_0}$$
-
-其中 $k_0 = (Z_0 - Z_1)/3Z_1$ 为零序补偿系数，$I_0$ 为零序电流。
-
 ## 与相关页面的关系
 
-- [[fault-impedance-model]] 处理故障支路、过渡电阻和电弧模型；本页说明这些模型如何进入故障场景。
-- [[sequence-network-model]] 支撑不对称故障的序分量解释；EMT求解仍应保留相域瞬时量。
-- [[circuit-breaker-model]] 关注切除设备和开断过程；本页只把断路器作为故障时序的一部分。
-- [[sequence-network-model]] 支撑不对称故障的序分量解释；EMT 求解仍应保留相域瞬时量。
-- [[transmission-line-model]] 和 [[frequency-dependent-line-model]] 决定故障行波传播与反射特性。
-- [[mmc-model]]、[[vsc-model]] 和 [[dfig-model]] 决定电力电子或新能源设备在故障期间的限流、闭锁和穿越行为。
+- [[fault-impedance-model]] 处理故障支路、过渡电阻和电弧模型；本页说明这些模型如何进入故障场景
+- [[sequence-network-model]] 支撑不对称故障的序分量解释；EMT 求解仍应保留相域瞬时量
+- [[circuit-breaker-model]] 关注切除设备和开断过程；本页只把断路器作为故障时序的一部分
+- [[transmission-line-model]] 和 [[frequency-dependent-line-model]] 决定故障行波传播与反射特性
+- [[mmc-model]] 和 [[vsc-model]] 决定电力电子换流器在故障期间的限流、闭锁和穿越行为
+- [[dfig-model]] 决定风电机组在故障期间的 Crowbar 投入和低电压穿越行为
+- [[steady-state-initialization]] 决定故障前稳态的初始化质量，直接影响故障响应的准确性
+- [[discretization-methods]] 决定数值阻尼特性，影响开关突变后的振荡行为
 
 ## 来源论文
 
-| 论文 | 年份 |
-|------|------|
-| [[a-novel-distance-protection-algorithm-in-frequency-domain-based-on-parameter-ide|A Novel Distance Protection Algorithm in Frequency Domain Ba]] | 2012 |
-| [[fast-detection-method-of-commutation-failure-based-on-multi-infeed-interaction-f|Fast Detection Method of Commutation Failure Based on Multi-]] | 2023 |
-| [[an-open-source-parallel-emt-simulation-framework|An open-source parallel EMT simulation framework]] | 2024 |
-| [[analysis-on-transient-characteristics-of-neutral-point-grounding-resistor-throw--fix|Analysis on Transient Characteristics of Neutral Point Groun]] | 2025 |
-| [[electromechanical-transientelectromagnetic-transient-hybrid-simulation-method-co|Electromechanical transientelectromagnetic transient hybrid ]] | 2026 |
+- Rosołowski 等 1997 — 复数微分方程距离保护算法，对称分量+时域微分方程求解，单采样时刻完成阻抗计算
+- Zhang 等 2018 — 多馈入直流换相失败快速判别，考虑负序电压对换相角的影响
+- Zhang 等 2024 — MMC-HVDC 故障定位，基于暂态电压特征和回归分析，$R^2 \geq 0.97$
+- Wang 等 2023 — MMC-MTDC 直流故障电流通用计算公式
+- Shu 等 2009 — 耦合平行线路电弧故障定位，相域变换方法
