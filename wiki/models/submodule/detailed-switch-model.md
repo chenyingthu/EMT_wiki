@@ -1,18 +1,16 @@
 ---
 title: "Detailed Switch Model"
 type: model
-tags: [switch-model, power-electronics, detailed-modeling, transient-analysis, igbt, mosfet, thyristor, diode, snubber-circuit]
+tags: [switch-model, power-electronics, detailed-modeling, transient-analysis, igbt, mosfet, thyristor, diode, snubber-circuit, tdm, dem, am, eam, fixed-admittance]
 created: "2026-05-02"
-updated: "2026-05-12"
-updated: "2026-05-11"
+updated: "2026-05-17"
 ---
 
 # Detailed Switch Model
 
-
 ## 定义与边界
 
-详细开关模型是 EMT 中对电力电子开关器件导通、关断、反向恢复、寄生电容电感、门极驱动和损耗过程的显式等效。它的物理对象是 IGBT、MOSFET、二极管、晶闸管及其封装、驱动和缓冲网络；EMT 等效对象则是会随门极信号、器件状态和网络电压电流改变的受控电导、受控源、寄生支路和状态机。
+详细开关模型是 EMT 中对电力电子开关器件导通、关断、反向恢复、寄生电容电感、门极驱动和损耗过程的显式等效。其物理对象是 IGBT、MOSFET、二极管、晶闸管及其封装、驱动和缓冲网络；EMT 等效对象则是随门极信号、器件状态和网络电压电流改变的受控电导、受控源、寄生支路和状态机。
 
 本页讨论详细开关模型的层级与接口，不把器件数据手册中的典型参数写成通用数值。若只关心开关周期平均行为，应使用 [[average-value-model]] 或 [[switching-function-method]]；若只关心拓扑通断逻辑，可用 [[ideal-switch-model]]。
 
@@ -20,116 +18,161 @@ updated: "2026-05-11"
 
 详细开关模型通常包含：
 
-- 主电气端口：集电极/发射极、漏极/源极、阳极/阴极等功率端口。
-- 控制端口：门极电压、电流、触发脉冲、驱动电阻和保护逻辑。
-- 寄生网络：结电容、封装电感、母排电感、缓冲电阻电容和反并联二极管。
-- 状态转换：导通、关断、反向恢复、尾电流、锁定或保护关断状态。
-- 热或损耗接口：瞬时功率、开关能量、结温输入或热网络反馈。
+- **主电气端口**：集电极/发射极、漏极/源极、阳极/阴极等功率端口
+- **控制端口**：门极电压/电流、触发脉冲、驱动电阻和保护逻辑
+- **寄生网络**：结电容、封装电感、母排电感、缓冲电阻电容和反并联二极管
+- **状态转换**：导通、关断、反向恢复、尾电流、锁定或保护关断状态
+- **热或损耗接口**：瞬时功率、开关能量、结温输入或热网络反馈
 
-## 模型结构与接口变量
+## EMT 中的角色
 
-详细开关可抽象为混合系统：
+详细开关模型在 EMT 仿真中承担双重角色：**精度提供者**和**计算瓶颈**。一方面，它通过显式模拟每个开关器件的换向过程、器件结电容的充放电、二极管的反向恢复电荷等物理现象，提供其他等效模型无法替代的波形精度；另一方面，MMC 等多电平换流器中每个桥臂含数百个子模块，每个子模块含 2 个 IGBT + 2 个反并联二极管，若用详细开关模型（Detailed Switching Model, DSM）在仿真界面直接连接所有器件，节点导纳矩阵规模随电平数增加而急剧膨胀，且每次开关动作都要求矩阵重新三角化（LU decomposition），成为 EMT 仿真的计算瓶颈（Beddard 2015）。
 
-$$
-\mathbf{x}_{s,n+1} = f_s(\mathbf{x}_{s,n}, v_s, i_s, u_g, \mathbf{p}_s),
-\qquad
-i_s = h_s(v_s, \mathbf{x}_{s,n}, u_g, \mathbf{p}_s).
-$$
-
-其中 $\mathbf{x}_s$ 包括门极电荷、结电容电压、反向恢复电荷、热状态或开关状态；$v_s$ 和 $i_s$ 是功率端口电压电流；$u_g$ 是驱动或触发信号；$\mathbf{p}_s$ 是器件和封装参数。
-
-在节点分析中，开关常被线性化为当前步等效电导和历史源：
-
-$$
-i_s(t_n) \approx G_{eq,n} v_s(t_n) + I_{hist,n}.
-$$
-
-事件发生时，$G_{eq}$、历史源或拓扑状态改变。若每次事件都重构矩阵，计算代价和数值噪声会增加；若采用 [[fixed-admittance]]，则需要用补偿源或状态变量保持物理一致性。
+这一矛盾催生了详细开关模型的两条演进路线：
+1. **精度路线**：在不显著增加计算量的前提下，保留器件级物理细节（如结电容动态、门极电荷效应）
+2. **加速路线**：在不显著损失精度的前提下，用等效模型替代 DSM 以避免矩阵频繁重三角化（如 DEM、AM）
 
 ## 建模层级
+
+详细开关模型按精度-计算成本权衡可分为五个层级，各层级的数学表达、适用场景和主要边界如下表所示：
 
 | 层级 | 表示方式 | 适用用途 | 主要边界 |
 |------|----------|----------|----------|
 | 理想开关 | 开/关两态电阻或电导 | 拓扑逻辑、控制初步验证 | 无法计算损耗、尖峰和恢复过程 |
-| 电阻型开关 | 状态相关 $R_{on}/R_{off}$ 和过渡函数 | 开关事件和粗略导通损耗 | 参数依赖器件，难以表示高频寄生 |
+| 电阻型开关 | 状态相关 $R_{\mathrm{on}}/R_{\mathrm{off}}$ 和过渡函数 | 开关事件和粗略导通损耗 | 参数依赖器件，难以表示高频寄生 |
 | 寄生详细模型 | 加入电容、电感、反并联二极管和缓冲支路 | 开关暂态、过电压和 EMI 倾向分析 | 需要小步长和器件参数 |
 | 半导体行为模型 | 门极电荷、尾电流、反向恢复和温度依赖 | 器件级损耗和保护策略研究 | 参数识别难，数值刚性较强 |
 | 实时等效模型 | 预计算、分段线性或 FPGA/实时友好实现 | HIL 和大规模换流器实时仿真 | 需说明降阶误差和硬件限制 |
 
+## 形式化表达
+
+### 状态空间方程
+
+混合系统状态方程是描述详细开关行为的基本数学框架。设开关状态向量 $\mathbf{x}_s$ 包含门极电荷 $Q_g$、结电容电压 $v_c$、反向恢复电荷 $Q_{rr}$、热状态或开关状态标志量，则开关的离散状态更新方程和端口关系为：
+
+$$\mathbf{x}_{s,n+1} = f_s(\mathbf{x}_{s,n}, v_s, i_s, u_g, \mathbf{p}_s)$$
+
+$$i_s(t_n) \approx G_{\mathrm{eq},n} \cdot v_s(t_n) + I_{\mathrm{hist},n}$$
+
+其中 $\mathbf{p}_s$ 是器件和封装参数向量（如 $R_{\mathrm{on}}$、$V_{\mathrm{th}}$、$C_j$、$t_f$ 等），$G_{\mathrm{eq}}$ 是等效电导，$I_{\mathrm{hist}}$ 是历史电流源。当开关状态改变时，$G_{\mathrm{eq}}$、$I_{\mathrm{hist}}$ 或拓扑连接均发生变化——这正是导致计算效率问题的根源。
+
+### 门极电荷效应（IGBT/MOSFET）
+
+IGBT 和 MOSFET 的门极电容 $C_g$ 充放电过程影响开关速度。门极电荷累积到阈值电压 $V_{\mathrm{th}}$ 后器件导通，其动态方程可表示为：
+
+$$i_g(t) = C_g \frac{dv_{ge}(t)}{dt}$$
+
+其中 $v_{ge}$ 是门极-发射极电压。考虑米勒效应时，等效输入电容 $C_{\mathrm{ies}}$ 远大于 $C_g$，导致门极充电平台期间 $v_{ge}$ 几乎不变。门极电阻 $R_g$ 决定了充电时间常数 $\tau_g = R_g C_{\mathrm{ies}}$，该参数直接影响 IGBT 的开通过程中的 $\mathrm{d}i/\mathrm{d}t$ 和关断过程中的 $\mathrm{d}v/\mathrm{d}t$。
+
+### 二极管反向恢复电荷
+
+当二极管从正向导通切换到反向阻断时，反向恢复电荷 $Q_{rr}$ 必须被抽除才能完成关断。该过程的时间常数与少子寿命 $\tau_L$ 相关：
+
+$$Q_{rr} = \int_{t_0}^{t_{\mathrm{rr}}} i_r(t) \, \mathrm{d}t = \frac{I_F}{2} t_{\mathrm{rr}}$$
+
+其中 $I_F$ 是正向电流，$t_{\mathrm{rr}}$ 是反向恢复时间。反向恢复电流峰值 $I_{\mathrm{rr}}$ 与 $\mathrm{d}i_r/\mathrm{d}t$ 成正比，会在电路中激发电压尖峰：
+
+$$V_{\mathrm{peak}} = L_{\sigma} \frac{\mathrm{d}i_r}{\mathrm{d}t}$$
+
+其中 $L_{\sigma}$ 是电路寄生电感。反向恢复电荷量和峰值电流是评估二极管开关性能和选择缓冲网络参数的核心依据。
+
+### 结电容动态（阻断状态）
+
+pn 结电容 $C_j$ 包括扩散电容和势垒电容两部分。当器件处于关断状态时，结电容上的电压 $v_c$ 随端口电压变化：
+
+$$i_c(t) = C_j(v_c) \frac{\mathrm{d}v_c}{\mathrm{d}t}$$
+
+势垒电容与结电压的关系为 $C_j(v_c) = C_{j0} / (1 + v_c/V_{\mathrm{bi}})^n$，其中 $V_{\mathrm{bi}}$ 是内建电势（约 0.7 V），$n$ 是掺杂浓度相关的常数（0.5~0.33）。对于 SiC 和 GaN 等宽禁带器件，结电容具有更明显的电压依赖性，且数值比 Si 器件更小，对应的开关速度更快但寄生振荡频率更高。
+
+### 缓冲网络（Snubber Circuit）
+
+开通缓冲电阻 $R_s$ 和电容 $C_s$ 用于抑制关断时的电压尖峰和开通过程中的电流冲击。RC 缓冲网络的耗散功率为：
+
+$$P_s = \frac{1}{2} C_s \Delta V^2 f_{\mathrm{sw}}$$
+
+其中 $\Delta V$ 是关断时的电压过冲，$f_{\mathrm{sw}}$ 是开关频率。缓冲电容过大则增加开通损耗和成本，过小则抑制效果有限；缓冲电阻则决定了放电时间常数 $\tau_s = R_s C_s$，需与开关频率匹配。
+
+### 恒导纳开关模型的虚拟功率损耗修正
+
+在固定步长 EMT 伴随离散电路（ADC）模型中，开关通常用恒导纳模型表示以避免矩阵更新。但恒导纳模型引入了理想开关不存在的暂态振荡，导致虚拟功率损耗。Wang 等（2024）从数值算法角度分析了虚拟功率损耗的来源并提出修正算法。
+
+ADC 模型中电感/电容/开关导通/开关关断的伴随电流参数化统一表达式为（Wang 2024）：
+
+$$j_a(t) = \alpha Y_b v_b(t-\Delta t) + \beta i_b(t-\Delta t)$$
+
+其中后向欧拉法（$\alpha = 0$, $\beta = 1$）具有极强的数值稳定性和高收敛性，是 EMT 仿真中广泛采用的离散化方法。传统恒导纳开关模型在开关动作时仍存在虚拟功率损耗，Wang 等提出的初始误差修正算法可在几乎不消耗额外 FPGA 资源的情况下基本消除该损耗。
+
+### 开关事件时刻的数值积分修正
+
+固定步长 EMT 中开关时刻通常落在离散时间步之间，Na 等（2023）提出的改进插值方法将半步长后向欧拉法与插值/外推策略结合：检测到开关动作时刻 $t_z$ 后，首先通过线性插值获取 $t_z^-$ 时刻状态，然后切换到开关后导纳矩阵，用半步长 BE 计算 $t_z + \Delta t/2$ 的网络解，最后用梯形法推进到 $t_z + 3\Delta t/2$ 并同步回原始时间网格。
+
+该方法的关键在于：BE 法电感历史电流项 $I_{\mathrm{history}}^{BE}(t-\Delta t) = i_{km}(t-\Delta t)$ 仅含连续状态变量（电感电流），不含电压项，从而从根本上切断数值振荡的传播路径；而梯形法历史项 $I_{\mathrm{history}}(t-\Delta t) = i_{km}(t-\Delta t) + \frac{1}{R_L}(v_k(t-\Delta t)-v_m(t-\Delta t))$ 含电压项，开关瞬间电压突变会导致历史电流计算误差及振荡。
+
+虚假开关损耗可从普通插值法的 212.6 μJ 降至约 2 μJ（消除率超过 99%），电感电流波形与 0.1 μs 高精度基准的相位偏差趋近于零（Na 2023）。
+
+## 关键技术挑战
+
+### 挑战 1：开关换向时的数值振荡抑制
+
+梯形积分法在含电感支路的开关断开时可能因历史项结构产生数值振荡（chatter），需要在固定步长约束下采用合适的阻尼策略。半步长 BE 法利用其固有数值阻尼特性可自然消除振荡，但需解决与梯形法框架的兼容性问题（Na 2023）。
+
+### 挑战 2：大规模 MMC 的矩阵更新瓶颈
+
+每个桥臂含 $N$ 个子模块的 MMC 若用 DSM，每步仿真需对规模为 $O(N)$ 的节点导纳矩阵重新三角化。Parvari 等（2023）通过限制矩阵重三角化仅发生在换流器闭锁（blocking）时刻而非每次开关动作，在正常运行期间保持恒定导纳矩阵，将 HBSM 和 FBSM 的计算效率分别提升 30% 和 60%（相对于已有 DEM）。
+
+### 挑战 3：IGBT 二极管配对建模的误差积累
+
+半桥子模块中 IGBT 和反并联二极管的换向逻辑存在单步延迟问题。Beddard 等（2015）指出加速模型（AM）在换流器闭锁时二极管状态判定存在单步延迟，增强型加速模型（EAM）通过将多个 SM 合并为一个子网络组来缓解这一问题。
+
+### 挑战 4：宽禁带器件（SiC/GaN）的寄生参数识别
+
+SiC 和 GaN HEMT 的结电容更小且电压依赖性更强，封装电感对 $\mathrm{d}v/\mathrm{d}t$ 和 $\mathrm{d}i/\mathrm{d}t$ 的影响更为显著。Zhang 等（2023）采用物理特征神经网络（PFNN）实现宽禁带器件的变步长（低至 1 ns）实时 HIL 建模，但泛化能力受训练数据覆盖范围限制。
+
+### 挑战 5：恒导纳模型的虚拟功率损耗
+
+恒导纳开关模型在开关状态切换时产生由模型本身而非实际器件引入的功率损耗，需要通过补偿电压源/电流源或重新初始化算法来抑制（Wang 2024）。补偿源的求解依赖外电路参数，增加了建模复杂度。
+
 ## 量化性能边界
 
-详细开关模型在 EMT 仿真中已有可核验的量化结果，但以下数据均绑定具体器件类型、算法和测试条件，不能外推为通用能力：
+详细开关模型在 EMT 仿真中已有可核验的量化结果，以下数据均绑定具体器件类型、算法和测试条件：
 
-- **Yu (2014)** 在 PSCAD/EMTDC 中提出了 MMC 快速数值仿真模型（平均比较电压均衡 + 受控电压源桥臂等效 + 线性化 IGBT/二极管开关模型）。在 201 电平（每臂 216 个 SM）MMC-HVDC 系统中，快速模型与详细开关模型波形几乎相同，仿真速度约为详细开关模型的 **5 000 倍**（5 s 暂态从约一周缩短至分钟级）。采用线性化开关模型（阈值电压 + 导通电阻）近似 IGBT/二极管伏安特性，保留每个 SM 电容电压动态。混合仿真模型可将特定 SM 替换为详细开关电路，兼顾全局效率与局部细节。原文未给出逐点误差表或系统误差统计 (Yu 2014)。
+| 研究 | 测试条件 | 加速比/误差 | 方法/模型 |
+|------|----------|------------|-----------|
+| Yu (2014) | PSCAD/EMTDC，201 电平 MMC-HVDC，每臂 216 个 SM | 详细开关模型 vs 线性化开关模型：**5,000 倍**加速（5 s 暂态从约一周缩短至分钟级） | 线性化 IGBT/二极管开关模型（阈值电压 + 导通电阻）+ 平均比较电压均衡 |
+| Gao (2024) | EMTP，HBSM MMC，混合数值积分（指数积分器 + 梯形法） | 与固定 1 μs 步长 DSM 相比：**5-15 倍**加速（精度保持一致，波形几乎重合） | 开关事件期间用指数积分器局部求解刚性微分方程，非事件期间用梯形法大步长推进 |
+| Zhang (2023) | Xilinx Ultrascale+ FPGA，GaN HEMT/SiC IGBT，PFNN 模型 | 变步长低至 **1 ns**，波形与 SaberRD/PSCAD 离线仿真一致 | 物理特征神经网络预测波形特征点（拐点、峰值、谷值）+ 分段线性插值重构，TLM 分区解耦 |
+| Yu (2013) | MMC 六种模型保真度系统比较 | Thevenin 等效模型精度与详细开关模型几乎一致；平均值模型在特定工况下误差可达 **>300%** | 六模型比较框架（详细开关/Thevenin/简化 Thevenin/连续/解析/稳态） |
+| Beddard (2015) | PSCAD/EMTDC X4，31 级 MMC VSC-HVDC（扩展至 16/61 级） | 61 级时：DEM 约为 TDM 的 **43 倍**速度，AM 约为 TDM 的 **14 倍**；稳态 MAE <1%，暂态 MAE <2.5% | TDM（直接建模所有 SM 器件）、DEM（嵌套快速同步求解）、AM（桥臂等效为受控电压源）、EAM（SM 分组） |
+| Parvari (2023) | PSCAD/EMTDC，HBSM/FBSM MMC | 相对于已有 DEM：**HBSM 提升 30%**，**FBSM 提升 60%**计算效率 | 恒定导纳矩阵 DEM（仅在闭锁时重三角化） |
+| Na (2023) | 自研 EMT 程序，IGBT/二极管/电感电路，50 μs 步长 | 虚假开关损耗从 212.6 μJ 降至约 2 μJ（**消除率 >99%**）；相位偏差趋近于 0 | 半步长 BE + 插值/外推改进算法 |
 
-- **Gao (2023)** 在半桥子模块(HBSM)中提出了混合积分方法：开关事件期间的刚性微分方程用指数积分器局部求解，非事件期间用梯形法大步长推进。与固定 1 μs 步长详细开关模型相比，在保持相同精度（波形几乎重合）的前提下获得 **5-15 倍**加速。加速比随子模块数量增加和开关频率降低而提高，验证限于 HBSM 和特定 MMC 配置 (Gao 2023)。
+## 适用边界与选择指南
 
-- **Zhang (2023)** 在 Xilinx Ultrascale+ FPGA 上实现了宽禁带器件（GaN HEMT、SiC IGBT）的物理特征神经网络(PFNN)实时 HIL 模型。PFNN 通过预测波形特征点（拐点、峰值、谷值）实现变步长（低至 **1 ns**）建模，再经分段线性插值重构高分辨率波形。系统级采用传输线法(TLM)分区解耦。原文报告波形与 SaberRD 和 PSCAD/EMTDC 离线仿真一致，但未给出可核验的详细误差百分比、资源占用表或加速倍数 (Zhang 2023)。
+**选择 DSM 或详细层级开关模型当**：需要器件级波形细节（开关暂态尖峰、反向恢复电流、门极波形）；研究对象是少量 SM 的换流器或故障分析（每次开关动作可接受重新三角化）；需要评估 EMI/过电压时的寄生网络精度。
 
-- **Yu (2013)** 系统比较了 MMC 的六种模型保真度（详细开关、Thevenin 等效、简化 Thevenin、连续、解析、稳态），结论是 Thevenin 等效模型在精度上与详细开关模型几乎一致，而平均值模型在特定工况下误差可达 **>300%**。该比较为模型层级选择提供了定量参考，但结论限于 MMC 拓扑和文中测试工况 (Yu 2013)。
+**选择 DEM 当**：研究对象是大规模 MMC/HVDC 且主要关心系统级暂态和外部端口特性；需要在可接受时间内完成大量仿真（故障扫描、参数扫描）；需要保留 SM 电容电压动态以评估均压特性。
 
-- **Stepanov (2020)** 提出了桥臂等效模型(AEM)的自适应切换方法，在 EMT 仿真中根据子模块电压偏差动态选择 DEM 或 AEM 模式。在 Delta 连接全桥 MMC-STATCOM 系统中，自适应切换模型与详细开关模型的误差 < **0.5%**，计算耗时较 DEM 显著降低。加速比随工况变化，需参考原文具体数值 (Stepanov 2020)。
+**选择 AM/EAM 当**：需要同时访问 SM 内部状态（如子模块电容电压均衡、环流控制）与较高效率；控制器设计需要逐 SM 的状态反馈信号。
 
-这些量化数据不构成对所涉建模方法的全面性能评价，只说明在特定测试条件下可获得的能力边界。
+**选择 AVM 当**：只关心换流器的基波频率行为和系统平均功率流；开关频率远低于 EMT 仿真步长对应的频率。
 
-## 适用边界与失败模式
+## 相关页面
 
-- 详细开关模型不自动"更准确"；若缺少器件数据、布局寄生或驱动模型，复杂模型可能只是引入未校准自由度。
-- 开关事件会改变导纳矩阵或等效源，可能触发数值振荡、代数环或刚性问题；相关处理见 [[numerical-integration]]、[[interpolation-method]] 和 [[stiff-system-handling]]。
-- 固定步长 EMT 可能错过实际开关时刻，插值或事件定位会影响尖峰和损耗计算。
-- 寄生电感、电容和缓冲网络对过电压敏感，不能用默认参数替代布局或数据手册。
-- 大规模 MMC、VSC 或逆变器研究中，详细开关模型的计算量可能不可接受，需要与 [[average-value-model]] 或等效子模块模型比较。
-- 线性化开关模型的精度受阈值电压和导通电阻近似影响，在宽工作点范围内需重新校核 (Yu 2014)。
-- NN 加速的器件模型（如 PFNN）的泛化能力受训练数据覆盖范围限制，未经训练的故障或极端工况可能产生不可预测误差 (Zhang 2023)。
-- 自适应等效模型在频繁切换边界附近可能引入额外数值振荡，需验证阈值设置的鲁棒性 (Stepanov 2020)。
-
-## 验证需求
-
-详细开关模型的验证应至少说明：
-
-- 器件类型、额定条件和参数来源，例如数据手册、双脉冲试验或论文模型。
-- 参考波形：开通/关断电压电流、反向恢复、电压尖峰、门极波形或损耗。
-- EMT 设置：步长、事件定位、积分方法、缓冲支路和网络寄生。
-- 层级对比：与理想开关、平均值模型或更详细器件模型的差异，并参考 Yu (2013) 的六模型比较框架。
-- 实时模型需报告资源占用、延迟和可接受的降阶误差，而不是笼统宣称实时可用。
-
-## 开放问题
-
-- MMC 快速数值模型（Yu 2014）的 5 000 倍加速基于平均比较和线性化开关近似，其误差边界在不同电平数和故障场景下的量化特征尚未系统报告。
-- 混合积分方法（Gao 2023）在更多器件类型（如 SiC、GaN）和复杂拓扑下的加速比和适用条件需要更多验证。
-- 机器学习加速器件模型的泛化能力和训练数据需求尚缺乏标准化评估方法（Zhang 2023）。
-- 详细开关模型与降阶模型之间的误差在换流器型电源高渗透系统中的累积效应尚不明确。
-- 当前 EMT 框架中缺乏统一的可变保真度开关模型选择准则，用户依赖经验从五层级中做出选择。
-
-## 代表性来源
-
-- [[fast-voltage-balancing-control-and-fast|Yu (2014)]] 支撑 MMC 快速数值模型（线性化开关 + 平均比较）：5 000 倍加速、201 电平 MMC-HVDC。原文未给出逐点误差统计。
-- [[real-time-hil-emulation-of-drm-with-machine-learning-accelerated-wbg-device-mode|Zhang (2023)]] 支撑 WBG 器件 PFNN 实时 HIL：变步长低至 1 ns、TLM 分区解耦。原文未给出可核验的误差百分比或加速倍数。
-- [[modeling-synchronous-voltage-source-converters-in-transmission-system-planning-s|Kosterev (2004)]] 代表在 EMTP 中用 TACS 受控开关表示 VSC 详细开关层级：18 脉波 GTO、12.5 kV/10 MVA。
-- [[a-vsc-hvdc-model-with-reduced-computational-intensity]] 说明用降阶或平均化模型替代详细开关的动机。
-- [[detailed-equivalent-model]] 和 [[average-value-model]] 是详细开关模型在 MMC 和 VSC 研究中的主要替代方案。
-
-## 与相关页面的关系
-
-- [[ideal-switch-model]] 是最简开关等效，用于拓扑和控制逻辑。
-- [[diode-model]]、[[igbt-model]] 和 [[thyristor-control]] 分别展开具体器件或触发控制。
-- [[power-electronics]] 是电力电子系统主题入口，[[vsc-model]]、[[mmc-model]] 和 [[inverter-model]] 是使用开关模型的设备页。
-- [[switching-transient]] 关注开关事件引发的系统暂态，详细开关模型是其可能的局部对象。
-- [[detailed-equivalent-model]] 给出 DEM 在 MMC 中的具体实现和精度边界。
+- [[ideal-switch-model]] — 最简开关等效，用于拓扑和控制逻辑
+- [[average-value-model]] — 开关周期平均行为等效
+- [[diode-model]] — 二极管器件级模型（含反向恢复）
+- [[igbt-model]] — IGBT 器件级模型（含门极电荷）
+- [[mmc-model]] — MMC 换流器总体模型（使用详细开关模型）
+- [[vsc-model]] — VSC 换流器模型
+- [[detailed-equivalent-model]] — DEM 在 MMC 中的具体实现
+- [[switching-transient]] — 开关事件引发的系统暂态
+- [[numerical-integration]] — 数值积分方法与开关振荡抑制
+- [[fixed-admittance]] — 恒导纳模型及其修正
 
 ## 来源论文
 
-参见 [[index]] 获取更多详细开关模型相关文献。
----
-
-*本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*
-
-## 来源论文
-
-| 论文 | 年份 |
-|------|------|
-| [[fast-voltage-balancing-control-and-fast-19、20、21|Fast Voltage-Balancing Control and Fast]] | 2014 |
-| [[fast-voltage-balancing-control-and-fast|Fast Voltage-Balancing Control and Fast Numerical Simulation]] | 2014 |
-| [[modeling-of-a-modular-multilevel-converter-with-embedded-energy-storage-for-elec|Modeling of a Modular Multilevel Converter With Embedded Ene]] | 2019 |
-| [[parallel-in-time-simulation-algorithm-for-power-electronics-mmc-hvdc-system|Parallel-in-Time Simulation Algorithm for Power Electronics:]] | 2019 |
-| [[numerically-efficient-average-value-model-for-voltage-source-converters-in-nodal|Numerically Efficient Average-Value Model for Voltage-Source]] | 2024 |
+- [[an-improved-high-accuracy-interpolation-method-for-switching-devices-in-emt-simu|Na 等 2023]] — 开关插值与半步长 BE 数值振荡抑制：虚假损耗降低 99% 以上
+- [[comparison-of-detailed-modeling-techniques-for-mmc-employed-on-vsc-hvdc-schemes|Beddard 等 2015]] — MMC 详细建模技术系统比较（TDM/DEM/AM/EAM 四层级）
+- [[an-accelerated-detailed-equivalent-model-for-modular-multilevel-converters|Parvari 等 2023]] — 恒定导纳矩阵 DEM（HBSM 效率提升 30%、FBSM 提升 60%）
+- [[a-computationally-efficient-approach-for-power-semiconductor-loss-estimation-of-|Sinkar 等 2025]] — MMC 功率半导体损耗估算的computationally efficient 方法
+- [[基于fpga的电力电子恒导纳开关模型修正算法及实时仿真架构|Wang 等 2024]] — 恒导纳开关模型虚拟功率损耗修正算法及 FPGA 架构
