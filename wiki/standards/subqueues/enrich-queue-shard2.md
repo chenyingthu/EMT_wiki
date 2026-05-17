@@ -25,7 +25,8 @@
 | 196 | distributed-parameter-model.md | methods | methods/transmission-line/distributed-parameter-model.md | P0 | 999 | 5964 | 33 | 12 | completed |
 | 329 | droop-control.md | methods | methods/control/droop-control.md | P1 | 999 | 2601 | 13 | 8 | completed |
 || 179 | economic-dispatch.md | methods | methods/system-studies/economic-dispatch.md | P0 | 999 | 4685 | 26 | 19 | completed |
-| 71 | electromechanical-electromagnetic-hybrid.md | topics | topics/renewable-storage/electromechanical-electromagnetic-hybrid.md | P0 | 999 | 1912 | 8 | 28 | pending |
+| 71 | electromechanical-electromagnetic-hybrid.md | topics | topics/renewable-storage/electromechanical-electromagnetic-hybrid.md | P0 | 999 | 2120 | 8 | 19 | completed |
+
 | 136 | emi-filter-model.md | models | models/compensation/emi-filter-model.md | P0 | 999 | 3635 | 19 | 19 | pending |
 | 259 | emtp-atpdraw.md | methods | methods/system-studies/emtp-atpdraw.md | P1 | 999 | 5348 | 8 | 1 | pending |
 | 356 | equivalent-circuit-method.md | methods | methods/network-solution/equivalent-circuit-method.md | P1 | 999 | 1524 | 8 | 15 | pending |
