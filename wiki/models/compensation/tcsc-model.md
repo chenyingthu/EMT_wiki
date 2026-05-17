@@ -183,7 +183,6 @@ TCSC 模型验证应覆盖：
 - [[frequency-scan]]：用于从 EMT 仿真中提取小信号端口模型，TCSC 频率扫描是 SSR 分析的基础步骤。
 - [[wideband-oscillation-stability]]：TCSC 的 SSR 阻尼控制与次同步带宽振荡稳定性直接相关。
 
----
 
 *本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*
 

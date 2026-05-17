@@ -253,6 +253,5 @@ Part II 模型的优化求解（目标函数 $\min \beta\sum\alpha_h^2$）在 $t
 - Alboaouh 等 (2025) — Modeling of inductive constant power load for electromagnetic-transient simulations–Part II（感性 CPL 的递推 RMS 约束 EMT 模型）
 - Alboaouh 等 (2024/2025) — Part I（整周期 RMS 约束法，基础模型）
 
----
 
 *本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*
