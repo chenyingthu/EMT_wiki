@@ -23,7 +23,7 @@
 | 267 | dc-dc-converter.md | models | models/converter/dc-dc-converter.md | P1 | 999 | 4448 | 41 | 16 | completed |
 | 38 | dc-rlc-filter.md | models | models/basic-component/dc-rlc-filter.md | P0 | 999 | 4173 | 13 | 28 | completed |
 | 355 | detailed-equivalent-model.md | methods | methods/power-electronics/detailed-equivalent-model.md | P1 | 999 | 2875 | 11 | 17 | completed |
-| 332 | direct-interface-technique.md | methods | methods/simulation-technology/direct-interface-technique.md | P1 | 999 | 1992 | 4 | 13 | pending |
+| 332 | direct-interface-technique.md | methods | methods/simulation-technology/direct-interface-technique.md | P1 | 999 | 4417 | 11 | 13 | completed |
 | 108 | distance-relay.md | models | models/protection/distance-relay.md | P0 | 999 | 2815 | 10 | 14 | pending |
 | 222 | distribution-network.md | methods | methods/system-studies/distribution-network.md | P0 | 999 | 11614 | 16 | 30 | pending |
 | 270 | dsogi-pll.md | methods | methods/control/dsogi-pll.md | P1 | 999 | 4344 | 11 | 11 | pending |
@@ -97,3 +97,5 @@
 ||| Cycle 3 | dc-rlc-filter.md | P0 ENRICH (bc=1206→4173, bf=2→13, sep_count=3→2, added Carbonea2002 formulas, 4 methods, quant tables) | 2026-05-18 02:52 |
 
 ||| Cycle 4 | detailed-equivalent-model.md | P1 ENRICH (bc=1352→2875, bf=9→11, added Parvari2023 30-60% acceleration data, 4 methods) | 2026-05-18 02:55 |
+
+||| Cycle 5 | direct-interface-technique.md | P1 ENRICH (bc=1749→4417, bf=4→11, expanded 5 variants, quant tables) | 2026-05-18 02:57 |
