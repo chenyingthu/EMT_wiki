@@ -4,8 +4,6 @@ type: topic
 tags: [time-domain, transient-analysis, numerical-simulation, emt, differential-equations, dae, state-space, nodal-analysis]
 created: "2026-05-04"
 updated: "2026-05-17"
----
-
 # 时域建模 (Time Domain Modeling)
 
 ## 定义
@@ -286,7 +284,5 @@ $$
 | [[a-time-domain-approach-to-transmission-network-equivalents-via-prony-analysts-fo]] (Ramos等) | 2004 | Prony时域网络等值，离散戴维南滤波器 |
 | [[a-piecewise-generalized-state-space-model-of-power-converters-for-electromagneti]] (王磊等) | 2019 | P-GSSA分段广义状态空间平均模型 |
 | Splitting State-Space Method for Converter-Integrated Power Systems EMT Simulations (Fu等) | 2025 | 指数分裂法回避矩阵指数，自适应误差控制 |
-
----
 
 *本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*
