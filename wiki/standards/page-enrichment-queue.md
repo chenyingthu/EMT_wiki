@@ -6,7 +6,7 @@
 
 | 序号 | 页面 | 分类 | 路径 | 优先级 | hollow_score | 字数 | 公式 | wikilinks | 状态 |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 | dfig-model.md | models | models/rotating-machine/dfig-model.md | P0 | 999 | 253 | 14 | 39 | pending |
+| 1 | dfig-model.md | models | models/rotating-machine/dfig-model.md | P0 | 999 | 253 | 14 | 39 | completed |
 | 2 | gear-method.md | methods | methods/numerical-methods/gear-method.md | P0 | 999 | 350 | 4 | 7 | pending |
 | 3 | solid-state-transformer.md | models | models/transformer/solid-state-transformer.md | P0 | 999 | 421 | 4 | 15 | pending |
 | 4 | switching-model.md | models | models/converter/switching-model.md | P0 | 999 | 490 | 6 | 8 | pending |
