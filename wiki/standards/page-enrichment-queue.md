@@ -15,7 +15,7 @@
 | 7 | ferroresonance.md | topics | topics/component-modeling/ferroresonance.md | P0 | 999 | 10926 | 44 | 15 | completed |
 | 8 | fault-impedance-model.md | models | models/protection/fault-impedance-model.md | P0 | 999 | 6704 | 108 | 12 | completed |
 | 9 | backward-euler.md | methods | methods/numerical-methods/backward-euler.md | P0 | 999 | 4711 | 92 | 10 | completed |
-| 10 | wind-farm-modeling.md | topics | topics/renewable-storage/wind-farm-modeling.md | P0 | 999 | 713 | 2 | 58 | pending |
+| 10 | wind-farm-modeling.md | topics | topics/renewable-storage/wind-farm-modeling.md | P0 | 999 | 13244 | 34 | 15 | completed |
 | 11 | emt-mathematical-foundation.md | topics | topics/simulation/emt-mathematical-foundation.md | P0 | 999 | 754 | 2 | 16 | pending |
 | 12 | frequency-dependent-modeling.md | topics | topics/modeling-methods/frequency-dependent-modeling.md | P0 | 999 | 769 | 0 | 171 | pending |
 | 13 | reactive-compensation-device.md | models | models/compensation/reactive-compensation-device.md | P0 | 999 | 775 | 0 | 17 | pending |
