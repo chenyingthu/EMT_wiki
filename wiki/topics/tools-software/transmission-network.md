@@ -8,16 +8,99 @@ created: "2026-05-02"
 # 输电网络 (Transmission Network)
 
 
-```mermaid
-graph TD
-    subgraph Ncmp[输电网络 (Transmission Network)]
-        N0[高压(HV): 110-220 kV]
-        N1[超高压(EHV): 330-765 kV]
-        N2[特高压(UHV AC): 1000-1150 kV]
-        N3[高压直流(HVDC): ±500-±1100 kV]
-        N4[特高压直流(UHVDC): ±800-±1100 kV]
-    end
-```
+
+
+<div style="text-align:center;margin:16px 0;">
+<svg viewBox="0 0 900 400" xmlns="http://www.w3.org/2000/svg">
+  <!-- 输电网络电压等级分层架构 -->
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+  
+  <!-- 层级1: 高压输电 (蓝色) -->
+  <rect x="50" y="30" width="180" height="60" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="2" filter="url(#shadow)"/>
+  <text x="140" y="55" text-anchor="middle" font-family="Arial" font-size="13" fill="#1e40af" font-weight="bold">高压 (HV)</text>
+  <text x="140" y="73" text-anchor="middle" font-family="Arial" font-size="11" fill="#3b82f6">110-220 kV</text>
+  
+  <!-- 层级2: 超高压 (蓝色) -->
+  <rect x="250" y="30" width="180" height="60" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="2" filter="url(#shadow)"/>
+  <text x="340" y="55" text-anchor="middle" font-family="Arial" font-size="13" fill="#1e40af" font-weight="bold">超高压 (EHV)</text>
+  <text x="340" y="73" text-anchor="middle" font-family="Arial" font-size="11" fill="#3b82f6">330-765 kV</text>
+  
+  <!-- 层级3: 特高压交流 (蓝色) -->
+  <rect x="450" y="30" width="180" height="60" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="2" filter="url(#shadow)"/>
+  <text x="540" y="55" text-anchor="middle" font-family="Arial" font-size="13" fill="#1e40af" font-weight="bold">特高压 AC (UHV)</text>
+  <text x="540" y="73" text-anchor="middle" font-family="Arial" font-size="11" fill="#3b82f6">1000-1150 kV</text>
+  
+  <!-- 层级4: 高压直流 (紫色) -->
+  <rect x="650" y="30" width="200" height="60" rx="8" fill="#ede9fe" stroke="#7c3aed" stroke-width="2" filter="url(#shadow)"/>
+  <text x="750" y="55" text-anchor="middle" font-family="Arial" font-size="13" fill="#6d28d9" font-weight="bold">高压直流 (HVDC)</text>
+  <text x="750" y="73" text-anchor="middle" font-family="Arial" font-size="11" fill="#8b5cf6">±500-±1100 kV</text>
+  
+  <!-- 连接线 -->
+  <line x1="230" y1="60" x2="250" y2="60" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="430" y1="60" x2="450" y2="60" stroke="#94a3b8" stroke-width="2"/>
+  <line x1="630" y1="60" x2="650" y2="60" stroke="#94a3b8" stroke-width="2"/>
+  
+  <!-- 箭头 -->
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#94a3b8"/>
+    </marker>
+  </defs>
+  
+  <!-- 拓扑类型区块 -->
+  <rect x="50" y="120" width="800" height="100" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+  <text x="450" y="145" text-anchor="middle" font-family="Arial" font-size="14" fill="#92400e" font-weight="bold">输电网络拓扑结构</text>
+  
+  <!-- 拓扑类型 - 4列 -->
+  <rect x="70" y="155" width="170" height="55" rx="6" fill="#fef9c3" stroke="#ca8a04" stroke-width="1"/>
+  <text x="155" y="178" text-anchor="middle" font-family="Arial" font-size="12" fill="#78350f">辐射状结构</text>
+  <text x="155" y="195" text-anchor="middle" font-family="Arial" font-size="10" fill="#92400e">简单·投资省</text>
+  
+  <rect x="260" y="155" width="170" height="55" rx="6" fill="#fef9c3" stroke="#ca8a04" stroke-width="1"/>
+  <text x="345" y="178" text-anchor="middle" font-family="Arial" font-size="12" fill="#78350f">环网结构</text>
+  <text x="345" y="195" text-anchor="middle" font-family="Arial" font-size="10" fill="#92400e">高可靠·灵活</text>
+  
+  <rect x="450" y="155" width="170" height="55" rx="6" fill="#fef9c3" stroke="#ca8a04" stroke-width="1"/>
+  <text x="535" y="178" text-anchor="middle" font-family="Arial" font-size="12" fill="#78350f">网状结构</text>
+  <text x="535" y="195" text-anchor="middle" font-family="Arial" font-size="10" fill="#92400e">最可靠·复杂</text>
+  
+  <rect x="640" y="155" width="170" height="55" rx="6" fill="#fef9c3" stroke="#ca8a04" stroke-width="1"/>
+  <text x="725" y="178" text-anchor="middle" font-family="Arial" font-size="12" fill="#78350f">链式结构</text>
+  <text x="725" y="195" text-anchor="middle" font-family="Arial" font-size="10" fill="#92400e">长距离·逐级</text>
+  
+  <!-- 关键设施区块 -->
+  <rect x="50" y="250" width="800" height="110" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="450" y="275" text-anchor="middle" font-family="Arial" font-size="14" fill="#166534" font-weight="bold">关键设施</text>
+  
+  <!-- 设施 - 3列 -->
+  <rect x="70" y="290" width="230" height="60" rx="6" fill="#f0fdf4" stroke="#22c55e" stroke-width="1"/>
+  <text x="185" y="315" text-anchor="middle" font-family="Arial" font-size="12" fill="#15803d" font-weight="bold">输电线路</text>
+  <text x="185" y="333" text-anchor="middle" font-family="Arial" font-size="10" fill="#166534">架空线·电缆·紧凑型</text>
+  
+  <rect x="320" y="290" width="230" height="60" rx="6" fill="#f0fdf4" stroke="#22c55e" stroke-width="1"/>
+  <text x="435" y="315" text-anchor="middle" font-family="Arial" font-size="12" fill="#15803d" font-weight="bold">变电站</text>
+  <text x="435" y="333" text-anchor="middle" font-family="Arial" font-size="10" fill="#166534">枢纽·中间·终端</text>
+  
+  <rect x="570" y="290" width="230" height="60" rx="6" fill="#f0fdf4" stroke="#22c55e" stroke-width="1"/>
+  <text x="685" y="315" text-anchor="middle" font-family="Arial" font-size="12" fill="#15803d" font-weight="bold">换流站</text>
+  <text x="685" y="333" text-anchor="middle" font-family="Arial" font-size="10" fill="#166534">LCC-HVDC·VSC-HVDC</text>
+  
+  <!-- 图例 -->
+  <rect x="50" y="380" width="15" height="15" fill="#dbeafe" stroke="#2563eb" stroke-width="1"/>
+  <text x="70" y="392" font-family="Arial" font-size="10" fill="#374151">电压等级</text>
+  <rect x="150" y="380" width="15" height="15" fill="#fef3c7" stroke="#d97706" stroke-width="1"/>
+  <text x="170" y="392" font-family="Arial" font-size="10" fill="#374151">拓扑结构</text>
+  <rect x="250" y="380" width="15" height="15" fill="#dcfce7" stroke="#16a34a" stroke-width="1"/>
+  <text x="270" y="392" font-family="Arial" font-size="10" fill="#374151">关键设施</text>
+  <rect x="350" y="380" width="15" height="15" fill="#ede9fe" stroke="#7c3aed" stroke-width="1"/>
+  <text x="370" y="392" font-family="Arial" font-size="10" fill="#374151">HVDC</text>
+</svg>
+</div>
+<p style="text-align:center;font-size:12px;color:#666;margin-top:8px;">图1 · 输电网络分类体系架构图</p>
 
 
 ## 核心原理详解
@@ -864,45 +947,57 @@ graph TD
 
 ## 相关主题
 
-- `power-system-network` - 电力系统网络
-- `smart-grid` - 智能电网
-- [[wide-area-monitoring-protection]] - 广域监测
-- [[modeling-synchronous-voltage-source-converters-in-transmission-system-planning-s]] - 输电系统
-- `hvdc-transmission` - 高压直流输电
-- `facts-devices` - FACTS装置
-- `power-quality` - 电能质量
-- `grid-code-compliance` - 并网导则
 
-## 来源论文
-
-| 论文 | 年份 |
-|------|------|
-| [[29tpwrd20162518676-2|29/TPWRD.2016.2518676]] | 2016 |
-| [[application-of-electromagnetic-transient-transient-stability-hybrid-simulation-t|Application of Electromagnetic Transient-Transient Stability]] | 2016 |
-| [[co-simulation-of-electromagnetic-transients-and-phasor-models-a-relaxation-appro|Co-Simulation of electromagnetic transients and Phasor model]] | 2016 |
-| [[co-simulation-of-electrical-networks-by-interfacing-emt-and-dynamic-phasor-simul|Co-simulation of electrical networks by interfacing EMT and ]] | 2018 |
-| [[advanced-dsogi-pll-with-adaptive-bandwidth-for-improved-transient-performance-of|Advanced DSOGI PLL with Adaptive Bandwidth for Improved Tran]] | 2024 |
-## EMT中的作用
-
-输电网络 (Transmission Network) 在EMT仿真中的核心作用：
-
-- **研究范围**：界定输电网络 (Transmission Network)在EMT仿真中的研究边界和应用场景
-- **分析方法**：提供输电网络 (Transmission Network)相关的EMT分析方法和工具
-- **系统影响**：分析输电网络 (Transmission Network)对电力系统电磁暂态特性的影响
-- **仿真验证**：为输电网络 (Transmission Network)相关研究提供仿真验证框架
 ## 形式化表达
 
-从EMT仿真角度，输电网络 (Transmission Network)可形式化表达为：
+输电网络在EMT仿真中可形式化表达为多端口网络系统，其核心是节点导纳矩阵方程和系统微分-代数方程组（DAE）的构建与求解。
+
+### 节点导纳矩阵
+
+输电网络的稳态分析基于节点导纳矩阵 $\mathbf{Y} \in \mathbb{C}^{n 	imes n}$：
 
 $$
-\text{待补充：输电网络 (Transmission Network)的数学形式化描述}
+\mathbf{Y} \mathbf{V} = \mathbf{I}
 $$
+
+其中 $\mathbf{V} = [V_1, V_2, ..., V_n]^T$ 为节点电压向量，$\mathbf{I} = [I_1, I_2, ..., I_n]^T$ 为节点注入电流向量。对于拥有 $n$ 个节点的网络，$\mathbf{Y}$ 的元素定义为：
+
+$$
+Y_{ii} = \sum_{k=1}^{n} y_{ik}, \quad Y_{ij} = -y_{ij} \quad (i \neq j)
+$$
+
+其中 $y_{ij}$ 为节点 $i$ 与 $j$ 之间支路的导纳。
+
+### 电磁暂态方程
+
+在EMT仿真中，输电网络表示为微分-代数方程组：
+
+$$
+\mathbf{M} \frac{d\mathbf{x}}{dt} = \mathbf{f}(\mathbf{x}, \mathbf{z}) + \mathbf{B} \cdot \mathbf{u}(t)
+$$
+
+其中：
+- $\mathbf{x} \in \mathbb{R}^n$ — 状态变量（电容电压、电感电流等）
+- $\mathbf{z} \in \mathbb{R}^m$ — 代数变量（网络节点电压）
+- $\mathbf{M}$ — 质量矩阵（反映储能元件的拓扑）
+- $\mathbf{B}$ — 输入矩阵
+- $\mathbf{u}(t)$ — 外部激励（故障电流源、换流器控制信号）
+
+### 稳态与暂态接口
+
+输电网络在混合仿真中作为边界网络时，采用戴维南等值或诺顿等值与内部EMT网络接口：
+
+$$
+V_{th}(t) = R_{eq} \cdot I_{boundary}(t) + L_{eq} \cdot \frac{dI_{boundary}}{dt}
+$$
+
+其中 $R_{eq}$、$L_{eq}$ 为等值阻抗参数。
+
 ## 来源论文
 
 | 论文 | 年份 |
 |------|------|
-| [[29tpwrd20162518676-2|29/TPWRD.2016.2518676]] | 2016 |
-| [[application-of-electromagnetic-transient-transient-stability-hybrid-simulation-t|Application of Electromagnetic Transient-Transient Stability]] | 2016 |
-| [[co-simulation-of-electromagnetic-transients-and-phasor-models-a-relaxation-appro|Co-Simulation of electromagnetic transients and Phasor model]] | 2016 |
-| [[co-simulation-of-electrical-networks-by-interfacing-emt-and-dynamic-phasor-simul|Co-simulation of electrical networks by interfacing EMT and ]] | 2018 |
-| [[advanced-dsogi-pll-with-adaptive-bandwidth-for-improved-transient-performance-of|Advanced DSOGI PLL with Adaptive Bandwidth for Improved Tran]] | 2024 |
+| [[29tpwrd20162518676-2]] - Application of Electromagnetic Transient-Transient Stability Hybrid Simulation | 2016 |
+| [[application-of-electromagnetic-transient-transient-stability-hybrid-simulation-t]] - EMT-暂态稳定混合仿真应用于FIDVR研究 | 2016 |
+| [[co-simulation-of-electrical-networks-by-interfacing-emt-and-dynamic-phasor-simul]] - EMT与动态相量协同仿真接口方法 | 2018 |
+| [[a-multi-solver-framework-for-co-simulation-of-transients-in-modern-power-systems]] - 多求解器协同仿真框架 | 2024 |
