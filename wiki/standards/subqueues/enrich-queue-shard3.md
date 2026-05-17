@@ -20,8 +20,8 @@
 
 | 252 | coordinate-transformation-model.md | models | models/control/coordinate-transformation-model.md | P1 | 999 | 7010 | 28 | 14 | completed |
 | 189 | csg.md | methods | methods/power-electronics/csg.md | P0 | 999 | 5593 | 6 | 10 | completed |
-| 267 | dc-dc-converter.md | models | models/converter/dc-dc-converter.md | P1 | 999 | 4448 | 41 | 16 | pending |
-| 38 | dc-rlc-filter.md | models | models/basic-component/dc-rlc-filter.md | P0 | 999 | 1229 | 2 | 28 | pending |
+| 267 | dc-dc-converter.md | models | models/converter/dc-dc-converter.md | P1 | 999 | 4448 | 41 | 16 | completed |
+| 38 | dc-rlc-filter.md | models | models/basic-component/dc-rlc-filter.md | P0 | 999 | 4173 | 13 | 28 | completed |
 | 355 | detailed-equivalent-model.md | methods | methods/power-electronics/detailed-equivalent-model.md | P1 | 999 | 1575 | 9 | 17 | pending |
 | 332 | direct-interface-technique.md | methods | methods/simulation-technology/direct-interface-technique.md | P1 | 999 | 1992 | 4 | 13 | pending |
 | 108 | distance-relay.md | models | models/protection/distance-relay.md | P0 | 999 | 2815 | 10 | 14 | pending |
@@ -91,3 +91,7 @@
 
 
 ||| Cycle 1 | csg.md | P0 SKIP (Quality Gate PASS: bc=2266≥2000, bf=6≥5, no placeholder, no DUP_BLOCK, src=508≤5000, max_block=8836≤15000) | 2026-05-18 02:47 |
+
+||| Cycle 2 | dc-dc-converter.md | P1 SKIP (Quality Gate PASS: bc=4311≥2000, bf=41≥5, no placeholder, no DUP_BLOCK, src=0≤5000, max_block=10159≤15000) | 2026-05-18 02:48 |
+
+||| Cycle 3 | dc-rlc-filter.md | P0 ENRICH (bc=1206→4173, bf=2→13, sep_count=3→2, added Carbonea2002 formulas, 4 methods, quant tables) | 2026-05-18 02:52 |
