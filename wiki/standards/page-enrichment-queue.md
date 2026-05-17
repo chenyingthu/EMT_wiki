@@ -18,7 +18,7 @@
 | 10 | wind-farm-modeling.md | topics | topics/renewable-storage/wind-farm-modeling.md | P0 | 999 | 13244 | 34 | 15 | completed |
 | 11 | emt-mathematical-foundation.md | topics | topics/simulation/emt-mathematical-foundation.md | P0 | 999 | 6997 | 14 | 15 | completed |
 | 12 | frequency-dependent-modeling.md | topics | topics/modeling-methods/frequency-dependent-modeling.md | P0 | 999 | 769 | 0 | 171 | completed |
-| 13 | reactive-compensation-device.md | models | models/compensation/reactive-compensation-device.md | P0 | 999 | 775 | 0 | 17 | pending |
+| 13 | reactive-compensation-device.md | models | models/compensation/reactive-compensation-device.md | P0 | 999 | 3581 | 25 | 17 | completed |
 | 14 | harmonic-analysis.md | topics | topics/stability-analysis/harmonic-analysis.md | P0 | 999 | 783 | 4 | 16 | pending |
 | 15 | differential-protection.md | models | models/protection/differential-protection.md | P0 | 999 | 795 | 2 | 13 | pending |
 | 16 | numerical-integration.md | methods | methods/numerical-methods/numerical-integration.md | P0 | 999 | 813 | 6 | 199 | pending |
@@ -431,3 +431,4 @@
 - P0 需全量重写: 234 页
 - P1 需修复问题: 180 页
 - 总计返工: 414 页
+|||| 5 | 1 | 1 | 0 | enrich: reactive-compensation-device.md | 2026-05-17 |
