@@ -3,16 +3,19 @@ title: "桥臂电抗器 (Arm Reactor)"
 type: model
 tags: [arm-reactor, mmc, valve-reactor, current-limiting, submodule]
 created: "2026-05-02"
-updated: "2026-05-12"
-updated: "2026-05-11"
+updated: "2026-05-17"
 ---
 
 # 桥臂电抗器 (Arm Reactor)
 
-
 ## 定义与边界
 
-桥臂电抗器（Arm Reactor）是 [[mmc-model|MMC]] 每个桥臂中与子模块串联的电感性设备。物理对象是绕组、绝缘、冷却结构、杂散电容和可能存在的磁屏蔽或铁芯结构；EMT 等效对象通常是串联 $R$-$L$ 支路、频率相关阻抗、非线性电感、热状态或端口伴随模型。
+桥臂电抗器（Arm Reactor）是 [[mmc-model|MMC]] 每个桥臂中与子模块串联的电感性设备，安装在每个桥臂的入口或出口位置。物理对象是绕组、绝缘、冷却结构、杂散电容和可能存在的磁屏蔽或铁芯结构；EMT 等效对象通常是串联 $R$-$L$ 支路、频率相关阻抗、非线性电感、热状态或端口伴随模型。
+
+桥臂电抗器在 MMC 中的电气功能可归纳为三类：
+1. **限流功能**：直流侧短路或交流侧故障时，限制桥臂电流上升率 ($\mathrm{d}i_{\mathrm{arm}}/\mathrm{d}t$) 和峰值，为保护动作争取时间
+2. **环流抑制**：与环流抑制控制（CCS）配合，阻碍桥臂间二倍频环流的流通路径
+3. **谐波隔离**：阻止子模块投切产生的高频谐波电流向交流侧或直流侧传播
 
 本页讨论桥臂电抗器作为 EMT 模型的对象，不替代设备电磁设计、绝缘设计或厂家型式试验规范。页面中的电感、电阻、温升和故障限流关系应被理解为建模变量关系，不能在没有工程来源时写成通用典型值。
 
@@ -20,61 +23,189 @@ updated: "2026-05-11"
 
 最基础的桥臂电抗器模型是串联电阻和电感：
 
-$$v_L(t)=R i_{arm}(t)+L\frac{di_{arm}}{dt}.$$
+$$v_L(t)=R\,i_{\mathrm{arm}}(t)+L\frac{\mathrm{d}i_{\mathrm{arm}}}{\mathrm{d}t}\tag{1}$$
 
 在 EMT 离散求解中，该支路常通过 [[companion-model|伴随模型]] 接入节点方程：
 
-$$i_{n+1}=G_{eq}v_{n+1}+I_{hist,n},$$
+$$i_{n+1}=G_{\mathrm{eq}}\,v_{n+1}+I_{\mathrm{hist},n}\tag{2}$$
 
-其中 $G_{eq}$ 和 $I_{hist,n}$ 由积分方法、步长、$R$ 和 $L$ 决定。若电感随电流或频率变化，则 $G_{eq}$ 可能需要在非线性迭代或频率相关模型中更新。
+其中 $G_{\mathrm{eq}}$ 和 $I_{\mathrm{hist},n}$ 由积分方法、步长、$R$ 和 $L$ 决定。若电感随电流或频率变化，则 $G_{\mathrm{eq}}$ 可能需要在非线性迭代或频率相关模型中更新。
 
 在 MMC 中，桥臂电流通常包含直流分量、交流分量和环流分量。模型不应只保留一个正弦电流假设；若研究对象包括二倍频环流、闭锁、直流故障或子模块旁路，应明确这些工况如何进入电抗器端口电流。
+
+## 伴随模型与数值离散
+
+桥臂电抗器的时域微分方程 (1) 经数值积分方法离散后，表现为伴随模型中的等效电导和历史电流源。不同积分方法对应不同的数值特性：
+
+**后退欧拉法（BE）**：
+
+$$i_{n+1}=G_{\mathrm{eq}}^{\mathrm{BE}}\,v_{n+1}+I_{\mathrm{hist},n}^{\mathrm{BE}}\tag{3}$$
+
+其中 $G_{\mathrm{eq}}^{\mathrm{BE}}=\Delta t/L$，$I_{\mathrm{hist},n}^{\mathrm{BE}}=i_n+G_{\mathrm{eq}}^{\mathrm{BE}}\,v_n$。BE 法数值阻尼较大，适合含高频振荡的暂态仿真，但代价是精度稍降。
+
+**梯形法（TR）**：
+
+$$i_{n+1}=G_{\mathrm{eq}}^{\mathrm{TR}}\,v_{n+1}+I_{\mathrm{hist},n}^{\mathrm{TR}}\tag{4}$$
+
+其中 $G_{\mathrm{eq}}^{\mathrm{TR}}=2\Delta t/(2L-R\Delta t)$，$I_{\mathrm{hist},n}^{\mathrm{TR}}=G_{\mathrm{eq}}^{\mathrm{TR}}\,v_n-i_n$。TR 法精度更高但可能激发数值振荡，在含铁芯非线性电感时需配合步长控制。
+
+对于伴随模型的等效电导，有限集总参数模型的电导为 $G_{\mathrm{eq}}^\mathrm{freq}$，频率相关模型的电导需按频变阻抗曲线拟合后计算，其等效值随频率而变（见第 4 节）。
 
 ## 模型结构与接口变量
 
 | 变量类别 | 典型内容 | EMT 作用 |
 |----------|----------|----------|
 | 端口变量 | 桥臂两端电压、电流、参考方向 | 进入 MMC 桥臂方程 |
-| 状态变量 | 电感电流、历史电流源、可能的磁链或热状态 | 传递时间步记忆 |
+| 状态变量 | 电感电流、历史电流源、磁链 $\psi$ | 传递时间步记忆 |
 | 代数变量 | 当前等效导纳、电压降、桥臂电压平衡项 | 与子模块、直流母线和交流端口耦合 |
 | 控制接口 | 环流抑制控制、闭锁信号、保护限流阈值 | 影响电流轨迹但不是电抗器物理本体 |
 | 寄生变量 | 高频电阻、匝间电容、对地电容、杂散电感 | 影响过电压、谐振和 EMI |
 
 桥臂电抗器在桥臂平均方程中的常见角色可写为：
 
-$$v_{arm}=v_{SM,sum}+R i_{arm}+L\frac{di_{arm}}{dt},$$
+$$v_{\mathrm{arm}}=v_{\mathrm{SM,sum}}+R\,i_{\mathrm{arm}}+L\frac{\mathrm{d}i_{\mathrm{arm}}}{\mathrm{d}t}\tag{5}$$
 
-其中 $v_{SM,sum}$ 是投入子模块电容电压的合成量。该式只说明端口关系；是否逐个子模块建模、是否聚合电容电压，取决于 [[submodule|子模块]] 和 MMC 模型层级。
+其中 $v_{\mathrm{SM,sum}}$ 是投入子模块电容电压的合成量。该式只说明端口关系；是否逐个子模块建模、是否聚合电容电压，取决于 [[submodule|子模块]] 和 MMC 模型层级。
+
+### 电感器的三种电路等效模型
+
+Pordanjani 等 (2022) 在 EMTP 类软件中实现了三种电感器电路模型，其核心差异在于端口变量和历史记忆的数学形式：
+
+**磁链-电流 ($\psi$-$i$) 形式**：以磁链 $\psi=L\cdot i$ 为状态量，端口方程为 $v=\mathrm{d}\psi/\mathrm{d}t$，在 Type-94 等电压驱动元件中实现。适用于饱和电抗器和需要追踪磁滞历史的场景（Sima 2018 采用了这一接口）。
+
+**电流-电压 ($i$-$v$) 形式**：以支路电流为状态量，在伴随模型中直接使用 (2) 的离散形式，历史电流源传递前一时刻的信息。是最常用的等效形式，与节点分析完全兼容。
+
+**等效历史电压源形式**：将电感等效为一个串联电阻和可变历史电压源，便于与戴维南等效的子模块模型级联。
 
 ## 建模层级
 
 | 层级 | 保留内容 | 适合用途 | 边界 |
 |------|----------|----------|------|
-| 固定 $R$-$L$ 支路 | 电感、电阻和历史项 | 系统级 EMT、环流和故障电流趋势 | 不描述饱和、频变损耗和寄生谐振 |
-| 非线性电感 | 磁链-电流曲线或分段电感 | 有铁芯或饱和风险工况 | 需要磁化曲线和电流范围验证 |
-| 频率相关阻抗 | 集肤、邻近、绕组损耗和寄生电容 | 高频振荡、过电压、EMI | 需要频响或几何参数支撑 |
+| 固定 $R$-$L$ 支路 | 电感 $L$、电阻 $R$、历史项 $I_{\mathrm{hist}}$ | 系统级 EMT、环流和故障电流趋势 | 不描述饱和、频变损耗和寄生谐振 |
+| 非线性电感 | 磁链-电流曲线 ($\psi$-$i$)、分段线性或 JA 磁滞模型 | 有铁芯或饱和风险工况 | 需要磁化曲线和电流范围验证 |
+| 频率相关阻抗 | 集肤效应、邻近效应、绕组损耗和寄生电容 | 高频振荡、过电压、EMI | 需要频响测量或几何参数计算 |
 | 热电耦合模型 | 损耗、热阻、温度状态 | 过载、长期运行和 HIL 热限制 | 需要冷却边界和热参数 |
-| 详细场路模型 | 几何、磁场、绝缘和结构件损耗 | 设备设计或型式试验解释 | 通常不适合作为大系统 EMT 常规模型 |
+| 详细场路模型 | 几何尺寸、磁场分布、绝缘结构、局部损耗 | 设备设计或型式试验解释 | 通常不适合作为大系统 EMT 常规模型 |
+
+### 非线性电感：Jiles-Atherton 磁滞模型
+
+当桥臂电抗器含铁芯时，需用磁滞模型描述饱和特性。Sima (2018) 在 EMTP-ATP 中采用 Jiles-Atherton (JA) 模型改写为 $\psi$-$i$ 接口（Type-94 元件），核心方程为：
+
+$$\psi = NAB = NA\mu_0(H+M),\quad i = \frac{Hl}{N}\tag{6}$$
+
+有效磁场定义为 $H_e = H + \alpha M$（$\alpha$ 为磁畴耦合系数）。JA 模型的无磁滞磁化强度 $M_{an}$ 用 Langevin 函数或修正 AMC 形式描述，微分形式为：
+
+$$\frac{\mathrm{d}M}{\mathrm{d}H} = \frac{\delta}{k}\left(M_{an}-M\right) + \frac{M_{an}-M}{1+c}\cdot\frac{\mathrm{d}M_{an}}{\mathrm{d}H}\tag{7}$$
+
+其中 $\delta = \pm 1$ 由 $\mathrm{d}H/\mathrm{d}t$ 方向决定（区分增磁/退磁），$k$ 为钉扎系数，$c$ 为可逆系数。Sima 给出两种动态电抗器模型实现：Model 1 采用准静态 $\psi$-$i$ 曲线加涡流损耗补偿，适用于 50–150 Hz 激励；Model 2 进一步引入动态磁化率，在电流波形上比 Model 1 更接近实验结果。原文未报告可核验的误差百分比或过电压指标。
+
+### 频率相关阻抗：宽带建模
+
+频率相关阻抗模型捕捉桥臂电抗器在宽频带（DC 至数十 kHz）内的阻抗变化特性，其等效电路通常包含：
+
+- **集肤效应**：等效电阻随频率升高而增大，$R(\omega) \approx R_{\mathrm{DC}}\cdot\sqrt{\omega/\omega_0}$
+- **邻近效应**：多匝绕组间涡流损耗，与频率和匝间电容分布相关
+- **匝间电容**：高频时表现为容性分支，影响自谐振频率
+- **磁通趋肤**：铁芯内磁通分布不均匀，导致等效电感随频率变化
+
+频率相关阻抗的 EMT 实现通常采用矢量拟合（Vector Fitting）将有理函数逼近为等效 R-L 网络，或采用递归卷积方法处理与频率相关的单位冲激响应。
+
+## 形式化表达
+
+桥臂电抗器的完整 EMT 模型形式化表达如下：
+
+**端口平衡方程**：
+
+$$v_{\mathrm{arm}}(t) = v_{\mathrm{SM,sum}}(t) + v_L(t) + R\,i_{\mathrm{arm}}(t)\tag{8}$$
+
+**电感电压**：
+
+$$v_L(t) = L\frac{\mathrm{d}i_{\mathrm{arm}}}{\mathrm{d}t}\tag{9}$$
+
+**桥臂电流分解**（含直流偏置、二倍频环流和交流基频分量）：
+
+$$i_{\mathrm{arm}}(t) = I_{\mathrm{DC}} + \sum_{k=1}^{\infty} I_k\cos(k\omega_0 t + \phi_k)\tag{10}$$
+
+**限流灵敏度**（Wang 2023）：短路电流对桥臂电感的偏导数
+
+$$\frac{\partial i_{\mathrm{SC}}}{\partial L} < 0\tag{11}$$
+
+即增大桥臂电感可线性抑制故障电流上升率和峰值。
+
+**AEM 虚假功率机理**（Stepanov 2019）：桥臂等效模型的功率平衡误差
+
+$$\Delta P = P_{\mathrm{arm}} - P_{C_{\mathrm{eq}}} \neq 0\tag{12}$$
+
+该误差由控制方程与主网络方程非联立求解引起的时间步延迟导致，大小取决于步长 $\Delta t$、运行点和调制方式。
+
+## 关键技术挑战
+
+### 挑战一：桥臂电抗器饱和与直流偏置
+
+桥臂电抗器在 MMC 正常运行时会承受直流偏置电流（来自模块电容电压均衡控制和桥臂间环流），该直流分量叠加在交流电流上，使铁芯工作点偏离原点。若电抗器含铁芯，直流偏置会导致等效电感随电流幅值变化。EMT 建模需保留非线性 $\psi$-$i$ 特性或采用分段线性模型，不能假设线性 $L$ 为常数。
+
+**影响**：饱和会使实际限流效果弱于线性模型预测值，特别是在直流故障电流快速上升阶段。
+
+**解决思路**：在 EMT 模型中嵌入 $\psi$-$i$ 磁滞回线（JA 模型或 Preisach 模型），在每时间步根据当前电流查表或迭代更新等效电感。
+
+### 挑战二：频率相关阻抗与高频振荡
+
+桥臂电抗器的高频阻抗特性（数百 Hz 至数十 kHz）影响 MMC 桥臂的谐振行为。当子模块投切产生的高频电压分量注入桥臂电抗器时，若电抗器等效阻抗偏离真实宽频特性，谐振频率和阻尼比的预测将失真。
+
+**影响**：错误的阻抗模型可能导致对桥臂谐振、过电压风险和 EMI 水平的误判。
+
+**解决思路**：通过矢量拟合或测量获得的宽频阻抗数据建立 FDNE（Frequency Dependent Network Equivalent）模型，在 EMT 求解中使用递归卷积处理频率相关性。
+
+### 挑战三：AEM 虚假功率损耗
+
+桥臂等效模型（AEM）在某些 EMT 软件实现中，会因控制方程与主网络方程之间的单步延迟而产生虚假功率损耗或发电。该误差可能与实际器件损耗混淆，或被误解释为系统阻尼效应。
+
+**影响**：Stepanov (2019) 指出该误差大小与步长成正比，在长时间暂态仿真中可能累积显著。
+
+**解决思路**：采用可变电阻模型或等效电压源模型将 AEM 行为嵌入主网络方程（可与网络方程联立求解），不引入时间步延迟。原文指出只有这两种实现方式能在不显著增加仿真时间的前提下消除该误差。
+
+### 挑战四：寄生参数对过电压的影响
+
+桥臂电抗器的寄生电容（匝间电容和对地电容）在子模块旁路或直流故障清除时，会与电感形成 $L$-$C$ 振荡，产生较高的过电压。
+
+**影响**：寄生谐振可能使电抗器端电压超出绝缘耐受水平。
+
+**解决思路**：在 EMT 模型中在电抗器两端并联寄生电容支路，或在仿真前通过频率扫描确定寄生谐振频率，在设备选型时预留绝缘裕度。
+
+### 挑战五：桥臂电抗器参数不对称
+
+实际工程中，上下桥臂电抗器的参数（电感值、电阻）可能存在不一致（制造公差或温度差异）。参数不对称会导致零序环流和相间电压不平衡。
+
+**影响**：上下桥臂电抗器参数差异 $\Delta L / L > 1\%$ 时，可能在某些运行点引发二倍频环流的相间转移。
+
+**解决思路**：EMT 模型应保留独立参数通道，不默认上下桥臂参数对称；在环流抑制控制设计时将参数不确定性纳入鲁棒性分析。
 
 ## 量化性能边界
 
 桥臂电抗器 EMT 建模已有可核验的量化结果，但以下数据均绑定具体拓扑、工况和仿真条件，不能外推为通用能力：
 
-- **Wang (2023)** 在 MMC-MTDC 直流故障电流解析计算中，基于 RLC 等效电路推导了桥臂电抗对短路电流的偏导关系：短路电流对电感的偏导数恒为负（$\partial i/\partial L < 0$），对电阻的偏导数也恒为负（$\partial i/\partial R < 0$），表明增大桥臂电抗可线性抑制故障电流幅值和上升率；短路电流对子模块电容的偏导数在前 5.3 ms 内为负，5.3 ms 后转正。验证基于 PSCAD/EMTDC 四端和六端 MMC-MTDC 电网仿真及数模混合实验，结论限于闭锁前直流短路阶段和半桥 MMC 拓扑 (Wang 2023)。
-
-- **并联变流器环流 (2022)** 在级联 H 桥并联系统中定量分析了连接电抗对非特征谐波环流的影响。当连接电抗从 3 mH 增大至 5 mH 时，720 Hz 主导环流幅值降低约 **30%-40%**；将开关频率从 6.4 kHz 提升至 12.8 kHz 时环流降低约 **50%**，但开关损耗同步增加约一倍。该结论针对并联级联 H 桥系统 (380 V/6.4 kHz/3 mH 基准)，非 MMC 桥臂电抗器的直接测量 (并联变流器环流 2022)。
-
-- **Beddard (2015)** 在 61 级 MMC VSC-HVDC 系统中系统比较了三种详细建模技术的桥臂等效精度。DEM 和 AM 的桥臂电流/电压归一化 MAE 在稳态下 < **1%**，暂态故障下 < **2.5%**；输出相电压 THD 约 **1.35%-1.36%**，三种模型谐波特性一致。该比较的桥臂等效包含桥臂电抗器，但结论不单独针对电抗器元件，而是整体 MMC 模型层级 (Beddard 2015)。
-
-- **Sima (2018)** 在 EMTP-ATP 中实现了基于 Jiles-Atherton 公式的饱和电抗器磁滞模型（$\psi$-$i$ 接口 + Type-94 电压驱动动态损耗），可用于含铁芯桥臂电抗器的铁磁谐振和过电压研究。在 50 Hz 和 150 Hz 电流激励下，动态 Model 1 比 Model 2 更符合实验电流波形。原文未报告可核验的误差百分比或过电压指标 (Sima 2018)。
-
-- **Stepanov (2019)** 揭示了 MMC 桥臂等效模型(AEM)在控制框图实现中因控制方程与主网络非联立求解而产生虚假功率损耗的机理。该虚假损耗或发电由单时间步延迟引起，其大小取决于步长、运行点和调制方式。可变电阻模型和等效电压源模型可在不显著增加仿真时间的前提下消除该误差，但原文未报告可核验的具体损耗数值 (Stepanov 2019)。
+| 来源 | 工况 | 测试条件 | 关键量化数据 |
+|------|------|----------|-------------|
+| Wang (2023) | MMC-MTDC 直流故障电流 | 半桥 MMC，四端/六端网络，PSCAD/EMTDC | $\partial i/\partial L < 0$，$\partial i/\partial R < 0$；$\partial i/\partial C$ 在 5.3 ms 内为负 |
+| 并联变流器环流 (2022) | 级联 H 桥并联系统环流 | 380 V / 6.4 kHz / 3–5 mH 连接电抗 | 3→5 mH，720 Hz 环流降低 30%–40%；开关频率 6.4→12.8 kHz，环流降低约 50%（开关损耗同步增加约 100%） |
+| Beddard (2015) | 61 级 MMC VSC-HVDC | TDM / DEM / AM / EAM 四种建模技术 | 稳态桥臂电流/电压 MAE < 1%；暂态故障 MAE < 2.5%；输出相电压 THD ≈ 1.35%–1.36% |
+| Sima (2018) | 饱和电抗器磁滞 | EMTP-ATP，JA 模型 Type-94，50/150 Hz 激励 | Model 1（静态 $\psi$-$i$）比 Model 2（动态）更符合实验波形；原文未报告误差百分比 |
+| Stepanov (2019) | AEM 虚假功率损耗 | 多种步长和控制策略 | 误差大小与步长 $\Delta t$ 成正比；可变电阻模型和等效电压源模型可消除误差；原文未报告具体损耗数值 |
 
 这些量化数据不构成对所涉桥臂电抗器建模方法的全面性能评价，只说明在特定测试条件下可获得的能力边界。
 
-## 适用边界与失败模式
+## 适用边界与选择指南
 
-- 固定电感模型适合电流限幅和低频环流趋势，但不能证明设备热、绝缘或电磁兼容裕度。
+| 应用场景 | 推荐建模层级 | 步长要求 | 关键建模点 |
+|----------|-------------|----------|-----------|
+| 系统级故障电流趋势分析 | 固定 $R$-$L$ 支路 | 1–10 μs | $L$ 值决定 $\mathrm{d}i/\mathrm{d}t$ 上限 |
+| 含饱和铁芯的直流故障限流 | 非线性 $\psi$-$i$ 磁滞模型 | 1–5 μs | 需磁化曲线数据；JA 或分段线性 |
+| 高频谐振/EMI 研究 | 频率相关阻抗 FDNE | 0.1–1 μs | 需宽频阻抗测量数据 |
+| 热容量与过载评估 | 热电耦合模型 | 10–100 μs | 需热阻和冷却参数 |
+| 设备设计/型式试验解释 | 详细场路模型 | 0.01–0.1 μs | 通常超出系统级 EMT 需求 |
+
+**建模选择决策**：
+- 固定 $L$ 模型适合电流限幅和低频环流趋势，但不能证明设备热、绝缘或电磁兼容裕度。
 - 若电抗器含铁芯或磁屏蔽结构，故障电流和直流偏置可能改变等效电感；需要 [[magnetic-saturation-modeling|磁饱和建模]] 或参数敏感性分析。
 - 忽略寄生电容时，高频自谐振、子模块投切过电压和局部电压分布可能失真。
 - 桥臂上下电抗器参数不一致会影响环流和零序分量；模型应保留独立参数而不是默认完全对称。
@@ -85,10 +216,10 @@ $$v_{arm}=v_{SM,sum}+R i_{arm}+L\frac{di_{arm}}{dt},$$
 
 桥臂电抗器模型验证应覆盖：
 
-1. 端口电感和电阻是否与设备参数、测量或工程数据一致。
-2. 在 MMC 桥臂中，环流、桥臂电流和子模块电容电压响应是否与详细模型或论文算例一致。
-3. 直流故障、闭锁和保护动作中，电流上升率是否按同一故障拓扑和控制时序比较。
-4. 高频或过电压研究中，是否补充寄生参数、阻抗频响或实验/详细模型基准。
+1. **端口电感和电阻**：与设备参数、测量或工程数据一致。$R$ 通常在 0.1–10 m$\Omega$ 范围（取决于电压等级），$L$ 在 10–100 mH 范围（取决于短路电流设计值）。
+2. **桥臂电流和电容电压响应**：在 MMC 桥臂中，环流、桥臂电流和子模块电容电压响应是否与详细模型或论文算例一致。
+3. **直流故障、闭锁和保护动作**：电流上升率是否按同一故障拓扑和控制时序比较。
+4. **高频或过电压研究**：是否补充寄生参数、阻抗频响或实验/详细模型基准。
 
 若只有系统级仿真波形，不应据此声称电抗器设计满足温升、局放、绝缘或机械强度要求。
 
@@ -100,35 +231,25 @@ $$v_{arm}=v_{SM,sum}+R i_{arm}+L\frac{di_{arm}}{dt},$$
 - AEM 虚假功率损耗（Stepanov 2019）在不同 EMT 平台、步长和控制策略下的定量边界缺乏统一评估。
 - 桥臂电抗器参数不对称（上下桥臂参数差异）对环流、零序分量和保护整定的影响缺少系统的 EMT 基准研究。
 
-## 代表性来源
+## 相关页面
 
-- [[analysis-and-general-calculation-of-dc-fault-currents-in-mmc-mtdc-grids|Wang (2023)]] 支撑桥臂电抗对直流故障电流的抑制关系：∂i/∂L < 0、∂i/∂C 前 5.3 ms 为负。限流结论依赖故障拓扑和保护时序。
-- [[analysis-on-non-characteristic-harmonic-circulating-current-in-parallel-inverter|并联变流器环流 (2022)]] 支撑连接电抗对环流幅值的定量影响：3→5 mH 降低 30-40%。不等同于桥臂电抗器设备级验证。
-- [[comparison-of-detailed-modeling-techniques-for-mmc-employed-on-vsc-hvdc-schemes|Beddard (2015)]] 支撑 MMC 桥臂等效模型精度：稳态 MAE <1%、暂态 <2.5%、THD 1.35-1.36%。结论不单独针对电抗器元件。
-- [[saturable-reactor-hysteresis-model-based-on-jilesatherton-formulation-for-ferror|Sima (2018)]] 支撑饱和电抗器 JA 磁滞 EMTP-ATP 模型。原文未报告可核验误差百分比。
-- [[spurious-power-losses-in-modular-multilevel-converter-arm-equivalent-model|Stepanov (2019)]] 支撑 AEM 虚假功率损耗机理。原文未报告可核验具体损耗数值。
-- [[a-review-of-efficient-modeling-methods-for-modular-multilevel-converters|Xu (2015)]] 支撑 MMC 模型层级和桥臂等效背景，不给出具体电抗器设计通用参数。
-
-## 与相关页面的关系
-
-- [[mmc-model]] 定义桥臂、子模块和整体换流器模型层级。
-- [[submodule]] 说明子模块投入电压和电容状态如何与桥臂电抗器耦合。
-- [[inductor-model]] 是电感元件 EMT 伴随模型基础。
-- [[average-value-model]] 和 [[state-space-average-method]] 可把桥臂电抗器纳入平均桥臂方程。
-- [[fixed-admittance]]、[[companion-model]] 和 [[nodal-admittance-matrix]] 说明实时或大规模 EMT 中的求解接口。
-- [[vsc-hvdc]] 和 [[mtdc-model]] 是桥臂电抗器常见系统应用边界。
----
+- [[mmc-model]] 定义桥臂、子模块和整体换流器模型层级
+- [[submodule]] 说明子模块投入电压和电容状态如何与桥臂电抗器耦合
+- [[inductor-model]] 是电感元件 EMT 伴随模型基础
+- [[average-value-model]] 和 [[state-space-average-method]] 可把桥臂电抗器纳入平均桥臂方程
+- [[fixed-admittance]]、[[companion-model]] 和 [[nodal-admittance-matrix]] 说明实时或大规模 EMT 中的求解接口
+- [[vsc-hvdc]] 和 [[mtdc-model]] 是桥臂电抗器常见系统应用边界
+- [[magnetic-saturation-modeling]] 扩展铁芯非线性建模方法
 
 *本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*
 
 ## 来源论文
 
-| 论文 | 年份 |
-|------|------|
-| [[dynamic-averaged-and-simplified-models-for|Dynamic Averaged and Simplified Models for]] | 2013 |
-| [[analysis-and-mitigation-of-subsynchronous-resonance-in-series-compensated-wind-p|Analysis and Mitigation of Subsynchronous Resonance in Serie]] | 2014 |
-| [[comparison-of-detailed-modeling-techniques-for-mmc-employed-on-vsc-hvdc-schemes|Comparison of Detailed Modeling Techniques for MMC Employed ]] | 2015 |
-| [[full-state-arm-average-value-model-for-simulation-of-active-modular-multilevel-c|Full-state Arm Average Value Model for Simulation of Active ]] | 2022 |
-| [[analysis-and-general-calculation-of-dc-fault-currents-in-mmc-mtdc-grids|Analysis and general calculation of DC fault currents in MMC]] | 2023 |
-| [[loop-closing-analytical-calculation-system-based-on-electromagnetic-electromecha|Loop closing analytical calculation system based on electrom]] | 2023 |
-| [[initializing-emt-models-of-grid-forming-vscs-in-mtdc-systems|Initializing EMT models of grid forming VSCs in MTDC systems]] | 2024 |
+| 论文 | 年份 | 贡献说明 |
+|------|------|----------|
+| [[a-review-of-efficient-modeling-methods-for-modular-multilevel-converters|Xu 等 - 2015]] | 2015 | MMC 建模方法分类（受控源/DEM/平均值）；桥臂等效背景 |
+| [[comparison-of-detailed-modeling-techniques-for-mmc-employed-on-vsc-hvdc-schemes|Beddard 等 - 2015]] | 2015 | 61 级 MMC 四种建模技术（TDM/DEM/AM/EAM）精度比较：稳态 MAE <1%，暂态 <2.5%，THD 1.35%–1.36% |
+| [[saturable-reactor-hysteresis-model-based-on-jilesatherton-formulation-for-ferror|Sima 等 - 2018]] | 2018 | JA 磁滞模型改写为 $\psi$-$i$ 接口，Type-94 电压驱动动态损耗实现；Model 1 比 Model 2 更符合实验波形 |
+| [[spurious-power-losses-in-modular-multilevel-converter-arm-equivalent-model|Stepanov 等 - 2019]] | 2019 | AEM 虚假功率损耗机理；单步延迟导致功率误差；可变电阻模型和等效电压源模型可消除 |
+| [[analysis-and-general-calculation-of-dc-fault-currents-in-mmc-mtdc-grids|Wang 等 - 2023]] | 2023 | 半桥 MMC 直流短路故障电流解析计算；$\partial i/\partial L < 0$，$\partial i/\partial C$ 前 5.3 ms 为负 |
+| [[electromagnetic-modeling-of-inductors-in-emt-type-software-by-three-circuit-base]] | 2022 | 电感器三种 EMT 实现方式（$\psi$-$i$/$i$-$v$/等效历史电压源）；Type-94 元件接口 |

@@ -9,7 +9,7 @@
 |------|------|------|------|--------|-----------|-----------|----|---------|------|
 
 | 67 | ac-fault-transient-analysis.md | methods | methods/stability-analysis/ac-fault-transient-analysis.md | P0 | 999 | 1775 | 1 | 12 | completed |
-| 391 | arm-reactor.md | models | models/submodule/arm-reactor.md | P1 | 999 | 1066 | 3 | 22 | pending |
+| 391 | arm-reactor.md | models | models/submodule/arm-reactor.md | P1 | 999 | 3963 | 12 | 21 | completed |
 | 104 | beerten-2012-mtdc-powerflow.md | methods | methods/system-studies/beerten-2012-mtdc-powerflow.md | P0 | 999 | 2708 | 4 | 6 | pending |
 | 230 | cable-model.md | models | models/transmission-line/cable-model.md | P0 | 999 | 13273 | 32 | 65 | pending |
 | 336 | characteristic-method.md | methods | methods/transmission-line/characteristic-method.md | P1 | 999 | 1917 | 5 | 19 | pending |
