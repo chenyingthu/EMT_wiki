@@ -34,7 +34,7 @@
 | 210 | folded-line-equivalent.md | methods | methods/transmission-line/folded-line-equivalent.md | P0 | 999 | 8402 | 12 | 10 | completed |
 | 348 | frequency-dependent-line-model.md | models | models/transmission-line/frequency-dependent-line-model.md | P1 | 999 | 4128 | 8 | 20 | completed |
 | 123 | frequency-response.md | methods | methods/stability-analysis/frequency-response.md | P0 | 999 | 3164 | 12 | 11 | completed |
-| 339 | gfl-inverter-model.md | models | models/converter/gfl-inverter-model.md | P1 | 999 | 1836 | 6 | 22 | pending |
+| 339 | gfl-inverter-model.md | models | models/converter/gfl-inverter-model.md | P1 | 999 | 4860 | 79 | 36 | completed |
 | 403 | grid-connected-inverter.md | models | models/converter/grid-connected-inverter.md | P1 | 999 | 865 | 7 | 9 | pending |
 | 343 | grounding-lightning-overvoltage.md | topics | topics/protection-lightning/grounding-lightning-overvoltage.md | P1 | 999 | 1786 | 17 | 17 | pending |
 | 240 | haileselassie-2012-mtdc-control.md | methods | methods/system-studies/haileselassie-2012-mtdc-control.md | P1 | 999 | 11201 | 8 | 10 | pending |
@@ -83,4 +83,5 @@
 | 209 | vector-fitting.md | methods | methods/signal-processing/vector-fitting.md | P0 | 999 | 8394 | 15 | 14 | completed |
 | 46 | vsc-hvdc.md | topics | topics/hvdc-facts/vsc-hvdc.md | P0 | 999 | 1392 | 7 | 126 | pending |
 | 83 | wideband-oscillation-stability.md | topics | topics/stability-analysis/wideband-oscillation-stability.md | P0 | 999 | 2187 | 11 | 15 | pending |
+
 
