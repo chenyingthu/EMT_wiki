@@ -9,7 +9,7 @@
 |------|------|------|------|--------|-----------|-----------|----|---------|------|
 
 | 366 | ac-coupled-network-equivalent.md | methods | methods/system-studies/ac-coupled-network-equivalent.md | P1 | 999 | 3475 | 10 | 20 | completed |
-| 77 | anti-islanding.md | methods | methods/protection-fault/anti-islanding.md | P0 | 999 | 2030 | 6 | 14 | pending |
+| 77 | anti-islanding.md | methods | methods/protection-fault/anti-islanding.md | P0 | 999 | 2171 | 10 | 8 | completed |
 | 205 | balanced-three-phase-line.md | methods | methods/transmission-line/balanced-three-phase-line.md | P0 | 999 | 7313 | 27 | 9 | pending |
 | 50 | bilinear-transform.md | methods | methods/numerical-methods/bilinear-transform.md | P0 | 999 | 1477 | 13 | 14 | pending |
 | 243 | cdsm.md | methods | methods/power-electronics/cdsm.md | P1 | 999 | 10085 | 11 | 14 | pending |
