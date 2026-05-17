@@ -434,23 +434,14 @@ end
 - [[real-time-simulation]] - 变压器实时仿真
 - [[frequency-dependent-modeling]] - 频变建模应用
 
-## 7. 来源论文
+## 来源论文
 
-| 论文 | 年份 | 核心贡献 |
-|------|------|----------|
-| [[measurement-based-frequency-dependent-model-of-a-hvdc-transformer-for-electromag|Measurement-based frequency dependent model of a HVDC transformer]] | 2019 | 基于测量的HVDC变压器频变模型，5Hz-10MHz |
-| [[a-high-frequency-transformer-model-for-the-emtp-power-delivery-ieee-transactions|A high frequency transformer model for the EMTP]] | 2001 | 高频变压器模型，适用于电磁暂态 |
-| [[electromagnetic-transient-modeling-and-simulation-of-large-power-systems-emt-sim|Electromagnetic Transient Modeling of Large Power Systems]] | 2025 | 大规模系统EMT建模，含变压器详细模型 |
+|| 论文 | 年份 | 核心贡献 |
+||------|------|----------|
+|| [[measurement-based-frequency-dependent-model-of-a-hvdc-transformer-for-electromag]] | 2019 | 基于测量的HVDC变压器频变模型，5Hz-10MHz，黑盒端口等效 ||
+|| [[a-high-frequency-transformer-model-for-the-emtp-power-delivery-ieee-transactions]] | 2001 | 高频变压器模型，60Hz-200kHz，RLC有理函数逼近 ||
+|| [[electromagnetic-transient-modeling-and-simulation-of-large-power-systems-emt-sim]] | 2025 | 大规模系统EMT建模，含77极点FDNE变压器等效 ||
 
 ---
 
 *本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*
-
-## 来源论文
-
-| 论文 | 年份 |
-|------|------|
-| [[control-and-simulation-of-a-grid-forming-inverter-for-hybrid-pv-battery-plants-i|Control and Simulation of a Grid-Forming Inverter for Hybrid]] | 2021 |
-| [[analysis-on-non-characteristic-harmonic-circulating-current-in-parallel-inverter|Analysis on non-characteristic harmonic circulating current ]] | 2022 |
-| [[an-aggregation-method-of-permanent-magnet-synchronous-wind-farms-for-electromech|An aggregation method of permanent magnet synchronous wind f]] | 2023 |
-| [[fast-investigation-of-control-interaction-risks-in-pv-parks-using-eigenvalue-ana|Fast investigation of control interaction risks in PV parks ]] | 2025 |
