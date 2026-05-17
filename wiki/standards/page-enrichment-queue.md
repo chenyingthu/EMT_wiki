@@ -30,7 +30,7 @@
 | 21 | detailed-switch-model.md | models | models/submodule/detailed-switch-model.md | P0 | 999 | 4182 | 8 | 18 | completed |
 | 22 | gfm-inverter-model.md | models | models/converter/gfm-inverter-model.md | P0 | 999 | 3575 | 15 | 14 | completed |
 | 23 | grounding-system-model.md | models | models/protection/grounding-system-model.md | P0 | 999 | 2765 | 17 | 18 | completed |
-| 24 | tcsc-model.md | models | models/compensation/tcsc-model.md | P0 | 999 | 949 | 3 | 11 | pending |
+| 24 | tcsc-model.md | models | models/compensation/tcsc-model.md | P0 | 999 | 3928 | 9 | 14 | completed |
 | 25 | ideal-switch-model.md | models | models/submodule/ideal-switch-model.md | P0 | 999 | 952 | 2 | 25 | pending |
 | 26 | vsc-model.md | models | models/converter/vsc-model.md | P0 | 999 | 989 | 13 | 99 | pending |
 | 27 | simulation-tools-status.md | methods | methods/system-studies/simulation-tools-status.md | P0 | 999 | 1034 | 0 | 11 | pending |
@@ -430,6 +430,7 @@
 ||| 1 | 1 | 1 | 0 | enrich: parallel-computing.md | 2026-05-17 |
 |||| 259 | 1 | 1 | 0 | enrich: microgrid-control.md | 2026-05-17 |
 
+||||| 7 | 1 | 1 | 0 | enrich: tcsc-model.md | 2026-05-17 |
 ## 复检统计
 - P0 需全量重写: 234 页
 - P1 需修复问题: 180 页
