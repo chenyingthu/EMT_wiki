@@ -14,7 +14,7 @@
 | 6 | transmission-network.md | topics | topics/tools-software/transmission-network.md | P0 | 999 | 1004 | 19 | 21 | completed |
 | 7 | ferroresonance.md | topics | topics/component-modeling/ferroresonance.md | P0 | 999 | 10926 | 44 | 15 | completed |
 | 8 | fault-impedance-model.md | models | models/protection/fault-impedance-model.md | P0 | 999 | 6704 | 108 | 12 | completed |
-| 9 | backward-euler.md | methods | methods/numerical-methods/backward-euler.md | P0 | 999 | 699 | 7 | 13 | pending |
+| 9 | backward-euler.md | methods | methods/numerical-methods/backward-euler.md | P0 | 999 | 4711 | 92 | 10 | completed |
 | 10 | wind-farm-modeling.md | topics | topics/renewable-storage/wind-farm-modeling.md | P0 | 999 | 713 | 2 | 58 | pending |
 | 11 | emt-mathematical-foundation.md | topics | topics/simulation/emt-mathematical-foundation.md | P0 | 999 | 754 | 2 | 16 | pending |
 | 12 | frequency-dependent-modeling.md | topics | topics/modeling-methods/frequency-dependent-modeling.md | P0 | 999 | 769 | 0 | 171 | pending |
@@ -425,6 +425,7 @@
 ||| 1 | 1 | 1 | 0 | enrich: transmission-line-theory.md | 2026-05-17 |
 ||| 2 | 1 | 1 | 0 | enrich: ferroresonance.md | 2026-05-17 |
 ||| 3 | 1 | 1 | 0 | enrich: fault-impedance-model.md | 2026-05-17 |
+||| 4 | 1 | 1 | 0 | enrich: backward-euler.md | 2026-05-17 |
 ## 复检统计
 - P0 需全量重写: 234 页
 - P1 需修复问题: 180 页
