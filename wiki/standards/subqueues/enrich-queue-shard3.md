@@ -13,12 +13,12 @@
 | 349 | bergeron-line-model.md | methods | methods/transmission-line/bergeron-line-model.md | P1 | 999 | 4238 | 20 | 30 | completed |
 | 135 | cable-modeling.md | topics | topics/component-modeling/cable-modeling.md | P0 | 999 | 3531 | 14 | 12 | completed |
 
-| 198 | chb-dab.md | methods | methods/power-electronics/chb-dab.md | P0 | 999 | 6022 | 15 | 4 | pending |
+| 198 | chb-dab.md | methods | methods/power-electronics/chb-dab.md | P0 | 999 | 6022 | 15 | 4 | completed |
 | 229 | coherency-clustering.md | methods | methods/simulation-technology/coherency-clustering.md | P0 | 999 | 6016 | 33 | 8 | completed |
 
 | 260 | computational-acceleration.md | methods | methods/simulation-technology/computational-acceleration.md | P1 | 999 | 5065 | 12 | 13 | completed |
 
-| 252 | coordinate-transformation-model.md | models | models/control/coordinate-transformation-model.md | P1 | 999 | 7010 | 28 | 14 | pending |
+| 252 | coordinate-transformation-model.md | models | models/control/coordinate-transformation-model.md | P1 | 999 | 7010 | 28 | 14 | completed |
 | 189 | csg.md | methods | methods/power-electronics/csg.md | P0 | 999 | 5593 | 6 | 10 | pending |
 | 267 | dc-dc-converter.md | models | models/converter/dc-dc-converter.md | P1 | 999 | 4448 | 41 | 16 | pending |
 | 38 | dc-rlc-filter.md | models | models/basic-component/dc-rlc-filter.md | P0 | 999 | 1229 | 2 | 28 | pending |
@@ -86,3 +86,5 @@
 | 251 | vector-control-model.md | models | models/control/vector-control-model.md | P1 | 999 | 7202 | 32 | 5 | pending |
 | 115 | voltage-interpolation.md | methods | methods/numerical-methods/voltage-interpolation.md | P0 | 999 | 3041 | 13 | 17 | pending |
 | 167 | wide-area-monitoring-protection.md | methods | methods/protection-fault/wide-area-monitoring-protection.md | P0 | 999 | 4638 | 8 | 14 | pending |
+
+
