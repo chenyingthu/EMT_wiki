@@ -19,7 +19,8 @@
 | 387 | cross-bonded-cable.md | models | models/transmission-line/cross-bonded-cable.md | P1 | 999 | 999 | 4017 | 18 | 12 | completed |
 | 290 | curve-fitting.md | methods | methods/signal-processing/curve-fitting.md | P1 | 999 | 3463 | 12 | 11 | completed |
 | 313 | dc-pfc.md | methods | methods/power-electronics/dc-pfc.md | P1 | 999 | 2707 | 7 | 6 | completed |
-| 306 | delarue-enhanced-avm.md | methods | methods/power-electronics/delarue-enhanced-avm.md | P1 | 999 | 3052 | 5 | 10 | pending |
+| 306 | delarue-enhanced-avm.md | methods | methods/power-electronics/delarue-enhanced-avm.md | P1 | 999 | 2685 | 10 | 13 | completed |
+
 | 291 | digital-simulator.md | topics | topics/simulation/digital-simulator.md | P1 | 999 | 3402 | 10 | 20 | pending |
 | 256 | dispatch-operation.md | topics | topics/renewable-storage/dispatch-operation.md | P1 | 999 | 5941 | 6 | 16 | pending |
 | 271 | distributed-parameter-line.md | methods | methods/transmission-line/distributed-parameter-line.md | P1 | 999 | 4337 | 27 | 15 | pending |
