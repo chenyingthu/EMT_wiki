@@ -20,7 +20,7 @@
 | 12 | frequency-dependent-modeling.md | topics | topics/modeling-methods/frequency-dependent-modeling.md | P0 | 999 | 769 | 0 | 171 | completed |
 | 13 | reactive-compensation-device.md | models | models/compensation/reactive-compensation-device.md | P0 | 999 | 3581 | 25 | 17 | completed |
 | 14 | harmonic-analysis.md | topics | topics/stability-analysis/harmonic-analysis.md | P0 | 999 | 783 | 4 | 16 | completed |
-| 15 | differential-protection.md | models | models/protection/differential-protection.md | P0 | 999 | 795 | 2 | 13 | pending |
+| 15 | differential-protection.md | models | models/protection/differential-protection.md | P0 | 999 | 3325 | 14 | 8 | completed |
 | 16 | numerical-integration.md | methods | methods/numerical-methods/numerical-integration.md | P0 | 999 | 813 | 6 | 199 | pending |
 | 17 | protection-control-device.md | models | models/protection/protection-control-device.md | P0 | 999 | 854 | 1 | 16 | pending |
 | 18 | parallel-computing.md | topics | topics/simulation/parallel-computing.md | P0 | 999 | 8343 | 78 | 15 | completed |
