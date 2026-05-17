@@ -29,7 +29,7 @@
 | 20 | microgrid-control.md | methods | methods/control/microgrid-control.md | P0 | 999 | 4235 | 15 | 8 | completed |
 | 21 | detailed-switch-model.md | models | models/submodule/detailed-switch-model.md | P0 | 999 | 4182 | 8 | 18 | completed |
 | 22 | gfm-inverter-model.md | models | models/converter/gfm-inverter-model.md | P0 | 999 | 3575 | 15 | 14 | completed |
-| 23 | grounding-system-model.md | models | models/protection/grounding-system-model.md | P0 | 999 | 927 | 9 | 29 | pending |
+| 23 | grounding-system-model.md | models | models/protection/grounding-system-model.md | P0 | 999 | 2765 | 17 | 18 | completed |
 | 24 | tcsc-model.md | models | models/compensation/tcsc-model.md | P0 | 999 | 949 | 3 | 11 | pending |
 | 25 | ideal-switch-model.md | models | models/submodule/ideal-switch-model.md | P0 | 999 | 952 | 2 | 25 | pending |
 | 26 | vsc-model.md | models | models/converter/vsc-model.md | P0 | 999 | 989 | 13 | 99 | pending |
@@ -439,3 +439,4 @@
 ||| 260 | 1 | 1 | 0 | enrich: detailed-switch-model.md | 2026-05-17 |
 
 ||||| 6 | 1 | 1 | 0 | enrich: gfm-inverter-model.md | 2026-05-17 |
+|||| 261 | 1 | 1 | 0 | enrich: grounding-system-model.md | 2026-05-17 |
