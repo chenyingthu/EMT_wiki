@@ -37,7 +37,7 @@
 | 28 | fft.md | methods | methods/signal-processing/fft.md | P0 | 999 | 3085 | 18 | 22 | completed |
 | 30 | nearest-level-modulation.md | methods | methods/power-electronics/nearest-level-modulation.md | P0 | 999 | 1069 | 2 | 10 | completed |
 | 31 | companion-circuit.md | methods | methods/numerical-methods/companion-circuit.md | P0 | 999 | 2929 | 14 | 42 | completed |
-| 32 | constant-power-load.md | models | models/basic-component/constant-power-load.md | P0 | 999 | 1107 | 13 | 15 | pending |
+| 32 | constant-power-load.md | models | models/basic-component/constant-power-load.md | P0 | 999 | 3622 | 33 | 9 | completed |
 | 33 | lightning-transient-analysis.md | topics | topics/protection-lightning/lightning-transient-analysis.md | P0 | 999 | 1127 | 7 | 20 | pending |
 | 34 | time-domain-modeling.md | topics | topics/modeling-methods/time-domain-modeling.md | P0 | 999 | 1163 | 10 | 13 | pending |
 | 35 | netlist-import-export.md | methods | methods/simulation-technology/netlist-import-export.md | P0 | 999 | 1184 | 1 | 8 | pending |
@@ -440,3 +440,4 @@
 
 ||||| 6 | 1 | 1 | 0 | enrich: gfm-inverter-model.md | 2026-05-17 |
 |||| 261 | 1 | 1 | 0 | enrich: grounding-system-model.md | 2026-05-17 |
+||||| 262 | 1 | 1 | 0 | enrich: constant-power-load.md | 2026-05-17 |
