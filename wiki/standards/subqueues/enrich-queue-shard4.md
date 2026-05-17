@@ -29,7 +29,7 @@
 | 78 | dual-active-bridge.md | methods | methods/power-electronics/dual-active-bridge.md | P0 | 999 | 5134 | 16 | 12 | completed |
 | 353 | eigenvalue-analysis.md | methods | methods/stability-analysis/eigenvalue-analysis.md | P1 | 999 | 3873 | 97 | 19 | completed |
 | 345 | electromechanical-modeling.md | methods | methods/stability-analysis/electromechanical-modeling.md | P1 | 999 | 3487 | 14 | 17 | completed |
-| 197 | emt-simulation.md | topics | topics/simulation/emt-simulation.md | P0 | 999 | 5965 | 16 | 432 | pending |
+| 197 | emt-simulation.md | topics | topics/simulation/emt-simulation.md | P0 | 999 | 5965 | 16 | 42 | completed |
 | 140 | energy-storage-converter-model.md | models | models/renewable-storage/energy-storage-converter-model.md | P0 | 999 | 3733 | 17 | 13 | pending |
 | 195 | equivalent-modeling.md | models | models/equivalent/equivalent-modeling.md | P0 | 999 | 5945 | 28 | 11 | pending |
 | 69 | fast-system-simulation.md | topics | topics/simulation/fast-system-simulation.md | P0 | 999 | 1817 | 2 | 25 | pending |
