@@ -34,7 +34,7 @@
 | 25 | ideal-switch-model.md | models | models/submodule/ideal-switch-model.md | P0 | 999 | 952 | 3402 | 39 | 18 | completed 
 | 26 | vsc-model.md | models | models/converter/vsc-model.md | P0 | 999 | 2194 | 13 | 16 | completed |
 | 27 | simulation-tools-status.md | methods | methods/system-studies/simulation-tools-status.md | P0 | 999 | 1034 | 0 | 11 | pending |
-| 28 | fft.md | methods | methods/signal-processing/fft.md | P0 | 999 | 1043 | 4 | 18 | pending |
+| 28 | fft.md | methods | methods/signal-processing/fft.md | P0 | 999 | 3085 | 18 | 22 | completed |
 | 29 | insulator-string-model.md | models | models/protection/insulator-string-model.md | P0 | 999 | 1047 | 8 | 16 | pending |
 | 30 | nearest-level-modulation.md | methods | methods/power-electronics/nearest-level-modulation.md | P0 | 999 | 1069 | 2 | 10 | pending |
 | 31 | companion-circuit.md | methods | methods/numerical-methods/companion-circuit.md | P0 | 999 | 1104 | 14 | 36 | pending |
