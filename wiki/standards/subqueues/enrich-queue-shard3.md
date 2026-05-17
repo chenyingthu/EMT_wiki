@@ -31,7 +31,7 @@
 
 || 246 | eeac.md | methods | methods/stability-analysis/eeac.md | P1 | 999 | 9139 | 15 | 8 | completed |
 | 404 | electromechanical-model.md | models | models/rotating-machine/electromechanical-model.md | P1 | 999 | 842 | 6 | 18 | completed |
-| 223 | emt-simulation-verification.md | methods | methods/system-studies/emt-simulation-verification.md | P0 | 999 | 11657 | 5 | 17 | pending |
+| 223 | emt-simulation-verification.md | methods | methods/system-studies/emt-simulation-verification.md | P0 | 999 | 11657 | 5 | 17 | completed |
 | 208 | energy-function.md | methods | methods/stability-analysis/energy-function.md | P0 | 999 | 8380 | 17 | 11 | pending |
 | 262 | equivalent-fault-loop.md | methods | methods/protection-fault/equivalent-fault-loop.md | P1 | 999 | 5110 | 15 | 13 | pending |
 | 287 | facts.md | topics | topics/hvdc-facts/facts.md | P1 | 999 | 3541 | 10 | 16 | pending |
