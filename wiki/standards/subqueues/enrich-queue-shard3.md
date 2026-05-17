@@ -29,8 +29,8 @@
 | 222 | distribution-network.md | methods | methods/system-studies/distribution-network.md | P0 | 999 | 11491 | 16 | 30 | completed |
 || 270 | dsogi-pll.md | methods | methods/control/dsogi-pll.md | P1 | 999 | 4344 | 11 | 11 | completed |
 
-| 246 | eeac.md | methods | methods/stability-analysis/eeac.md | P1 | 999 | 9139 | 15 | 8 | pending |
-| 404 | electromechanical-model.md | models | models/rotating-machine/electromechanical-model.md | P1 | 999 | 842 | 6 | 18 | pending |
+|| 246 | eeac.md | methods | methods/stability-analysis/eeac.md | P1 | 999 | 9139 | 15 | 8 | completed |
+| 404 | electromechanical-model.md | models | models/rotating-machine/electromechanical-model.md | P1 | 999 | 842 | 6 | 18 | completed |
 | 223 | emt-simulation-verification.md | methods | methods/system-studies/emt-simulation-verification.md | P0 | 999 | 11657 | 5 | 17 | pending |
 | 208 | energy-function.md | methods | methods/stability-analysis/energy-function.md | P0 | 999 | 8380 | 17 | 11 | pending |
 | 262 | equivalent-fault-loop.md | methods | methods/protection-fault/equivalent-fault-loop.md | P1 | 999 | 5110 | 15 | 13 | pending |
