@@ -42,7 +42,7 @@
 | 34 | time-domain-modeling.md | topics | topics/modeling-methods/time-domain-modeling.md | P0 | 999 | 1163 | 10 | 13 | completed |
 | 35 | netlist-import-export.md | methods | methods/simulation-technology/netlist-import-export.md | P0 | 999 | 3593 | 4 | 11 | completed |
 
-| 36 | svc-tcr-model.md | models | models/compensation/svc-tcr-model.md | P0 | 999 | 1190 | 4 | 12 | pending |
+| 36 | svc-tcr-model.md | models | models/compensation/svc-tcr-model.md | P0 | 999 | 4331 | 20 | 12 | completed |
 | 37 | frequency-scanning.md | methods | methods/stability-analysis/frequency-scanning.md | P0 | 999 | 1210 | 8 | 14 | pending |
 | 38 | dc-rlc-filter.md | models | models/basic-component/dc-rlc-filter.md | P0 | 999 | 1229 | 2 | 28 | pending |
 | 39 | insulation-coordination.md | methods | methods/protection-fault/insulation-coordination.md | P0 | 999 | 1233 | 3 | 18 | pending |
@@ -443,3 +443,4 @@
 |||| 261 | 1 | 1 | 0 | enrich: grounding-system-model.md | 2026-05-17 |
 ||||| 262 | 1 | 1 | 0 | enrich: constant-power-load.md | 2026-05-17 |
 ||||| 263 | 1 | 1 | 0 | enrich: netlist-import-export.md | 2026-05-17 |
+|||| 264 | 1 | 1 | 0 | enrich: svc-tcr-model.md | 2026-05-17 |
