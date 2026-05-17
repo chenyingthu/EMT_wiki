@@ -1,4 +1,5 @@
 # Sub-Queue Shard 3 — 75 pages
+||| Cycle 8 | dsogi-pll.md | P1 SKIP (Quality Gate PASS: bc=4306≥2000, bf=11≥5, wikilinks fixed 9→11, no placeholder, src=0≤5000, max_block=8311≤15000) | 2026-05-18 03:10 |
 
 > Generated: 2026-05-17 22:10
 
@@ -26,7 +27,8 @@
 | 332 | direct-interface-technique.md | methods | methods/simulation-technology/direct-interface-technique.md | P1 | 999 | 4417 | 11 | 13 | completed |
 | 108 | distance-relay.md | models | models/protection/distance-relay.md | P0 | 999 | 2752 | 10 | 14 | completed |
 | 222 | distribution-network.md | methods | methods/system-studies/distribution-network.md | P0 | 999 | 11491 | 16 | 30 | completed |
-| 270 | dsogi-pll.md | methods | methods/control/dsogi-pll.md | P1 | 999 | 4344 | 11 | 11 | pending |
+|| 270 | dsogi-pll.md | methods | methods/control/dsogi-pll.md | P1 | 999 | 4344 | 11 | 11 | completed |
+
 | 246 | eeac.md | methods | methods/stability-analysis/eeac.md | P1 | 999 | 9139 | 15 | 8 | pending |
 | 404 | electromechanical-model.md | models | models/rotating-machine/electromechanical-model.md | P1 | 999 | 842 | 6 | 18 | pending |
 | 223 | emt-simulation-verification.md | methods | methods/system-studies/emt-simulation-verification.md | P0 | 999 | 11657 | 5 | 17 | pending |

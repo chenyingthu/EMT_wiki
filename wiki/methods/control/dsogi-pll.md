@@ -199,8 +199,8 @@ Luchini(2023)在ATP/ATPDraw中实现跟网型IBR等效时域模型,提供DSOGI-P
 - [[fault-ride-through]]: 故障穿越控制,依赖PLL的相位估计
 
 ### 代表性来源
-- [[advanced-dsogi-pll-with-adaptive-bandwidth|Ranasinghe 2024 - 改进型DSOGI-PLL自适应带宽]]
-- [[equivalent-grid-following-inverter-model-atp|Luchini 2023 - ATP中跟网型逆变器等效模型(DSOGI-PLL同步)]]
+- [[advanced-dsogi-pll-with-adaptive-bandwidth-for-improved-transient-performance-of]] Ranasinghe 2024 - 改进型DSOGI-PLL自适应带宽
+- [[equivalent-grid-following-inverter-based-generator-model-for-atpatpdraw-simulati]] Luchini 2023 - ATP中跟网型逆变器等效模型(DSOGI-PLL同步)
 
 ---
 
