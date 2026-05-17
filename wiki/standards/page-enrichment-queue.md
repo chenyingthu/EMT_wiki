@@ -12,7 +12,7 @@
 | 4 | switching-model.md | models | models/converter/switching-model.md | P0 | 999 | 490 | 6 | 8 | completed |
 | 5 | trapezoidal-rule.md | methods | methods/numerical-methods/trapezoidal-rule.md | P0 | 999 | 584 | 7 | 10 | completed |
 | 6 | transmission-network.md | topics | topics/tools-software/transmission-network.md | P0 | 999 | 1004 | 19 | 21 | completed |
-| 7 | ferroresonance.md | topics | topics/component-modeling/ferroresonance.md | P0 | 999 | 605 | 6 | 15 | pending |
+| 7 | ferroresonance.md | topics | topics/component-modeling/ferroresonance.md | P0 | 999 | 10926 | 44 | 15 | completed |
 | 8 | fault-impedance-model.md | models | models/protection/fault-impedance-model.md | P0 | 999 | 659 | 2 | 9 | pending |
 | 9 | backward-euler.md | methods | methods/numerical-methods/backward-euler.md | P0 | 999 | 699 | 7 | 13 | pending |
 | 10 | wind-farm-modeling.md | topics | topics/renewable-storage/wind-farm-modeling.md | P0 | 999 | 713 | 2 | 58 | pending |
@@ -423,6 +423,7 @@
 
 
 ||| 1 | 1 | 1 | 0 | enrich: transmission-line-theory.md | 2026-05-17 |
+||| 2 | 1 | 1 | 0 | enrich: ferroresonance.md | 2026-05-17 |
 ## 复检统计
 - P0 需全量重写: 234 页
 - P1 需修复问题: 180 页
