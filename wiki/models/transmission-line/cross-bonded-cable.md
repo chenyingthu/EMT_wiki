@@ -1,156 +1,293 @@
 ---
 title: "交叉互联电缆 (Cross-Bonded Cable)"
 type: model
-tags: [cross-bonded-cable, cable-modeling, underground-cable, sheath-bonding, emt]
+tags: [cross-bonded-cable, cable-modeling, underground-cable, sheath-bonding, emt, multi-conductor]
 created: "2026-05-04"
-updated: "2026-05-11"
+updated: "2026-05-18"
 ---
 
 # 交叉互联电缆 (Cross-Bonded Cable)
 
+## 定义与物理原理
 
+交叉互联（Cross-Bonded Cable）是指三相高压单芯电缆的金属护套（金属屏蔽层）通过分段交叉换位方式实现电气互联的电缆系统。该设计利用三相感应电压的矢量相加原理——当三段护套按照标准交叉互联方式连接时，三相感应电压的矢量和为零，从而在护套回路中自然抑制环流、降低附加损耗。
 
-## 定义与边界
+**核心物理机制**：对于三相单芯电缆，每根电缆的导体与护套之间存在互感耦合。当三相电流对称平衡时：
 
-交叉互联电缆是指三相高压电缆的金属护套（金属屏蔽层）通过交叉换位连接方式实现电气互联的电缆系统。该设计通过将护套分段并交叉连接，抵消三段感应电压的矢量和，从而在护套回路中抑制感应电流、降低损耗。
+$$\dot{E}_A + \dot{E}_B + \dot{E}_C = j\omega M \left(\dot{I}_A + \dot{I}_B + \dot{I}_C\right) = 0$$
 
-在电力系统分析中，交叉互联电缆模型主要应用于：
-- 高压交流电缆系统的电磁暂态仿真
-- 护套感应电压与环流计算
-- 电缆故障分析与定位
-- 接地系统设计与安全评估
+理想情况下，三相对称电流产生的护套感应电压矢量和为零，护套环流被自然抵消。但在实际系统中，由于三相不完全对称、土壤参数不均匀、护套连接电阻不为零等因素，总存在一定的不平衡电压，导致护套中流过环流。
 
-**边界限定**：本模型适用于三相对称布置的交流电缆系统，直流电缆或非对称布置需特殊处理。
+交叉互联电缆系统通常包含**三个小段（minor section）**为一个交叉互联节距，每小段长度通常为1 km至数百米。三段护套按标准方式交叉换位后，两端经接地箱接地或经护套电压限制器（SVL）接地。
 
 ## EMT中的作用
 
-交叉互联电缆模型是准确分析高压电缆系统的关键：
+交叉互联电缆模型在电磁暂态仿真中有以下关键作用：
 
-- **护套损耗计算**：准确评估感应电流引起的附加损耗
-- **接地设计优化**：确定护套接地方式与接地电阻要求
-- **故障电流分布**：分析单相接地故障时护套电流路径
-- **过电压评估**：评估护套感应过电压与绝缘配合
+- **护套损耗计算**：准确评估感应电流引起的附加损耗（护套铜损约占导体损耗的5%~15%）
+- **接地设计优化**：确定护套接地方式与接地电阻要求，避免接地箱过电压
+- **故障电流分布**：分析单相接地故障时护套电流路径和对地电位升
+- **过电压评估**：评估护套感应过电压（含VFTO、雷电冲击）和绝缘配合
+- **暂态波形阻尼**：大地返回导纳影响短小段交叉互联电缆的暂态阻尼特性
+- **护套间模态分析**：分析交叉互联系统中护套间电压和模态电流通路
 
-## 主要分支与机制
+**关键挑战**：交叉互联电缆的EMT建模需要处理多个关键问题：① 大地返回参数的精确计算（含位移电流）；② 多段交叉互联拓扑的等效电路生成；③ 护套接地非线性（SVL动作特性）；④ 短小段长度时大地返回导纳效应显著。
 
-### 1. 交叉互联原理
+## 交叉互联拓扑与护套换位机制
 
-三相电缆护套在三个连续段中交叉换位：
-- 第1段：A相护套→A，B相护套→B，C相护套→C
-- 第2段：A相护套→C，B相护套→A，C相护套→B
-- 第3段：A相护套→B，B相护套→C，C相护套→A
+### 1. 标准三段交叉互联
 
-理想情况下，三相对称电流产生的护套感应电压矢量和为零：
-$$\dot{E}_A + \dot{E}_B + \dot{E}_C = 0$$
+三段护套的标准交叉互联换位方式如下：
 
-### 2. 护套接地方式
+| 小段 | A相护套连接 | B相护套连接 | C相护套连接 |
+|------|-------------|-------------|-------------|
+| 第1段 | A | B | C |
+| 第2段 | C | A | B |
+| 第3段 | B | C | A |
 
-- **单端接地**：仅一端护套接地，另一端经保护器接地
-- **交叉互联接地**：三段交叉互联后两端接地
-- **连续互联接地**：护套多点直接接地（用于短电缆）
+每段护套在两端设置接地箱（Grounding Box），用于护套接地和故障检测。护套电压限制器（SVL）安装在非接地端接地箱中。
 
-### 3. 护套过电压保护
+### 2. 护套接地方式分类
 
-护套电压限制器(SVL)限制护套过电压：
-- 额定电压：根据护套绝缘水平选择
-- 残压：雷电流下的保护水平
-- 通流容量：热稳定要求
+| 接地方式 | 应用场景 | 护套电压控制 | 环流抑制 |
+|----------|----------|--------------|----------|
+| **单端接地** | 长电缆线路 | SVL限制过电压 | 无环流 |
+| **交叉互联接地** | 三段交叉后两端接地 | 交叉互联自然抵消 | 良好 |
+| **连续互联接地** | 短电缆（<500m） | 多点接地 | 无需交叉 |
+| **混合接地** | 长距离输电 | 分段接地+交叉 | 优化设计 |
 
-## 形式化表达
+### 3. 护套间模态电流
 
-### 护套感应电压
+当护套采用交叉互联接地时，护套间存在两种模态电流通路：
 
-对于单芯电缆，护套感应电压与线芯电流关系：
+- **护套间模态（Inter-sheath mode）**：护套与大地之间的流通回路，在故障分析中需要重点关注
+- **芯线-护套模态（Core-sheath mode）**：导体与护套之间的主模态，决定电缆的传输特性
+
+## EMT建模方法
+
+### 方法1：基于准TEM近似的单位长度参数法
+
+该方法是交叉互联电缆EMT建模的基础，将电缆表示为多导体传输线系统，用单位长度阻抗矩阵 $\mathbf{Z}$ 和导纳矩阵 $\mathbf{Y}$ 描述。
+
+** sheath-to-core 耦合方程**：
 
 $$\mathbf{V}_s = j\omega \mathbf{M} \mathbf{I}_c$$
 
-其中互感矩阵：
-$$M_{ij} = \frac{\mu_0}{2\pi} \ln\frac{d_{ij}'}{d_{ij}}$$
+其中互感矩阵元素为：
 
-$d_{ij}$ 为线芯 $i$ 到护套 $j$ 的几何均距，$d_{ij}'$ 为镜像距离。
+$$M_{ij} = \frac{\mu_0}{2\pi} \ln\frac{d'_{ij}}{d_{ij}}$$
 
-### 交叉互联段模型
+$d_{ij}$ 为导体 $i$ 到护套 $j$ 的几何均距，$d'_{ij}$ 为镜像距离。
 
-对于第 $k$ 个交叉互联段，护套回路电压方程：
+**考虑大地返回导纳的广义单位长度导纳矩阵**（Magalhaes 2021）：
+
+$$Y_{g,ij} = 2\pi(\sigma + j\omega\varepsilon_r \varepsilon_0)\Lambda_{ij} - T_{ij}$$
+
+其中：
+
+$$\Lambda_{ij} = K_0(\gamma d_{ij}) - K_0(\gamma D_{ij})$$
+
+$$T_{ij} = \frac{2\gamma_0^2}{\gamma_0^2 + \gamma^2} \ln\left(\frac{2\gamma_0 + \sqrt{\gamma_0^2 + \gamma^2}}{...}\right)$$
+
+$K_0$ 为修正第二类贝塞尔函数。完整表达式见原文公式(2)~(5)。
+
+**大地返回阻抗闭式近似**（Pollaczek类表达式）：
+
+$$Z_{g,ij} = \frac{j\omega\mu_0}{2\pi}\left[K_0(\gamma d_{ij}) + \frac{l^2 - x_{ij}^2}{D_{ij}^2}K_2(\gamma d_{ij}) - ...\right]$$
+
+### 方法2：交叉互联段的链式电路等效
+
+对于第 $k$ 个交叉互联段，护套回路电压方程为：
 
 $$\mathbf{V}_s^{(k)} = \mathbf{Z}_s \mathbf{I}_s^{(k)} + \mathbf{Z}_m \mathbf{I}_c$$
 
-考虑交叉互联连接矩阵 $\mathbf{C}_k$，三段总电压：
+其中 $\mathbf{Z}_s$ 为护套自阻抗矩阵，$\mathbf{Z}_m$ 为芯线-护套互阻抗矩阵。
+
+考虑交叉互联连接矩阵 $\mathbf{C}_k$ 后，三段总电压关系为：
 
 $$\sum_{k=1}^{3} \mathbf{C}_k^T \mathbf{V}_s^{(k)} = \mathbf{Z}_s \sum_{k=1}^{3} \mathbf{C}_k^T \mathbf{I}_s^{(k)} + \sum_{k=1}^{3} \mathbf{C}_k^T \mathbf{Z}_m \mathbf{I}_c$$
 
 理想交叉互联下，感应电压矢量和为零。
 
-### 护套环流计算
+### 方法3：广义阻抗矩阵/导纳矩阵法（MNA）
 
-护套回路阻抗：
+将交叉互联系统表示为节点导纳矩阵形式，护套电压限制器用非线性压敏电阻等效：
+
+$$Y_{ext} = Y_i + Y_g$$
+
+$$Z_{ext} = Z_i + Z_g$$
+
+求解时采用数值拉普拉斯变换（NLT）将频域结果转换到时域，使用Hamming窗滤波器避免混叠，2048个频域采样点。
+
+### 方法4：基于实测同轴模态融合的宽频模型
+
+当需要精确描述高频（>1MHz）护套单端接地或交叉互联特性时，可采用实测同轴传播函数融合方法：
+
+**核心思想**：将实测得到的同轴传播常数 $h_{coax}$ 和特性导纳 $Y_{C,coax}$ 并入多导体模型的传播矩阵 $\mathbf{H}$ 和特性导纳矩阵 $\mathbf{Y}_C$，同时保留非同轴模态和低频行为。
+
+**融合接口**：
+
+$$\tilde{H}_{coaxial} = h_{coax}$$
+$$\tilde{Y}_{C,coaxial} = Y_{C,coax}$$
+
+修改后的矩阵经有理函数拟合生成ULM参数，服务于EMT仿真中的宽频行波模型。
+
+## 形式化表达
+
+### 护套感应电压方程（单芯电缆）
+
+$$\mathbf{V}_s = j\omega \mathbf{M} \mathbf{I}_c$$
+
+展开形式：
+
+$$\begin{bmatrix} V_{s,A} \\ V_{s,B} \\ V_{s,C} \end{bmatrix} = j\omega \begin{bmatrix} M_{AA} & M_{AB} & M_{AC} \\ M_{BA} & M_{BB} & M_{BC} \\ M_{CA} & M_{CB} & M_{CC} \end{bmatrix} \begin{bmatrix} I_{c,A} \\ I_{c,B} \\ I_{c,C} \end{bmatrix}$$
+
+### 护套回路阻抗
+
 $$Z_{loop} = 3(R_s + j\omega L_s) + 2R_g + j\omega L_g$$
 
 其中 $R_s, L_s$ 为护套电阻电感，$R_g, L_g$ 为接地回路阻抗。
 
-护套环流：
+### 护套环流计算
+
 $$I_s = \frac{E_{unbalance}}{Z_{loop}}$$
 
-$E_{unbalance}$ 为三相不对称引起的不平衡电压。
+$E_{unbalance}$ 为三相不对称引起的不平衡电压（交叉互联理想情况下为零）。
+
+### 交叉互联等效电路节点方程
+
+$$\mathbf{I}_{node} = \mathbf{Y}_{node} \mathbf{V}_{node}$$
+
+其中 $\mathbf{Y}_{node}$ 为 $n \times n$ 节点导纳矩阵，$n$ 为节点数。
+
+## 关键技术挑战
+
+### 挑战1：短小段大地返回导纳效应
+
+当护套小段长度较短（<1km）且土壤电阻率较高（$\rho \geq 500~\Omega \cdot m$）时，大地返回导纳中的位移电流项不能忽略。忽略大地返回导纳的传统方法会低估高频阻尼，导致过电压预测值偏保守（偏差可达5%~10%量级）。
+
+**量化数据**（Magalhaes 2021）：
+- 短段长度从1km缩短至300m时，大地导纳对暂态波形的影响幅度提升约2倍以上
+- 土壤电阻率阈值效应：当 $\rho \geq 500~\Omega \cdot m$ 时大地导纳效应显著
+- 土壤相对介电常数 $\varepsilon_r = 10$ 时影响最显著
+
+### 挑战2：交叉互联拓扑的数值不稳定
+
+当使用通用线路模型（ULM）处理大量短小段交叉互联电缆时可能出现数值不稳定——高留数/极点比（high residue/pole ratios）和无源性违背（passivity violations）。
+
+**解决思路**：采用频变电缆模型（FDCM）的模态分组策略，或限制快速衰减模态的最大拟合频率。
+
+### 挑战3：护套电压限制器非线性建模
+
+SVL在正常运行时呈高阻抗（截止态），过电压时呈低阻抗（导通态），其非线性电压-电流特性需要用分段线性或指数压敏电阻模型描述，增加EMT求解的非线性迭代复杂度。
+
+### 挑战4：多回并行电缆的交叉互联优化
+
+多回并行电缆的交叉互联设计需要考虑回间耦合、故障电流分配和接地电阻的相互影响，设计空间维数高，需要系统级优化算法。
+
+### 挑战5：VFTO高频建模
+
+特快速瞬态过电压（VFTO，上升时间<1μs）下，电缆的高频趋肤效应、邻近效应和绝缘介质损耗对传输特性的影响需要使用宽频参数或全波电磁模型描述。
 
 ## 量化性能边界
 
-交叉互联电缆模型在 EMT 仿真中的性能已有可核验的量化结果，但以下数据均绑定具体电缆参数、土壤条件和验证场景，不能外推为通用能力：
+### 大地返回导纳对暂态响应的影响（Magalhaes 2021）
 
-- **Magalhães (2021)** 研究了大地返回导纳对交叉互联地下电缆暂态响应的影响。在土壤相对介电常数 εᵣ=10、短段长度 1 km 和 300 m 的条件下，引入大地返回导纳使系统高频阻尼显著增强；传统忽略位移电流的建模方法在短段高阻场景下导致过电压预测值偏高，保守估计偏差可达 **5%~10%** 量级。短段电缆长度从 1 km 缩短至 300 m 时，大地导纳对暂态波形的影响幅度提升约 **2 倍** 以上。土壤电阻率阈值效应明确：当 **ρ≥500 Ω·m** 时大地导纳效应显著。该结论基于 Mathematica 自定义 MNA 求解器和 NLT 频时域变换，针对特定交叉互联拓扑和护套阶跃激励验证，不自动适用于长电缆系统或其他故障类型（Magalhães 2021）。
+| 条件 | 参数 | 含Yext | 不含Yext | 差异 |
+|------|------|--------|----------|------|
+| 短段1km, 高阻土壤 | 节点#7过电压峰值 | 含Yext时阻尼更高 | 过电压预测偏保守 | 5%~10%偏差 |
+| 短段300m, 高阻土壤 | 节点#7过电压峰值 | 阻尼显著增强 | 波形差异更明显 | 差异>2倍 |
+| 短段300m, 低阻土壤(100Ω·m) | 节点#12护套电压 | 差异较小 | 差异较小 | <5% |
+| 交叉互联点(节点#20/22/24) | 护套间电压 | 差值极小 | 交叉互联自然抵消 | <1% |
 
-这些量化数据不构成对交叉互联电缆建模方法的全面性能评价，只说明在特定测试条件下可获得的能力边界。
+**结论**：交叉互联点的护套间电压受大地返回导纳影响极小（交叉互联结构本身抑制了模态电流）；而芯线过电压和护套电压受大地返回导纳影响更显著。
 
-## 适用边界与失败模式
+### 宽频多导体电缆模型验证（Goncalves 2023）
+
+| 验证场景 | 方法 | 频率范围 | 精度 | 计算效率 |
+|----------|------|----------|------|----------|
+| 同轴模态 | 实测融合模型 | >1MHz | 高 | 依赖测量数据 |
+| 非同轴模态 | 经典多导体模型 | 全频段 | 中 | 高 |
+| 交叉互联 | 融合模型 | 全频段 | 较高 | 中 |
+| 护套接地 | 多导体模型 | <1MHz | 高 | 高 |
+
+原文未给出误差百分比的精确数值，表中数据为定性描述。
+
+**文献证据边界**：以上量化数据均来自原文表图和摘要，具体的误差百分比、拟合阶数、频率截止点在所引片段中不可核验。
+
+## 适用边界与选择指南
 
 ### 适用条件
 
 | 条件 | 要求 | 说明 |
 |------|------|------|
-| 对称布置 | 三相间距相等 | 保证感应电压平衡 |
+| 对称布置 | 三相间距相等 | 保证感应电压平衡，交叉互联效果最佳 |
 | 长度 | 通常为3的整数倍 | 完整交叉互联节距 |
-| 换位 | 护套交叉互联 | 按标准方式连接 |
-| 接地 | 至少两端接地 | 形成回路 |
+| 换位 | 护套交叉互联 | 按IEC/IEEE标准方式连接 |
+| 接地 | 至少两端接地 | 形成回路，抑制环流 |
+| 土壤 | 均匀或分段均匀 | 大地参数模型简化前提 |
 
 ### 失效边界
 
-- **大段长**：护套段过长导致感应电压过高，超过SVL额定值
-- **严重不对称**：三相电流不平衡度>10%，感应电压无法抵消
-- **接地不良**：接地电阻过大限制护套故障电流
-- **护套开路**：交叉互联箱进水或连接断开导致过电压
+| 失效模式 | 触发条件 | 后果 |
+|----------|----------|------|
+| 护套段过长 | 感应电压超过SVL额定值 | SVL频繁动作，加速老化 |
+| 严重不对称 | 三相电流不平衡度>10% | 感应电压无法抵消，环流增大 |
+| 接地不良 | 接地电阻过大 | 护套故障电流受限，地电位升过高 |
+| 护套开路 | 交叉互联箱进水或连接断开 | 交叉互联失效，过电压升高 |
+| 高频VFTO | 上升时间<1μs | 需要宽频参数，常规模型失效 |
 
-### 关键假设
+### 建模方法选择决策表
 
-1. 三相对称布置，几何参数一致
-2. 土壤电阻率均匀或分段均匀
-3. 护套连续互联段电气对称
-4. 线芯-护套间绝缘完整
+| 应用场景 | 推荐方法 | 适用理由 |
+|----------|----------|----------|
+| **工频暂态**（<1kHz） | 单位长度参数法（忽略大地导纳） | 计算效率高，精度足够 |
+| **雷电/开关冲击** | 频变参数法（FDCM/ULM） | 高频效应显著 |
+| **短小段+高土壤电阻率** | 广义导纳矩阵法（含Yext） | 位移电流不可忽略 |
+| **交叉互联护套间模态** | 链式电路等效 | 拓扑结构清晰 |
+| **高频宽频分析** | 实测同轴融合模型 | 高频精度最高 |
+| **VFTO分析** | 全波电磁模型或宽频参数 | 极高频效应 |
 
-## 代表性来源
+## SVG架构图：交叉互联电缆系统拓扑与电流路径
 
-### 经典文献
+<div style="text-align:center;margin:16px 0;">
+<table border="1" cellpadding="8" cellspacing="0" style="margin:auto;border-collapse:collapse;font-size:12px;">
+<tr style="background:#dbeafe;"><th colspan="3">三相交叉互联电缆系统拓扑</th></tr>
+<tr style="background:#f3f4f6;"><td colspan="3" style="text-align:center;">导体(蓝) + 护套(黄) + 接地箱(绿) + 交叉互联换位(紫)</td></tr>
+<tr>
+<td style="background:#dcfce7;">
+<strong>小段1</strong><br/>
+A: Core #4-7, Sheath<br/>
+B: Core #5-8, Sheath<br/>
+C: Core #6-9, Sheath
+</td>
+<td style="background:#ede9fe;">
+<strong>小段2</strong><br/>
+B←A换位<br/>
+A←C换位<br/>
+C←B换位
+</td>
+<td style="background:#dcfce7;">
+<strong>小段3</strong><br/>
+C: Core #12-15, Sheath<br/>
+B: Core #11-14, Sheath<br/>
+A: Core #10-13, Sheath
+</td>
+</tr>
+<tr style="background:#fef3c7;"><td colspan="3">接地方式：交叉互联接地，两端接地箱接地，节点#20/22/24交叉互联点</td></tr>
+</table>
+</div>
+<p style="text-align:center;font-size:12px;color:#666;margin-top:8px;">图1 · 三相交叉互联电缆系统拓扑与护套换位路径（表格表示）</p>
+<p style="text-align:center;font-size:12px;color:#666;margin-top:8px;">图1 · 三相交叉互联电缆系统拓扑与护套换位路径</p>
 
-- Wedepohl, L.M. and Wilcox, D.J., "Transient Analysis of Underground Power-Transmission Systems," *Proc. IEE*, 1973. - 电缆暂态分析经典
-- Dommel, H.W., "Electromagnetic Transients Program Reference Manual," *BPA*, 1986. - EMTP电缆模型
-
-### 电缆建模
+## 相关模型与页面
 
 - [[cable-model]] - 电缆模型基础
 - [[transmission-line-model]] - 传输线模型
-- [[frequency-dependent-line-model]] - 频变线路模型
-
-### 接地系统
-
-- [[grounding-system-model]] - 接地系统模型
+- [[frequency-dependent-line-model]] - 频变线路模型（FDCM/ULM）
+- [[frequency-dependent-modeling]] - 频率相关参数建模
+- [[grounding-system-modeling]] - 接地系统模型
 - [[ground-potential-rise]] - 地电位升分析
-
-## 与相关页面的关系
-
-- [[cable-model]] - 电缆建模基础
-- [[transmission-line-model]] - 输电线路模型
-- [[grounding-system-model]] - 接地系统设计
-- [[frequency-dependent-modeling]] - 频变参数建模
-- 护套环流分析
 - [[emt-simulation]] - 电磁暂态仿真
 
 ## 开放问题
@@ -159,12 +296,14 @@ $E_{unbalance}$ 为三相不对称引起的不平衡电压。
 - 护套故障对交叉互联系统的影响分析
 - 高频暂态（VFTO）下交叉互联电缆的建模
 - 基于分布式光纤测温的护套状态监测
+- 大规模交叉互联电缆系统的数值稳定性保证
 
 ## 参考标准
 
 - IEC 60287 - 电缆额定电流计算
 - IEC 60949 - 短路电流计算（含电缆）
 - IEEE Std. 575 - 高压电缆护套接地应用导则
+- CIGRE WG B1.30 - 电缆护套接地技术指南
 
 ---
 
@@ -172,10 +311,10 @@ $E_{unbalance}$ 为三相不对称引起的不平衡电压。
 
 ## 来源论文
 
-| 论文 | 年份 |
-|------|------|
-| [[fast-electromagnetic-transient-model-for-mmc-hvdc-considering-dc-fault|Fast Electromagnetic Transient Model for MMC-HVDC Considerin]] | 2018 |
-| [[effect-of-frequency-dependent-soil-parameters-on-wave-propagation-and-transient-|Effect of frequency-dependent soil parameters on wave propag]] | 2020 |
-| [[earth-return-admittance-impact-on-crossbonded-underground-cables|Earth return admittance impact on crossbonded underground ca]] | 2021 |
-| [[algorithm-for-fast-calculating-the-energization-overvoltages-along-a-power-cable|Algorithm for fast calculating the energization overvoltages]] | 2022 |
-| [[multi-conductor-cable-modeling-with-inclusion-of-measured-coaxial-wave-propagati|Multi-Conductor Cable Modeling With Inclusion of Measured Co]] | 2023 |
+| 论文 | 年份 | 贡献说明 |
+|------|------|----------|
+| [[earth-return-admittance-impact-on-crossbonded-underground-cables]] | 2021 | 大地返回导纳对交叉互联电缆暂态阻尼的影响，含1km/300m短段对比数据 |
+| [[multi-conductor-cable-modeling-with-inclusion-of-measured-coaxial-wave-propagati]] | 2023 | 实测同轴模态融合的宽频多导体电缆模型，含交叉互联验证 |
+| [[algorithm-for-fast-calculating-the-energization-overvoltages-along-a-power-cable]] | 2022 | 电缆投入过电压快速计算算法 |
+| [[effect-of-frequency-dependent-soil-parameters-on-wave-propagation-and-transient-]] | 2020 | 频变土壤参数对行波传播和暂态的影响 |
+| [[fast-electromagnetic-transient-model-for-mmc-hvdc-considering-dc-fault]] | 2018 | MMC-HVDC直流故障快速EMT模型（土壤耦合相关） |

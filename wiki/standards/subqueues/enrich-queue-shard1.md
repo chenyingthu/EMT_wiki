@@ -16,7 +16,7 @@
 | 99 | cl-dccb.md | methods | methods/power-electronics/cl-dccb.md | P0 | 999 | 2609 | 7 | 11 | completed |
 | 315 | compensation-method.md | methods | methods/network-solution/compensation-method.md | P1 | 999 | 2677 | 7 | 7 | completed |
 | 76 | converter-station-inverter.md | methods | methods/power-electronics/converter-station-inverter.md | P0 | 999 | 8273 | 16 | 25 | completed |
-| 387 | cross-bonded-cable.md | models | models/transmission-line/cross-bonded-cable.md | P1 | 999 | 1143 | 7 | 12 | pending |
+| 387 | cross-bonded-cable.md | models | models/transmission-line/cross-bonded-cable.md | P1 | 999 | 999 | 4017 | 18 | 12 | completed |
 | 290 | curve-fitting.md | methods | methods/signal-processing/curve-fitting.md | P1 | 999 | 3463 | 12 | 11 | pending |
 | 313 | dc-pfc.md | methods | methods/power-electronics/dc-pfc.md | P1 | 999 | 2749 | 7 | 6 | pending |
 | 306 | delarue-enhanced-avm.md | methods | methods/power-electronics/delarue-enhanced-avm.md | P1 | 999 | 3052 | 5 | 10 | pending |
