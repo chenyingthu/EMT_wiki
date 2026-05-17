@@ -11,10 +11,13 @@
 | 44 | ac-transmission-line.md | models | models/transmission-line/ac-transmission-line.md | P0 | 999 | 6401 | 31 | 15 | completed |
 | 174 | automatic-code-generation.md | methods | methods/simulation-technology/automatic-code-generation.md | P0 | 999 | 4910 | 18 | 14 | completed |
 | 349 | bergeron-line-model.md | methods | methods/transmission-line/bergeron-line-model.md | P1 | 999 | 4238 | 20 | 30 | completed |
-| 135 | cable-modeling.md | topics | topics/component-modeling/cable-modeling.md | P0 | 999 | 3576 | 14 | 26 | pending |
+| 135 | cable-modeling.md | topics | topics/component-modeling/cable-modeling.md | P0 | 999 | 3531 | 14 | 12 | completed |
+
 | 198 | chb-dab.md | methods | methods/power-electronics/chb-dab.md | P0 | 999 | 6022 | 15 | 4 | pending |
-| 229 | coherency-clustering.md | methods | methods/simulation-technology/coherency-clustering.md | P0 | 999 | 12787 | 33 | 8 | pending |
-| 260 | computational-acceleration.md | methods | methods/simulation-technology/computational-acceleration.md | P1 | 999 | 5162 | 12 | 13 | pending |
+| 229 | coherency-clustering.md | methods | methods/simulation-technology/coherency-clustering.md | P0 | 999 | 6016 | 33 | 8 | completed |
+
+| 260 | computational-acceleration.md | methods | methods/simulation-technology/computational-acceleration.md | P1 | 999 | 5065 | 12 | 13 | completed |
+
 | 252 | coordinate-transformation-model.md | models | models/control/coordinate-transformation-model.md | P1 | 999 | 7010 | 28 | 14 | pending |
 | 189 | csg.md | methods | methods/power-electronics/csg.md | P0 | 999 | 5593 | 6 | 10 | pending |
 | 267 | dc-dc-converter.md | models | models/converter/dc-dc-converter.md | P1 | 999 | 4448 | 41 | 16 | pending |
