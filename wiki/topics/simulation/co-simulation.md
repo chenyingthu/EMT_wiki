@@ -1,566 +1,348 @@
 ---
 title: "混合仿真"
 type: topic
-tags: []
+tags: [co-simulation, hybrid-simulation, interface-technique, multirate, dynamic-phasor]
 created: "2026-04-13"
+updated: "2026-05-18"
 ---
 
 # 混合仿真
 
-```mermaid
-graph TD
-    subgraph "EMT侧 (小步长 μs级)"
-        EMT["电磁暂态仿真
-详细设备模型
-MMC/VSC/线路
-步长 1-50 μs"]
-    end
-    subgraph "接口层"
-        INT["接口变换
-Thevenin/Norton等效
-动态相量/移频
-插值/采样/同步"]
-        FDNE["FDNE频变等效"]
-        MURI["多速率接口"]
-    end
-    subgraph "机电侧 (大步长 ms级)"
-        RMS["机电暂态仿真
-相量域网络
-步长 1-10 ms"]
-    end
-    subgraph "HIL硬件在环"
-        HIL["硬件在环测试
-RTDS/FPGA
-物理控制器"]
-    end
-    EMT <--> INT
-    INT <--> RMS
-    EMT --> FDNE
-    FDNE --> INT
-    INT --> MURI
-    MURI --> RMS
-    EMT --> HIL
-    RMS --> HIL
-
-    style EMT fill:#fce4ec
-    style INT fill:#e1f5fe
-    style FDNE fill:#f5f5f5
-    style MURI fill:#f5f5f5
-    style RMS fill:#fff3e0
-    style HIL fill:#e8f5e9
-```
-
-```mermaid
-graph TD
-    subgraph "EMT侧 (小步长 μs级)"
-        EMT["电磁暂态仿真
-详细设备模型
-MMC/VSC/线路
-步长 1-50 μs"]
-    end
-    subgraph "接口层"
-        INT["接口变换
-Thevenin/Norton等效
-动态相量/移频
-插值/采样/同步"]
-        FDNE["FDNE频变等效"]
-        MURI["多速率接口"]
-    end
-    subgraph "机电侧 (大步长 ms级)"
-        RMS["机电暂态仿真
-相量域网络
-步长 1-10 ms"]
-    end
-    subgraph "HIL硬件在环"
-        HIL["硬件在环测试
-RTDS/FPGA
-物理控制器"]
-    end
-    EMT <--> INT
-    INT <--> RMS
-    EMT --> FDNE
-    FDNE --> INT
-    INT --> MURI
-    MURI --> RMS
-    EMT --> HIL
-    RMS --> HIL
-
-    style EMT fill:#fce4ec
-    style INT fill:#e1f5fe
-    style FDNE fill:#f5f5f5
-    style MURI fill:#f5f5f5
-    style RMS fill:#fff3e0
-    style HIL fill:#e8f5e9
-```
-
 ## 定义
-混合仿真是在同一研究问题中耦合不同暂态表示、求解器或时间步长的仿真范式。该页的论文样本主要围绕 EMT、机电暂态、相量域、动态相量和移频相量之间的接口展开，用于在保留局部波形细节的同时降低全系统 EMT 建模成本。
 
-## 合成定位
-在 P0 taxonomy 中，混合仿真是连接 [[dynamic-phasor]]、[[frequency-dependent-modeling]]、[[parallel-computing]] 与 [[real-time-simulation]] 的总入口。它关注的是“模型域如何拼接”和“接口误差如何受控”，而不是单一设备模型本身；设备侧细节通常落在 [[mmc-model]]、[[vsc-model]]、[[transmission-line-model]] 或 [[fdne-model]]。
+混合仿真（Co-Simulation）是将两种或以上不同暂态表示、求解器或时间步长的仿真工具在同一研究问题中耦合执行的仿真范式。其核心目标是在保留局部波形细节的同时大幅降低全系统电磁暂态（EMT）仿真的计算成本。
 
-## 分类或机制
-- EMT-机电暂态混合：以边界母线、Thevenin/Norton 等值、动态相量接口或 [[fdne-model]] 连接详细 EMT 子网与大规模机电网络。
-- EMT-相量/动态相量协同：用 [[dynamic-phasor]] 或移频相量减少高频载波求解负担，并通过映射、插值、外推或松弛迭代交换边界变量。
-- 多速率/多求解器协同：用 [[multirate-method]] 对快变电力电子局部子系统和慢变网络采用不同步长，并处理同步、延迟和收敛问题。
-- 实时/硬件在环混合：将 [[rtds]]、FPGA、CPU 或离线工具联接，用于保护控制器和大系统动态测试。
+在 EMT 语境下，"混合仿真"特指 **EMT 与其他仿真域的协同**，包括：
+- **EMT-机电暂态（TS）混合**：详细设备模型（1-50 μs步长）与大规模相量域网络（1-10 ms步长）的边界接口
+- **EMT-动态相量（DP）混合**：时域波形采样与基频相量/谐波相量的跨域映射
+- **EMT-移频相量（SFA/SFP）混合**：频域等效与时域EMT的并行追踪
+- **多速率EMT-EMT混合**：快变电力电子子系统（μs级）与慢变网络（ms级）的差异化步长协同
+- **硬件在环（HIL）混合**：RTDS/FPGA实时仿真器与离线EMT/TS求解器的物理接口
+
+## 在 EMT 中的角色
+
+EMT 仿真是电力系统精细化分析的核心工具，但其步长受限于电力电子开关动作（通常 1-50 μs），无法高效处理大系统全时长仿真。混合仿真是解决这一瓶颈的关键技术：
+
+| 系统部分 | 仿真工具 | 步长 | 典型应用 |
+|---------|---------|------|---------|
+| 换流器/MMC/DCDC | EMT | 1-50 μs | 详细开关波形、谐波、故障穿越 |
+| 大规模交流网络 | TS/PM | 1-10 ms | 机电振荡、低频动态 |
+| 直流电网 | SFA/SFP/DP | 50-500 μs | 直流故障、多端协调控制 |
+| 控制器硬件 | HIL | 实时 | 保护逻辑验证、保护控制器测试 |
+
+**核心挑战**在于接口精度、接口延迟、模型无源性和数值稳定性。
+
+## 分类与机制
+
+### 按接口变量形式分类
+
+| 接口类型 | 核心等效 | 适用场景 | 代表方法 |
+|---------|---------|---------|---------|
+| **Thevenin/Norton等值** | 电压源+阻抗 / 电流源+导纳 | 边界母线为相对平衡点 | [[fdne-model]]、双端口等效 |
+| **动态相量接口** | 基频相量/谐波相量映射 | 含直流偏置、谐波的接口 | DPIM、MATE |
+| **移频相量接口** | 频域复数信号转换 | 宽频带交互分析 | HMD-TLM、SFA-EMT |
+| **松弛迭代接口** | 边界变量预测+迭代修正 | 接口电气距离近、交互强 | 边界预测加速、双向阻抗更新 |
+| **接口位移/映射等效** | 物理位置迁移+松耦合 | 大规模交直流混联系统 | ID-Mapping |
+
+### 按协同架构分类
+
+| 架构类型 | 核心机制 | 代表论文 |
+|---------|---------|---------|
+| **集中式混合仿真** | 单一仿真器管理EMT和TS，两侧通过接口变量交换 | InterPSS+PSCAD/EMTDC (Huang & Vittal 2016) |
+| **分布式混合仿真** | 多EMT子系统和TS子系统独立求解，通过MATE协议同步 | Shu 2017、分布式MATE (Tarazona 2026) |
+| **多速率EMT协同** | 快变/慢变子系统用不同步长，通过多速率接口同步 | Shu 2017多速率框架 |
+| **多求解器集成** | EMT/DP/FAST/TS四求解器按需自适应分配 | Rupasinghe 2023多求解器框架 |
 
 ## 形式化表示
-协同仿真的接口可抽象为两个子系统在边界变量上交换：
+
+### 接口方程数学框架
+
+EMT-TS 混合仿真的接口可抽象为两个子系统在边界变量上的交替求解：
 
 $$
-x_E^{k+1}=F_E(x_E^k,z_T^k,\Delta t_E),\qquad
-x_T^{k+1}=F_T(x_T^k,z_E^k,\Delta t_T)
+\mathbf{x}_E^{k+1} = \mathbf{f}_E\left(\mathbf{x}_E^k, \mathbf{z}_T^k, \Delta t_E\right), \qquad
+\mathbf{x}_T^{k+1} = \mathbf{f}_T\left(\mathbf{x}_T^k, \mathbf{z}_E^k, \Delta t_T\right) \tag{1}
 $$
 
-其中 $x_E$ 是 EMT 子系统状态，$x_T$ 是机电/相量/动态相量子系统状态，$z_E,z_T$ 是经 Thevenin/Norton 等值、动态相量或频率相关网络等值传递的边界变量。
+其中 $\mathbf{x}_E$ 和 $\mathbf{x}_T$ 分别是 EMT 和 TS 子系统的状态向量，$\mathbf{z}_E, \mathbf{z}_T$ 是边界变量。关键在于边界变量的传递方式。
 
-## 适用边界与失败边界
-适用场景是局部强暂态、全网规模大、研究对象需要跨时间尺度而全 EMT 成本过高的系统。失败边界通常出现在接口电气距离过近、边界变量频谱超出接口模型带宽、强不平衡故障导致等值失配、多速率延迟不可忽略、或 FDNE/有理模型无源性不足时。原页面/来源汇总未给出统一的误差阈值或步长比准则，因此本页不固化精确数字。
+### Thevenin 等值接口
 
-## 代表性论文
-- “Interfacing Techniques for Transient Stability and Electromagnetic Transient Hybrid Simulation”：系统化 TS-EMT 接口分类与术语。
-- “Hybrid simulation of power systems with SVC dynamic phasor model”：展示 SVC 动态相量模型与机电暂态网络的混合接口。
-- “Frequency Dependent Network Equivalent for Electromagnetic and Electromechanical”：将 [[vector-fitting]] 与无源性处理用于 EMT-机电边界等值。
-- “A Multirate EMT Co-Simulation of Large AC and MMC-Based MTDC Systems”：代表多速率 EMT 协同仿真路线。
-- “A multi-solver framework for co-simulation of transients in modern power systems”：代表 EMT、DP、FAST、TS 多求解器集成趋势。
+当 EMT 子系统在第 $k$ 步的边界电压为 $\mathbf{v}_b^k$、边界电流为 $\mathbf{i}_b^k$ 时，TS 侧看到的 Thevenin 等值为：
 
-## 验证共识
-该主题的验证以仿真对比为主，常见基准包括全 EMT、PSCAD/EMTDC、机电暂态程序、实时仿真平台或硬件在环结果。论文通常报告波形一致性、接口暂态误差、计算效率和强扰动响应；但跨论文缺少统一公开基准，原页面/来源汇总未给出可直接比较的标准数据集。
+$$
+\mathbf{v}_b^k = \mathbf{v}_{\text{th}}^k - \mathbf{Z}_{\text{th}}^k \mathbf{i}_b^k \tag{2}
+$$
+
+其中 Thevenin 阻抗 $\mathbf{Z}_{\text{th}}$ 需随频率更新（见 Plumier 2016）。阻抗更新频率影响迭代收敛速度——每步更新 vs 每 $N$ 步更新存在精度-效率权衡。
+
+### 时变接口模型（Shu 2017 多速率）
+
+多速率协同中，接口参数通过移动窗口预测、逐步校正和平均技术消除混叠/延迟误差：
+
+$$
+\hat{\mathbf{v}}_{\text{th}}^{k+m} = \frac{1}{W}\sum_{j=0}^{W-1}\mathbf{v}_{\text{th}}^{k-j}, \qquad m \in \mathbb{Z}^+ \tag{3}
+$$
+
+其中 $W$ 为移动窗口宽度，$\hat{\mathbf{v}}_{\text{th}}$ 为预测的 Thevenin 电压。
+
+### 松弛迭代接口（Plumier 2016）
+
+松弛迭代的迭代方程为：
+
+$$
+\mathbf{z}_E^{k+1,(n+1)} = \mathbf{C}_E \mathbf{z}_E^{k+1,(n)} + (1-\mathbf{C}_E)\mathbf{z}_T^{k+1,(n)} \tag{4}
+$$
+
+其中 $\mathbf{C}_E$ 为松弛矩阵（对角矩阵，控制迭代强度），$n$ 为迭代序号。收敛条件为 $\|\mathbf{z}_E^{k+1,(n+1)} - \mathbf{z}_E^{k+1,(n)}\| < \varepsilon_{\text{tol}}$。
+
+### 接口位移与映射等效（Zhu 2021）
+
+接口位移方法将物理端口迁移至松耦合位置，等效关系为：
+
+$$
+\mathbf{Y}_{\text{eq}} = \mathbf{A}^T \mathbf{Y}_{\text{port}} \mathbf{A}, \qquad \mathbf{v}_{\text{eq}} = \mathbf{A}^{-1} \mathbf{v}_{\text{port}} \tag{5}
+$$
+
+其中 $\mathbf{A}$ 为端口迁移变换矩阵，$\mathbf{Y}_{\text{eq}}$ 和 $\mathbf{v}_{\text{eq}}$ 分别为等效导纳矩阵和等效端口电压。
+
+### SFA-EMT 直接接口协议（Tarazona 2026）
+
+SFA-EMT 协议通过并行追踪 EMT 解的实部和虚部分量，实现与复数形式 SFA 解的直接耦合：
+
+$$
+\tilde{\mathbf{x}}_{\text{EMT}} = \mathbf{x}_{\text{EMT,real}} + j\mathbf{x}_{\text{EMT,imag}}, \qquad \tilde{\mathbf{x}}_{\text{SFA}} = \mathbf{x}_{\text{SFA,complex}} \tag{6}
+$$
+
+接口耦合无需时间步延迟或迭代，仅需复数变换。
+
+## 关键技术挑战
+
+### 挑战 1：接口精度与带宽限制
+
+动态相量提取方法的频谱特性决定了接口带宽。Rupasinghe 2021 评估了五种相量提取方法的性能：
+
+| 方法 | 幅值误差 | 相位误差 | 适用信号 |
+|------|---------|---------|---------|
+| 傅里叶变换（FFT）| 低 | 低 | 纯基频稳态 |
+| 滑动 DFT | 中 | 中 | 缓变动态 |
+| 正交滤波器 | 低-中 | 低 | 含谐波信号 |
+| 插值 DFT | 中 | 低 | 频偏信号 |
+| 广义平均 | 中 | 中-高 | 强暂态 |
+
+**接口位移映射等效**（Zhu 2021）通过物理位置迁移将强耦合接口转换为松耦合接口，有效降低接口精度要求。
+
+### 挑战 2：数值稳定性与无源性
+
+FDNE 模型在宽频带内必须保持无源。Zhang 2012（FDNE for hybrid simulation）结合矢量拟合（[[vector-fitting]]）与半尺寸无源性检测：
+
+$$
+\mathbf{Y}(s) = \sum_{i=1}^{N}\frac{r_i}{s - p_i} \quad \Rightarrow \quad \text{Re}(\mathbf{Y}(j\omega)) \geq 0, \quad \forall \omega \geq 0 \tag{7}
+$$
+
+无源性强制（[[passivity-enforcement]]）后，混合仿真中的数值发散问题可彻底消除（Zhang 2012 实验验证）。
+
+### 挑战 3：多速率同步与延迟
+
+多速率协同的核心问题是快慢系统间的同步误差。Shu 2017 的解决策略：
+
+1. **混叠抑制**：接口参数采用移动窗口平均（式(3)）抑制高频分量混叠
+2. **延迟补偿**：逐步校正技术实时修正接口时延
+3. **振荡抑制**：数值振荡抑制算法保证接口离散化稳定性
+
+### 挑战 4：不对称故障与等值失配
+
+机电侧不对称故障会导致 FDNE 等值失配。Zhang 2012 提出的伴随初始化与临界电气距离指标可判断何时需要更新 FDNE，避免不必要的重新计算。
+
+### 挑战 5：接口协议与通信架构
+
+大规模系统的分布式混合仿真需要高效的通信接口。Design and Implementation of Scalable Communication Interfaces (2025) 提出了本地局域网（低延迟交互）与远程互联网（广域数据交换）的双模通信架构，适用于IBR渗透率高的电力系统实时协同仿真。
+
+## 量化性能边界
+
+### 不同混合仿真方法的性能对比
+
+| 方法/论文 | 接口类型 | 步长比 $\Delta t_T/\Delta t_E$ | 加速比 | 精度验证 |
+|---------|---------|---------------------------|-------|---------|
+| 松弛迭代接口（Plumier 2016）| PM-EMT | 10:1（10ms vs 1ms）| ~5× | 74-bus, 23-machine |
+| 多速率EMT协同（Shu 2017）| AC-MTDC | 10:1（500μs vs 50μs）| 3-10× | 四端MMC-MTDC |
+| 接口位移映射（Zhu 2021）| HVAC/DC | 10-20:1 | ~8× | 交直流混联系统 |
+| SFA-EMT MATE（Tarazona 2026）| SFA-EMT | 20-50:1 | 5-20× | HVDC系统 |
+| 多求解器框架（Rupasinghe 2023）| EMT/DP/FAST/TS | 自适应 | 10-50× | 现代电力系统 |
+| DPIM接口（Huang & Vittal 2018）| EMT-DP | 10:1 | 6-15× | 新英格兰39节点 |
+
+### 接口方法收敛性对比
+
+| 等值方法 | 收敛速度 | 实现复杂度 | 稳定性 |
+|---------|---------|-----------|------|
+| 固定 Thevenin | 快（1步）| 低 | 边界平衡时良好 |
+| 时变 Thevenin | 中（需更新）| 中 | 需阻抗更新策略 |
+| 时变 Norton | 中 | 中 | 对电流源子系统更稳定 |
+| 双端口等效 | 慢（需迭代）| 高 | 最通用但计算量大 |
+| 松弛迭代（Plumier 2016）| 最慢（需迭代）| 高 | 最稳定但需参数整定 |
+
+### 不同接口类型的适用场景
+
+| 接口类型 | 步长比上限 | 边界不平衡度容忍 | 系统规模 |
+|---------|----------|----------------|---------|
+| Thevenin/Norton 等值 | 20:1 | 低 | 中等 |
+| 动态相量接口 | 50:1 | 中 | 大规模 |
+| 移频相量接口 | 100:1 | 中-高 | 大规模/宽频 |
+| 松弛迭代接口 | 10:1 | 高 | 中等 |
+| 接口位移映射 | 50:1 | 高 | 超大规模 |
+
+## 适用边界与选择指南
+
+### 方法选择决策表
+
+**问**：需要模拟什么系统？接口电气距离如何？
+
+**答**：根据以下决策树选择接口方法：
+
+```
+1. 接口边界平衡且电气距离远（>50km）
+   → 固定 Thevenin/Norton 等值
+   ↓ 不满足
+2. 接口含强直流偏置或谐波分量
+   → 动态相量接口（DPIM）或移频相量接口（HMD-TLM）
+   ↓ 不满足
+3. 需要宽频带分析（故障暂态、谐波传递）
+   → SFA-EMT 直接接口（Tarazona 2026）或接口位移映射
+   ↓ 不满足
+4. 接口电气距离近、交互强
+   → 松弛迭代接口（Plumier 2016）或 MATE 分布式协议
+   ↓ 不满足
+5. 超大规模系统、多求解器集成
+   → 多求解器框架（Rupasinghe 2023）
+```
+
+**失效边界**：
+- 接口电气距离过近（如 <5 km）、边界变量频谱超出接口模型带宽时，接口误差急剧增大
+- 强不平衡故障（如单相接地）导致 Thevenin/Norton 等值失配，需要实时更新等值参数
+- FDNE/有理模型无源性不足时，即使接口参数正确也会导致数值发散
+- 多速率延迟不可忽略时（如通信延迟 > 1 步长），需要专门延迟补偿算法
 
 ## 相关方法
+
 - [[multirate-method|多速率方法]] - 子系统差异化步长协同
 - [[vector-fitting|矢量拟合]] - 接口频变网络等值
 - [[passivity-enforcement|无源性强制]] - 等值模型稳定性保证
 - [[state-space-method|状态空间法]] - 多域状态空间接口
 - [[average-value-model|平均值模型]] - 多尺度模型切换
+- [[dynamic-phasor|动态相量法]] - 跨域动态相量接口
+- [[frequency-dependent-modeling|频率相关建模]] - 宽频混合建模
+- [[real-time-simulation|实时仿真]] - 实时协同仿真
 
 ## 相关模型
+
 - [[fdne-model|频变网络等值(FDNE)]] - 外部系统宽频等值
 - [[synchronous-machine-model|同步电机模型]] - 机电侧等值模型
 - [[mmc-model|MMC模型]] - 电磁侧详细模型
 - [[vsc-model|VSC模型]] - 换流器接口模型
 
-## 相关主题
-- [[dynamic-phasor|动态相量法]] - 跨域动态相量接口
-- [[frequency-dependent-modeling|频率相关建模]] - 宽频混合建模
-- [[real-time-simulation|实时仿真]] - 实时协同仿真
-- [[parallel-computing|并行计算]] - 多求解器并行协同
-- [[network-equivalent|网络等值]] - 系统分割与等值
-
-## 论文方法分析
-> 基于 46 篇相关论文的深度内容分析生成
-### 使用的方法/技术
-| 方法/技术 | 使用次数 | 代表论文 |
-|----------|---------|----------|
-| 机电-电磁暂态混合仿真 | 4 | Electromechanical-electromagnetic Hybrid Simulation Technology With La |
-| 多速率协同仿真 | 3 | A multi-area Thevenin equivalent based multi-rate co-simulation for co |
-| 动态相量法 | 3 | Dynamic Phasor Based Interface Model for EMT and Transient Stability H |
-| 机电暂态建模 | 3 | Electromechanical Transient Modeling of the Low-Frequency AC System Wi |
-| 混合仿真接口技术 | 3 | Hybrid simulation of power systems with SVC dynamic phasor model |
-| 多域协同仿真 | 2 | A Multi-Domain Co-Simulation Method for Comprehensive Shifted-Frequenc |
-| 移频相量法(SFP) | 2 | A Multi-Domain Co-Simulation Method for Comprehensive Shifted-Frequenc |
-| 混合多域传输线模型接口(HMD-TLM) | 2 | A Multi-Domain Co-Simulation Method for Comprehensive Shifted-Frequenc |
-| 相量域建模 | 2 | A rotary frequency converter model for electromechanical transient stu |
-| 机电暂态数值仿真 | 2 | A rotary frequency converter model for electromechanical transient stu |
-| 等效电路法 | 2 | Electromechanical Transient Modeling of the Low-Frequency AC System Wi |
-| 频率相关网络等值（FDNE） | 2 | Frequency Dependent Network Equivalent for Electromagnetic and Electro |
-| 机电暂态仿真 | 2 | Hybrid simulation of power systems with SVC dynamic phasor model |
-| 接口位移技术(ID) | 2 | Interface Displacement and Mapping Equivalence Based Hybrid Simulation |
-| 离散电感解耦方法 | 1 | 27&28/Multi-rate real time hybrid simulation of controllable line comm |
-### 涉及的设备/模型
-| 设备/模型 | 使用次数 |
-|----------|----------|
-| 模块化多电平换流器(MMC) | 4 |
-| 电磁暂态(EMT)模型 | 3 |
-| 机电暂态模型 | 3 |
-| 电磁暂态模型 | 3 |
-| 大规模交直流电网 | 2 |
-| 直流电网移频相量模型 | 2 |
-| 交流电网电磁暂态模型 | 2 |
-| 旋转变频器(RFC) | 2 |
-| 动态相量求解器 | 2 |
-| HVDC系统 | 2 |
-| 交流电网 | 2 |
-| 新英格兰39节点测试系统 | 2 |
-| 静止无功补偿器(SVC) | 2 |
-| 交流子系统机电暂态模型 | 2 |
-| HVAC/DC交直流电网 | 2 |
-### 验证方式分布
-- **仿真**: 20 篇
-- **仿真对比**: 9 篇
-- **仿真/对比**: 7 篇
-- **实验**: 2 篇
-- **仿真与对比**: 2 篇
-- **仿真与对比验证**: 1 篇
-- **仿真/实验**: 1 篇
-- **对比**: 1 篇
-- **仿真验证与对比**: 1 篇
-- **仿真对比验证**: 1 篇
-- **理论对比与综述**: 1 篇
-## 技术演进脉络
-### 2009年 (4篇)
-- **Hybrid simulation of power systems with SVC dynamic phasor model**
-  - 💡 将动态相量理论应用于SVC建模，并与传统机电暂态模型结合，提出了一种兼顾计算效率与波形精度的新型混合仿真方法。
-  - 推导了基于动态相量理论的SVC单相详细模型。
-  - 提出了SVC动态相量模型与交流子系统机电暂态模型之间的混合仿真接口算法。
-- **Hybrid simulation of power systems with SVC dynamic phasor model**
-  - 💡 将动态相量理论引入SVC建模并与机电暂态程序结合，有效克服了传统TSP-EMTP混合仿真中的相位不连续与直流偏移问题。
-  - 推导了基于动态相量理论的SVC单相详细数学模型。
-  - 提出了SVC动态相量模型与交流子系统机电暂态模型之间的高效接口算法。
-- **Interfacing Techniques for Transient Stability and Electromagnetic Transient Hyb**
-  - 💡 首次系统构建TS-EMT混合仿真接口技术分类体系，并提出基于频移的一体化建模新路径。
-  - 系统梳理并分类了TS与EMT混合仿真中的接口技术与关键实现问题。
-  - 统一并规范了混合仿真器构建过程中涉及的术语、定义与标准方法。
-- **Interfacing Techniques for Transient Stability and Electromagnetic Transient Hyb**
-  - 💡 首次系统性地分类与规范了TS-EMT混合仿真接口技术体系，并创新性地引入频率平移法实现一体化建模。
-  - 系统梳理并分类了暂态稳定与电磁暂态混合仿真中的接口技术与关键实施步骤。
-  - 汇总并规范了混合仿真构建过程中使用的术语、定义与主流方法。
-### 2012年 (2篇)
-- **Frequency Dependent Network Equivalent for Electromagnetic and Electromechanical**
-  - 💡 将矢量拟合与半尺寸无源性检测相结合，构建了兼顾宽频特性与数值稳定性的电磁-机电混合仿真网络等值新方法
-  - 提出适用于电磁-机电混合仿真的频率相关网络等值方法
-  - 基于矢量拟合技术实现等值模型的严格无源性保证
-- **电磁–机电暂态混合仿真中机电侧故障的仿真方法**
-  - 💡 针对机电侧故障导致FDNE失效的问题，提出结合伴随初始化与临界电气距离指标的FDNE动态切换策略，兼顾混合仿真精度与计算效率。
-  - 提出伴随仿真方法初始化新FDNE状态变量，有效抑制切换过程中的虚假暂态波动。
-  - 提出临界电气距离指标，用于快速判断机电侧故障时是否需要更新FDNE。
-### 2013年 (2篇)
-- **Comparison between electromechanical transient model and electromagnetic transie**
-  - 💡 首次结合TLS-ESPRIT算法与ADPSS混合仿真平台，定量对比并验证了直流机电暂态模型在低频振荡模态分析中的等效性与高效性。
-  - 在ADPSS平台上构建了标准测试系统与实际电网的直流机电暂态及机电-电磁混合仿真模型。
-  - 引入TLS-ESPRIT算法对故障后功率振荡信号进行模态分析，精准提取主导频率与阻尼比。
-- **Electromechanical Transient Modeling of Modular Multilevel Converter Based Multi**
-  - 💡 提出了一种基于动态过程定量分析的MMC-MTDC简化机电暂态模型，在保留关键控制特性的同时显著提升了大规模交直流系统机电暂态仿真的计算效率。
-  - 建立了MMC的数学模型及其等效电路，结构类似于两电平换流器
-  - 提出了适用于含MMC-MTDC系统的交直流网络潮流计算方法
-### 2014年 (2篇)
-- **Comparative study on electromechanical and electromagnetic transient model for g**
-  - 💡 提出了一种基于纯数学计算的通用性光伏机电暂态模型，摒弃了高频开关与具体电路参数，在保证精度的同时大幅提升了大规模光伏系统仿真效率。
-  - 提出了一种不包含电气元件和高频开关器件的通用性并网光伏机电暂态模型。
-  - 通过纯数学计算替代复杂电路仿真，显著提升了大规模光伏电站的仿真计算速度。
-- **基于ADPSS的电力系统和牵引供电系统机电–电磁暂态混合仿真**
-  - 💡 利用ADPSS实现了真实电网机电暂态模型与牵引系统电磁暂态模型的无缝接口与同步仿真，解决了传统简化等值模型精度低且适应性差的问题。
-  - 基于ADPSS平台搭建了实际电力系统与牵引供电系统的机电-电磁暂态混合仿真模型，填补了联合仿真空白。
-  - 验证了混合仿真方法的准确性，避免了传统方法中对主电网进行等值简化带来的精度损失。
-### 2016年 (3篇)
-- **A Hybrid Simulation Tool for the Study of PV Integration Impacts on Distribution**
-  - 💡 提出了一种EMT与相量域协同的混合仿真架构，有效解决了高比例光伏配电网研究中精度与计算效率难以兼顾的难题。
-  - 开发了一种将EMT仿真引擎与开源相量分析工具OpenDSS无缝接口的混合仿真平台。
-  - 实现了光伏系统的详细电磁暂态建模与配电网其余部分相量域建模的协同仿真。
-- **Application of Electromagnetic Transient-Transient Stability Hybrid Simulation t**
-  - 💡 提出结合多端口三相戴维南等效与自动协议切换的交互机制，突破了传统混合仿真边界需保持三相平衡的限制，实现了大规模电网不对称故障与FIDVR现象的高精度仿真。
-  - 开发了集成PSCAD/EMTDC与InterPSS的新型EMT-TS混合仿真平台。
-  - 提出了一种带自动协议切换控制的组合交互协议以优化边界数据交换。
-- **Co-Simulation of electromagnetic transients and Phasor models: A relaxation appr**
-  - 💡 提出了一种结合边界变量预测、戴维南阻抗动态更新与单步EMT求解的松弛迭代架构，有效突破了传统EMT-PM混合仿真在收敛速度与计算效率上的瓶颈。
-  - 提出了一种基于松弛迭代的EMT与相量模式联合仿真框架，兼顾了高精度与计算效率。
-  - 系统评估并比较了多种多端口等效模型对PM-EMT迭代收敛性的影响。
-### 2017年 (3篇)
-- **A Multirate EMT Co-Simulation of Large AC and MMC-Based MTDC Systems**
-  - 💡 提出了一种保留详细换流器动态与交流系统非线性的多速率EMT协同仿真架构，通过高精度时变接口模型与振荡抑制算法解决了传统等值方法精度下降与数值不稳定的问题。
-  - 提出了一种适用于大型交直流混合系统的多速率EMT协同仿真方法，显著提升了大规模电网的仿真效率。
-  - 设计了结合移动窗口预测、逐步校正与平均技术的时变接口模型，有效消除了多速率交互中的混叠与时延误差。
-- **A Novel Interfacing Technique for Distributed Hybrid Simulations Combining EMT a**
-  - 💡 提出基于两级舒尔补法与组合交互协议的分布式混合仿真接口技术，实现了多EMT子系统与TS子系统的高效、精确协同仿真。
-  - 提出了一种分布式混合仿真架构，有效克服了传统集中式混合仿真中网络划分困难与效率低下的问题。
-  - 设计了基于两级舒尔补法的接口更新技术，充分计及了多个EMT子系统之间的动态耦合关系。
-- **Dynamic Phasor Based Interface Model for EMT and Transient Stability Hybrid Simu**
-  - 💡 将动态相量理论引入混合仿真接口设计，通过基频与动态相量等效电路实现跨域高精度、低延迟数据交互。
-  - 提出基于动态相量的接口模型(DPIM)，显著提升EMT与暂态稳定混合仿真的接口精度。
-  - 构建TS-DPIM与DPIM-EMT间的双向等效接口，采用基频诺顿等效与动态相量戴维南等效实现数据交互。
-### 2018年 (4篇)
-- **A rotary frequency converter model for electromechanical transient studies of 16**
-  - 💡 开发了基于标准同步电机理论且适配实际可用参数的相量域RFC模型，为低频铁路机电稳定性分析提供了开源工具。
-  - 提出了一种适用于相量域机电暂态研究的同步-同步旋转变频器开放模型。
-  - 模型设计直接兼容现有RFC的典型铭牌与运行数据，降低了建模门槛。
-- **A rotary frequency converter model for electromechanical transient studies**
-  - 💡 构建了首个基于公开可用数据、专用于低频铁路同步型旋转变频器的相量域机电暂态开放模型。
-  - 提出了一种适用于低频铁路系统机电暂态稳定性研究的同步-同步型旋转变频器相量域开放模型。
-  - 模型结构专门设计为可直接兼容并利用现有的RFC设备铭牌与测试数据。
-- **Advanced EMT and Phasor-Domain Hybrid Simulation With Simulation Mode Switching **
-  - 💡 提出具备仿真模式切换能力的先进混合仿真架构，通过动态切换回纯相量域仿真显著提升大规模输配电系统的计算效率
-  - 将混合仿真应用范围从输电网扩展至配电网及输配电网一体化系统
-  - 构建了支持正序、三序、三相及混合表示的综合相量域建模与仿真框架
-- **Co-simulation of electrical networks by interfacing EMT and dynamic-phasor simul**
-  - 💡 提出了一种基于专用映射算法与多时间步长处理的EMT-动态相量混合协同仿真接口技术，在保证局部快速暂态精度的同时大幅提升了大规模电网的仿真效率。
-  - 构建了EMT与动态相量求解器的混合协同仿真架构。
-  - 开发了瞬时EMT样本与动态相量傅里叶分量之间的精确映射算法。
-### 2019年 (5篇)
-- **A multi-area Thevenin equivalent based multi-rate co-simulation for control desi**
-  - 💡 将MATE多速率协同仿真技术与基于虚拟阻抗的改进控制策略相结合，实现了兼顾高精度与高效率的LCC-HVDC系统电磁暂态仿真与控制设计。
-  - 提出了一种基于MATE的多速率协同仿真方法，有效兼顾了电磁暂态仿真的精度与计算效率。
-  - 构建了MATE传输线模型并结合多速率加速技术，显著提升了大规模交直流系统的仿真速度。
-- **A Multi-Domain Co-Simulation Method for Comprehensive Shifted-Frequency Phasor D**
-  - 💡 首次构建结合移频相量直流模型与电磁暂态交流模型的多域协同仿真框架，并通过HMD-TLM接口实现跨域高效数据交互与双波形同步输出。
-  - 提出了一种将大规模交直流系统划分为直流SFP子系统与交流EMT子系统的多域协同仿真方法。
-  - 开发了混合多域传输线模型（HMD-TLM）接口，有效处理跨域交互并实现瞬时值与相量波形的同步输出。
-- **A Multi-rate Co-simulation of Combined Phasor-Domain and Time-Domain Models for **
-  - 💡 首创结合移频相量模型与电磁暂态模型的多速率协同仿真架构，通过新型MD-TLM接口实现宽频带交互的高效精确模拟。
-  - 提出结合移频相量域与时域的多速率协同仿真方法，解决传统方法难以捕获宽频带交互的问题。
-  - 将交流电网侧仿真步长扩展至500µs，显著降低大规模系统的计算负担。
-- **A Two-layer Network Equivalent with Local Passivity Compensation with Applicatio**
-  - 💡 提出无需全局优化的双层网络等效与局部无源性补偿技术，在保证数值稳定性的同时大幅提升了混合仿真的收敛速度、精度与计算效率。
-  - 提出了一种结合扰动测试与解析法的双层FDNE模型用于交流电网等效。
-  - 开发了基于辅助有理函数的局部无源性补偿技术，避免了传统全局优化方法的收敛与效率瓶颈。
-- **Shu 等 | A Multi-Domain Co-Simulation Method for Comprehensive Shifted-Frequency **
-  - 💡 首创结合SFP直流模型与EMT交流模型的多域协同仿真框架，并通过HMD-TLM接口实现跨域高效交互与瞬时/相量波形同步。
-  - 提出将直流子系统采用SFP模型、交流子系统采用EMT模型的多域协同仿真架构。
-  - 开发HMD-TLM接口模型以精确处理跨域交互，并支持瞬时值与相量波形同步输出。
-### 2020年 (3篇)
-- **A Harmonic Phasor Domain Co-Simulation Method and New Insight for Harmonic Analy**
-  - 💡 首创基于HPD-TLM接口的EMT-HPD跨域联合仿真架构，实现瞬时波形与谐波相量波形的同步高效分析。
-  - 提出了一种适用于电力电子直流电网的谐波相量域(HPD)建模方法。
-  - 构建了HPD传输线模型(HPD-TLM)，实现了HPD直流模型与EMT交流模型的高效接口与协调。
-- **Interface Displacement and Mapping Equivalence Based Hybrid Simulation for HVAC/**
-  - 💡 提出接口位移与动态相量映射等效相结合的新型接口方案，通过物理位置迁移与等效建模实现子网松耦合，彻底避免接口变量形式转换并消除延迟误差。
-  - 量化分析了混合仿真中接口延迟对系统精度的影响机制。
-  - 总结了提升混合仿真接口精度的核心原则。
-- **Interface Displacement and Mapping Equivalence Based Hybrid Simulation for HVAC/**
-  - 💡 提出接口位移与动态相量映射等效相结合的混合仿真接口方案，通过松耦合架构与免变量转换机制显著提升了交直流电网混合仿真的精度与稳定性。
-  - 量化了混合仿真中接口延迟对系统精度的影响机制。
-  - 总结了提升混合仿真接口精度的核心原则。
-### 2021年 (3篇)
-- **Assessment of dynamic phasor extraction methods for power system co-simulation a**
-  - 💡 首次面向EMT-动态相量联合仿真接口需求，系统对比评估了主流动态相量提取方法的理论特性、数值局限与频谱表现，为大规模电力系统混合仿真提供了明确的算法选型指南。
-  - 系统梳理并深入剖析了多种动态相量提取方法的底层理论与数值实现流程。
-  - 全面评估了各方法在含机电振荡、直流偏置、谐波、不平衡及任意暂态等复杂信号下的相量特性。
-- **Electromechanical transient modelling and application of modular multilevel conv**
-  - 💡 将储能直接嵌入MMC子模块构建Active MMC，并建立其机电暂态等效模型以实现交直流系统解耦与协同控制。
-  - 建立了含嵌入式储能子模块的Active MMC机电暂态数学模型及交直流侧等效电路。
-  - 提出了聚焦于MMC换流器与储能子模块协同工作的控制策略。
-- **Real-time RMS-EMT co-simulation and its application in HIL testing of protective**
-  - 💡 提出了一种基于内置输电线路模型的实时RMS-EMT多速率协同仿真接口技术，并结合快速曲线拟合算法突破了传统HIL测试中系统规模受限与动态细节丢失的瓶颈。
-  - 提出了一种利用内置三相输电线路模型实现实时RMS-EMT多域多速率协同仿真的接口技术。
-  - 开发了一种非缓冲快速曲线拟合方法，以满足实时仿真中波形到相量转换的严格计算约束。
-### 2022年 (4篇)
-- **Co-simulation applied to power systems with high penetration of distributed ener**
-  - 💡 将FMI/FMU标准封装与基于行波理论的虚拟输电线接口相结合，实现高渗透率DER电力系统的高效、频率无关协同仿真。
-  - 提出了一种基于虚拟输电线的协同仿真架构，适用于高渗透率分布式能源电力系统。
-  - 验证了协同仿真能够准确复现完整系统的动态仿真结果。
-- **Electromechanical-electromagnetic Hybrid Simulation Technology With Large Number**
-  - 💡 通过直流标准化建模、数据自动映射拼接与接口电压箝位技术，实现了含大量直流电磁模型的大规模交直流电网混合仿真数据自动构建与平稳快速启动。
-  - 提出了基于直流标准化建模与数据映射拼接的混合仿真数据自动建立方法，显著提升建模效率。
-  - 设计了直流输电电磁模型运行工况自动调整策略，简化了复杂交直流电网的仿真设置。
-- **Electromechanical-electromagnetic transient hybrid simulation of an ACDC hybrid **
-  - 💡 将ADPSS机电-电磁混合仿真技术应用于特高压直流分层接入系统，有效解决了单一仿真方法精度不足或计算效率低的问题。
-  - 基于ADPSS平台成功搭建了含特高压分层接入直流的交直流混联电网混合仿真模型。
-  - 通过与PSCAD模型对比，验证了底层纯电磁暂态模型的正确性。
-- **Electromechanical transient-electromagnetic transient hybrid simulation of doubl**
-  - 💡 在自主开发的PSD-PSModel平台上实现了双馈风机的电磁暂态-机电暂态混合仿真，突破了国外商业软件的技术垄断。
-  - 基于双馈风机运行原理建立了详细的电磁暂态模型框架。
-  - 在自主开发的PSD-PSModel平台上实现了机电-电磁暂态混合仿真功能。
-### 2023年 (4篇)
-- **A multi-solver framework for co-simulation of transients in modern power systems**
-  - 💡 首创性地将EMT、DP、FAST与TS求解器集成于统一的多速率协同仿真架构中，实现按网络动态特性自适应分配求解资源以兼顾精度与效率。
-  - 提出了一种融合动态相量、暂态稳定、FAST与EMT模型的多速率多求解器协同仿真框架。
-  - 制定了基于设备类型、精度需求、电气距离和研究目的的网络分区与求解器/步长选择指南。
-- **An aggregation method of permanent magnet synchronous wind farms for electromech**
-  - 💡 提出了一种基于容量放大的PMSG风电场等效聚合方法，在保证电磁暂态仿真精度的前提下大幅提升了大规模风电场的仿真效率。
-  - 提出了一种适用于大规模PMSG风电场电磁暂态仿真的等效聚合建模方法。
-  - 构建了40台5MW机组的详细模型与200MW等效聚合模型，并给出了明确的聚合原则与流程。
-- **Electromechanical Transient Modeling of the Low-Frequency AC System With Modular**
-  - 💡 构建了适用于大规模电网机电暂态仿真的M3C-LFAC等效动态模型，填补了该类低频交流系统在传统机电仿真软件中的建模空白。
-  - 建立了M3C的精确数学模型及其等效电路。
-  - 提出了适用于含M3C-LFAC系统交流电网的迭代潮流计算算法。
-- **Loop closing analytical calculation system based on electromagnetic-electromecha**
-  - 💡 将机电-电磁混合仿真与自动网络划分及模型转换技术深度融合，实现了电网合环操作的高精度暂态评估与自动化分析。
-  - 开发了基于机电-电磁暂态混合仿真的电网合环分析计算系统。
-  - 提出了基于最大级数搜索算法的电磁网络自动划分方法。
-### 2025年 (4篇)
-- **An Interface Method for Co-Simulation of EMT Model and Shifted Frequency EMT Mod**
-  - 💡 提出基于ESPRIT算法的EMT与SFEMT联合仿真接口，通过精准参数估计构建真实解析信号，有效克服了传统接口因负频分量导致的精度损失问题。
-  - 推导了SFEMT建模的一般形式，为联合仿真接口设计提供了理论指导。
-  - 提出了一种基于ESPRIT算法的EMT与SFEMT模型联合仿真接口。
-- **Co-simulation and compensation method for parallel simulation of electromagnetic**
-  - 💡 首次将无延迟补偿方法与FMI协同仿真框架深度融合，结合MANA公式与自适应步长策略，实现了高精度、强扩展性的离线EMT并行加速。
-  - 提出了一种基于补偿方法的无延迟并行EMT协同仿真工具。
-  - 将补偿方法推广至MANA公式并实现从潮流计算的自动初始化。
-- **Design and Implementation of Scalable Communication Interfaces for Reliable and **
-  - 💡 提出了一种兼顾本地低延迟与远程广域扩展的分级通信接口架构，有效突破了多速率实时协同仿真中的同步与稳定性瓶颈。
-  - 设计并实现了一种可扩展的通信接口，支持高IBR渗透率电力系统的实时协同仿真。
-  - 提出了本地局域网与远程互联网双模通信架构，分别优化低延迟交互与广域数据交换。
-- **SFA-EMT hybrid simulation of power systems: Application to HVDC systems**
-  - 💡 提出了一种无延迟、非迭代的SFA-EMT直接接口多速率混合仿真协议，通过并行EMT追踪复数分量实现灵活步长的高效耦合。
-  - 提出了一种基于MATE框架的新型多速率混合协议，实现了SFA与EMT解的直接接口，无需时间步延迟或迭代。
-  - 引入并行EMT解算以跟踪实部和虚部，从而能够直接与复数形式的SFA解进行无缝耦合。
-### 2026年 (3篇)
-- **27&28/Multi-rate real time hybrid simulation of controllable line commutated con**
-  - 💡 提出结合离散电感解耦与解析参数优化的CPU-FPGA协同多速率仿真架构，有效解决了CLCC-HVDC系统小时间步建模与高效实时计算的矛盾。
-  - 提出了面向CLCC-HVDC系统的CPU-FPGA协同多速率实时仿真框架。
-  - 开发了以电感为自然解耦边界的离散电感解耦方法，实现复杂拓扑的高效分割。
-- **Electromagnetic transient (EMT) and quasi static time series (QSTS) Co-simulatio**
-  - 💡 提出了一种融合相量域QSTS与电磁暂态EMT的联合仿真架构，在保证精度的同时大幅提升了含高比例电力电子配电网的仿真效率。
-  - 提出了一种将OpenDSS相量域分析与MATLAB/Simulink电磁暂态模型相结合的新型联合仿真框架。
-  - 有效克服了传统OpenDSS在电力电子设备建模上的局限性，同时显著降低了全EMT仿真的计算复杂度。
-- **Electromechanical transientelectromagnetic transient hybrid simulation method co**
-  - 💡 提出考虑正负序参数差异的基波负序补偿法与最小二乘三序电流提取技术，实现了机电-电磁暂态混合仿真在不对称故障下的精确接口交互。
-  - 提出了一套完整的机电-电磁暂态混合仿真方案，明确了接口母线选取与双向等值方法。
-  - 针对等值电路正负序参数不一致的问题，提出了基波负序补偿法进行处理。
-## 关键发现汇总
-- [2009] **Hybrid simulation of power systems with SVC dynamic phasor m**: 在9节点和新英格兰39节点系统上的测试表明，SVC动态相量模型与电磁暂态(EMTP)模型相比具有极高的精度。
-- [2009] **Hybrid simulation of power systems with SVC dynamic phasor m**: 该混合仿真方法有效克服了传统TSP-EMTP混合仿真中的相位不连续和直流偏移问题。
-- [2009] **Hybrid simulation of power systems with SVC dynamic phasor m**: 相比全系统EMTP仿真，该方法在保留关键设备波形细节的同时大幅减少了计算时间和内存占用。
-- [2009] **Hybrid simulation of power systems with SVC dynamic phasor m**: 在9节点和新英格兰39节点系统上的测试表明，SVC动态相量模型的仿真精度与全电磁暂态模型高度一致。
-- [2009] **Hybrid simulation of power systems with SVC dynamic phasor m**: 该混合仿真方法相比传统全系统EMTP仿真显著提升了计算效率并降低了内存资源消耗。
-- [2009] **Interfacing Techniques for Transient Stability and Electroma**: 明确了混合仿真中时间步长差异与接口数据交换是制约仿真精度的核心瓶颈。
-- [2009] **Interfacing Techniques for Transient Stability and Electroma**: 频移法能够有效消除TS与EMT模型间的频率尺度差异，实现无缝集成。
-- [2009] **Interfacing Techniques for Transient Stability and Electroma**: 归纳的接口分类体系显著提升了混合仿真器开发的标准化程度与可复用性。
-- [2009] **Interfacing Techniques for Transient Stability and Electroma**: 明确了混合仿真在系统分割、接口算法、数据同步及等效建模方面的核心挑战与解决路径。
-- [2009] **Interfacing Techniques for Transient Stability and Electroma**: 验证了频率平移法在实现TS与EMT一体化建模中的理论可行性与潜在优势。
-- [2009] **Interfacing Techniques for Transient Stability and Electroma**: 建立了完整的混合仿真接口技术分类体系，为后续算法开发与工程应用提供了参考基准。
-- [2012] **Frequency Dependent Network Equivalent for Electromagnetic a**: 所提FDNE模型在宽频带内准确复现了外部网络的频率响应特性
-- [2012] **Frequency Dependent Network Equivalent for Electromagnetic a**: 无源性强制方法彻底消除了混合仿真中的数值发散问题
-- [2012] **Frequency Dependent Network Equivalent for Electromagnetic a**: 半尺寸检测算法显著降低了无源性校验的计算负担并提高了边界识别效率
-- [2012] **电磁–机电暂态混合仿真中机电侧故障的仿真方法**: 伴随仿真方法能有效消除FDNE切换时产生的虚假暂态，保证混合仿真波形平稳过渡。
-- [2012] **电磁–机电暂态混合仿真中机电侧故障的仿真方法**: 临界电气距离指标可准确筛选出对电磁侧影响显著的故障，避免不必要的FDNE重新计算。
-- [2012] **电磁–机电暂态混合仿真中机电侧故障的仿真方法**: 所提切换策略在多个测试系统中验证了其在保证仿真精度的同时大幅提升了计算效率。
-- [2013] **Comparison between electromechanical transient model and ele**: 两种模型提取的低频振荡主导频率与阻尼比数据高度一致，仿真波形吻合度良好。
-- [2013] **Comparison between electromechanical transient model and ele**: 在交直流混合系统低频振荡分析中，直流机电暂态模型的计算精度与电磁暂态模型基本等效。
-- [2013] **Comparison between electromechanical transient model and ele**: 机电暂态模型在保证分析精度的同时显著降低了计算复杂度，具备较高的工程实用价值。
-- [2013] **Electromechanical Transient Modeling of Modular Multilevel C**: 简化模型仅保留外环控制器与部分直流网络动态，支持机电暂态仿真采用更大步长
-- [2013] **Electromechanical Transient Modeling of Modular Multilevel C**: PSS/E机电暂态仿真结果与PSCAD电磁暂态模型结果高度一致，证明了模型精度
-- [2013] **Electromechanical Transient Modeling of Modular Multilevel C**: MMC-MTDC系统能够有效隔离异步互联交流电网中的交流故障，提升系统稳定性
-- [2014] **Comparative study on electromechanical and electromagnetic t**: 机电暂态模型的仿真输出结果与详细电磁暂态模型基本吻合，验证了模型精度。
-- [2014] **Comparative study on electromechanical and electromagnetic t**: 采用纯数学计算的机电暂态模型大幅减少了仿真时间，有效克服了传统电磁模型计算步长小、速度慢的问题。
-- [2014] **Comparative study on electromechanical and electromagnetic t**: 该模型成功集成于PSCAD/EMTDC平台，能够满足电力系统机电暂态分析对有效值电压/电流输出的需求。
-- [2014] **基于ADPSS的电力系统和牵引供电系统机电–电磁暂态混合仿真**: 混合仿真结果与纯电磁暂态仿真结果及典型值高度吻合，证明了模型的正确性。
-- [2014] **基于ADPSS的电力系统和牵引供电系统机电–电磁暂态混合仿真**: 牵引机车运行电流波形呈现明显畸变并含有大量谐波，验证了牵引负荷作为谐波源的特性。
-- [2014] **基于ADPSS的电力系统和牵引供电系统机电–电磁暂态混合仿真**: 该混合仿真方法在详细模拟牵引系统快速暂态过程的同时，有效兼顾了大规模电网的仿真规模与计算效率。
-- [2016] **A Hybrid Simulation Tool for the Study of PV Integration Imp**: 混合仿真工具在保持与全EMT模型相近精度的同时，显著降低了计算时间和资源消耗。
-
 ## 来源论文
 
-| 论文 | 年份 |
-|------|------|
-| [[transmission-line-model-for-variable-step-size-simulation-algorithms|Transmission line model for variable step size simulation al]] | 1999 |
-| [[frequency-dependent-transmission-line-modeling-utilizing-transposed-conditions-p|Frequency-dependent transmission line modeling utilizing tra]] | 2001 |
-| [[combined-transient-and-dynamic-analysis-of-hvdc-and-facts-systems|Combined transient and dynamic analysis of HVDC and FACTS sy]] | 2004 |
-| [[combined-transient-and-dynamic-analysis-of-hvdc-and-facts-systems|Combined transient and dynamic analysis of HVDC and FACTS sy]] | 2004 |
-| [[computation-of-the-periodic-steady-state-in-systems-with-nonlinear-components-us|Computation of the periodic steady state in systems with non]] | 2004 |
-| [[multiprocessor-based-generator-module-for-a-real-time-power-system-simulator-pow|Multiprocessor based generator module for a real-time power ]] | 2004 |
-| [[multiprocessor-based-generator-module-for-a-real-time-power-system-simulator-pow|Multiprocessor based generator module for a real-time power ]] | 2004 |
-| [[power-converter-simulation-module-connected-to-the-emtp-power-systems-ieee-trans|Power converter simulation module connected to the EMTP - Po]] | 2004 |
-| [[含统一潮流控制器装置的电力系统动态混合仿真接口算法研究|含统一潮流控制器装置的电力系统动态混合仿真接口算法研究]] | 2005 |
-| [[含统一潮流控制器装置的电力系统动态混合仿真接口算法研究|含统一潮流控制器装置的电力系统动态混合仿真接口算法研究]] | 2005 |
-| [[hybrid-transient-stability-simulation-using-dynamic-phasor-based-interface-model-22|Hybrid Transient Stability Simulation Using Dynamic Phasor B]] | 2006 |
-| [[hybrid-transient-stability-simulation-using-dynamic-phasor-based-interface-model-22|Hybrid Transient Stability Simulation Using Dynamic Phasor B]] | 2006 |
-| [[hybrid-model-transient-stability-simulation-using-dynamic-phasors-based-hvdc-system-model|Hybrid-model transient stability simulation using dynamic ph]] | 2006 |
-| [[2728nested-fast-and-simultaneous-solution-for-time-domain-simulation-of-integrat|Nested fast and simultaneous solution for time-domain simula]] | 2006 |
-| [[电力系统机电暂态和电磁暂态混合仿真程序设计和实现|电力系统机电暂态和电磁暂态混合仿真程序设计和实现]] | 2006 |
-| [[电力系统机电暂态和电磁暂态混合仿真程序设计和实现|电力系统机电暂态和电磁暂态混合仿真程序设计和实现]] | 2006 |
-| [[a-link-between-emtp-rv-and-flux3d-for-transformer-energization-studies|A link between EMTP-RV and FLUX3D for transformer energizati]] | 2009 |
-| [[frequency-adaptive-power-system-modeling-for|Frequency-Adaptive Power System Modeling for]] | 2009 |
-| [[hybrid-simulation-of-power-systems-with-svc-dynamic-phasor-model-22|Hybrid simulation of power systems with SVC dynamic phasor m]] | 2009 |
-| [[hybrid-simulation-of-power-systems-with-svc-dynamic-phasor-model-22|Hybrid simulation of power systems with SVC dynamic phasor m]] | 2009 |
-| [[hybrid-simulation-of-power-systems-with-svc-dynamic-phasor-model-22|Hybrid simulation of power systems with SVC dynamic phasor m]] | 2009 |
-| [[hybrid-simulation-of-power-systems-with-svc-dynamic-phasor-model|Hybrid simulation of power systems with SVC dynamic phasor m]] | 2009 |
-| [[hybrid-simulation-of-power-systems-with-svc-dynamic-phasor-model|Hybrid simulation of power systems with SVC dynamic phasor m]] | 2009 |
-| [[hybrid-simulation-of-power-systems-with-svc-dynamic-phasor-model|Hybrid simulation of power systems with SVC dynamic phasor m]] | 2009 |
-| [[interfacing-techniques-for-transient-stability-and-electromagnetic-transient-hyb-fix|Interfacing Techniques for Transient Stability and Electroma]] | 2009 |
-| [[interfacing-techniques-for-transient-stability-and-electromagnetic-transient-hyb-fix|Interfacing Techniques for Transient Stability and Electroma]] | 2009 |
-| [[interfacing-techniques-for-transient-stability-and-electromagnetic-transient-hyb-fix|Interfacing Techniques for Transient Stability and Electroma]] | 2009 |
-| [[interfacing-techniques-for-transient-stability-and-electromagnetic-transient-hyb|Interfacing Techniques for Transient Stability and Electroma]] | 2009 |
-| [[interfacing-techniques-for-transient-stability-and-electromagnetic-transient-hyb|Interfacing Techniques for Transient Stability and Electroma]] | 2009 |
-| [[methods-of-interfacing-rotating-machine-models-in-emtp|Methods of Interfacing Rotating Machine Models in EMTP]] | 2010 |
-| [[the-recongurable-hardware-real-time-and|The Reconﬁgurable-Hardware Real-Time and]] | 2012 |
-| [[time-domain-transformation-method|Time Domain Transformation Method]] | 2012 |
-| [[基于数字混合仿真的电网一次时间常数计算方法|基于数字混合仿真的电网一次时间常数计算方法]] | 2012 |
-| [[基于频率相关网络等值的电磁-机电暂态解耦混合仿真|基于频率相关网络等值的电磁-机电暂态解耦混合仿真]] | 2012 |
-| [[基于频率相关网络等值的电磁-机电暂态解耦混合仿真|基于频率相关网络等值的电磁-机电暂态解耦混合仿真]] | 2012 |
-| [[电磁机电暂态混合仿真中机电侧故障的仿真方法|电磁–机电暂态混合仿真中机电侧故障的仿真方法]] | 2012 |
-| [[电磁机电暂态混合仿真中机电侧故障的仿真方法|电磁–机电暂态混合仿真中机电侧故障的仿真方法]] | 2012 |
-| [[电磁机电暂态混合仿真中的频率相关网络等值|电磁–机电暂态混合仿真中的频率相关网络等值]] | 2012 |
-| [[comparison-between-electromechanical-transient-model-and-electromagnetic-transie|Comparison between electromechanical transient model and ele]] | 2013 |
-| [[fast-voltage-balancing-control-and-fast|Fast Voltage-Balancing Control and Fast Numerical Simulation]] | 2014 |
-| [[基于adpss的电力系统和牵引供电系统机电电磁暂态混合仿真|基于ADPSS的电力系统和牵引供电系统机电–电磁暂态混合仿真]] | 2014 |
-| [[advanced-hybrid-transient-stability-and-emt-simulation-for-vsc-hvdc-systems|Advanced Hybrid Transient Stability and EMT Simulation for V]] | 2015 |
-| [[advanced-hybrid-transient-stability-and-emt-simulation-for-vsc-hvdc-systems|Advanced Hybrid Transient Stability and EMT Simulation for V]] | 2015 |
-| [[analysing-a-power-transformers-internal-response-to-system-transients-using-a-hy|Analysing a power transformer⠒s internal response to system ]] | 2015 |
-| [[analysing-a-power-transformers-internal-response-to-system-transients-using-a-hy|Analysing a power transformer⠒s internal response to system ]] | 2015 |
-| [[a-hybrid-simulation-tool-for-the-study-of-pv-integration-impacts-on-distribution|A Hybrid Simulation Tool for the Study of PV Integration Imp]] | 2016 |
-| [[a-hybrid-simulation-tool-for-the-study-of-pv-integration-impacts-on-distribution|A Hybrid Simulation Tool for the Study of PV Integration Imp]] | 2016 |
-| [[application-of-electromagnetic-transient-transient-stability-hybrid-simulation-t|Application of Electromagnetic Transient-Transient Stability]] | 2016 |
-| [[co-simulation-of-electromagnetic-transients-and-phasor-models-a-relaxation-appro|Co-Simulation of electromagnetic transients and Phasor model]] | 2016 |
-| [[co-simulation-of-electromagnetic-transients-and-phasor-models-a-relaxation-appro|Co-Simulation of electromagnetic transients and Phasor model]] | 2016 |
-| [[current-source-modular-multilevel-converter-modeling-and-control|Current Source Modular Multilevel Converter Modeling and Con]] | 2016 |
-| [[基于rtds和fpga联合仿真平台的多速率实时仿真方法|基于RTDS和FPGA联合仿真平台的多速率实时仿真方法]] | 2016 |
-| [[a-multirate-emt-co-simulation-of-large-ac-and-mmc-based-mtdc-systems|A Multirate EMT Co-Simulation of Large AC and MMC-Based MTDC]] | 2017 |
-| [[a-novel-interfacing-technique-for-distributed-hybrid-simulations-combining-emt-a|A Novel Interfacing Technique for Distributed Hybrid Simulat]] | 2017 |
-| [[a-novel-interfacing-technique-for-distributed-hybrid-simulations-combining-emt-a|A Novel Interfacing Technique for Distributed Hybrid Simulat]] | 2017 |
-| [[dynamic-phasor-based-interface-model-for-emt-and-transient-stability-hybrid-simu|Dynamic Phasor Based Interface Model for EMT and Transient S]] | 2017 |
-| [[2728multi-scale-and-frequency-dependent-modeling-of-electric-power-transmission-|Multi-scale and Frequency-dependent Modeling of Electric Pow]] | 2017 |
-| [[含vsc-hvdc交直流系统多尺度暂态建模与仿真研究-40|含VSC-HVDC交直流系统多尺度暂态建模与仿真研究]] | 2017 |
-| [[含vsc-hvdc交直流系统多尺度暂态建模与仿真研究-40|含VSC-HVDC交直流系统多尺度暂态建模与仿真研究]] | 2017 |
-| [[advanced-emt-and-phasor-domain-hybrid-simulation-with-simulation-mode-switching-|Advanced EMT and Phasor-Domain Hybrid Simulation With Simula]] | 2018 |
-| [[co-simulation-of-electrical-networks-by-interfacing-emt-and-dynamic-phasor-simul|Co-simulation of electrical networks by interfacing EMT and ]] | 2018 |
-| [[development-and-applicability-of-online-passivity-enforced-wide-band-multi-port-|Development and Applicability of Online Passivity Enforced W]] | 2018 |
-| [[field-validated-generic-emt-type-model-of-a-full-converter-wind-turbine-based-on|Field Validated Generic EMT-Type Model of a Full Converter W]] | 2018 |
-| [[functional-mock-up-interface-based-approach-for-parallel-and-multistep-simulatio|Functional Mock-up Interface Based Approach for Parallel and]] | 2018 |
-| [[real-time-fpga-rtds-co-simulator-for-power-systems|Real-Time FPGA-RTDS Co-Simulator for Power Systems]] | 2018 |
-| [[a-multi-rate-co-simulation-of-combined-phasor-domain-and-time-domain-models-for-|A Multi-rate Co-simulation of Combined Phasor-Domain and Tim]] | 2019 |
-| [[a-two-layer-network-equivalent-with-local-passivity-compensation-with-applicatio|A Two-layer Network Equivalent with Local Passivity Compensa]] | 2019 |
-| [[hybrid-transient-stability-simulation-using-dynamic-phasor-based-interface-model|Hybrid Transient Stability Simulation Using Dynamic Phasor B]] | 2019 |
-| [[mmc-upfc电磁-机电混合仿真技术研究|MMC-UPFC电磁-机电混合仿真技术研究]] | 2019 |
-| [[multi-scale-induction-machine-model-in-the-phase-domain-with-constant-inner-impe|Multi-scale Induction Machine Model in the Phase Domain with]] | 2019 |
-| [[multi-scale-induction-machine-model-in-the-phase-domain-with-constant-inner-impe|Multi-scale Induction Machine Model in the Phase Domain with]] | 2019 |
-| [[a-harmonic-phasor-domain-co-simulation-method-and-new-insight-for-harmonic-analy|A Harmonic Phasor Domain Co-Simulation Method and New Insigh]] | 2020 |
-| [[fpga-based-sub-microsecond-level-real-time-simulation-for-microgrids-with-a-netw|FPGA-Based Sub-Microsecond-Level Real-Time Simulation for Mi]] | 2020 |
-| [[interface-displacement-and-mapping-equivalence-based-hybrid-simulation-for-hvacd-24|Interface Displacement and Mapping Equivalence Based Hybrid ]] | 2020 |
-| [[interface-displacement-and-mapping-equivalence-based-hybrid-simulation-for-hvacd|Interface Displacement and Mapping Equivalence Based Hybrid ]] | 2020 |
-| [[interface-displacement-and-mapping-equivalence-based-hybrid-simulation-for-hvacd|Interface Displacement and Mapping Equivalence Based Hybrid ]] | 2020 |
-| [[real-time-simulation-with-an-industrial-dccb-controller-in-a-hvdc-grid|Real-time simulation with an industrial DCCB controller in a]] | 2020 |
-| [[real-time-simulation-with-an-industrial-dccb-controller-in-a-hvdc-grid|Real-time simulation with an industrial DCCB controller in a]] | 2020 |
-| [[a-comparative-study-of-electromagnetic-transient-simulations-using-companion-cir|A Comparative Study of Electromagnetic Transient Simulations]] | 2021 |
-| [[adaptive-heterogeneous-transient-analysis-of-wind-farm-integrated-comprehensive-|Adaptive Heterogeneous Transient Analysis of Wind Farm Integ]] | 2021 |
-| [[assessment-of-dynamic-phasor-extraction-methods-for-power-system-co-simulation-a|Assessment of dynamic phasor extraction methods for power sy]] | 2021 |
-| [[damping-of-subsynchronous-control-interactions-in-large-scale-pv-installations-t|Damping of Subsynchronous Control Interactions in Large-Scal]] | 2021 |
-| [[damping-of-subsynchronous-control-interactions-in-large-scale-pv-installations-t|Damping of Subsynchronous Control Interactions in Large-Scal]] | 2021 |
-| [[large-scale-hybrid-real-time-simulation-modeling-and-benchmark-for-nelson-river-|Large-scale hybrid real time simulation modeling and benchma]] | 2021 |
-| [[multi-scale-formulation-of-admittance-based-modeling-of-cables|Multi-scale formulation of admittance-based modeling of cabl]] | 2021 |
-| [[real-time-rms-emt-co-simulation-and-its-application-in-hil-testing-of-protective|Real-time RMS-EMT co-simulation and its application in HIL t]] | 2021 |
-| [[an-equivalent-hybrid-model-for-a-large-scale-modular-multilevel-converter-and-co|An Equivalent Hybrid Model for a Large-Scale Modular Multile]] | 2022 |
-| [[co-simulation-applied-to-power-systems-with-high-penetration-of-distributed-ener|Co-simulation applied to power systems with high penetration]] | 2022 |
-| [[co-simulation-applied-to-power-systems-with-high-penetration-of-distributed-ener|Co-simulation applied to power systems with high penetration]] | 2022 |
-| [[electromechanical-transient-electromagnetic-transient-hybrid-simulation-of-doubl|Electromechanical transient-electromagnetic transient hybrid]] | 2022 |
-| [[electromechanical-transient-electromagnetic-transient-hybrid-simulation-of-doubl|Electromechanical transient-electromagnetic transient hybrid]] | 2022 |
-| [[electromechanical-electromagnetic-transient-hybrid-simulation-of-an-acdc-hybrid-|Electromechanical-electromagnetic transient hybrid simulatio]] | 2022 |
-| [[faster-than-real-time-hardware-emulation-of-extensive-contingencies-for-dynamic-|Faster-Than-Real-Time Hardware Emulation of Extensive Contin]] | 2022 |
-| [[interfacing-real-time-and-offline-power-system-simulation-tools-using-udp-or-fpg|Interfacing real-time and offline power system simulation to]] | 2022 |
-| [[interfacing-real-time-and-offline-power-system-simulation-tools-using-udp-or-fpg|Interfacing real-time and offline power system simulation to]] | 2022 |
-| [[multi-timescale-simulator-of-nonlinear-electrical-elements-by-interfacing-shifte|Multi-timescale simulator of nonlinear electrical elements b]] | 2022 |
-| [[中-国-电-机-工-程-学-报-34|中  国  电  机  工  程  学  报]] | 2022 |
-| [[中-国-电-机-工-程-学-报-34|中  国  电  机  工  程  学  报]] | 2022 |
-| [[大规模电力电子设备接入的电力系统混合仿真接口技术综述|大规模电力电子设备接入的电力系统混合仿真接口技术综述]] | 2022 |
-| [[大规模电力电子设备接入的电力系统混合仿真接口技术综述|大规模电力电子设备接入的电力系统混合仿真接口技术综述]] | 2022 |
-| [[电力系统机电-电磁混合仿真边界解耦算法研究|电力系统机电-电磁混合仿真边界解耦算法研究]] | 2022 |
-| [[电力系统机电-电磁混合仿真边界解耦算法研究|电力系统机电-电磁混合仿真边界解耦算法研究]] | 2022 |
-| [[a-multi-solver-framework-for-co-simulation-of-transients-in-modern-power-systems|A multi-solver framework for co-simulation of transients in ]] | 2023 |
-| [[admittance-based-modelling-of-cables-and-overhead-lines-by-idempotent-decomposit|Admittance-based modelling of cables and overhead lines by i]] | 2023 |
-| [[analysis-and-general-calculation-of-dc-fault-currents-in-mmc-mtdc-grids|Analysis and general calculation of DC fault currents in MMC]] | 2023 |
-| [[analysis-and-general-calculation-of-dc-fault-currents-in-mmc-mtdc-grids|Analysis and general calculation of DC fault currents in MMC]] | 2023 |
-| [[digital-twins-of-multiple-energy-networks-based-on-real-time-simulation-using-ho|Digital twins of multiple energy networks based on real-time]] | 2023 |
-| [[faster-than-real-time-hardware-emulation-of-transients-and-dynamics-of-a-grid-of|Faster-Than-Real-Time Hardware Emulation of Transients and D]] | 2023 |
-| [[loop-closing-analytical-calculation-system-based-on-electromagnetic-electromecha|Loop closing analytical calculation system based on electrom]] | 2023 |
-| [[massively-parallel-modeling-of-battery-energy-storage-systems-for-acdc-grid-high|Massively Parallel Modeling of Battery Energy Storage System]] | 2023 |
-| [[parallelization-of-emt-simulations-for-integration-of-inverter-based-resources|Parallelization of EMT simulations for integration of invert]] | 2023 |
-| [[parallelization-of-emt-simulations-for-integration-of-inverter-based-resources|Parallelization of EMT simulations for integration of invert]] | 2023 |
-| [[基于cpu-fpga异构平台的虚拟同步并网逆变器实时仿真算法设计|基于CPU-FPGA异构平台的虚拟同步并网逆变器实时仿真算法设计]] | 2023 |
-| [[电力系统数字混合仿真技术综述及展望|电力系统数字混合仿真技术综述及展望]] | 2023 |
-| [[电力系统数字混合仿真技术综述及展望|电力系统数字混合仿真技术综述及展望]] | 2023 |
-| [[电力系统风力发电建模与仿真研究综述|电力系统风力发电建模与仿真研究综述]] | 2024 |
-| [[co-simulation-and-compensation-method-for-parallel-simulation-of-electromagnetic|Co-simulation and compensation method for parallel simulatio]] | 2025 |
-| [[design-and-implementation-of-scalable-communication-interfaces-for-reliable-and-|Design and Implementation of Scalable Communication Interfac]] | 2025 |
-| [[design-and-implementation-of-scalable-communication-interfaces-for-reliable-and-|Design and Implementation of Scalable Communication Interfac]] | 2025 |
-| [[design-and-implementation-of-scalable-communication-interfaces-for-reliable-and-|Design and Implementation of Scalable Communication Interfac]] | 2025 |
-| [[revisiting-dynamic-phasors-and-their-efficacy-in-simulating-electric-circuits|Revisiting dynamic phasors and their efficacy in simulating ]] | 2025 |
-| [[sfa-emt-hybrid-simulation-of-power-systems-application-to-hvdc-systems|SFA-EMT hybrid simulation of power systems: Application to H]] | 2025 |
-| [[sfa-emt-hybrid-simulation-of-power-systems-application-to-hvdc-systems|SFA-EMT hybrid simulation of power systems: Application to H]] | 2025 |
-| [[大规模交直流电网电磁暂态数模混合仿真平台构建及验证-40|大规模交直流电网电磁暂态数模混合仿真平台构建及验证]] | 2025 |
-| [[electromagnetic-transient-emt-and-quasi-static-time-series-qsts-co-simulation-fo|Electromagnetic transient (EMT) and quasi static time series]] | 2026 |
-| [[electromagnetic-transient-emt-and-quasi-static-time-series-qsts-co-simulation-fo|Electromagnetic transient (EMT) and quasi static time series]] | 2026 |
-| [[electromechanical-transientelectromagnetic-transient-hybrid-simulation-method-co|Electromechanical transientelectromagnetic transient hybrid ]] | 2026 |
-| [[experimental-research-on-high-voltage-transformer-transient-characteristics|Experimental research on high-voltage transformer transient ]] | 2026 |
-| [[fast-electromagnetic-transient-simulation-models-of-modular-multilevel-converter|Fast electromagnetic transient simulation models of modular ]] | 2026 |
-| [[2728multi-rate-real-time-hybrid-simulation-of-controllable-line-commutated-conve|Multi-rate real time hybrid simulation of controllable line ]] | 2026 |
-| [[大电网仿真工具现状及其在华北电网推广应用的思考|大电网仿真工具现状及其在华北电网推广应用的思考]] | 未知 |
+| 论文 | 年份 | 贡献 |
+|------|------|------|
+| Plumier 等 - Co-Simulation of electromagnetic transients and Phasor models: a relaxation approach | 2016 | 松弛迭代接口理论与收敛性分析 |
+| Shu 等 - A Multirate EMT Co-Simulation of Large AC and MMC-Based MTDC Systems | 2017 | 多速率接口模型与时变Thevenin/Norton等值 |
+| Mudunkotuwa & Filizadeh - Co-simulation of electrical networks by interfacing EMT and dynamic-phasor simulators | 2018 | EMT-DP协同仿真接口算法 |
+| Zhu 等 - Interface Displacement and Dynamic Phasor Mapping Equivalence Based Hybrid Simulation | 2021 | 接口位移与映射等效方法 |
+| Rupasinghe 等 - Assessment of dynamic phasor extraction methods for power system co-simulation applications | 2021 | 五种动态相量提取方法系统评估 |
+| Rupasinghe 等 - A multi-solver framework for co-simulation of transients in modern power systems | 2023 | EMT/DP/FAST/TS四求解器集成框架 |
+| Tarazona 等 - SFA-EMT hybrid simulation of power systems: Application to HVDC systems | 2026 | MATE框架SFA-EMT无延迟直接接口协议 |
+| Zhang 等 - Frequency dependent network equivalent for electromagnetic and electromechanical hybrid simulation | 2012 | FDNE与矢量拟合无源性强制 |
+| Huang & Vittal - Advanced EMT and Phasor-Domain Hybrid Simulation With Simulation Mode Switching | 2018 | 仿真模式切换与DPIM接口 |
+
+## 附录：混合仿真分类体系架构图
+
+<div style="text-align:center;margin:16px 0;">
+<svg viewBox="0 0 800 320" xmlns="http://www.w3.org/2000/svg">
+  <rect width="800" height="320" fill="white"/>
+  
+  <!-- Layer 1: Input - 仿真子系统类型 -->
+  <rect x="10" y="30" width="150" height="120" rx="5" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="85" y="52" font-family="Arial" font-size="11" font-weight="bold" text-anchor="middle" fill="#1e40af">EMT 侧 (μs级)</text>
+  <text x="20" y="75" font-family="Arial" font-size="9" fill="#333">• MMC/VSC 换流器</text>
+  <text x="20" y="91" font-family="Arial" font-size="9" fill="#333">• DC-DC 变流器</text>
+  <text x="20" y="107" font-family="Arial" font-size="9" fill="#333">• 故障暂态分析</text>
+  <text x="20" y="123" font-family="Arial" font-size="9" fill="#333">• 谐波传递路径</text>
+  <text x="20" y="139" font-family="Arial" font-size="9" fill="#333">步长: 1-50 μs</text>
+  
+  <rect x="10" y="160" width="150" height="80" rx="5" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+  <text x="85" y="182" font-family="Arial" font-size="11" font-weight="bold" text-anchor="middle" fill="#166534">TS/相量侧 (ms级)</text>
+  <text x="20" y="204" font-family="Arial" font-size="9" fill="#333">• 同步发电机</text>
+  <text x="20" y="220" font-family="Arial" font-size="9" fill="#333">• 机电振荡分析</text>
+  <text x="20" y="236" font-family="Arial" font-size="9" fill="#333">步长: 1-10 ms</text>
+  
+  <rect x="10" y="250" width="150" height="60" rx="5" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+  <text x="85" y="272" font-family="Arial" font-size="11" font-weight="bold" text-anchor="middle" fill="#92400e">SFA/DP 侧</text>
+  <text x="20" y="294" font-family="Arial" font-size="9" fill="#333">• 移频相量分析 · 步长: 50-500 μs</text>
+  
+  <!-- Layer 2: 接口层 - 5种接口类型 -->
+  <rect x="200" y="30" width="200" height="280" rx="5" fill="#f5f5f5" stroke="#666" stroke-width="2"/>
+  <text x="300" y="52" font-family="Arial" font-size="11" font-weight="bold" text-anchor="middle" fill="#333">接口层（5类方法）</text>
+  
+  <rect x="210" y="65" width="180" height="35" rx="3" fill="#e0e7ff" stroke="#3730a3" stroke-width="1.5"/>
+  <text x="300" y="85" font-family="Arial" font-size="9" font-weight="bold" text-anchor="middle" fill="#3730a3">Thevenin/Norton 等值</text>
+  
+  <rect x="210" y="108" width="180" height="35" rx="3" fill="#dcfce7" stroke="#166534" stroke-width="1.5"/>
+  <text x="300" y="128" font-family="Arial" font-size="9" font-weight="bold" text-anchor="middle" fill="#166534">动态相量接口 (DPIM)</text>
+  
+  <rect x="210" y="151" width="180" height="35" rx="3" fill="#fef3c7" stroke="#92400e" stroke-width="1.5"/>
+  <text x="300" y="171" font-family="Arial" font-size="9" font-weight="bold" text-anchor="middle" fill="#92400e">移频相量接口 (SFA/SFP)</text>
+  
+  <rect x="210" y="194" width="180" height="35" rx="3" fill="#fce7f3" stroke="#9d174d" stroke-width="1.5"/>
+  <text x="300" y="214" font-family="Arial" font-size="9" font-weight="bold" text-anchor="middle" fill="#9d174d">松弛迭代接口</text>
+  
+  <rect x="210" y="237" width="180" height="35" rx="3" fill="#e5e5e5" stroke="#525252" stroke-width="1.5"/>
+  <text x="300" y="257" font-family="Arial" font-size="9" font-weight="bold" text-anchor="middle" fill="#525252">接口位移映射等效</text>
+  
+  <!-- Layer 3: 协同架构 + 输出 -->
+  <rect x="440" y="30" width="160" height="120" rx="5" fill="#f5f5f5" stroke="#666" stroke-width="2"/>
+  <text x="520" y="52" font-family="Arial" font-size="11" font-weight="bold" text-anchor="middle" fill="#333">协同架构</text>
+  <text x="450" y="75" font-family="Arial" font-size="9" fill="#333">• 集中式混合仿真</text>
+  <text x="450" y="91" font-family="Arial" font-size="9" fill="#333">• 分布式 MATE 协议</text>
+  <text x="450" y="107" font-family="Arial" font-size="9" fill="#333">• 多求解器集成框架</text>
+  <text x="450" y="123" font-family="Arial" font-size="9" fill="#333">• 多速率EMT协同</text>
+  
+  <rect x="440" y="160" width="160" height="150" rx="5" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/>
+  <text x="520" y="182" font-family="Arial" font-size="11" font-weight="bold" text-anchor="middle" fill="#5b21b6">量化性能</text>
+  <text x="450" y="204" font-family="Arial" font-size="9" font-weight="bold" fill="#5b21b6">加速比:</text>
+  <text x="450" y="220" font-family="Arial" font-size="9" fill="#333">EMT-TS: 5-15×</text>
+  <text x="450" y="236" font-family="Arial" font-size="9" fill="#333">多速率: 3-10×</text>
+  <text x="450" y="252" font-family="Arial" font-size="9" fill="#333">SFA-EMT: 5-20×</text>
+  <text x="450" y="268" font-family="Arial" font-size="9" fill="#333">多求解器: 10-50×</text>
+  <text x="450" y="284" font-family="Arial" font-size="9" fill="#333">步长比上限: 20-100:1</text>
+  
+  <!-- Layer 4: 关键方法/论文 -->
+  <rect x="640" y="30" width="150" height="280" rx="5" fill="#fafafa" stroke="#ddd" stroke-width="2"/>
+  <text x="715" y="52" font-family="Arial" font-size="11" font-weight="bold" text-anchor="middle" fill="#333">代表方法</text>
+  <text x="650" y="75" font-family="Arial" font-size="9" fill="#333">Plumier 2016</text>
+  <text x="650" y="91" font-family="Arial" font-size="9" fill="#444">松弛迭代接口</text>
+  <text x="650" y="115" font-family="Arial" font-size="9" fill="#333">Shu 2017</text>
+  <text x="650" y="131" font-family="Arial" font-size="9" fill="#444">时变Thevenin/Norton</text>
+  <text x="650" y="155" font-family="Arial" font-size="9" fill="#333">Zhu 2021</text>
+  <text x="650" y="171" font-family="Arial" font-size="9" fill="#444">接口位移映射</text>
+  <text x="650" y="195" font-family="Arial" font-size="9" fill="#333">Tarazona 2026</text>
+  <text x="650" y="211" font-family="Arial" font-size="9" fill="#444">SFA-EMT MATE</text>
+  <text x="650" y="235" font-family="Arial" font-size="9" fill="#333">Rupasinghe 2023</text>
+  <text x="650" y="251" font-family="Arial" font-size="9" fill="#444">多求解器集成</text>
+  <text x="650" y="275" font-family="Arial" font-size="9" fill="#333">Zhang 2012</text>
+  <text x="650" y="291" font-family="Arial" font-size="9" fill="#444">FDNE + 矢量拟合</text>
+  
+  <!-- 箭头 -->
+  <line x1="160" y1="90" x2="200" y2="90" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="160" y1="200" x2="200" y2="200" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="160" y1="280" x2="200" y2="160" stroke="#333" stroke-width="2" stroke-dasharray="4,2"/>
+  
+  <line x1="400" y1="120" x2="440" y2="90" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="400" y1="180" x2="440" y2="160" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+  
+  <line x1="600" y1="90" x2="640" y2="90" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="600" y1="180" x2="640" y2="180" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+  
+  <text x="400" y="305" font-family="Arial" font-size="9" font-style="italic" fill="#666">关键公式: (1) 接口方程 · (2) Thevenin等值 · (3) 时变接口 · (4) 松弛迭代 · (5) 位移映射 · (6) SFA-EMT</text>
+</svg>
+</div>
+<p style="text-align:center;font-size:12px;color:#666;margin-top:8px;">图1 · 混合仿真分类体系：EMT侧（μs步长）、TS/SFA侧（ms/μs步长）通过5类接口方法实现跨域协同，数据经分布式MATE协议汇聚后输出量化性能指标</p>
