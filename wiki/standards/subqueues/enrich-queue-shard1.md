@@ -14,7 +14,7 @@
 | 50 | bilinear-transform.md | methods | methods/numerical-methods/bilinear-transform.md | P0 | 999 | 3243 | 20 | 6 | completed |
 | 243 | cdsm.md | methods | methods/power-electronics/cdsm.md | P1 | 999 | 10085 | 11 | 14 | completed |
 | 99 | cl-dccb.md | methods | methods/power-electronics/cl-dccb.md | P0 | 999 | 2609 | 7 | 11 | completed |
-| 315 | compensation-method.md | methods | methods/network-solution/compensation-method.md | P1 | 999 | 2677 | 7 | 7 | pending |
+| 315 | compensation-method.md | methods | methods/network-solution/compensation-method.md | P1 | 999 | 2677 | 7 | 7 | completed |
 | 76 | converter-station-inverter.md | methods | methods/power-electronics/converter-station-inverter.md | P0 | 999 | 1997 | 0 | 17 | pending |
 | 387 | cross-bonded-cable.md | models | models/transmission-line/cross-bonded-cable.md | P1 | 999 | 1143 | 7 | 12 | pending |
 | 290 | curve-fitting.md | methods | methods/signal-processing/curve-fitting.md | P1 | 999 | 3463 | 12 | 11 | pending |
