@@ -36,7 +36,7 @@
 | 27 | simulation-tools-status.md | methods | methods/system-studies/simulation-tools-status.md | P0 | 999 | 1034 | 2428 | 3 | 15 | completed |
 | 28 | fft.md | methods | methods/signal-processing/fft.md | P0 | 999 | 3085 | 18 | 22 | completed |
 | 30 | nearest-level-modulation.md | methods | methods/power-electronics/nearest-level-modulation.md | P0 | 999 | 1069 | 2 | 10 | completed |
-| 31 | companion-circuit.md | methods | methods/numerical-methods/companion-circuit.md | P0 | 999 | 1104 | 14 | 36 | pending |
+| 31 | companion-circuit.md | methods | methods/numerical-methods/companion-circuit.md | P0 | 999 | 2929 | 14 | 42 | completed |
 | 32 | constant-power-load.md | models | models/basic-component/constant-power-load.md | P0 | 999 | 1107 | 13 | 15 | pending |
 | 33 | lightning-transient-analysis.md | topics | topics/protection-lightning/lightning-transient-analysis.md | P0 | 999 | 1127 | 7 | 20 | pending |
 | 34 | time-domain-modeling.md | topics | topics/modeling-methods/time-domain-modeling.md | P0 | 999 | 1163 | 10 | 13 | pending |

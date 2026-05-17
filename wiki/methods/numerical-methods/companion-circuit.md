@@ -6,6 +6,7 @@ created: "2026-05-02"
 updated: "2026-05-10"
 ---
 
+
 # 伴随电路 (Companion Circuit)
 
 ## 1. 物理背景与工程需求
@@ -39,7 +40,6 @@ EMT 仿真是在数字计算机上模拟电力系统的电磁暂态过程。但�
 
 这也解释了为什么 EMTP 类程序采用"元件-接口-求解"三层分离架构：伴随电路就是那个**接口层**，每个新元件只需实现自己的伴随电路接口就可以接入现有求解器。
 
----
 
 ## 2. 数学描述
 
@@ -117,7 +117,6 @@ $$
 
 后向欧拉的等效电导更大（导纳更大、阻抗更小），这带来了更强的**数值阻尼**——能够在开关突变后快速衰减非物理振荡。代价是精度从 $O(\Delta t^2)$ 降为 $O(\Delta t)$。
 
----
 
 ## 3. 计算模型与离散化
 
@@ -172,7 +171,6 @@ $$
 
 所有这些方法的核心都是"在元件层面把微分/复杂关系转换成统一接口的诺顿等效"，然后装配到全局节点方程中统一求解。
 
----
 
 ## 4. 实现方法与算法细节
 
@@ -207,7 +205,6 @@ $$
 
 后向欧拉是 L-稳定的，能快速衰减高频分量，所以通常作为"救火队员"在突变后临时切换使用。
 
----
 
 ## 5. 适用边界与失效模式
 
@@ -233,7 +230,6 @@ $$
 - 开关电导比推荐 $10^5$ 左右：太大恶化条件数，太小漏电流过大
 - 恒导纳模型中，非线性和开关通过补偿/诺顿等效修正，不做矩阵重分解
 
----
 
 ## 6. 一个简单的数值算例
 
@@ -263,7 +259,6 @@ $$
 
 注意：这个算例中没有开关突变，所以不会出现数值振荡。实际仿真中如果加入 PWM 开关或故障切除，需要在事件点启用 CDA 或插值处理。
 
----
 
 ## 7. 延伸阅读
 
@@ -287,34 +282,30 @@ $$
 
 | 论文 | 年份 |
 |------|------|
-| [[mode-domain-multiphase-transmission-line-model-use-in-transient-studies-power-de|Mode domain multiphase transmission line model - use in tran]] | 2004 |
-| [[2728nested-fast-and-simultaneous-solution-for-time-domain-simulation-of-integrat|Nested fast and simultaneous solution for time-domain simula]] | 2006 |
-| [[application-of-emtp-rv-graphic-software-of-electromagnetic-transient-simulation|Application of EMTP-RV graphic software of electromagnetic t]] | 2007 |
-| [[frequency-adaptive-power-system-modeling-for|Frequency-Adaptive Power System Modeling for]] | 2009 |
-| [[a-combined-state-space-nodal-method-for-the-simulation-of-power-system-transient|A combined state-space nodal method for the simulation of po]] | 2011 |
-| [[analyses-of-the-modifications-in-the-pi-circuits-for-inclusion-of-frequency-infl|Analyses of the modifications in the pi circuits for inclusi]] | 2011 |
-| [[application-of-pi-circuits-for-simulation-of-corona-effect-in-transmission-lines|Application of pi circuits for simulation of corona effect i]] | 2011 |
-| [[application-of-pi-circuits-for-simulation-of-corona-effect-in-transmission-lines|Application of pi circuits for simulation of corona effect i]] | 2011 |
-| [[a-type-4-wind-power-plant-equivalent-model|A Type-4 Wind Power Plant Equivalent Model]] | 2012 |
-| [[development-of-data-translators-for-interfacing-13&14|Development of Data Translators for Interfacing Power-Flow P]] | 2013 |
-| [[a-wideband-equivalent-model-of-type-3-wind-power-plants-for-emt-studies|A Wideband Equivalent Model of Type-3 Wind Power Plants for ]] | 2016 |
-| [[enhanced-high-speed-electromagnetic-transient-simulation-17|Enhanced high-speed electromagnetic transient simulation]] | 2016 |
-| [[enhanced-high-speed-electromagnetic-transient-simulation|Enhanced high-speed electromagnetic transient simulation]] | 2016 |
-| [[30tpwrd20172714639-2|30/TPWRD.2017.2714639]] | 2017 |
-| [[2728multi-scale-and-frequency-dependent-modeling-of-electric-power-transmission-|Multi-scale and Frequency-dependent Modeling of Electric Pow]] | 2017 |
-| [[grounding-grids-in-electro-magnetic-transient-simulations-with-frequency-depende|Grounding grids in electro-magnetic transient simulations wi]] | 2019 |
-| [[fpga-based-sub-microsecond-level-real-time-simulation-for-microgrids-with-a-netw|FPGA-Based Sub-Microsecond-Level Real-Time Simulation for Mi]] | 2020 |
-| [[a-comparative-study-of-electromagnetic-transient-simulations-using-companion-cir|A Comparative Study of Electromagnetic Transient Simulations]] | 2021 |
-| [[evaluation-of-time-domain-and-phasor-domain-methods-for-power-system-transients|Evaluation of time-domain and phasor-domain methods for powe]] | 2022 |
-| [[multi-timescale-simulator-of-nonlinear-electrical-elements-by-interfacing-shifte|Multi-timescale simulator of nonlinear electrical elements b]] | 2022 |
-| [[alternative-method-to-include-the-frequency-effect-on-transmission-line-paramete|Alternative method to include the frequency-effect on transm]] | 2023 |
-| [[alternative-method-to-include-the-frequency-effect-on-transmission-line-paramete|Alternative method to include the frequency-effect on transm]] | 2023 |
-| [[an-automatable-approach-for-small-signal-stability-analysis-of-power-electronic-|An Automatable Approach for Small-Signal Stability Analysis ]] | 2023 |
-| [[an-aggregation-method-of-permanent-magnet-synchronous-wind-farms-for-electromech|An aggregation method of permanent magnet synchronous wind f]] | 2023 |
-| [[generalized-electromagnetic-transient-equivalent-modeling-and-implementation-of-|Generalized Electromagnetic Transient Equivalent Modeling an]] | 2023 |
-| [[inaccuracies-due-to-the-frequency-warping-in-simulation-of-electrical-systems-us|Inaccuracies due to the frequency warping in simulation of e]] | 2023 |
-| [[inaccuracies-due-to-the-frequency-warping-in-simulation-of-electrical-systems-us|Inaccuracies due to the frequency warping in simulation of e]] | 2023 |
-| [[paraemt-an-open-source-parallelizable-and-hpc-compatible-emt-simulator-for-large|ParaEMT: An Open Source, Parallelizable, and HPC-Compatible ]] | 2024 |
-| [[a-julia-based-simulation-platform-for-power-system-transients|A Julia-based simulation platform for power system transient]] | 2025 |
-| [[mtof-a-novel-fpga-based-emt-toolbox-in-matlab|MTOF: A Novel FPGA-Based EMT Toolbox in MATLAB]] | 2025 |
-| [[partial-refactorization-techniques-for-electromagnetic-transient-simulations|Partial Refactorization Techniques for Electromagnetic Trans]] | 2025 |
+| [[mode-domain-multiphase-transmission-line-model-use-in-transient-studies-power-de.md]] | 2004 |
+| [[2728nested-fast-and-simultaneous-solution-for-time-domain-simulation-of-integrat.md]] | 2006 |
+| [[application-of-emtp-rv-graphic-software-of-electromagnetic-transient-simulation.md]] | 2007 |
+| [[frequency-adaptive-power-system-modeling-for.md]] | 2009 |
+| [[a-combined-state-space-nodal-method-for-the-simulation-of-power-system-transient.md]] | 2011 |
+| [[analyses-of-the-modifications-in-the-pi-circuits-for-inclusion-of-frequency-infl.md]] | 2011 |
+| [[application-of-pi-circuits-for-simulation-of-corona-effect-in-transmission-lines.md]] | 2011 |
+| [[a-type-4-wind-power-plant-equivalent-model.md]] | 2012 |
+| [[development-of-data-translators-for-interfacing-13&14.md]] | 2013 |
+| [[a-wideband-equivalent-model-of-type-3-wind-power-plants-for-emt-studies.md]] | 2016 |
+| [[enhanced-high-speed-electromagnetic-transient-simulation.md]] | 2016 |
+| [[30tpwrd20172714639-2.md]] | 2017 |
+| [[2728multi-scale-and-frequency-dependent-modeling-of-electric-power-transmission-.md]] | 2017 |
+| [[grounding-grids-in-electro-magnetic-transient-simulations-with-frequency-depende.md]] | 2019 |
+| [[fpga-based-sub-microsecond-level-real-time-simulation-for-microgrids-with-a-netw.md]] | 2020 |
+| [[a-comparative-study-of-electromagnetic-transient-simulations-using-companion-cir.md]] | 2021 |
+| [[evaluation-of-time-domain-and-phasor-domain-methods-for-power-system-transients.md]] | 2022 |
+| [[multi-timescale-simulator-of-nonlinear-electrical-elements-by-interfacing-shifte.md]] | 2022 |
+| [[alternative-method-to-include-the-frequency-effect-on-transmission-line-paramete.md]] | 2023 |
+| [[an-automatable-approach-for-small-signal-stability-analysis-of-power-electronic-.md]] | 2023 |
+| [[an-aggregation-method-of-permanent-magnet-synchronous-wind-farms-for-electromech.md]] | 2023 |
+| [[generalized-electromagnetic-transient-equivalent-modeling-and-implementation-of-.md]] | 2023 |
+| [[inaccuracies-due-to-the-frequency-warping-in-simulation-of-electrical-systems-us.md]] | 2023 |
+| [[paraemt-an-open-source-parallelizable-and-hpc-compatible-emt-simulator-for-large.md]] | 2024 |
+| [[a-julia-based-simulation-platform-for-power-system-transients.md]] | 2025 |
+| [[mtof-a-novel-fpga-based-emt-toolbox-in-matlab.md]] | 2025 |
+| [[partial-refactorization-techniques-for-electromagnetic-transient-simulations.md]] | 2025 |
