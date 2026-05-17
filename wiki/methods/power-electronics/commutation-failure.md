@@ -199,14 +199,14 @@ Yao 等 [Yao 2023] 的谐波传递模型主要在频域计算：
 
 ## 7. 延伸阅读
 
-- [[lcc-model]] — LCC 换流器设备模型与 EMT 实现
-- [[extinction-angle-calculation]] — 关断角计算与安全裕度评估
-- [[concurrent-commutation-failure]] — 多馈入并发换相失败机制
-- [[average-value-model]] — 参数化平均值模型方法总览
-- [[vsc-hvdc]] — VSC-HVDC 对比（不存在换相失败问题）
-- [[electromechanical-electromagnetic-hybrid-simulation]] — 机电-电磁混合仿真
-- [[symmetrical-components]] — 对称分量法与序分量分析
-- [[harmonic-analysis]] — 谐波分析与传递模型
+- [[models/converter/lcc-model]] — LCC 换流器设备模型与 EMT 实现
+- [[methods/power-electronics/extinction-angle-calculation]] — 关断角计算与安全裕度评估
+- [[methods/power-electronics/concurrent-commutation-failure]] — 多馈入并发换相失败机制
+- [[methods/power-electronics/average-value-model]] — 参数化平均值模型方法总览
+- [[topics/hvdc-facts/vsc-hvdc]] — VSC-HVDC 对比（不存在换相失败问题）
+- [[methods/system-studies/electromechanical-electromagnetic-hybrid-simulation]] — 机电-电磁混合仿真
+- [[methods/protection-fault/symmetrical-components]] — 对称分量法与序分量分析
+- [[topics/stability-analysis/harmonic-analysis]] — 谐波分析与传递模型
 
 ---
 
@@ -216,6 +216,6 @@ Yao 等 [Yao 2023] 的谐波传递模型主要在频域计算：
 
 | 论文 | 年份 |
 |------|------|
-| [[average-value-modeling-of-line-commutated-inverter-systems-with-commutation-fail|Average-Value Modeling of Line-Commutated Inverter Systems W]] | 2022 |
-| [[fast-detection-method-of-commutation-failure-based-on-multi-infeed-interaction-f|Fast Detection Method of Commutation Failure Based on Multi-]] | 2023 |
-| [[analysis-on-dynamic-characteristic-of-control-mode-for-800-kv-yun-guang-uhvdc|Analysis on dynamic characteristic of control mode for +/-80]] | 2025 |
+| [[average-value-modeling-of-line-commutated-inverter-systems-with-commutation-fail]] | 2022 |
+| [[fast-detection-method-of-commutation-failure-based-on-multi-infeed-interaction-f]] | 2023 |
+| [[analysis-on-dynamic-characteristic-of-control-mode-for-800-kv-yun-guang-uhvdc]] | 2025 |

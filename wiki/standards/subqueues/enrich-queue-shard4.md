@@ -14,7 +14,7 @@
 | 293 | capacitor-model.md | models | models/compensation/capacitor-model.md | P1 | 999 | 3352 | 26 | 13 | completed |
 || 359 | circuit-breaker-model.md | models | models/protection/circuit-breaker-model.md | P1 | 999 | 3990 | 93 | 15 | completed |
 
-| 303 | commutation-failure.md | methods | methods/power-electronics/commutation-failure.md | P1 | 999 | 3105 | 6 | 11 | pending |
+| 303 | commutation-failure.md | methods | methods/power-electronics/commutation-failure.md | P1 | 999 | 3043 | 6 | 11 | completed |
 | 302 | concurrent-commutation-failure.md | methods | methods/power-electronics/concurrent-commutation-failure.md | P1 | 999 | 3109 | 9 | 15 | pending |
 | 316 | coordinate-transformation.md | methods | methods/control/coordinate-transformation.md | P1 | 999 | 2650 | 5 | 10 | pending |
 | 285 | current-injection.md | methods | methods/network-solution/current-injection.md | P1 | 999 | 3621 | 16 | 13 | pending |
