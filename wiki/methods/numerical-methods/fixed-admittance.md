@@ -1,212 +1,319 @@
-
 ---
 title: "恒导纳模型 (Fixed Admittance / ADC Model)"
 type: method
-tags: [fixed-admittance, adc, real-time, companion-circuit]
+tags: [fixed-admittance, adc, associated-discrete-circuit, companion-circuit, real-time-simulation, vsc-model, mmc-model, switch-modeling]
 created: "2026-04-13"
-updated: "2026-05-10"
+updated: "2026-05-18"
 ---
 
 # 恒导纳模型 (Fixed Admittance / ADC Model)
 
-## 1. 物理背景与工程需求
+## 定义
 
-### 为什么需要恒导纳模型？
-
-在 EMT 仿真中，每步需要求解节点方程 $\mathbf{Y}_n \mathbf{v} = \mathbf{i}$。若开关动作改变 $\mathbf{Y}_n$，就需要重新进行 LU 分解——计算量与 $N^3$ 成正比。在含大量电力电子开关的系统中（如 MMC 有数百个子模块），频繁重分解会使仿真速度骤降。
-
-恒导纳模型的核心思想是将开关状态变化从左侧矩阵转移到右侧历史项：
+恒导纳模型（Fixed Admittance Model），又称伴随离散电路（Associated Discrete Circuit, ADC）模型，是EMT仿真中避免开关动作触发矩阵重分解的一类核心加速技术。其数学本质是将开关状态变化的影响从左侧节点导纳矩阵 $\mathbf{Y}_n$ 转移到右侧诺顿历史电流源 $I_{\mathrm{hist}}$，使得 $\mathbf{Y}_n$ 在整个仿真过程中恒定不变：
 
 $$
-\mathbf{Y}_{\mathrm{fix}} \mathbf{v} = \mathbf{i}(s_k, x_{k-1}, u_k)
+\mathbf{Y}_{\mathrm{fix}} \mathbf{v} = I_{\mathrm{hist}}(s_k, x_{k-1}, u_k)
 $$
 
-矩阵 $\mathbf{Y}_{\mathrm{fix}}$ 固定不变，开关状态 $s_k$ 只影响右侧注入电流。这样 LU 分解只需做一次，每步只做前代回代 $O(nnz)$。
+其中 $s_k$ 为当前开关状态，$x_{k-1}$ 为上一时刻状态变量，$u_k$ 为当前输入。开关切换时只有 $I_{\mathrm{hist}}$ 更新，矩阵 $\mathbf{Y}_{\mathrm{fix}}$ 保持不变，每步只需前代回代 $O(nnz)$ 而非 LU 分解 $O(N^3)$。
 
-### 三个层级
+## EMT中的角色
 
-恒导纳建模可以在三个层级实现，复杂度依次增加但精度也更高：
+### 计算瓶颈：开关动作与矩阵重分解
 
-1. **单开关 ADC**：每个开关独立建模为固定导纳 + 历史源
-2. **桥臂模块级 ADC（BAM-ADC）**：将上下开关、桥臂电感、电容整合为统一模块
-3. **MMC 聚合恒导纳**：对子模块或桥臂做 Thevenin/Norton 聚合
+每步 EMT 求解节点方程 $\mathbf{Y}_n \mathbf{v} = \mathbf{i}$。若开关动作改变 $\mathbf{Y}_n$，就必须重新 LU 分解——计算量 $O(N^3)$。在 MMC 等含大量子模块的拓扑中（如 200 子模块/桥臂 × 6 桥臂），开关切换极为频繁，每次切换都触发全网 LU 重分解成为主要计算瓶颈。
 
----
+恒导纳模型的核心价值在于：**将矩阵"重分解"问题转化为"历史源更新"问题**，将每次切换的计算代价从 $O(N^3)$ 降至 $O(1)$。
 
-## 2. 数学描述
+### 三级实现架构
 
-### 统一形式
+恒导纳建模可以在三个层级实现：
 
-恒导纳模型的统一诺顿等效形式：
+| 层级 | 描述 | 计算收益 |
+|------|------|---------|
+| **单开关 ADC** | 每个开关独立建模为固定导纳 + 历史源 | 消除单开关切换的 LU 重分解 |
+| **桥臂模块级 BAM-ADC** | 上下开关、桥臂电感、电容整合为统一模块 | 模块内开关切换不触发重分解 |
+| **MMC 聚合恒导纳** | 对子模块或桥臂做 Thevenin/Norton 聚合 | 大规模节点消去，矩阵维度 $K \to K-k$ |
 
-$$
-i_k = G_{\mathrm{eq}} v_k + I_{\mathrm{hist}}(s_k, x_{k-1}, u_k)
-$$
+### 与其他加速方法的关系
 
-$G_{\mathrm{eq}}$ 在开关状态 $s_k$ 改变时保持不变，所有状态变化通过历史项 $I_{\mathrm{hist}}$ 体现。
+恒导纳模型是**器件级加速**（减少开关状态变化的矩阵操作），与**系统级加速**（多速率、并行计算、网络分区）互补。两者可叠加：先用恒导纳压缩器件级计算，再用多速率/并行压缩系统级计算。
 
-### 参数化 ADC 模型（Bonjour et al., 2025）
+## 数学描述
 
-对单个开关单元，参数化 ADC 模型写为：
+### 核心原理：矩阵分裂（Matrix Splitting）
 
-$$
-i_{sw}^n = G_{\mathrm{eq},sw} u_{sw}^n + \alpha G_{\mathrm{eq},sw} u_{sw}^{n-1} + \beta i_{sw}^{n-1}
-$$
-
-其中 $\alpha$、$\beta$ 是可调参数。通过 Z 变换终值定理推导理想稳态条件：
-
-- 导通态：$\alpha \neq -1$，$\beta = 1$
-- 关断态：$\alpha = -1$，$\beta \neq 1$
-
----
-
-## 3. 计算模型与离散化
-
-### 单开关 ADC
-
-对理想开关，传统 $R_{\mathrm{on}}/R_{\mathrm{off}}$ 模型在切换时改变导纳矩阵。ADC 方法用固定导纳 $G_{\mathrm{eq}}$ 配合历史源：
-
-- 导通：$I_{\mathrm{hist}}$ 使支路表现为小电阻
-- 关断：$I_{\mathrm{hist}}$ 使支路表现为大电阻
-
-矩阵不变，仅右端项变化。
-
-### BAM-ADC（桥臂模块级）
-
-Bonjour et al. (2025) 将桥臂模块整体建模。离散状态空间方程：
+将系统状态方程中的矩阵分裂为恒定部分和变化部分：
 
 $$
-x_1^n = A_1 x_1^{n-1} + b_1^n
+\mathbf{M}\dot{\mathbf{x}}(t) = (\mathbf{A}_\alpha + \mathbf{A}_\beta)\mathbf{x}(t) + \mathbf{B}\mathbf{u}(t)
 $$
 
-以状态转移矩阵谱半径 $\rho(A_1)$ 为核心指标进行参数寻优。最优参数下 $\rho(A_1) = 0$，暂态误差单步零收敛。
+其中 $\mathbf{A}_\alpha$ 为恒定部分（对应固定导纳矩阵），$\mathbf{A}_\beta$ 为变化部分（对应开关状态），$\mathbf{x}(t)$ 为状态变量（电容电压、电感电流）。通过组合输出方程消去含变化矩阵的项，导出恒定节点电压方程：
 
-### MMC 聚合恒导纳
+$$
+\mathbf{i}(t+\Delta t) = \mathbf{Y}_n \mathbf{u}_n(t+\Delta t) + \mathbf{i}_h(t)
+$$
 
-对 MMC 等含有大量重复子模块的拓扑，可在桥臂或模块级聚合：
-- 消去内部节点，保留端口行为
-- 外部导纳矩阵恒定
-- 内部动态信息由历史源携带
+其中：
 
----
+$$
+\mathbf{Y}_n = \frac{\Delta t}{2}\mathbf{P}\mathbf{Q}\mathbf{B}, \quad
+\mathbf{i}_h(t) = \mathbf{P}\mathbf{Q}\mathbf{R}\mathbf{x}(t) + \frac{\Delta t}{2}\mathbf{P}\mathbf{Q}\mathbf{B}\mathbf{u}_n(t)
+$$
 
-## 4. 实现方法与算法细节
+$\mathbf{Y}_n$ 完全由恒定矩阵 $\mathbf{P}$、$\mathbf{Q}$、$\mathbf{B}$ 决定，**与开关状态无关**。
 
-### CRI（交叉重初始化）
+### 状态变量逆解
 
-Bonjour et al. (2025) 提出的 CRI 是关键实现技术。开关状态切换时，不重新组网求解，而是用切换前后的交叉状态量重置历史注入源：
+解出节点电压后，状态变量（电容电压、电感电流）通过以下公式逆解：
 
-```text
-检测到状态切换：
-1. 记录切换前各支路电压、电流
-2. 根据新拓扑计算应有的历史源初值
-3. 用交叉状态量（旧状态 x 新配置）重置 I_hist
-4. 继续用原有 Y_fix 求解
-```
+$$
+\mathbf{x}(t+\Delta t) = \mathbf{K}\mathbf{u}_n(t+\Delta t) + \boldsymbol{\Phi}(t)
+$$
+
+其中：
+
+$$
+\mathbf{K} = \frac{\Delta t}{2}\mathbf{Q}\mathbf{B}, \quad
+\boldsymbol{\Phi}(t) = \mathbf{Q}\mathbf{R}\mathbf{x}(t) + \frac{\Delta t}{2}\mathbf{Q}\mathbf{B}\mathbf{u}_n(t)
+$$
+
+$\boldsymbol{\Phi}(t)$ 作为下一时步的历史注入项，构成完整的递推链。
+
+### 数值稳定性
+
+离散系统的稳定性由谱半径 $\rho(\boldsymbol{\Phi}) < 1$ 表征（Xu 2025）。对不同参数的系统分析表明，**电容对步长的约束比电感和负载更严格**：保证稳定性的仿真步长上限为 $112\ \mu\text{s}$。
+
+当检测到数值振荡时（由非状态变量突变引发），可切换至隐式欧拉法抑制振荡：
+
+$$
+\mathbf{M}\frac{\mathbf{x}(t+\Delta t)-\mathbf{x}(t)}{\Delta t} \approx \Delta t\mathbf{A}\mathbf{x}(t+\Delta t) + \Delta t\mathbf{B}\mathbf{u}_n(t+\Delta t)
+$$
+
+### 闭锁模式处理
+
+换流器闭锁时，二极管通断状态由上一时刻电流方向或电压差判断：
+
+$$
+S_{\text{diode}}(t) = 
+\begin{cases}
+1 & \text{若 } S_{\text{diode}}(t-\Delta t)=1 \text{ 且 } I_{\text{diode}} > 0 \\
+0 & \text{若 } S_{\text{diode}}(t-\Delta t)=0 \text{ 且 } U_{\text{diode}} > 0
+\end{cases}
+$$
+
+闭锁后开关状态通过 $S_{\text{diode}}$ 更新计算历史电流源，**无需改变等效电路拓扑**，正常工况与闭锁工况自动衔接。
+
+## 形式化表达
+
+### 单开关 ADC 模型
+
+理想开关的固定导纳等效：
+
+$$
+i_k = G_{\mathrm{eq}} v_k + I_{\mathrm{hist}}(s_k, x_{k-1})
+$$
+
+$G_{\mathrm{eq}} = (G_{\mathrm{on}} + G_{\mathrm{off}})/2$，导通态和关断态的差异全部补偿到 $I_{\mathrm{hist}}$ 中。
+
+### 参数化 BAM-ADC 模型（Cao 2025）
+
+桥臂模块状态空间方程：
+
+$$
+\mathbf{x}_1^n = \mathbf{A}_1 \mathbf{x}_1^{n-1} + \mathbf{b}_1^n
+$$
+
+离散化的等效诺顿形式：
+
+$$
+i_{\text{hist}}^{n+1} = \mathbf{A}_1^{\ast} \mathbf{x}_1^n + \mathbf{b}_1^{n+1}
+$$
+
+以状态转移矩阵谱半径 $\rho(\mathbf{A}_1)$ 为核心指标进行参数寻优，**最优参数下 $\rho(\mathbf{A}_1)=0$，暂态误差单步零收敛**。
+
+### CRI 交叉重初始化（Cao 2025）
+
+开关状态切换时的误差修正算法：
+
+| 步骤 | 操作 |
+|------|------|
+| 1 | 检测到状态切换，记录切换前各支路电压、电流 |
+| 2 | 根据新拓扑计算应有的历史源初值 |
+| 3 | 用交叉状态量（旧状态 × 新配置）重置 $I_{\text{hist}}$ |
+| 4 | 继续用原有 $\mathbf{Y}_{\mathrm{fix}}$ 求解 |
 
 CRI 消除了切换瞬间的虚假初值误差，而不破坏固定导纳结构。
 
-### 矩阵复用的收益
+### 三层架构（Xu 2025）
 
-| 方法 | 每步矩阵操作 | 开关动作时的操作 | 适用场景 |
-|------|-------------|-----------------|----------|
-| $R_{\mathrm{on}}/R_{\mathrm{off}}$ | 前代回代 | 完全重分解 $O(N^3)$ | 开关少 |
-| 单开关 ADC | 前代回代 | 历史项更新 $O(1)$ | 单开关 |
-| BAM-ADC | 前代回代 | CRI + 历史项更新 $O(K)$ | 桥臂模块 |
-| MMC 聚合 | 前代回代 | 聚合参数更新 $O(K)$ | 大量子模块 |
+"网络-节点电压-历史电流源"三层架构的恒导纳等效：
 
-### 非互补导通降级
+| 层次 | 内容 |
+|------|------|
+| **网络方程层** | $\mathbf{Y}_n \mathbf{u}_n = \mathbf{i}$（恒定节点方程） |
+| **节点电压层** | $\mathbf{u}_n(t+\Delta t)$ 通过 LU 求解器获取 |
+| **历史电流源层** | $\mathbf{i}_h(t) = \mathbf{P}\mathbf{Q}\mathbf{R}\mathbf{x}(t) + \frac{\Delta t}{2}\mathbf{P}\mathbf{Q}\mathbf{B}\mathbf{u}_n(t)$ |
 
-当进入非互补导通状态（如双管关断），BAM-ADC 自动降级切换回传统 L/C-ADC 模型，以确保仿真继续。
+## EMT建模方法
 
----
+### 方法1：单开关ADC（基础恒导纳）
 
-## 5. 适用边界与失效模式
+**原理**：对每个理想开关，用固定导纳 $G_{\mathrm{eq}}$ 配合诺顿历史源替代时变 $R_{\mathrm{on}}/R_{\mathrm{off}}$ 模型。开关状态变化只更新右侧注入电流，左侧导纳矩阵完全不变。
 
-### 什么条件下好用？
+**数学表达**：
+- 导通：$I_{\mathrm{hist}}$ 补偿 $G_{\mathrm{eq}}$ 与 $G_{\mathrm{on}}$ 的差异，使支路表现为小电阻
+- 关断：$I_{\mathrm{hist}}$ 补偿 $G_{\mathrm{eq}}$ 与 $G_{\mathrm{off}}$ 的差异，使支路表现为大电阻
+- $\mathbf{Y}_n$ 始终不变，只有 $I_{\mathrm{hist}}$ 随状态变化
 
-- 开关动作频繁（MMC、VSC、DAB 等变流器拓扑）
-- 矩阵分解成本显著（大规模网络 $> 10^3$ 节点）
-- 实时仿真需要确定性计算时间（FPGA 流水线）
-- 外部只需要端口行为，不需要内部细节
+**特点**：实现简单；消除单开关切换的 LU 重分解；不引入虚拟功率损耗（Xu 2025 指出二进制电阻模型优于 L/C 模型）。
 
-### 什么条件下会出问题？
+**适用场景**：单个或少量开关的变流器（如两电平 VSC）、开关切换不频繁的系统。
 
-| 问题场景 | 表现 | 原因 | 缓解办法 |
-|----------|------|------|----------|
-| 虚拟功率损耗 | 开关切换时有虚假能量耗散 | 历史源不匹配 | CRI 或参数优化 |
-| 状态切换初值误差 | 切换后波形跳变 | 旧状态带入新拓扑 | CRI 重初始化 |
-| 非互补导通 | 模型失效 | ADC 假设不成立 | 降级回 L/C-ADC |
-| 步长过大 | 精度丧失 | 固定导纳的截断误差 $O(\max\{k_L, k_C\})$ | 减小步长 |
-| 器件级研究 | 开关损耗、EMI、过电压无法获取 | 等效过于粗糙 | 使用详细模型 |
+**失效场景**：大量开关时，单开关 ADC 仍需对每个开关维护独立历史源，效率提升不显著。
 
-### 工程经验值
+### 方法2：BAM-ADC（桥臂模块级恒导纳）
 
-- Bonjour et al. (2025) 的 BAM-ADC：$\rho(A_1) = 0$ 实现单步误差收敛
-- 矩阵求逆次数：从 $2mN$ 次（RON/ROFF）降至 1 次
-- 等效导纳配置准则：$G_{\mathrm{eq},L} \ll G_{\mathrm{eq},1} + G_{\mathrm{eq},2} \ll G_{\mathrm{eq},C}$
-- 误差 $< 1\%$ 要求：$2k_L/(1+\sqrt{k_1}) < 0.01$ 且 $2k_C(1+\sqrt{k_1}) < 0.01$
+**原理**（Cao 2025）：将上下开关、桥臂电感和电容整合为一个统一模块进行参数化 ADC 建模。通过分析稳态和暂态特性确定最优参数，使谱半径 $\rho(\mathbf{A}_1)=0$，实现单步误差零收敛。
 
----
+**数学表达**：桥臂模块统一诺顿等效，CRI 方法修正状态切换初值误差。
 
-## 6. 应用案例
+**特点**：模块内开关切换不触发任何矩阵操作；CRI 保证切换精度；谱半径优化实现单步收敛。
 
-### 一个简单开关的 ADC 建模
+**适用场景**：MMC、STATCOM 等多子模块变流器的桥臂级建模；需要 $10-50\ \mu\text{s}$ 步长实时仿真的场景。
 
-考虑一个理想开关连接节点 1 和 2。传统 RON/ROFF 模型在两个状态间切换：
-- 闭合：$Y_{11} += G_{\mathrm{on}}$，$Y_{22} += G_{\mathrm{on}}$，$Y_{12} -= G_{\mathrm{on}}$，$Y_{21} -= G_{\mathrm{on}}$
-- 断开：$Y_{11} += G_{\mathrm{off}}$，$Y_{22} += G_{\mathrm{off}}$，$Y_{12}} -= G_{\mathrm{off}}$，$Y_{21} -= G_{\mathrm{off}}$
+**失效场景**：当开关出现非互补导通状态（如双管关断）时，BAM-ADC 自动降级切换回传统 L/C-ADC 模型。
 
-ADC 方法取固定导纳 $G_{\mathrm{eq}} = (G_{\mathrm{on}} + G_{\mathrm{off}})/2$：
-- 闭合时历史源 $I_{\mathrm{hist}}$ 补偿 $G_{\mathrm{eq}}$ 与 $G_{\mathrm{on}}$ 的差异
-- 断开时历史源补偿 $G_{\mathrm{eq}}$ 与 $G_{\mathrm{off}}$ 的差异
+### 方法3：MMC聚合恒导纳
 
-$\mathbf{Y}_n$ 始终不变，只有 $I_{\mathrm{hist}}$ 随状态变化。
+**原理**：对 MMC 等含大量重复子模块的拓扑，在桥臂或模块级做 Thevenin/Norton 聚合——消去内部节点，保留端口行为。
 
-### 验证步骤
+**数学表达**：
+- 聚合参数：$G_{\text{arm,eq}} = \sum_{k=1}^{N} G_{\text{eq},k}$（N 为子模块数）
+- 外部导纳矩阵恒定，内部动态由历史源 $\mathbf{i}_h$ 携带
+- 系统规模：$K \to K-k$（$k$ 为消去的内部节点数）
 
-如需验证固定导纳的精度：
-1. 用 RON/ROFF 模型和恒导纳 ADC 分别仿真同一电路
-2. 对比两种方法的波形差异（重点关注开关切换时刻）
-3. 观察恒导纳模型是否产生虚拟功率损耗或谐波尖峰
-4. 检查步长减小时误差是否收敛
+**特点**：矩阵规模大幅缩小；外部端口行为精确保留；内部动态通过历史源近似。
 
----
+**适用场景**：大规模 MMC-HVDC 系统（>100 子模块/桥臂）、需要 50-100 μs 步长的实时仿真。
 
-## 7. 延伸阅读
+**失效场景**：需要子模块级内部波形细节（如电容电压均衡动态的精确瞬态）时，聚合模型丢失子模块间差异。
 
-### 核心参考文献
+### 方法4：虚拟元件法（VC-EMT，Su 2025）
 
-- [[a-bridge-arm-module-based-fixed-admittance-adc-model-for-converters-in-emt-simul]] — Bonjour et al. (2025)：BAM-ADC 参数化模型，$\rho(A_1) = 0$
-- [[a-state-variables-elimination-based-emtp-type-constant-admittance-equivalent-mod]] — 状态变量消元恒导纳等效
-- [[unified-high-speed-emt-equivalent-and-implementation-method-of-mmcs-with-single-]] — MMC 高速恒导纳等效
-- [[analytical-modeling-of-the-half-bridge-leg-using-an-associated-discrete-circuit-]] — 半桥腿 ADC 解析建模
-- [[su-等-a-fixed-admittance-algorithm-for-the-fpga-based-microsecond-level-nonlinear]] — FPGA 实时固定导纳实现
+**原理**：将网络中的非线性/时变组件用"虚拟元件"建模——小规模非线性组件通过等效电路变换转换为常量导纳 + 历史源，使 $\mathbf{Y}_n$ 在整个非线性仿真过程中保持恒定。
 
-### 相关页面
+**数学表达**：
+- 虚拟元件诺顿等效：$i_k = G_{\mathrm{eq}} v_k + I_{\mathrm{hist}}$
+- 非线性 MOV（金属氧化物压敏电阻）的时变电阻 $R(t)$ 映射为固定导纳 + 补偿历史注入
 
+**特点**：避免网络解耦、避免迭代、避免补偿滞回；1 μs 步长下最大误差 < 0.5%；适用于混合 DCCB 典型非线性响应。
+
+**适用场景**：DCCB（混合高压直流断路器）、含 MOV 限压器等非线性元件的系统、FPGA 微秒级实时仿真。
+
+**失效场景**：强非线性（如电弧阻抗的剧烈时变）需要多次补偿迭代时，虚拟元件法精度下降。
+
+### 方法5：虚拟功率损耗修正（Wang 2024）
+
+**原理**：传统恒导纳开关模型存在由模型引入的虚假功率损耗（非实际开关损耗），Wang 2024 从数值算法角度分析并提出初始误差修正算法，消除这种虚拟功耗。
+
+**数学表达**：虚拟功耗 $P_{\text{virtual}} = \Delta t \sum (G_{\mathrm{eq}} - G_{\mathrm{actual}}) v^2$ 通过修正历史源补偿项消除。
+
+**特点**：CRI + 虚拟功率损耗双重修正；DSP 硬核资源复用 FPGA 架构；50 kHz 固特变压器实时仿真验证。
+
+**适用场景**：需要精确功率平衡验证的场合、长时间实时仿真（累积虚拟功耗不可忽略）。
+
+**失效场景**：开关频率极高（> 10 kHz）时，虚拟功率损耗修正的计算代价可能超过节省的 LU 分解成本。
+
+## 量化性能边界
+
+| 指标 | 数值 | 来源 |
+|------|------|------|
+| 计算复杂度（恒导纳 vs NEM） | 从 $O(n^3)$ 降至 $O(n^2)$；矩阵求逆从 $2mn^2$ 次降至 1 次 | Xu 2025 |
+| 步长稳定性上限 | $112\ \mu\text{s}$（保证 $\rho(\boldsymbol{\Phi})<1$） | Xu 2025 |
+| VC-EMT 最大误差 | $< 0.5\%$ @ $1\ \mu\text{s}$ 步长 | Su 2025 |
+| BAM-ADC 误差 | $< 0.5\%$ @ $50\ \mu\text{s}$ 步长（$\rho(\mathbf{A}_1)=0$ 优化） | Cao 2025 |
+| FPGA 固特变压器实时仿真 | $50\ \text{kHz}$ 固特变压器实时仿真，虚拟功率损耗 $< 1\%$ | Wang 2024 |
+| 矩阵求逆次数（vs RON/ROFF） | 从 $2mN$ 次降至 1 次 | Cao 2025 |
+| PMSG 虚拟阻抗补偿恒导纳 | 精度 < 1%，适用大规模风电并网 | Shi 2024 |
+
+## 关键技术挑战
+
+### 挑战1：虚拟功率损耗与精确补偿
+
+恒导纳模型在开关切换时可能违反能量守恒——因为历史源补偿是近似量，累积后产生虚假功耗。Su 2025 的虚拟元件方法通过在切换时引入精确补偿来缓解。对于长时间仿真（> 1 s），累积虚拟功耗可能显著影响能量平衡验证精度。
+
+**应对策略**：在每个切换点执行功率校验，若总虚拟功耗超过阈值则触发一次完整矩阵求解修正。
+
+### 挑战2：状态切换初值误差
+
+开关状态切换时，旧状态变量的值被带入新拓扑，导致切换瞬间波形跳变。这是因为 $\mathbf{x}(t-\Delta t)$ 对新 $\mathbf{Y}_{\mathrm{fix}}$ 不再是物理一致的状态。
+
+**应对策略**：Cao 2025 的 CRI 方法——用切换前后的交叉状态量重置历史注入源，使切换前后自动衔接而无瞬态跳变。
+
+### 挑战3：非互补导通降级
+
+当开关出现非互补导通状态（如双管关断或死区期间的二极管续流）时，ADC 假设不成立，模型精度丧失。
+
+**应对策略**：BAM-ADC 检测到非互补状态时自动降级切换回传统 L/C-ADC 模型，确保仿真继续。
+
+### 挑战4：大规模系统的矩阵规模与精度权衡
+
+在超大规模 MMC（> 1000 子模块）中，即使恒导纳消 LU 重分解，每步前代回代 $O(nnz)$ 的成本仍然显著。此外，聚合恒导纳在简化内部动态时丢失子模块间差异。
+
+**应对策略**：分级聚合策略——先对子模块组做局部聚合（保留子模块组间差异），再对组间做全局聚合（保留端口行为）。
+
+### 挑战5：FPGA资源约束与数值精度平衡
+
+FPGA 实现恒导纳时，定点运算的有限字长效应可能引入数值误差，特别是在 $\mathbf{Y}_n$ 的条件数较大时。
+
+**应对策略**（Wang 2024）：DSP 硬核资源复用架构在保证速度的同时，通过双精度辅助通道周期性校验修正定点误差。
+
+## 适用边界与选择指南
+
+### 按应用场景推荐
+
+| 场景 | 推荐方法 | 步长范围 | 说明 |
+|------|---------|---------|------|
+| 单开关变流器（两电平 VSC） | 单开关 ADC | 10-50 μs | 最简单实现，开关少时加速效果有限 |
+| MMC/STATCOM 桥臂建模 | BAM-ADC + CRI | 10-50 μs | 模块级恒导纳，消除桥臂内切换开销 |
+| 大规模 MMC-HVDC（> 100 子模块/桥臂） | MMC 聚合恒导纳 | 50-100 μs | 节点消去，矩阵规模大幅缩小 |
+| 含 MOV/DCCB 非线性元件 | 虚拟元件法（VC-EMT） | 1-10 μs | 1 μs 微秒级步长，< 0.5% 误差 |
+| FPGA 实时仿真（需精确功率验证） | 虚拟功率损耗修正法 | 10-50 μs | 消除虚拟功耗，支持 HIL 测试 |
+| 教学/算法验证 | 单开关 ADC | 10-100 μs | 概念清晰，易于实现和调试 |
+
+### 按精度需求推荐
+
+| 精度要求 | 推荐方法 | 说明 |
+|---------|---------|------|
+| 端口行为（波形趋势正确） | MMC 聚合恒导纳 | 子模块级细节丢失，但端口特性保留 |
+| 详细波形（开关切换时刻精确） | BAM-ADC + CRI | $\rho(\mathbf{A}_1)=0$ 单步收敛 |
+| 非线性元件精确瞬态 | 虚拟元件法（VC-EMT） | 1 μs 步长，< 0.5% 误差 |
+| 长时间能量平衡验证 | 虚拟功率损耗修正 | 消除累积虚拟功耗 |
+
+## 相关方法
+
+### 上游基础
 - [[nodal-analysis]] — 恒导纳复用矩阵的求解框架
-- [[companion-circuit]] — 伴随电路与等效导纳
-- [[compensation-method]] — 另一种避免重分解的方法
-- [[sparse-matrix-solver]] — 固定矩阵的分解复用
+- [[companion-circuit]] — 伴随电路与等效导纳的理论基础
 - [[switch-modeling]] — 开关模型的 ADC 等效
-- [[mmc-model]] — MMC 聚合恒导纳的应用对象
+
+### 同级关联
+- [[compensation-method]] — 另一种避免重分解的方法（补偿电流源法）
+- [[sparse-matrix-solver]] — 固定矩阵的稀疏 LU 分解复用
 - [[interpolation-method]] — 开关时刻对齐与历史项修正
+
+### 下游应用
+- [[mmc-model]] — MMC 聚合恒导纳的具体应用对象
+- [[vsc-model]] — VSC 变流器中单开关 ADC 的应用场景
+- [[dccb]] — DCCB 虚拟元件法的具体应用
 
 ## 来源论文
 
-| 论文 | 年份 |
-|------|------|
-| [[simulation-of-electromagnetic-transients-with-modelica-accuracy-and-performance-|Simulation of electromagnetic transients with Modelica, accu]] | 2020 |
-| [[适用于电磁暂态仿真的变阶变步长3s-dirk算法|适用于电磁暂态仿真的变阶变步长3S-DIRK算法]] | 2020 |
-| [[一种用于电磁暂态仿真的两电平电压源型换流器解耦模型|一种用于电磁暂态仿真的两电平电压源型换流器解耦模型]] | 2022 |
-| [[中-国-电-机-工-程-学-报-34|中  国  电  机  工  程  学  报]] | 2022 |
-| [[中-国-电-机-工-程-学-报|中  国  电  机  工  程  学  报]] | 2022 |
-| [[模块化多电平换流器电磁暂态模型研究综述|模块化多电平换流器电磁暂态模型研究综述]] | 2022 |
-| [[计及电容过渡过程的双钳位型mmc电磁暂态高效仿真方法|计及电容过渡过程的双钳位型MMC电磁暂态高效仿真方法]] | 2022 |
-| [[一种级联h桥型电力电子变压器电磁暂态解耦与仿真模型|一种级联H桥型电力电子变压器电磁暂态解耦与仿真模型]] | 2023 |
-| [[基于cpu-fpga异构平台的虚拟同步并网逆变器实时仿真算法设计|基于CPU-FPGA异构平台的虚拟同步并网逆变器实时仿真算法设计]] | 2023 |
-| [[su-等-a-fixed-admittance-algorithm-for-the-fpga-based-microsecond-level-nonlinear|Su 等 | A fixed-admittance algorithm for the FPGA-based micro]] | 2025 |
-| [[universal-decoupled-equivalent-circuit-models-of-solid-state-transformer-for-acc|Universal Decoupled Equivalent Circuit Models of Solid-State]] | 2025 |
-| [[中-国-电-机-工-程-学-报-37|中  国  电  机  工  程  学  报]] | 2025 |
-| [[rmsx002b-augmenting-the-traditional-circuit-model-to-capture-pll-instability|RMS&#x002B;: Augmenting the Traditional Circuit Model to Cap]] | 2026 |
+- **Xu 等 2025** — 状态变量消元 EMTP 型恒导纳等效建模方法，三层架构"网络-节点电压-历史电流源"，矩阵分裂替代节点消元，计算复杂度从 $O(n^3)$ 降至 $O(n^2)$，步长上限 $112\ \mu\text{s}$
+- **Cao 等 2025** — 基于桥臂模块的固定导纳 ADC 模型（BAM-ADC），参数化设计使 $\rho(\mathbf{A}_1)=0$ 单步误差零收敛，CRI 交叉重初始化消除切换初值误差，精度 < 0.5%
+- **Su 等 2025** — 虚拟元件法（VC-EMT）用于 FPGA 微秒级非线性实时仿真，混合 DCCB 在 $1\ \mu\text{s}$ 步长下最大误差 < 0.5%，避免网络解耦和迭代
+- **Wang 等 2024** — 基于 FPGA 的电力电子恒导纳开关模型修正算法，消除虚拟功率损耗，DSP 硬核资源复用架构，50 kHz 固特变压器实时仿真验证
+- **Shi 等 2024** — 基于虚拟阻抗补偿的 PMSG 恒导纳建模方法，适用于大规模风电并网系统，精度 < 1%

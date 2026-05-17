@@ -33,10 +33,10 @@
 | 404 | electromechanical-model.md | models | models/rotating-machine/electromechanical-model.md | P1 | 999 | 842 | 6 | 18 | completed |
 | 223 | emt-simulation-verification.md | methods | methods/system-studies/emt-simulation-verification.md | P0 | 999 | 11657 | 5 | 17 | completed |
 | 208 | energy-function.md | methods | methods/stability-analysis/energy-function.md | P0 | 999 | 8380 | 17 | 11 | completed |
-| 262 | equivalent-fault-loop.md | methods | methods/protection-fault/equivalent-fault-loop.md | P1 | 999 | 5110 | 15 | 13 | pending |
-| 287 | facts.md | topics | topics/hvdc-facts/facts.md | P1 | 999 | 3541 | 10 | 16 | pending |
-| 279 | fbsm.md | methods | methods/power-electronics/fbsm.md | P1 | 999 | 4009 | 13 | 14 | pending |
-| 409 | fixed-admittance.md | methods | methods/numerical-methods/fixed-admittance.md | P1 | 999 | 797 | 4 | 24 | pending |
+| 262 | equivalent-fault-loop.md | methods | methods/protection-fault/equivalent-fault-loop.md | P1 | 999 | 5110 | 15 | 13 | completed |
+| 287 | facts.md | topics | topics/hvdc-facts/facts.md | P1 | 999 | 3541 | 10 | 16 | completed |
+| 279 | fbsm.md | methods | methods/power-electronics/fbsm.md | P1 | 999 | 4009 | 13 | 14 | completed |
+| 409 | fixed-admittance.md | methods | methods/numerical-methods/fixed-admittance.md | P1 | 999 | 797 | 4 | 24 | completed |
 | 183 | fpga-real-time-simulation.md | topics | topics/simulation/fpga-real-time-simulation.md | P0 | 999 | 5383 | 1 | 39 | pending |
 | 217 | frequency-dependent-soil.md | methods | methods/transmission-line/frequency-dependent-soil.md | P0 | 999 | 9989 | 13 | 17 | pending |
 | 204 | gan-hemt.md | methods | methods/power-electronics/gan-hemt.md | P0 | 999 | 7075 | 15 | 10 | pending |

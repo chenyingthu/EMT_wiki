@@ -1,0 +1,1143 @@
+IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 40, NO. 6, DECEMBER 2025                                                                                           3307
+
+
+
+
+       A Bridge-Arm-Module-Based Fixed-Admittance
+       ADC Model for Converters in EMT Simulation
+                         Yang Cao, Graduate Student Member, IEEE, Xiaodong Yuan , Huachun Han ,
+                         Mingwang Xu , Graduate Student Member, IEEE, Fei Zhang , Member, IEEE,
+                                             and Wei Gu , Senior Member, IEEE
+
+
+   Abstract—Electromagnetic transient (EMT) simulation models,                     sources and the proliferation of power electronics offer signifi-
+especially converter models, face challenges in meeting the demand                 cant promise for energy applications, but they also pose safety
+for precise and fast simulation of complex dynamics in modern                      and stability challenges [3], [4]. This highlights the necessity for
+distribution systems. Difficulty in achieving both high accuracy
+and efficiency simultaneously is a key issue in converter modeling,                precise simulation and analysis of power systems [5]. Traditional
+especially in real-time simulation. To address this issue, this paper              electromagnetic transient (EMT) simulation models are inade-
+proposes a parametric fixed-admittance associated discrete circuit                 quate for meeting the requirements of new distribution systems
+(ADC) converter model based on bridge arm modules (BAMs),                          [6], which underscores the growing importance of accurate and
+with the aim of improving simulation precision and efficiency. The                 efficient power electronic converter models [7], [8], [9].
+paper first establishes a parametric ADC model of the BAM. An
+optimal parameter calculation approach is introduced to ensure                        In EMT simulations, achieving both high accuracy and high
+high fidelity through analysis of steady-state and transient char-                 efficiency is crucial for converter modeling, especially in real-
+acteristics. Furthermore, to mitigate initial errors caused by state               time simulation [8], [10], [11]. Presently, simulation platforms
+switching, a cross-re-initialization (CRI) method combined with                    such as PSCAD, RTDS, and OPAL-RT still adopt the RON /ROFF
+improved state determination expressions for specific topologies is                [12], [13] or the L/C-based associated discrete circuit (L/C-
+developed, effectively correcting these errors without compromis-
+ing computational efficiency. Simulation and experimental results                  ADC) model [14], [15]. However, the former faces challenges in
+validate the effectiveness of the BAM-ADC model, highlighting its                  scaling due to inefficiency, while the latter imposes limitations
+high precision, high efficiency, and broad applicability.                          on the maximum time step and suffers from virtual power loss.
+   Index Terms—Associated discrete circuit (ADC), fixed-admit-
+                                                                                      Several studies have focused on improving efficiency without
+tance model, power converter modeling, real-time simulation,                       compromising accuracy by employing reduced-order methods.
+virtual power loss.                                                                Reduced-order methods aim to reduce the matrix size from K
+                                                                                   to K-k by eliminating internal nodes or employing alternative
+                            I. INTRODUCTION                                        solver architectures, thereby reducing the computational over-
+                                                                                   head. For the same system, the matrix inverse complexity is
+      HE technological innovation of third-generation power
+T     electronic switches and the widespread adoption of
+converter-interfaced generation technologies have led to a sub-
+                                                                                   from O(K3 ) to O[(K-k)3 ] after dimension reduction. Li et al. [16]
+                                                                                   and Gao et al. [17] established equivalent models based on
+                                                                                   ports and components rather than nodes and branches, effec-
+stantial increase in dynamic response characteristics within                       tively reducing matrix order. Zhang et al. [18] combined model
+modern power systems. As a result, the definition of power                         order reduction with state prediction to improve the accuracy
+system stability has evolved to encompass “converter-driven sta-                   of voltage source converter models. Xu et al. [19] proposed a
+bility” [1], [2], allowing for a more comprehensive assessment of                  low-dimensional equivalent model using an alternating half-step
+the impact of fast-response power electronics. Converter-driven                    decoupling method, improving simulation efficiency. RTDS [20]
+stability is primarily influenced by power converters and re-                      has proposed a universal converter model (UCM) based on de-
+lated control. The growing incorporation of renewable energy                       scriptor state space equations, and OPAL-RT [21] has proposed
+                                                                                   improved switching function models based on state space equa-
+   Received 5 February 2025; revised 2 July 2025; accepted 8 September 2025.       tions. These state-space-equation-based models reduce the com-
+Date of publication 11 September 2025; date of current version 24 Novem-
+ber 2025. This work was supported by the State Grid Corporation of China           putational overhead, which can also be interpreted as a form of
+Headquarters Science and Technology Project under Grant 5400-202318547A-           dimension reduction. Although these methods reduce the com-
+3-2-ZN. Paper no. TPWRD-00165-2025. (Corresponding author: Wei Gu.)                putational complexity of per matrix inversion, they still require
+   Yang Cao, Mingwang Xu, Fei Zhang, and Wei Gu are with the School
+of Electrical Engineering, Southeast University, Nanjing 210096, China (e-         repeated matrix inversions, failing to fundamentally alleviate the
+mail: yangcao@seu.edu.cn; 230228745@seu.edu.cn; zhangfei@seu.edu.cn;               substantial computational burden imposed by frequent matrix
+wgu@seu.edu.cn).                                                                   inversions, especially as the system scale increases. Moreover,
+   Xiaodong Yuan and Huachun Han are with the State Grid Jiangsu Electric
+Power Company Ltd. Research Institute, Nanjing 211103, China (e-mail: lan-         the internal operating states of the reduced-order systems are not
+nyyuan@js.sgcc.com.cn; hanhc@js.sgcc.com.cn).                                      directly accessible, necessitating additional computations.
+   Color versions of one or more figures in this article are available at             Some studies have traded a certain degree of model accuracy
+https://doi.org/10.1109/TPWRD.2025.3608898.
+   Digital Object Identifier 10.1109/TPWRD.2025.3608898                            for significant gains in computational efficiency. Among them,
+
+      0885-8977 © 2025 IEEE. All rights reserved, including rights for text and data mining, and training of artificial intelligence and similar technologies.
+Personal use is permitted, but republication/redistribution requires IEEE permission. See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 13:36:58 UTC from IEEE Xplore. Restrictions apply.
+3308                                                                             IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 40, NO. 6, DECEMBER 2025
+
+
+
+the fixed-admittance ADC models such as L/C-ADC are widely
+adopted in real-time simulation due to its high efficiency, as
+it avoids the most time-consuming updated matrix inversion
+[22]. As a result, L/C-ADC remains a key modeling approach
+in platforms like OPAL-RT [21] and RTDS [23], especially in
+FPGA-based simulations, where it offers notable advantages
+in scalability and smaller time steps over RON /ROFF [24].
+However, its limited accuracy remains a critical concern. To                    Fig. 1. Overall time consumption comparison diagram of EMT simulation
+address this, several studies have aimed to enhance the ac-                     based on RON /ROFF and fixed-admittance ADC models.
+curacy of fixed-admittance ADC models by reducing virtual
+power loss [25]. Hou et al. [26] introduced negative impedance
+to improve accuracy, though this may compromise stability.
+Zhang et al. [27] proposed a general linearized method based
+on a fixed nodal admittance matrix tailored to voltage source
+converters (VSCs), which improves accuracy effectively. Mod-
+els like G-ADC [28] and CI-ADC [29] have notably reduced
+virtual power loss through optimal parameter selection and ini-                 Fig. 2.   L/C-ADC model of switches [14], [15].
+tialization techniques. Nonetheless, their applicability remains
+limited in certain EMT simulation scenarios, especially under
+non-complementary states such as blocking modes, and further                        r In steady-state operation, the switch model should exhibit
+reductions in virtual power loss and spurious harmonic spikes                         zero voltage and non-zero current when ON and zero
+are still required.                                                                   current and non-zero voltage when OFF.
+   In summary, there are few models achieving high accuracy                         r Following a transient event, the transient error should decay
+and high efficiency under multiple operating states. To solve                         rapidly to near zero.
+this dilemma, this study proposes a bridge-arm-module-based                         r Once a state switching event occurs, the initial switching
+ADC (BAM-ADC) model for system-level behavioral EMT                                   error should be close to zero.
+simulation, which leverages the efficiency advantage of the                        In this context, transient error refers to the computational
+fixed-admittance ADC model while enhancing accuracy by re-                      deviation following dynamic events, such as switching opera-
+ducing virtual power loss. This model represents the steady-state               tions or system faults. A specific type of transient error is the
+and transient behavior of converters with sufficient efficiency                 initial switching error, which denotes the numerical discrepancy
+and accuracy. The key innovations of this paper are:                            when state switching occurs, resulting from the inherent discon-
+    r A parametric fixed-admittance ADC model based on                          tinuity of fixed-admittance ADC models at system transitions.
+      BAMs is developed, with a constant admittance matrix                      These errors highlight the accuracy limitations of ADC models
+      that enables high efficiency and reduced computational                    in capturing system dynamics compared to actual systems or
+      overhead.                                                                 high-fidelity reference models.
+    r An optimal parameter calculation method of the BAM-                          The core of converter modeling lies in the representation of
+      ADC is proposed, which can ensure the ideal steady-state                  power electronic switches. Among various models, the fixed-
+      and transient error convergence characteristics.                          admittance ADC model is particularly notable for its high com-
+    r A novel cross-re-initialization (CRI) method is proposed to               putational efficiency. This model is established based on the
+      correct state-switching errors, effectively reducing virtual              EMTP theory proposed by Dommel [13], [30], which discretizes
+      power loss without increasing computational burden.                       switch components to form ADC models in Norton equivalent
+   The rest of this paper is organized as follows: Section II                   form. It avoids repeated admittance matrix inversion, one of the
+introduces the fixed-admittance ADC model. Section III details                  most computationally intensive steps in EMT simulation, by
+the construction of the BAM-ADC model, including optimal                        using fixed admittance, and replaces the inversion with updated
+parameter calculation via steady-state and transient characteri-                calculation of equivalent current sources, reducing significant
+zation, and a CRI switching error correction method. Simulation                 computational burden.
+and experimental validations are presented in Sections IV and                      As illustrated in Fig. 1, ADC models require only a sin-
+V, respectively. Section VI concludes.                                          gle inversion of the K-dimensional nodal admittance matrix
+                                                                                throughout the simulation versus at least 2mN for RON /ROFF ,
+                                                                                where m is the number of carrier periods and N is the number
+II. PRELIMINARY STUDY OF FIXED-ADMITTANCE ADC MODEL                             of BAMs. Thus, without prior offline pre-computation of matrix
+  Accurate and efficient converter models are essential for EMT                 data, time complexity scales as O(K3 ) for ADC models versus
+simulations, as they significantly influence simulation results.                O(2mN·K3 ) for RON /ROFF , indicating ADC models of higher
+For high-precision converter models applicable in real-time                     efficiency and more suitable for real-time simulation.
+simulations, the following characteristics are desirable:                          L/C-ADC is a commonly used fixed-admittance model in real-
+   r Throughout the simulation, the node admittance matrix                      time simulation, which treats the switch as an inductor when
+     should remain constant or be easily invertible.                            ON and a capacitor when OFF [31], as shown in Fig. 2. Using
+
+         Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 13:36:58 UTC from IEEE Xplore. Restrictions apply.
+CAO et al.: BRIDGE-ARM-MODULE-BASED FIXED-ADMITTANCE ADC MODEL FOR CONVERTERS IN EMT SIMULATION                                                         3309
+
+
+
+                                                                                 optimal parameters of BAMs are derived to ensure high simula-
+                                                                                 tion accuracy. Compared to CI-ADC [29], BAM-ADC achieves
+                                                                                 higher accuracy, offers more rigorous analytical foundations
+                                                                                 without constant capacitor voltage assumption, and allows flex-
+                                                                                 ible integration with L/C-ADC to simulate non-complementary
+                                                                                 conduction states. Furthermore, an improved switching error
+Fig. 3. Variables of ADC swich model during transient events such as state       correction method (CRI) is considered, which significantly out-
+switching at tn : (a) Current, (b) voltage and (c) power loss.                   performs the CI method of CI-ADC, especially considering
+                                                                                 non-complementary states.
+
+the backward Euler (BE) method as an example, the L/C-ADC                        A. Parametric Fixed-Admittance ADC Model
+model is formulated as:
+                                                                                    Before modeling, the following statement is needed. For the
+     insw = Geq,sw · unsw + Iinj,sw
+                             n
+                                    ,                                     (1)    derivation of BAM-ADC, only the complementary conduction
+                                n−1                                             states of two switch units within the BAM are considered. Non-
+          h     2Csw n          i ,                                   ON
+Geq,sw =      =     , Iinj,sw = sw                                               complementary conduction states fall outside the standalone
+         2Lsw    h              −Geq,sw · un−1
+                                           sw ,                       OFF        application scenario of the BAM-ADC model and should be
+                                                                        (2)      simulated in conjunction with the L/C-ADC model.
+                                                                                    Based on this, the BAM in converters typically operates in two
+where isw and usw denote the switch current and voltage, re-
+                                                                                 complementary conduction states: (1) S1 ON, S2 OFF, and (2) S1
+spectively; Geq,sw and Iinj,sw are the equivalent admittance and
+                                                                                 OFF, S2 ON. These two states are essentially two discrete-time
+historical injected current source; index n refers to the nth discrete
+                                                                                 systems. Besides, (3) S1 OFF, S2 OFF is a non-complementary
+moment; h is the simulation step; Lsw and Csw are the virtual
+                                                                                 state to be separately discussed later.
+inductance and capacitance of switch, respectively.
+                                                                                    The structure of the parametric ADC model of BAMs is
+   While the L/C-ADC model offers a physically interpretable
+                                                                                 developed as shown in Fig. 4. The equivalent current source I n
+structure and high computational efficiency, it suffers from spuri-
+                                                                                 inj is calculated based on variables un-1 and in-1 , with inductors
+ous harmonic spikes and virtual power loss, which significantly
+                                                                                 and capacitors discretized using the trapezoidal rule (TR):
+degrade simulation accuracy. As shown in Fig. 3, the virtual
+                                                                                 ⎧n
+power loss refers to the additional power loss due to the non-ideal              ⎨i1 = Geq,1 un1 + Iinj,1
+                                                                                                       n
+                                                                                                             = Geq,1 un1 + α1 Geq,1 un−1
+                                                                                                                                      1   + β1 in−1
+                                                                                                                                                1
+energy changes of ADC switch models, while the spurious                             in2 = Geq,2 un2 + Iinj,2
+                                                                                                       n
+                                                                                                             = Geq,2 un2 + α2 Geq,2 u2 +β2 in−1
+                                                                                                                                      n−1
+                                                                                                                                                     ,
+                                                                                 ⎩n                                                            2
+harmonic spikes appear as voltage or current spikes at transient                    iL = Geq,L unL + Iinj,L
+                                                                                                        n
+                                                                                                              = Geq,L unL + Geq,L un−1
+                                                                                                                                     L   + in−1
+                                                                                                                                             L
+events such as state switching.                                                                                                                  (3)
+   These issues impose severe limitations on the maximum
+feasible time step and increase hardware demands, thus making                    where α and β denote voltage and current coefficients, respec-
+precise EMT simulation analysis highly difficult. Consequently,                  tively. The equivalent admittances of inductors and capacitors
+there is a need for more accurate fixed-admittance ADC models                    are defined as Geq,L = h/2Lac and Geq,C = 2Cdc /h. Subscripts
+that can address these challenges without sacrificing computa-                   1, 2, L, and C refer to the upper switch, lower switch, inductor,
+tional efficiency.                                                               and capacitor in the BAM.
+
+           III. CONSTRUCTION OF BAM-ADC MODEL                                    B. Steady-State Characterization
+   Reducing virtual power loss is difficult by constructing im-                     To ensure that the BAM exhibits ideal steady-state character-
+proved fixed-admittance ADC models of individual switches, as                    istics, it is first necessary that each individual switch unit presents
+a single switch unit struggles to compensate for computational                   ideal steady-state behavior. The ideal steady-state characteristics
+errors using its own internal variables. In power converters,                    of a switch unit can be defined as:
+switch units typically operate in pairs within the same BAM                                   
+                                                                                                   lim usw (t) = 0, lim isw (t) = 0, ON
+                                                                                                 t→+∞                t→+∞
+and jointly determine the steady-state and transient response                                                                                .       (4)
+characteristics. The variables of one switch unit can help correct                                 lim isw (t) = 0, lim usw (t) = 0, OFF
+                                                                                                t→+∞                  t→+∞
+the computational deviations of the other. Therefore, this study
+shifts focus from individual switch units to BAMs, aiming to                        To clearly understand the steady-state characteristics of the
+capture converter dynamics more accurately by considering the                    switch unit, it is essential first to analyze its steady-state condi-
+overall behavior of switch pairs.                                                tions in both ON and OFF states. Derived from (3), the Z-domain
+   Remark 1: The switch unit with BAMs may consist of a                          representation of the switch unit can be expressed as
+primary switch and an anti-parallel diode (e.g., IGBT + diode),                    Isw (z) = Geq · Usw (z) + αGeq · z −1 Usw (z) + β · z −1 Isw (z)
+or refer to an individual device (e.g., diode, IGBT).                                                                                             (5)
+   In this section, a parametric fixed-admittance BAM is con-
+structed as the basic building module of converters. Through                        According to the Final Value Theorem of the Z Transform,
+the analysis of its steady-state and transient characteristics, the              the steady-state values of ON-state voltage usw and OFF-state
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 13:36:58 UTC from IEEE Xplore. Restrictions apply.
+3310                                                                               IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 40, NO. 6, DECEMBER 2025
+
+
+
+
+Fig. 4.   Parametric ADC model of BAMs based on half-bridge structure and its typical applicable converter topologies.
+
+
+
+current isw are determined as [28]:                                                  Given (8), the operating state of BAM at any moment can be
+⎧                                                                                 determined using one voltage and any two currents, from which
+⎨ lim unsw = lim usw (t) = 1+α  1−βON
+                                       · G1eq lim isw (t), ON
+   n→+∞            t→+∞                               t→+∞                        all other variables can be computed.
+                                                                              .
+                                    ON
+
+⎩ lim insw = lim isw (t) = 1+α
+                           1−βOFF · Geq lim usw (t), OFF
+                              OFF
+                                                                                     Taking the status with S1 OFF and S2 ON as an example, it
+   n→+∞            t→+∞                               t→+∞
+                                                                                  can be obtained from (7) as:
+                                                                           (6)                   
+                                                                                                   α1 = αOFF = −1, β2 = βON = 1
+  It indicates that the sufficient and necessary condition for the                                                                          (9)
+                                                                                                   β1 = βOFF = 1, α2 = αON = −1
+switch unit to ensure ideal steady-state characteristics of the
+parametric ADC model of BAMs is                                                     The remaining unknowns are the voltage coefficient β 1 and
+                                                                                 current coefficient α2 . Substituting (8) and (9) into (3) yields:
+                αi = −1, βi = 1, ON                                              ⎧n
+                                         , i ∈ {1, 2}.         (7)                  i = −Geq,1 (un2 − un−1     ) + Geq,1 (undc − un−1          n−1
+                αi = −1, βi = 1, OFF                                             ⎪
+                                                                                  ⎪                                                dc ) + β1 i1
+                                                                                  ⎨ 1n            n
+                                                                                                            2
+                                                                                                                  n−1     n−1
+                                                                                    i2 = Geq,2 u2 + α2 Geq,2 u2 + i2
+   To accurately simulate an ideal converter, the parameters of
+                                                                                  ⎪
+                                                                                  ⎪ in − in2 = Geq,L (un2 + un−1         n
+                                                                                                               dc2 − uac )
+BAM must not only satisfy (7) but also be carefully selected to                   ⎩1                  n−1     n−1                n−1
+                                                                                           +Geq,L (u2 + udc2 − un−1     ac ) + i1     − in−1
+                                                                                                                                         2
+ensure good transient performance, including fast convergence
+of numerical errors and minimal initial error at state switching.                                                                                (10)
+These will be further addressed in subsequent sections.                               Then, organizing (10) yields:
+                                                                                                                                                   
+                                                                                   un2 = (k1 − α2 k2 − kL ) un−1
+                                                                                                             2   + (β1 − 1)k1 · in−1
+                                                                                                                                 1                      Geq,1
+C. Transient Error Convergence Characterization
+   In EMT simulation, accurately capturing the transient behav-                            + kL (unac − undc2 )+(un−1
+                                                                                                                  ac  − un−1         n     n−1
+                                                                                                                         dc2 ) +k1 (udc − udc )
+ior of converters is essential. The following two key character-                                                                            (11)
+istics define the main transient performance:                                       Combining (10) and (11), we can derive the discrete-time
+    r After a transient event, the system’s response should                       dynamic equation:
+      rapidly converge to the new steady state.
+    r At the instant of state switching, the initial error should be                               un2               un−1
+                                                                                                                       2 
+                                                                                          xn1 =     n         = A1 · n−1         + bn1                          (12)
+                                                                                                   i1 / Geq,1        i1    Geq,1
+      sufficiently small to meet high-precision requirements.
+   This subsection focuses on the error convergence, while the                    where
+                                                                                  ⎧
+initial switching error is discussed in the following section.                    ⎪                k1 − α 2 k2 − kL                     (β1 − 1)k1
+                                                                                  ⎪
+                                                                                  ⎪ A1 =
+   In an ideal converter model, state transitions after transient                 ⎪
+                                                                                  ⎪            1 −    (k    −   α    k   −   k   )  β   − (β1 − 1)k1
+                                                                                  ⎪
+                                                                                  ⎪
+                                                                                                          1        2   2       L      1
+events are achieved almost instantaneously without a long error                   ⎪
+                                                                                  ⎪            k                                                    k1
+                                                                                  ⎪   n
+                                                                                    b1 =         L
+                                                                                                        (uac + uac − udc2 − un−1
+                                                                                                            n         n−1         n
+                                                                                                                                                          Δundc
+convergence process, resulting in minimal transient error. In con-                ⎪
+                                                                                  ⎪           −k                                          dc2 ) + 1 − k
+                                                                                  ⎪
+                                                                                  ⎪                L                                                    1
+trast, non-ideal ADC models inherently involve a convergence                      ⎨
+                                                                                    = O(kL ) + O(kC ) = O                 (max{kL , kC })
+process, during which errors gradually diminish. A slower con-                          n               n        n−1
+                                                                                  ⎪
+                                                                                  ⎪ Δu     =    k C (i  C   +  i C     )   (Geq,1 + Geq,2 + Geq,L ) = O(kC )
+vergence rate is associated with lower accuracy. To analyze the                   ⎪
+                                                                                  ⎪   n
+                                                                                        dc
+                                                                                             n          n        n          n
+                                                                                  ⎪
+                                                                                  ⎪ i C =  i      −   i    =   i      −   i
+transient error convergence characteristics, based on Kirchhoff’s                 ⎪
+                                                                                  ⎪
+                                                                                             dc1        1        dc2        2
+                                                                                  ⎪
+                                                                                  ⎪ k i =  G  eq,i / (G   eq,1   +   G  eq,2  + Geq,L ), i ∈ {1, 2}
+Voltage Law and Kirchhoff’s Current Law, the internal variable                    ⎪
+                                                                                  ⎪
+                                                                                  ⎪
+                                                                                  ⎪ k L =  1   −   k 1 −    k 2  =   G  eq,L  / (Geq,1 + Geq,2 + Geq,L )
+relationships is derived as follows:                                              ⎩
+                                                                                    kC = (Geq,1 + Geq,2 + Geq,L )/ Geq,C
+         ⎧ n
+         ⎨udc = undc1 − undc2 = un1 + un2                                                                                                                 (13)
+            un = un − un − un1 = undc2 − unac + un2 .            (8)
+         ⎩ nL ndc1 n ac                                                             In this expression, x1 denotes the state variable under the
+            i L = i1 − i 2                                                        current operating state, A1 is the state matrix, b1 is the input
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 13:36:58 UTC from IEEE Xplore. Restrictions apply.
+CAO et al.: BRIDGE-ARM-MODULE-BASED FIXED-ADMITTANCE ADC MODEL FOR CONVERTERS IN EMT SIMULATION                                                          3311
+
+
+
+vector. The parameters ki , kL , and kC represent the coefficients
+of the ith switch, the inductor, and the capacitor, respectively.
+   Then, the local truncation error εx1 is given by:
+ ⎧ n
+ ⎪
+ ⎪  εu2 = (k1 − α2 k2 − kL ) · un−1    + (β1 − 1)k1 · in1 / Geq,1
+ ⎪
+ ⎪
+                                   2
+ ⎨          +kL · (uac + uac − udc2 − un−1
+                      n     n−1      n                     n
+                                              dc2 ) + k1 Δudc
+      n                                          n−1
+    εi1 / Geq,1 = [1 − (k1 − α2 k2 − kL )] · u2
+ ⎪
+ ⎪
+ ⎪
+ ⎪                 + [β1 − (β1 − 1)k1 ] · in1 / Geq,1
+ ⎩
+    −kL · (uac + un−1
+              n
+                     ac  − undc2 − un−1
+                                     dc2 ) + (1 − k1 )Δudc
+                                                          n
+
+                                                               (14)             Fig. 5. Spectral radius of matrix ρ(A1 ) based on voltage coefficient β 1 of
+                                                                                OFF-state switch unit S1 and current coefficient α2 of ON-state switch unit S2
+   This indicates that the numerical error of x1 is directly related            with Geq,1 = 1 S, Geq,2 = 1 S and Geq,L = 0.04 S.
+to its convergence rate: a faster convergence leads to more rapid
+error attenuation.
+                                                                                   Within the feasible domain, there are two parameter sets
+   The incremental change in the inductor current ΔiL is:
+                                                                                corresponding to zero spectral radius ρ(A1 ) = 0:
+                                                                                                      √                    √
+  ΔinL / Geq,L = inL / Geq,L − in−1
+                                  L    Geq,L                                                             k1           k + k1 − kL
+                                                                               I. α1 = −1, β1 =         √ , α2 = 1                , β2 = 1,
+   = [1 + (k1 − α2 k2 − kL )] un−1    + (β1 − 1)k1 in−1     Geq,1                                    1 + k1                  k2
+                                  2                   1
+                                                                                                                                        (20)
+     − (k1 + k2 ) · (unac + un−1
+                             ac  − undc2 − un−1            n
+                                            dc2 ) + k1 · Δudc ,                                        √                    √
+                                                                                                         k1           k1 − k1 − kL
+                                                           (15)                 II. α1 = −1, β1 = √           , α2 =               , β2 = 1.
+                                                                                                       k1 − 1                k2
+which gives the corresponding truncation error εΔiL :                                                                                   (21)
+⎧                                                                                 Based on these parameters, the model will achieve the fastest
+⎪
+⎪ εΔinL / Geq,L = ΔinL / Geq,L − ΔinL_ideal Geq,L 
+⎪
+⎪                                                                               error convergence due to the Matrix Convergence Theorem.
+⎨= [1 + (k1 − α2 k2 − kL )] un−1        + (β1 − 1)k1 in−1     Geq,1
+             n      n−1        n
+                                   2
+                                        n−1
+                                                         1
+                                                           n                    Then, it can be derived that A1 · A1 = O, and xn is derived
+    +kL · (u
+            ac + u       −  u    −  u     )  +  k 1 · Δu
+                                                        dc         .
+⎪
+⎪    n
+                    ac
+                         n
+                               dc2      dc2
+                                               n−1                              as:
+⎪
+⎪ Δi         G      =  i           G      −  i          G
+⎩ L_ideal      eq,L      L_ideal     eq,L      L_ideal   eq,L
+  = undc2 + un−1       n
+              dc2 − uac − uac
+                                n−1
+                                                                                    xn1 = A1 · (A1 · xn−2
+                                                                                                      1   + bn−1
+                                                                                                             1   ) + bn1 = A1 · bn−1
+                                                                                                                                 1   + bn1
+                                                                (16)                                                                     (22)
+
+   It reveals that the error in iL is also primarily influenced                    If no state switching occurs, using parameters from (20)
+by the convergence behavior of u2 and i1 in this state. Slower                  yields:
+                                                                                              n  n    n−1  n−1
+                                                                                                               
+convergence results in a larger cumulative error in iL . Besides,                           kL (uac −udc2 +uac   −udc2 )
+                                                                                                          √
+based on (8), the numerical errors of other variables are also                    xn1 =               √
+                                                                                                      1+ k1    + O (h · max{kL , kC })
+                                                                                             (1 + k1 ) · Δundc
+significantly affected by the convergence rate of u2 and i1 .
+                                                                                                                            
+   Derived from (13), the eigenvalue λ of A1 satisfies:
+                                                                                           = O max 2kL (1 + k1 ), 2kC · (1 + k1 )
+       ⎧ 2
+       ⎨λ − p · λ + q = 0                                                                  = O (max {kL , kC }) ,                                       (23)
+         p = (k1 − α2 k2 − kL ) + β1 − (β1 − 1)k1 .           (17)
+       ⎩
+         q = (k1 − α2 k2 − kL )β1 − (β1 − 1)k1                                  while parameters from (21) give:
+                                                                                             n   n−1  n    n−1
+                                                                                                                
+                                                                                            kL (uac +uac −udc2 −udc2 )
+  According to the Matrix Convergence Theorem, the conver-                                               √
+                                                                                  xn1 =               √
+                                                                                                      1− k1                 + O (h · max{kL , kC })
+gence rate depends on the matrix spectral radius ρ(A1 ):                                       (1 − k1 ) · Δundc
+                                                                                                                         
+                   ρ (A1 ) = max {|λ1 | , |λ2 |} .                     (18)                = O max 2kL (1 − k1 ), 2kC · (1 − k1 )
+
+  The condition ρ(A1 ) < 1 defines the feasible domain for                                 = O (max {kL , kC })                                         (24)
+parameter selection, as shown in Fig. 5, ensuring convergence
+of the model. A smaller spectral radius indicates faster error                     By comparing (23) and (24), the steady-state error of group I
+reduction. The spectral radii ρ(A1 ) of conventional L/C-ADC                    in (20) is smaller than that of group II in (21), making group I
+models using BE and TR integration are also marked in Fig. 5:                   the preferred choice for high-accuracy BAM-ADC model.
+                                                                                   The same applies when S1 is ON and S2 is OFF. Thus, the
+                                                √
+      ρL/C−ADC_BE (A1 ) = max {|λ1 | , |λ2 |} = k1 .                            optimal parameters for the BAM-ADC model are:
+                                                          (19)
+      ρL/C−ADC_TR (A1 ) = max {|λ1 | , |λ2 |} = 1.                                 1) when S1 is ON and S2 is OFF,
+                                                                                                 √                                      √
+                                                                                            k2 + k2 − kL                                  k2
+                                                                                      α1=                   , β1 = 1, α2 = −1, β2 =       √ ,
+   Their relatively large values explain the slow convergence                                     k1                                  1 + k2
+rate, leading to significant virtual power loss in L/C-ADC.                                                                                 (25)
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 13:36:58 UTC from IEEE Xplore. Restrictions apply.
+3312                                                                             IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 40, NO. 6, DECEMBER 2025
+
+
+
+  2) when S1 is OFF and S2 is ON,                                               simulated using the L/C-ADC method as described in (1). The
+                     √                √                                         corresponding ADC parameters of BAM in this state are:
+                      k1          k1 + k1 − kL
+     α1 = −1, β1 =     √ , α2 =                , β2 = 1.
+                   1 + k1              k2                                                        α1 = −1, β1 = 0, α2 = −1, β2 = 0                     (32)
+                                                   (26)
+                                                                                   In this state, additional logic is required to accurately deter-
+  Furthermore, the error of x1 is obtained from (23):
+                                                                             mine the current operating state and to identify the timing of
+                                                  
+  εxn1 = O max 2kL (1 + k1 ), 2kC (1 + k1 ) .                                   switching events. Although a fast state determination method
+                                                                                for ADC-type models has been proposed in [15], its reliance
+                                                                       (27)
+                                                                                on non-state variables can lead to unreliable judgments due
+   From (27), the model error is related to kL and kC . The smaller             to the presence of spurious harmonic spikes. Therefore, this
+kL and kC are, the smaller the error is. For example, if an error               study leverages state variables at the interface and considers
+of less than one percent is required, it is desirable that both                 the previous state and detailed topology for accurate state de-
+2kL /(1+k1 ) and 2kC (1+k1 ) should be below 0.01. Therefore,                 termination. Improved state determination expressions tailored
+a general selection guideline for the equivalent admittance of                  to typical topologies are presented below, which enable more
+switch unit can be established: Geq,L << Geq,1 + Geq,2 <<                       reliable and accurate state judgment.
+Geq,C .                                                                                   ⎧ n                            !              !
+   To minimize the overall error, the following constraint should                         ⎪
+                                                                                          ⎪ D = g̃Vn · D  
+                                                                                                            n−1
+                                                                                                                ∪ V n−1 ·f in−1L    <0
+                                                                                          ⎪
+                                                                                          ⎪                                                    !
+also be satisfied:                                                                        ⎨        +g̃Vn · D̃n−1 ∩ Ṽ n−1 · f un−1     > un−1
+                                                                             Boost :                                   !        ac
+                                                                                                                                         ! dc1
+
+              2kL (1 + k1 ) = 2kC · (1 + k1 )                 (28)                        ⎪
+                                                                                          ⎪ V n = gVn ·  Dn−1 ∪ V n−1 · f in−1 L    <0
+                                                                                          ⎪
+                                                                                          ⎪                                                    !
+                                                                                          ⎩        +gVn · D̃n−1 ∩ Ṽ n−1 · f un−1      > un−1
+                                                                                                                                   ac      dc2
+  Assuming Geq,1 and Geq,2 take equal values, so the optimal
+switch admittance becomes:                                                                                                                        (33)
+         ⎧                    √                                                        ⎧ n                            n−1
+                                                                                                                                  !                  !
+         ⎪                   2 Geq,L ·Geq,C    G                                       ⎪        n n
+                                                                                       ⎪S1 = g̃2 g1 + g̃
+                                                                                                            n n
+                                                                                                            1 g̃2 · S1    ∪ S2n−1 · f in−1     <0
+         ⎪
+         ⎪ G eq,1 = Geq,2 =    √              − eq,L                                   ⎪
+                                                                                       ⎪
+                                                                                                                                           L
+                                                                                                                                                    !
+         ⎨                         −p
+                            4+ 8−8p+p   2        2                                     ⎨       +g̃1n g̃2n · S̃1n−1 ∩ S̃2n−1 · f un−1       > un−1
+                                                        (29)                    V SC :                                              ! ac       dc1
+                                                                                                                                                      !
+         ⎪
+         ⎪ =        √2         − p2 · C     dc
+                                                                                       ⎪
+                                                                                       ⎪ S n
+                                                                                             = g̃ n n
+                                                                                                   g    +  g̃ n n
+                                                                                                               g̃  · S n−1
+                                                                                                                           ∪  S n−1
+                                                                                                                                       · f i n−1
+                                                                                                                                                 >0
+         ⎪      4−p+ (4−p)2 −8            Lac
+                                                                                       ⎪   2      1 2        1 2      1       2            L
+                                                                                                                                                    !
+         ⎩                           √                                               ⎪
+                                                                                       ⎩
+           p = Geq,L / Geq,C = h (2 Lac · Cdc )                                                +g̃1n g̃2n · S̃1n−1 ∩ S̃2n−1 · f un−1   ac  < un−1
+                                                                                                                                                dc2
+
+   For ease of implementation, given that p is typically close to                                                                                     (34)
+0, the preferred switch admittance can be approximated as:                      where g denotes the gate control signal; f (·) is the indicator
+                    √                            √       
+                      2 − 1                       2 − 1 Cdc                    function, which equals to one when the condition holds; the su-
+ Geq,1 = Geq,2 = √            Geq,L · Geq,C = √                                 perscript ∼ represents logical negation. Other topologies can be
+                        2                            2      Lac
+                                                             (30)               similarly treated based on their structure and interface variables,
+                                                                                which require additional specific analysis.
+  Using this value of Geq,sw , the error of x1 can be obtained as:
+         ⎛        ⎧                                             ⎫⎞
+                             Geq,L                      Geq,1
+                  ⎨                          1 +    Geq,1 +Geq,2
+                                                                 ⎬              D. Initial Error Correction at State Switching
+                         Geq,1 +Geq,2
+εxn1 = O ⎝2 max                           ,                      ⎠
+                                                                                   Despite the fast error convergence rate of the BAM-ADC
+                  ⎩1 +           Geq,1              Geq,C        ⎭
+                              Geq,1 +Geq,2      G eq,1 +G eq,2                  model, non-negligible initial switching errors may still arise
+                                                                            when the system transitions from one discrete-time state to
+     =O h         Lac · Cdc                                    (31)             another. To achieve high simulation accuracy, these errors must
+   It is evident that accuracy depends on the time step h and                   be appropriately corrected [25].
+parameters Lac , Cdc . With appropriate choice of h, high accuracy                 For instance, when the operating state of BAM is switched
+of the BAM-ADC model can be achieved.                                           from S1 ON, S2 OFF to S1 OFF, S2 ON at tn , non-state variables
+   Once the optimal parameters are determined, the proposed                     such as switch voltage and current in the RON /ROFF models
+BAM-ADC model can be constructed. Compared with L/C-                            should change to new steady-state values at tn , as illustrated
+ADC, it demonstrates much faster error convergence rate and                     in Fig. 6(a). However, in conventional L/C-ADC models, state
+significantly reduced transient error. Besides, each BAM oper-                  switching often introduces substantial spurious voltage and cur-
+ates independently, making the model well-suited for converters                 rent spikes. The corresponding initial switching error of the
+with multiple BAMs, such as multi-phase VSCs. Moreover,                         L/C-ADC model in Fig. 6(b) can be derived from (12):
+the optimal parameters and preferred switch admittance are                       ⎧                           in−1
+                                                                                 ⎪     n        n−1
+                                                                                 ⎨εu2n = k1 · udc − k1 · Geq,1 + On−1  (max {kL , kC })
+                                                                                                              L
+isolated from external systems and only depend on the time                       ⎪
+                                                                                     εi1                 n−1       iL
+                                                                                    Geq,1 = (1 − k1 ) · udc + k1 · Geq,1 + O (max {kL , kC })
+step h and passive components (L, C), granting the model strong
+                                                                                 ⎪
+                                                                                 ⎪
+generalizability.                                                                ⎩ εΔinL                 n−1        in−1
+                                                                                    Geq,L = (1 + k1 ) · udc − k1 · Geq,1 + O (max {kL , kC })
+                                                                                                                     L
+   As for the non-complementary conduction state (both S1
+and S2 are OFF), such as the blocking or standby mode, it is                                                                                (35)
+
+
+         Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 13:36:58 UTC from IEEE Xplore. Restrictions apply.
+CAO et al.: BRIDGE-ARM-MODULE-BASED FIXED-ADMITTANCE ADC MODEL FOR CONVERTERS IN EMT SIMULATION                                                         3313
+
+
+
+
+                                                                                 in−1    n n−1 n−1       n n−1 n−1       n    n n−1
+                                                                                  1_CRI=S1 iL , i2_CRI=−S2 iL , iL_CRI=(S1 ∪ S2 )iL
+                                                                                                                                                        (38)
+                                                                                 where utemp is an intermediate voltage variable derived from
+                                                                                 the steady-state conditions of BAM-ADC for computation.
+                                                                                    Then, Iinj in (3) is calculated based on (37) and (38), which
+                                                                                 are subsequently used to calculate the circuit variables at tn :
+                                                                                      n
+                                                                                        Iinj,i = αi · Geq, · un−1           n−1
+                                                                                                              i_CRI + βi · ii_CRI , i ∈ {1, 2}
+                                                                                         n                  n−1      n−1                       (39)
+Fig. 6. State switching process at tn of (a) RON /ROFF model, (b) ADC models            Iinj,L = Geq,L · uL_CRI + iL_CRI
+without error correction, and (c) ADC models using error correction method.
+                                                                                   For the same switching event from S1 ON, S2 OFF to S1 OFF,
+                                                                                 S2 ON, the corrected initial switching errors through the CRI
+   In [28], the G-ADC model employs the final steady-state value                 method in Fig. 6(c) can be expressed as:
+from the previous occurrence of the same operating state to                         ⎧ n        k√       n     n        n−1      n−1
+                                                                                    ⎪εu2 = 1+ k1 (uac − udc2 ) + (uac − udc2 )
+                                                                                    ⎪            L
+calculate the equivalent current source. However, this approach
+                                                                                    ⎪
+                                                                                    ⎪
+neglects the dynamic process between two consecutive identi-                        ⎪
+                                                                                    ⎨ n       +O(h · max{kL , kC })
+                                                                                       εi1           √ !
+cal states. To address this, the cross-initialization (CI) method
+                                                                                      Geq,1  =  1 + k1 Δundc + O(h · max{kL , kC }) (40)
+proposed in [29] improves the accuracy of switch voltage and                        ⎪
+                                                                                    ⎪      n
+                                                                                    ⎪ εΔiL = 2k√L (unac − undc2 ) + (un−1
+                                                                                    ⎪                                        − un−1
+                                                                                                                                 dc2 )
+current by initializing their values based on the variables of the                  ⎪
+                                                                                    ⎩ G eq,L   1+ k1                      ac
+
+opposite switch unit in the same BAM just before switching.                                    +O(h · max{kL , kC })
+Although the CI method effectively reduces virtual power loss                       It is demonstrated that the corrected initial switching error by
+under complementary states, it does not leverage the steady-state                the CRI method matches the theoretical value in (23). Compared
+characteristics of the CI-ADC model for further refinement.                      to uncorrected ADC models, the CRI method significantly mit-
+Moreover, neither the G-ADC nor CI-ADC methods account                           igates spurious harmonic spikes by cross-re-initializing internal
+for non-complementary conduction states, which limits their                      variables during state switching, without adding computational
+generality.                                                                      overhead.
+   To extend the applicability of the BAM-ADC model, its                            In EMT simulation, the BAM-ADC model with CRI achieves
+initial switching error must be explicitly analyzed. For the same                computational efficiency comparable to conventional L/C-ADC
+transition scenario from S1 ON, S2 OFF to S1 OFF, S2 ON, the                     models, while significantly reducing initial switching errors
+initial state switching error of the BAM-ADC model without                       during state switching, particularly compared to uncorrected
+correction, as shown in Fig. 6(b), is given by:                                  ADC models. Moreover, owing to its half-bridge-based mod-
+⎧          √                    in−1                                             ular structure, the BAM-ADC model can be applied to various
+⎪     n          n−1       k√
+⎨εu2n=− k1 udc√ −! 1+ k1 G√           + O(max {kL , kC })
+                                 L
+⎪
+                            1
+                                 eq,1                                            converter topologies, as illustrated in Fig. 4.
+    εi1                   n−1           in−1
+          = 1 + k1 udc + k1 GLeq,1 + O(max {kL , kC })                              The EMT simulation flowchart using the BAM-ADC model
+⎪
+⎪
+   G eq,1
+                 √ ! n−1
+⎩ εΔinL                                  in−1                                    with the CRI method is shown in Fig. 7. In this framework,
+   Geq,L = 1 −     k1 udc − 1+k√1 k GLeq,1 + O(max {kL , kC })
+                                      1                                          system components are categorized according to their dynamic
+                                                              (36)               characteristics. Low-frequency components, such as passive
+   Likewise, this initial switching errors cannot be neglected.                  elements including capacitors, inductors, and transformers, ex-
+   To address this issue, we propose an improved cross-re-                       hibit relatively slow dynamics (milliseconds to seconds) and
+initialization (CRI) method for BAM-ADC based on the variable                    are modeled using conventional EMT techniques. In contrast,
+relationships described in (8). This method aims to correct the                  high-frequency components, such as power electronic switches,
+historical voltage and current values, basically aligning them                   exhibit rapid transient behavior (microseconds to nanoseconds)
+with the theoretical steady-state values under the new operat-                   and are modeled using the BAM-ADC method.
+ing condition, used in computing equivalent historical injected                     In summary, the BAM-ADC model provides both accurate
+current sources at the next time step.                                           steady-state and transient performance, closely resembling that
+   When state switching occurs, the CRI method re-initializes                    of an ideal converter model. Its effectiveness will be further
+the internal variables at the end of the previous state and recal-               demonstrated through simulation and experimental validation
+culates the equivalent injected current source Iinj based on the                 in the following sections.
+updated variables. By incorporating the steady-state values from
+(23) into error correction for voltage, the method further reduces                                        IV. SIMULATION TEST
+initial switching errors and improves the simulation accuracy.                      The simulation cases in this section are mainly conducted on
+The CRI values of internal variables are given by:                               ADS-RTSim, our self-developed simulation platform based on
+ ⎧                                                                               C++. The processor is Intel Core i7-12700H with 14 cores and
+ ⎪
+ ⎪ un−1       n n−1
+     1_CRI=S̃1 (u1      + un−1      n n−1
+                           L ) + S2 (u2      − un−1
+                                                L ) + 2kL utemp
+                                                               n−1
+ ⎪
+ ⎨un−1 =S n (un−1 + un−1 ) + S̃ n (un−1 − un−1 ) − 2k un−1                       2.30 GHz. For accuracy comparison, the BAM-ADC, L/C-ADC,
+     2_CRI    1    1       L        2    2      L           L temp               G-ADC [28], and CI-ADC [29] models are implemented in
+     n−1         n n−1      n−1       n n−1       n−1           n−1
+ ⎪
+ ⎪ u L_CRI  =  S 1 (u    +u L   ) − S 2 (u    − u L   )−2k  L utemp              the platform, while the RON /ROFF model is constructed in
+ ⎪           S n
+                      1
+                                        S n
+                                           2
+ ⎩un−1= √1 (un−1 + un−1 ) − √2 (un−1 − un−1 )
+     temp 1+ k2       1      L        1+ k1   2        L                         PSCAD as the reference benchmark. For efficiency analysis,
+                                                               (37)              to ensure a consistent testing environment, all models including
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 13:36:58 UTC from IEEE Xplore. Restrictions apply.
+3314                                                                               IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 40, NO. 6, DECEMBER 2025
+
+
+
+
+Fig. 7.   Flowchart of EMT simulation using the BAM-ADC model with the CRI method.
+
+
+
+BAM-ADC, L/C-ADC, G-ADC, CI-ADC, and RON /ROFF are
+simulated on the same platform under identical conditions.
+Moreover, for the L/C-ADC model, the state determination
+strategy expressions in [15] are used.
+   Before simulation testing, we have assessed the recommended
+values of switch admittance Geq,sw used in G-ADC, CI-ADC,
+and BAM-ADC models, all of which are determined based on                          Fig. 8.   Boost chopper system.
+the time step and circuit L/C parameters:
+
+⎧                                                                     
+⎨G - ADC & CI - ADC : Geq,sw = C                                           C
+                        √     L                      ⇒ Geq,sw =                  A. DC-DC Converter: Boost Chopper
+⎩BAM − ADC : Geq,sw = √2−1 C                                               2L
+                           2  L
+                                                                                     A boost chopper circuit is constructed as shown in Fig. 8,
+                                                                         (41)
+                                                                                  employing an asymmetric topology composed of one BAM
+                                                                                  containing two independent switches. The relevant parameters
+   Although each model provides its own recommendation for                        are listed in Appendix A. The simulation lasts for 0.05 s with a
+Geq,sw , no single value is universally optimal across all mod-                   time step of 2 μs. The converter is in disable mode before 0.01 s
+els. Therefore, to maintain fairness and consistency in model                     and after 0.04 s. A DC source fault is applied at 0.02 s, dropping
+comparison, we adopt a unified conductance value of Geq,sw =                      the voltage to 0 V, and restoring it to 40 V at 0.03 s.
+(C/2L) in this section, which is of the same order of magnitude                     The waveforms are presented in Figs. 9, 10, 11, and 12.
+with all these recommended values.                                                   As shown in Fig. 9, the BAM-ADC model accurately captures
+   Moreover, for clear visualization, figures labeled (a), (b), and               the circuit behavior under disable mode and fault conditions,
+(c) depict waveforms of different variables. For each wave-                       with results consistent with those of the RON /ROFF model.
+form, subfigures (a1)–(a3), (b1)–(b3), and (c1)–(c3) provide                      In contrast, the L/C-ADC model exhibits significant deviation
+first-level magnified views of the corresponding main figures.                    due to its inherent modeling limitations, resulting in substantial
+Subsequently, subfigures (a4)–(a6), (b4)–(b6), and (c4)–(c6)                      spurious voltage spikes and virtual power loss in Fig. 10. These
+offer second-level zoomed-in views of selected regions within                     figures highlight the low accuracy of L/C-ADC and its limited
+the first-level magnifications, enabling detailed observation of                  capability in handling switching events. The BAM-ADC model,
+non-state variables such as switch voltage. This hierarchical                     by contrast, effectively suppresses spurious voltage spikes and
+zooming strategy is consistently applied across all simulation                    associated virtual power losses, achieving both high accuracy
+cases for clarity and comparative analysis.                                       and reliable state judgment.
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 13:36:58 UTC from IEEE Xplore. Restrictions apply.
+CAO et al.: BRIDGE-ARM-MODULE-BASED FIXED-ADMITTANCE ADC MODEL FOR CONVERTERS IN EMT SIMULATION                                                         3315
+
+
+
+
+Fig. 9. Waveforms of (a) inductor current and (b) load current. (a) iL (A).
+(b) iload (A).
+
+
+
+
+                                                                                 Fig. 11. Waveform comparison of the BAM-ADC model under different
+                                                                                 values of Geq,sw : (a) inductor current, and (b) load current. (a) iL (A).
+                                                                                 (b) iload (A).
+
+
+
+                                                                                       optimal value yields the highest accuracy. While moderate
+                                                                                       deviations are observed at 1/10 and 10 times, significant
+                                                                                       errors occur at 1/100 and 100 times due to large kC or
+                                                                                       kL , thereby validating the appropriateness of the optimal
+                                                                                       admittance selection.
+                                                                                    2) The second test evaluates the influence of different time
+                                                                                       steps (0.5 μs, 2 μs, 10 μs, and 50 μs), as shown in
+                                                                                       Fig. 12. It shows that the deviation between BAM-ADC
+                                                                                       and RON /ROFF increases with step size, validating that
+                                                                                       the BAM-ADC error is positively correlated with h, as
+                                                                                       theoretically derived in (31).
+                                                                                    These two additional tests not only demonstrate the effective-
+                                                                                 ness of the recommended Geq,sw , but also confirm the rationality
+Fig. 10. Waveforms of (a) voltage and (b) virtual power loss of switch V.        of the error analysis.
+(a) uV (V). (b) PlossVD (kW).
+
+                                                                                 B. AC-DC Converter: Three-Phase Full-Bridge Rectifier
+   Additionally, Fig. 9 illustrates that the G-ADC and CI-ADC                       In this subsection, a three-phase full-bridge rectifier is mod-
+models exhibit noticeable deviations under the disable mode                      eled as shown in Fig. 13, allowing investigation of the influ-
+and fault conditions. This highlights their limited applicability in             ence of inter-BAM coupling and evaluation of the BAM-ADC
+non-complementary states, as both models are constructed under                   model’s generality. The parameters are provided in Appendix A.
+complementary state assumptions. Further analysis in Fig. 10                     The duration is 0.8 s with a 10 μs time step. The converter is
+reveals that their voltage spikes and virtual power loss are in-                 blocked before 0.1 s. A single-phase-to-ground fault occurs on
+creased compared to the BAM-ADC model, thereby confirming                        phase A at 0.31 s and clears at 0.33 s. The control signal of
+the better accuracy performance of BAM-ADC.                                      switch unit S1 is lost at 0.4 s and restored at 0.6 s. The results
+   To further examine the impact of the recommended switch                       are provided in Figs. 14, and 15.
+admittance Geq,sw and simulation time step h on simulation                          As observed in Fig. 14, the BAM-ADC model maintains high
+accuracy, two additional tests are conducted:                                    accuracy identical to that of the RON /ROFF model, even under
+   1) The first test investigates the effect of varying the switch               relatively large time steps like 10 μs and across various operating
+      admittance from 1/100 to 100 times the recommended                         states, including normal operation, block mode, ground fault,
+      value, as shown in Fig. 11. The results indicate that the                  and signal loss fault. By contrast, the L/C-ADC model presents
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 13:36:58 UTC from IEEE Xplore. Restrictions apply.
+3316                                                                                   IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 40, NO. 6, DECEMBER 2025
+
+
+
+
+                                                                                       Fig. 14. Waveforms of (a) consumed power of Rload , and (b) A-phase current.
+                                                                                       (a) Pload (kW). (b) ia (A).
+
+
+
+                                                                                       substantial deviations in non-complementary switching states,
+                                                                                       while L/C-ADC presents persistent high errors. These results
+                                                                                       further verify the accuracy and generality of the BAM-ADC
+                                                                                       model across diverse operating scenarios.
+
+                                                                                       C. Two-Stage Grid-Connected PV Generation System
+                                                                                          To further validate the generality of the BAM-ADC model, a
+                                                                                       two-stage grid-connected photovoltaic (PV) generation system
+                                                                                       is simulated as shown in Fig. 16, which includes a PV array,
+                                                                                       a boost chopper, a VSC, and their respective control systems.
+Fig. 12. Waveform comparison of the RON /ROFF and BAM-ADC models
+under different time step h: (a) Inductor current, and (b) load current. (a) iL (A).   Thus, this test enables assessment of the model under closed-
+(b) iload (A).                                                                         loop and grid-connected conditions, as well as the impact of
+                                                                                       interconnected converters on the BAM-ADC model’s accuracy.
+                                                                                       The simulation runs for 1.0 s with a time step of 2 μs. The
+                                                                                       parameters are detailed in Appendix B. A ground fault occurs
+                                                                                       on phase A at 0.4 s and clears at 0.42 s. The irradiance drops
+                                                                                       to 800 W/m2 at 0.8 s and recovers to 1000 W/m2 at 0.85 s. The
+                                                                                       results are presented in Figs. 17 and 18.
+                                                                                          Figs. 17 and 18 show that BAM-ADC produces waveforms
+                                                                                       consistent with the RON /ROFF model throughout start-up,
+                                                                                       ground fault, and irradiance drop scenarios. In contrast, the
+                                                                                       L/C-ADC model introduces significant deviations. G-ADC and
+                                                                                       CI-ADC models exhibit substantial errors during 0-0.2 s due to
+                                                                                       the presence of non-complementary states in the boost chop-
+Fig. 13.   Three-phase full-bridge rectifier system.                                   per during start-up, while maintaining relatively high accuracy
+                                                                                       during normal operation. Furthermore, Fig. 18 highlights the
+                                                                                       presence of higher harmonic spikes and larger virtual losses
+severe distortions and becomes unreliable under such conditions.                       in other ADC models, reaffirming the high fidelity and broad
+Besides, although G-ADC and CI-ADC show relatively high                                applicability of BAM-ADC.
+accuracy under normal operation and ground fault, they fail to
+simulate accurate results during block mode and signal loss fault,
+                                                                                       D. Accuracy and Efficiency Analysis
+limiting their reliability.
+   Fig. 15 further confirms that BAM-ADC accurately re-                                   Table I lists the maximum relative errors of each ADC model
+flects the switch voltage and midpoint voltage of BAM, while                           with respect to the RON /ROFF reference. For non-state quantities
+consistently maintaining low spurious harmonic spikes and                              such as switch voltage/current, as state misjudgment leads to
+virtual power loss. However, G-ADC and CI-ADC produce                                  significant deviations, only the magnitudes of the spurious spikes
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 13:36:58 UTC from IEEE Xplore. Restrictions apply.
+CAO et al.: BRIDGE-ARM-MODULE-BASED FIXED-ADMITTANCE ADC MODEL FOR CONVERTERS IN EMT SIMULATION                                                            3317
+
+
+
+
+                                                                                     Fig. 17. Waveforms of (a) output active power to grid, (b) phase A current,
+                                                                                     and (c) PV array voltage. (a) Pgrid (kW). (b) ia (A). (c) upv (V).
+
+                                                                                                                 TABLE I
+                                                                                         ACCURACY COMPARISON OF FIXED-ADMITTANCE ADC MODELS (% )
+
+Fig. 15. Waveforms of (a) voltage of switch unit S1 , (b) voltage of midpoint
+on BAM1 , and (c) virtual power loss of switch unit S1 . (a) uS1 (V). (b) uax (V).
+(c) PlossS1 (kW).
+
+
+
+
+Fig. 16.   Two-stage grid-connected PV generation system.
+
+
+
+are compared in this table. The incorrect state identification rates                 fault scenarios. The results further validate the high precision of
+are presented in Table II.                                                           BAM-ADC.
+   As shown in Table I, the BAM-ADC model exhibits signifi-                             Table II indicates that the BAM-ADC model achieves a high
+cantly lower maximum virtual power loss and harmonic spikes                          state identification accuracy, closely matching the RON/ROFF
+compared to other ADC models. It also maintains high accuracy                        reference, while the L/C-ADC model suffers from a higher mis-
+across other quantities. In contrast, the L/C-ADC model exhibits                     judgment rate. Moreover, the G-ADC and CI-ADC models fail
+substantial errors and virtual power loss, severely undermining                      to account for non-complementary states, resulting in drastically
+its simulation accuracy and highlighting its limitations in large-                   reduced correct identification rates under such scenarios. These
+step or high-precision EMT simulations. Table I further reveals                      underscore the limitations of existing ADC models and further
+that the G-ADC and CI-ADC models consistently underperform                           demonstrate the applicability of the BAM-ADC model in diverse
+in accuracy relative to BAM-ADC, with significantly larger de-                       operating conditions To evaluate efficiency, 100 one-second
+viations observed during non-complementary states and certain                        simulations are conducted on the C++-based platform, and the
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 13:36:58 UTC from IEEE Xplore. Restrictions apply.
+3318                                                                              IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 40, NO. 6, DECEMBER 2025
+
+
+
+
+                                                                                 Fig. 19. Experiment platform: (a) topology of the three-phase full-bridge
+                                                                                 inverter, (b) physical experiment setup, and (c) HIL simulation architecture.
+
+
+Fig. 18. Waveforms of (a) voltage, (b) current, and (c) virtual power loss of
+S1 . (a) uS1 (V). (b) iS1 (A). (c) PlossS1 (kW).                                 for real-time simulation. In contrast, the high time cost of the
+                                                                                 RON /ROFF model stems from complex switching operations
+                            TABLE II                                             and corresponding additional computing overheads.
+ INCORRECT STATE RATES OF ADC MODELS COMPARED TO RON /ROFF (% )                     In summary, these cases collectively validate the BAM-ADC
+                                                                                 model’s high accuracy and computational efficiency.
+
+                                                                                                    V. EXPERIMENTAL VERIFICATION
+                                                                                    Section IV has demonstrated the outstanding accuracy and
+                                                                                 efficiency advantages of BAM-ADC. However, two key issues
+                                                                                 must still be addressed to validate its practical application in
+                            TABLE III
+       AVERAGE EXECUTION TIME FOR ONE-SECOND SIMULATION (MS)                     EMT simulation [22]. First, regarding accuracy, it is essential
+                                                                                 to confirm whether the simulation results align with real-world
+                                                                                 converter behavior. Second, in terms of efficiency, it is necessary
+                                                                                 to assess the model’s performance in a real-time simulation
+                                                                                 environment. To this end, a physical experiment and a hardware-
+                                                                                 in-the-loop (HIL) test of a three-phase full-bridge inverter are
+                                                                                 conducted as depicted in Fig. 19.
+                                                                                    The physical test platform, shown in Fig. 19(a) and (b), is
+                                                                                 constructed to validate the fidelity of the BAM-ADC model.
+                                                                                 A constant voltage and constant frequency (CVCF) control
+average elapsed computation times are summarized in Table III.                   strategy is employed, and relevant parameters are provided in
+It indicates that the BAM-ADC, G-ADC, and CI-ADC models                          Appendix B. The deadtime of the controller is set to 1μs.
+share comparable execution times with the L/C-ADC model,                            To evaluate real-time performance, an HIL simulation is im-
+and are all significantly faster than the RON /ROFF model. This                  plemented using an OP4610XG emulator with an AMD Ryzen
+confirms that, compared to L/C-ADC, BAM-ADC does not                             3.8 GHz CPU and a Xilinx Kintex-7 410T FPGA, together with
+introduce substantial computational overhead and is well-suited                  an imperix B-Box RCP 3.0 controller and two host computers,
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 13:36:58 UTC from IEEE Xplore. Restrictions apply.
+CAO et al.: BRIDGE-ARM-MODULE-BASED FIXED-ADMITTANCE ADC MODEL FOR CONVERTERS IN EMT SIMULATION                                                        3319
+
+
+
+
+                                                                                Fig. 21. Waveforms under reference voltage step from 40 V to 30 V: A phase
+                                                                                voltage and current of (a)(b) BAM-ADC, and (c)(d) L/C-ADC.
+
+
+
+
+                                                                                consistently exhibits pronounced spikes and switching power
+Fig. 20. Waveforms of gate signal S1 , and phase voltages ua , ub :
+(a)(b) experiment, (c)(d) BAM-ADC simulation, and (e)(f) L/C-ADC simu-          loss during state transitions, regardless of the value of Geq,sw .
+lation.                                                                            These results further confirm that BAM-ADC more closely
+                                                                                resembles the ideal behavior of switches, while L/C-ADC intro-
+                                                                                duces substantial inaccuracies.
+as shown in Fig. 19(c). The CPU transfers observation data to the                  Through experimental testing, both the BAM-ADC and L/C-
+controller; the controller processes the data and sends the control             ADC models successfully complete HIL simulations without
+signals to the FPGA module; the FPGA carries out the whole                      time overruns, demonstrating the feasibility of BAM-ADC for
+electrical system modeling and calculation; the host computers                  real-time applications. In addition, although the output AC wave-
+provide the development environment and operation interface                     forms appear similar, the BAM-ADC model generates signifi-
+of RT-LAB and ACG SDK. The time step of the HIL test is 1                       cantly lower harmonic spikes and virtual power loss compared
+μs with 1 μs deadtime.                                                          to the L/C-ADC model. These results underscore the superior
+   In this section, the BAM-ADC model uses the recommended                      accuracy and efficiency of the BAM-ADC model in real-time
+equivalent admittance Geq,sw derived in (30), while the L/C-                    simulation scenarios.
+ADC model is tested using both the same admittance and the
+value recommended in [32] for thorough comparison. Since the
+output phase voltage/current waveforms are nearly identical in                                              VI. CONCLUSION
+both L/C-ADC cases, only the internal variables of the switch
+                                                                                   To address the dual challenges of achieving high accuracy and
+unit are presented to avoid redundancy.
+                                                                                efficiency in EMT simulations, this paper proposes a BAM-ADC
+  ⎧                             √     
+  ⎨BAM − ADC :Geq,sw = √2−1 C ≈ 0.153S                                          model. The model enhances simulation efficiency through a
+                                   2     L √ √                                  parameterized BAM structure with fixed equivalent admittance,
+                                          2/ 2· 3
+                                                              (42)
+  ⎩L/C − ADC : G             =
+                                AC
+                               IRM  S
+                                      ≈            ≈ 0.025S                     while high accuracy is ensured via optimal parameter settings
+                       eq,sw      V DC           100
+                                                                                and the application of the CRI method. Simulation and experi-
+   Fig. 20 presents the experimental and simulated results for                  mental results confirm that BAM-ADC exhibits high accuracy
+phase voltages ua , ub and gate signal of S1 . In the experiment and            with low computational overhead. Compared to existing ADC
+simulations of BAM-ADC and L/C-ADC, the phase voltages                          models, it consistently achieves lower simulation errors without
+exhibit a consistent amplitude of approximately 39 V and remain                 sacrificing efficiency, making it well-suited for EMT simula-
+phase-aligned. In addition, as the duty cycle of S1 increases, ua               tions, especially in real-time scenarios where both precision and
+gradually rises from −39 V to 39 V, confirming that both models                 speed are essential.
+present the expected external behavior.                                            Nevertheless, the BAM-ADC model has certain limitations.
+   To evaluate dynamic performance, the reference voltage in the                Specifically, it is currently unable to independently simulate
+CVCF control is changed from 40 V to 30 V. The waveforms are                    non-complementary conduction scenarios. In such cases, it must
+shown in Figs. 21 and 22. Fig. 21 shows that both BAM-ADC                       be used in conjunction with the L/C-ADC model, which may
+and L/C-ADC track the step change. However, the L/C-ADC                         compromise optimal simulation performance. Addressing this
+waveforms exhibit relatively higher noise levels, indicating its                limitation presents a valuable direction for future research. In
+elevated harmonic content. This further highlights the accuracy                 addition, there remains room for improvement in the fast state
+advantage of BAM-ADC.                                                           determination strategy for converters based on the ADC models.
+   Moreover, Fig. 22 compares the voltage, current, and virtual                 The development of high-accuracy and universal state predic-
+power loss of switch unit S1 . The BAM-ADC model maintains                      tion methods for various converter topologies under real-time
+stable switching behavior with minimal voltage/current spikes                   conditions remains a highly promising and impactful research
+and negligible power loss. In contrast, the L/C-ADC model                       avenue.
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 13:36:58 UTC from IEEE Xplore. Restrictions apply.
+3320                                                                              IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 40, NO. 6, DECEMBER 2025
+
+
+
+
+Fig. 22. Waveforms of gate signal S1 and voltage, current, and virtual power loss of switch unit S1 under reference voltage step from 40 V to 30 V:
+(a)–(d) BAM-ADC, (e)–(h) L/C-ADC using recommended Geq,sw in [32], and (i)–(l) L/C-ADC using same Geq,sw as BAM-ADC.
+
+
+
+                                APPENDIX                                                b) Boost chopper:
+A. Parameters of the Simulations
+  1) Boost Chopper:
+
+                                                                                     Controller: Dual closed-loop control.
+
+
+
+
+                                                                                        c) Three-phase bridge converter:
+  2) Three-Phase Full-Bridge Rectifier:
+
+
+
+
+                                                                                     Controller: Dual closed-loop control.
+
+
+
+
+  3) Two-Stage Grid-Connected PV System:
+    a) PV array:
+                                                                                 B. Parameters of the Experiment
+
+
+
+
+  Controller: MPPT (perturbation and observation method).
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 13:36:58 UTC from IEEE Xplore. Restrictions apply.
+CAO et al.: BRIDGE-ARM-MODULE-BASED FIXED-ADMITTANCE ADC MODEL FOR CONVERTERS IN EMT SIMULATION                                                                3321
+
+
+
+                                   REFERENCES                                       [23] RTDS Technologies, “The Universal Converter Model for enhanced real-
+                                                                                         time power electronics simulation,” RTDS Blog, 2021. Accessed: May
+ [1] N. Hatziargyriou et al., “Definition and classification of power system             29, 2024. [Online]. Available: https://www.rtds.com/BlogPosts/UCM
+     stability – revisited & extended,” IEEE Trans. Power Syst., vol. 36, no. 4,    [24] T. Maguire, S. Elimban, E. Tara, and Y. Zhang, “Predicting switch ON/OFF
+     pp. 3271–3281, Jul. 2021.                                                           statuses in real time electromagnetic transients simulations with voltage
+ [2] P. Kundur et al., “Definition and classification of power system stability          source converters,” in Proc. 2nd IEEE Conf. Energy Internet Energy System
+     IEEE/CIGRE joint task force on stability terms and definitions,” IEEE               Integration, Oct. 2018, pp. 1–7.
+     Trans. Power Syst., vol. 19, no. 3, pp. 1387–1401, Aug. 2004.                  [25] C. Wang, Q. Wang, H. Weng, and X. Pan, “A modified algorithm for
+ [3] X. Zhou, L. Guo, X. Li, Z. Wang, J. Zhu, and C. Wang, “Transient stability          the L/C-based switch model of power converters in real-time simulation
+     analysis of renewable power generations via VSC-HVDC,” IEEE Trans.                  based on FPGA,” IEEE Trans. Ind. Appl., vol. 60, no. 5, pp. 7030–7037,
+     Ind. Electron., vol. 72, no. 5, pp. 4889–4899, May 2025.                            Sep./Oct. 2024.
+ [4] W. Xu et al., “Modeling of inverter-based resources for power system           [26] Y. Hou, C. Liu, L. Zheng, S. Xin, and H. Cai, “Fixed-admittance mod-
+     harmonics studies,” IEEE Trans. Power Del., vol. 40, no. 1, pp. 166–177,            eling method of voltage source converter based on compensation of
+     Feb. 2025.                                                                          negative resistance,” Proc. Chin. Soc. Electronical Eng., vol. 42, no. 19,
+ [5] Y. Liu, Y. Gao, and J. Liang, “Simulation of switched-mode power con-               pp. 6985–6994, 2022.
+     version circuits with extended impedance method,” IEEE Trans. Circuits         [27] F. Zhang, W. Gu, Y. Zhang, L. Wang, and W. Li, “General linearized model
+     Syst. I: Reg. Papers, vol. 69, no. 9, pp. 3851–3860, Sep. 2022.                     of voltage source converter with fixed nodal admittance matrix,” IEEE
+ [6] B. K. Johnson, “Electromagnetic transient simulation: Moving to the                 Trans. Power Electron., vol. 39, no. 10, pp. 12143–12148, Oct. 2024.
+     mainstream [technology leader],” IEEE Electrific. Mag., vol. 11, no. 4,        [28] K. Wang, J. Xu, G. Li, N. Tai, A. Tong, and J. Hou, “A generalized asso-
+     pp. 6–7, Dec. 2023.                                                                 ciated discrete circuit model of power converters in real-time simulation,”
+ [7] X. Fu, W. Wu, P. Li, J. Mahseredjian, J. Wu, and C. Wang, “Splitting state-         IEEE Trans. Power Electron., vol. 34, no. 3, pp. 2220–2233, Mar. 2019.
+     space method for converter-integrated power systems EMT simulations,”          [29] Y. Cao, W. Gu, W. Liu, G. Cao, G. Lou, and D. Zou, “A parameterized
+     IEEE Trans. Power Del., vol. 40, no. 1, pp. 584–595, Feb. 2025.                     fixed-admittance model of converters based on cross initialization,” Proc.
+ [8] J. D. Lara, R. Henriquez-Auba, D. Ramasubramanian, S. Dhople,                       Chin. Soc. Electronical Eng., vol. 41, no. 10, pp. 3518–3527, 2021.
+     D. S. Callaway, and S. Sanders, “Revisiting power systems time-domain          [30] H. W. Dommel, “Electromagnetic transients in single- and multiphase
+     simulation methods and models,” IEEE Trans. Power Syst., vol. 39, no. 2,            networks,” IEEE Trans. Power App. Syst., vol. PAS-88, no. 4, pp. 388–399,
+     pp. 2421–2437, Mar. 2024.                                                           1969.
+ [9] B. Shi, Y. Chen, K. Chen, J. Ju, Z. Yu, and Z. Zhao, “Event-driven approach    [31] P. Wu, J. Xu, K. Wang, Z. Li, and G. Li, “A fractional time-step simulation
+     with time-scale hierarchical automaton for switching transient simulation           method suitable for the associated discrete circuit model of power elec-
+     of SiC-based high-frequency converter,” IEEE Trans. Circuits Syst. I: Reg.          tronic system,” IET Renewable Power Gener., vol. 17, no. 1, pp. 176–185,
+     Papers, vol. 68, no. 11, pp. 4746–4759, Nov. 2021.                                  2023.
+[10] X. Ma and X. -P. Zhang, “Basics of electromagnetic transients: Underlying      [32] OPAL-RT, “How to tune discrete-time switch conductance - eHS
+     mathematics,” IEEE Electrific. Mag., vol. 11, no. 4, pp. 8–19, Dec. 2023.           FPGA-based Power Electronics Toolbox - OPAL-RT,” OPAL-RT Wiki,
+[11] J. Xu et al., “High-speed electromagnetic transient (EMT) equivalent                2023. Accessed: May 22, 2025. [Online]. Available: https://opal-
+     modelling of power electronic transformers,” IEEE Trans. Power Del.,                rt.atlassian.net/wiki/spaces/PFPET/pages/310870375/How+to+tune+
+     vol. 36, no. 2, pp. 975–986, Apr. 2021.                                             discrete-time+switch+conductance
+[12] P. Kuffel, K. Kent, and G. Irwin, “The implementation and effectiveness of
+     linear interpolation within digital simulation,” Int. J. Elect. Power Energy
+     Syst., vol. 19, no. 4, pp. 221–227, May 1997.
+[13] H. W. Dommel, “Digital computer solution of electromagnetic transients
+     in single-and multiphase networks,” IEEE Trans. Power App. Syst., vol.
+     PAS-88, no. 4, pp. 388–399, Apr. 1969.                                                                   Yang Cao (Graduate Student Member, IEEE) re-
+[14] S. Y. R. Hui and C. Christopoulos, “A discrete approach to the modeling                                  ceived the B.S. and M.S. degrees in electrical engi-
+     of power electronic switching networks,” IEEE Trans. Power Electron.,                                    neering in 2018 and 2021, respectively, from South-
+     vol. 5, no. 4, pp. 398–403, Oct. 1990.                                                                   east University, Nanjing, China, where he is cur-
+[15] P. Pejovic and D. Maksimovic, “A method for fast time-domain simulation                                  rently working toward the Ph.D. degree in electrical
+     of networks with switches,” IEEE Trans. Power Electron., vol. 9, no. 4,                                  engineering.
+     pp. 449–456, Jul. 1994.                                                                                    His research interests include modeling, control,
+[16] Z. Li et al., “Unified real-time simulation method for DC/DC conversion                                  and real-time simulation of power electronic systems.
+     systems consisting of cascaded dual-port submodules,” IEEE Trans. Ind.
+     Electron., vol. 70, no. 11, pp. 11368–11378, Nov. 2023.
+[17] C. Gao et al., “Portal analysis approach used for the efficient electro-
+     magnetic transient (EMT) simulation of power electronic systems,” IEEE                                   Xiaodong Yuan received the B.S. and M.S. degrees
+     Trans. Power Del., vol. 38, no. 6, pp. 4213–4225, Dec. 2023.                                             in electrical engineering from Southeast University,
+[18] F. Zhang, Z. Zhou, W. Gu, and D. Jia, “General modeling method of voltage                                Nanjing, China, in 2001 and 2005, respectively.
+     source converter for electromagnetic transient simulation based on state                                    His research focuses on power system simulation
+     space equation and switching function,” Automat. Electric Power Syst.,                                   and analysis.
+     vol. 47, no. 23, pp. 84–91, 2023.
+[19] M. Xu, W. Gu, Y. Cao, S. Chen, F. Zhang, and W. Liu, “Low-dimensional
+     equivalent models and multithreading-based parallel EMT simulation
+     method for multi-converter systems,” IEEE Trans. Energy Convers.,
+     vol. 40, no. 1, pp. 437–452, Mar. 2025.
+[20] RTDS Technologies, “Universal converter model: Industry leading
+     real-time power electronic simulation,” RTDS Knowledge Center, 2025.
+     Accessed: Sep. 25, 2024. [Online]. Available: https://knowledge.rtds.                                    Huachun Han received the B.S. degree in electrical
+     com/hc/en-us/articles/4408515011223-Universal-Converter-Model-                                           engineering from Shandong University, Jinan, China,
+     Industry-Leading-Real-Time-Power-Electronic-Simulation                                                   in 2009 and the Ph.D. degree in power electronics
+[21] OPAL-RT, “eHS single switches capability - common internal documen-                                      and electric drives from the University of Chinese
+     tation - OPAL-RT,” OPAL-RT Wiki, 2024. Accessed: May 17, 2025.                                           Academy of Sciences, Beijing, China, in 2016.
+     [Online]. Available: https://opal-rt.atlassian.net/wiki/spaces/PINT/pages/                                  Her research focuses on power system simulation
+     1027866696/eHS+Single+Switches+Capability                                                                and modeling.
+[22] J. Xu, K. Wang, P. Wu, and G. Li, “FPGA-based sub-microsecond-level
+     real-time simulation for microgrids with a network-decoupled algorithm,”
+     IEEE Trans. Power Del., vol. 35, no. 2, pp. 987–998, Apr. 2020.
+
+
+
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 13:36:58 UTC from IEEE Xplore. Restrictions apply.
+3322                                                                           IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 40, NO. 6, DECEMBER 2025
+
+
+
+                      Mingwang Xu (Graduate Student Member, IEEE)                                          Wei Gu (Senior Member, IEEE) received the B.S.
+                      received the B.S. and M.S. degrees in power engi-                                    and Ph.D. degrees in electrical engineering from
+                      neering from North China Electric Power University,                                  Southeast University, Nanjing, China, in 2001 and
+                      Beijing, China, in 2019 and 2022, respectively. He is                                2006, respectively. From 2009 to 2010, he was a
+                      currently working toward the Ph.D. degree in electri-                                Visiting Scholar with the Department of Electrical
+                      cal engineering from Southeast University, Nanjing,                                  Engineering, Arizona State University, Tempe, AZ,
+                      China.                                                                               USA.
+                         His research interests include modeling and real-                                    He is currently a Professor with the School of
+                      time simulation of power electronic systems.                                         Electrical Engineering, Southeast University. He is
+                                                                                                           also the Director of the Institute of Distributed Gener-
+                                                                                                           ations and Active Distribution Networks. His research
+                                                                               interests include distributed generations and microgrids, and integrated energy
+                                                                               systems.
+
+
+
+                      Fei Zhang (Member, IEEE) received the B.S. and
+                      M.S. degrees in electrical engineering from Tsinghua
+                      University, Beijing, China, in 2009 and 2012, respec-
+                      tively, and the Ph.D. degree in electrical engineering
+                      from McGill University, Montreal, Canada, in 2018.
+                      From 2018 to 2020, he was a Specialist in modeling
+                      and electrical simulation with Opal-RT Technologies,
+                      Montreal, QC, Canada. Since 2020, he has been an
+                      Associate Professor with the School of Electrical
+                      Engineering, Southeast University, Nanjing, China.
+                         His research interests include HVDC converters,
+                      high power electronics, and real-time simulation.
+
+
+
+
+       Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 13:36:58 UTC from IEEE Xplore. Restrictions apply.
+

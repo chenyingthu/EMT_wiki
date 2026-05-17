@@ -247,13 +247,7 @@ Parvari(2023)在PSCAD/EMTDC中实现了CIGRE B4-57标准系统,换流站采用FB
 - [[circulating-current-suppression]]: 桥臂环流抑制,与FBSM负电平能力配合
 
 ### 代表性来源
-- [[considering-dead-time-fbsm-state-space-averaging|潘可盈等 2024 - 考虑死区特性的全桥型MMC状态空间平均化建模方法]]
-- [[an-accelerated-detailed-equivalent-model-for-modular-multilevel-converters|Parvari 2023 - 加速MMC详细等效模型]]
-- [[modular-multilevel-converter-models|MMC Models 2013 - 四种MMC模型保真度分层]]
-- [[dynamic-averaged-and-simplified-models-for|Yu 2013 - MMC-HVDC六种模型系统性对比]]
-
-## 来源论文
-
-| 论文 | 年份 |
-|------|------|
-| [[combining-detailed-equivalent-model-with-switching-function-based-average-value-|Combining Detailed Equivalent Model With Switching-Function-]] | 2020 |
+- [[考虑死区特性的全桥型mmc状态空间平均化建模方法]] — 潘可盈等 2024，含死区特性的FBSM状态空间平均化建模（SDCM）和桥臂集中模型（BACM）；18种实际开关方式归并为3类建模工况；端口死区电压尖峰+2v_c
+- [[an-accelerated-detailed-equivalent-model-for-modular-multilevel-converters|Parvari 2023]] — FBSM加速DEM（欧拉前向恒定导纳矩阵）；2.73x加速比；CIGRE B4-57四端MMC-HVDC验证
+- [[modular-multilevel-converter-models|MMC Models 2013]] — 四种MMC模型保真度分层；FBSM vs HBSM拓扑对比；Model 1/3/4/5/6分类
+- [[dynamic-averaged-and-simplified-models-for|Yu 2013]] — MMC-HVDC六种模型系统性对比；AVM直流故障误差>300%；详细开关/DEM/AVM精度边界
