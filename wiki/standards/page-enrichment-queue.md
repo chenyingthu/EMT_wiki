@@ -25,7 +25,7 @@
 | 17 | protection-control-device.md | models | models/protection/protection-control-device.md | P0 | 999 | 3167 | 6 | 17 | completed |
 
 | 18 | parallel-computing.md | topics | topics/simulation/parallel-computing.md | P0 | 999 | 8343 | 78 | 15 | completed |
-| 19 | dynamic-phasor.md | topics | topics/modeling-methods/dynamic-phasor.md | P0 | 999 | 885 | 2 | 77 | pending |
+| 19 | dynamic-phasor.md | topics | topics/modeling-methods/dynamic-phasor.md | P0 | 999 | 4600 | 22 | 32 | completed |
 | 20 | microgrid-control.md | methods | methods/control/microgrid-control.md | P0 | 999 | 893 | 2 | 11 | pending |
 | 21 | detailed-switch-model.md | models | models/submodule/detailed-switch-model.md | P0 | 999 | 898 | 2 | 25 | pending |
 | 22 | gfm-inverter-model.md | models | models/converter/gfm-inverter-model.md | P0 | 999 | 919 | 10 | 14 | pending |
@@ -433,3 +433,4 @@
 - P1 需修复问题: 180 页
 - 总计返工: 414 页
 |||| 5 | 1 | 1 | 0 | enrich: reactive-compensation-device.md | 2026-05-17 |
+||| 1 | 1 | 1 | 1 | enrich: dynamic-phasor.md | 2026-05-17 |
