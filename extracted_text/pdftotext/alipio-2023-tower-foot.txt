@@ -1,0 +1,568 @@
+                                                               Electric Power Systems Research 223 (2023) 109584
+
+
+                                                                     Contents lists available at ScienceDirect
+
+
+                                                         Electric Power Systems Research
+                                                            journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Tower-foot grounding model for EMT programs based on transmission line
+theory and Marti’s model
+Rafael Alipio a, 1, *, Alberto De Conti b, Felipe Vasconcellos c, Fernando Moreira c, Naiara Duarte a,
+José Martí d
+a
+  Electromagnetic Compatibility Laboratory, Swiss Federal Institute of Technology in Lausanne (EPFL), 1015, Switzerland
+b
+  Department of Electrical Engineering, Federal University of Minas Gerais, Belo Horizonte, MG, Brazil
+c
+  Department of Electrical and Computer Engineering, Federal University of Bahia, Salvador, BA, Brazil
+d
+  Electrical and Computer Engineering Department, University of British Columbia, Vancouver, Canada
+
+
+
+
+A R T I C L E I N F O                                      A B S T R A C T
+
+Keywords:                                                  This paper proposes a tower-foot grounding system model compatible with EMT programs which might be useful
+Lightning transients                                       for the simulation of lightning transients in overhead lines. The proposed model is based on the solution of the
+Transmission lines                                         telegrapher’s equations and the application of the classical Marti’s transmission line model. The model is
+EMT programs
+                                                           implemented in the Alternative Transients Program (ATP) and validated considering a benchmark electromag­
+Grounding
+Transmission line theory
+                                                           netic model. Its accuracy is evaluated and shown both in terms of the simulated ground potential rise (GPR) and
+                                                           line overvoltages developed through the insulator strings due to lightning currents. Finally, the model accuracy is
+                                                           also demonstrated in terms of the line backflashover outage rate.
+
+
+
+
+1. Introduction                                                                                  time-domain simulator through a pole-residue representation [7,8]. This
+                                                                                                 second approach, however, is more laborious and time consuming. A
+    FOR most overhead power transmission lines (TLs), lightning is the                           third approach, which balances accuracy and computational effort, is
+primary cause of unscheduled interruptions [1]. The assessment of the                            the representation of the grounding electrodes as a buried transmission
+lightning performance of overhead TLs involves the calculation of the                            line. This approach, however, is generally used only for representing
+minimum lightning currents causing insulation flashover for strikes to                           simple arrangements such as single horizontal or vertical grounding
+phase conductors (shielding failure flashover) and to towers and shield                          electrodes [9,10]. In [11], a pi-equivalent circuit model was proposed to
+wires (backflashover) [2]. Although the tower-foot grounding system                              represent general grounding system arrangements of transmission lines,
+does not affect the occurrence of shielding failure flashover, it does                           based on an accurate circuit model and an optimization procedure to
+affect the backflashover by markedly changing the amplitude and                                  determine the pi-circuit parameters. Recently, the tower-foot grounding
+steepness of the resulting overvoltages across line insulators [3].                              modeling through a lumped resistance with the same value as the
+    Typically, the assessment of the lightning performance of trans­                             so-called grounding impulse impedance was also suggested [3].
+mission lines is carried out using time-domain transient simulators [4,                              In this paper, a tower-foot grounding model based on the solution of
+5]. Such platforms, however, do not have specific models for the                                 the telegrapher’s equations is proposed and implemented in the Alter­
+tower-foot grounding system. Thus, in most cases, the grounding system                           native Transients Program (ATP) using the classical Marti’s transmission
+is normally modeled simply as a lumped resistance. This approach dis­                            line model [12]. The accuracy of the proposed model is evaluated using
+regards the frequency-dependent behavior of grounding input imped­                               an electromagnetic model as a benchmark. The obtained results serve as
+ance which might be important in lightning transients [6]. An                                    a basis for implementing an electrical grounding component in
+alternative and more accurate approach is the determination of the                               time-domain simulators which might benefit the industry, allowing
+frequency-dependent response of the tower-foot grounding externally                              more accurate simulations of lightning overvoltages in overhead TLs.
+using an electromagnetic field approach and then including it in the                             Thus, the main novelty of this paper consists in the use of a stable model
+
+
+
+    * Corresponding author.
+      E-mail address: rafael.alipio@cefetmg.br (R. Alipio).
+    1
+      on leave from the Federal Center of Technological Education of Minas Gerais, Belo Horizonte, MG, Brazil.
+
+https://doi.org/10.1016/j.epsr.2023.109584
+Received 11 December 2022; Received in revised form 17 February 2023; Accepted 21 June 2023
+Available online 6 July 2023
+0378-7796/© 2023 Elsevier B.V. All rights reserved.
+R. Alipio et al.                                                                                                     Electric Power Systems Research 223 (2023) 109584
+
+
+                                                                                     2. Case study
+
+                                                                                         In the developments of this work, a case study corresponding to a
+                                                                                     typical 138-kV transmission line is considered. Fig. 1 shows the tower
+                                                                                     geometry, taken from [8], which has one ACSR conductor per phase
+                                                                                     (LINNET) and one 3/8′’ EHS shield wire.
+                                                                                         In the analysis of the lightning performance of overhead TLs, the
+                                                                                     response to first return stroke currents associated with downward
+                                                                                     flashes is the most relevant aspect [5]. In the simulation results pre­
+                                                                                     sented in this paper, the current waveform shown in Fig. 2 is assumed.
+                                                                                     This waveform is modeled as the sum of Heidler’s functions, as detailed
+                                                                                     in [13], and closely reproduces the median parameters of downward
+                                                                                     negative first return strokes measured at Mount San Salvatore station
+                                                                                     [14], which is assumed as the international reference for
+                                                                                     lightning-related studies [15]. The first-stroke current is characterized
+                                                                                     by a peak value of 31 kA and a virtual front time (calculated as the time
+                                                                                     between 30% and 90% of its peak value, divided by 0.6) of 3.8 µs.
+
+                                                                                     3. Tower-foot grounding modeling using transmission line
+                                                                                     theory and Marti’s model
+
+                                                                                     3.1. Per-unit-length parameter calculation
+
+                                                                                         Fig. 3 shows the typical electrode arrangement of the transmission
+                                                                                     line tower grounding. It consists of four bare conductors, known as
+                                                                                     counterpoise wires, that are buried on a depth and are laid parallel to the
+               Fig. 1. Tower geometry of the tested 138-kV line [8].
+                                                                                     surface of the earth. The grounding electrodes start from the tower legs
+                                                                                     at a 45◦ angle. After reaching a length l 1 , they change their direction
+                                                                                     and become parallel to the right-of-way. The length l 2 of the counter­
+                                                                                     poise wires running parallel to each other is adjusted to maximize the
+                                                                                     effectiveness of the grounding system according to the soil resistivity
+                                                                                     value. This means that the total length l = l 1 + l 2 of each counterpoise
+                                                                                     wire is set such that the effective length of the grounding system is not
+                                                                                     exceeded.
+                                                                                         From a theoretical standpoint, the four counterpoise wires are elec­
+                                                                                     tromagnetically coupled and therefore a rigorous electromagnetic
+                                                                                     model should be used for their representation. However, a transmission
+                                                                                     line model may be adopted as long as some assumptions are made. First,
+                                                                                     the symmetry of the problem is taken into consideration and only the
+Fig. 2. Representative lightning current waveform of first strokes measured at       wires at one side of the tower are considered electromagnetically
+Mount San Salvatore [13,14].                                                         coupled. Second, each pair of wires is modeled using an equivalent
+                                                                                     uniform transmission line representation characterized by the following
+                                                                                     equations
+                                                                                     dV
+                                                                                        = − Zi − jωLI                                                             (1)
+                                                                                     dx
+
+                                                                                     dI
+                                                                                        = − (G + jωC)V                                                            (2)
+                                                                                     dx
+
+                                                                                     where V and I are voltage and current vectors of size 2 × 1, Zi and L are
+                                                                                     2 × 2 matrices respectively containing the internal impedance of the
+                          Fig. 3. Tower-foot grounding.                              conductors and the external inductance per unit length, G and C are 2 ×
+                                                                                     2 matrices respectively containing the shunt conductance and capaci­
+widely available in EMT-type platforms, namely the FDLine model or                   tance per unit length and ω is the angular frequency.
+Marti’s model, to simulate the transient response of grounding elec­                    Matrix G is the inverse of the shunt resistance matrix R, whose main-
+trodes together with other electrical system components.                             diagonal elements RS are identical. These elements are calculated using
+    This paper is organized as follows. In Section 2 the case study con­             the equation proposed by Sunde for determining the grounding resis­
+sisting of a 138-kV line is presented. The proposed model for the tower-             tance of a buried bare conductor parallel to the surface of the earth [16]
+foot grounding system, along with its implementation in ATP and vali­                          [ (         )   ]
+                                                                                           1        2l
+dation using a benchmark electromagnetic model, is presented in Sec­                 RS =       ln √̅̅̅̅̅̅̅ − 1                                             (3)
+                                                                                          πσ g       2hr
+tion 3. In Section 4 the proposed tower-foot grounding model is applied
+to assess the lightning performance of the studied transmission line.
+                                                                                     where σg is the ground conductivity, l is the total counterpoise length,
+Finally, Section 5 presents the main conclusions of the paper and makes
+                                                                                     h = 0.8 m is the burial depth, and r = 4.7625 mm is the counterpoise
+a summary of it.
+                                                                                     radius.
+                                                                                        The mutual shunt resistance corresponding to the off-diagonal ele­
+
+
+                                                                                 2
+R. Alipio et al.                                                                                                         Electric Power Systems Research 223 (2023) 109584
+
+
+Table 1
+Length of the counterpoise wires as a function of low-frequency ground
+resistivity.
+  ρg (Ωm)          250            500       1000          2500          5000
+
+  l (m)            15             25        40            55            80
+
+
+
+
+Fig. 4. Absolute value of the modal characteristic impedance Zc(ω) of the
+counterpoise wire model for soil resistivities of (a) 250 Ωm and (b) 2500 Ωm.
+Black solid lines: original curves; red dashed lines: fitted curves.
+
+
+
+
+                                                                                       Fig. 6. GPRs developed by the tower-foot grounding system in response to the
+                                                                                       injection of the current shown in Fig. 2 considering the proposed TL line model
+                                                                                       and the HEM model, and soil resistivities of (a) 250 Ωm, (b) 500 Ωm, (c) 1000
+                                                                                       Ωm, (d) 2500 Ωm, and (e) 5000 Ωm.
+Fig. 5. Absolute value of the modal propagation function A(ω) of the coun­
+terpoise wire model for soil resistivities of (a) 250 Ωm and (b) 2500 Ωm. Black
+solid lines: original curves; red dashed lines: fitted curves.                         Table 2
+                                                                                       Peak value of the GPR.
+ments of R is proposed here to be calculated as                                         ρ (Ωm)                        250       500        1000       2500        5000
+             [ (          )   ]                                                         Vp (kV) Marti’s TL model      212       288        390        691         906
+     e− γg d      2l
+RM =          ln √̅̅̅̅̅̅̅̅ − 1                                               (4)        Vp (kV) HEM model             223       293        387        688         911
+      πσg         2hd                                                                   |Δ| (%)                       4.9       1.7        0.8        0.4         0.5
+           √̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅
+where γg = jωμ0 (σ g + jωεg ) is the intrinsic propagation constant of the
+ground, in which εg is the ground permittivity and μ0 is the vacuum
+permeability, and d is given by
+
+
+
+                                                                                   3
+R. Alipio et al.                                                                                                      Electric Power Systems Research 223 (2023) 109584
+
+
+                                                                                          d1 l 1 + d2 l 2
+                                                                                     d=                                                                            (5)
+                                                                                                 l
+
+                                                                                     where d1 = (b +d)/2 is the average horizontal separation between the
+                                                                                     diagonally oriented parts of the grounding electrodes, d2 = d = 20 m is
+                                                                                     the total electrode separation, and 6 m is the tower base width. The
+                                                                                     exponential term is introduced in (4) to account for the propagation
+                                                                                     delay in the transversal direction. Once R is determined with (3) and (4),
+                                                                                     the shunt conductance and shunt capacitance matrices per unit length
+                                                                                     are simply calculated as G = R− 1 and C = (εg /σg )G [17].
+                                                                                         It is worth mentioning that expression (4) for calculating the mutual
+                                                                                     shunt resistance, except for the exponential term, has been shown to be a
+                                                                                     good approximation for calculating the mutual effects between parallel
+                                                                                     electrodes with geometry as illustrated in Fig. 3, based on comparisons
+                                                                                     with several other models available in the literature [18,19]. This
+                                                                                     expression is obtained from (3) by replacing the conductor radius by the
+                                                                                     distance between the electrodes and the depth by the average depth of
+                                                                                     the electrodes.
+                                                                                         The internal impedance Zi in (1) is a diagonal matrix that can be
+                                                                                     usually neglected in grounding impedance calculations. However, it was
+                                                                                     included for completeness considering the exact solution for the internal
+Fig. 7. (a) Pi-equivalent circuit model. (b) Grounding system composed of four       impedance of a solid cylindrical conductor [20]. Finally, the diagonal
+horizontal conductors made of strap iron (40 mm × 4 mm) buried at 0.8 m              elements of matrix L are calculated using [17,21]
+depth. In the proposed model, the length of the rods connected at the end were                 [ (       )    ]
+incorporated into the total length of the horizontal electrodes.                            μ       2l
+                                                                                     LS = 0 ln √̅̅̅̅̅̅̅ − 1                                                 (6)
+                                                                                           2π        2hr
+
+                                                                                     while the off-diagonal elements of L, following an approach that is
+                                                                                     similar to the one adopted to compute the mutual shunt resistance, are
+                                                                                     proposed here to be calculated as
+                                                                                              [ (        )   ]
+                                                                                           μ        2l 2
+                                                                                     LM = 0 ln √̅̅̅̅̅̅̅̅ − 1 e− γg d                                    (7)
+                                                                                           2π        2hd
+                                                                                         It must be noted that only the length l 2 related to the extension of
+                                                                                     the grounding electrodes that run parallel to each other is considered in
+                                                                                     (7). Moreover, the distance between the electrodes is that between the
+Fig. 8. Comparison between the simulated GPRs developed by the grounding             parallel section (d) and not the average horizontal separation (d). This is
+system shown in Fig. 7(b) in response to the current shown in Fig. 2, consid­        so because the non-parallel sections of the counterpoise wires are
+ering the proposed model and the pi-circuit model proposed in [11].                  orthogonal and therefore not magnetically coupled. As in (4), Eq. (7)
+                                                                                     includes an exponential term that accounts for the propagation delay in
+                                                                                     the transversal direction. Since Eqs. (3)–(7) assume a homogeneous
+                                                                                     ground, the ground conductivity in (3) and (4) should be viewed as an
+                                                                                     apparent value intended to represent a multilayer ground equivalently.
+
+
+
+
+Fig. 9. Schematic representation of the simulated system corresponding to a direct strike to the top of a tower flanked by adjacent towers (only two represented in
+the figure).
+
+                                                                                 4
+R. Alipio et al.                                                                                                                                          Electric Power Systems Research 223 (2023) 109584
+
+
+                                                                                                   For representing a multilayer ground structure in detail, Eqs. (3)–(7)
+                                                                                                   should be modified accordingly.
+                                                                                                       As discussed in [22], the transmission line approximation should be
+                                                                                                   valid for buried wires provided the ground-return currents are confined
+                                                                                                   in a region delimited by the wavelength in the ground. The following
+                                                                                                   approximate expression is proposed in the same reference to determine
+                                                                                                   the frequency limit, in Hz, below which the transmission line approxi­
+                                                                                                   mation should be valid
+
+                                                                                                                      μ0 σg πc2
+                                                                                                   fmax = √̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅
+                                                                                                                {                                 }                                                    (8)
+                                                                                                           εrg εrg + μ0 εg [2πc]2
+
+                                                                                                   where εrg is the ground relative permittivity and c is the speed of light.
+                                                                                                   Eq. (8) predicts an inverse relationship between the ground resistivity
+                                                                                                   ρg = 1/σ g and fmax . For example, for a constant ground resistivity of 250
+                                                                                                   Ωm and a ground relative permittivity of 10, this expression leads to
+                                                                                                   fmax = 22 MHz, which greatly exceeds the range of frequencies expected
+                                                                                                   to occur in lightning overvoltages. If the ground resistivity is increased
+                                                                                                   to 5000 Ωm, this frequency limit is reduced to 1.1 MHz, which still
+                                                                                                   covers the range of frequencies in which the bulk of the lightning energy
+                                                                                                   is confined. If a more realistic frequency-dependent soil model is used,
+                                                                                                   these limiting values will increase due to the reduction of the soil re­
+                                                                                                   sistivity with frequency. This indicates that (1) and (2) can be used to
+                                                                                                   model counterpoise wires with sufficient accuracy within the limits of
+                                                                                                   transmission line theory.
+
+                                                                                                   3.2. ATP modeling of the grounding electrodes
+
+                                                                                                        Since the matrices G, C, Zi , and L are symmetric and perfectly
+                                                                                                   balanced, a real and constant transformation matrix can be conveniently
+                                                                                                   used to diagonalize the transmission line Eqs. (1) and (2) and write them
+                                                                                                   in the modal domain in exact form. By defining I = T I Im and V = T V V m ,
+                                                                                                   where Im and V m are the modal-domain equivalents of I and V,
+                                                                                                   respectively, and observing that T tV = T −I 1 [23], the transformation
+                                                                                                   matrix T I can be simply written as
+                                                                                                               [     ]
+                                                                                                           1 1 1
+                                                                                                    T I = √̅̅̅                                                            (9)
+                                                                                                            2 1 − 1
+
+                                                                                                        After transformation to the modal domain, Eqs. (1) and (2) can be
+Fig. 10. Lightning overvoltages developed across the lower line insulator,                         accurately solved in the time domain using Marti’s transmission line
+considering the proposed TL line model and the HEM model, and soil re­                             model [12] implemented in ATP. However, there is no model in ATP to
+sistivities of (a) 250 Ωm, (b) 500 Ωm, (c) 1000 Ωm, (d) 2500 Ωm, and (e)                           calculate the per-unit-length parameters considering the equations
+5000 Ωm.
+                                                                                                   presented in the previous section. For this reason, the line parameters
+                                                                                                   were calculated in Matlab. The rational fitting of the characteristic
+                                                                                                   impedance and propagation function of each mode required in Marti’s
+Table 3
+Peak value of the overvoltages across the lower insulator.
+                                                                                                   model was also performed in Matlab. This was done using the vector
+                                                                                                   fitting technique [24] considering real poles only. The poles and resi­
+  ρ (Ωm)                            250         500        1000         2500         5000
+                                                                                                   dues obtained from the fitting as well as the transformation matrix T I
+  Vp (kV) Marti’s TL model          353         381        414          476          512           were written as a text file with the extension .pch and coupled with ATP
+  Vp (kV) HEM model                 356         382        411          470          498
+                                                                                                   following the approach described in detail in [25]. Using this approach,
+  |Δ| (%)                           0.8         0.3        0.7          1.3          2.8
+                                                                                                   each pair of counterpoise wires shown in Fig. 3 can be modeled in ATP as
+                                                                                                   a two-phase transmission line with Marti’s model.
+
+
+
+
+Table 4
+Estimated backflashover rates.
+  Number                 Percentual distribution of soils with different resistivity along the transmission line route (%)                                             BFR                       |Δ| (%)
+                   250       500         1000         2500         5000                                                                                 TL Marti’s model       HEM model
+
+  1                30        40           30          0           0                                                                                     0.62                   0.63              1.6
+  2                0         0            40          30          30                                                                                    2.03                   1.97              3.0
+  3                20        20           20          20          20                                                                                    1.47                   1.45              1.4
+  4                10        25           30          25          10                                                                                    1.36                   1.33              2.3
+
+
+                                                                                               5
+R. Alipio et al.                                                                                                   Electric Power Systems Research 223 (2023) 109584
+
+
+3.3. Model validation                                                              estimation of the backflashover rate of the line, the deviations observed
+                                                                                   tend to reduce. This demonstrates the validity of the proposed coun­
+    To demonstrate the validity of the transmission line modeling of the           terpoise wire modeling approach using transmission line theory com­
+counterpoise wires using the approach proposed in this paper, simula­              bined with Marti’s model in ATP.
+tions were performed considering the realistic current waveform shown
+in Fig. 2. In the simulations, the sending ends of the four counterpoise           3.4. Comparison with the Gatta et al.’s model
+wires shown in Fig. 3 were connected to a single virtual node repre­
+senting the tower bottom. An ideal current source injected the lightning               To further assess the applicability and the accuracy of the proposed
+return-stroke current at this node and the resulting ground potential rise         model, the results it provides are compared with those obtained using a
+(GPR) was calculated. Five low-frequency values of ground resistivity              previous model available in literature. In [11], a pi-equivalent circuit, as
+were considered, namely 250, 500, 1000, 2500, and 5000 Ωm. In all                  shown in Fig. 7(a), is proposed to simulate the transient response of
+cases, the ground resistivity and permittivity were assumed to vary with           typical grounding configurations of Italian transmission lines. The pa­
+frequency according to the Alipio-Visacro model [26]. The total length             rameters of the pi-circuit are estimated by an optimization procedure,
+of each counterpoise wire was changed so that the effective length                 taking as reference a full circuit model. Considering the configuration
+corresponding to each ground resistivity was not exceeded. The                     shown in Fig. 7(b), and constant ground parameters with ρg = 1000 Ω
+considered values are listed in Table 1.                                           and εrg = 35, the following parameters were determined [11]: R1 =
+    Figs. 4 and 5 illustrate the absolute values of the modal characteristic       34.122 Ω, R2 = 43.266 Ω, C1 = 3.32 nF, C2 = 9.00 nF, R = 0, and L =
+impedance and the modal propagation function, respectively, associated             12.50 μH. The voltage-controlled current sources G1 and G2 accounts for
+with the counterpoise wires for ground resistivities of 250 Ωm and 2500            soil ionization and were not considered in this paper.
+Ωm. Also shown in the figures are the fitted curves obtained with the                  Fig. 8 compares the GPRs calculated with the proposed and the pi-
+vector fitting technique. These values were selected because they                  circuit models in response to the current waveform depicted in Fig. 2.
+demonstrate the overall behavior of both parameters for the conditions             In the case of the proposed model, two curves are presented, one
+indicated in Table 1.                                                              considering and the other disregarding the exponential term in (4). For
+    In general, a good agreement is observed in Figs. 4 and 5 between the          comparison purposes, the result obtained with the HEM reference model
+original and fitted curves. However, the fitting of the model parameters           is also included. In general, the obtained results are in good agreement.
+with real poles as required in the ATP implementation of Marti’s model             If the exponential term is considered a small difference of around 4%
+becomes increasingly difficult with increasing values of ground re­                between the peaks of the GPRs computed using the proposed and the pi-
+sistivity and frequency. For this reason, although the fitting for the 250-        circuit models is observed, although the former leads to better agree­
+Ωm and 500-Ωm soils could be performed up to 10 MHz, for ground                    ment with the HEM model. Along the tail, the models are nearly coin­
+resistivities equal to or greater than 1000 Ωm the fitting had to be               cident, which indicates that they basically lead to the same value of the
+limited to 1 MHz for best accuracy. Nevertheless, the performance of the           low-frequency grounding resistance.
+grounding models was not severely affected because most of the energy                  Finally, it should be noted that, although the model proposed here
+associated with the return stroke current of Fig. 2 (and most lightning            has been applied to evaluate the typical grounding configuration of TL
+currents, in general) is well below 1 MHz.                                         towers illustrated in Fig. 3, it can be applied to other grounding ar­
+    Model passivity was checked by assuring that [27]                              rangements as long as they can be approximately represented by parallel
+    ((         )/ )〉                                                               conductors.
+ eig Y n + Y Hn 2 0 ∀s, s = jω                                         (10)
+                                                                                   4. Assessment of the lightning performance of the transmission
+where Y n is the nodal admittance matrix calculated from the fitted
+                                                                                   line
+propagation function and characteristic admittance of the line, and su­
+perscript ‘H’ corresponds to the Hermitian of a matrix. In all cases
+                                                                                       In order to further demonstrate the applicability and accuracy of the
+indicated in Table 1, the inequality in (10) was confirmed for fre­
+                                                                                   tower-foot grounding model, the lightning performance of the trans­
+quencies up to 10 MHz even if the model was accurately fitted up to 1
+                                                                                   mission line in terms of its outage rate is assessed in this Section. The
+MHz only. This was done to investigate the occurrence of out-of-band
+                                                                                   transmission system is modeled in ATP and the resulting lightning
+passivity violations. In none of the cases any passivity violation was
+                                                                                   overvoltages due to a direct strike to the tower are computed consid­
+identified.
+                                                                                   ering two grounding models, one based on the transmission line theory
+    Fig. 6 illustrates the GPRs calculated with the implemented
+                                                                                   as proposed in this paper and the other based on the rigorous repre­
+grounding models. Also included in the figure are voltage waveforms
+                                                                                   sentation provided by HEM. Finally, the estimated outage rates are
+calculated using the hybrid electromagnetic model (HEM) [28], which
+                                                                                   computed and compared.
+provides a rigorous solution to the problem by considering the electro­
+magnetic coupling of a system of arbitrarily oriented electrodes in the
+                                                                                   4.1. Modeling of transmission line components
+solution of the scalar potential and magnetic vector potential equations
+derived from Maxwell’s equations. As discussed in detail in [29], its
+                                                                                       As detailed in [8], the tower geometry depicted in Fig. 1 was divided
+acronym HEM reflects the hybrid electromagnetic-circuit approach of
+                                                                                   into four sections connected in cascade, each one modeled as a
+the model, since its formulation is based on EM theory to compute the
+                                                                                   single-phase distributed-parameter line. Each section is represented by
+coupling among grounding electrodes from a numerical implementation
+                                                                                   four vertical parallel conductors, and the equivalent surge impedance of
+of basic EM equations (including propagation effects) and its results are
+                                                                                   the associated single-phase line is computed applying the modified
+expressed in terms of circuital quantities such as voltages and currents. It
+                                                                                   Jordan’s formula [32]. The following surge impedances were obtained
+is noteworthy that the HEM model was extensively validated consid­
+                                                                                   for each section from the bottom to the top of the tower: Z1 = 121 Ω,
+ering experimental results of the impulse response of different
+                                                                                   Z2 = 171 Ω, Z3 = 223 Ω, and Z4 = 272 Ω.
+grounding configurations [30,31].
+                                                                                       The simulations assume direct lightning strikes to the top of a central
+    As seen in Fig. 6, the agreement between the waveforms calculated
+                                                                                   tower of the system and five spans at each side of the strike point are
+with the different methods is excellent in all cases. The most significant
+                                                                                   considered. Each span is represented as an untransposed line section
+deviations are observed for the 250 Ωm ground resistivity. However,
+                                                                                   with distributed/frequency-dependent parameters. Long lines are con­
+they do not exceed 5% in terms of the GPR peak, as shown in Table 2. For
+                                                                                   nected to the last towers of each side to avoid reflections that could
+the high-resistivity soil cases, which are more determinant for the
+                                                                                   affect the simulated overvoltages along the struck tower. Fig. 9 depicts a
+
+                                                                               6
+R. Alipio et al.                                                                                                      Electric Power Systems Research 223 (2023) 109584
+
+
+schematic representation of the simulated system.
+                                                                                                 N
+   The tower-foot grounding system is modeled in two different ways.                          1 ∑ ρ
+
+                                                                                      BFR =         BFRk × Nk                                                    (12)
+One is the model described in Section 3, which considers Sunde’s                              N k=1
+equations applied to bare buried conductors along with Marti’s line
+model (labeled henceforth as “Marti’s TL model”). The other model,                    where Nρ is the number of sections into which the line is divided with
+assumed as a benchmark, corresponds to the grounding system repre­                    representative resistivity ρk , Nk is the percentage of towers located in a
+sentation by its frequency-dependent input impedance computed using                   section with resistivity ρk , and N = N1 + N2 + ⋯ + Nk = 100. More
+the accurate electromagnetic model (labeled henceforth as “HEM                        details on the calculation of line outage rate can be found in standards
+model”) [28]. In this work, this impedance is calculated in a frequency               [1,5].
+range from 1 Hz to 10 MHz and incorporated in the ATP time-domain                         Table 4 presents the results of the expected backflashover rate,
+simulations through an equivalent circuit as detailed in [7,8,33].                    assuming four different possibilities of ground resistivity distributions
+                                                                                      along the line route and considering the two approaches for tower-foot
+                                                                                      grounding modeling. The results were obtained considering the Berger’s
+4.2. Simulated overvoltages                                                           cumulative peak current distribution [14,15] and a normalized ground
+                                                                                      flash density of 1 flash/km2/year. The parameter Δ in the table indicates
+    Fig. 10 shows the lightning overvoltages across the lower phase                   the absolute percentage differences between the results obtained
+insulator of the line, which is the critical phase, in response to a direct           considering the two tower-foot grounding models.
+strike at the tower top considering the median first stroke current of                    According to the results, a good agreement between the estimated
+Fig. 2. The lightning overvoltages were determined considering the two                backflashover rates, considering the two approaches for the tower-foot
+tower-foot grounding models investigated in this paper.                               grounding modeling, is observed. Notably, this good agreement is
+    The results indicate an excellent agreement between the simulated                 observed for all considered ground resistivity distributions which
+overvoltages considering the proposed grounding model based on                        describe different scenarios. For instance, distribution 1 comprises soils
+transmission line theory and the HEM model. As shown in Table 3, the                  of low and moderate resistivity, while in distribution 2 soils of high
+differences between the peak values (VP) of the simulated overvoltages                resistivity predominate. Distribution 3 describes a uniform ground re­
+using the two different approaches for the tower-foot grounding                       sistivity scenario and distribution 4 presents a symmetry of ground re­
+modeling are less than 3% and show a slight increase with increasing soil             sistivity values around 1000 Ωm.
+resistivity. This steams from the fact that the overvoltages across line
+insulators are markedly influenced by the tower-foot impedance,                       5. Conclusions
+notably by the reflection coefficient at the bottom of the tower given by
+Γ = (ZG − ZT )/(ZG + ZT ), where ZG is the tower-foot grounding                           This paper proposes a model for tower-foot grounding systems based
+impedance and ZT is the tower surge impedance. The relative sensitivity               on the application of transmission line theory and Marti’s model. The
+of the reflection coefficient, (∂Γ/Γ∂ZG ), increases with ZG ; thus, it is more       good accuracy of the proposed model is demonstrated using an elec­
+sensitive in case of high-resistivity soils, which are associated with                tromagnetic model as a benchmark. The model is implemented in ATP,
+higher values of tower-foot impedance. Thus, even small deviations                    allowing the simulation of lightning overvoltages using models already
+observed between the two grounding models for high-resistivity soils, as              available on this platform. It is shown that good results are obtained
+shown in Section 3.3, can lead to larger percentage differences between               both along the front and tail of the overvoltage waveforms. This suggests
+the simulated peak overvoltage values developed across the insulator                  that the proposed model can be conveniently used in general lightning
+strings. Anyway, the observed errors are quite small and are within the               transient studies without incurring in significant errors. Although a
+uncertainties present in the estimation of the lightning performance of               typical tower-foot grounding configuration composed of horizontal
+transmission lines.                                                                   counterpoise wires was taken as reference, similar conclusions could be
+    Finally, it is noteworthy that a good agreement between the simu­                 drawn for an arrangement composed of vertical rods, for instance. More
+lated overvoltages is observed not only along the front of the waveforms,             importantly, the proposed model is EMT-program compatible, and
+but also along their tails. This indicates that the proposed tower-foot               might support the implementation of an electrical grounding component
+grounding model may be also suitable for lightning studies involving                  in time-domain simulators. Finally, since voltages and currents are
+energy stress, such as the energy dissipated by surge arresters [34].                 readily available at both ends of the counterpoise wires, short grounding
+                                                                                      sections could be cascaded for determining current distributions
+                                                                                      required for calculating electromagnetic fields in the vicinity of the
+4.3. Backflashover rate of the line                                                   grounding electrodes, or for allowing multiple current injection points.
+
+    The main parameter that measures the TL performance is its outage                 CRediT authorship contribution statement
+rate per 100 km per year. To compute this rate, results similar to those
+shown in Fig. 10 were obtained by varying the peak current amplitude.                     Rafael Alipio: Conceptualization, Methodology, Software, Valida­
+For each peak current value, the integration method was applied to the                tion, Formal analysis, Writing – original draft, Visualization, Funding
+impinging overvoltages across the line insulators to check whether                    acquisition. Alberto De Conti: Conceptualization, Methodology,
+insulation breakdown will occur or not [35]. The peak value of the                    Formal analysis, Writing – review & editing, Funding acquisition. Felipe
+lightning current that causes insulation breakdown leading to line                    Vasconcellos: Conceptualization, Methodology, Formal analysis,
+outage is called critical current IC . Then, the line backflashover rate              Writing – review & editing. Fernando Moreira: Conceptualization,
+assuming a given value of ground resistivity is computed as                           Methodology, Formal analysis, Writing – review & editing. Naiara
+BFRk = 0.6 × NL × P(IP > ICk )                                            (11)        Duarte: Conceptualization, Methodology, Formal analysis, Writing –
+                                                                                      review & editing, Funding acquisition. José Martí: Conceptualization,
+where BFRk is the backflashover rate considering a ground resistivity ρk ,            Formal analysis, Writing – review & editing, Supervision.
+P(IP > ICk ) is the probability of the lightning peak current being greater
+than the minimum current that causes insulation breakdown, the factor                 Declaration of Competing Interest
+0.6 is used to disregard the effect of strokes along the span, and NL is the
+expected number of flashes to the line per 100 km per year. Finally, the                  The authors declare that they have no known competing financial
+global line backflashover rate is given by                                            interests or personal relationships that could have appeared to influence
+
+                                                                                  7
+R. Alipio et al.                                                                                                                      Electric Power Systems Research 223 (2023) 109584
+
+
+the work reported in this paper.                                                                [14] K. Berger, R.B. Anderson, H. Kroninger, Parameters of lightning flashes, Electra
+                                                                                                     (80) (1975) 223–237.
+                                                                                                [15] Working Group C4.407, CIGRE TB 549: Lightning parameters For Engineering
+Data availability                                                                                    Applications, CIGRE, Paris, 2013.
+                                                                                                [16] E.D. Sunde, Earth Conduction Effects in Transmission Systems, Dover Publications,
+    Data will be made available on request.                                                          New York, 1968.
+                                                                                                [17] L. Grcev, S. Grceva, On HF circuit models of horizontal grounding electrodes, IEEE
+                                                                                                     Trans. Electromagn. Compat. 51 (3) (2009) 873–875. Aug.
+                                                                                                [18] J. Osvaldo Saldanha Paulino, W. do C Boaventura, A. Barros Lima, Maurissone
+Acknowledgements                                                                                     Ferreira Guimaraes, Transient voltage response of ground electrodes in the time-
+                                                                                                     domain, in: 2012 International Conference on Lightning Protection (ICLP), 2012,
+                                                                                                     pp. 1–6. Sep.
+   This paper was supported by the National Council for Scientific and                          [19] C.E.F. Caetano, A.B. Lima, J.O.S. Paulino, W.C. Boaventura, E.N. Cardoso,
+Technological Development (CNPq) (306006/2019-7, 314849/2021-1                                       A conductor arrangement that overcomes the effective length issue in transmission
+                                                                                                     line grounding, Electr. Power Syst. Res. 159 (2018) 31–39. Jun.
+and 406177/2021-0) and by the State of Minas Gerais Research Foun­                              [20] S.A. Schelkunoff, The electromagnetic theory of coaxial transmission lines and
+dation (FAPEMIG) (TEC-PPM-00280-17 and APQ-01081-21).                                                cylindrical shields, Bell Syst. Tech. J. 13 (4) (1934) 532–579. Oct.
+                                                                                                [21] R. King, Antennas in material media near boundaries with application to
+                                                                                                     communication and geophysical exploration, part I: the bare metal dipole, IEEE
+References                                                                                           Trans. Antennas Propag. 34 (4) (1986) 483–489. Apr.
+                                                                                                [22] F. Rachidi, S. Tkachenko, Electromagnetic Field Interaction With Transmission
+ [1] IEEE Std 1243-1997, IEEE Guide for Improving the Lightning Performance of                       Lines – From Classical Theory to HF Radiation Effects, WIT Press, 2008.
+     Transmission Lines, 1997. New York.                                                        [23] L.M. Wedepohl, Application of matrix methods to the solution of travelling-wave
+ [2] Z.G. Datsios, P.N. Mikropoulos, T.E. Tsovilis, Closed-form expressions for the                  phenomena in polyphase systems, Proc. Inst. Electr. Eng. 110 (12) (1963) 2200.
+     estimation of the minimum backflashover current of overhead transmission lines,            [24] B. Gustavsen, A. Semlyen, Rational approximation of frequency domain responses
+     IEEE Trans. Power Deliv. 36 (2) (2021) 522–532.                                                 by vector fitting, IEEE Trans. Power Deliv. 14 (3) (1999) 1052–1061. Jul.
+ [3] S. Visacro, F.H. Silveira, Lightning performance of transmission lines: requirements       [25] A. De Conti, M.P.S. Emídio, Extension of a modal-domain transmission line model
+     of tower-footing electrodes consisting of long counterpoise wires, IEEE Trans.                  to include frequency-dependent ground parameters, Electr. Power Syst. Res. 138
+     Power Deliv. 31 (4) (2016) 1524–1532. Aug.                                                      (2016) 120–130. Sep.
+ [4] A. Ametani, T. Kawamura, A method of a lightning surge analysis recommended in             [26] R. Alipio, S. Visacro, Modeling the frequency dependence of electrical parameters
+     japan using EMTP, IEEE Trans. Power Deliv. 20 (2) (2005) 867–875. Apr.                          of soil, IEEE Trans. Electromagn. Compat. 56 (5) (2014) 1163–1171. Oct.
+ [5] Working Group C4.23, CIGRE TB 839: Procedures for Estimating the Lightning                 [27] B. Gustavsen, Passivity enforcement for transmission line models based on the
+     Performance of Transmission Lines – New Aspects, 2021. Paris.                                   method of characteristics, IEEE Trans. Power Deliv. 23 (4) (2008) 2286–2293. Oct.
+ [6] L. Grcev, Impulse efficiency of ground electrodes, IEEE Trans. Power Deliv. 24 (1)         [28] S. Visacro, A. Soares, HEM: a model for simulation of lightning-related engineering
+     (2009) 441–451. Jan.                                                                            problems, IEEE Trans. Power Deliv. 20 (2) (2005) 1206–1208. Apr.
+ [7] M.R. Alemi, K. Sheshyekani, Wide-band modeling of tower-footing grounding                  [29] Working Group C4.37, CIGRE TB 785: Electromagnetic Computation Methods For
+     systems for the evaluation of lightning performance of transmission lines, IEEE                 Lightning Surge Studies With Emphasis On the FDTD Method, 2019. Paris.
+     Trans. Electromagn. Compat. 57 (6) (2015) 1627–1636. Dec.                                  [30] S. Visacro, R. Alipio, C. Pereira, M. Guimaraes, M.A.O. Schroeder, Lightning
+ [8] R. Alipio, A. De Conti, N. Duarte, F. Rachidi, Influence of a lossy ground on the               response of grounding grids: simulated and experimental results, IEEE Trans.
+     lightning performance of overhead transmission lines, Electr. Power Syst. Res. 214              Electromagn. Compat. 57 (1) (2015) 121–127. Feb.
+     (2023), 108951. Jan.                                                                       [31] R. Alipio, D. Conceição, A. De Conti, K. Yamamoto, R.N. Dias, S. Visacro,
+ [9] Y. Liu, N. Theethayi, R. Thottappillil, An engineering model for transient analysis             A comprehensive analysis of the effect of frequency-dependent soil electrical
+     of grounding system under lightning strikes: nonuniform transmission-line                       parameters on the lightning response of wind-turbine grounding systems, Electr.
+     approach, IEEE Trans. Power Deliv. 20 (2) (2005) 722–730. Apr.                                  Power Syst. Res. 175 (2019), 105927. Oct.
+[10] L. Grcev, M. Popov, On high-frequency circuit equivalents of a vertical ground rod,        [32] A. De Conti, S. Visacro, A. Soares, M.A.O. Schroeder, Revision, extension, and
+     IEEE Trans. Power Deliv. 20 (2) (2005) 1598–1603. Apr.                                          validation of Jordan’s formula to calculate the surge impedance of vertical
+[11] F.M. Gatta, A. Geri, S. Lauria, M. Maccioni, Simplified HV tower grounding system               conductors, IEEE Trans. Electromagn. Compat. 48 (3) (2006) 530–536. Aug.
+     model for backflashover simulation, Electr. Power Syst. Res. 85 (2012) 16–23. Apr.         [33] B. Gustavsen, Computer code for rational approximation of frequency dependent
+[12] J. Marti, Accurate modelling of frequency-dependent transmission lines in                       admittance matrices, IEEE Trans. Power Deliv. 17 (4) (2002) 1093–1098. Oct.
+     electromagnetic transient simulations, IEEE Trans. Power Appar. Syst. PAS-101 (1)          [34] J.A. Martinez, F. Castro-Aranda, Lightning flashover rate of an overhead
+     (1982) 147–157. Jan.                                                                            transmission line protected by surge arresters, in: 2007 IEEE Power Engineering
+[13] A. De Conti, S. Visacro, Analytical representation of single- and double-peaked                 Society General Meeting, 2007, pp. 1–6. Jun.
+     lightning current waveforms, IEEE Trans. Electromagn. Compat. 49 (2) (2007)                [35] A.R. Hileman, Insulation Coordination for Power Systems, 1 Edition, CRC Press,
+     448–451. May.                                                                                   1999.
+
+
+
+
+                                                                                            8
+

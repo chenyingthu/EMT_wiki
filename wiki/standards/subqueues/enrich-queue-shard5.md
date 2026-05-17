@@ -36,7 +36,7 @@
 | 123 | frequency-response.md | methods | methods/stability-analysis/frequency-response.md | P0 | 999 | 3164 | 12 | 11 | completed |
 | 339 | gfl-inverter-model.md | models | models/converter/gfl-inverter-model.md | P1 | 999 | 4860 | 79 | 36 | completed |
 | 403 | grid-connected-inverter.md | models | models/converter/grid-connected-inverter.md | P1 | 999 | 2509 | 17 | 11 | completed |
-| 343 | grounding-lightning-overvoltage.md | topics | topics/protection-lightning/grounding-lightning-overvoltage.md | P1 | 999 | 1786 | 17 | 17 | pending |
+| 343 | grounding-lightning-overvoltage.md | topics | topics/protection-lightning/grounding-lightning-overvoltage.md | P1 | 999 | 3258 | 76 | 13 | completed |
 | 240 | haileselassie-2012-mtdc-control.md | methods | methods/system-studies/haileselassie-2012-mtdc-control.md | P1 | 999 | 11201 | 8 | 10 | pending |
 | 80 | harmonic-analysis-methods.md | methods | methods/signal-processing/harmonic-analysis-methods.md | P0 | 999 | 2132 | 17 | 62 | pending |
 | 219 | heterogeneous-computing.md | methods | methods/simulation-technology/heterogeneous-computing.md | P0 | 999 | 10303 | 7 | 9 | pending |
@@ -85,3 +85,4 @@
 | 83 | wideband-oscillation-stability.md | topics | topics/stability-analysis/wideband-oscillation-stability.md | P0 | 999 | 2187 | 11 | 15 | pending |
 
 
+|||| 411 | 1 | 1 | 0 | grounding-lightning-overvoltage.md enriched: bc 1657→3258, bf 17≥5 pass, removed DUP_BLOCK mermaid, added Alipio2023/Lima2026/Meyberg2026/DeAraujo2021 grounding models |
