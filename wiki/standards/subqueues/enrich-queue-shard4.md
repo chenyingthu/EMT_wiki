@@ -19,7 +19,8 @@
 | 316 | coordinate-transformation.md | methods | methods/control/coordinate-transformation.md | P1 | 999 | 2650 | 5 | 10 | completed |
 | 285 | current-injection.md | methods | methods/network-solution/current-injection.md | P1 | 999 | 3621 | 16 | 23 | completed |
 
-| 186 | dc-fault-blocking.md | topics | topics/hvdc-facts/dc-fault-blocking.md | P0 | 999 | 5526 | 11 | 19 | pending |
+| 186 | dc-fault-blocking.md | topics | topics/hvdc-facts/dc-fault-blocking.md | P0 | 999 | 5461 | 11 | 21 | completed |
+
 | 102 | dccb.md | methods | methods/power-electronics/dccb.md | P0 | 999 | 2695 | 7 | 12 | pending |
 | 297 | dfig-offshore-wind-farm.md | methods | methods/system-studies/dfig-offshore-wind-farm.md | P1 | 999 | 3237 | 12 | 4 | pending |
 | 402 | discrete-fourier-transform.md | methods | methods/signal-processing/discrete-fourier-transform.md | P1 | 999 | 909 | 7 | 22 | pending |
