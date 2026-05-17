@@ -27,7 +27,7 @@
 | 138 | distributed-control.md | methods | methods/control/distributed-control.md | P0 | 999 | 3641 | 25 | 11 | completed |
 | 93 | distribution-transformer.md | models | models/transformer/distribution-transformer.md | P0 | 999 | 2357 | 13 | 28 | completed |
 | 78 | dual-active-bridge.md | methods | methods/power-electronics/dual-active-bridge.md | P0 | 999 | 5134 | 16 | 12 | completed |
-| 353 | eigenvalue-analysis.md | methods | methods/stability-analysis/eigenvalue-analysis.md | P1 | 999 | 1605 | 7 | 18 | pending |
+| 353 | eigenvalue-analysis.md | methods | methods/stability-analysis/eigenvalue-analysis.md | P1 | 999 | 3873 | 97 | 19 | completed |
 | 345 | electromechanical-modeling.md | methods | methods/stability-analysis/electromechanical-modeling.md | P1 | 999 | 1773 | 4 | 14 | pending |
 | 197 | emt-simulation.md | topics | topics/simulation/emt-simulation.md | P0 | 999 | 5965 | 16 | 432 | pending |
 | 140 | energy-storage-converter-model.md | models | models/renewable-storage/energy-storage-converter-model.md | P0 | 999 | 3733 | 17 | 13 | pending |
