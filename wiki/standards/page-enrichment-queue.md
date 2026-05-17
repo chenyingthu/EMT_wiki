@@ -9,7 +9,7 @@
 | 1 | dfig-model.md | models | models/rotating-machine/dfig-model.md | P0 | 999 | 253 | 14 | 39 | completed |
 | 2 | gear-method.md | methods | methods/numerical-methods/gear-method.md | P0 | 999 | 350 | 4 | 7 | completed |
 | 3 | solid-state-transformer.md | models | models/transformer/solid-state-transformer.md | P0 | 999 | 421 | 4 | 15 | completed |
-| 4 | switching-model.md | models | models/converter/switching-model.md | P0 | 999 | 490 | 6 | 8 | pending |
+| 4 | switching-model.md | models | models/converter/switching-model.md | P0 | 999 | 490 | 6 | 8 | completed |
 | 5 | trapezoidal-rule.md | methods | methods/numerical-methods/trapezoidal-rule.md | P0 | 999 | 584 | 7 | 10 | pending |
 | 6 | transmission-network.md | topics | topics/tools-software/transmission-network.md | P0 | 999 | 602 | 1 | 24 | pending |
 | 7 | ferroresonance.md | topics | topics/component-modeling/ferroresonance.md | P0 | 999 | 605 | 6 | 15 | pending |
