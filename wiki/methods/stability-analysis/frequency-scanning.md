@@ -1,77 +1,92 @@
 ---
 title: "频率扫描法 (Frequency Scanning)"
 type: method
-tags: [frequency-scanning, harmonic-analysis, impedance-measurement, stability-analysis, resonance]
+tags: [frequency-scanning, harmonic-analysis, impedance-measurement, stability-analysis, resonance, small-signal, dq0-impedance]
 created: "2026-05-04"
+updated: "2026-05-17"
 ---
 
 # 频率扫描法 (Frequency Scanning)
 
+## 定义
 
-```mermaid
-graph TD
-    subgraph Ncmp[频率扫描法 (Frequency Scanning)]
-        N0[线性度: 小信号扰动]
-        N1[稳态: 各频点达到稳态]
-        N2[频率分辨率: $\Delta f < f_r/Q$]
-        N3[动态范围: 信噪比>40dB]
-    end
-```
+频率扫描法（Frequency Scanning）是一种通过向电力系统注入特定频率的小信号扰动，并测量系统响应以获取其频域阻抗/导纳特性的实验或仿真分析方法。该方法的核心原理是：在系统稳态运行点上叠加频率可控的试探信号，通过测量端口电压与电流的幅值和相位关系，直接计算得到系统的宽频阻抗/导纳矩阵。
 
+在 EMT 仿真环境中，频率扫描法通过在公共连接点（PCC）注入多频正弦扰动，利用离散傅里叶变换（DFT）提取各频率点下的阻抗响应。该方法可在不打开控制器黑盒的前提下，获取变流器或电网的宽频阻抗特性，广泛用于并网稳定性分析、谐振识别和阻尼评估。
 
-## 定义与边界
+## EMT中的角色
 
-频率扫描法是一种通过向系统注入特定频率的扰动信号并测量响应，从而获取系统频域特性（阻抗、导纳、传递函数）的实验或仿真分析方法。该方法通过遍历感兴趣的频段，绘制频响特性曲线，用于识别谐振点、评估稳定性裕度。
+频率扫描法在 EMT 建模与分析体系中承担以下关键角色：
 
-在电力系统分析中，频率扫描法主要应用于：
-- 电网阻抗频谱测量与建模
-- 电力电子设备宽频阻抗特性获取
-- 谐振频率识别与阻尼评估
-- 并网稳定性分析与裕度计算
+- **黑盒阻抗建模**：无需设备内部参数，基于端口测量建立宽频模型，特别适用于封装控制器或商业模型的等值
+- **谐振频率识别**：精确定位电网与电力电子设备交互产生的谐振点，评估阻尼特性
+- **稳定性裕度计算**：基于阻抗比的奈奎斯特或伯德图分析，预测系统的增益裕度和相位裕度
+- **EMT模型频域验证**：将 EMT 时域仿真结果与频域阻抗测量对比，验证模型的宽频精度
+- **临界短路比（CSCR）评估**：通过阻抗扫描特征值分析，预测IBR接入系统的临界短路比
 
-**边界限定**：本方法适用于线性时不变系统的频域特性获取，不适用于非线性系统的全工况特性描述。
+### 核心挑战
 
-## EMT中的作用
+1. **频率耦合效应**：电力电子装置在 abc 坐标系下存在正负序频率耦合，直接扫描得到的阻抗矩阵维度高且非对角元素显著
+2. **非线性饱和**：大扰动导致设备进入非线性区域，小信号阻抗模型失效
+3. **时变系统**：控制模式切换、温度漂移等导致阻抗随时变化
 
-频率扫描法解决了复杂系统频域特性难以理论建模的问题：
+## 频率扫描方法体系
 
-- **黑箱建模**：无需设备内部参数，基于端口测量建立宽频模型
-- **谐振识别**：精确定位电网与设备交互产生的谐振频率
-- **稳定性裕度**：基于阻抗比的奈奎斯特图或伯德图评估稳定性
-- **宽频验证**：验证电磁暂态模型的频域精度
+### 1. 单频点独立扫描
 
-## 主要分支与机制
+在每个频点独立注入单一频率正弦扰动，待系统达到稳态后测量响应：
 
-### 1. 单频点扫描
+$$Z(f_k) = \frac{V(f_k)}{I(f_k)}, \quad k = 1, 2, \ldots, N$$
 
-在每个频点独立注入正弦扰动，稳态后测量响应：
-$$Z(f_k) = \frac{V(f_k)}{I(f_k)}, \quad k = 1, 2, ..., N$$
+**特点**：精度高，每次测量相互独立，无频率间耦合干扰；**缺点**：耗时长，N个频点需要N次独立仿真。
 
-精度高但耗时，适用于关键频段精细分析。
+适用于关键频段的精细分析，或作为其他扫描方法的精度基准。
 
-### 2. 多频同时扫描
+### 2. 多频同时扫描（PRBS伪随机）
 
-注入包含多个频率分量的合成信号，通过FFT分解响应：
+注入包含多个频率分量的合成信号，通过 DFT 并行分解响应：
+
 $$i(t) = \sum_{k=1}^{N} I_k \sin(2\pi f_k t + \phi_k)$$
 
-效率高但可能存在频率间耦合干扰。
+或采用二进制伪随机序列（PRBS）激励，其自相关函数接近δ函数，频谱接近均匀分布：
 
-### 3. 线性调频扫描
+$$u_{PRBS}(t) = \sum_{k=0}^{N-1} a_k \cdot u(t - k\tau), \quad a_k \in \{-1, +1\}$$
 
-注入频率连续变化的啁啾信号(chirp)：
-$$f(t) = f_0 + \frac{f_1-f_0}{T}t$$
+**特点**：效率高，一次仿真获取多频响应；**缺点**：频率间互调干扰可能导致测量误差。
 
-兼顾效率与精度，适用于宽频带快速扫描。
+### 3. 线性调频扫描（Chirp）
+
+注入频率连续变化的啁啾信号：
+
+$$f(t) = f_0 + \frac{f_1 - f_0}{T}t$$
+
+**特点**：宽频带快速扫描，连续频谱无离散间隔；**缺点**：短时截断导致频谱泄漏，需加窗函数抑制旁瓣。
+
+### 4. dq0坐标系扫描
+
+为消除 abc 域频率耦合效应，在 dq0 旋转坐标系下进行扫描。通过 Park 变换将三相电压电流变换到 dq0 域：
+
+$$\begin{bmatrix} v_d \\ v_q \\ v_0 \end{bmatrix} = \frac{2}{3} \begin{bmatrix} \cos\theta & \cos(\theta-120^\circ) & \cos(\theta+120^\circ) \\ -\sin\theta & -\sin(\theta-120^\circ) & -\sin(\theta+120^\circ) \\ \frac{1}{2} & \frac{1}{2} & \frac{1}{2} \end{bmatrix} \begin{bmatrix} v_a \\ v_b \\ v_c \end{bmatrix}$$
+
+分别在 d 轴、q 轴、0 轴注入扰动，构建电压响应矩阵和电流响应矩阵，通过矩阵运算获取阻抗矩阵：
+
+$$Z_{MMC}^{dq0}(f) = V_{PCC}^{dq0}(f) \cdot [I_{MMC}^{dq0}(f)]^{-1}$$
+
+dq0 域扫描可使阻抗矩阵非对角元素（如 $Z_{d0}$、$Z_{q0}$）幅值极小，近似解耦为对角占优结构。
+
+### 5. 序列域频率扫描
+
+在正序/负序/零序坐标系下分别进行扫描，适用于不对称故障分析和多端直流系统：
+
+$$Z_{seq}(f) = \frac{\Delta V_{seq}(f)}{\Delta I_{seq}(f)}$$
 
 ## 形式化表达
 
 ### 基本测量原理
 
-在端口注入电流扰动 $\Delta I(f)$，测量电压响应 $\Delta V(f)$，阻抗为：
+在端口注入电流扰动 $\Delta I(f)$，测量电压响应 $\Delta V(f)$，阻抗定义为：
 
-$$
-Z(f) = \frac{\Delta V(f)}{\Delta I(f)} = |Z(f)|e^{j\varphi(f)}
-$$
+$$Z(f) = \frac{\Delta V(f)}{\Delta I(f)} = |Z(f)|e^{j\varphi(f)}$$
 
 其中：
 - $|Z(f)| = \frac{|\Delta V(f)|}{|\Delta I(f)|}$ 为阻抗幅值
@@ -79,112 +94,94 @@ $$
 
 ### 谐振识别
 
-谐振频率 $f_r$ 满足：
+谐振频率 $f_r$ 满足一阶导数为零、二阶导数小于零的条件：
 
-$$
-\frac{d|Z(f)|}{df}\bigg|_{f=f_r} = 0, \quad \frac{d^2|Z(f)|}{df^2}\bigg|_{f=f_r} < 0
-$$
+$$\left.\frac{d|Z(f)|}{df}\right|_{f=f_r} = 0, \quad \left.\frac{d^2|Z(f)|}{df^2}\right|_{f=f_r} < 0$$
 
-品质因数 $Q$ 与带宽 $\Delta f$ 关系：
+品质因数 $Q$ 与带宽 $\Delta f$ 的关系：
 
-$$
-Q = \frac{f_r}{\Delta f} = \frac{f_r}{f_2 - f_1}
-$$
+$$Q = \frac{f_r}{\Delta f} = \frac{f_r}{f_2 - f_1}$$
 
-其中 $f_1, f_2$ 为半功率点频率。
+其中 $f_1, f_2$ 为半功率点频率（对应 $|Z(f)| = |Z(f_r)|/\sqrt{2}$）。
+
+### 闭环系统传递函数
+
+基于扫描得到的 MMC 阻抗与电网导纳，构建闭环系统传递函数：
+
+$$\frac{\Delta V_{PCC}}{\Delta I_{Dis}} = \frac{Z_{MMC}}{1 + Z_{MMC} \cdot Y_{ac}}$$
+
+计算开环增益矩阵 $Z_{MMC} Y_{ac}$ 的特征值 $\lambda_i(f)$，将多输入多输出稳定性问题转为各特征值轨迹的增益/相位裕度判断。
 
 ### 稳定性裕度
 
-基于阻抗比 $T_m(f) = Z_{grid}(f)/Z_{device}(f)$ 的稳定性判据：
+基于阻抗比 $T_m(f) = Z_{grid}(f) / Z_{device}(f)$ 的稳定性判据：
 
-**幅值裕度** (Gain Margin):
+**幅值裕度**（Gain Margin）：
+
 $$GM = -20\log_{10}|T_m(f_{\pi})| \quad \text{[dB]}$$
 
-其中 $f_{\pi}$ 满足 $\angle T_m(f_{\pi}) = -180°$。
+其中 $f_{\pi}$ 满足 $\angle T_m(f_{\pi}) = -180^\circ$。
 
-**相位裕度** (Phase Margin):
-$$PM = 180° + \angle T_m(f_c) \quad \text{[°]}$$
+**相位裕度**（Phase Margin）：
 
-其中 $f_c$ 满足 $|T_m(f_c)| = 1$ ($0$ dB)。
+$$PM = 180^\circ + \angle T_m(f_c) \quad \text{[\circ]}$$
 
-## 适用边界与失败模式
+其中 $f_c$ 满足 $|T_m(f_c)| = 1$（0 dB）。
 
-### 适用条件
+### 临界短路比（CSCR）
 
-| 条件 | 要求 | 说明 |
-|------|------|------|
-| 线性度 | 小信号扰动 | 扰动幅值<5%额定值 |
-| 稳态 | 各频点达到稳态 | 需足够长的仿真时间 |
-| 频率分辨率 | $\Delta f < f_r/Q$ | 分辨谐振峰 |
-| 动态范围 | 信噪比>40dB | 保证测量精度 |
+通过伯德图中特征值相位穿越 $180^\circ$ 时的幅值反推临界短路比：
 
-### 失效边界
+$$CSCR = \frac{SCR_{initial}}{|\lambda|_{180^\circ}}$$
 
-- **非线性饱和**：大扰动导致设备非线性，小信号阻抗模型失效
-- **频率耦合**：多频同时扫描时各频率分量间产生互调干扰
-- **泄漏误差**：FFT分析时非整数周期截断导致频谱泄漏
-- **时变特性**：控制模式切换、温度变化导致阻抗时变
+当 $|\lambda|_{180^\circ} = 1$ 时，系统处于失稳边界。
 
-### 关键假设
+## 关键技术挑战
 
-1. 系统在测量时间窗口内近似时不变
-2. 扰动-响应关系近似线性
-3. 测量端口可充分激励目标模态
-4. 背景谐波与噪声可忽略或可被抑制
+### 挑战1：频率耦合效应
 
-## 代表性来源
+电力电子装置在 abc 坐标系下存在固有的频率耦合——注入某一频率的扰动会在其他频率产生响应（尤其在 dq 坐标变换后表现为阻抗矩阵非对角元素）。**解决方案**：采用 dq0 坐标系扫描，通过坐标变换消除频率耦合影响，使阻抗矩阵近似解耦。对于高度耦合系统，可采用 MIMO 阻抗矩阵测量方法（分别注入 d、q、0 轴扰动）。
 
-### 经典文献
+### 挑战2：频谱泄漏与频率分辨率
 
-- Rygg, A., et al., "A Modified Method for Evaluating the Impedance of Power Electronic Converters," *IEEE Trans. Power Electronics*, 2017. - 频率扫描测量方法改进
-- Wang, X., et al., "Resonance Analysis in Grid-Connected Converters," *IEEE Trans. Power Electronics*, 2015. - 基于频率扫描的谐振分析
-- Cespedes, M. and Sun, J., "Online Measurement of Impedance," *IEEE Trans. Power Electronics*, 2016. - 在线频率扫描技术
+Chirp 信号的短时截断和非整数周期采样会导致频谱泄漏，使谐振峰估值偏差。**解决方案**：加汉宁窗或汉明窗抑制旁瓣；选择足够长的观测窗口 $T_{obs} \gg 1/\Delta f$ 以提高频率分辨率。
 
-### 测量技术
+### 挑战3：非线性饱和与互调干扰
 
-- [[impedance-modeling]] - 阻抗建模理论
-- [[harmonic-analysis-methods]] - 谐波分析方法
-- [[small-signal-analysis]] - 小信号分析基础
-- FFT 频谱分析
+多频同时注入时，各频率分量间会产生互调干扰（Intermodulation），特别在大扰动幅值时更显著。**解决方案**：扰动幅值控制在额定值的 0.5% 以内保证线性度；采用 PRBS 代替多频叠加信号，利用其低互调特性。
 
-### 应用案例
+### 挑战4：时变系统阻抗跟踪
 
-- 并网逆变器阻抗测量
-- [[wind-farm-modeling]] - 风电场阻抗特性
-- [[pv-power-plant]] - 光伏电站频率扫描分析
+IBR 控制模式切换（如 LVRT）、温度变化和太阳辐照波动导致阻抗随时变化，单次扫描结果不能代表全工况。**解决方案**：研发实时/准实时阻抗跟踪算法，结合递推最小二乘法（RLS）或卡尔曼滤波在线更新阻抗模型。
 
-## 与相关页面的关系
+### 挑战5：大规模系统分布式扫描
 
-- [[impedance-modeling]] - 阻抗建模理论框架
-- [[vector-fitting]] - 扫描数据的参数化拟合
-- [[harmonic-analysis-methods]] - 谐波域分析
-- [[frequency-domain-analysis]] - 频域分析方法
-- [[emt-simulation-verification]] - EMT模型频域验证
+大规模多端直流系统中，集中在单一 PCC 端口的扫描无法覆盖全网模态。**解决方案**：基于区域分解的分布式并行频率扫描——各子区域独立注入扰动，通过接口等值模型拼接全局阻抗矩阵。
 
-## 开放问题
+## 量化性能边界
 
-- 如何抑制多频扫描中的互调干扰以提高效率
-- 时变系统（如光伏出力变化）的准稳态频率扫描方法
-- 基于宽频功率谱密度的快速阻抗辨识
-- 大规模系统的分布式并行频率扫描
+| 指标 | 典型数值 | 数据来源 |
+|------|---------|---------|
+| 电压源型 VSG 临界短路比（CSCR） | 3.7 | Jiang 2025（PSCAD/EMTDC+MMC 270MVA） |
+| 电压源型 VSG 失稳振荡频率 | 1.15 Hz | Jiang 2025（根轨迹法对比） |
+| 电流源型 VSG 稳定 SCR 上限 | ≥100（强网） | Jiang 2025 |
+| 频率扫描点数（多频注入） | 最多30点 | Jiang 2025 |
+| 扰动幅值（线性度要求） | <0.5%额定值 | Jiang 2025 |
+| 阻抗测量信噪比要求 | >40 dB | 工程经验 |
+| 频率分辨率要求 | $\Delta f < f_r/Q$ | 工程经验 |
 
-## 参考标准
+## 适用边界与选择指南
 
-- IEEE Std. 1453 - 电力系统谐波测量
-- IEC 61000-4-7 - 谐波和间谐波测量方法
-- CIGRE TB 768 - 电力电子设备阻抗测量导则
-
----
-
-*本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。如有更新或修正，请参考最新研究进展。*
+| 扫描方法 | 适用场景 | 优点 | 缺点 |
+|---------|---------|------|------|
+| 单频点扫描 | 关键频段精细分析、基准验证 | 精度高、无互调 | 耗时长 |
+| 多频同时扫描 | 宽频快速扫描、在线监测 | 效率高 | 频率耦合 |
+| Chirp 扫描 | 宽频带快速扫描 | 连续频谱 | 频谱泄漏 |
+| dq0 扫描 | 并网变流器阻抗提取 | 消除耦合 | 需坐标变换 |
+| 序列域扫描 | 不对称故障、多端DC系统 | 解耦正负序 | 设备复杂 |
 
 ## 来源论文
 
-| 论文 | 年份 |
-|------|------|
-| [[application-of-emtp-in-the-research-of-uhv-ac-power-transmission|Application of EMTP in the research of UHV AC power transmis]] | 2006 |
-| [[passivity-enforcement-of-wideband-line-model-through-coupled-perturbation-of-res|Passivity enforcement of wideband line model through coupled]] | 2020 |
-| [[an-improved-passivity-enforcement-algorithm-for-transmission-line-models-using-p|An improved passivity enforcement algorithm for transmission]] | 2021 |
-| [[comparison-of-dynamic-phasor-discrete-time-and-frequency-scanning-based-ssr-mode|Comparison of dynamic phasor, discrete-time and frequency sc]] | 2021 |
-| [[dq-admittance-model-extraction-for-ibrs-via-gaussian-pulse-excitation|DQ Admittance Model Extraction for IBRs via Gaussian Pulse E]] | 2023 |
-| [[comprehensive-formula-omitted-impedance-modeling-of-ac-power-electronics-based-p|Comprehensive [formula omitted] impedance modeling of AC pow]] | 2024 |
+- Jiang 等 - 2025 - An EMT based dynamic frequency scanning tool for stability analysis of inverter based systems（Electric Power Systems Research）
+- Dey 等 - 2021 - Comparison of dynamic phasor, discrete-time and frequency scanning based SSR models of a TCSC（IEEE TPWRD）
+- Meng 等 - 2023 - A new sequence domain EMT-level multi-input multi-output frequency scanning method for inverter base（IEEE TPEL）
