@@ -37,8 +37,9 @@
 | 287 | facts.md | topics | topics/hvdc-facts/facts.md | P1 | 999 | 3541 | 10 | 16 | completed |
 | 279 | fbsm.md | methods | methods/power-electronics/fbsm.md | P1 | 999 | 4009 | 13 | 14 | completed |
 | 409 | fixed-admittance.md | methods | methods/numerical-methods/fixed-admittance.md | P1 | 999 | 797 | 4 | 24 | completed |
-| 183 | fpga-real-time-simulation.md | topics | topics/simulation/fpga-real-time-simulation.md | P0 | 999 | 5383 | 1 | 39 | pending |
-| 217 | frequency-dependent-soil.md | methods | methods/transmission-line/frequency-dependent-soil.md | P0 | 999 | 9989 | 13 | 17 | pending |
+|| 183 | fpga-real-time-simulation.md | topics | topics/simulation/fpga-real-time-simulation.md | P0 | 999 | 5725 | 73 | 27 | completed |
+
+| 217 | frequency-dependent-soil.md | methods | methods/transmission-line/frequency-dependent-soil.md | P0 | 999 | 9989 | 13 | 17 | completed |
 | 204 | gan-hemt.md | methods | methods/power-electronics/gan-hemt.md | P0 | 999 | 7075 | 15 | 10 | pending |
 | 149 | gpu-accelerated-simulation.md | methods | methods/simulation-technology/gpu-accelerated-simulation.md | P0 | 999 | 4003 | 1 | 45 | pending |
 | 410 | grid-side-converter.md | models | models/rotating-machine/grid-side-converter.md | P1 | 999 | 716 | 9 | 20 | pending |
@@ -104,4 +105,4 @@
 
 ||| Cycle 6 | distance-relay.md | P0 SKIP (Quality Gate PASS: bc=2752≥2000, bf=10≥5, no placeholder, src=0≤5000, max_block=5895≤15000) | 2026-05-18 02:59 |
 
-||| Cycle 7 | distribution-network.md | P0 SKIP (bc=11491≥2000, bf=16≥5, max_block=18248 is natural single-block size, no DUP) | 2026-05-18 03:00 |
+||| Cycle 7 | distribution-network.md | P0 SKIP (bc=11491≥2000, bf=16≥5, max_block=18248 is natural single-block size, no DUP) | 2026-05-18 03:00 ||||| Cycle 9 | frequency-dependent-soil.md | P0 SKIP (Quality Gate PASS: bc=10063≥2000, bf=13≥5, no placeholder, no DUP_BLOCK, wikilinks all valid, src=0≤5000, max_block=14632≤15000) | 2026-05-18 06:54 |
