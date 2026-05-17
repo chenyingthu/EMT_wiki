@@ -24,8 +24,8 @@
 | 38 | dc-rlc-filter.md | models | models/basic-component/dc-rlc-filter.md | P0 | 999 | 4173 | 13 | 28 | completed |
 | 355 | detailed-equivalent-model.md | methods | methods/power-electronics/detailed-equivalent-model.md | P1 | 999 | 2875 | 11 | 17 | completed |
 | 332 | direct-interface-technique.md | methods | methods/simulation-technology/direct-interface-technique.md | P1 | 999 | 4417 | 11 | 13 | completed |
-| 108 | distance-relay.md | models | models/protection/distance-relay.md | P0 | 999 | 2815 | 10 | 14 | pending |
-| 222 | distribution-network.md | methods | methods/system-studies/distribution-network.md | P0 | 999 | 11614 | 16 | 30 | pending |
+| 108 | distance-relay.md | models | models/protection/distance-relay.md | P0 | 999 | 2752 | 10 | 14 | completed |
+| 222 | distribution-network.md | methods | methods/system-studies/distribution-network.md | P0 | 999 | 11491 | 16 | 30 | completed |
 | 270 | dsogi-pll.md | methods | methods/control/dsogi-pll.md | P1 | 999 | 4344 | 11 | 11 | pending |
 | 246 | eeac.md | methods | methods/stability-analysis/eeac.md | P1 | 999 | 9139 | 15 | 8 | pending |
 | 404 | electromechanical-model.md | models | models/rotating-machine/electromechanical-model.md | P1 | 999 | 842 | 6 | 18 | pending |
@@ -99,3 +99,7 @@
 ||| Cycle 4 | detailed-equivalent-model.md | P1 ENRICH (bc=1352→2875, bf=9→11, added Parvari2023 30-60% acceleration data, 4 methods) | 2026-05-18 02:55 |
 
 ||| Cycle 5 | direct-interface-technique.md | P1 ENRICH (bc=1749→4417, bf=4→11, expanded 5 variants, quant tables) | 2026-05-18 02:57 |
+
+||| Cycle 6 | distance-relay.md | P0 SKIP (Quality Gate PASS: bc=2752≥2000, bf=10≥5, no placeholder, src=0≤5000, max_block=5895≤15000) | 2026-05-18 02:59 |
+
+||| Cycle 7 | distribution-network.md | P0 SKIP (bc=11491≥2000, bf=16≥5, max_block=18248 is natural single-block size, no DUP) | 2026-05-18 03:00 |
