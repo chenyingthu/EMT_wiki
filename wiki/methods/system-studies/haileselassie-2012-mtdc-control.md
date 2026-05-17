@@ -5,7 +5,6 @@ tags: [haileselassie-2012-mtdc-control, mtdc-control, vsc-hvdc, droop-control, o
 created: "2026-05-04"
 updated: "2026-05-14"
 ---
-
 # Haileselassie 2012 MTDC 控制策略
 
 ## 定义
@@ -28,127 +27,39 @@ MTDC 系统的控制是 EMT 仿真中最复杂的环节之一，原因包括：
 Haileselassie 2012 提出的下垂控制框架为这些问题提供了基础解决方案，其核心思想是**用直流电压偏差作为功率分配信号**，使各站无需站间通信即可实现自治功率分配。
 
 <div style="text-align:center;margin:16px 0;">
-<svg viewBox="0 0 900 480" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <marker id="arrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
-      <polygon points="0 0, 8 3, 0 6" fill="#333"/>
-    </marker>
-    <marker id="arrow-red" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
-      <polygon points="0 0, 8 3, 0 6" fill="#dc2626"/>
-    </marker>
-    <filter id="shadow" x="-2%" y="-2%" width="104%" height="104%">
-      <feDropShadow dx="1" dy="1" stdDeviation="1" flood-color="#00000033"/>
-    </filter>
-  </defs>
-
-  <!-- Title -->
-  <text x="450" y="28" fill="#1a1a2e" font-size="16" font-weight="bold" text-anchor="middle" font-family="serif">MTDC 系统控制架构（下垂控制 + V/f 构网型控制）</text>
-
-  <!-- Layer 1: AC Systems (Input) -->
-  <rect x="80" y="55" width="120" height="45" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="2" filter="url(#shadow)"/>
-  <text x="140" y="73" fill="#1e3a5f" font-size="12" font-weight="bold" text-anchor="middle">交流系统 A</text>
-  <text x="140" y="88" fill="#4b6b8f" font-size="9" text-anchor="middle">Thevenin 等效</text>
-
-  <rect x="300" y="55" width="120" height="45" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="2" filter="url(#shadow)"/>
-  <text x="360" y="73" fill="#1e3a5f" font-size="12" font-weight="bold" text-anchor="middle">海上风电场</text>
-  <text x="360" y="88" fill="#4b6b8f" font-size="9" text-anchor="middle">DFIG / 全变流</text>
-
-  <rect x="520" y="55" width="120" height="45" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="2" filter="url(#shadow)"/>
-  <text x="580" y="73" fill="#1e3a5f" font-size="12" font-weight="bold" text-anchor="middle">交流系统 B</text>
-  <text x="580" y="88" fill="#4b6b8f" font-size="9" text-anchor="middle">孤岛 / 无源负荷</text>
-
-  <rect x="740" y="55" width="120" height="45" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="2" filter="url(#shadow)"/>
-  <text x="800" y="73" fill="#1e3a5f" font-size="12" font-weight="bold" text-anchor="middle">海上平台</text>
-  <text x="800" y="88" fill="#4b6b8f" font-size="9" text-anchor="middle">绿色电气化</text>
-
-  <!-- Arrows down to converters -->
-  <line x1="140" y1="100" x2="140" y2="135" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <line x1="360" y1="100" x2="360" y2="135" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <line x1="580" y1="100" x2="580" y2="135" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <line x1="800" y1="100" x2="800" y2="135" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)"/>
-
-  <!-- Layer 2: VSC Converters (Processing) -->
-  <rect x="80" y="135" width="120" height="50" rx="4" fill="#dcfce7" stroke="#16a34a" stroke-width="2" filter="url(#shadow)"/>
-  <text x="140" y="155" fill="#14532d" font-size="12" font-weight="bold" text-anchor="middle">VSC 换流站 1</text>
-  <text x="140" y="170" fill="#3a7a5a" font-size="9" text-anchor="middle">定电压控制</text>
-
-  <rect x="300" y="135" width="120" height="50" rx="4" fill="#dcfce7" stroke="#16a34a" stroke-width="2" filter="url(#shadow)"/>
-  <text x="360" y="155" fill="#14532d" font-size="12" font-weight="bold" text-anchor="middle">VSC 换流站 2</text>
-  <text x="360" y="170" fill="#3a7a5a" font-size="9" text-anchor="middle">V/f 构网 + 下垂</text>
-
-  <rect x="520" y="135" width="120" height="50" rx="4" fill="#dcfce7" stroke="#16a34a" stroke-width="2" filter="url(#shadow)"/>
-  <text x="580" y="155" fill="#14532d" font-size="12" font-weight="bold" text-anchor="middle">VSC 换流站 3</text>
-  <text x="580" y="170" fill="#3a7a5a" font-size="9" text-anchor="middle">定功率控制</text>
-
-  <rect x="740" y="135" width="120" height="50" rx="4" fill="#dcfce7" stroke="#16a34a" stroke-width="2" filter="url(#shadow)"/>
-  <text x="800" y="155" fill="#14532d" font-size="12" font-weight="bold" text-anchor="middle">VSC 换流站 4</text>
-  <text x="800" y="170" fill="#3a7a5a" font-size="9" text-anchor="middle">V/f 构网 + 下垂</text>
-
-  <!-- Arrows down to DC network -->
-  <line x1="140" y1="185" x2="140" y2="225" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <line x1="360" y1="185" x2="360" y2="225" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <line x1="580" y1="185" x2="580" y2="225" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <line x1="800" y1="185" x2="800" y2="225" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)"/>
-
-  <!-- Layer 3: DC Network -->
-  <rect x="200" y="225" width="500" height="55" rx="4" fill="#fef3c7" stroke="#d97706" stroke-width="2" filter="url(#shadow)"/>
-  <text x="450" y="247" fill="#78350f" font-size="14" font-weight="bold" text-anchor="middle">直流互联网络（DC Grid）</text>
-  <text x="450" y="265" fill="#a16207" font-size="10" text-anchor="middle">$P_i^* = P_{i0} + k_{di}(V_{dc,0} - V_{dc,i})$ · 下垂控制功率分配</text>
-
-  <!-- Layer 4: Control Strategies -->
-  <rect x="40" y="310" width="180" height="55" rx="4" fill="#ede9fe" stroke="#7c3aed" stroke-width="2" filter="url(#shadow)"/>
-  <text x="130" y="330" fill="#3b0764" font-size="12" font-weight="bold" text-anchor="middle">直流电压下垂控制</text>
-  <text x="130" y="348" fill="#6b21a8" font-size="9" text-anchor="middle">$P_i^*=P_{i0}+k_{di}(V_{dc,0}-V_{dc,i})$</text>
-
-  <rect x="260" y="310" width="180" height="55" rx="4" fill="#ede9fe" stroke="#7c3aed" stroke-width="2" filter="url(#shadow)"/>
-  <text x="350" y="330" fill="#3b0764" font-size="12" font-weight="bold" text-anchor="middle">V/f 构网型控制</text>
-  <text x="350" y="348" fill="#6b21a8" font-size="9" text-anchor="middle">$E_d^{ref}=K_{pv}\\Delta V_{ac}+K_{iv}\\int\\Delta V_{ac}dt$</text>
-
-  <rect x="480" y="310" width="180" height="55" rx="4" fill="#ede9fe" stroke="#7c3aed" stroke-width="2" filter="url(#shadow)"/>
-  <text x="570" y="330" fill="#3b0764" font-size="12" font-weight="bold" text-anchor="middle">定电压 / 定功率控制</text>
-  <text x="570" y="348" fill="#6b21a8" font-size="9" text-anchor="middle">PI 外环 + d/q 内环解耦</text>
-
-  <rect x="700" y="310" width="180" height="55" rx="4" fill="#ede9fe" stroke="#7c3aed" stroke-width="2" filter="url(#shadow)"/>
-  <text x="790" y="330" fill="#3b0764" font-size="12" font-weight="bold" text-anchor="middle">运行模式切换</text>
-  <text x="790" y="348" fill="#6b21a8" font-size="9" text-anchor="middle">定功率 → 下垂（电压越限）</text>
-
-  <!-- Arrows from DC network to control strategies -->
-  <line x1="140" y1="280" x2="140" y2="308" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <line x1="360" y1="280" x2="360" y2="308" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <line x1="580" y1="280" x2="580" y2="308" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <line x1="800" y1="280" x2="800" y2="308" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)"/>
-
-  <!-- Horizontal interconnections between converters (DC voltage coupling) -->
-  <line x1="200" y1="160" x2="298" y2="160" stroke="#333" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrow)"/>
-  <line x1="420" y1="160" x2="518" y2="160" stroke="#333" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrow)"/>
-  <line x1="640" y1="160" x2="738" y2="160" stroke="#333" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrow)"/>
-  <text x="249" y="155" fill="#555" font-size="8" text-anchor="middle">直流电压耦合</text>
-  <text x="469" y="155" fill="#555" font-size="8" text-anchor="middle">直流电压耦合</text>
-  <text x="689" y="155" fill="#555" font-size="8" text-anchor="middle">直流电压耦合</text>
-
-  <!-- Fault path (red dashed) -->
-  <rect x="680" y="390" width="200" height="45" rx="4" fill="#fee2e2" stroke="#dc2626" stroke-width="2" filter="url(#shadow)"/>
-  <text x="780" y="408" fill="#7f1d1d" font-size="11" font-weight="bold" text-anchor="middle">直流故障 → DCCB 动作</text>
-  <text x="780" y="423" fill="#b91c1c" font-size="9" text-anchor="middle">换流站闭锁 / 模式切换</text>
-  <line x1="800" y1="365" x2="800" y2="388" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrow-red)"/>
-
-  <!-- Legend -->
-  <text x="40" y="410" fill="#333" font-size="11" font-weight="bold">图例</text>
-  <rect x="40" y="418" width="14" height="10" rx="2" fill="#dbeafe" stroke="#2563eb" stroke-width="1"/>
-  <text x="60" y="427" fill="#555" font-size="9">输入/源</text>
-  <rect x="120" y="418" width="14" height="10" rx="2" fill="#dcfce7" stroke="#16a34a" stroke-width="1"/>
-  <text x="140" y="427" fill="#555" font-size="9">换流器</text>
-  <rect x="200" y="418" width="14" height="10" rx="2" fill="#fef3c7" stroke="#d97706" stroke-width="1"/>
-  <text x="220" y="427" fill="#555" font-size="9">直流网络</text>
-  <rect x="300" y="418" width="14" height="10" rx="2" fill="#ede9fe" stroke="#7c3aed" stroke-width="1"/>
-  <text x="320" y="427" fill="#555" font-size="9">控制策略</text>
-  <rect x="400" y="418" width="14" height="10" rx="2" fill="#fee2e2" stroke="#dc2626" stroke-width="1"/>
-  <text x="420" y="427" fill="#555" font-size="9">故障</text>
-  <line x1="480" y1="423" x2="496" y2="423" stroke="#333" stroke-width="1"/>
-  <text x="502" y="427" fill="#555" font-size="9">实线=信号</text>
-  <line x1="570" y1="423" x2="586" y2="423" stroke="#333" stroke-width="1" stroke-dasharray="3,3"/>
-  <text x="592" y="427" fill="#555" font-size="9">虚线=耦合</text>
-</svg>
+<div style="text-align:center;margin:16px 0;">
+<table border="1" cellpadding="8" cellspacing="0" style="border-collapse:collapse;margin:auto;font-size:13px;">
+<tr style="background:#dbeafe;">
+  <td colspan="4"><b>输入层：交流系统</b></td>
+</tr>
+<tr style="background:#dbeafe;">
+  <td>交流系统A<br/><span style="font-size:11px;color:#555;">Thevenin等效</span></td>
+  <td>海上风电场<br/><span style="font-size:11px;color:#555;">DFIG/全变流</span></td>
+  <td>交流系统B<br/><span style="font-size:11px;color:#555;">孤岛/无源负荷</span></td>
+  <td>海上平台<br/><span style="font-size:11px;color:#555;">绿色电气化</span></td>
+</tr>
+<tr style="background:#dcfce7;">
+  <td>VSC换流站1<br/><span style="font-size:11px;color:#555;">定电压控制</span></td>
+  <td>VSC换流站2<br/><span style="font-size:11px;color:#555;">V/f构网+下垂</span></td>
+  <td>VSC换流站3<br/><span style="font-size:11px;color:#555;">定功率控制</span></td>
+  <td>VSC换流站4<br/><span style="font-size:11px;color:#555;">V/f构网+下垂</span></td>
+</tr>
+<tr style="background:#fef3c7;">
+  <td colspan="4"><b>直流互联网络（DC Grid）</b><br/>
+    $P_i^* = P_{i0} + k_{di}(V_{dc,0} - V_{dc,i})$ · 下垂控制功率分配</td>
+</tr>
+<tr style="background:#ede9fe;">
+  <td>直流电压下垂控制<br/><span style="font-size:11px;">$P_i^*=P_{i0}+k_{di}(V_{dc,0}-V_{dc,i})$</span></td>
+  <td>V/f构网型控制<br/><span style="font-size:11px;">$E_d^{ref}=K_{pv}\Delta V_{ac}+K_{iv}\int\Delta V_{ac}dt$</span></td>
+  <td>定电压/定功率控制<br/><span style="font-size:11px;">PI外环+d/q内环解耦</span></td>
+  <td>运行模式切换<br/><span style="font-size:11px;">定功率→下垂（电压越限）</span></td>
+</tr>
+<tr style="background:#fee2e2;">
+  <td colspan="4"><b>直流故障 → DCCB动作</b> · 换流站闭锁/模式切换</td>
+</tr>
+</table>
+</div>
+<p style="text-align:center;font-size:12px;color:#666;margin-top:8px;">图1 · MTDC系统控制架构：交流输入→VSC换流站→直流网络→控制策略分层</p>
 </div>
 <p style="text-align:center;font-size:12px;color:#666;margin-top:8px;">图1 · MTDC 系统控制架构：交流输入 → VSC 换流站 → 直流网络 → 控制策略分层</p>
 
