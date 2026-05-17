@@ -16,10 +16,10 @@
 | 263 | companion-model.md | methods | methods/numerical-methods/companion-model
 | 323 | control-system.md | methods | methods/control/control-system.md | P1 | 9
 | 266 | corona-effect-modeling.md | methods | methods/transmission-line/corona-effect-modeling.md | P1 | 999 | 4680 | 29 | 15 | completed |
-| 216 | current-trajectory-similarity.md | methods | methods/system-studies/current-trajectory-similarity.md | P0 | 999 | 9880 | 10 | 10 | pending |
-| 132 | dc-fcl.md | methods | methods/power-electronics/dc-fcl.md | P0 | 999 | 3489 | 6 | 13 | pending |
-| 284 | declarative-modeling.md | methods | methods/simulation-technology/declarative-modeling.md | P1 | 999 | 3630 | 16 | 16 | pending |
-| 152 | digital-distance-protection.md | methods | methods/protection-fault/digital-distance-protection.md | P0 | 999 | 4089 | 23 | 15 | pending |
+| 216 | current-trajectory-similarity.md | methods | methods/system-studies/current-trajectory-similarity.md | P0 | 999 | 9880 | 10 | 10 | completed |
+| 132 | dc-fcl.md | methods | methods/power-electronics/dc-fcl.md | P0 | 999 | 3489 | 6 | 13 | completed |
+| 284 | declarative-modeling.md | methods | methods/simulation-technology/declarative-modeling.md | P1 | 999 | 3630 | 16 | 16 | completed |
+| 152 | digital-distance-protection.md | methods | methods/protection-fault/digital-distance-protection.md | P0 | 999 | 4089 | 23 | 15 | completed |
 | 124 | discretization-methods.md | methods | methods/numerical-methods/discretization-methods.md | P0 | 999 | 3219 | 8 | 11 | pending |
 | 131 | distributed-generation.md | topics | topics/renewable-storage/distributed-generation.md | P0 | 999 | 3454 | 31 | 15 | pending |
 | 298 | dq-transformation.md | methods | methods/control/dq-transformation.md | P1 | 999 | 3231 | 6 | 8 | pending |
