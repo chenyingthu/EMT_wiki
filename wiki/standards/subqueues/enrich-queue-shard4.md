@@ -17,7 +17,8 @@
 | 303 | commutation-failure.md | methods | methods/power-electronics/commutation-failure.md | P1 | 999 | 3043 | 6 | 11 | completed |
 | 302 | concurrent-commutation-failure.md | methods | methods/power-electronics/concurrent-commutation-failure.md | P1 | 999 | 3109 | 9 | 15 | completed |
 | 316 | coordinate-transformation.md | methods | methods/control/coordinate-transformation.md | P1 | 999 | 2650 | 5 | 10 | completed |
-| 285 | current-injection.md | methods | methods/network-solution/current-injection.md | P1 | 999 | 3621 | 16 | 13 | pending |
+| 285 | current-injection.md | methods | methods/network-solution/current-injection.md | P1 | 999 | 3621 | 16 | 23 | completed |
+
 | 186 | dc-fault-blocking.md | topics | topics/hvdc-facts/dc-fault-blocking.md | P0 | 999 | 5526 | 11 | 19 | pending |
 | 102 | dccb.md | methods | methods/power-electronics/dccb.md | P0 | 999 | 2695 | 7 | 12 | pending |
 | 297 | dfig-offshore-wind-farm.md | methods | methods/system-studies/dfig-offshore-wind-farm.md | P1 | 999 | 3237 | 12 | 4 | pending |
