@@ -16,7 +16,7 @@
 | 72 | co-simulation.md | topics | topics/simulation/co-simulation.md | P0 | 999 | 1922 | 1 | 110 | completed |
 | 352 | complex-differential-equation-solving.md | methods | methods/system-studies/complex-differential-equation-solving.md | P1 | 999 | 3505 | 10 | 14 | completed |
 | 139 | converter-transformer-model.md | models | models/transformer/converter-transformer-model.md | P0 | 999 | 2812 | 25 | 22 | completed |
-| 386 | cs-dam-model.md | models | models/submodule/cs-dam-model.md | P1 | 999 | 1168 | 5 | 7 | pending |
+| 386 | cs-dam-model.md | models | models/submodule/cs-dam-model.md | P1 | 999 | 3022 | 14 | 8 | completed |
 | 175 | dae-solvers.md | methods | methods/numerical-methods/dae-solvers.md | P0 | 999 | 4940 | 11 | 13 | pending |
 | 114 | dc-protection.md | methods | methods/protection-fault/dc-protection.md | P0 | 999 | 2984 | 7 | 19 | pending |
 | 59 | dem.md | methods | methods/power-electronics/dem.md | P0 | 999 | 1671 | 3 | 12 | pending |
