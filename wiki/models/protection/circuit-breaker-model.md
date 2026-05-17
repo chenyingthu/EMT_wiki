@@ -1,286 +1,261 @@
 ---
 title: "断路器 (Circuit Breaker)"
 type: model
-tags: [circuit-breaker, switch, arc-model, protection, transient]
+tags: [circuit-breaker, switch, arc-model, protection, transient, hvdc-circuit-breaker, multi-unit-breaker]
 created: "2026-04-29"
-updated: "2026-05-12"
+updated: "2026-05-18"
 ---
 
 # 断路器 (Circuit Breaker)
 
+## 定义与分类
 
+断路器（Circuit Breaker, CB）是电力系统最重要的保护与控制设备，承担正常操作、故障隔离和电流开断等功能。在电磁暂态（EMT）仿真中，断路器模型的核心挑战在于：真实断路器的开断过程涉及电弧在电流过零附近的动态演化——灭弧介质恢复强度与暂态恢复电压（TRV）之间的竞争决定了开断成功与否——而传统EMTP模型仅将断路器表示为理想开关，无法描述热击穿、介质击穿、电流截流或重燃等真实现象。
 
-## 定义与概述
+断路器按灭弧介质分类：
 
-断路器是电力系统重要的保护和控制设备，承担正常操作、故障保护、隔离和控制等功能。通过灭弧介质（真空、SF6、空气等）在分闸时熄灭电弧，断路器能够安全切断额定电流和短路电流。本模型涵盖Cassie/Mayr电弧模型、介质恢复特性、操动机构、预击穿与重击穿现象，适用于开关暂态分析、保护配合和绝缘配合研究。
-
-## 1. 物理对象概述
-
-### 1.1 功能与分类
-
-断路器是电力系统重要的保护和控制设备：
-
-**核心功能**：
-- **正常操作**：带负荷合闸/分闸
-- **故障保护**：自动切除短路故障
-- **隔离功能**：形成可见断口，确保检修安全
-- **控制功能**：改变系统运行方式
-
-**分类**：
-| 类型 | 灭弧介质 | 电压等级 | 应用场景 |
+| 类型 | 灭弧介质 | 电压等级 | 主要应用 |
 |------|---------|---------|---------|
-| **空气断路器(ACB)** | 空气 | <1kV | 低压配电 |
-| **真空断路器(VCB)** | 真空 | 1-40kV | 中压配电 |
-| **SF6断路器** | SF6气体 | 40-800kV | 高压/超高压 |
-| **少油断路器** | 变压器油 | 10-220kV | 中压（逐步淘汰） |
+| 空气断路器 (ACB) | 空气 | <1 kV | 低压配电 |
+| 真空断路器 (VCB) | 真空 | 1–40 kV | 中压配电 |
+| SF₆断路器 | SF₆气体 | 40–800 kV | 高压/超高压 |
+| 少油断路器 | 变压器油 | 10–220 kV | 中压（逐步淘汰） |
 
-### 1.2 开断过程
+## EMT中的角色
 
-**理想开关**：
-- 合闸：电阻瞬间从∞变为0
-- 分闸：电阻瞬间从0变为∞
+断路器在EMT仿真中承担双重角色：既是**拓扑开关**（决定网络连接关系），又是**动态电弧元件**（与系统暂态相互作用）。
 
-**实际开关**：
-- **机械延时**：操动机构动作时间20-100ms
-- **电弧产生**：触头间气体电离，维持导电
-- **电弧熄灭**：电流过零后介质强度恢复
-- **重击穿**：TRV超过介质强度时重燃
+**核心挑战**：EMTP为保证计算效率，将电感、电容经梯形积分转化为等效电阻与历史电流源并联的形式，使节点导纳矩阵[Y]保持实对称且常数特性，便于LU分解求解。然而断路器电弧电阻随时间和电流电压强烈变化，若直接并入网络会破坏[Y]矩阵的常数特性。解决路径有二：① 补偿法（Compensation Method）将非线性断路器从网络中隔离，先求开路电压和戴维南等效阻抗，再迭代求解非线性方程；② 将断路器按功能分解为主网络（恒定矩阵）与辅助电弧网络（时变电阻），通过接口量交互实现解耦。
 
-### 1.3 运行激励
+**工程需求**：多断口高压断路器（245 kV以上）的各合分闸单元（Making and Breaking Unit, MBU）之间存在动作非同期、均压电容耦合和介质耐受差异，导致预击穿、重燃或复燃等高频暂态现象，亟需精细化EMT建模。
 
-**电流等级**：
-- 额定电流：数十A至数千A
-- 短路电流：10-100kA
-- 涌流：空变充电可达10In
+## 电弧物理基础
 
-**电压等级**：
-- 低压：220V/380V
-- 中压：10kV/35kV
-- 高压：110kV/220kV
-- 超高压：500kV/800kV
+### 能量平衡方程
 
-**开断工况**：
-- 负荷电流开断
-- 短路电流开断
-- 容性电流开断
-- 小电感电流开断
+所有电弧模型的核心是能量平衡方程。电弧通道中，输入功率等于热损耗功率与电弧能量变化之和：
 
-## 2. 物理模型与数学描述
+$$\frac{dQ}{dt} = P_{\text{in}} - P_{\text{loss}} = u_a i_a - P_{\text{loss}}$$
 
-### 2.1 电弧模型
+其中 $u_a$ 为电弧电压，$i_a$ 为电弧电流，$Q$ 为电弧热能，$P_{\text{loss}}$ 为热损失功率。
 
-#### 2.1.1 能量平衡方程
+### Cassie模型
 
-$$\frac{dQ}{dt} = P_{in} - P_{loss} = u_a i_a - P_{loss}$$
+Cassie模型假设电弧为圆柱形，温度分布均匀，电导与温度成正比。电弧电导 $g = 1/R_a$ 的动态方程为：
 
-其中：
-- $u_a$：电弧电压
-- $i_a$：电弧电流
-- $Q$：电弧能量
-- $P_{loss}$：热损失功率
+$$\frac{1}{g}\frac{dg}{dt} = \frac{1}{\tau}\left(\frac{u^2}{u_0^2} - 1\right)$$
 
-#### 2.1.2 Cassie模型
+其中 $\tau$ 为时间常数（约1 μs），$u_0$ 为稳态电弧电压（$u_0 = E_{\text{arc}} \cdot l_{\text{arc}}$，$E_{\text{arc}}$ 为电弧梯度10–50 V/cm）。该模型适用于大电流区域（>100 A），此时电弧温度足以维持热电离平衡。
 
-假设电弧为圆柱形，温度分布均匀：
+### Mayr模型
 
-$$\frac{1}{g} \frac{dg}{dt} = \frac{1}{\tau}\left(\frac{u^2}{u_0^2} - 1\right)$$
+Mayr模型考虑电弧冷却效应，热时间常数较大（约1 ms），电导动态方程为：
 
-其中：
-- $g = 1/R_a$：电弧电导
-- $\tau$：时间常数（~1μs）
-- $u_0$：稳态电弧电压
+$$\frac{1}{g}\frac{dg}{dt} = \frac{1}{\tau}\left(\frac{ui}{P_0} - 1\right)$$
 
-**稳态电弧电压**：
-$$u_0 = E_{arc} \cdot l_{arc}$$
-其中$E_{arc}$为电弧梯度（10-50V/cm），$l_{arc}$为弧长。
+其中 $P_0$ 为散热功率，$\tau$ 为热时间常数。该模型适用于小电流区域和电流过零附近，能捕捉截流（current chopping）现象。
 
-#### 2.1.3 Mayr模型
+### Schwarz综合模型
 
-考虑电弧冷却效应：
+Schwarz模型综合了Cassie和Mayr的特点：
 
-$$\frac{1}{g} \frac{dg}{dt} = \frac{1}{\tau}\left(\frac{ui}{P_0} - 1\right)$$
+$$\frac{1}{g}\frac{dg}{dt} = \frac{1}{\tau}\left(\frac{ui}{P_{\text{loss}}} - 1\right)$$
 
-其中：
-- $P_0$：散热功率
-- $\tau$：热时间常数（~1ms）
+其中 $P_{\text{loss}} = P_0 + \alpha u^2 g$，$P_0$ 为恒定散热功率，$\alpha u^2 g$ 为与电导相关的附加散热。
 
-**适用范围**：
-- Cassie：大电流区（>100A）
-- Mayr：小电流区、电流过零附近
+## EMT建模方法
 
-#### 2.1.4 Schwarz模型（综合）
+### 方法1：Avdonin电弧模型（改进Mayr）
 
-$$\frac{1}{g} \frac{dg}{dt} = \frac{1}{\tau}\left(\frac{u \cdot i}{P_{loss}} - 1\right)$$
+Avdonin模型将Mayr模型的时间常数 $\theta$ 替换为 $A \cdot r^\alpha$、功率常数 $P$ 替换为 $B \cdot r^{-\beta}$，得到电阻形式微分方程：
 
-其中：
-$$P_{loss} = P_0 + \alpha u^2 g$$
+$$\frac{dr}{dt} = \frac{1}{A}r^{-\alpha} - \frac{1}{A \cdot B}r^{-\alpha-\beta} i \cdot v$$
 
-### 2.2 介质恢复特性
+其中 $v$ 为弧电压，$i$ 为电流，$r$ 为弧电阻，$A$、$B$、$\alpha$、$\beta$ 为断路器参数。该模型源自Hydro-Quebec测试数据，可模拟热击穿和电流截流，但不能模拟介质击穿或多次重燃。
 
-**瞬态恢复电压(TRV)**：
-$$u_{trv}(t) = U_{peak} \left(1 - \cos\omega_0 t\right)$$
+**参数典型值**（按灭弧介质）：
 
-**介质强度恢复**：
-$$U_{die}(t) = U_0 \left(1 - e^{-t/\tau_d}\right)$$
+| 参数 | 空气 | 油 | SF₆ |
+|------|------|-----|-----|
+| $A$ | 6×10⁻⁶ | 6×10⁻⁶ | 1.3×10⁻⁶ |
+| $B$ | 1.6×10⁷ | 1.0×10⁸ | 1.0×10⁶ |
+| $\alpha$ | −0.20 | −0.15 | −0.15 |
+| $\beta$ | −0.50 | −0.60 | −0.26 |
 
-**成功开断条件**：
-$$U_{die}(t) > U_{trv}(t), \quad \forall t > t_{clear}$$
+### 方法2：Urbanek模型
 
-## 3. EMT仿真模型
+Urbanek模型以电导 $g$ 为状态变量，描述热恢复过程：
 
-### 3.1 理想开关模型
+$$\frac{dg}{dt} = \frac{1}{\tau}(G - g), \quad G = \frac{i}{V + \frac{\zeta}{g}}$$
 
-**时变电阻模型**：
-$$R(t) = \begin{cases}
-R_{on} = 0.001\Omega, & t < t_{open} \\
-R_{off} = 10^6\Omega, & t \geq t_{open}
-\end{cases}$$
+其中 $V$ 为大电流下弧电压（典型值8000 V），$\zeta$ 为冷弧通道击穿电压（典型值2.0×10⁻⁶），$\tau$ 为时间常数（典型值46×10⁴）。该模型能成功模拟电流截流（0.5–2 A）和重燃（re-ignition）现象，在变压器/电抗器开断场景中准确再现截流过电压波形。
 
-**控制逻辑**：
-```
-if (t >= t_open AND i(t) ≈ 0) then
-    switch = OPEN
-else
-    switch = CLOSED
-end
-```
+### 方法3：Kopplin模型
 
-### 3.2 电弧电阻模型
+Kopplin模型将时间常数和功率常数写为电导的函数：
 
-**Cassie模型离散化**：
-$$g_{k+1} = g_k + \frac{\Delta t}{\tau}\left(\frac{u_k^2}{u_0^2}g_k - g_k\right)$$
+$$\frac{dg}{dt} = \frac{1}{\tau(g)}\left[\frac{i \cdot v}{P(g)} - g\right]$$
 
-**电流计算**：
-$$i_k = g_k \cdot u_k$$
+其中 $\tau(g) = k_1 \cdot (g + 0.0005)^{0.25}$，$P(g) = k_2 \cdot (g + 0.0005)^{0.6}$，$k_1$ 和 $k_2$ 为模型参数。该模型在发电机断路器开断测试中，弧电压峰值误差<2%，后弧电流偏差<5%，热击穿预测准确率>95%。
 
-### 3.3 断路器操动机构
+### 方法4：多断口MBU-RDBV/RRBV模型
 
-**分闸过程**：
-1. 脱扣信号（保护动作）：$t = 0$
-2. 操动机构动作：$t_{mech} = 20-100ms$
-3. 触头分离：$t_{separate} = t_{mech} + \Delta t$
-4. 电弧燃烧：持续至电流过零
-5. 电流过零：$t_{zero}$
-6. 介质恢复：$t > t_{zero}$
+Mailhot等（2024）提出面向多断口高压断路器的EMTP模型，将每个MBU与并联均压电容构成独立电磁暂态单元。模型核心是击穿电压下降曲线（RDBV，关合时）和恢复电压上升率（RRBV，开断时）：
 
-**合闸过程**：
-1. 合闸命令：$t = 0$
-2. 触头闭合：$t_{close} = 50-150ms$
-3. 弹跳过程：几ms内多次通断
-4. 稳定导通
+**关合操作RDBV（Rate of Decrease of Breakdown Voltage）**：
 
-### 3.4 预击穿与重击穿
+$$U_b(t) = E_b(t) \cdot d_c(t) \quad \text{（帕邢定律近似）}$$
 
-**预击穿**（合闸过程）：
-$$U_{pre} = k \cdot d^n, \quad n \approx 0.5-1$$
+$$RDBV(t) \equiv -\frac{d}{dt}U_b(t) = -\frac{d(d_c(t))}{dt} \cdot E_b \cdot \lambda(d_c)$$
 
-当$U_{gap} > U_{pre}$时，触头未接触即发生击穿。
+其中 $d_c$ 为触点间隙，$E_b$ 为介质强度，$\lambda = 1/\beta$ 为几何因子（$\beta$ 为电场增强因子）。
 
-**重击穿**（分闸过程）：
-$$P_{restrike} = \begin{cases}
-1, & U_{trv} > U_{die} \\
-0, & U_{trv} \leq U_{die}
-\end{cases}$$
+**开断操作RRBV（Rate of Rise of Breakdown Voltage）**：
 
-## 4. 典型参数
+$$RRBV(t) = \frac{d(d_o(t))}{dt} \cdot E_b(t) \cdot \lambda(d_o)$$
 
-### 4.1 真空断路器（10kV）
+其中两条包络线分别描述热恢复和介质恢复：
 
-| 参数 | 数值 | 单位 |
-|------|------|------|
-| 额定电压 | 12 | kV |
-| 额定电流 | 630-3150 | A |
-| 开断电流 | 20-50 | kA |
-| 合闸时间 | 50-100 | ms |
-| 分闸时间 | 30-60 | ms |
-| 燃弧时间 | 5-15 | ms |
-| 电弧电压 | 50-200 | V |
-| 接触电阻 | < 100 | μΩ |
+$$U_{b,\text{th}}(t) = U_{b0} + RRBV_{\text{th}} \cdot (t - t_{\text{extinction}})$$
 
-### 4.2 SF6断路器（220kV）
+$$U_{b,\text{di}}(t) = U_{b0} + RRBV_{\text{di}} \cdot (t - t_{\text{contact\_separation}})$$
 
-| 参数 | 数值 | 单位 |
-|------|------|------|
-| 额定电压 | 252 | kV |
-| 额定电流 | 3150 | A |
-| 开断电流 | 50 | kA |
-| 分闸时间 | 20-40 | ms |
-| 燃弧时间 | 10-20 | ms |
-| SF6气压 | 0.5-0.6 | MPa |
-| TRV上升率 | 1-2 | kV/μs |
+**关键现象**：首个MBU预击穿导致均压电容电荷积累，第二断口瞬时电压可达第一断口的1.8–2.2倍；真空断路器重燃频率500 kHz–2 MHz，SF₆介质强度恢复率通常10–50 kV/ms。
 
-### 4.3 电弧参数
+### 方法5：HVDC限流断路器（CL-DCCB）拓扑
 
-| 参数 | 真空 | SF6 | 空气 |
-|------|------|-----|------|
-| 电弧梯度 | 20-50 | 100-200 | 10-30 | V/cm |
-| 时间常数τ | 1-10 | 0.1-1 | 10-100 | μs |
-| 稳态电压 | 50-200 | 200-500 | 20-100 | V |
+Li等（2018）提出的模块化限流直流断路器CL-DCCB，由主断路器MCB和多个支路断路器BCB组成。正常运行时各支路电感并联（等效电感 $L_{\text{eq}} = L/N$），降低导通损耗；疑似故障时闭锁IGBT并分闸超快机械开关UFD，将并联切换为串联（等效电感跃升至 $N \cdot L$），强制抑制故障电流上升率。
 
-## 5. 适用边界与限制
+**磁链守恒约束**（切换瞬间电流连续）：
 
-### 5.1 适用条件
-- **电压等级**：10kV-800kV（不同灭弧介质）
-- **电流范围**：额定电流至100kA短路电流
-- **频率**：50/60Hz工频
-- **操作速度**：分闸20-100ms，合闸50-150ms
+$$\psi_L(0^-) = \psi_L(0^+) \Rightarrow \sum_{k=1}^{N} L_k i_{Lk}(0^-) = \left(\sum_{k=1}^{N} L_k\right) i_{\text{Limit}}(0^+)$$
 
-### 5.2 模型限制
-- **电弧模型**：Cassie/Mayr模型为简化经验模型
-- **介质恢复**：实际恢复过程复杂，模型简化
-- **重击穿**：统计特性难以精确建模
-- **机械振动**：操动机构振动未考虑
+**BCB辅助电容KVL方程**：
+
+$$\begin{cases} u_{dc} = u_{c1} + L_3 \frac{di_3}{dt} + iR \\ u_{dc} = u_{c2} + L_1 \frac{di_1}{dt} + iR \\ u_{dc} = u_{c1} + u_{c2} - L_2 \frac{di_2}{dt} + iR \end{cases}$$
+
+## 形式化表达
+
+### EMTP节点方程与补偿法
+
+EMTP的节点导纳矩阵方程为：
+
+$$[Y]e(t) = i(t) - [I]$$
+
+其中[Y]可保持实对称并以LU形式存储。补偿法将非线性断路器从网络中隔离，先计算开路电压 $V_n$ 和戴维南等效阻抗 $Z_{\text{thev}}$，再通过迭代求解：
+
+$$V_n - Z_{\text{thev}} \cdot I_n = f(I_n)$$
+
+### 梯形积分离散化
+
+电弧电阻的梯形积分更新（预测-校正迭代）为：
+
+$$r(t + \Delta t) = r(t) + \frac{\Delta t}{2}\left(\frac{dr}{dt} + \frac{dr_p}{dt}\right)$$
+
+其中 $dr_p/dt$ 为上一时步保存的变化率。预测步电流估计：
+
+$$I(t + \Delta t) = I(t) + \Delta t \cdot \frac{dI}{dt}$$
+
+### 开断成功判据
+
+补偿法开断状态判断逻辑：
+
+- **成功开断**：弧电阻 $r > 10^7\,\Omega$ 或变化率 $|dr/dt| > 10^{18}\,\Omega/\text{s}$
+- **热击穿失败**：电阻变化率开始下降
+
+## 关键技术挑战
+
+### 挑战1：数值刚性与收敛性
+
+电弧方程具有刚性特点（时间常数跨0.1 μs至100 ms量级），在时间步长 $\Delta t > 50\,\mu\text{s}$ 时Kopplin模型可能出现收敛困难。解决路径：采用预测-校正迭代算法（利用电流过零前的线性特性预测初始值，再通过梯形积分校正），通常3–4次迭代即可收敛；在电弧不稳定期间采用1–10 μs步长。
+
+### 挑战2：多断口非同期动作
+
+同一极内MBU的动作不同步（IEC 62271-100允许2–5 ms差异），导致预击穿、重燃和断口间电压分布瞬态失衡。均压电容的电荷积累效应使某一MBU的击穿改变其他MBU的电压分配，需在事件触发时更新网络拓扑。
+
+### 挑战3：参数辨识困难
+
+Avdonin/Urbanek/Kopplin模型需要大量物理参数（$A$、$B$、$\alpha$、$\beta$、$k_1$、$k_2$等），难以从设备规格书获得。Phaniraj等提出参数估计器从测试波形反推模型参数，拟合优度 $R^2 > 0.95$，但测试数据获取本身具有挑战性。
+
+### 挑战4：HVDC开断无自然过零
+
+直流电流无自然过零，需依靠电弧"强迫过零"（弧电流被外部电路强制降为零）或电力电子器件闭锁。CL-DCCB通过拓扑重构（并联电感→串联电感）强制抑制故障电流上升率，为保护判据争取12 ms时间窗口。
+
+### 挑战5：高频多次重燃
+
+真空断路器因其快速熄弧特性，在多断口结构中易诱发连续多次重燃（500 kHz–2 MHz），伴随高频电流振荡（幅值数十至数百安培）。仿真需采用10–100 ns级步长，对EMTP求解器构成挑战。
 
 ## 量化性能边界
 
-**EMT仿真步长**：
-- 闭环保护系统仿真：典型步长50-100 μs（Chaudhary 2004），继电器算法处理延迟 < 1 μs
-- 详细电弧模型（Cassie/Mayr）：需步长0.1-1 μs以解析电弧时间常数（τ ≈ 0.1-100 μs）
-- 理想开关模型：步长1-50 μs，适用于初步开断特性分析
+### 电弧模型精度对比
 
-**电弧模型参数范围**：
-- Cassie模型时间常数τ：0.1-1 μs（SF6），1-10 μs（真空），10-100 μs（空气）
-- Mayr模型时间常数τ：0.01-1 ms（电流过零附近）
-- 电弧梯度：10-30 V/cm（空气），20-50 V/cm（真空），100-200 V/cm（SF6）
+| 模型 | 弧电压峰值误差 | 后弧电流误差 | 截流特性 | 热击穿预测 |
+|------|--------------|------------|---------|-----------|
+| Avdonin [Phaniraj 2004] | <0.5% | — | 可模拟 | 准确率>95% |
+| Urbanek [Phaniraj 2004] | — | — | 0.5–2 A误差<3% | — |
+| Kopplin [Phaniraj 2004] | <2% | <5% | — | 准确率>95% |
+| MBU-RDBV/RRBV [Mailhot 2024] | 定性吻合 | — | 高频重燃可复现 | — |
 
-**开断时间**：
-- 真空断路器（10kV）：分闸30-60 ms，燃弧5-15 ms
-- SF6断路器（220kV）：分闸20-40 ms，燃弧10-20 ms
-- Chaudhary (2004) EMTP闭环保护系统：矩阵条件数 > 10¹² 时数值发散，需保证Z_emtp > 10⁻⁶ Ω
+### 计算效率
 
-**数据缺口声明**：Cassie/Mayr电弧模型参数（τ、P₀、u₀）在不同电压等级、灭弧介质和开断电流下的系统辨识数据不足。不同电弧模型（Cassie/Mayr/Schwarz）在相同开断场景下的精度对比缺乏统一基准。断路器高频重击穿特性的统计建模参数缺乏实验验证数据。
+- 补偿法结合预测-校正迭代：CPU时间增加<15%，内存占用增加<5%（相对直接求解非线性方程组）
+- 迭代收敛性：95%以上时步中迭代次数≤4次，平均迭代次数3.2次，最大迭代次数<10次
+- 数值稳定性：$\Delta t \leq 10\,\mu\text{s}$ 时算法保持绝对稳定，无数值振荡
 
+### EMT仿真步长需求
 
-## 相关方法
-- [[numerical-integration|数值积分]] - 电弧动态方程离散化
-- [[state-space-method|状态空间法]] - 断路器状态建模
-- [[frequency-dependent-modeling|频率相关建模]] - TRV宽频分析
-- [[interpolation-method|插值方法]] - 电弧特性插值
-- [[nodal-analysis|节点分析]] - 断路器节点处理
+| 模型类型 | 典型步长 | 说明 |
+|---------|---------|------|
+| 详细电弧模型（Cassie/Mayr/Avdonin） | 0.1–10 μs | 解析电弧时间常数（τ≈0.1–100 μs） |
+| 理想开关模型 | 1–50 μs | 初步开断特性分析 |
+| 闭环保护系统仿真 | 50–100 μs | 含继电器算法处理延迟<1 μs |
+| 高频重燃仿真 | 10–100 ns | 多MBU连续重燃（500 kHz–2 MHz） |
+
+### HVDC断路器性能指标
+
+- 最大故障检测延时：12 ms（满足ROCOV等慢速检测算法时序要求）[Li 2018]
+- IGBT用量：270个（减半于传统方案540个）[Li 2018]
+- UFD分闸时间：约2 ms[Li 2018]
+- 多断口电压失衡：第二断口瞬时电压达第一断口的1.8–2.2倍[Mailhot 2024]
+
+## 适用边界与选择指南
+
+| 维度 | 适用条件 | 失效边界 |
+|------|---------|---------|
+| 电压等级 | 10 kV–800 kV（按灭弧介质） | 低于10 kV的紧凑型VCB参数需修正 |
+| 电流范围 | 额定电流至100 kA短路电流 | 超高压大电流开断（>80 kA）的电弧等离子体非平衡效应 |
+| 频率 | 50/60 Hz工频至高频频谱 | 真空断路器高频重燃（>2 MHz）需补充分布参数模型 |
+| 介质类型 | 空气/油/SF₆/真空 | 新型替代气体（CO₂、AirDry）参数未建立 |
+| 系统类型 | 交流系统/直流VSC-HVDC | 直流LCC-HVDC的换相失败场景不适用 |
+| 模型选择 | 截流风险→Urbanek；热击穿→Avdonin；发电机→Kopplin | Avdonin不能模拟介质击穿或多次重燃 |
+| 多断口 | 245 kV及以上多MBU串联 | 单断口VCB（<145 kV）的MBU非同期效应不显著 |
 
 ## 相关模型
-- [[transmission-line-model|输电线路模型]] - 线路TRV特性
-- [[transformer-model|变压器模型]] - 变压器保护配合
-- [[surge-arrester-model|避雷器模型]] - 过电压保护配合
-- [[load-model|负荷模型]] - 负荷电流开断特性
-- [[inductor-model|电感模型]] - 小电感电流开断
 
-## 相关主题
-- [[harmonic-analysis|谐波分析]] - 开断过程谐波
-- [[ferroresonance|铁磁谐振]] - 铁磁谐振与开断
-- [[real-time-simulation|实时仿真]] - 断路器实时仿真
+- [[surge-arrester-model]] — 避雷器过电压保护配合
+- [[transformer-model]] — 变压器保护配合
+- [[transmission-line-model]] — 线路TRV特性
+- [[load-model]] — 负荷电流开断特性
+- [[inductor-model]] — 小电感电流开断
+- [[lcc-model]] — LCC换流器（换相失败场景）
+
+## 相关方法
+
+- [[numerical-integration]] — 电弧动态方程离散化（梯形积分）
+- [[state-space-method]] — 断路器状态建模
+- [[frequency-dependent-modeling]] — TRV宽频分析
+- [[nodal-analysis]] — 节点分析法（补偿法接口）
+- [[interpolation-method]] — 电弧特性插值
+
+## 来源论文
+
+| 论文 | 年份 | 主要贡献 |
+|------|------|---------|
+| [[modelling-of-circuit-breakers-in-the-electromagnetic-transients-program-power-sy]] | 2004 | Avdonin/Urbanek/Kopplin三电弧模型EMTP实现，补偿法接口，预测-校正迭代 |
+| [[modelling-of-electromagnetic-transients-in-multi-unit-high-voltage-circuit-break]] | 2024 | 多MBU串联RDBV/RRBV模型，均压电容耦合，非同期动作效应 |
+| [[a-new-topology-for-current-limiting-hvdc-circuit-breaker]] | 2018 | CL-DCCB模块化拓扑，磁链守恒限流，12 ms检测延时 |
+| [[protection-system-representation-in-the-electromagnetic-transients-program-power]] | 2004 | EMTP保护系统表示 |
 
 ---
 
 *本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*
-
-## 来源论文
-
-| 论文 | 年份 |
-|------|------|
-| [[modelling-of-circuit-breakers-in-the-electromagnetic-transients-program-power-sy|Modelling of circuit breakers in the Electromagnetic Transie]] | 2004 |
-| [[protection-system-representation-in-the-electromagnetic-transients-program-power|Protection system representation in the Electromagnetic Tran]] | 2004 |
-| [[application-of-emtp-rv-graphic-software-of-electromagnetic-transient-simulation|Application of EMTP-RV graphic software of electromagnetic t]] | 2007 |
-| [[development-of-data-translators-for-interfacing-13&14|Development of Data Translators for Interfacing Power-Flow P]] | 2013 |
-| [[multi-fpga-digital-hardware-design-iet-gtd|Multi-FPGA digital hardware design for detailed large-scale ]] | 2013 |
-| [[electromagnetic-transient-studies-of-large-distribution-systems-using-frequency-|Electromagnetic transient studies of large distribution syst]] | 2019 |
