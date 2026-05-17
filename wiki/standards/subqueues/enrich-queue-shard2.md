@@ -23,7 +23,7 @@
 | 119 | diode-model.md | models | models/basic-component/diode-model.md | P0 | 999 | 3175 | 21 | 12 | completed |
 | 309 | distance-protection.md | methods | methods/protection-fault/distance-protection.md | P1 | 999 | 2937 | 16 | 11 | completed |
 | 196 | distributed-parameter-model.md | methods | methods/transmission-line/distributed-parameter-model.md | P0 | 999 | 5964 | 33 | 12 | completed |
-| 329 | droop-control.md | methods | methods/control/droop-control.md | P1 | 999 | 2105 | 6 | 10 | pending |
+| 329 | droop-control.md | methods | methods/control/droop-control.md | P1 | 999 | 2601 | 13 | 8 | completed |
 | 179 | economic-dispatch.md | methods | methods/system-studies/economic-dispatch.md | P0 | 999 | 5219 | 26 | 9 | pending |
 | 71 | electromechanical-electromagnetic-hybrid.md | topics | topics/renewable-storage/electromechanical-electromagnetic-hybrid.md | P0 | 999 | 1912 | 8 | 28 | pending |
 | 136 | emi-filter-model.md | models | models/compensation/emi-filter-model.md | P0 | 999 | 3635 | 19 | 19 | pending |
