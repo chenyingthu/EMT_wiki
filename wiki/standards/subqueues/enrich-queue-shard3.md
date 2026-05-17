@@ -19,7 +19,7 @@
 | 260 | computational-acceleration.md | methods | methods/simulation-technology/computational-acceleration.md | P1 | 999 | 5065 | 12 | 13 | completed |
 
 | 252 | coordinate-transformation-model.md | models | models/control/coordinate-transformation-model.md | P1 | 999 | 7010 | 28 | 14 | completed |
-| 189 | csg.md | methods | methods/power-electronics/csg.md | P0 | 999 | 5593 | 6 | 10 | pending |
+| 189 | csg.md | methods | methods/power-electronics/csg.md | P0 | 999 | 5593 | 6 | 10 | completed |
 | 267 | dc-dc-converter.md | models | models/converter/dc-dc-converter.md | P1 | 999 | 4448 | 41 | 16 | pending |
 | 38 | dc-rlc-filter.md | models | models/basic-component/dc-rlc-filter.md | P0 | 999 | 1229 | 2 | 28 | pending |
 | 355 | detailed-equivalent-model.md | methods | methods/power-electronics/detailed-equivalent-model.md | P1 | 999 | 1575 | 9 | 17 | pending |
@@ -88,3 +88,6 @@
 | 167 | wide-area-monitoring-protection.md | methods | methods/protection-fault/wide-area-monitoring-protection.md | P0 | 999 | 4638 | 8 | 14 | pending |
 
 
+
+
+||| Cycle 1 | csg.md | P0 SKIP (Quality Gate PASS: bc=2266≥2000, bf=6≥5, no placeholder, no DUP_BLOCK, src=508≤5000, max_block=8836≤15000) | 2026-05-18 02:47 |
