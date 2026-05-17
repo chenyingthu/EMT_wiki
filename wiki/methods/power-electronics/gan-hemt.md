@@ -304,18 +304,22 @@ $$C_{\text{th}} \frac{dT_j}{dt} = P_{\text{loss}} - \frac{T_j - T_a}{R_{\text{th
 
 ## 相关方法 / 相关模型 / 相关主题
 
-- [[switching-model]] — 开关器件建模，GaN HEMT 的物理基础
-- [[power-electronics]] — 电力电子器件建模总论
-- [[real-time-simulation]] — GaN HEMT 常出现在硬件加速和 HIL 场景
-- [[solid-state-transformer]] — 宽禁带器件在高频电力电子装备中的应用
-- [[grid-connected-inverter]] — 宽禁带器件在并网电力电子中的背景
-- [[wideband-modeling]] — 宽禁带器件与高频动态背景
-- [[half-bridge-submodule]] — 半桥子模块中的 GaN HEMT 应用
-- [[commutation-failure]] — 与 GaN HEMT 快速开关相关的换相过程
-- [[switching-function-method]] — 开关函数建模，GaN HEMT 简化建模方法
+- [[models/converter/switching-model.md]] — 开关器件建模，GaN HEMT 的物理基础
+- [[methods/control/power-electronics-control.md]] — 电力电子器件建模总论
+- [[topics/simulation/fpga-real-time-simulation.md]] — GaN HEMT 常出现在硬件加速和 HIL 场景
+- [[models/transformer/solid-state-transformer.md]] — 宽禁带器件在高频电力电子装备中的应用
+- [[models/converter/grid-connected-inverter.md]] — 宽禁带器件在并网电力电子中的背景
+- [[methods/transmission-line/wideband-modeling.md]] — 宽禁带器件与高频动态背景
+- [[methods/power-electronics/half-bridge-submodule.md]] — 半桥子模块中的 GaN HEMT 应用
+- [[methods/power-electronics/commutation-failure.md]] — 与 GaN HEMT 快速开关相关的换相过程
+- [[methods/power-electronics/switching-function-method.md]] — 开关函数建模，GaN HEMT 简化建模方法
 
 ## 来源论文
 
-| 论文 | 年份 |
-|------|------|
-| [[analytical-modeling-of-the-half-bridge-leg-using-an-associated-discrete-circuit-|Analytical Modeling of the Half-Bridge Leg Using an Associat]] | 2026 |
+| 论文 | 年份 | 说明 |
+|------|------|------|
+| [[sources/real-time-hil-emulation-of-drm-with-machine-learning-accelerated-wbg-device-mode.md|Zhang 等 2023]] | 2023 | PFNN/FTPNN 机器学习加速 WBG 器件建模，Xilinx Ultrascale+ FPGA 实时 HIL，变量时步可低至 1 ns |
+| [[sources/analytical-modeling-of-the-half-bridge-leg-using-an-associated-discrete-circuit-.md]] | 2026 | ADC 关联离散电路 GaN 半桥解析建模，统一导纳框架下 ZVS/inc-ZVS/硬开关无缝切换 |
+| Sinkar 等 2025 | 2025 | MMC 臂级半导体损耗快速估计方法（原文未报告可核验数值结果） |
+
+> 注：Sinkar 2025 论文尚未收录至 wiki/sources/，此处引用为方法论引用。

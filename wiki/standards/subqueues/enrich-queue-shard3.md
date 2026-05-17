@@ -40,7 +40,7 @@
 || 183 | fpga-real-time-simulation.md | topics | topics/simulation/fpga-real-time-simulation.md | P0 | 999 | 5725 | 73 | 27 | completed |
 
 | 217 | frequency-dependent-soil.md | methods | methods/transmission-line/frequency-dependent-soil.md | P0 | 999 | 9989 | 13 | 17 | completed |
-| 204 | gan-hemt.md | methods | methods/power-electronics/gan-hemt.md | P0 | 999 | 7075 | 15 | 10 | pending |
+| 204 | gan-hemt.md | methods | methods/power-electronics/gan-hemt.md | P0 | 999 | 7075 | 15 | 10 | completed |
 | 149 | gpu-accelerated-simulation.md | methods | methods/simulation-technology/gpu-accelerated-simulation.md | P0 | 999 | 4003 | 1 | 45 | pending |
 | 410 | grid-side-converter.md | models | models/rotating-machine/grid-side-converter.md | P1 | 999 | 716 | 9 | 20 | pending |
 | 66 | gruson-2011-reduced-mmc.md | models | models/equivalent/gruson-2011-reduced-mmc.md | P0 | 999 | 1768 | 8 | 9 | pending |
