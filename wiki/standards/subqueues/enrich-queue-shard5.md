@@ -32,7 +32,7 @@
 | 334 | fault-analysis-methods.md | methods | methods/protection-fault/fault-analysis-methods.md | P1 | 999 | 1945 | 5 | 24 | completed |
 | 200 | fdtd.md | methods | methods/simulation-technology/fdtd.md | P0 | 999 | 6722 | 19 | 14 | completed |
 | 210 | folded-line-equivalent.md | methods | methods/transmission-line/folded-line-equivalent.md | P0 | 999 | 8402 | 12 | 10 | completed |
-| 348 | frequency-dependent-line-model.md | models | models/transmission-line/frequency-dependent-line-model.md | P1 | 999 | 1709 | 3 | 25 | pending |
+| 348 | frequency-dependent-line-model.md | models | models/transmission-line/frequency-dependent-line-model.md | P1 | 999 | 4128 | 8 | 20 | completed |
 | 123 | frequency-response.md | methods | methods/stability-analysis/frequency-response.md | P0 | 999 | 3214 | 12 | 11 | pending |
 | 339 | gfl-inverter-model.md | models | models/converter/gfl-inverter-model.md | P1 | 999 | 1836 | 6 | 22 | pending |
 | 403 | grid-connected-inverter.md | models | models/converter/grid-connected-inverter.md | P1 | 999 | 865 | 7 | 9 | pending |
