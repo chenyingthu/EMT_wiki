@@ -395,8 +395,3 @@ CDSM 内部含有 2 个独立电容和 5 个开关器件，子模块数量庞大
 - **Xu 等 (2018)**《High-Speed EMT Modeling of MMCs With Arbitrary Multiport Submodule Structures Using Generalized Norton Equivalents》— 提出基于 Schur 补的多端口子模块通用建模方法，适用于包括 CDSM 在内的各类子模块，加速比达 2~3 个数量级。IEEE Transactions on Power Delivery, 33(3)。
 
 ## 来源论文
-
-| 论文 | 年份 |
-|------|------|
-| [[real-time-mpsoc-based-electrothermal-transient-simulation-of-fault-tolerant-mmc-|Real-Time MPSoC-Based Electrothermal Transient Simulation of]] | 2019 |
-| [[combining-detailed-equivalent-model-with-switching-function-based-average-value-|Combining Detailed Equivalent Model With Switching-Function-]] | 2020 |

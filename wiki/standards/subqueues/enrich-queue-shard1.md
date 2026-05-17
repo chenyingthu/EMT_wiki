@@ -12,7 +12,7 @@
 | 77 | anti-islanding.md | methods | methods/protection-fault/anti-islanding.md | P0 | 999 | 2171 | 10 | 8 | completed |
 | 205 | balanced-three-phase-line.md | methods | methods/transmission-line/balanced-three-phase-line.md | P0 | 999 | 7313 | 27 | 9 | completed |
 | 50 | bilinear-transform.md | methods | methods/numerical-methods/bilinear-transform.md | P0 | 999 | 3243 | 20 | 6 | completed |
-| 243 | cdsm.md | methods | methods/power-electronics/cdsm.md | P1 | 999 | 10085 | 11 | 14 | pending |
+| 243 | cdsm.md | methods | methods/power-electronics/cdsm.md | P1 | 999 | 10085 | 11 | 14 | completed |
 | 99 | cl-dccb.md | methods | methods/power-electronics/cl-dccb.md | P0 | 999 | 2609 | 7 | 11 | pending |
 | 315 | compensation-method.md | methods | methods/network-solution/compensation-method.md | P1 | 999 | 2677 | 7 | 7 | pending |
 | 76 | converter-station-inverter.md | methods | methods/power-electronics/converter-station-inverter.md | P0 | 999 | 1997 | 0 | 17 | pending |
