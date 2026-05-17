@@ -23,7 +23,7 @@
 | 15 | differential-protection.md | models | models/protection/differential-protection.md | P0 | 999 | 795 | 2 | 13 | pending |
 | 16 | numerical-integration.md | methods | methods/numerical-methods/numerical-integration.md | P0 | 999 | 813 | 6 | 199 | pending |
 | 17 | protection-control-device.md | models | models/protection/protection-control-device.md | P0 | 999 | 854 | 1 | 16 | pending |
-| 18 | parallel-computing.md | topics | topics/simulation/parallel-computing.md | P0 | 999 | 860 | 1 | 144 | pending |
+| 18 | parallel-computing.md | topics | topics/simulation/parallel-computing.md | P0 | 999 | 8343 | 78 | 15 | completed |
 | 19 | dynamic-phasor.md | topics | topics/modeling-methods/dynamic-phasor.md | P0 | 999 | 885 | 2 | 77 | pending |
 | 20 | microgrid-control.md | methods | methods/control/microgrid-control.md | P0 | 999 | 893 | 2 | 11 | pending |
 | 21 | detailed-switch-model.md | models | models/submodule/detailed-switch-model.md | P0 | 999 | 898 | 2 | 25 | pending |
@@ -426,6 +426,7 @@
 ||| 2 | 1 | 1 | 0 | enrich: ferroresonance.md | 2026-05-17 |
 ||| 3 | 1 | 1 | 0 | enrich: fault-impedance-model.md | 2026-05-17 |
 ||| 4 | 1 | 1 | 0 | enrich: backward-euler.md | 2026-05-17 |
+||| 1 | 1 | 1 | 0 | enrich: parallel-computing.md | 2026-05-17 |
 ## 复检统计
 - P0 需全量重写: 234 页
 - P1 需修复问题: 180 页
