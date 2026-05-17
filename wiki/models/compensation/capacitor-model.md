@@ -377,6 +377,7 @@ $$\Delta t < 2\sqrt{ESL \cdot C}$$
 
 这些量化数据不构成对电容建模方法的全面性能评价，只说明在特定测试条件下可获得的能力边界。
 
+
 ## 适用边界与失败模式
 
 ### 适用条件
@@ -401,38 +402,12 @@ $$\Delta t < 2\sqrt{ESL \cdot C}$$
 
 ## 代表性来源
 
-- [[digital-time-domain-investigation-of-transient-behavior-of-coupling-capacitor-vo|Iravani & Wang (2004) - Digital Time-Domain Investigation of Transient Behavior of Coupling Capacitor Voltage Transformer]]
-- [[考虑中间变压器饱和特性的电容式电压互感器宽频非线性模型|司马文霞 (2021) - 考虑中间变压器饱和特性的电容式电压互感器宽频非线性模型]]
-
-## 与相关页面的关系
-
-- [[resistor-model|电阻模型]] - ESR等效电阻
-- [[inductor-model|电感模型]] - ESL等效电感
-- [[bess-model|电池储能系统]] - 超级电容储能应用
-- [[emi-filter-model|EMI滤波器]] - 滤波电容设计
-
-## 开放问题
-
-- 宽禁带器件高频开关下电容寄生参数的精确提取
-- 薄膜电容自愈过程的 EMT 建模
-- 超级电容多时间常数模型的实时仿真实现
-- 电容器老化退化对 EMT 仿真精度的影响
-
-## 参考标准
-
-- IEC 60063 - 电容器优选值系列
-- IEC 61071 - 电力电子电容器
-- IEEE Std. 18 - 并联电力电容器标准
-
----
-
-*本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*
+- [[digital-time-domain-investigation-of-transient-behavior-of-coupling-capacitor-vo]] Iravani & Wang (2004) — 耦合电容器电压互感器 CCVT 宽频暂态响应建模
+- [[考虑中间变压器饱和特性的电容式电压互感器宽频非线性模型]] 司马文霞 (2021) — CVT 宽频非线性耦合模型
 
 ## 来源论文
 
 | 论文 | 年份 |
 |------|------|
-| [[a-steady-state-initialization-procedure-for-generic-voltage-source-converters-in|A steady-state initialization procedure for generic voltage-]] | 2023 |
-| [[fast-electromagnetic-transient-simulation-method-for-mmc-hvdc-system|Fast electromagnetic transient simulation method for MMC-HVD]] | 2023 |
-| [[loop-closing-analytical-calculation-system-based-on-electromagnetic-electromecha|Loop closing analytical calculation system based on electrom]] | 2023 |
-| [[modeling-and-simulation-of-vsc-hvdc-with-dynamic-phasors|Modeling and simulation of VSC-HVDC with dynamic phasors]] | 2023 |
+| [[digital-time-domain-investigation-of-transient-behavior-of-coupling-capacitor-vo]] | 2004 |
+| [[考虑中间变压器饱和特性的电容式电压互感器宽频非线性模型]] | 2021 |

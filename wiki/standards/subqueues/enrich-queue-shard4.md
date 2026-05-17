@@ -11,7 +11,7 @@
 | 109 | adaptive-droop.md | methods | methods/control/adaptive-droop.md | P0 | 999 | 2837 | 10 | 10 | completed |
 | 253 | average-value-model.md | methods | methods/power-electronics/average-value-model.md | P1 | 999 | 6372 | 13 | 9 | completed |
 | 346 | bergeron-model.md | methods | methods/transmission-line/bergeron-model.md | P1 | 999 | 1724 | 4 | 19 | completed |
-| 293 | capacitor-model.md | models | models/compensation/capacitor-model.md | P1 | 999 | 3352 | 26 | 13 | pending |
+| 293 | capacitor-model.md | models | models/compensation/capacitor-model.md | P1 | 999 | 3352 | 26 | 13 | completed |
 | 359 | circuit-breaker-model.md | models | models/protection/circuit-breaker-model.md | P1 | 999 | 1504 | 14 | 19 | pending |
 | 303 | commutation-failure.md | methods | methods/power-electronics/commutation-failure.md | P1 | 999 | 3105 | 6 | 11 | pending |
 | 302 | concurrent-commutation-failure.md | methods | methods/power-electronics/concurrent-commutation-failure.md | P1 | 999 | 3109 | 9 | 15 | pending |
