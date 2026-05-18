@@ -46,7 +46,7 @@
 | 330 | ieee-39-bus-system.md | topics | topics/test-system/ieee-39-bus-system.md | P1 | 999 | 2083 | 7 | 11 | completed |
 | 390 | induction-machine-model.md | models | models/rotating-machine/induction-machine-model.md | P1 | 999 | 2550 | 14 | 17 | completed |
 | 181 | interface-technique.md | methods | methods/simulation-technology/interface-technique.md | P0 | 999 | 5234 | 10 | 19 | completed |
-| 289 | large-scale-grid-simulation.md | topics | topics/simulation/large-scale-grid-simulation.md | P1 | 999 | 3484 | 7 | 51 | pending |
+| 289 | large-scale-grid-simulation.md | topics | topics/simulation/large-scale-grid-simulation.md | P1 | 999 | 3484 | 7 | 51 | completed |
 | 341 | layered-connection.md | methods | methods/transmission-line/layered-connection.md | P1 | 999 | 1823 | 5 | 13 | pending |
 | 388 | load-and-dg-modeling.md | topics | topics/component-modeling/load-and-dg-modeling.md | P1 | 999 | 1139 | 8 | 14 | pending |
 | 362 | lumped-parameter-model.md | methods | methods/transmission-line/lumped-parameter-model.md | P1 | 999 | 1460 | 6 | 14 | pending |
