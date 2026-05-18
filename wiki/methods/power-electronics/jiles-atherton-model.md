@@ -250,24 +250,24 @@ $$
 
 ## 相关方法
 
-- [[magnetic-saturation-modeling]] — 磁饱和基本概念
-- [[companion-circuit]] — 非线性支路的 EMT 离散化
-- [[numerical-integration]] — 含磁滞的刚性系统积分
+- [[methods/power-electronics/magnetic-saturation-modeling.md]] — 磁饱和基本概念
+- [[methods/numerical-methods/companion-circuit.md]] — 非线性支路的 EMT 离散化
+- [[methods/numerical-methods/numerical-integration.md]] — 含磁滞的刚性系统积分
 - Preisach 模型 — 另一种经典磁滞模型（基于积分算子，参数较多）
-- [[transformer-model]] — 变压器 EMT 建模基础
+- [[models/transformer/transformer-model.md]] — 变压器 EMT 建模基础
 
 ## 相关模型
 
-- [[transformer-model]] — 变压器 EMT 模型
-- [[induction-machine-model]] — 感应电机模型（含铁芯饱和）
-- [[converter-transformer-model]] — 换流变压器模型
+- [[models/transformer/transformer-model.md]] — 变压器 EMT 模型
+- [[models/rotating-machine/induction-machine-model.md]] — 感应电机模型（含铁芯饱和）
+- [[models/transformer/converter-transformer-model.md]] — 换流变压器模型
 
 ## 相关主题
 
-- [[ferroresonance]] — 铁磁谐振
-- [[transformer-modeling]] — 变压器建模
-- [[power-electronic-device-modeling]] — 电力电子器件建模
-- [[harmonic-analysis-methods]] — 谐波分析方法
+- [[topics/component-modeling/ferroresonance.md]] — 铁磁谐振
+- [[topics/component-modeling/transformer-modeling.md]] — 变压器建模
+- [[topics/modeling-methods/power-electronic-device-modeling.md]] — 电力电子器件建模
+- [[methods/signal-processing/harmonic-analysis-methods.md]] — 谐波分析方法
 
 ## 来源论文
 

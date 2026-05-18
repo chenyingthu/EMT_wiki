@@ -47,7 +47,7 @@
 | 372 | ieee-300-bus-system.md | topics | topics/test-system/ieee-300-bus-system.md | P1 | 999 | 7956 | 5 | 21 | completed |
 | 151 | impedance-relay.md | methods | methods/protection-fault/impedance-relay.md | P0 | 999 | 4045 | 17 | 15 | pending |
 | 39 | insulation-coordination.md | methods | methods/protection-fault/insulation-coordination.md | P0 | 999 | 2236 | 5 | 9 | completed |
-| 169 | jiles-atherton-model.md | methods | methods/power-electronics/jiles-atherton-model.md | P0 | 999 | 4727 | 12 | 10 | pending |
+| 169 | jiles-atherton-model.md | methods | methods/power-electronics/jiles-atherton-model.md | P0 | 999 | 4727 | 12 | 10 | completed |
 | 91 | large-timestep-simulation.md | methods | methods/numerical-methods/large-timestep-simulation.md | P0 | 999 | 2392 | 6 | 16 | pending |
 | 187 | lightning-overvoltage.md | topics | topics/protection-lightning/lightning-overvoltage.md | P0 | 999 | 5528 | 17 | 22 | pending |
 | 163 | low-rank-solver.md | methods | methods/network-solution/low-rank-solver.md | P0 | 999 | 4516 | 22 | 22 | pending |
