@@ -40,7 +40,7 @@
 | 367 | generalized-eigenvalue-method.md | methods | methods/stability-analysis/generalized-eigenvalue-method.md | P1 | 999 | 3223 | 13 | 24 | completed |
 | 238 | gpu-parallel-acceleration.md | methods | methods/simulation-technology/gpu-parallel-acceleration.md | P1 | 999 | 13292 | 32 | 13 | completed |
 | 206 | ground-potential-rise.md | topics | topics/protection-lightning/ground-potential-rise.md | P0 | 999 | 7380 | 61 | 13 | completed |
-| 360 | h-infinity-control.md | methods | methods/control/h-infinity-control.md | P1 | 999 | 1497 | 3 | 12 | pending |
+| 360 | h-infinity-control.md | methods | methods/control/h-infinity-control.md | P1 | 999 | 8760 | 9 | 27 | completed |
 | 241 | hardware-in-loop.md | topics | topics/simulation/hardware-in-loop.md | P1 | 999 | 11005 | 8 | 11 | completed |
 | 150 | heidler-function.md | methods | methods/signal-processing/heidler-function.md | P0 | 999 | 4026 | 19 | 10 | completed |
 | 51 | hil-simulation.md | topics | topics/simulation/hil-simulation.md | P0 | 999 | 1515 | 2 | 33 | pending |
