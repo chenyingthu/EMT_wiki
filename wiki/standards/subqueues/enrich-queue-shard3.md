@@ -1,6 +1,8 @@
 # Sub-Queue Shard 3 — 75 pages
 ||| Cycle 8 | dsogi-pll.md | P1 SKIP (Quality Gate PASS: bc=4306≥2000, bf=11≥5, wikilinks fixed 9→11, no placeholder, src=0≤5000, max_block=8311≤15000) | 2026-05-18 03:10 |
 ||| Cycle 10 | gpu-accelerated-simulation.md | P0 ENRICH (bc=663→4300, bf=1→9, no mermaid, added 8 block formulas, 3 methods, quant tables) | 2026-05-18 07:56 |
+||| Cycle 11 | hardware-acceleration.md | P1 SKIP (Quality Gate PASS: bc=2761≥2000, bf=6≥5, no placeholder, no DUP_BLOCK, wikilinks 22 all valid, src=1055≤5000, max_block=7856≤15000) | 2026-05-18 09:59 |
+
 
 > Generated: 2026-05-17 22:10
 
@@ -45,7 +47,7 @@
 | 149 | gpu-accelerated-simulation.md | methods | methods/simulation-technology/gpu-accelerated-simulation.md | P0 | 999 | 4300 | 9 | 11 | completed |
 | 410 | grid-side-converter.md | models | models/rotating-machine/grid-side-converter.md | P1 | 999 | 3203 | 17 | 23 | completed |
 | 66 | gruson-2011-reduced-mmc.md | models | models/equivalent/gruson-2011-reduced-mmc.md | P0 | 999 | 2369 | 8 | 9 | completed |
-| 311 | hardware-acceleration.md | methods | methods/simulation-technology/hardware-acceleration.md | P1 | 999 | 2802 | 6 | 22 | pending |
+| 311 | hardware-acceleration.md | methods | methods/simulation-technology/hardware-acceleration.md | P1 | 999 | 2761 | 6 | 22 | completed |
 | 190 | hbsm.md | methods | methods/power-electronics/hbsm.md | P0 | 999 | 1718 | 12 | 13 | completed |
 | 192 | high-performance-computing.md | methods | methods/simulation-technology/high-performance-computing.md | P0 | 999 | 5691 | 10 | 12 | pending |
 | 234 | hybrid-acdc-system.md | topics | topics/hvdc-facts/hybrid-acdc-system.md | P0 | 999 | 18632 | 27 | 14 | pending |
