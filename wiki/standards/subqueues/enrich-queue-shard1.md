@@ -62,7 +62,7 @@
 | 212 | ould-bachir-2019-unified-avm.md | methods | methods/power-electronics/ould-bachir-2019-unified-avm.md | P0 | 999 | 9070 | 14 | 17 | pending | completed 
 | 370 | partial-fraction-expansion.md | methods | methods/signal-processing/partial-fraction-expansion.md | P1 | 999 | 1423 | 6 | 16 | pending |
 | 304 | phase-domain-model.md | topics | topics/modeling-methods/phase-domain-model.md | P1 | 999 | 3078 | 6 | 15 | pending | completed 
-| 144 | pi-controller-model.md | models | models/control/pi-controller-model.md | P0 | 999 | 3936 | 30 | 9 | pending |
+| 144 | pi-controller-model.md | models | models/control/pi-controller-model.md | P0 | 999 | 3936 | 30 | 9 | completed |
 | 105 | pmsm-model.md | models | models/rotating-machine/pmsm-model.md | P0 | 999 | 2739 | 14 | 23 | pending | completed 
 | 201 | power-flow-calculation.md | methods | methods/system-studies/power-flow-calculation.md | P0 | 999 | 6755 | 18 | 13 | pending | completed 
 | 86 | prony-analysis.md | methods | methods/signal-processing/prony-analysis.md | P0 | 999 | 2283 | 10 | 13 | pending |
