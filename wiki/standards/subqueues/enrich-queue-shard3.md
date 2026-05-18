@@ -57,7 +57,7 @@
 | 157 | interpolation-method.md | methods | methods/numerical-methods/interpolation-method.md | P0 | 999 | 3725 | 10 | 22 | completed |
 
 | 274 | large-scale-hybrid-acdc-simulation.md | topics | topics/simulation/large-scale-hybrid-acdc-simulation.md | P1 | 999 | 4242 | 10 | 15 | completed |
-| 282 | lcl-filter.md | methods | methods/power-electronics/lcl-filter.md | P1 | 999 | 3685 | 17 | 8 | pending |
+| 282 | lcl-filter.md | methods | methods/power-electronics/lcl-filter.md | P1 | 999 | 3685 | 17 | 8 | completed |
 | 55 | load-model.md | models | models/basic-component/load-model.md | P0 | 999 | 1633 | 16 | 5 | pending |
 | 333 | lumped-resistance-approximation.md | methods | methods/system-studies/lumped-resistance-approximation.md | P1 | 999 | 1952 | 17 | 6 | pending |
 | 401 | microgrid-distribution-network.md | topics | topics/renewable-storage/microgrid-distribution-network.md | P1 | 999 | 910 | 3 | 12 | pending |
