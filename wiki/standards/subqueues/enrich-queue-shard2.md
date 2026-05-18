@@ -43,7 +43,7 @@
 | 254 | high-frequency-transient-analysis.md | methods | methods/protection-fault/high-frequency-transient-analysis.md | P1 | 999 | 6226 | 30 | 18 | completed |
 | 74 | hybrid-acdc-network.md | topics | topics/hvdc-facts/hybrid-acdc-network.md | P0 | 999 | 12494 | 15 | 15 | completed |
 | 232 | ibr.md | methods | methods/system-studies/ibr.md | P0 | 999 | 13677 | 16 | 14 | completed |
-| 330 | ieee-39-bus-system.md | topics | topics/test-system/ieee-39-bus-system.md | P1 | 999 | 2083 | 7 | 11 | pending |
+| 330 | ieee-39-bus-system.md | topics | topics/test-system/ieee-39-bus-system.md | P1 | 999 | 2083 | 7 | 11 | completed |
 | 390 | induction-machine-model.md | models | models/rotating-machine/induction-machine-model.md | P1 | 999 | 1093 | 10 | 27 | pending |
 | 181 | interface-technique.md | methods | methods/simulation-technology/interface-technique.md | P0 | 999 | 5234 | 10 | 19 | pending |
 | 289 | large-scale-grid-simulation.md | topics | topics/simulation/large-scale-grid-simulation.md | P1 | 999 | 3484 | 7 | 51 | pending |
