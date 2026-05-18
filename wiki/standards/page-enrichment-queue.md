@@ -46,7 +46,8 @@
 | 37 | frequency-scanning.md | methods | methods/stability-analysis/frequency-scanning.md | P0 | 999 | 2993 | 14 | 0 | completed |
 | 38 | dc-rlc-filter.md | models | models/basic-component/dc-rlc-filter.md | P0 | 999 | 1229 | 2 | 28 | pending |
 | 39 | insulation-coordination.md | methods | methods/protection-fault/insulation-coordination.md | P0 | 999 | 1233 | 3 | 18 | pending |
-| 40 | numerical-inverse-laplace-transform.md | methods | methods/signal-processing/numerical-inverse-laplace-transform.md | P0 | 999 | 1237 | 6 | 15 | pending |
+| 40 | numerical-inverse-laplace-transform.md | methods | methods/signal-processing/numerical-inverse-laplace-transform.md | P0 | 999 | 5892 | 21 | 24 | completed |
+
 | 41 | emt-software-history.md | topics | topics/tools-software/emt-software-history.md | P0 | 999 | 1239 | 4 | 20 | pending |
 | 42 | real-time-simulation.md | topics | topics/simulation/real-time-simulation.md | P0 | 999 | 1250 | 1 | 129 | pending |
 | 43 | lightning-induced-voltage.md | topics | topics/protection-lightning/lightning-induced-voltage.md | P0 | 999 | 1286 | 8 | 17 | pending |
