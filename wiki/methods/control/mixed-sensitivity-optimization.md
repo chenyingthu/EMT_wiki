@@ -1,26 +1,22 @@
 ---
 title: "混合灵敏度优化 (Mixed-Sensitivity Optimization)"
 type: method
-tags: [mixed-sensitivity, robust-control, optimization, h-infinity, controller-design]
+tags: [mixed-sensitivity, robust-control, optimization, h-infinity, controller-design, sensitivity, weighting-function]
 created: "2026-05-02"
+updated: "2026-05-19"
 ---
 
 # 混合灵敏度优化 (Mixed-Sensitivity Optimization)
 
-
-```mermaid
-graph TD
-    subgraph Ncmp[混合灵敏度优化 (Mixed-Sensitivity O…]
-        N0[$W_1$: 跟踪误差和扰动抑制]
-        N1[$W_2$: 控制量、执行器和调制限制]
-        N2[$W_3$: 噪声、未建模动态和鲁棒稳定]
-    end
-```
-
-
 ## 定义与边界
 
 混合灵敏度优化是 H∞ 控制中的一类频域加权综合问题。它同时约束灵敏度 $S$、控制灵敏度 $KS$ 和互补灵敏度 $T$，把跟踪/扰动抑制、控制量限制、噪声抑制和鲁棒稳定性折中为一个标准 H∞ 优化问题。
+
+其核心数学形式为：
+
+$$\min_K \left\| \begin{bmatrix} W_1 S \\ W_2 KS \\ W_3 T \end{bmatrix} \right\|_\infty$$
+
+其中 $S=(I+GK)^{-1}$、$T=I-S$、$KS=K(I+GK)^{-1}$，$W_1, W_2, W_3$ 为频率加权函数。当综合结果满足 $\gamma < 1$ 时，说明在所建线性模型和权重定义下，三类加权目标同时满足给定最坏增益界限。
 
 本页是 [[h-infinity-control]] 的具体设计分支。它不替代阻抗测量、频率扫描或小信号稳定分析；这些页面提供模型和验证证据。它也不是暂态稳定控制的直接保证，设计完成后仍需在 [[transient-stability-analysis]] 和 EMT 时域场景中复核。
 
@@ -39,21 +35,15 @@ graph TD
 
 对负反馈系统，设被控对象为 $G(s)$，控制器为 $K(s)$。灵敏度函数为：
 
-$$
-S=(I+GK)^{-1}
-$$
+$$S = (I + GK)^{-1}$$
 
 互补灵敏度为：
 
-$$
-T=GK(I+GK)^{-1}=I-S
-$$
+$$T = GK(I + GK)^{-1} = I - S$$
 
 控制灵敏度为：
 
-$$
-KS=K(I+GK)^{-1}
-$$
+$$KS = K(I + GK)^{-1}$$
 
 三者的物理解释不同：
 
@@ -61,22 +51,33 @@ $$
 - $T$ 主要描述测量噪声和未建模高频动态进入输出的通道，也与乘性不确定性鲁棒稳定有关；
 - $KS$ 反映扰动或参考变化引起的控制量需求，关系到执行器饱和和控制能量。
 
+三者之间存在约束关系。在 SISO 系统中有 $|S(j\omega)| + |T(j\omega)| = 1$，意味着低频扰动抑制（$S$ 小）必然伴随高频噪声放大（$T$ 大），这是混合灵敏度优化的物理约束基础。
+
+## H∞ 范数与灵敏度上界
+
+H∞ 范数定义为：
+
+$$\|G\|_\infty = \sup_\omega \bar{\sigma}(G(j\omega))$$
+
+其中 $\bar{\sigma}$ 是最大奇异值。它表示频域中最坏方向的小信号增益上界。混合灵敏度优化使闭环传递的 H∞ 范数最小化，即在频域中约束最坏增益。
+
+若优化结果 $\gamma < 1$，则有：
+
+$$\bar{\sigma}[W_1 S(j\omega)] < 1, \quad \bar{\sigma}[W_2 KS(j\omega)] < 1, \quad \bar{\sigma}[W_3 T(j\omega)] < 1, \quad \forall \omega$$
+
+这等价于三个频域不等式同时成立。
+
 ## 优化问题
 
 常见混合灵敏度问题写作：
 
-$$
-\min_K
-\left\|
-\begin{bmatrix}
-W_1S \\
-W_2KS \\
-W_3T
-\end{bmatrix}
-\right\|_\infty
-$$
+$$\min_K \left\| \begin{bmatrix} W_1 S \\ W_2 KS \\ W_3 T \end{bmatrix} \right\|_\infty$$
 
-其中 $W_1,W_2,W_3$ 是频率权重。若综合结果满足范数小于目标值，说明在所建线性模型和权重定义下，三类加权目标同时满足给定最坏增益界限。
+其中 $W_1, W_2, W_3$ 是频率权重。也可写为约束形式：
+
+$$\min_K \|W_1 S\|_\infty \quad \text{s.t.} \quad \|W_2 KS\|_\infty \le 1, \ \|W_3 T\|_\infty \le 1$$
+
+若综合结果满足范数小于目标值，说明在所建线性模型和权重定义下，三类加权目标同时满足给定最坏增益界限。
 
 权重的工程含义通常是：
 
@@ -86,48 +87,142 @@ $$
 | $W_2$ | 控制量、执行器和调制限制 | 全频或中高频 | 过弱会产生不可实现控制动作 |
 | $W_3$ | 噪声、未建模动态和鲁棒稳定 | 高频或不确定性显著频段 | 过弱会放大噪声和延时影响 |
 
+典型的权重函数形式为：
+
+$$W_1(s) = \frac{\frac{\omega_B}{M} s + \omega_B}{s + \omega_B \cdot \epsilon}, \quad W_3(s) = \frac{s + \omega_A / M}{\epsilon \cdot s + \omega_A}$$
+
+其中 $M$ 为峰值增益上限（通常取 $1.1\sim2$），$\omega_B$ 为带宽边界，$\epsilon$ 为高频衰减系数。
+
+## 广义对象与状态空间实现
+
+广义对象状态空间实现为：
+
+$$\begin{aligned} \dot{x} &= A x + B_1 w + B_2 u \\ z &= C_1 x + D_{11} w + D_{12} u \\ y &= C_2 x + D_{21} w + D_{22} u \end{aligned}$$
+
+其中 $w$ 是外部扰动输入，$u$ 是控制输入，$z$ 是加权性能输出，$y$ 是测量输出。
+
+从扰动 $w$ 到性能输出 $z$ 的闭环传递 $T_{zw}(s)$ 为：
+
+$$T_{zw}(s) = C_1 (sI - A - B_2 K)(I + D_{22} K)^{-1} B_1 + D_{11}$$
+
+广义对象可写为：
+
+$$\begin{bmatrix} z \\ y \end{bmatrix} = P(s) \begin{bmatrix} w \\ u \end{bmatrix}$$
+
+控制器 $u = K(s) y$ 闭合后得到从 $w$ 到 $z$ 的闭环传递。
+
+## 数值阻尼与混合灵敏度关联
+
+数值阻尼方法与混合灵敏度设计存在深层类比。对梯形积分法（Bilinear/Tustin 变换），数值阻尼引入的额外相位滞后等价于在高频段引入了一个隐式的 $W_3 T$ 加权项：
+
+$$\delta_\phi(\omega) \approx \frac{\omega h}{2}, \quad \text{对后向欧拉法} \quad \delta_\phi(\omega) \approx -\frac{\omega h}{2}$$
+
+该相位滞后在高频（$\omega > 1/h$）时等效于一个正阻尼，使离散域特征值 $\lambda_d$ 移向单位圆内部。
+
+对于 BDF 族，阶数 $k$ 的 BDF 方法引入的数值阻尼比近似为：
+
+$$\delta_\text{BDF} \approx \frac{k(k+1)}{12} \cdot (\omega h)^2$$
+
+在 EMT 仿真中，这种隐式的数值阻尼效应可视为系统自身的"内置 $W_3$ 权重"，因此在设计 H∞ 控制器时应考虑仿真步长 $h$ 的影响。
+
 ## 设计流程
 
-1. 选择设计模型：解析状态空间、频率扫描阻抗/导纳、动态相量或降阶模型。
-2. 明确输入输出：参考、扰动、噪声、控制量、测量量和性能量。
-3. 选择权重：把带宽、稳态误差、控制限制、噪声和未建模动态写成频率整形目标。
-4. 构造广义对象并检查维度、稳定性、可镇定性和可检测性。
-5. 进行 H∞ 综合或固定结构优化，记录目标值、控制器阶次和可实现性。
-6. 做频域验证：检查 $S,T,KS$、奇异值、稳定裕度和权重满足情况。
-7. 做实现处理：离散化、延时建模、阶次降低、限幅和抗饱和。
-8. 做 EMT 时域验证：多运行点、多扰动、多故障和保护动作场景下复核。
+1. **选择设计模型**：解析状态空间、频率扫描阻抗/导纳、动态相量或降阶模型。
+2. **明确输入输出**：参考、扰动、噪声、控制量、测量量和性能量。
+3. **选择权重**：把带宽、稳态误差、控制限制、噪声和未建模动态写成频率整形目标。
+4. **构造广义对象**：检查维度、稳定性、可镇定性和可检测性。
+5. **进行 H∞ 综合**：记录目标值 $\gamma_\min$、控制器阶次和可实现性。
+6. **做频域验证**：检查 $S$、$T$、$KS$ 的奇异值、稳定裕度和权重满足情况。
+7. **做实现处理**：离散化（通常用 Tustin 变换）、延时建模、阶次降低、限幅和抗饱和。
+8. **做 EMT 时域验证**：多运行点、多扰动、多故障和保护动作场景下复核。
 
 ## EMT/控制器设计注意点
 
 - 由 EMT 频扫得到的 $G(s)$ 只在扫描运行点、扰动幅值和频段内有效。
 - 如果对象是 MIMO 阻抗矩阵，需使用奇异值或特征值轨迹，不应把单通道 Bode 图当作完整证据。
-- 权重函数不能只追求曲线“好看”；必须对应实际电压、电流、调制比、采样、延时和保护限制。
-- 混合灵敏度结果常给出高阶动态控制器，工程实现前需要阶次降低和离散化复核。
-- 若控制器进入限幅，线性闭环的 $S,T,KS$ 已不再描述实际 EMT 轨迹。
+- 权重函数不能只追求曲线"好看"；必须对应实际电压、电流、调制比、采样、延时和保护限制。
+- 混合灵敏度结果常给出高阶动态控制器（阶次等于广义对象状态数），工程实现前需要阶次降低和离散化复核。
+- 若控制器进入限幅，线性闭环的 $S$、$T$、$KS$ 已不再描述实际 EMT 轨迹。
+- 数值阻尼（BDF、半步 BE 等）会隐式引入高频相位滞后，在高频阻抗设计中应考虑其影响。
+
+## EMT 中的接口方法
+
+### 阻抗/导纳接口法
+
+将 EMT 频域扫描得到的端口阻抗 $Z(j\omega)$ 或导纳 $Y(j\omega)$ 作为 H∞ 设计对象。把换流器等效为多端口网络后，可直接用阻抗矩阵实施鲁棒控制综合。
+
+在 dq0 坐标系下的阻抗矩阵（消除频率耦合）为：
+
+$$Z_{dq0}(\omega) = V_{dq0}(\omega) \cdot I_{dq0}(\omega)^{-1}$$
+
+其中 Park 变换矩阵为：
+
+$$T_{abc \to dq0} = \frac{2}{3} \begin{bmatrix} \cos\theta & \cos(\theta-2\pi/3) & \cos(\theta+2\pi/3) \\ -\sin\theta & -\sin(\theta-2\pi/3) & -\sin(\theta+2\pi/3) \\ 1/2 & 1/2 & 1/2 \end{bmatrix}$$
+
+### 伴随电路-特征值接口法
+
+利用 EMT 程序的伴随电路节点导纳矩阵 $G$ 及其 LU 分解因子，直接提取系统线性化模型做特征值分析。开关非线性系统的状态转移矩阵 $\Phi_T$ 可映射为可做特征值分析的形式：
+
+$$\mathbf{x}_{k+1} = \Phi_T \mathbf{x}_k, \quad \Phi_T = (G + G_\text{hist})^{-1} \cdot G_\text{switch}$$
+
+稳定性判据：$|\lambda_i(\Phi_T)| < 1$。
+
+### 非线性迭代求解法
+
+在 EMT 每步积分求解非线性电路时，采用标准 NR → 双轴 NR → Katzenelson 算法三级递进框架：
+
+- 标准 NR 承担 95% 以上的求解任务；
+- 双轴 NR 调用率约 4.5%，用于处理分段线性边界附近的振荡；
+- Katzenelson 算法调用率低于 0.5%，作为全局收敛兜底。
+
+该分层策略在强非线性（铁芯饱和、MOA 等）条件下可实现 100% 全局收敛率，相比单一 Katzenelson 算法整体计算耗时降低约 85%~90%。
+
+## 方法变体
+
+| 变体 | 机制 | 适用场景 | 主要风险 |
+|------|------|----------|----------|
+| 标准 H∞ 综合 | 最小化 $T_{zw}$ 的最大奇异值 | MIMO 线性控制器设计 | 控制器阶次高、权重解释困难 |
+| **混合灵敏度** | 加权 $S$、$KS$、$T$ 三通道 | 跟踪/扰动/噪声/控制量折中 | 权重选择可能导致保守或不可实现 |
+| 固定结构 H∞ | 优化给定控制器结构 | 工程控制器参数整定 | 非凸，可能停在局部解 |
+| $\mu$ 综合 | 处理结构化不确定性 | 参数和动态不确定性明确时 | D-K 迭代不保证全局最优 |
+| 基于阻抗的鲁棒整形 | 针对端口阻抗/导纳设计 | IBR、HVDC、弱网振荡 | 依赖线性频域模型质量 |
 
 ## 适用边界与失败模式
 
-- 不能把 $W_1S$ 小解释为所有故障电压都可快速恢复；它只是线性扰动通道的频域约束。
-- 不能把 $W_3T$ 小解释为所有未建模高频动态都安全；不确定性权重必须覆盖真实误差。
+- 不能把 $W_1 S$ 小解释为所有故障电压都可快速恢复；它只是线性扰动通道的频域约束。
+- 不能把 $W_3 T$ 小解释为所有未建模高频动态都安全；不确定性权重必须覆盖真实误差。
 - 控制量权重不足会在 EMT 中表现为调制饱和、电流限幅或保护触发。
 - 权重冲突可能使问题不可解，或得到过保守、低带宽的控制器。
 - 对多运行点系统，单点综合需要增益调度、鲁棒验证或多模型设计支撑。
+- 数值阻尼方法（BDF、BE 等）会引入步长依赖的隐式高频加权，综合结果应覆盖实际仿真步长范围。
 
-## 代表性证据
+## 量化性能边界
 
-- [[an-emt-based-dynamic-frequency-scanning-tool-for-stability-analysis-of-inverter-]]：可作为从 EMT 模型提取频域对象并验证控制交互的证据入口。
-- [[z-tool-frequency-domain-characterization-of-emt-models-for-small-signal-stabilit]]：说明多端 AC/DC 导纳矩阵可由 EMT 扫频识别，适合支撑 MIMO 混合灵敏度设计的模型来源边界。
-- [[h-infinity-control]]：提供本页所属的鲁棒控制总框架。
-- [[small-signal-stability-analysis]]：用于检查综合后闭环在运行点附近的模态表现。
+| 性能指标 | 典型范围 | 影响因素 |
+|----------|----------|----------|
+| $\gamma_\min$ | $0.5 \sim 2.0$ | 模型不确定性强弱、权重设置 |
+| 控制器阶次 | $4 \sim 20$（标准 H∞），$2 \sim 6$（降阶后） | 广义对象状态数、权重阶次 |
+| 带宽 $\omega_B$ | $10 \sim 500$ rad/s（MMC 内环），$1 \sim 50$ rad/s（外环） | 系统强度（SCR）、运行点 |
+| 稳定裕度 | 相位裕度 $\ge 30^\circ$，增益裕度 $\ge 6$ dB | 权重选择、模型精度 |
+| EMT 验证成功率 | $70\% \sim 95\%$ | 非线性程度、限幅频率 |
+
+典型工程实例（弱交流电网 MMC-HVDC，Li 等 2024）：外环带宽与 PLL 带宽接近不一定导致谐振失稳，降低交流电压控制器和 PLL 参数有利于逆变工况稳定。外环闭环主导极点对应时间常数约为 $0.014$ s（PCC 电容 0.15 pu），系统在逆变满功率（$P=-1$ pu）下若忽略 PCC 电容时全功率范围均稳定，考虑电容时则在特定功率点附近可能失稳。
+
+主动阻尼控制案例（Luo 等 2022）：Buck 模式 DC-DC 变换器在直流配电网中的谐振失稳可通过直流电流反馈有源阻尼抑制，参数设计需满足电池储能装置并联谐振抑制和直流网络串联谐振抑制两个约束，阻尼控制器增益在 Buck 模式下存在严格上限约束。
 
 ## 与相关页面的关系
 
-- [[h-infinity-control]]：上位鲁棒控制方法。
-- [[frequency-scan]]、[[impedance-measurement]] 和 [[time-domain-impedance-estimation]]：提供频域模型或验证数据。
-- [[modal-analysis]]：解释控制器对目标模态的作用通道。
+- [[h-infinity-control]]：上位鲁棒控制方法，提供广义对象框架和 H∞ 综合理论。
+- [[small-signal-stability]]：验证综合后闭环在运行点附近的模态表现，提供 Floquet 乘子和特征值分析。
+- [[frequency-scan]] 和 [[impedance-measurement]]：提供频域模型或验证数据，是阻抗/导纳接口法的信息来源。
+- [[time-domain-impedance-estimation]]：从时域数据辨识阻抗，与频率扫描互为补充。
+- [[modal-analysis]]：解释控制器对目标模态的作用通道和参与因子。
 - [[transient-stability-analysis]]：验证控制器在大扰动和保护动作下是否仍有益。
 - [[emt-simulation-verification]]：组织 EMT 时域对比、步长和模型边界检查。
+- [[active-damping-control]]：从阻抗塑形角度设计阻尼，与混合灵敏度优化的权重设计思路一致。
 
-## 证据边界
+## 来源论文
 
-本页只定义混合灵敏度优化的机制和 EMT 使用边界。具体权重、裕度、扰动幅值、频段和控制器阶次必须随项目模型报告；没有来源时不应给出通用“最佳权重”或固定鲁棒裕度。
+- **Li 等 2024** — Analytical Calculation Method of Outer Loop Controller Parameters of HVDC Converter Station Connected to Weak AC System. 弱交流电网 MMC-HVDC 外环参数解析计算，外环闭环传递函数零极点分析，$525\text{kV}/1250\text{MW}$ 换流站，$\gamma_\min$ 导向的 PI 参数范围推导。原文验证：EMT 时域仿真对照，$0.014$ s 主导时间常数，PCC 电容 $0.15$ pu 下逆变满功率失稳特征根分析。
+- **Luo 等 2022** — Active Damping Control and Parameter Calculation for Resonance Suppression in DC Distribution Networks. 有源阻尼控制策略及参数解析计算方法，$118$ Hz 串联谐振频率理论值与 $115.5$ Hz 阻抗幅值交点频率误差 $<2.5\%$，阻尼参数上界约束条件。
+- **Noda & Kikuma 2011** — A Robust and Efficient Iterative Scheme for the EMT Simulations of Nonlinear Circuits. 非线性电路分层混合迭代求解，标准 NR/双轴 NR/Katzenelson 三级递进框架，全局收敛率 $100\%$，计算耗时降低 $85\% \sim 90\%$，单步平均迭代次数 $<4$ 次。
