@@ -91,7 +91,7 @@
 | 308 | tools-comparison-guide.md | topics | topics/tools-software/tools-comparison-guide.md | P1 | 999 | 2852 | 6 | 19 | completed |
 
 | 249 | transient-stability.md | methods | methods/stability-analysis/transient-stability.md | P1 | 999 | 8233 | 10 | 14 | completed |
-| 63 | underground-cable-modeling.md | methods | methods/transmission-line/underground-cable-modeling.md | P0 | 999 | 1744 | 4 | 17 | pending |
+| 63 | underground-cable-modeling.md | methods | methods/transmission-line/underground-cable-modeling.md | P0 | 999 | 4254 | 17 | 27 | completed 
 | 251 | vector-control-model.md | models | models/control/vector-control-model.md | P1 | 999 | 7202 | 32 | 5 | pending |
 | 115 | voltage-interpolation.md | methods | methods/numerical-methods/voltage-interpolation.md | P0 | 999 | 3041 | 13 | 17 | completed |
 | 167 | wide-area-monitoring-protection.md | methods | methods/protection-fault/wide-area-monitoring-protection.md | P0 | 999 | 4638 | 8 | 14 | completed |
