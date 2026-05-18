@@ -1,0 +1,777 @@
+364                                                                                 IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 41, NO. 1, FEBRUARY 2026
+
+
+
+
+RMS+: Augmenting the Traditional Circuit Model to
+          Capture PLL Instability
+  Miguel Carreño , Oriol Velasco-Falguera , Josep Arévalo-Soler , and Oriol Gomis-Bellmunt , Fellow, IEEE
+
+
+   Abstract—Electrical circuits are modelled with a constant ad-                   the network is through a linear matrix equation that yields the
+mittance matrix for steady-state studies and for dynamic stud-                     currents of the buses as the product of their voltages times the
+ies involving synchronous machines. It is widely considered that                   admittances (Ybus ) [1].
+this model, called RMS model, is also suitable for capturing low-
+frequency oscillations in networks with inverters; however, this idea                  Bulk power systems are transitioning from being dominated
+has been challenged by recent research of the Phase-Locked Loop.                   by synchronous machines, to being dominated by Voltage
+The EMT model, in contrast, accounts for the dynamics of all circuit               Source Converters (VSCs). Grid-following VSCs include a
+components, but its high computational cost limits its application in              Phase-Locked Loop (PLL) that synchronizes the internal con-
+the analysis of bulk power systems. This paper introduces RMS+, a                  trol angle with the voltage angle. Nevertheless, the analysis of
+new circuit model constructed from the raw data of the system, that
+captures the PLL interactions with the network while reducing the                  the closed-loop dynamics shows that the “di/dt” effect of the
+number of state variables. The theoretical framework includes the                  inductors plays a crucial role [2], and is the mechanism, behind
+theory of dynamical systems, particularly, of slow-fast systems. The               two types of small-signal instability [3], [4].
+underlying assumption is that there must be a time-scale separation                    Driven by the transition taking place in power systems, the
+between the electromagnetic transients, and the PLL dynamics. In                   tools for analysis have also evolved. The model based on instan-
+this sense, this paper discusses the advantage of the RMS+ model
+for the analysis of synchronization stability of networks with Grid-               taneous signals (EMT) has gained momentum, even competing
+following Voltage Source Converters. The model is implemented in                   with the traditional Root Mean Square (RMS) model. Neverthe-
+a modal analysis tool, and validated in three test networks: a Single              less, the EMT model requires more storage space and compu-
+Converter Infinite Bus system, a modified version of the WSCC                      tation time compared to the RMS model, which complicates its
+nine-bus system; and the 39-bus system.                                            application for the analysis of large bulk power networks.
+   Index Terms—Slow-fast systems, SRF-PLL, synchronization                             Historically, there have been proposals to reduce the com-
+stability, grid-following, weak grid.                                              plexity of the problem. One of the earliest consists in the
+                                                                                   equivalencing of parts of the network and interconnecting them
+                            I. INTRODUCTION                                        to a small vicinity of the node where the study is focused.
+                                                                                   For instance, the elements under study can be modeled with
+      OLTAGES and currents in an electrical, passive circuit,
+V     are the sum of natural transients, originating from the
+interconnection of resistances, inductances, and capacitors, and
+                                                                                   instantaneous differential equations, other part can be modeled
+                                                                                   with the RMS circuit model, and the forced dynamics of gen-
+                                                                                   erators; and still another part (circuit and generators) can be
+“forced” dynamics, originating from the generators and active                      modeled as a frequency-dependent load [5]. This can yield good
+devices connected to the circuit. For the stability analysis of                    results for digital relaying studies; but its application for the
+power systems dominated by synchronous machines, passive                           stability analysis of Voltage Source Converters has shown that
+circuits are conventionally treated as algebraic restrictions. The                 it is difficult to define the boundary, as it is not straightforward
+underlying assumption is that all transients have settled down                     what is the “vicinity”, especially because it seems to change
+(steady-state), and the internal currents and voltages are sinu-                   with the tuning of the controls [6].
+soids at constant frequency. Since the synchronous machines                            A different approach was taken by Milano and Ortega, who
+are voltage sources, the most convenient way of representing                       first applied the theory of time-scale separation to derive the Fre-
+                                                                                   quency Divider Formula [7], and later, proposed a methodology
+                                                                                   to update the algebraic constraint (RMS model) in each time-step
+                                                                                   of a transient stability simulation program [8]. This way, the
+   Received 12 February 2025; revised 11 June 2025 and 23 September 2025;          voltage drop in the inductive branches was better approximated
+accepted 18 December 2025. Date of publication 22 December 2025; date of cur-
+rent version 26 January 2026. The work of Oriol Gomis-Bellmunt was supported       with the effect of the rotor dynamics; however, the analysis did
+by ICREA Academia Program. This work was supported by FEDER/Ministerio             not include Voltage Source Converters.
+de Ciencia, Innovación y Universidades - Agencia Estatal de Investigación,             It is convenient to clarify that the concept of dynamic phasors
+under Project PID2021-124292OB-I00. Paper no. TPWRD-00197-2025. (Cor-
+responding author: Miguel Carreño.)                                                cannot be considered an antecedent of this study. Dynamic Pha-
+   The authors are with Centre d’Innovacio Tecnologica en Convertidors Estat-      sors was a concept born in the context of Phasor Measurement
+ics I Accionaments - UPC, 08034 Barcelona, Spain (e-mail: miguel.carre             Units, and has to do more with signal processing and numerical
+no@upc.edu; oriol.velasco.falguera@upc.edu; josep.arevalo@upc.edu; oriol.
+gomis@upc.edu).                                                                    techniques, rather than the problem this paper addresses. In
+   Digital Object Identifier 10.1109/TPWRD.2025.3646818                            this theory, a given waveform is abstracted as a phasor with a
+
+      1937-4208 © 2025 IEEE. All rights reserved, including rights for text and data mining, and training of artificial intelligence and similar technologies.
+Personal use is permitted, but republication/redistribution requires IEEE permission. See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 04:06:23 UTC from IEEE Xplore. Restrictions apply.
+CARREÑO et al.: RMS+: AUGMENTING THE TRADITIONAL CIRCUIT MODEL TO CAPTURE PLL INSTABILITY                                                               365
+
+
+
+                                                                                    In the development presented in this document ωn represents
+                                                                                 the nominal angular speed ( ωn = 2πfn ), δ denotes the PLL
+                                                                                 angle shift, Δω denotes the frequency shift in radians per second,
+                                                                                 u denotes the input signal of the PLL, and iP , iQ denote the
+                                                                                 current commands regulating the active power and reactive
+                                                                                 power respectively. The RMS line-line voltage of the constant
+                                                                                 voltage source is denoted with V , the inductance with L, and its
+                                                                                 reactance with X.
+Fig. 1. Small radial system. (a) Circuit and dynamical model (b) Non-linear         Fig. 1(b) shows the block diagram of the non-linear closed-
+block diagram of closed-loop system.                                             loop system, with emphasis on the positive feedback loop that
+                                                                                 is overlooked by the RMS model. Essentially, this is the conse-
+                                                                                 quence of modelling the network only with impedances. Notice
+time-varying envelope. The function that the envelope follows is                 that the circuit equations in complex dq variables referenced to
+proposed to be polynomial, and the research focuses on different                 the angle of the constant voltage source are:
+techniques to find the coefficients of the complex polynomial
+[9]. There have been attempts to model network components                                        RMS: udq = idq (jX) + V
+with dynamic phasors for time-domain simulation. In [10], the                                                                       didq
+authors modeled transmission lines as RL branches, but they                                      EMT: udq = idq (jX) + L                 +V             (1)
+                                                                                                                                     dt
+included only the fundamental frequency component, which is
+equivalent to an RMS model of the network.                                          The linearization of the second order system in Fig. 1(b) pro-
+   Inspired by the theory of slow-fast systems developed by                                                                                      ·
+                                                                                                                                            2
+Fenichel, Tikhonov, and others [11]; this paper proposes RMS+,                   duces an equation of the form 0 = Δδ̈ + 2ζωnat Δδ +ωnat       Δδ,
+a new circuit model that is sensitive to the forced dynamics, while              where 2ζωnat is called the damping, ζ is the damping coefficient,
+being unaffected by the natural transients of the network. The                   and ωnat is the natural frequency. The symbol “Δ” behind δ
+currents and voltages of the passive elements are not modeled                    denotes that we are dealing with “perturbed” or “deviation”
+as state variables, hence, RMS+ is simpler and less compu-                       quantities. The conditions for stability can be deduced from
+tationally costly than the EMT model. Antecedents of similar                     the inequality 2ζωnat > 0. The derivation of the conditions is
+proposals can be found in the field of theoretical chemistry                     detailed in [4]. Here, only a comparison between the two models
+[12], [13]. The innovation presented here was motivated by the                   is presented. A step-by-step explanation of why the RMS model
+problem of synchronization stability of grid-following voltage                   fails to capture PLL small-signal instability is provided in [14].
+source converters; hence, this paper demonstrates its validity and                  In the RMS model, the condition 2ζωnat > 0 implies a single
+advantage in that context.                                                       condition: V > |iP X|. This inequality is a voltage-stability
+   This paper is organized as follows: Section II discusses the                  condition establishing that the magnitude of the steady-state
+limitations of the RMS model, while Section III examines the                     voltage across the inductor corresponding to active power in-
+challenges in augmenting it. Section IV introduces the RMS+                      jection should be less than the RMS line-line voltage of the
+model, Section V details the procedure for large RLC cir-                        voltage source. On the other hand, the EMT model features three
+cuits, and Section VI analyzes the closed-loop model of multi-                   conditions of stability:
+converter systems. Section VII presents validations across three
+systems of varying complexity and size. Finally, Section VIII                               Voltage Stability: V > |iP X| ,
+concludes the paper.                                                              Transcritical bifurcation: 1 − Kp iP L > 0,
+                                                                                                                              12
+         II. LIMITATIONS OF THE RMS CIRCUIT MODEL                                        Hopf bifurcation: Kp V 2 −(iP X)2 −Ki iP L > 0,
+   This section builds upon known results to argue that rep-                                                                                            (2)
+resenting a circuit only with impedances implies missing two
+mechanisms of small-signal instability of the PLL.                                  Notice that inequality two and three involve both, the electrical
+   For understanding the essential limitation, it is enough to                   parameters and the PLL gains. Transcritical bifurcation occurs if
+consider the small system of Fig. 1(a), which has been studied                   Kp surpasses a limit, while Hopf bifurcation occurs if the ratio
+thoroughly in previous research (a small selection is [2], [3],                  Ki /Kp surpasses a limit. Also notice that a common feature
+[4]). The dynamical model of the converter does not include                      between all three conditions of stability is that a high iP (high
+Low Voltage Ride Through logic because short circuits are not                    active power injection) and high L (large inductance) make
+studied. The outer loop is reasonably assumed to be much slower                  the system more prone to instability. This confirms common
+than the PLL, hence, it is neglected, and the current commands                   knowledge about the stability of grid-following VSCs; that the
+are assumed to be constant. Finally, the current loop is assumed                 active power injection and the grid strength play a fundamental
+to be ideal, which implies that the currents follow the commands                 role. The basic definition of the Short Circuit Ratio is the
+perfectly. As explained in [2], [3], [4], this is reasonable because             maximum short circuit power (Ssc ) divided by the P rating of the
+in most realistic cases there is a clear time-scale separation                   converter. Denoting with Umax the magnitude of the maximum
+between the PLL and the current loop.                                            RMS line-line voltage at terminals of the converter, the ratio for
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 04:06:23 UTC from IEEE Xplore. Restrictions apply.
+366                                                                                   IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 41, NO. 1, FEBRUARY 2026
+
+
+                                                                                                                  
+                                                                                                          iGF L1    V
+                                                                                                        ×         +    .                                  (4)
+                                                                                                          iGF L2    V
+
+                                                                                         Though the coefficient of p is now a matrix, finding it is
+                                                                                      straightforward since it is again the result of dividing the re-
+                                                                                      actances by ωn . The reason behind this is that the number
+                                                                                      of branches and the number of GFL is equal (2 GFL and 2
+Fig. 2.   Interconnection diagram of the electrical elements.                         branches); hence, the current through the branches is a linear
+                                                                                      combination of the GFL currents. Denoting with iBr1 and iBr2
+                                                                                      the currents through inductor L1 and L2 respectively, the rela-
+                                                                                      tionship is
+                                                                                                                              
+                                                                                                         iBr1      1 1 iGF L1
+                                                                                                               =                     .             (5)
+                                                                                                         iBr2      0 1 iGF L2
+                                                                                         It is essential to understand that in this straightforward circuit
+                                                                                      the linear relationship in (5) is fulfilled always, during the
+                                                                                      transient period and the steady-state period.
+                                                                                         The circuit of Fig. 3(b) is a different story. In this case, there is
+                                                                                      only one GFL, and two branches. The differential and algebraic
+                                                                                      equations in this case are
+                                                                                                   vGF L − V = (R1 + jX1 + L1 p) iBr1
+                                                                                                   vGF L − V = (R2 + jX2 + L2 p) iBr2
+Fig. 3.   Circuits cases (a) Example 1 (b) Example 2.
+                                                                                                        iGF L1 = iBr1 + iBr2 .                            (6)
+                                                                                         Notice that now iGF L1 is not differentiated with respect to
+the system in Fig. 1(a) yields:                                                       time, but iBr1 and iBr2 are the ones subjected to operator
+                                                                                    p. Also, notice that (6) includes two derivatives. Compared
+             Ssc    Umax Isc   Umax (V /X)                            V               with the system of Fig. 1, the new dynamical model is larger,
+SCR =             =          =             =                                      .
+             Pvsc    Pvsc       Umax iPmax                          iPmax X           which translates in a higher computational cost for its transient
+                                                                              (3)     simulation, or eigenvalue calculation.
+                                                                                         It would be desirable to reduce the problem to a single
+   The Short Circuit Ratio yields valuable information about the                      derivation, with a coefficient L, applied directly to the GFL
+network, but loses the dynamic interaction with the parameters                        current, like in Fig. 2. The symbol chosen, L, points to the role
+of the PLL. Hence, for screening, it might be a good idea to                          of this coefficient, scalar, or matrix, to contain the equivalent
+also perform a small-signal stability analysis with simplified                        inductances. In other words, it would be desirable to model the
+models of grid-following converters such as the one in Fig. 1.                        voltage drop as
+Nevertheless, most small-signal analysis tools are based on the
+RMS model that cannot capture PLL instabilities.                                                vGF L − V = vdrop = (Zeq + Lp) iGF L1 ,                   (7)
+                                                                                      however, while it is known how to calculate Zeq , the question
+            III. HOW TO AUGMENT THE RMS MODEL?                                        remains on how to calculate L.
+   The block-diagram in Fig. 2 shows an alternative connection
+of the system considered before. In this new representation the                                          IV. RMS+ CIRCUIT MODEL
+inputs and outputs are electrical signals, which could be 2D                             This section presents the basics of slow-fast systems and
+vectors or complex numbers referenced to a single angle in the                        proposes a two-step process to compute L. Then, the problem
+network. In this representation iGF L1 is the current injected                        stated in the previous section is solved with this approach.
+by the grid-following converter and vGF L1 denotes its input,
+the measured signal. The name GFL stands for “grid-following                          A. Slow-Fast Systems
+VSC”. Operator p is introduced to denote derivation with respect
+                                                                                        Slow-fast systems can be modeled with two sets of state
+to time.
+                                                                                      variables, x and z (vectors), where the derivatives of z are
+   Notice that in this case it is straightforward to augment the
+                                                                                      multiplied by a small positive parameter ε:
+RMS model by simply adding to jX the term Lp. A similar
+                                                                                                                  ·
+situation occurs in larger networks such as the one in Fig. 3(a).                                                x = f (x, z, ε) ,
+Notice that the circuit matrix equation is:
+                                                                                                                εż = g (x, z, ε) .                       (8)
+                                                    
+      vGF L1          X1        X1          L1      L1                                  The selection of state variables x and z; and of the time
+               = j                      +                 p
+      vGF L2          X1 X1 + X2            L1 L1 + L2                                constant ε is not always straightforward. However, the origin
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 04:06:23 UTC from IEEE Xplore. Restrictions apply.
+CARREÑO et al.: RMS+: AUGMENTING THE TRADITIONAL CIRCUIT MODEL TO CAPTURE PLL INSTABILITY                                                               367
+
+
+
+of ε are the “parasitic” parameters such as inductances and                                                     TABLE I
+                                                                                                      COMPARISON OF CIRCUIT MODELS
+capacitances that increase the order of the model. Setting ε equal
+to zero degenerates in the equation g (x, z, 0) = 0, whose roots
+in terms of z are functions of x, hence z = h(x). These roots
+represent quasi-equilibriums, because the fast states settle down
+not to a constant value, but to slower dynamics driven by x. The
+new system is restricted to the manifold z = h(x); the result is
+a slow flow, or slow model [11], [15]:
+                        ẋ = f (x, h (x) , 0) .                          (9)
+   The slow model is a reduced version of the original model
+(8), and is a valid approximation if the analysis focuses on the
+slow dynamics. This idea has been explored for VSC control
+simplification [16]; but this paper explores it for circuits with                 The second step is to recover the original equations of the
+GFL converters. The states of the PLL such as δ and Δω are                      inductors:
+slow, while currents of inductors and voltages of capacitors are
+                                                                                       vGF L − V = (R1 + jX1 + L1 p) iBr1
+often much faster. The transients produced by the latter are called
+by different names, such as electromagnetic transients, or RLC                                        ∼
+                                                                                                      = [(R1 + jX1 ) a1 + L1 a1 p] iGF L1 ,
+transients. While the RMS model assumes that all state variables
+                                                                                       vGF L − V = (R2 + jX2 + L2 p) iBr2
+have reached their equilibriums, it is better to consider that the
+fast states have reached their quasi-equilibriums, while the other                                    ∼
+                                                                                                      = [(R2 + jX2 ) a2 + L2 a2 p] iGF L1 .            (11)
+variables keep changing slowly.
+                                                                                   As expected, the algebraic terms of the two equations coin-
+                                                                                cide, and are equal to the equivalent impedance:
+B. Two-step Process
+   The RMS+ model is based on the idea of first expressing                                     (R1 + jX1 ) a1 = (R2 + jX2 )
+the inductor currents as linear combinations of the GFL cur-                                           (R1 + jX1 ) (R2 + jX2 )
+rents, or any other active device, such as synchronous machine,                                a2 =                            = Zeq                   (12)
+                                                                                                            R12 + jX12
+grid-forming VSC, etc. This step is similar to finding the quasi-
+equilibriums, and in practice the steady-state relationships are                   However, the coefficients in the dynamic parts do not coincide
+utilized.                                                                                                      (R2 L1 + jωn L2 L1 )
+   In second place, the original expression for the voltage of                                     L1 a 1 =                         ;
+                                                                                                                   R12 + jX12
+the inductors is recovered; which means that their voltage is
+expressed as the sum of an algebraic part (RMS model), and a                                                   (R1 L2 + jωn L2 L1 )
+                                                                                                   L2 a 2 =                         .                  (13)
+dynamic first order part. To find L, the branch equation must                                                      R12 + jX12
+be converted to a node equation, but here a limitation arises,
+                                                                                  This issue can be surpassed if least-squares approximation is
+which is that the resulting system is not square, since there are
+                                                                                applied, which in this case means computing the average. Hence
+more branches than GFL nodes (Example 2 in the previous                                                                          
+section). This leads to an overdetermined system with more                                         (L1 R2 + R1 L2 ) + j2ωn L1 L2
+                                                                                          L =                                       .     (14)
+equations than variables that can be solved with least-squares                                             2 (R12 + jX12 )
+approximation. As a result, L is found.
+                                                                                  Notice that L is a complex scalar, as opposed to L1 and L2
+                                                                                which are real scalars.
+C. Solution to Example 2
+   Returning to the problem that was left open in the previous                  D. Clarifying Remarks
+section, it is shown here how to compute L. The first step is
+to approximate the branch currents as linear expressions of the                     RMS+ is an open-loop model of the circuit, not restricting
+GFL current. This is achieved with the current divider formula:                 the dynamical models of the generators connected to it, though
+                                                                              it is accurate only with the slow dynamics. It augments the RMS
+                           R2 + jX2                                             model by introducing the term Lp, which could be thought as
+                 iBr1 ∼
+                      =                 iGF L1 ,
+                          R12 + jX12                                            adding an “inductance” effect.
+                                                                                  Table I presents a summary of the main differences between
+                      ∼    R1 + jX1
+                 iBr2 =                 iGF L1 .           (10)                 the three models. The RMS+ model can be integrated in time-
+                          R12 + jX12
+                                                                                domain simulation programs and modal analysis programs.
+   In (10) R12 and X12 are the sums of the resistances and of the                   However, it should be stressed again that it is accurate only for
+reactances respectively. For simplicity the complex coefficients                slow dynamics, with frequency behind the nominal frequency,
+are denoted with a1 and a2 ; hence iBr1 = a1 iGF L1 , and iBr2 =                since at that point is where the electromagnetic transients start
+a2 iGF L2 .                                                                     having a significant impact.
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 04:06:23 UTC from IEEE Xplore. Restrictions apply.
+368                                                                                IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 41, NO. 1, FEBRUARY 2026
+
+
+
+                 V. FINDING L IN LARGE CIRCUITS                                      Substituting and manipulating with (15) and (16), the result
+                                                                                  is a known expression for the admittance matrix Ybus :
+   In this section N∗ is used to denote the number of nodes,                           ⎡      ⎤               ⎡       ⎤
+where the subindex ∗ identifies the type of the node, i.e.,                              I∞                      V∞
+∗ = {“∞”, “GFL”, “0”}. Hence, there are N constant volt-                              ⎣IGF L ⎦= BZ−1diag B
+                                                                                                            T ⎣
+                                                                                                                VGF L ⎦
+age sources (infinite buses), NGF L grid-following converters,                            I0                      V0
+and N0 intermediate busbars (busbars with no generation). One                                      ⎡                             ⎤⎡        ⎤
+of the infinite buses establishes the system angle reference,                                        Y∞∞         Y∞GF L    Y∞0        V∞
+which rotates at speed ωn . All voltages and currents are ex-                                   = ⎣YGF L∞ YGF LGF L YGF L0 ⎦ ⎣VGF L ⎦
+pressed with 2 × 1 column vectors whose entries are the real                                          Y0∞         Y0GF L   Y00         V0
+                                                                                                        ⎡        ⎤
+(d-axis), and imaginary (q- axis) components. For the infinite                                             V∞
+buses, its voltage and current vectors are denoted with V∞ ,                                    = Ybus ⎣VGF L ⎦ .                            (18)
+and I∞ , respectively. The node voltages and currents of the                                                V0
+grid-following VSCs, are denoted with vGF Li and iGF Li for
+i = 1, 2, . . . NGF L . All other nodes are assumed to have                          From the Ybus in (18) it is possible to express the branch
+zero current injection and are denoted with v0j and i0j for                       currents as linear combinations of the node currents, and the
+j = 1, 2, . . . N0 . For ease of notation, the vectors vGF Li are                 infinite bus. This requires first a preprocessing to reduce matrix
+aggregated into a single column vector VGF L , and the same for                   Ybus , and express VGFL in terms of V∞ , and IGFL . Since I0 = 0,
+their currents, yielding the vector IGF L . Vectors v0j and i0j are               the vector V0 can be expressed in terms of the other two:
+                                                                                                         −1
+aggregated in a similar fashion into V0 and I0 . The number of                                   V0 = −Y00  (Y0∞ V∞ + Y0GF L VGF L )
+branches is NBr , and their voltages and currents are aggregated                                                                
+likewise. For the series RL branches (lines and transformers),                                           −1                 V∞
+                                                                                                    = −Y00  Y0∞ Y0GF L             ,                    (19)
+their voltage and current vectors are VRL and IRL respectively.                                                            VGF L
+The loads are modeled as parallel L and R shunt branches;                           Thus, the matrix can be reduced (Kron reduction):
+thus, their vectors are VLshunt , VRshunt , and ILshunt , IRshunt ,                                                   
+                                                                                            Y∞∞       Y∞GF L        Y∞0
+respectively. Finally, the vectors for the shunt capacitors are VC                Yred =                        −          Y −1 Y0∞ Y0GF L
+                                                                                           YGF L∞ YGF LGF L       YGF L0 00
+and IC . In the following development, symbols 0, and 1, are used
+                                                                                                     −1                          −1
+                                                                                                                                              
+generically to denote matrices of zeros, and identity matrices of                        Y∞∞ −Y∞0 Y00    Y0∞      Y∞GF L −Y∞0 Y00    Y0GF L
+                                                                                  =                      −1                          −1        ,
+appropriate sizes in each context.                                                     YGF L∞ −YGF L0 Y00   Y0∞ YGF LGF L −YGF L0 Y00   Y0GF L
+   The node currents are the sum of the branch currents con-                                        
+nected to the node, hence:                                                             Y       YredB
+                                                                                  = redA               .                                   (20)
+                                                                                       YredC YredD
+                                                             ⎡            ⎤
+ ⎡         ⎤                                                      IRL               With the reduced admittance matrix, it is possible to express
+      I∞                                                     ⎢ILshunt ⎥
+ ⎣IGF L ⎦ = BRL BLshunt BRshunt BC                           ⎢        ⎥           VGF L in terms of V∞ and IGF L :
+                                                             ⎣IRshunt ⎦ ,
+                                                                                                            −1
+   I0
+                                                                IC                                VGF L = YredD (IGF L − YredC V∞ ) ,                   (21)
+                                                                     (15)            It is important to emphasize that (21) corresponds to the RMS
+                                                                                  model, since an algebraic relationship between the voltages and
+where BRL , BLshunt , BRshunt , and BC are incidence matrices                     the currents of the converters has been established. Nevertheless,
+of the respective branches. All of them have (2 + 2N + 2M )                       to derive the RMS+ model it is necessary to proceed further.
+rows, and number of columns according to the number of re-                        First, the matrix that reduces the vector of voltages - derived
+spective branches. The full incidence matrix is denoted with B;                   from (19) - is denoted K:
+and it also plays a role in the expression of the branch voltages:                       ⎡       ⎤     ⎡                            ⎤
+                                                                                             V∞               1             0                
+                     ⎡           ⎤                                                       ⎣VGF L ⎦ = ⎣         0             1       ⎦ V∞
+                          VRL         ⎡      ⎤                                                               −1           −1            VGF L
+                                        V∞                                                   V0          −Y00   Y0∞ −Y00     Y0GF L
+                     ⎢VLshunt ⎥
+                     ⎢        ⎥     T ⎣
+                                       VGF L ⎦.                                                                  
+                     ⎣VRshunt ⎦ = B                                      (16)
+                                                                                                             V∞
+                                        V0                                                          =K              .                           (22)
+                        VC                                                                                  VGF L
+                                                                                    Next, substituting (21) and (22) the node voltages can be
+  In steady-state, it is possible to express every branch voltage                 expressed in terms of V∞ , and the currents of the grid-following
+as the product of the current through the branch times the                        VSCs. The new matrix is denoted Z̃:
+impedance of the branch:                                                          ⎡      ⎤
+                                                                                     V∞                                                       
+                   ⎡            ⎤            ⎡           ⎤                        ⎣VGF L ⎦ = K V∞ = K                    1            0       V∞
+                                                                                                                      −1              −1
+                         VRL                     IRL                                                VGF L         −YredD   YredC YredD       IGF L
+                   ⎢VLshunt ⎥         ⎢ILshunt ⎥                                     V0
+                   ⎢        ⎥         ⎢        ⎥                                                         
+                   ⎣VRshunt ⎦ = Zdiag ⎣IRshunt ⎦.                        (17)
+                                                                                            =𝒵  ˜ V∞                                           (23)
+                      VC                 IC                                                         IGF L
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 04:06:23 UTC from IEEE Xplore. Restrictions apply.
+CARREÑO et al.: RMS+: AUGMENTING THE TRADITIONAL CIRCUIT MODEL TO CAPTURE PLL INSTABILITY                                                               369
+
+
+                                                                                                             
+   In (23) the node voltages have been expressed in terms of the                                       V∞                         d
+node currents and the infinite-bus voltage. Finally, substituting                  = Zdiag C                      + Ldiag CGF L      IGF L .           (28)
+                                                                                                      IGF L                       dt
+in (16), and in (17), the result is:
+    ⎡          ⎤           ⎡          ⎤                                            In the right-hand side of (28), the algebraic and dynamic parts
+        IRL                    VRL                 ⎡       ⎤                    are distinguishable, and they can be reorganized separately. For
+    ⎢ILshunt ⎥             ⎢          ⎥               V∞
+    ⎢          ⎥             V
+                      −1 ⎢ Lshunt ⎥             T ⎣                             the algebraic part, the branch voltages are expressed in terms of
+    ⎣IRshunt ⎦ = Zdiag ⎣VRshunt ⎦ = Zdiag B
+                                             −1
+                                                     VGF L ⎦
+                                                                                the generator voltages by substituting (16) and (22):
+                                                       V0                                              ⎡          ⎤
+         IC                    VC
+                                                                                                       VRL                             
+                                     V∞                                                       V∞       ⎢VLshunt ⎥                      V∞
+                  = Z−1
+                      diag B T˜
+                              𝒵            .                 (24)                 BT K               =⎢⎣VRshunt ⎦
+                                                                                                                  ⎥      = Z diag C           . (29)
+                                   IGF L                                                     VGF L                                    IGF L
+                                                                                                           VC       RMS
+   In (24) the branch currents have been expressed as linear
+combinations of the currents out of the converters, and the                        The product B T K is not invertible because there are more
+voltage of the infinite bus. This concludes step 1 of 2, presented              branches than nodes in realistic circuits, hence, the system is not
+                                                     T˜
+in Section A. For convenience, the matrix Z−1  diag B 𝒵 in (24) is              squared, but overdetermined; however, least-squares estimation
+denoted with C, and expressed as the horizontal concatenation                   can be applied; or in other terms, the pseudoinverse of Moore-
+of two matrices:                                                                Penrose († “dagger symbol”). As expected, for the algebraic part,
+  ⎡         ⎤                                                                   the estimation yields the expression derived in (21):
+     IRL                                                      
+  ⎢ILshunt ⎥                                                                                                               
+  ⎢         ⎥ = Z−1 B T 𝒵  ˜ V∞ = C∞ CGF L                  V∞                         V∞                 †           V∞
+  ⎣IRshunt ⎦       diag        IGF L                       IGF L                                 = B T K Zdiag C
+                                                                                      VGF L RMS                        IGF L
+      IC                                                                                                                              
+                                                                                                           1             0        V∞
+                        V∞                                                                       =        −1               −1              . (30)
+              =C              .                                (25)                                   −YredD   YredC YredD         IGF L
+                      IGF L
+                                                                                   Notice that the term relating VGF L with IGF L is the equivalent
+                                                                                                       −1
+   This paper proposes that the steady-state result achieved in                 impedance: Zeq = YredD      . For the dynamic part, it is necessary
+(25) is a reasonable approximation of the distribution of the                   first to denote with B̃ the reduced incidence matrix:
+currents if the system is not exactly in steady-state, but the forced
+dynamics are slow compared to the natural transients. Therefore,                                       B̃ = BRL BLshunt 0 0 ;                          (31)
+the next step consists in expressing the voltages of the inductive              hence:
+elements as the sum of an algebraic part (RMS), and a dynamic                                                      ⎡         ⎤
+part:                                                                                                                VRL
+                                                                                                V∞        ⎢VLshunt ⎥                  d
+      ⎡          ⎤ ⎡             ⎤          ⎡         ⎤                           B̃ T K                 =⎢        ⎥     = Ldiag CGF L IGF L
+         VRL              VRL                  VRL                                             VGF L Dyn  ⎣ 0 ⎦                       dt
+      ⎢VLshunt ⎥ ⎢VLshunt ⎥                 ⎢VLshunt ⎥                                                        0
+      ⎢          ⎥ ⎢             ⎥       +⎢           ⎥
+      ⎣VRshunt ⎦ = ⎣VRshunt ⎦               ⎣ 0 ⎦ .              (26)                                                Dyn
+                                                                                                                                         (32)
+          VC               VC      RMS
+                                                0       Dyn
+                                                                                  To obtain L, it is necessary to slice, or select, only the last 2N
+   To express the dynamic part, it is necessary to introduce Ldiag ,            rows of the estimation. Hence, the slicing matrix S is defined
+a diagonal matrix whose entries are the inductances of each                     by the concatenation S = [02(N GF L ×N ∞ ) I2(N GF L ×N GF L ) ].
+branch. The entries corresponding to shunt resistors, and shunt                 Thus,
+capacitors, are zero. Therefore, the updated expression for the                                                 †
+branch voltages – compare with (17) - is:                                                          L =S B̃ T K Ldiag CGF L .                     (33)
+  ⎡         ⎤          ⎡         ⎤             ⎡          ⎤
+     VRL                  IRL                       IRL                            Finally, expressing the derivative with p, the final expression
+  ⎢VLshunt ⎥           ⎢ILshunt ⎥            d ⎢          ⎥
+  ⎢         ⎥          ⎢         ⎥             ⎢ILshunt ⎥                       relating voltages of the converters, currents of the converters,
+  ⎣VRshunt ⎦ = Zdiag ⎣IRshunt ⎦ + Ldiag dt ⎣IRshunt ⎦ . (27)                    and voltage of the infinite bus is:
+      VC                   IC                        IC                                          −1
+                                                                                       VGF L + YredD YredC V∞ = (Zeq + Lp) IGF L .                     (34)
+  Substituting (25), and (16) in (27) yields                                                    −1
+    ⎡           ⎤                                                                  The term YredD   YredC V∞ corresponds to the Thévenin volt-
+        VRL                                                                     ages seen by each converter; hence, the left-hand side term
+    ⎢VLshunt ⎥
+    ⎢           ⎥                                                               in (34) corresponds to the voltage drop at the passive circuit
+    ⎣VRshunt ⎦                                                                  elements. Matrix Zeq corresponds to the equivalent steady-state
+          VC                                                                    impedances and L is the new term, a matrix of usually small
+                                                                          gains that captures the sensitivity of the voltages to the deriva-
+               V∞             d                 V∞
+  = Zdiag C           + Ldiag       C∞ CGF L            .                       tives of the currents. By including this new matrix L, the RMS+
+              IGF L           dt               IGF L
+                                                                              model becomes apt to capture PLL small-signal instability. Some
+               V∞                 d               d                             additional clarifications are:
+  = Zdiag C           + Ldiag C∞ V∞ + Ldiag CGF L IGF L
+              IGF L              dt              dt                                1) Model (34) is a positive-sequence model.
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 04:06:23 UTC from IEEE Xplore. Restrictions apply.
+370                                                                                IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 41, NO. 1, FEBRUARY 2026
+
+
+
+                                                                                                                     ⎡             ·   ⎤
+                                                                                                                         iGF L1 δ1
+                                                                                                                     ⎢             ·   ⎥
+                                                                                                                     ⎢                 ⎥
+                                                                                             −1             ⎢ iGF L2 δ2 ⎥
+                                                                                        = −YredD IGF L + Lℛ ⎢     .     ⎥.                              (36)
+                                                                                                                     ⎢        ..       ⎥
+                                                                                                                     ⎣                 ⎦
+                                                                                                                                   ·
+                                                                                                                         iGF LN δN
+                                                                                     Matrix ℛ in (36) is a block-diagonal matrix with the following
+                                                                                  structure:
+                                                                                                                                     
+                                                                                                       0 −1        0 −1            0 −1
+                                                                                      ℛ = blkdiag               ,          ,...,                .
+                                                                                                       1 0 1 1 0 2                 1 0 N
+                                                                                                                                               (37)
+                                                                                     The effect of this matrix is to switch the order of the com-
+                                                                                                                       ·
+                                                                                  ponents of each 2 × 1 vector iGF Lk δ k for k = 1, 2, . . . , NGF L ;
+                                                                                  relocating the negative of the second entry in the first row, and
+                                                                                  the first entry in the second row.
+                                                                                     The relevance of (36) consists in making the voltage at the
+                                                                                  converters sensible to their own PLL dynamics. Notice that each
+                                                                                   ·
+                                                                                  δ k is the output of the PI block in the PLL; hence, denoting
+                                                                                  the proportional and integral gains, respectively, in the k th
+                                                                                  converter with Kpk and Kik ; and denoting with vGF Lkd the
+                                                                                  d-axis component of the voltage at the k th converter, we have:
+                                                                                                   ·
+                                                                                                  δ k = −Kpk vGF Lkd − Kik ∫ vGF Lkd .                  (38)
+Fig. 4.   Summary of the procedure to find L in large RLC circuits.
+                                                                                     Therefore, substituting (38) in (36) would close the loop of
+                                                                                  the PLL equations, making the synchronization model more
+                                                                                  accurate compared with that obtained with the RMS model
+   2) The circuit is assumed to be composed of resistances,                       because the positive feedback loop is recovered.
+      inductances, and capacitors.                                                   The RMS+ model can be included in time-domain simula-
+   3) Although the voltage and current vectors of the generators                  tion programs, or in eigenvalue analysis programs. This paper
+      were denoted VGF L and IGF L , all types of generators, and                 focuses on eigenvalue analysis, which is conducted for systems
+      other active devices can be included as long as the output                  of different size and complexity in the next section.
+      of their dynamic models is current.
+   4) The model captures accurately the slow dynamics of the                                                   VII. VALIDATION
+      generators. If the interest is on the fast dynamics, the model
+      might not be suitable. A diagram summarizing the process                       The tests in this section are designed to identify PLL small-
+      for finding L is presented in Fig. 4.                                       signal instability through modal analysis. The RMS+ model
+                                                                                  is benchmarked against the EMT model. The traditional RMS
+                                                                                  model is also included to highlight its inability to capture the
+       VI. CLOSED-LOOP MODEL OF MULTI GFL SYSTEMS                                 instabilities. The software PowerFactory was used to obtain the
+                                                                                  results of modal analysis and time-domain simulation with the
+   The open-loop circuit system presented in (34) can be con-
+                                                                                  RMS model. The EMT and RMS+ models were implemented
+verted to a closed-loop system by substituting IGF L . If all
+                                                                                  in Matlab and Simulink.
+converters are modelled with the dynamical model of Fig. 1,
+the current of the kth GFL is (in complex variables) iGF Lk =
+iPQk ej(δk ) . Its derivative is                                                  A. Example 2
+                                                                                    The system presented in Fig. 3(b) is validated first. The
+                                     ·                ·                         nominal frequency is 50 Hz; and the values of resistances and
+   piGF Lk = p iPQk e      jδk
+                                  = j δk iPQk ejδk = j δk iGF Lk         (35)
+                                                                                  inductances in per unit are:
+
+  Hence, the real and imaginary components switch positions                                 R1 = 0.0713,         R2 = 0.0347,          L1 = 0.0045,
+with one sign change, and the derivative of δk appears as a factor.
+                                                                                            L2 = 0.0027.                                                (39)
+Returning to only real variables (2D vectors), the substitution of
+IGF L in the dynamic part (Lp) yields:                                              The values in (39) correspond to a SCR of 3, and an X/R ratio
+                                                                                  of 22.4, which is representative of high-voltage transmission
+                −1                −1
+      VGF L + YredD YredC V∞ = −YredD IGF L + L (pIGF L )                         systems. The operation point of consideration is determined by
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 04:06:23 UTC from IEEE Xplore. Restrictions apply.
+CARREÑO et al.: RMS+: AUGMENTING THE TRADITIONAL CIRCUIT MODEL TO CAPTURE PLL INSTABILITY                                                                   371
+
+
+
+
+Fig. 5. Transcritical bifurcation in Example 1. (a) Sign of real part of eigenvalues. (b) Time-response with critical pair. (c) Time-response with unstable pair
+(zoomed).
+
+
+
+
+Fig. 6.   Hopf bifurcation in Minimal meshed network. (a) Root Locus. (b) Time-response with critical pair. (c) Time-response with unstable pair.
+
+
+the load flow:
+
+     U = 0.87 p.u.,          δ ∗ = −0.55 rad,         q = 1.0 p.u.,
+                                                     iC∗
+
+       d = 0.0 p.u.
+      iC∗                                                                (40)
+
+   The objective of the tests is to reach the bifurcations described
+in (2) by sweeping one of the gains of the PLL. Apart from
+benchmarking the results of the modal analysis, for this test a
+time-domain simulation model was prepared based on the result
+obtained in (36). The objective is to show that the RMS+ model
+can be used for both type of studies, conventional in the analysis
+of power systems.
+   Kp Sweep: For this test, Ki is fixed in 100 p.u. while Kp
+is swept linearly from 10 to 700 p.u., in 10 steps. In Fig. 5(a)
+the sign of the real part of the eigenvalue closest to the positive               Fig. 7.   Single-line diagram of the test network.
+half-plane is plotted against Kp . The critical pair has Kp =
+547 p.u, and the unstable pair has Kp = 623. To confirm the                       to capture this instability, contrary to the other two models.
+results, a time-domain simulation was prepared. The system                        Visually, in the complex plane, the RMS+ model demonstrates
+initializes at a different, stable operating point, but after five                high accuracy when benchmarked against the EMT model. In
+seconds, it starts slowly moving towards the operating point                      the time-response, the RMS+ model closely follows the EMT
+under study. Specifically, the current commands of the converter                  model, although the peaks of the oscillations are smaller, as
+change with first-order behavior (time constant of 0.5 seconds).                  evidenced in the zoomed region of Fig. 6(b). It is important to
+The time responses of δ for the critical and unstable pairs are                   note that the time-domain simulation is implemented for the full
+shown in Fig. 5(b) and (c), respectively. As discussed above, the                 model, not the linearized model.
+RMS model is unable to capture the instability in both modal
+analysis and time-domain simulation. In contrast, the RMS+
+                                                                                  B. WSCC Nine-Bus System
+model closely follows the EMT model and captures accurately
+the instability.                                                                     Example 1 only included one VSC, and did not include any
+   Ki Sweep: For the test, Kp is fixed in 5 p.u., while Ki                        capacitor or load. Therefore, a general transmission network was
+increases linearly from 100 to 3000 in 10 steps. The eigenvalues                  chosen to validate the RMS+ model. Additionally, in section III
+are plotted in the complex plane (root-locus) in Fig. 6(a). The                   it was stated that one of the assumptions is that there is a time-
+critical pair has Ki = 2322 p.u., and the unstable pair has Ki                    scale separation between the electromagnetic (RLC) transients
+= 2600 p.u. The time response of δ for both pairs is shown in                     and the GFL transients; therefore, with this network two settings
+Fig. 6(b) and (c), respectively. The RMS model is also unable                     of the PLL are tested: a slow PLL, and a fast PLL. The speed
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 04:06:23 UTC from IEEE Xplore. Restrictions apply.
+372                                                                                IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 41, NO. 1, FEBRUARY 2026
+
+
+
+
+Fig. 8. Slow PLL (a) Root Locus. (b) Time-response of critical pair. (c) Time-    Fig. 9.   Fast PLL. (a) Root-locus. (b) Detail of Mode 1. (c) Error of Mode 1.
+response of unstable pair. (d) Error of damping. (e) Error of damped frequency.
+
+
+
+of the PLL is determined by the fixed value of Kp . A small                       RMS+ model follows the behavior of the EMT model. The
+Kp implies a slow PLL (see previous test), while a high value                     importance of this is accentuated by the fact that, for this test, the
+implies a fast PLL.                                                               EMT model is comprised of 36 state variables, while the RMS+
+   The accuracy is evaluated with two error computations, one                     model is comprised of only four. The critical pair has Ki =
+for the damped frequency, and one for the damping coefficient.                    3014 p.u., and the unstable Ki = 3257 p.u. The time-responses
+Specifically, suppose that the RMS+ yields m pairs of complex                     shown in Fig. 8(b) and c) confirm the results of the root-locus.
+conjugate eigenvalues. Denote the eigenvalues corresponding to                       Fig. 8(d) and (e) show the evolution of the errors. In the case
+the three models with the following symbols:                                      of Eζ , the two curves exhibit similar behavior but span different
+                                                                                  scales. While the maximum error is around 0.16% for the RMS+
+ EMT : Ai ± jBi , RMS+ : ai ± jbi , RMS : αi ± jβi .                              model, it reaches as high as 5% for the RMS model. In contrast,
+                                                (41)                              for the damped frequency, the error between the models is of the
+   The damping coefficient (ζ) and damped frequency (ωd ) of                      same scale, with a small advantage for the RMS model.
+the ith eigenvalue from the EMT model are defined as ζ =                             K i Sweep, Fast PLL: Kp is fixed in 500 p.u., and Ki is swept
+                 1/2                                                              linearly from 90e3 p.u., to 500e3 p.u. in 15 steps. The root-locus,
+−Ai /(A2i + Bi2 ) , and ωd = Bi . The same equations apply
+for the eigenvalues obtained from the RMS and RMS+ model.                         shown in Fig. 9(a) shows that the RMS+ model yields two modes
+The errors are calculated with (also for the RMS+ model):                         of oscillation; however, this time only Mode 1 (zoomed region)
+                                                                                  coincides with a mode from the EMT model; the other mode is
+                              
+                              m
+                                 RMS                                            fictitious. The RMS+ model is unable to capture the interactions
+         Eζ (%) = 100           ζi   − ζiEMT  , Eω (Hz)    d                    of the PLL with the electromagnetic transients of the network.
+                              i=1
+                                                                                  This is coherent with the development presented above, since the
+                        m 
+                        
+                                             
+                                             
+                             ωd RMS
+                                i   − ωd EMT
+                                         i                                        assumption of time-scale separation is not fulfilled with these
+                    =                               ;                    (42)     pair of gains.
+                        i=1
+                                      2π
+                                                                                     The error metrics Eζ and Eωd were calculated only for Mode
+   As shown in Fig. 7, the new test network is identical to the                   1, as shown in Fig. 9(b) and (c). The accuracy in the damping
+WSCC Nine-bus system [17], except for the generators in Bus                       is very high, since the error is below 0.8%. The error in the
+2 and Bus 3, which have been substituted with grid-following                      frequency is below 2 Hz; which is small compared with the
+converters. The dynamic model of the converters is the one                        frequency of the mode, which is close to 100 Hz.
+shown in Fig. 1; and it is assumed that both have identical PLL                      Another perspective that could result useful for the analysis
+gains.                                                                            of the results in Fig. 9 is the frequency response of the open-
+   The generator at Bus 1 has also been substituted with an AC                    loop systems, i.e., converters and network. Fig. 10 shows the
+voltage source, that plays the role of the infinite bus, and the loads            magnitude of the dd components in the dynamic admittances of
+are modeled as constant parallel impedances. The steady-state                     VSC1 in both configurations, Slow and Fast PLL. Additionally,
+operation point is identical to the original load flow in [17].                   the self-admittance seen from its corresponding bus (Bus2)
+   K i Sweep, Slow PLL: Kp was fixed at 5 p.u., while the                         has been plotted for the two models, EMT and RMS+. As
+integral gain was swept linearly from 100 p.u. to 3500 p.u. in                    expected, the RMS+ model captures accurately the response
+15 steps. The root-locus, shown in Fig. 8(a), evidences that the                  of the network up to the first peak, since it is a first-order
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 04:06:23 UTC from IEEE Xplore. Restrictions apply.
+CARREÑO et al.: RMS+: AUGMENTING THE TRADITIONAL CIRCUIT MODEL TO CAPTURE PLL INSTABILITY                                                                373
+
+
+
+
+                                                                                  Fig. 12.     Frequency vs. damping factor of modes.
+Fig. 10.   Frequency responses of Admittances (dd) for VSC1 in the 9 Bus
+system.
+                                                                                                                   TABLE II
+                                                                                             DAMPING (%) OF PLL MODES WITH EXTREME PAIR OF GAINS
+                                                                                                               IN 39-BUS SYSTEM
+
+
+
+
+Fig. 11. Dynamical model of VSCs in the 39-bus network. Values of param-          the modes in the complex plane, they are plotted in the plane of
+eters are reported in the Appendix.                                               the frequency (logarithmic) vs. damping factor (ζ). This figure
+                                                                                  shows evidence that for the low frequency modes (including the
+                                                                                  modes of the PLL), the RMS+ model is accurate, even though
+approximation. When the PLL is slow, the dynamics of VSC1                         additional dynamic components were added to the VSC model.
+coincide with the region where the RMS+ model is accurate, and                    For higher frequencies, the RMS+ is not accurate due to the
+additionally there is enough separation with respect to the natural               participation of the natural transients of the network.
+transients of the network. In contrast, when the PLL is fast, the                    In terms of performance, the closed-loop state-space represen-
+time-scale separation is lost, although the RMS+ model is still                   tation with the EMT model is composed of 270 state variables;
+a good approximation. This translates in the behavior seen in                     and computing the eigenvalues takes 2.5545 seconds. In contrast,
+the root-locus of Fig. 9, where one of the modes is still captured                using the RMS+ model of the network yields 108 state variables
+accurately, but for the other one the results are wrong.                          and takes 0.1812 seconds, which is roughly 14 times faster. For
+                                                                                  realistic networks with thousands of buses, the difference in
+C. 39-Bus New England Test System                                                 performance is expected to be even more significative. All of this
+                                                                                  provides evidence that the RMS+ model is ideal for the quick
+   This network consists of 10 generators, 34 lines, 12 trans-                    identification of modes induced by the PLL of the converters in
+formers, and 19 loads, including one load with a leading power                    realistic networks with thousands of buses.
+factor. For this test all generators (except the one connected                       During this study, it was found that the RMS+ model can
+at bus 38) have been replaced with Grid-following VSCs with                       be overly conservative in some scenarios. For instance, with the
+identical dynamical model and parameters, as shown in Fig. 11.                    parameters Kp = 5 p.u., and Ki = 1000 p.u., the damping
+The objective in this test is to evaluate the performance of the                  of the PLL modes takes the values shown in Table II. Clearly,
+RMS+ model with more realistic conditions, both regarding the                     the damping of Mode 1 with the RMS+ model is negative
+network and regarding the dynamical model of the converters.                      (unstable) while with the EMT model it is positive. One possible
+In specific, the objective is to test the accuracy and trustwor-                  explanation for this mismatch lies in the fact that the RMS+
+thiness of the model at capturing the low-frequency modes.                        model neglects the capacitor dynamics; nevertheless, since the
+The high-frequency modes result from the interaction between                      results are conservative instead of optimistic, the model is still a
+the dynamics of the converters and the natural transients of the                  good alternative for the quick identification of the PLL modes.
+network; hence, it is known beforehand that these modes will
+not be captured accurately.
+                                                                                                              VIII. CONCLUSION
+   The steady-state operation point studied was configured by
+setting Bus 38 as slack bus, and configuring the other generators                    In power systems dominated by synchronous machines, rep-
+to PQ mode. The voltage at bus 38 coincides with the voltage of                   resenting the circuit in terms of impedances is sufficient for both
+the original load flow, and the PQ injection of the other genera-                 steady-state studies and dynamic studies. For networks with high
+tors also coincide with the original load-flow. Nevertheless, all                 participation of grid-following VSCs this steady-state model
+other variables are different because the taps of the transformers                becomes inadequate, one of the reasons being its “blindness”
+were neglected.                                                                   to PLL small-signal instability. This challenges the common
+   Fig. 12 shows a plot of the modes of oscillation obtained with                 notion that the RMS model might be appropriate if the interest
+the EMT model and with the RMS+ model. Instead of plotting                        is on low-frequency oscillations.
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 04:06:23 UTC from IEEE Xplore. Restrictions apply.
+374                                                                                IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 41, NO. 1, FEBRUARY 2026
+
+
+
+   Motivated by the need for a better representation, this paper                      r Delay: Pure time-delay corresponding to a sampling rate
+proposed to augment the RMS model with a new “equivalent                                of 1 kHz. Linear model is a Padé approximant of second
+inductance” matrix that serves as the coefficient of a derivative.                      order.
+This matrix, called L, can be computed by first finding the dis-                      r P&V Control: Proportional (0.5 p.u.) and Integral (10 p.u.)
+tribution of the converter currents in the branches of the circuit,                     compensators.
+and then considering the derivatives of the inductors and solving                     r Current Loop and filter: Rf = 1e-3 p.u.; and Lf = 1e-4
+a least-squares problem. This procedure is based on the theory                          p.u. The time constant of the Current Loop is 10 ms.
+of fast-slow systems, and hence, the essential assumption is that
+some of the dynamics of the converter control are slow compared                                                      REFERENCES
+to the electromagnetic (RLC) transients. Benchmarking results                      [1] P. S. Kundur, “Small-signal stability,” in Power System Stability and
+demonstrate that RMS+ captures PLL small-signal instability,                           Control. Palo Alto, CA, USA: McGraw Hill, 1994, pp. 699–825.
+while reducing the number of state variables that an EMT model                     [2] Q. Hu, L. Fu, F. Ma, and F. Ji, “Large signal synchronizing instability of
+                                                                                       PLL-based VSC connected to weak AC grid,” IEEE Trans. Power Syst.,
+would require. On the other hand, this model is not suitable to                        vol. 34, no. 4, pp. 3220–3229, Jul. 2019.
+study harmonic stability; or any other phenomena where the                         [3] M. Z. Mansour, S. P. Me, S. Hadavi, B. Badrzadeh, A. Karimi, and
+controls considered interact with the electromagnetic transients.                      B. Bahrani, “Nonlinear transient stability analysis of phased-locked loop-
+                                                                                       based grid-following voltage-source converters using Lyapunov’s direct
+   This research is introductory and there are several aspects that                    method,” IEEE J. Emerg. Sel. Topics Power Electron., vol. 10, no. 3,
+can be addressed in future research. One of them is to add the                         pp. 2699–2709, Jun. 2022.
+voltage derivatives at capacitors. Another one is its extension to                 [4] M. Carreño, J. Song, O. Gomis-Bellmunt, and R. Griñó, “Design-oriented
+                                                                                       large-signal stability analysis of synchronous reference frame phase-
+the unbalanced case. Additionally, further studies could examine                       locked loop,” IEEE Trans. Power Del., vol. 40, no. 3, pp. 1235–1243,
+its use in grid-forming converter synchronization and evaluate                         Jun. 2025.
+the effects of faster control loops on system performance.                         [5] B. Kasztenny and M. Kezunovic, “A method for linking different modeling
+                                                                                       techniques for accurate and efficient simulation,” IEEE Trans. Power Syst.,
+   The RMS+ model represents an update to the RMS circuit                              vol. 15, no. 1, pp. 65–72, Feb. 2000.
+model, and its implementation in tools for modal analysis and                      [6] G. Grdenić, M. Delimar, and J. Beerten, “Assessment of AC network
+transient stability analysis is encouraged. This general model                         modeling impact on small-signal stability of AC systems with VSC
+                                                                                       HVDC converters,” Int. J. Elect. Power Energy Syst., vol. 119, 2020,
+allows for the connection of converters, synchronous generators,                       Art. no. 105897.
+and other active devices. Furthermore, as demonstrated in this                     [7] F. Milano and Á. Ortega, “Frequency divider,” IEEE Trans. Power Syst.,
+paper, RMS+ is particularly well-suited for analyzing PLL                              vol. 32, no. 2, pp. 1493–1501, Mar. 2017.
+                                                                                   [8] F. Milano and Á. O. Manjavacas, “Frequency-dependent model for
+stability in large bulk power systems, as the number of state                          transient stability analysis,” IEEE Trans. Power Syst., vol. 34, no. 1,
+variables is reduced compared with the EMT model.                                      pp. 806–809, Jan. 2019.
+                                                                                   [9] J. Khodaparast and M. Khederzadeh, “Least square and Kalman based
+                                                                                       methods for dynamic phasor estimation: A review,” Protection Control
+                                 APPENDIX                                              Modern Power Syst., vol. 2, no. 1, pp. 1–18, 2017.
+                                                                                  [10] T. Demiray and G. Andersson, “Optimization of numerical integration
+A. abc to qd Transformation                                                            methods for the simulation of dynamic phasor models in power systems,”
+                                                                                       Int. J. Elect. Power Energy Syst., vol. 31, no. 9, pp. 512–521, 2009.
+       √                                                                      [11] C. Kuehn, Multiple Time Scale Dynamics. Cham, Switzerland: Springer
+    ud     2 cos (θ)  cos (θ − 2π/3)   cos (θ + 2π/3)                                  International Publishing, 2016.
+        =√                                                                        [12] M. Stiefenhofer, “Quasi-steady-state approximation for chemical reaction
+    uq     3 −sin (θ) −sin (θ − 2π/3) − sin (θ + 2π/3)                                 networks,” J. Math. Biol., vol. 36, no. 6, pp. 593–609, 1998.
+            ⎡ ⎤                                                                   [13] A. Goeke, C. Chilli, S. Walcher, and E. Zerz, “Computing quasi-steady
+             ua                                                                        state reductions,” J. Math. Chem., vol. 50, no. 6, pp. 1495–1513, 2012.
+         × ⎣ ub ⎦ ,                                (43)                           [14] M. Carreño, “The RMS model cannot capture PLL small-signal instabil-
+             uC                                                                        ity,” IEEE Trans. Power Syst., vol. 40, no. 5, pp. 4415–4418, Sep. 2025.
+                                                                                  [15] H. K. Khalil, “Singular perturbations,” in Nonlinear Systems. Saddle River,
+   The operation in (43) corresponds to a power-invariant trans-                       NJ, USA: Prentice Hall, 2002, pp. 485–520.
+                                                                                  [16] Y. Chen, M. Jiménez Carrizosa, G. Damm, F. Lamnabhi-Lagarrigue,
+formation with phase a aligned with the d axis.                                        M. Li, and Y. Li, “Control-induced time-scale separation for multiterminal
+                                                                                       high-voltage direct current systems using droop control,” IEEE Trans.
+B. Values of Parameters for the 39-bus System Test                                     Control Syst. Technol., vol. 28, no. 3, pp. 967–983, May 2020.
+                                                                                  [17] P. M. Anderson and A. A. Fouad, Power System Control and Stability.
+      r SRF-PLL: Kp = 20 p.u., ad Ki = 200 p.u.                                        Ames, IA, USA: Iowa State Univ. Press, 1977.
+
+
+
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 04:06:23 UTC from IEEE Xplore. Restrictions apply.
+

@@ -84,7 +84,7 @@
 | 328 | small-perturbation-linearization.md | methods | methods/stability-analysis/small-perturbation-linearization.md | P1 | 999 | 2129 | 6 | 11 | pending |
 | 45 | sparse-matrix-techniques.md | methods | methods/network-solution/sparse-matrix-techniques.md | P0 | 999 | 1339 | 2 | 8 | pending |
 | 272 | state-space-average-method.md | methods | methods/numerical-methods/state-space-average-method.md | P1 | 999 | 4295 | 15 | 15 | completed |
-| 395 | submodule.md | models | models/submodule/submodule.md | P1 | 999 | 992 | 4 | 19 | pending |
+| 395 | submodule.md | models | models/submodule/submodule.md | P1 | 999 | 3257 | 15 | 15 | completed |
 | 73 | switch-modeling.md | methods | methods/power-electronics/switch-modeling.md | P0 | 999 | 1936 | 5 | 28 | pending |
 | 211 | tbs.md | methods | methods/power-electronics/tbs.md | P0 | 999 | 8727 | 14 | 18 | completed |
 | 147 | three-phase-instantaneous-model.md | methods | methods/system-studies/three-phase-instantaneous-model.md | P0 | 999 | 3992 | 19 | 10 | completed |
