@@ -48,7 +48,7 @@
 | 181 | interface-technique.md | methods | methods/simulation-technology/interface-technique.md | P0 | 999 | 5234 | 10 | 19 | completed |
 | 289 | large-scale-grid-simulation.md | topics | topics/simulation/large-scale-grid-simulation.md | P1 | 999 | 3484 | 7 | 51 | completed |
 | 341 | layered-connection.md | methods | methods/transmission-line/layered-connection.md | P1 | 999 | 1823 | 5 | 13 | completed |
-| 388 | load-and-dg-modeling.md | topics | topics/component-modeling/load-and-dg-modeling.md | P1 | 999 | 1139 | 8 | 14 | pending |
+| 388 | load-and-dg-modeling.md | topics | topics/component-modeling/load-and-dg-modeling.md | P1 | 999 | 3618 | 31 | 27 | completed |
 | 362 | lumped-parameter-model.md | methods | methods/transmission-line/lumped-parameter-model.md | P1 | 999 | 1460 | 6 | 14 | pending |
 | 160 | mbsm.md | methods | methods/power-electronics/mbsm.md | P0 | 999 | 4374 | 22 | 8 | pending |
 | 57 | mmc-hvdc-5-level.md | models | models/submodule/mmc-hvdc-5-level.md | P0 | 999 | 1660 | 10 | 12 | pending |
