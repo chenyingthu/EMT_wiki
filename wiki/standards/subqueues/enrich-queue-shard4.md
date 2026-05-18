@@ -53,7 +53,8 @@
 | 331 | least-squares-method.md | methods | methods/signal-processing/least-squares-method.md | P1 | 999 | 2031 | 8 | 13 | completed |
 | 141 | load-modeling.md | topics | topics/component-modeling/load-modeling.md | P0 | 999 | 3733 | 10 | 18 | completed |
 | 64 | lvrt-control.md | methods | methods/control/lvrt-control.md | P0 | 999 | 3385 | 12 | 15 | completed |
-| 371 | microgrid-test-system.md | topics | topics/test-system/microgrid-test-system.md | P1 | 999 | 1415 | 11 | 10 | pending |
+| 371 | microgrid-test-system.md | topics | topics/test-system/microgrid-test-system.md | P1 | 999 | 1415 | 2264 | 9 | 9 | completed |
+
 | 335 | modal-analysis.md | methods | methods/signal-processing/modal-analysis.md | P1 | 999 | 2536 | 10 | 12 | completed |
 | 81 | model-order-reduction.md | topics | topics/modeling-methods/model-order-reduction.md | P0 | 999 | 2139 | 19 | 41 | pending |
 | 121 | mtdc-model.md | models | models/equivalent/mtdc-model.md | P0 | 999 | 3190 | 31 | 17 | pending |
