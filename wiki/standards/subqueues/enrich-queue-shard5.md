@@ -46,7 +46,7 @@
 | 60 | ieee-1547.md | methods | methods/protection-fault/ieee-1547.md | P0 | 999 | 4806 | 15 | 9 | completed |
 | 373 | impedance-modeling.md | methods | methods/stability-analysis/impedance-modeling.md | P1 | 999 | 3539 | 54 | 10 | completed |
 | 397 | inertia-control.md | methods | methods/control/inertia-control.md | P1 | 963 | 5227 | 15 | 11 | completed |
-| 106 | iterative-solvers.md | methods | methods/network-solution/iterative-solvers.md | P0 | 999 | 2770 | 4 | 10 | pending |
+| 106 | iterative-solvers.md | methods | methods/network-solution/iterative-solvers.md | P0 | 999 | 3345 | 7 | 7 | completed |
 | 156 | large-scale-system-simulation.md | topics | topics/simulation/large-scale-system-simulation.md | P0 | 999 | 4264 | 10 | 58 | pending |
 | 43 | lightning-induced-voltage.md | topics | topics/protection-lightning/lightning-induced-voltage.md | P0 | 999 | 1286 | 8 | 17 | pending |
 | 369 | low-rank-and-efficient-solvers.md | topics | topics/modeling-methods/low-rank-and-efficient-solvers.md | P1 | 999 | 1426 | 10 | 9 | pending |
