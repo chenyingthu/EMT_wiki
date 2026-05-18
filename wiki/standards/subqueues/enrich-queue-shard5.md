@@ -76,7 +76,7 @@
 | 340 | steady-state-initialization.md | topics | topics/simulation/steady-state-initialization.md | P1 | 999 | 9487 | 16 | 15 | completed |
 
 
-| 398 | svc-model.md | models | models/compensation/svc-model.md | P1 | 999 | 959 | 3 | 13 | pending |
+| 398 | svc-model.md | models | models/compensation/svc-model.md | P1 | 999 | 2248 | 9 | 13 | completed |
 | 65 | switching-transient.md | topics | topics/stability-analysis/switching-transient.md | P0 | 999 | 1758 | 10 | 19 | completed |
 | 344 | thevenin-equivalent.md | methods | methods/network-solution/thevenin-equivalent.md | P1 | 999 | 1782 | 6 | 10 | pending |
 | 347 | time-domain-formulation.md | methods | methods/system-studies/time-domain-formulation.md | P1 | 999 | 1718 | 5 | 14 | pending |

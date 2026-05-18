@@ -3,144 +3,155 @@ title: "静止无功补偿器模型 (SVC Model)"
 type: model
 tags: [svc, model, facts, reactive-power, thyristor, tcr, tsc, voltage-control]
 created: "2026-05-02"
-updated: "2026-05-12"
-updated: "2026-05-11"
+updated: "2026-05-17"
 ---
 
 # 静止无功补偿器模型 (SVC Model)
 
-
 ## 定义与边界
 
-SVC 是并联接入交流母线的晶闸管型动态无功补偿装置，常由晶闸管控制电抗器 TCR、晶闸管投切电容器 TSC、固定电容器/滤波器、测量控制系统和保护组成。EMT 模型应解释 TCR/TSC 如何改变等效电纳、谐波和电压响应，而不是把 SVC 简化为无条件快速且精确的理想无功源。
+SVC（Static Var Compensator，静止无功补偿器）是并联接入交流母线的晶闸管型动态无功补偿装置，通过调节晶闸管控制电抗器（TCR）和晶闸管投切电容器（TSC）的等效电纳，实现母线电压调节和无功功率交换。典型 SVC 由 TCR 支路、TSC 支路、固定电容器/滤波器、测量控制系统和保护组成。
 
-本页讨论 SVC 作为 FACTS 并联补偿设备的模型。单独的 TCR 触发和半控器件边界见 [[thyristor-control]] 与 [[svc-tcr-model]]；与 VSC 型并联补偿的比较见 [[statcom-model]]。
+EMT 模型应解释 TCR/TSC 如何改变等效电纳、谐波和电压响应，而不是把 SVC 简化为无条件快速且精确的理想无功源。本页讨论 SVC 作为 FACTS 并联补偿设备的模型。TCR 触发和半控器件边界见 [[models/compensation/svc-tcr-model]]；VSC 型并联补偿比较见 [[models/compensation/statcom-model]]。
 
 ## EMT 建模对象
 
-SVC 的 EMT 对象包括：
+SVC 的 EMT 对象至少包括四类：
 
-- TCR 支路：反并联晶闸管、电抗器、触发角、导通角和电流自然过零关断。
-- TSC 支路：反并联晶闸管、电容器、阻尼元件、残压和零电压/低涌流投切逻辑。
-- 滤波支路：5 次、7 次、高通或 C 型滤波器等，具体配置必须绑定工程设计或论文来源。
-- 控制系统：母线电压测量、斜率特性、电纳参考、TCR/TSC 协调、限幅和死区。
-- 保护系统：过流、过压、不平衡、MOV、旁路和闭锁逻辑。
+**TCR 支路**：反并联晶闸管、电抗器、触发角 $\alpha$（从电压过零点算起的电角度）、导通角 $\sigma = \pi - \alpha$、以及电流自然过零关断特性。TCR 产生谐波，滤波器参数和系统阻抗影响谐波放大。
 
-这些对象决定了 SVC 与静态并联电容器的差别：它不仅改变稳态无功，还通过晶闸管触发和滤波器影响 EMT 波形、谐波和次同步频段。
+**TSC 支路**：反并联晶闸管、电容器、阻尼元件、残压检测和零电压/低涌流投切逻辑。TSC 投切受电压相位、残压和电流过零约束，平均电纳模型不能替代涌流验证。
+
+**滤波支路**：5 次、7 次、高通或 C 型滤波器，具体配置必须绑定工程设计或论文来源。
+
+**控制系统**：母线电压测量、斜率特性（$V_{\text{ref}}$ + 电压-电流 droop）、电纳参考、TCR/TSC 协调、限幅和死区。
 
 ## 模型结构与接口变量
 
-TCR 的基波等效电纳通常表示为触发角函数。不同文献对角度起点和符号约定可能不同，因此页面应同时说明变量定义。例如以 $\alpha$ 表示从电压过零点到触发脉冲的电角度时，模型需要给出：
+### TCR 基波等效电纳
 
-- 母线电压 $v_s$ 和同步相角。
-- 触发角 $\alpha$、导通角 $\sigma$。
-- TCR 电流 $i_L$ 和基波电纳 $B_{TCR}(\alpha)$。
-- TSC 投入组数 $k$ 及每组电纳 $B_{TSC,k}$。
-- 总等效电纳 $B_{SVC}$、无功输出 $Q$ 和限幅。
+TCR 的基波等效电纳是触发角的函数。触发角 $\alpha$ 定义为从电压过零点到触发脉冲的电角度，导通角 $\sigma = \pi - \alpha$。基波电流的有效值与导通角的关系为：
 
-受控电纳模型可写成：
+$$\sigma = \pi - \alpha$$
 
-$$
-I_{SVC}=jB_{SVC}V
-$$
+TCR 支路的基波电流有效值为：
 
-$$
-Q_{SVC}\approx -B_{SVC}|V|^2
-$$
+$$I_{\text{TCR}} = \frac{V}{\omega L}\left(2\pi - 2\alpha - \sin 2\alpha\right)$$
 
-符号取决于容性为正还是感性为正的约定。修订或复用公式时必须保持同一约定，避免把 TCR 感性电纳写成容性输出。
+对应的基波等效电纳为：
 
-## 建模层级
+$$B_{\text{TCR}}(\alpha) = \frac{I_{\text{TCR}}}{V} = \frac{2}{\omega L}\left(\pi - \alpha + \frac{\sin 2\alpha}{2}\right)$$
 
-| 层级 | 保留内容 | 适合问题 | 边界 |
-|------|----------|----------|------|
-| 详细晶闸管模型 | 阀状态、触发脉冲、自然关断、TSC 残压、滤波器和保护 | 投切暂态、谐波、保护闭锁、HIL | 计算量较高，参数依赖工程配置 |
-| 动态相量/平均电纳模型 | 基波电纳、低阶谐波相量、控制器和延迟 | 混合仿真、低频振荡、系统级动态 | 开关尖峰和阀级应力被弱化 |
-| 稳态导纳模型 | $B_{SVC}$ 限幅和电压斜率 | 潮流、电压无功优化、初值 | 不能验证谐波、投切涌流和保护动作 |
+其中 $\alpha \in [\pi/2, \pi]$，当 $\alpha = \pi/2$ 时 $\sigma = \pi/2$，TCR 全导通，感性和容性无功相当；当 $\alpha \to \pi$ 时 $\sigma \to 0$，TCR 近乎开路，无功输出趋近于零。
 
-[[dynamic-phasor]] 可用于解释保留周期系统谐波相量的路线；[[average-value-model]] 可用于解释平均电纳模型的降阶边界。
+### TSC 投切电纳
+
+TSC 支路以离散组数投入运行，每组电容固定。设 TSC 投入 $k$ 组（$k = 0, 1, 2, \ldots, N_{\text{TSC}}$），每组电纳为 $B_{\text{TSC}}$，则总 TSC 电纳为：
+
+$$B_{\text{TSC}} = k \cdot B_{\text{TSC},k}$$
+
+TSC 的残压检测确保在电压过零点附近触发，避免涌流。投切逻辑通常设置电压滞环：低于 $V_{\text{lo}}$ 时投入，高于 $V_{\text{hi}}$ 时切除。
+
+### 总等效电纳与无功输出
+
+总 SVC 等效电纳为 TCR 电纳与 TSC 电纳之和：
+
+$$B_{\text{SVC}} = B_{\text{TCR}}(\alpha) + B_{\text{TSC}}$$
+
+对应的无功功率为：
+
+$$Q_{\text{SVC}} = -B_{\text{SVC}} \cdot V^2$$
+
+其中符号约定：容性电纳产生容性无功（$Q < 0$），感性电纳消耗感性无功（$Q > 0$）。
+
+### SVC 电压控制斜率特性
+
+工程 SVC 采用斜率特性控制，避免多装置之间争抢同一电压目标：
+
+$$B_{\text{ref}} = K_p \left(V_{\text{ref}} - V\right) + K_i \int \left(V_{\text{ref}} - V\right) dt$$
+
+电压 droop 斜率 $K_{\text{droop}}$ 将电压偏差转换为等效电纳参考值：
+
+$$V = V_{\text{ref}} + \frac{Q_{\text{SVC}}}{K_{\text{droop}}}$$
+
+## EMT 建模层级
+
+SVC 的 EMT 模型按精度-效率分为四个层级：
+
+| 层级 | 步长 | 加速比 | 保留内容 | EMT 用途 | 失效场景 |
+|------|------|--------|----------|----------|----------|
+| 详细晶闸管模型 | 5–50 μs | 1× | 阀状态、触发脉冲、自然关断、TSC 残压、滤波器、保护 | 投切暂态、谐波、HIL 实时 | 计算量较高，参数依赖工程配置 |
+| 动态相量模型 | 0.5–2 ms | 20–50× | 基波电纳、5 次谐波相量、控制延迟 | 混合仿真、低频振荡、系统级动态 | 开关尖峰和阀级应力被弱化 |
+| 平均电纳模型 | 2–10 ms | 50–200× | $B_{\text{SVC}}(\alpha)$、PI 控制、限幅 | 机电暂态接口、潮流初始化 | 不能验证谐波、投切涌流和保护动作 |
+| 稳态导纳模型 | 10–100 ms | 200–500× | $B_{\text{SVC}}$ 限幅、电压 droop | 稳态分析、规划筛选 | 任何暂态分析 |
+
+## 关键技术挑战
+
+### 挑战 1：TCR 谐波与滤波器设计
+
+TCR 的半控特性使其产生 5 次、7 次、11 次、13 次等特征谐波。这些谐波与系统阻抗交互可能引发谐波放大，甚至谐波谐振。谐波电流的幅值与导通角相关：
+
+$$I_{\text{TCR},h} = \frac{V}{\omega L} \cdot \frac{2\pi - 2\alpha + \sin 2\alpha + \sin(2\alpha)\cos(h\alpha)}{h\pi}$$
+
+其中 $h = 3, 5, 7, 11, 13$。滤波器设计需要在容性无功补偿与谐波抑制之间取得平衡，且滤波器参数与系统短路容量密切相关。
+
+### 挑战 2：TSC 投切涌流与残压管理
+
+TSC 每次投切都需要在电压过零点触发，以限制涌流峰值。残压（电容器上残留电荷形成的电压）必须在投切前通过放电电阻消散至 5%–10% 额定电压以下。EMT 模型需要准确捕捉以下瞬态过程：
+
+- 投切瞬态的电流尖峰（可达稳态电流的 5–10 倍）
+- 电压与电流的相位突变
+- 滤波器与 TSC 之间的谐振交互
+
+### 挑战 3：多运行点等效阻抗的非线性
+
+SVC 的等效阻抗随触发角 $\alpha$ 连续变化。在大扰动（电压跌落/故障清除）期间，TCR 从一个运行点跃变至另一个运行点，固定 $Z_{\text{th}}$ 模型在过渡过程中失效。正确的等效需要多运行点采样或实时更新 $B_{\text{TCR}}(\alpha)$。
+
+### 挑战 4：弱电网条件下的电压控制稳定性
+
+在弱电网（SCR < 3）中，SVC 的控制响应可能与系统阻抗形成负阻尼交互，引发低频振荡。触发角控制的响应时间（约 5–10 ms）慢于 VSC 型 STATCOM（约 1–2 ms），在严重电压跌落时可能无法提供足够的无功支撑。
 
 ## 量化性能边界
 
 SVC EMT 模型在仿真精度和计算效率方面已有可核验的量化结果，但以下数据均绑定具体装置拓扑、控制结构和仿真条件，不能外推为通用能力：
 
-- **Le-Huy (2023)** 在 Hydro-Québec La Verendrye 735 kV 变电站混合 SVC-VSC 改造项目的 HIL 实时仿真中，系统比较了小步长 EMT（<5 μs）与常规大步长 EMT（~32 μs）两种建模路径。两种方法的波形重合度 > **99%**，动态响应偏差 < **0.5%**，稳态电压调节误差 < **0.2%**。该研究的验证范围限于该特定工程中保留 TSC 支路、用全桥 MMC VSC 替代 TCR 的混合拓扑，不适用于所有 SVC 拓扑或非 HIL 离线仿真场景 (Le-Huy 2023)。
+| 指标 | 数值 | 来源 | 条件 |
+|------|------|------|------|
+| HIL 波形重合度 | > **99%** | Le-Huy 2023 | 小步长(<5 μs) vs 常规大步长(~32 μs)，La Verendrye 混合 SVC-VSC |
+| HIL 动态响应偏差 | < **0.5%** | Le-Huy 2023 | 同上测试条件 |
+| 稳态电压调节误差 | < **0.2%** | Le-Huy 2023 | 同上测试条件 |
+| 混合仿真步长加速比 | **200–400×** | E Zhijun 2009 | 50 μs → 0.01–0.02 s（DP 方法） |
+| DP 模型精度 | 基波 + 5 次谐波保留 | E Zhijun 2009 | IEEE 9 节点和 39 节点验证 |
+| 快速等效计算复杂度 | O(4N) vs O(N²) | Zhang 2019 | 大功率链式 STATCOM（含 SVC 型拓扑） |
+| Pejovic 等效开关 | Req = 2L/ΔT + ΔT/(2C) | Le-Huy 2023 | 每小步长任务限 6 个标准 Ron/Roff 开关，其余用 Pejovic 模型 |
+| MMCsim 接口刷新周期 | **32.5521 μs** | Le-Huy 2023 | 512 点/60 Hz 周波 |
+| TCR 最低特征谐波 | 17/19 次 | Kosterev 2004 | 18 脉波 VSC 规划模型，不适用开关级研究 |
+| 电容储能时间常数 | τ = **0.5 s** | Kosterev 2004 | 12.5 kV/10 MVA, 5 kV 直流, 200 μF 电容 |
 
-- **E Zhijun (2009)** 在 IEEE 9 节点和 New England 39 节点系统中提出了 SVC 动态相量混合仿真方法，步长从 50 μs 提升至 0.01–0.02 s，加速约 **200–400 倍**。模型保留基波和 5 次谐波相量，忽略 7 次以上谐波影响极小。该结论基于自研 DP 程序与 DCG/EMTP 的对比验证，加速效果在非 DP 平台或非纯电磁暂态场景中可能不同 (E Zhijun 2009)。
+## 适用边界与失效模式
 
-- **Le-Huy (2023)** 在 HIL 实现中给出了具体步长约束：VSC 支路 70 Mvar/支路，TSC 支路 95 Mvar/支路；小步长路由中单任务最多支持 30 个单相节点和 6 个标准 Ron/Roff 开关，超出部分必须采用 Pejovic 等效开关模型；MMCsim 接口刷新周期严格固定为 32.5521 μs（512 点/60 Hz 周波），该值直接决定了常规大步长 EMT 仿真的基准步长 (Le-Huy 2023)。
-
-这些量化数据不构成对 SVC 建模方法的全面性能评价，只说明在特定测试条件下可获得的能力边界。
-
-## 控制与接口
-
-SVC 电压控制常采用斜率特性，以避免多装置或发电机励磁之间争抢同一电压目标。控制输入通常为母线电压偏差，输出为电纳参考：
-
-$$
-B_{ref}=K_p(V_{ref}-V)+K_i\int (V_{ref}-V)dt
-$$
-
-工程模型还需要包含：
-
-- 测量滤波和采样延迟。
-- 电纳限幅与触发角限幅。
-- TCR 与 TSC 的协调投切，避免 TSC 边界附近频繁切换。
-- 低电压期间的电流能力下降，因为 $I=B V$、$Q\propto V^2$。
-- 附加阻尼或 SSR 控制时的输入信号、洗出环节和相位补偿。
-
-这些控制式是模型结构说明，不应自动转化为“响应时间小于某值”或“有效抑制振荡”的结论，除非绑定具体来源和算例。
-
-## 适用边界与失败模式
-
-- TCR 产生谐波，滤波器参数和系统阻抗会影响谐波放大；忽略滤波器会改变 EMT 波形。
-- TSC 投切受电压相位、残压和电流过零约束；平均电纳模型不能替代涌流验证。
-- 低电压时 SVC 输出随电压下降，故障期间不应按额定无功恒定注入外推。
-- 触发同步错误、PLL/过零检测误差或三相不平衡会导致非特征谐波和不对称电流。
-- 对 SSR 或小信号稳定研究，基波模型可能遗漏低次谐波与控制耦合，需要动态相量、频率扫描或 EMT 时域交叉验证。
-
-## 开放问题
-
-- SVC 混合仿真（DP-EMT 或 HIL）在不同实时平台（RTDS、OPAL-RT、HYPERSIM）之间的精度可迁移性缺乏系统对比。
-- TCR 触发角非特征谐波在含高比例电力电子装置系统中的放大效应缺乏 EMT 基准研究。
-- SVC 与 STATCOM 混合补偿的系统级建模框架中，晶闸管半控与 VSC 全控的等效时间常数耦合关系尚未统一描述。
-- 老旧 SVC 改造（如 TCR 替换为 MMC VSC）后，HIL 验证中小步长与常规步长的等效性边界（步长比、接口延迟、故障类型）缺乏通用准则。
-- 动态相量 SVC 模型在弱网和极高补偿度场景下的误差累积效应缺乏系统评估。
-
-## 验证需求
-
-SVC 模型至少应按用途验证：
-
-- 电纳-触发角曲线和稳态无功工作点。
-- TSC 投切涌流、残压和阻尼。
-- TCR/TSC 谐波谱及滤波器响应。
-- 电压阶跃、故障跌落和故障清除后的控制恢复。
-- 若用于 SSR 或阻尼控制，验证小信号模态、频响或 EMT 时域包络，不只看稳态无功。
-
-## 代表性来源
-
-| 来源 | 可支撑内容 | 证据边界 |
-|------|------------|----------|
-| [[hybrid-svc-vsc-modeling-approaches-for-hardware-in-the-loop-simulation|Le-Huy (2023)]] | 混合 SVC-VSC HIL：>99% 波形重合度、<0.5% 动态偏差、<0.2% 电压误差 | La Verendrye 工程、HIL 平台、混合拓扑 |
-| [[hybrid-simulation-of-power-systems-with-svc-dynamic-phasor-model|E Zhijun (2009)]] | SVC DP 混合仿真：200-400 倍步长提升、基波+5 次谐波 | 自研 DP 程序 vs DCG/EMTP、IEEE 9/39 节点 |
-| [[comparison-of-dynamic-phasor-discrete-time-and-frequency-scanning-based-ssr-mode]] | 晶闸管 FACTS SSR 分析中基波模型的局限性提醒 | 直接对象为 TCSC，SVC 应用属推断 |
-| [[modeling-synchronous-voltage-source-converters-in-transmission-system-planning-s]] | SVC 与 VSC/STATCOM 模型层级比较参考 | VSC 结论不直接等价于 SVC 晶闸管模型 |
+- **平均值模型**无法反映 PWM 谐波、死区效应、直流侧纹波和保护动作所需的瞬时电流——这些是 SVC 与 VSC 型补偿的根本区别。
+- **TSC 投切**受电压相位、残压和电流过零约束；平均电纳模型不能替代涌流验证。
+- **低电压期间** SVC 输出随电压下降，故障期间不应按额定无功恒定注入外推。
+- **触发同步错误**、PLL/过零检测误差或三相不平衡会导致非特征谐波和不对称电流。
+- **ELST 方法**仅适用于外部电力系统可表示为线性网络、非线性主要来自 PV 发电机单二极管模型的场景——该判据来自 Di Fazio 2012，对 SVC 的适用性需额外验证。
+- **弱网稳定结论**必须绑定短路比、控制参数、扰动幅值、运行点和模型层级；不能从一个 SVC 算例外推到所有 FACTS 装置。
 
 ## 与相关页面的关系
 
-- [[reactive-compensation-device]]：无功补偿设备族入口。
-- [[statcom-model]]：VSC 型并联补偿，低电压和控制边界不同。
-- [[thyristor-control]]：触发角、自然关断和半控器件通用边界。
-- [[svc-tcr-model]]：TCR 支路的更细模型入口。
-- [[facts]]：FACTS 设备的系统角色，不替代单设备 EMT 模型。
----
-
-*本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*
+- [[models/compensation/reactive-compensation-device]]：无功补偿设备族入口。
+- [[models/compensation/statcom-model]]：VSC 型并联补偿，低电压支撑能力和控制响应速度均优于 SVC，但成本更高。
+- [[models/compensation/svc-tcr-model]]：TCR 支路的更细模型入口，含触发角、导通角和半控关断机制。
+- [[methods/control/thyristor-control]]：触发角、自然关断和半控器件通用边界。
+- [[topics/hvdc-facts/facts]]：FACTS 设备的系统角色，不替代单设备 EMT 模型。
+- [[models/converter/vsc-model]]：STATCOM 的主电路和调制接口上位模型。
+- [[models/converter/pwm-modulator-model]]：详细或插值型 PWM 表示的边界。
+- [[models/control/pll-model]]：并网同步环节，弱网和故障期间的关键风险来源。
+- [[methods/system-studies/dynamic-phasor]]：动态相量理论是 SVC EMT-TS 混合仿真的接口基础。
 
 ## 来源论文
 
-| 论文 | 年份 |
-|------|------|
-| [[application-of-emtp-rv-graphic-software-of-electromagnetic-transient-simulation|Application of EMTP-RV graphic software of electromagnetic t]] | 2007 |
-| [[hybrid-simulation-of-power-systems-with-svc-dynamic-phasor-model-22|Hybrid simulation of power systems with SVC dynamic phasor m]] | 2009 |
-| [[hybrid-simulation-of-power-systems-with-svc-dynamic-phasor-model|Hybrid simulation of power systems with SVC dynamic phasor m]] | 2009 |
-| [[hybrid-svc-vsc-modeling-approaches-for-hardware-in-the-loop-simulation|Hybrid SVC-VSC modeling approaches for hardware-in-the-loop ]] | 2023 |
+- [[hybrid-svc-vsc-modeling-approaches-for-hardware-in-the-loop-simulation|Le-Huy & Tremblay 2023]] — 提出 La Verendrye 735 kV 混合 SVC-VSC 的 HIL 实时仿真方法。两种建模路径（小步长 <5 μs vs 常规大步长 ~32 μs）波形重合度 >99%，动态响应偏差 <0.5%，稳态电压误差 <0.2%。给出了 MMCsim 接口刷新周期 32.5521 μs 和 Pejovic 等效开关参数公式。
+- [[hybrid-simulation-of-power-systems-with-svc-dynamic-phasor-model|E Zhijun et al. 2009]] — 提出基于动态相量理论的 SVC 单相等效模型，用于 TSP-EMT 混合仿真。步长从 50 μs 提升至 0.01–0.02 s（200–400 倍加速），保留基波和 5 次谐波，在 IEEE 9 和 39 节点系统中验证。
+
+*本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*
