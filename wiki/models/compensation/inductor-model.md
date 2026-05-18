@@ -3,7 +3,7 @@ title: "电感 (Inductor)"
 type: model
 tags: [inductor, inductance, passive-component, saturation, core-loss, magnetic]
 created: "2026-04-30"
-updated: "2026-05-11"
+updated: "2026-05-18"
 ---
 
 # 电感 (Inductor)
@@ -412,9 +412,9 @@ SATURABLE_TRANSFORMER
 ## 6. 相关主题与链接
 
 ### 6.1 相关模型
-- [[transformer-model|变压器模型]] - 多绕组磁耦合
-- [[resistor-model|电阻模型]] - 绕组电阻
-- [[capacitor-model|电容模型]] - 寄生电容
+- [[transformer-model]] - 多绕组磁耦合
+- [[resistor-model]] - 绕组电阻
+- [[capacitor-model]] - 寄生电容
 
 ### 6.2 相关方法
 - [[numerical-integration|数值积分]] - 电感离散化
@@ -449,12 +449,6 @@ SATURABLE_TRANSFORMER
 
 这些量化数据不构成对电感器建模方法的全面性能评价，只说明在特定测试条件下可获得的能力边界。
 
----
-
-*本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*
-
 ## 来源论文
 
-| 论文 | 年份 |
-|------|------|
-| [[electromagnetic-modeling-of-inductors-in-emt-type-software-by-three-circuit-base|Electromagnetic modeling of inductors in EMT-type software b]] | 2022 |
+- [[electromagnetic-modeling-of-inductors-in-emt-type-software-by-three-circuit-base]] — Pordanjani 等 (2022)：提出三种分布式磁路类比方法（Hopkinson/Buntenbach/对偶原理），将电感器几何网格离散为EMTP可执行电路，与二维FEM交叉验证，无气隙nRMSE 1.13%~1.19%，有气隙nRMSE 1.52%~1.67%，线性工况比FEM快约30倍，饱和工况快约10倍。
