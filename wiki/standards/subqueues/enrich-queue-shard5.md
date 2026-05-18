@@ -64,7 +64,7 @@
 | 92 | pet.md | methods | methods/power-electronics/pet.md | P0 | 999 | 2392 | 5 | 13 | completed |
 | 228 | phasor-model.md | methods | methods/system-studies/phasor-model.md | P0 | 999 | 12624 | 21 | 18 | completed |
 | 295 | pmsg-single-unit.md | methods | methods/system-studies/pmsg-single-unit.md | P1 | 999 | 3286 | 18 | 5 | completed |
-| 337 | power-electronics.md | topics | topics/component-modeling/power-electronics.md | P1 | 999 | 1890 | 10 | 30 | pending |
+| 337 | power-electronics.md | topics | topics/component-modeling/power-electronics.md | P1 | 999 | 2025 | 10 | 33 | completed |
 | 237 | power-system.md | topics | topics/tools-software/power-system.md | P1 | 999 | 13841 | 14 | 15 | pending |
 | 239 | pv-power-plant.md | topics | topics/renewable-storage/pv-power-plant.md | P1 | 999 | 12468 | 15 | 27 | pending |
 | 188 | quasi-tem-approximation.md | methods | methods/transmission-line/quasi-tem-approximation.md | P0 | 999 | 5571 | 26 | 13 | completed |
