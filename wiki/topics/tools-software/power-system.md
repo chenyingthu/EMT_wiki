@@ -365,21 +365,21 @@ Song 等人（2018）在 NVIDIA P100 上，对含 50 个 PV 控制系统的 IEEE
 
 ## 相关方法 / 相关模型 / 相关主题
 
-- [[electromagnetic-transient]] — EMT 仿真基础概念与物理现象
-- [[power-system-network]] — 电力系统网络建模
-- [[control-system]] — 控制与保护系统建模
-- [[large-scale-power-system]] — 大规模系统 EMT 仿真
-- [[real-time-simulation]] — 实时仿真与硬件在环
-- [[model-order-reduction]] — 模型降阶技术
-- [[parallel-in-time]] — 时间并行算法
-- [[gpu-parallel-acceleration]] — GPU 加速 EMT 仿真
-- [[hybrid-simulation]] — 混合/联合仿真方法
-- [[steady-state-initialization]] — EMT 仿真初始化
-- [[power-flow-calculation]] — 潮流计算与稳态求解
-- [[transmission-network]] — 输电网络建模
-- [[distribution-network]] — 配电网络建模
-- [[renewable-energy-integration]] — 新能源接入
-- [[hil-simulation]] — 硬件在环仿真
+- [[topics/stability-analysis/electromagnetic-transient.md]] — EMT 仿真基础概念与物理现象
+- [[topics/tools-software/power-system-network.md]] — 电力系统网络建模
+- [[methods/control/control-system.md]] — 控制与保护系统建模
+- [[topics/simulation/large-scale-power-system.md]] — 大规模系统 EMT 仿真
+- [[topics/simulation/real-time-simulation.md]] — 实时仿真与硬件在环
+- [[topics/modeling-methods/model-order-reduction.md]] — 模型降阶技术
+- [[methods/simulation-technology/parallel-in-time.md]] — 时间并行算法
+- [[methods/simulation-technology/gpu-parallel-acceleration.md]] — GPU 加速 EMT 仿真
+- [[topics/simulation/hybrid-simulation.md]] — 混合/联合仿真方法
+- [[topics/simulation/steady-state-initialization.md]] — EMT 仿真初始化
+- [[methods/system-studies/power-flow-calculation.md]] — 潮流计算与稳态求解
+- [[topics/tools-software/transmission-network.md]] — 输电网络建模
+- [[methods/system-studies/distribution-network.md]] — 配电网络建模
+- [[topics/renewable-storage/renewable-energy-integration.md]] — 新能源接入
+- [[topics/simulation/hil-simulation.md]] — 硬件在环仿真
 
 ## 来源论文
 

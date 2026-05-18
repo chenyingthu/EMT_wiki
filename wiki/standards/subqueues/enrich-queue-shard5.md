@@ -65,7 +65,7 @@
 | 228 | phasor-model.md | methods | methods/system-studies/phasor-model.md | P0 | 999 | 12624 | 21 | 18 | completed |
 | 295 | pmsg-single-unit.md | methods | methods/system-studies/pmsg-single-unit.md | P1 | 999 | 3286 | 18 | 5 | completed |
 | 337 | power-electronics.md | topics | topics/component-modeling/power-electronics.md | P1 | 999 | 2025 | 10 | 33 | completed |
-| 237 | power-system.md | topics | topics/tools-software/power-system.md | P1 | 999 | 13841 | 14 | 15 | pending |
+| 237 | power-system.md | topics | topics/tools-software/power-system.md | P1 | 999 | 13957 | 14 | 15 | completed |
 | 239 | pv-power-plant.md | topics | topics/renewable-storage/pv-power-plant.md | P1 | 999 | 12468 | 15 | 27 | pending |
 | 188 | quasi-tem-approximation.md | methods | methods/transmission-line/quasi-tem-approximation.md | P0 | 999 | 5571 | 26 | 13 | completed |
 | 264 | renewable-energy-units.md | topics | topics/renewable-storage/renewable-energy-units.md | P1 | 999 | 4768 | 14 | 35 | completed |
@@ -97,3 +97,5 @@
 |||||||||| 454 | 1 | 0 | 0 | pmsg-single-unit.md enriched: bc 3199≥2000, bf 18≥5, footer DUP_BLOCK removed, 5 broken wikilinks fixed with full paths |
 |||||| 455 | 1 | 1 | 0 | upfc-model.md enriched: bc 3262≥2000 pass, bf 16≥5, lightweight footer remnant case, 14 wikilinks all valid, SVG skip (formulas dense) |
 ||||||||| 456 | 1 | 1 | 0 | steady-state-initialization.md enriched: bc 1825→9487, bf 14→16 pass, mermaid→SVG 4-layer flowchart, added shooting method + MTDC + MMC SM init, 15 wikilinks all valid |
+
+|||||||||| 456 | 1 | 1 | 0 | power-system.md wikilink fix: 15 bare filenames → full relative paths (topics/, methods/), all wikilinks now valid. Page already PASSED Quality Gate (bc=13957≥2000, bf=14≥5, no placeholder, no DUP_BLOCK). Incremental fix only. |
