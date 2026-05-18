@@ -44,7 +44,7 @@
 | 204 | gan-hemt.md | methods | methods/power-electronics/gan-hemt.md | P0 | 999 | 7075 | 15 | 10 | completed |
 | 149 | gpu-accelerated-simulation.md | methods | methods/simulation-technology/gpu-accelerated-simulation.md | P0 | 999 | 4300 | 9 | 11 | completed |
 | 410 | grid-side-converter.md | models | models/rotating-machine/grid-side-converter.md | P1 | 999 | 3203 | 17 | 23 | completed |
-| 66 | gruson-2011-reduced-mmc.md | models | models/equivalent/gruson-2011-reduced-mmc.md | P0 | 999 | 1768 | 8 | 9 | pending |
+| 66 | gruson-2011-reduced-mmc.md | models | models/equivalent/gruson-2011-reduced-mmc.md | P0 | 999 | 2369 | 8 | 9 | completed |
 | 311 | hardware-acceleration.md | methods | methods/simulation-technology/hardware-acceleration.md | P1 | 999 | 2802 | 6 | 22 | pending |
 | 190 | hbsm.md | methods | methods/power-electronics/hbsm.md | P0 | 999 | 5623 | 12 | 15 | pending |
 | 192 | high-performance-computing.md | methods | methods/simulation-technology/high-performance-computing.md | P0 | 999 | 5691 | 10 | 12 | pending |
@@ -107,3 +107,4 @@
 ||| Cycle 6 | distance-relay.md | P0 SKIP (Quality Gate PASS: bc=2752≥2000, bf=10≥5, no placeholder, src=0≤5000, max_block=5895≤15000) | 2026-05-18 02:59 |
 
 ||| Cycle 7 | distribution-network.md | P0 SKIP (bc=11491≥2000, bf=16≥5, max_block=18248 is natural single-block size, no DUP) | 2026-05-18 03:00 ||||| Cycle 9 | frequency-dependent-soil.md | P0 SKIP (Quality Gate PASS: bc=10063≥2000, bf=13≥5, no placeholder, no DUP_BLOCK, wikilinks all valid, src=0≤5000, max_block=14632≤15000) | 2026-05-18 06:54 |
+
