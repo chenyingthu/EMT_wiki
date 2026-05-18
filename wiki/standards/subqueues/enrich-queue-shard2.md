@@ -36,7 +36,7 @@
 | 100 | fourier-series.md | methods | methods/signal-processing/fourier-series.md | P0 | 999 | 2619 | 10 | 15 | completed |
 | 376 | frequency-dependent-soil-model.md | methods | methods/transmission-line/frequency-dependent-soil-model.md | P1 | 999 | 1346 | 3523 | 19 | 13 | completed |
 | 159 | full-bridge-smb.md | models | models/submodule/full-bridge-smb.md | P0 | 999 | 4354 | 46 | 20 | completed |
-| 118 | grid-forming-inverter.md | models | models/converter/grid-forming-inverter.md | P0 | 999 | 3146 | 20 | 12 | pending |
+| 118 | grid-forming-inverter.md | models | models/converter/grid-forming-inverter.md | P0 | 999 | 3095 | 20 | 12 | completed |
 | 158 | grounding-system.md | topics | topics/protection-lightning/grounding-system.md | P0 | 999 | 4342 | 39 | 10 | completed |
 | 89 | half-bridge-submodule.md | methods | methods/power-electronics/half-bridge-submodule.md | P0 | 999 | 2377 | 8 | 12 | pending |
 | 389 | harmonic-transfer-coefficient.md | methods | methods/signal-processing/harmonic-transfer-coefficient.md | P1 | 999 | 1095 | 5 | 23 | pending |

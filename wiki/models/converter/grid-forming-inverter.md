@@ -375,5 +375,3 @@ $$U = U_{sc} e^{-j(\theta_0+\Delta\theta)} + [R_g + (s+j\omega_i)L_g] i$$
 - [[initializing-emt-models-of-grid-forming-vscs-in-mtdc-systems|Allabadi 2024]] - CISS/DI 初始化、6.9× 加速
 
 ---
-
-*本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*
