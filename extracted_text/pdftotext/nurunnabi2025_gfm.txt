@@ -1,0 +1,1108 @@
+Received 21 March 2025, accepted 6 April 2025, date of publication 17 April 2025, date of current version 2 May 2025.
+Digital Object Identifier 10.1109/ACCESS.2025.3561788
+
+
+
+
+Advancing Grid-Forming Inverter Technology:
+Comprehensive PQ Capability and
+Performance Analysis
+MD NURUNNABI, SHUHUI LI , (Senior Member, IEEE),
+AND HIMADRY SHEKHAR DAS , (Student Member, IEEE)
+Department of Electrical and Computer Engineering, The University of Alabama, Tuscaloosa, AL 35487, USA
+Corresponding author: Shuhui Li (sli@eng.ua.edu)
+This work was supported in part by the U.S. National Science Foundation under Grant 2141067 and Grant 2402634.
+
+
+
+
+  ABSTRACT This paper presents a performance analysis of grid-forming (GFM) inverter technology, which
+  is essential to ensure stable and reliable operation of power systems with high penetration of inverter-based
+  resources (IBRs). Recognizing that IBR operational constraints are distinct from those of synchronous
+  generators, this study develops advanced PQ capability models and algorithmic frameworks that accurately
+  characterize GFM inverter operational constraints across various coupling filter configurations (L, LC, and
+  LCL). Electromagnetic transient (EMT) simulations show that the Enhanced Voltage Regulation (EVR)
+  and Controlled Proportional-Integral Droop (CPID) strategies proposed in this paper improve voltage and
+  frequency stability under dynamic loading and fault conditions, outperforming conventional droop methods.
+  Real-time hardware validation confirms the robustness of the proposed approaches and their effectiveness
+  in suppressing harmonics and recovering from faults. Key contributions include the derivation of practical
+  PQ capability boundaries under realistic constraints, identification of superior control strategies for robust
+  power quality (PQ), and successful GFM and grid-following (GFL) integration in parallel operations. These
+  findings provide actionable insights for optimizing GFM inverter design and ensuring IEEE 1547 compliance
+  in low-inertia grids.
+
+
+  INDEX TERMS Droop control systems, grid-forming inverters, inverter coupling filters, inverter operational
+  constraints, power quality enhancement, PWM saturation effects.
+
+
+
+
+I. INTRODUCTION                                                                                 can function independently of the grid, providing a reliable
+The increase in renewable energy utilization in power systems                                   power supply in isolated networks or supporting the main grid
+requires robust and dependable inverter technology. Grid-                                       during fluctuations [8], [9], [10].
+forming inverters, like traditional synchronous generators,                                        PQ Capability charts are traditionally used for synchronous
+play a crucial role in this transition by providing the grid                                    generators to establish reliable operational boundaries and
+with necessary voltage and frequency support [1], [2], [3],                                     to inform their control mechanisms [11], [12]. This con-
+[4], [5], [6]. This feature is extremely critical for ensuring                                  cept is similarly critical in the realm of inverters, where PQ
+grid stability and dependability, particularly in microgrids                                    capability is a fundamental specification outlined in interna-
+and distributed energy resource (DER) contexts when con-                                        tional standards [13], [14]. Numerous PQ capability charts
+ventional generation is restricted or absent [7]. GFM inverters                                 have been formulated for inverter-based resources (IBR) [15],
+                                                                                                [16], [17]. For instance, the Electric Reliability Council of
+   The associate editor coordinating the review of this manuscript and                          Texas (ERCOT) has introduced a rectangular PQ capability
+approving it for publication was Alexander Micallef              .                              chart that is required at the point of interconnection (POI)
+
+                                                  2025 The Authors. This work is licensed under a Creative Commons Attribution 4.0 License.
+VOLUME 13, 2025                                          For more information, see https://creativecommons.org/licenses/by/4.0/                         73391
+                                                                                       M. Nurunnabi et al.: Advancing Grid-Forming Inverter Technology
+
+
+
+
+[15] as shown in Fig. 1(a). Concurrently, the North America                 aims to fill this gap and provide valuable insights into the
+Electric Reliability Corporation (NERC) has introduced a                    design and operation of GFM inverters.
+semi-circular PQ capability chart for nominal voltage, main-                   Despite the importance of GFM inverters in provid-
+taining a fixed reactive power approximately 0.95 p.u. of the               ing frequency and voltage support, GFL inverters are also
+active power output [16], depicted in Fig. 1(b).                            widely used in renewable energy resources [23], [24], [25].
+                                                                            Therefore, it is crucial to study the impacts of integrat-
+                                                                            ing GFM and GFL inverters in an EPS. Several interna-
+                                                                            tional standards define performance, safety, and grid com-
+                                                                            patibility requirements for grid-connected inverters. IEEE
+                                                                            1547 specifies requirements for interconnection, Including
+                                                                            allowable voltage and frequency deviations, total harmonic
+                                                                            distortion (THD) limits, and ride-through capabilities. UL
+                                                                            1741 addresses safety aspects and certification procedures,
+                                                                            while IEC 62116 outlines test procedures for anti-islanding
+                                                                            protection. This study assesses inverter performance against
+                                                                            IEEE 1547 criteria, particularly focusing on THD limits for
+FIGURE 1. Inverter-Based Resource PQ Capability Diagrams:                   voltage and current, as well as voltage and frequency stability
+(a) According to ERCOT specifications [15], and (b) NERC guidelines [16].
+                                                                            during disturbances.
+
+   However, GFM inverters possess sophisticated control sys-
+tems distinct from those of synchronous generators. Their
+operation is constrained by several factors, including PWM
+(pulse-width modulation) saturation and rated current, which
+play critical roles in determining the PQ–capability area and
+ensuring the reliable operation of GFM inverters. Existing
+inverter PQ capability charts often fail to adequately consider             FIGURE 2. Grid-connected GFM inverter schematic.
+the specific characteristics and constraints of GFM inverters,
+making the impact on their control and operation unclear [5],
+[18], [19], [20]. A coupling filter is mandatory for connect-                  The studies are conducted via electromagnetic transient
+ing a GFM inverter to a microgrid, which affects both the                   (EMT) simulation and hardware experiments. To our knowl-
+harmonics and PQ capability of the inverter. While L filters                edge, this study introduces comprehensive insights not yet
+are most used in grid-following (GFL) inverters connected                   fully explored in existing literature, thereby advancing the
+to strong grids due to sufficient harmonic suppression and                  development of grid-forming (GFM) inverter systems signif-
+the grid’s inherent voltage stiffness, LC or LCL filters may                icantly.
+be used in weak grid or microgrid environments to provide                      The contributions of this paper include: 1) Development
+improved harmonic attenuation [11]. Rathnayake et al. [5]                   of inverter PQ models considering specific inverter charac-
+provided a comprehensive overview of GFM inverter model-                    teristics and coupling filters. 2) Development of algorithms
+ing but did not extensively cover the impact of different filter            to determine PQ capability charts considering constraints
+topologies on PQ capabilities.                                              unique to GFM inverters. 3) Performance and harmonic stud-
+   Vega et al. [20] discussed control requirements for main-                ies of GFM inverters under diverse loading conditions and
+taining frequency stability in low-inertia systems, but their               filtering setups. 4) Evaluation of GFM inverter control and
+work lacked detailed operational dynamics for GFM inverters                 operation from a novel dynamic PQ capability perspective.
+under various filtering conditions. Li et al. [21] and Zeng et al.          5) A study of integrated GFM and GFL inverters under
+[22] highlighted the significance of filter design in mitigating            diverse power sharing conditions.
+harmonics and improving inverter performance. However,                         The paper is organized as follows:
+these studies did not integrate the specific constraints of                    • Section II presents the control and power modeling of
+GFM inverters into their PQ capability analyses, which is                        GFM and GFL inverters, including active and reactive
+critical for understanding the full operational potential of                     power equations under various coupling filters (L, LC,
+these devices.                                                                   and LCL).
+   Different load types in an electrical power system (EPS),                   • Section III describes the algorithm for generating PQ
+including R, RL, RC loads, and stochastic load, present                          capability charts based on current and PWM saturation
+varying characteristics when supplied by a GFM inverter,                         constraints, along with a comprehensive analysis of
+depending on the coupling filter used. Previous studies have                     inverter PQ capabilities.
+often focused on R loads, but comprehensive studies evaluat-                   • Section IV provides detailed electromagnetic transient
+ing the performance of GFM inverters under diverse loading                       (EMT) simulation results under different load condi-
+conditions and filtering setups are lacking [8], [9]. This study                 tions, including stochastic and mixed load profiles.
+
+73392                                                                                                                                 VOLUME 13, 2025
+M. Nurunnabi et al.: Advancing Grid-Forming Inverter Technology
+
+
+
+
+    • Section V presents experimental validation using a                    The current calculation for the LCL capacitor is defined as
+      real-time hardware setup, including performance under                 follows:
+      load switching and fault conditions.                                                                                    ⃗
+    • Section VI concludes the paper with key findings and                            ⃗Iinv = ⃗IPCC + jωs C · V⃗c = ⃗IPCC + j Vc    (4)
+                                                                                                                              Xc
+      future research directions
+                                                                            where E⃗ inv , ⃗Iinv , V⃗c , ⃗IPCC and V⃗PCC represent the steady-state
+II. CONFIGURATION OF GFM INVERTERS WITH                                     phasors for the output voltage of the inverter, inductor current
+DIFFERENT FILTERS                                                           at the inverter side, filter capacitor voltage, inductor current
+A. DESCRIPTION OF GFM INVERTERS TOPOLOGY                                    at PCC, and voltage at PCC, respectively.
+A GFM inverter employs a control scheme capable of gener-
+ating grid voltage and frequency independently, eliminating
+the need for large-scale electric generators. As depicted in
+Fig. 2, a GFM inverter operates as a voltage source posi-
+tioned behind a coupling filter, adept at managing both the
+magnitude and frequency of the voltage at the Point of Com-
+mon Coupling (PCC) with an extensive AC network. The
+voltage that the inverter delivers to the AC system, denoted
+as Eabc_inv , corresponds to the controller’s output voltage
+  ∗                                                                         FIGURE 3. Schematic of a grid-connected converter (LCL filter) [26], [27].
+Eabc_inv as per the established relationship. [26],
+                                        ∗
+                       Eabc_inv = kP · Eabc_inv                       (1)      The impedances of the inverter-side inductor are given by
+                                                                            Zinv = Rinv + jωs Linv , the impedance of the PCC-side inductor
+where kP represents the pulse-width modulation (PWM),                       by Zg = Rg + jωs Lg , and the reactance of the filter capacitor
+induces the ratio between the terminal voltage of the inverter              by Xc = 1/(ωs C). Neglecting the internal resistance of the
+and the controller’s output voltage [26]. The coupling filter               filter, the stable current flow into the AC network can be
+plays a crucial role in mitigating harmonics introduced by the              determined from equations (5) to (6) as follows:
+inverter’s switching actions and shaping the inverter’s power                                                     
+delivery capabilities at the PCC. However, it is important                               E⃗ inv − V⃗PCC 1 − XXinvc     E⃗ inv − V⃗PCC_F
+                                                                                ⃗IPCC =                           =                   (5)
+to note that harmonic performance also depends on other                                   j X + X − inv g
+                                                                                                           X X                 jXF
+                                                                                                inv      g      Xc
+factors, such as the control algorithm, switching frequency,
+and the type of PWM strategy employed [27]. In this study,                  where, XF = Xinv + Xg − inv
+                                                                                                              X Xg          ⃗
+                                                                                                                Xc , and VPCC_F        =
+these variables are held constant to isolate the impact of                       
+                                                                                      X
+                                                                                           
+filter topology, but future research may extend this work to                V⃗PCC 1 −  inv
+                                                                                            . Assuming V⃗PCC as the reference and setting
+                                                                                           Xc
+examine their combined effects.                                             E⃗ inv = Einv ̸ δinv , Then, the current at PCC can be expressed
+                                                                            as follows:
+                                                                                    ⃗IPCC = Einv sin δinv − j Einv cos δinv − VPCC_F
+B. OUTPUT POWER EQUATION OF A GRID-CONNECTED
+CONVERTER                                                                                                                                (6)
+                                                                                                    XF                    XF
+The amount of generated power at the PCC is determined
+                                                                               Consequently, the complex power formula enables the cal-
+by the AC system’s inverter output voltage, the PCC voltage,
+                                                                            culation of the power transferred from the GFM inverter to
+and the grid filter’s type and characteristics. Fig. 3 depicts a                                                                ∗
+                                                                            the AC network at the PCC. PPCC + jQPCC = V⃗PCC ⃗IPCC    =
+GFM inverter with an LCL-filter, where Linv and Rinv repre-                       ⃗∗
+                                                                            VPCC IPCC , as follows
+sent the inverter-side inductance and resistance, Cf represents
+the filter capacitor, and Lg and Rg represent the PCC-side                                        Einv sin δinv   VPCC Einv
+                                                                                       PPCC = VPCC              ≈           δinv                  (7a)
+inductance and resistance. The LC and L filters are specific                                           XF            XF
+cases of the LCL filter.                                                                          Einv cos δinv − VPCC_F
+  Utilizing the generator’s sign convention and under stable                          QPCC = VPCC
+                                                                                                             XF
+conditions, the voltage balance equation for the inverter-side                                    Einv − VPCC_F
+inductor is outlined as follows:                                                           ≈ VPCC                                                 (7b)
+                                                                                                         XF
+    E⃗ inv = Rinv ⃗Iinv + jωs Linv · ⃗Iinv + V⃗c = Zinv ⃗Iinv + V⃗c   (2)      Similarly, using the characteristic equations for LC-filter
+                                                                                                                                          
+                                                                            GFM inverter’s XF = Xinv and V⃗PCC_F = V⃗PCC 1 − XXinvc
+The voltage equilibrium equation for the inductor on the PCC                and the L-filter GFM inverter’s XF = Xinv and V⃗PCC_F =
+point is                                                                    V⃗PCC , one can establish analogous active and reactive power
+                                                                            equations. Control over the active power delivered by the
+  V⃗c = Rg ⃗IPCC + jωs Lg · ⃗IPCC + V⃗PCC = Zg ⃗IPCC + V⃗PCC
+                                                                            inverter to the AC network can be managed by adjusting the
+                                                            (3)             phase angle or frequency of the output voltage, as described
+
+VOLUME 13, 2025                                                                                                                                  73393
+                                                                                M. Nurunnabi et al.: Advancing Grid-Forming Inverter Technology
+
+
+
+
+in (7a). For GFM inverters utilizing L-filter, LC-filter, and       B. ANALYZING THE PQ CAPABILITY UNDER PWM
+LCL-filters, adjustments to the reactive power delivered to the     SATURATION LIMITS
+AC network are achievable by regulating the voltage output          In addition to the rated current limitation, a GFM inverter’s
+by the inverter, as described in (7b).                              power output at the PCC is constrained by the PWM satu-
+                                                                    ration limit. Commonly, two PWM strategies are employed:
+III. METHODOLOGY FOR DETERMINING THE PQ                             Sinusoidal PWM and Space Vector PWM [26]. The output
+CAPABILITY CHART                                                    terminal voltage of the inverter must conform to the following
+The permissible power range of an inverter, constrained by          equation to comply with these constraints:
+its physical limitations (such as the rated power/current and
+PWM saturation), is defined by the inverter’s PQ capability                                      E⃗ inv ≤ Emax                           (10)
+area. Effective control of a GFM inverter is crucial to ensure                       √
+it operates within this PQ capability range. Consequently, the      where Emax is 3V  √ dc for SPWM and V   √dc for SVPWM. There-
+                                                                                     2 2                      2
+power commands issued to the inverter controller must not           fore, the allowable PQ capability region at any given PCC
+exceed this designated area to maintain the inverter’s safe and     voltage, considering the PWM saturation restriction, can be
+dependable functionality.                                           determined.
+                                                                       To accurately determine the inverter’s PQ capability
+A. ASSESSING PQ CAPABILITY BASED ON RATED                           region, these constraints must be thoroughly analyzed and
+POWER/CURRENT RESTRICTIONS                                          combined.
+Take that the GFM inverter’s perceived power is Srated . Under         First, the rated current constraint establishes a circular
+the nominal PCC voltage conditions, the power commands              boundary within which the inverter can safely operate without
+provided to the inverter controller have to satisfy the follow-     exceeding its maximum current rating. This constraint is
+ing equation:                                                       directly related to the inverter’s rated current (Irated ) and the
+               q                                                    voltage at the point of common coupling (PCC).
+                        2           2
+                  P∗PCC + Q∗PCC ≤ Srated                    (8a)
+
+By using (8a), the permissible active P∗PCC and reactive Q∗PCC
+power commands can be calculated as follows:
+                              Srated
+                P∗PCC = r             2                   (8b)
+                            1+ Q   PCC
+                                  PPCC
+                         q
+               Q∗PCC =    (Srated )2 − (PPCC )2             (8c)
+
+   However, if the voltage at the PCC changes from the nomi-
+nal voltage, equation (8) will not be sufficient to calculate the
+PQ capacity. For instance, during a low-voltage ride-through
+scenario, the actual voltage at the PCC can be substantially
+lower than the nominal voltage. As a result, the PQ capability
+that is calculated by (8) will result in a significantly higher
+current than the inverter’s rated current. To minimize overcur-
+rent issues, the PQ capacity of an inverter should be calculated
+based on the current rating instead of the power rating.
+
+                         ⃗IPCC ≤ Irated                     (9a)
+
+   If the actual PCC voltage varies from the nominal, adjust
+the PQ capability by (9a) instead of power ratings to
+avoid overcurrent conditions. For adjusting voltage condi-
+tions according to (9a), the active power (Pactual ) and reactive
+power (Qactual ) can be adjusted PQ capability.                     FIGURE 4. Flowchart for assessing PQ capability of GFM inverters.
+
+                                             
+                                     Vactual                           Second, the PWM saturation constraint is shaped by
+                  Pactual = P∗PCC                            (9b)
+                                     V                              inverter output voltages, DC-link voltage, selected PWM
+                                    nominal 
+                                      Vactual                       scheme (SPWM or SVPWM), and coupling filter param-
+                 Qactual = Q∗PCC                             (9c)
+                                     Vnominal                       eters. This constraint generates a boundary reflecting the
+
+73394                                                                                                                          VOLUME 13, 2025
+M. Nurunnabi et al.: Advancing Grid-Forming Inverter Technology
+
+
+
+
+inverter’s voltage limitations. The intersection of these two
+boundaries, the rated current constraint and the PWM
+saturation–constraint defines the permissible PQ capabil-
+ity region for reliable operation. A detailed step-by-step
+algorithm for computing the PQ capability region is provided
+explicitly in Appendix A.
+
+C. ANALYZING THE PQ CAPABILITY UNDER NOMINAL
+CONDITIONS
+The nominal values for the parameters are as follows. 1) The
+GFM inverter has a 100 kVA rated power. 2) The voltage of
+                                                                   FIGURE 5. PQ capability region at nominal conditions for (a) SPWM
+the dc-link is 1500V. 3) The rms voltage of the PCC line is        (b) SVPWM.
+690V at 60Hz. 4) The inductance and resistance of the induc-
+tor for the L filter are 4mH and 0.012, respectively [26].
+5) The capacitance for the LC filter is 25µF, while the            SVPWM enhances PQ capacity even without increasing the
+inductor stays the same. 6) The LCL filter has the same capac-     cost or size of the inverter system.
+itance, 2 mH of inductance, and 0.006  of resistance for
+both the grid-side and inverter-side inductors. The maximum
+                                                                   D. PQ CAPABILITY WITH VARYING PCC AND DC-LINK
+amount of power that can be delivered during a faulty state is
+                                                                   VOLTAGES
+reflected in the short-circuit MVA (Ssc ) at the inverter output
+                                                                   Under real-world conditions, variations in PCC voltage and
+point. It is computed using the inverter circuit’s impedance
+                                                                   changes in DC-link voltage led to dynamic shifts in PQ
+and maximum current capacity. The short-circuit current, Isc
+                                                                   capability. Fig. 6 illustrates a PQ capability analysis consid-
+can be approximated by [26] and [27]:
+                                                                   ering fluctuations in both PCC and DC-link voltages. Due to
+                                      
+                               VLL_rms                             minimal differences among LCL, LC, and L filters,
+                       Isc =                               (11a)
+                                  Z
+where VLL_rms is the line-line rms voltage of the PCC line.
+  The short-circuit MVA, Ssc is then calculated by the fol-
+lowing equation:
+                         √
+                  Ssc = 3 × Vrms × Isc                 (11b)
+
+   Consequently, the short-circuit MVA (SSC ) at the Inverter
+output terminal is calculated to be 316 kVA. The analysis of
+PQ capability is expressed in per unit (p.u.) terms, based on
+the nominal PCC voltage and the inverter’s rated power as the
+reference values.
+   For SPWM, the maximum inverter output voltage, Emax is
+1.33 p.u., while for SVPWM, it increases to 1.53 p.u. Follow-
+ing this, the PQ capability diagrams are outlined as shown in
+Fig. 5. These diagrams feature a central circle, designated as
+the Rated Current Circle (RIC) and other additional circles
+marked as PWMLCL, PWMLC, and PWML that represent
+the PWM saturation limits for the inverter when utiliz-
+ing L-filter, LC-filter, and LCL-filters respectively. Notably,
+in Fig. 5, the circles for PWM constraints overlap across all
+filter types, which is primarily due to the capacitors in the
+LCL and LC filters, which are tasked mainly with harmonic
+filtering. The defined PQ capability region is the intersection
+of these circles, detailing the operational envelope limited by    FIGURE 6. With the DC-link voltage held constant, the Rated Current Circle
+PWM saturation. Fig. 5 shows the following observations:           (RIC) expands in the PQ plane as the PCC for diverse DC-link and PCC
+   1) At nominal conditions, the PQ capability area differs        voltage, P-Q capability regions utilizing SPWM (a & c) and SVPWM (b & d).
+
+significantly from industry-standard inverter PQ capability
+charts and synchronous generators.                                    This section focuses solely on results using the GFM
+   2) The GFM inverter with SVPWM has a bigger PQ                  inverter with an LCL filter. Key observations from Fig. 6
+capability area than the SPWM inverter, demonstrating that         include:
+
+VOLUME 13, 2025                                                                                                                       73395
+                                                                                M. Nurunnabi et al.: Advancing Grid-Forming Inverter Technology
+
+
+
+
+  1) voltage rises and contracts as the PCC voltage falls,          where, Pkmax_i and Qkmax_i , and 1fik and 1Vik represent the
+     as shown in Fig. 6(c) and 6(d).                                maximum permissible frequency and voltage deviations for
+  2) Maintaining a constant DC-link voltage, the PWM sat-           the ith inverter’s output voltage within the k th interval.
+     uration constraint circle expands in the PQ plane as the          Fig. 7 illustrates a conventional droop control strategy in
+     PCC voltage increases, and it contracts when the PCC           which increases in frequency (f ) and voltage (V ) correspond
+     voltage decreases, as depicted in Fig. 6(c) and 6(d).          to decreases in active and reactive power, respectively. This
+  3) The greater the DC-link voltage, the larger the per-           relationship is depicted through linear droop characteristics,
+     missible PQ capability region, as depicted in Fig. 6(a)        as demonstrated in Fig. 7. Specifically, Fig. 7(a) highlights a
+     and 6(b). Consequently, a lower DC-link voltage might          positive relationship between real power and frequency, while
+     limit the inverter’s active and reactive power capabil-        Fig. 7(b) reveals both positive and negative relationships
+     ities. However, higher DC-link voltages can lead to            among voltage magnitude and reactive power.
+     increased inverter costs.                                         The droop control for frequency-power (P-f ) is set at
+   The ultimate PQ capability region, which defines the             1%, which defines the operational frequency range from
+allowable operating boundaries for the inverter, is determined      fmax_i (at no active power output) to fmin_i (at maximum
+by the intersection of the results from the rated current and       active power output) that is shown in Fig. 7(a). Similarly, the
+PWM saturation constraints.                                         voltage-reactive power (q-V ) droop is set at 3%, which dic-
+                                                                    tates that the voltage at the PCC bus in the microgrid can vary
+IV. CONTROL AND OPERATION OF A GFM INVERTER                         between Vmax (when the inverter is delivering full inductive
+A. FUNDAMENTAL DROOP REGULATION (FDR) STRATEGY                      power) and Vmin (when it is supplying full capacitive power)
+                                                                    that is depicted in Fig. 7(b).
+Two standard control topologies for a grid-forming (GFM)
+                                                                       Although this work uses conventional P–f and Q–V droop
+inverter, including configurations with and without a current
+                                                                    control for GFM inverter operation, alternative approaches
+control loop are widely used. Research suggests that for
+                                                                    such as non-linear and adaptive droop methods have been
+islanding applications of grid-forming inverters, the topology
+                                                                    proposed in the literature to enhance power-sharing per-
+without a current control loop offers greater reliability [9],
+                                                                    formance [33]. While this study focuses on traditional
+[10]. This methodology is utilized in this study to assess
+                                                                    droop-based control and enhanced voltage regulation strate-
+the performance of the GFM inverter. The employed control
+                                                                    gies, future research will explore the integration of virtual
+strategy was developed under the Consortium for Electric
+Reliability Technology Solutions (CERTS) Microgrid pro-             inertia control, as proposed in [34] and [35], to further
+                                                                    improve frequency response in low-inertia grid conditions.
+gram [29] and adheres to the principles outlined in (7). Over
+the past 15 years, this strategy has undergone rigorous testing
+                                                                    B. ENHANCED VOLTAGE REGULATION (EVR) STRATEGY
+at the CERTS, substantiating its effectiveness [29], [30], [31],
+[32]. The control scheme incorporates two droop control             The overall control configuration of the grid-forming (GFM)
+strategies: P–f droop and Q–V droop, which are defined by           inverter with enhanced voltage regulation topology is shown
+the subsequent mathematical formulations:                           in Fig. 8. The controller modulates the AC system voltage
+                                                                    in response to changes in frequency and voltage amplitude,
+                                              
+                fik = fset + mpi Pkset_i − Pki            (12a)     adhering to the P–f and Q–V droop control strategies. Sta-
+                                                                  bility of the PCC voltage amplitude is achieved through an
+                Vik = Vset + mqi Qkset_i − Qki            (12b)     inner Proportional-Integral (PI) controller. This PI controller
+                                                                    incorporates a saturation mechanism to prevent the integral
+Here, fik represents the reference frequency for the ith            term from exceeding the GFM inverter’s maximum allowable
+inverter’s output voltage during the k th time interval, with       output voltage.
+fset as the nominal frequency. The coefficient mpi represents
+the frequency droop factor. The terms Pkset_i , Pki refer to the
+target and actual measured active power of the ith inverter for
+the k th interval, respectively. Based on (12b), Vik indicates
+the target PCC voltage for the ith inverter in the k th interval,
+Vset is the nominal PCC voltage, and mqi is the voltage droop
+coefficient. Qkset_i , Qki are the target and actual measured
+reactive power of the ith inverter, respectively.
+                                         !
+                                  1fik                              FIGURE 7. (a) P-f droop (b) q-V droop for GFM inverter.
+                          mpi =                            (12c)
+                                 Pkmax_i
+                                                                       Key parameters for the P–f droop include the droop coef-
+                                         !
+                                  1Vik
+                          mqi =                            (12d)    ficient (mp ), the active power set point (Pset ), the rated
+                                 Qkmax_i                            frequency (fset ), and the angle δ, derived from the angular
+
+73396                                                                                                                          VOLUME 13, 2025
+M. Nurunnabi et al.: Advancing Grid-Forming Inverter Technology
+
+
+
+
+frequency ω. The Q–V droop is designed to minimize
+reactive power circulation among grid-forming inverters by
+maintaining a predefined voltage magnitude using droop
+characteristics. The grid-side voltage (Vm ), regulated through
+an integral controller characterized by the droop coefficient
+(mq ), voltage set point (Vset ), and PI controller. Despite load
+variations, Vm remains stable, facilitated by the reactance
+of the LCL filter, which curtails the circulation of reactive
+power.
+   In the control system illustrated in Fig. 8, the computa-
+tion for active and reactive power (p and q), and voltage
+magnitude Vmag in the αβ stationary reference frame are
+determined using measurements of the PCC voltage (vabc         pcc )
+and the current at PCC (iabc     pcc )  [10]. The   transformation
+from abc to αβ is achieved using the following Clarke
+transformation:
+                    
+                             1           1
+                                            
+                                                vapcc
+                                                      
+                    1    −           −
+         vα      2
+                           √2           √2 
+                                             b 
+         vβ
+              =                               vpcc        (13a)
+                 3           3           3      c
+                      0              −          vpcc
+                           2            2                                   FIGURE 8. Overall control configuration of a GFM inverter.
+                             1           1    
+                                                iapcc
+                                                      
+                    1    −           −
+         iα      2
+                           √2           √2 
+                                             b 
+         iβ
+              =                               ipcc        (13b)
+                 3           3           3 c                                harmonics in the inverter voltage, which are mitigated by the
+                      0              −          ipcc                          LCL filter.
+                            2            2
+                                                                                 The required active and reactive powers (P and Q) are typ-
+   Here, vapcc , vbpcc , vcpcc , iapcc , ibpcc , and icpcc are the original
+                                                                              ically generated by the AGC (automatic generation control)
+phase voltage and current at PCC. Using the αβ components,
+                                                                              system of a larger AC network and issued to different dis-
+the instantaneous p and q can be calculated as:
+                                                                            tributed generation (DG) units, including the GFM inverters.
+                                                 iα                         However, under the droop control shown in Fig. 7, the actual
+                          p = vα vβ                                   (14a)
+                                                    iβ                        inverter output power at the PCC could be different from
+                                                                              the desired active and reactive power settings and the actual
+                                                        
+                                                 iβ
+                          q = vα vβ                                  (14b)    PQ capability of the GFM inverter at the PCC could also be
+                                                    −iα
+                                 q
+                                                     2                       affected by the system conditions, both of which would cause
+                    Vmag = (vα )2 + vβ                                 (15)   abnormal operation of a GFM inverter.
+   These measured values, p, q, and Vmag undergo through
+                                                                              V. EMT SIMULATION RESULTS
+low-pass filter to derive the fundamental components P, Q,
+                                                                              A. SIMULATION SETUP
+and Vm∗ . To generate the PWM signals for inverter control, the
+                                                                              A detailed simulation evaluation is done using MATLAB
+sinusoidal reference voltages for each phase are calculated
+                                                                              Simulink for analyzing the performance of GFM with distinct
+using the amplitude Vm and phase angle δ of the controller
+                                                                              load, diverse filtering mechanisms, and in parallel with GFL.
+output. The equations for each phase voltage are formalized
+                                                                              The parameters used for this analysis are tabulated in Table 1.
+as follows:
+                       a
+                     Vref = Vm cos(δ)                               (16a)     B. SIMULATION RESULTS
+                                                                              This study assesses inverter performance against IEEE
+                                         
+                                       4π
+                       b
+                     Vref = Vm cos δ +                              (16b)     1547 criteria, particularly focusing on THD limits for voltage
+                                        3
+                                   
+                                       2π
+                                                                             and current, as well as voltage and frequency stability during
+                     Vref = Vm cos δ +
+                       c
+                                                                    (16c)     disturbances. As shown in simulation and hardware results
+                                        3
+                                                                              (e.g., Table 2, Fig. 9–16), the system consistently operates
+   These equations yield the reference voltages Vref   abc for                within these prescribed limits, supporting compliance with
+the three-phase system, which are used to drive the PWM                       industry standards.
+signals for the inverter. Single-loop droop control oversees
+both the load-side voltage and current, adjusting the internal                1) GFM INVERTER OPERATION WITHIN MAXIMUM PQ
+voltage V /δ as a controllable source. It modulates the fre-                  CAPABILITY LIMITS
+quency (f ) and voltage (V ) based on the P-f and q-V droop                   This subsection conducts an in-depth examination of Grid-
+controls, respectively. High-frequency switching introduces                   Forming (GFM) inverter performance, specifically evaluating
+
+VOLUME 13, 2025                                                                                                                            73397
+                                                                                M. Nurunnabi et al.: Advancing Grid-Forming Inverter Technology
+
+
+
+
+TABLE 1. Parameters for GFM analysis.
+
+
+
+
+its control strategies under diverse operational scenarios
+while maintaining operations within maximum permissible             FIGURE 9. System response to resistive load change: a) load change,
+                                                                    b) voltage variation for resistive load change, c) frequency deviation,
+PQ capability limits. The analysis focuses on two prominent         d) GFM current response.
+control strategies: Fundamental Droop Regulation (FDR) and
+Enhanced Voltage Regulation (EVR), utilizing controlled and
+uncontrolled Proportional-Integral (PI) droop methodologies.
+The simulations are systematically structured to include
+comprehensive scenarios, spanning various load types and
+dynamic load variations.
+   Case 1 (Resistive Load Changes): The initial analy-
+sis involves assessing GFM inverter performance under
+incremental resistive load adjustments, designed to evaluate
+voltage stability, frequency control, and dynamic responsive-
+ness. Loads were systematically increased every 0.5 seconds,
+increasing from 25 kW up to a maximum of 100 kW in steps
+of 25 kW. Results, as illustrated in Figs. 9(a)-(d) indicate
+that the EVR strategy significantly outperforms the FDR
+strategy, providing superior voltage and frequency regula-          FIGURE 10. Q-V curve characteristics for reactive load handling.
+
+tion. Voltage deviations remained consistently within ±5% of
+nominal–values across all loading conditions, demonstrating
+robust voltage stabilization. Although minor transient voltage         As depicted in Fig. 10, the Q-V characteristic curve
+dips were observed during load transitions from lower to            provides a detailed perspective, facilitating the selection
+higher values, the EVR controller promptly restored voltage         of an effective droop coefficient. Simulation results pre-
+levels within a few milliseconds, thus verifying its effective-     sented in Figs. 11(a)-(b) reveal that a higher reactive droop
+ness in managing sudden load variations and maintaining             coefficient allows quicker stabilization following distur-
+high-quality power delivery.                                        bances, but at the expense of greater steady-state voltage
+   Case 2 (Inductive Load Variations): This analysis investi-       deviation. Conversely, a lower reactive droop coefficient
+gates the capability of the GFM inverter to manage reactive         results in reduced overshoot, better voltage regulation, and
+power by evaluating its performance under inductive load            improved steady-state stability. Among the evaluated droop
+scenarios with varying power factors. Specifically, the study       coefficients, a 3% q-V droop demonstrates optimal per-
+applies inductive load conditions sequentially: first, a 0.6 lag-   formance, maintaining voltage within the ±5% tolerance
+ging power factor load (P=60 kW, Q=80 kVAR), followed               limit, efficiently handling reactive power fluctuations, and
+by a unity power factor load (P=100 kW), and finally a              ensuring rapid recovery after transient disturbances. Notably,
+0.9 lagging power factor load (P=80 kW, Q=43.59 kVAR).              transient voltage dips occurring during transitions from
+The primary goal of this scenario is to identify the optimal        unity power factor loads to 0.9 lagging power factor loads
+reactive power droop coefficient by assessing the system’s          (Fig. 11(a)) are quickly resolved, highlighting the robust
+tolerance to reactive power variations.                             reactive power control capability of the GFM inverter.
+
+73398                                                                                                                           VOLUME 13, 2025
+M. Nurunnabi et al.: Advancing Grid-Forming Inverter Technology
+
+
+
+
+Frequency regulation remains consistently stable across all                  power. Across filter configurations (L, LC, and LCL), the
+evaluated droop coefficients, as shown in Fig. 11(b), affirm-                LC filter exhibited slightly higher voltage fluctuations. A sud-
+ing reliable frequency stability irrespective of reactive droop              den capacitive load reconnection caused a transient overshoot
+variations.                                                                  of approximately 15%, still within IEEE recommended
+                                                                             thresholds. The EVR strategy exhibited superior voltage reg-
+                                                                             ulation and rapid recovery, effectively mitigating transient
+                                                                             over-voltage scenarios. Maximum voltage deviations were
+                                                                             limited to approximately 2.9%, and frequency deviations
+                                                                             were restricted to 0.37%, underscoring the robustness of the
+                                                                             EVR strategy in maintaining voltage and frequency stability
+                                                                             despite capacitive load disturbances.
+                                                                                Case 4 (Stochastic Load Changes): This scenario evaluated
+                                                                             the performance of the GFM inverter under stochastic load
+                                                                             variations, characterized by 10% random variability every
+                                                                             0.125 seconds, generated using a Gaussian random num-
+                                                                             ber generator. This test emulated real-world unpredictable
+                                                                             load dynamics to assess the inverter’s adaptive capabili-
+                                                                             ties. Fig. 13(a) illustrates active power responses to random
+                                                                             load fluctuations. The EVR strategy demonstrated excel-
+                                                                             lent performance, maintaining stable voltage and frequency
+                                                                             regulation well within IEEE standards. Fig. 13(b) presents
+                                                                             the corresponding voltage and frequency stability responses,
+FIGURE 11. System Response to Inductive Load Variations under EVR
+Strategy for different q-V droop coefficients that shows voltage deviation
+                                                                             highlighting the strategy’s capability to swiftly counteract
+for inductive load change.                                                   rapid, random load variations. Furthermore, Fig. 13(c) dis-
+                                                                             plays minimal Total Harmonic Distortion (THD) in the load
+   Case 3 (Capacitive Load Adjustments): The third scenario                  current, verifying high-quality power output and effective
+examines system performance under varying capacitive loads                   harmonic suppression. Overall, the EVR strategy showed
+to assess voltage stability and power quality. The simula-                   superior control effectiveness, exhibiting minimal variability
+tion considered sequential transitions between loads at power                in power output, thereby confirming its suitability for highly
+factors of 0.6 leading, unity leading, and 0.9 leading, as illus-            dynamic load environments.
+trated in Fig. 12(a). Results indicate minor voltage deviations,
+approximately 3%, when supplying capacitive loads with
+lower power factors, as shown in Fig. 12(b).
+
+
+
+
+                                                                             FIGURE 13. Comparative power response to stochastic load variability.
+
+
+
+                                                                             2) ANALYSIS OF A GRID FORMING INVERTER WITH FILTER
+FIGURE 12. Voltage Stability during Capacitive Load Fluctuations under
+EVR Strategy for three distinct filter L, LC, LCL.                           CHARACTERISTICS
+                                                                             This analysis evaluates the performance characteristics of a
+   A notable transient voltage dip occurred when transi-                     Grid-Forming (GFM) inverter under various load conditions
+tioning from capacitive to purely resistive loads at rated                   (resistive, inductive, capacitive, and stochastic), using both
+
+VOLUME 13, 2025                                                                                                                               73399
+                                                                              M. Nurunnabi et al.: Advancing Grid-Forming Inverter Technology
+
+
+
+
+LC and LCL filters. While this study primarily focuses on          inverter’s current THD reached 8% when the GFM inverter
+overall voltage and current behavior under different filter        dominated the load, largely due to the insufficient filtering
+and load conditions, the role of filter capacitors (in LC and      of switching harmonics and the lack of dynamic harmonic
+LCL configurations) in shaping dynamic performance is crit-        sharing. Conversely, when the GFL inverter dominated, the
+ical. Although capacitor bank responses—such as voltage            GFM inverter’s current THD increased to 5.34%, primarily
+ripple and transient charging/discharging effects—were not         due to mismatched control strategies and weak harmonic
+analyzed in isolation, their effects are inherently reflected in   suppression at light loads.
+the observed inverter voltage stability and harmonic filtering.       In contrast, LCL filters demonstrate superior harmonic
+A dedicated analysis of capacitor behavior under diverse           suppression across all load conditions and operating modes.
+operating scenarios will be considered in future work. Droop       The harmonic spectrum consistently meets IEEE-1547 limits,
+control parameters are fixed at 1% for frequency (P–f) and         with dominant harmonics significantly attenuated regardless
+3% for voltage (Q–V), relative to the inverter’s rated base.       of load profile or inverter dominance. This highlights the
+Comparative results are shown in Table 2.                          effectiveness of LCL filters in microgrids with mixed inverter
+   The Total Harmonic Distortion (THD) of voltage and              types. The accompanying Figs. in Appendix B (Figs. 22–24)
+current varies significantly depending on the load type and        illustrate the impact of load level on current THD, clearly
+level. At lighter load conditions, THD tends to be higher          demonstrating the differences between low and high loading
+due to reduced current magnitude, which weakens the damp-          conditions.
+ing effect of the filter and diminishes harmonic attenuation.
+This phenomenon is well-documented in both Grid-Forming            3) FAULT ANALYSIS AND SYSTEM RECOVERY
+(GFM) and Grid-Following (GFL) inverters.                          This section analyzes the performance of the Grid-Forming
+   For instance, under capacitive low loading, the current         (GFM) inverter under conditions where it operates beyond its
+THD was measured at 5.17% with an LC filter, primarily due         rated PQ capability region, evaluating its fault response and
+to resonant interactions that amplify lower-order harmonics,       recovery capabilities. Three distinct scenarios—single-phase
+particularly the 3rd, 5th, and 7th harmonics.                      to ground asymmetrical fault (L-G), symmetrical three-phase
+   At higher load levels, harmonic suppression improves            fault (L-L-L-G), and prolonged overload conditions—were
+as the inverter operates closer to its rated power. In this        thoroughly examined using two inverter control strategies:
+regime, the feedback control action strengthens, and the inter-    Controlled PI Droop (CPID) and Uncontrolled PI Droop
+nal voltage saturation mechanisms help mitigate excessive          (UPID).
+switching-related harmonics. As a result, THD remains con-
+sistently low, typically under 1% for both LC and LCL filters.
+
+TABLE 2. Voltage and current THDs at the PCC for a GFM inverter
+fundamental filters.
+
+
+
+
+                                                                   FIGURE 14. L-G fault (asymmetrical) impact and recovery comparisons.
+
+
+                                                                      Case 1 (L-G Fault (Asymmetrical Fault): An asymmetrical
+                                                                   single-phase-to-ground fault was simulated at 0.5 seconds,
+                                                                   lasting for a duration of 0.0667 seconds (equivalent to
+                                                                   4 cycles). Figs. 14(a)-(b) depict the fault conditions clearly.
+                                                                   During the fault period, the GFM inverter responded by
+                                                                   injecting reactive power (as shown in Fig. 14(e)) to mitigate
+                                                                   the voltage disturbance. Significant transient voltage fluc-
+                                                                   tuations and frequency deviations occurred during the fault
+                                                                   event. However, post-fault clearance, the Enhanced Voltage
+                                                                   Regulation (EVR) strategy demonstrated remarkable per-
+                                                                   formance by rapidly restoring both voltage and frequency
+   When operating in parallel with a GFL inverter, harmonic        back to nominal conditions within milliseconds (as indi-
+interactions become more complex. For LC filters, the GFL          cated in Figs. 14(d) and 14(f)). This highlights the robust
+
+73400                                                                                                                        VOLUME 13, 2025
+M. Nurunnabi et al.: Advancing Grid-Forming Inverter Technology
+
+
+
+
+fault-handling and quick recovery capabilities of the GFM              strategy effectively maintained operation along the PWM sat-
+inverter under asymmetrical fault conditions.                          uration boundary, delivering power to the load while limiting
+   Case 2 [L-L-L-G (Symmetrical) Fault]: A symmetrical                 voltage deviations to within acceptable Q–V droop control
+three-phase-to-ground (L-L-L-G) fault was introduced at                bounds (Fig. 16(b)). When the load reverted to within the
+0.5 seconds, as illustrated in Figs. 15(a)-(b). The inverter           PQ capability region at 0.75 seconds, both strategies allowed
+system’s response was analyzed using both CPID and UPID                gradual restoration to nominal operation. This demonstrates
+control strategies. Following fault clearance, both strategies         that the CPID control strategy significantly enhances the
+attempted to restore voltage and frequency to nominal levels.          inverter’s resilience and operational stability even under sus-
+Observations from Fig. 15(c) indicate a significant injec-             tained overload conditions.
+tion of reactive power post-fault to stabilize voltage and
+frequency. The CPID strategy effectively limited frequency
+deviations to within an acceptable threshold (59.9 Hz),
+enabling faster stabilization and continuous power supply.
+Conversely, UPID experienced a more pronounced frequency
+drop to approximately 59.5 Hz (as shown in Fig. 15(d)).
+   Post-clearance, charged filter components released sub-
+stantial current into the network, leading to transient voltage
+spikes. Notably, UPID exhibited excessive voltage spikes
+nearly twice the nominal voltage. CPID effectively controlled
+these transients, maintaining safe voltage levels and immedi-
+ately supplying stable power post-clearance, thus illustrating
+superior fault-handling performance.
+
+
+
+
+                                                                       FIGURE 16. GFM inverter operation beyond the PQ capability region: a)
+                                                                       Active and reactive power, b) frequency, c) line voltage, and d) RMS
+                                                                       current at the PCC.
+
+
+                                                                       4) PARALLEL OPERATION OF AN ISLANDED GFM AND GFL
+                                                                       INVERTER
+                                                                       This section investigates the combined performance of
+                                                                       Grid-Forming (GFM) and Grid-Following (GFL) inverters
+                                                                       operating in parallel within an islanded microgrid scenario.
+                                                                       Fig. 17 shows a single line diagram of GFM and GFL invert-
+                                                                       ers operating in parallel. Both inverter types utilize LCL
+                                                                       filters, although the study notes adaptability to LC filter
+                                                                       configurations. The two inverters share identical ratings in
+                                                                       terms of capacity and line voltage. The GFM inverter’s pri-
+                                                                       mary objective is to ensure stable voltage regulation at the
+                                                                       Point of Common Coupling (PCC) while maintaining min-
+                                                                       imal total harmonic distortion (THD). In contrast, the GFL
+                                                                       inverter focuses on precise current regulation at the PCC, sim-
+FIGURE 15. LLL-G (symmetrical) fault impact and recovery comparison.
+                                                                       ilarly targeting minimal current THD. Integrating the GFL
+                                                                       inverter introduces additional complexity due to its influ-
+   Case 3 [Overload Conditions (Beyond PQ Capability)]:                ence on both fundamental and harmonic currents, potentially
+This scenario investigates the GFM inverter’s response under           affecting the voltage quality and stability managed by the
+prolonged overload conditions exceeding its nominal PQ                 GFM inverter.
+capability. An overload of approximately 60% above rated                  Operational dynamics are detailed in Figs. 18(a)-(f), where
+power was introduced at 0.5 seconds and sustained for                  both inverters supply power to a purely resistive load via
+0.25 seconds. Fig. 16 details the system’s response during             LCL filters. Initially, from 0 to 1 second, the GFM inverter
+this condition. Without PI droop control (UPID), the inverter          exclusively powers the load, achieving stable PCC volt-
+experienced excessive current surges (Fig. 16(d)), poten-              age and current with excellent power quality. At 1 second,
+tially triggering protective mechanisms. In contrast, the CPID         the GFL inverter is introduced without initially contributing
+
+VOLUME 13, 2025                                                                                                                         73401
+                                                                                  M. Nurunnabi et al.: Advancing Grid-Forming Inverter Technology
+
+
+
+
+power, resulting in minor circulating currents that introduce
+slight distortions in the PCC voltage and current waveforms.
+At 1.5 seconds, as the GFL inverter begins contributing active
+power (with the GFM inverter still dominant), distortions in
+voltage and current waveforms increase, especially notable
+when alternative filters (L or LC) are utilized. At 2.0 seconds,
+with the GFL inverter dominating load supply, distortions
+further increase, exceeding 4% for both voltage and current.
+Despite these challenges, the Controlled PI Droop (CPID)
+method successfully maintains voltage and frequency regu-
+lation within acceptable standards.
+
+
+
+
+FIGURE 17. Sigle line diagram of GFM and GFL inverters operating in
+parallel.
+
+
+   Fig. 19 presents a detailed transient response analysis upon
+the introduction of the GFL inverter. Initial voltage over-
+shoot from the GFL inverter is quickly stabilized, matching
+the GFM inverter’s reference voltage level, and readying
+it to supply the load. Frequency fluctuations were briefly
+observed upon GFL integration, stabilizing within approx-
+                                                                      FIGURE 18. Distribution of RL Load Supply Between GFM and GFL
+imately 0.2 seconds as the inverter synchronized with the             Inverters. The output waveforms display (a) load distribution, (b) PCC
+GFM inverter’s operational frequency. These results, along-           voltage (c) load current. GFM inverter current, (c) total load current, and
+                                                                      (d) GFL inverter current.
+side data from Figs. 18 and 19, and summarized in Table 2,
+underscore the critical importance of proper filter selection
+and advanced control strategies to mitigate harmonic and
+stability issues inherent in hybrid GFM-GFL inverter config-                power conversion processes. They compute and exe-
+urations.                                                                   cute control algorithms based on real-time data inputs.
+                                                                         5) OPAL-RT OP8660 Data Acquisition System: Employed
+VI. HARDWARE EXPERIMENT EVALUATION                                          exclusively for high-speed, high-resolution data acqui-
+A. EXPERIMENT SETUP                                                         sition. It captures the real-time voltage and current
+To validate the theoretical models discussed in Section IV,                 signals at the Point of Common Coupling (PCC) and
+a practical experimental setup was constructed, as depicted                 provides these critical inputs to the DS1103 controllers.
+in Fig. 20, replicating the GFM and GFL system configura-                   This setup allows the controllers to access accurate and
+tion shown in Fig. 17. This setup comprises several critical                up-to-date information, enhancing the control accuracy
+components configured to facilitate dual inverter operations:               and system response to dynamic changes.
+   1) DC Power Supplies: Two units provide the necessary                The experimental setup is designed to simulate a microgrid
+      power input for the inverters.                                  system with a resistive (R) load. The line voltage at the Point
+   2) LabVolt 3-phase IGBT Converters: Employed in both               of Common Coupling (PCC) is maintained at 120V rms,
+      GFM and GFL systems to convert DC power into AC                 while the DC supply voltage is set at 240V. This hands-on
+      power.                                                          approach provides a direct assessment of the inverter systems’
+   3) LCL Filters: Each system utilizes two LabVolt 3-phase           performance under controlled laboratory conditions.
+      LC filters combined to form LCL configurations, cru-
+      cial for minimizing voltage and current harmonics.              B. EXPERIMENT EVALUATION
+   4) dSPACE DS1103 Controllers: These real-time con-                 This subsection presents experimental validation of the par-
+      trollers are solely responsible for managing the oper-          allel operation of Grid-Forming (GFM) and Grid-Following
+      ation of the inverters, ensuring precise control over           (GFL) inverters, as illustrated in Figs. 14(a)-(f). The
+
+73402                                                                                                                              VOLUME 13, 2025
+M. Nurunnabi et al.: Advancing Grid-Forming Inverter Technology
+
+
+
+
+FIGURE 19. Transient response of the voltage and frequency when GFL is
+connected to GFM to supply the load.
+
+
+
+
+FIGURE 20. Experiment setup of a GFM and GFL system supplying an R
+load.                                                                    FIGURE 21. Experimental results demonstrate the performance of GFM
+                                                                         and GFL systems powering an R load. (a) Voltage at the PCC, (b) Load
+experimental setup involved both inverter systems managing               current, (c) GFL inverter current, (d) GFM inverter current, (e) Output of
+                                                                         active and reactive power, (f) Frequency responses observed.
+active and reactive power flow to a purely resistive load of
+50 ohms. Initially, the GFM inverter exclusively powered                 nevertheless, the droop control mechanism rapidly restored
+the load, ensuring stable and distortion-free voltage and load           frequency stability, as illustrated in Fig. 14(f).
+current up to 7.5 seconds. At 7.5 seconds, the GFL inverter                 Overall, these experimental outcomes confirm that while
+was integrated into the system without initially contributing            integrating GFM and GFL inverters equipped with LCL
+any power, resulting in minor disturbances and circulating               filters effectively maintains stable voltage and frequency
+currents between the two inverters, as shown in Fig. 14(c).              within rated current and PWM saturation constraints, higher
+   To examine the system’s dynamic performance, the GFL                  contributions from GFL inverters can compromise power
+inverter’s load contribution was incrementally increased—                quality. This highlights the necessity for balanced inverter
+first to approximately 20% of rated power at 13.2 seconds,               roles and careful tuning of control parameters to ensure sys-
+and subsequently to around 57% at 22.5 seconds. Results                  tem integrity and optimal performance in practical microgrid
+indicated that the system maintained excellent power quality             applications.
+while the GFM inverter dominated the load supply. However,
+as the GFL inverter’s contribution increased and began to                VII. CONCLUSION
+dominate the load, noticeable voltage and current distortions            This paper presents a detailed exploration of grid-forming
+emerged. Additionally, a minor frequency rise was observed               (GFM) inverter technology, with a particular focus on
+during active power contribution from the GFL inverter;                  PQ capability modeling, algorithmic development, and
+
+VOLUME 13, 2025                                                                                                                                73403
+                                                                           M. Nurunnabi et al.: Advancing Grid-Forming Inverter Technology
+
+
+
+
+performance evaluation of GFM inverters under a wide                     d. Thus explicitly:
+range of operational conditions. A key insight of this work
+is the significant deviation of GFM inverter PQ capability                                 PPCC (i) = Re(SPCC (i))
+regions from conventional industry standards due to inherent                               QPCC (i) = Im(SPCC (i))
+constraints such as PWM saturation and rated current lim-
+                                                                         e. Store calculated power points (PPCC (i) , QPCC (i))
+its. The proposed Enhanced Voltage Regulation (EVR) and
+                                                                         f. Increment angle explicitly:
+Controlled Proportional-Integral Droop (CPID) strategies
+outperformed traditional droop control methods by offering                                     δinv = δinv + 1δ inv
+markedly improved voltage and frequency stability under
+dynamic loading and fault scenarios.                               3. After covering δinv from 0◦ to 360◦ , plot all stored
+   Moreover, the study demonstrated that LCL filters deliver          (PPCC (i) , QPCC (i)) points to form the Rated Current
+superior harmonic suppression, especially in hybrid systems           Constraint boundary.
+where GFM inverters operate alongside grid-following (GFL)
+inverters. The robustness and effectiveness of the proposed
+approaches were validated through EMT simulation and
+real-time hardware experiments, confirming their practical
+viability.
+   Future research will explore adaptive and non-linear
+droop control strategies to further improve power-sharing
+accuracy and system stability. Integration of virtual inertia
+mechanisms will also be investigated to enhance frequency
+response in low-inertia grids. These efforts will support the
+resilient and scalable deployment of GFM inverters in future
+inverter-dominated power systems.
+
+APPENDIX A
+Detailed Algorithm for Determining PQ Capability Region
+of GFM Inverters: The algorithm for determining the PQ
+capability region of a GFM inverter, explicitly incorporating
+rated current and PWM saturation constraints, is detailed
+step-by-step below.
+   Inputs:
+  • Rated inverter current: Irated
+  • DC-link voltage: VDC
+  • PCC voltage: VPCC (complex phasor representation)
+  • Coupling filter parameters: Linv , Rinv , Lg, Rg , C f
+  • PWM type: SPWM or SVPWM
+  • Number of sampling points: N (e.g., N=100)
+   I. Rated Current Constraint
+   1. Initialize angle increment:
+                       360◦
+               1δ inv =     , initialize δ inv = 0◦             FIGURE 22. Harmonic spectrum of GFM inverter current under low
+                        N                                       capacitive load a) LC filter) b) LCL filter.
+  2. For each angle increment i = 1, 2 . . . , N :
+       a. Calculate the inverter current components:              II. PWM Saturation Constraint
+                                                                  1. Set maximum inverter output voltage Emax :
+                    IPCC_real (i) = Irated × cos(δinv )                             √
+                   IPCC_imag (i) = Irated × sin(δinv )                                   3V dc
+                                                                                     √ , for SPWM
+                                                                                    
+                                                                                    
+                                                                             Emax =     2 2
+        b. Determine the complex inverter current at PCC:                             Vdc
+                                                                                    √ ,
+                                                                                    
+                                                                                                for SVPWM
+              IPCC (i) = IPCC_real (i) + j × IPCC_imag (i)                               2
+                                                                   2. Compute filter node voltage VPCC_F based on
+        c. Compute complex power at PCC explicitly:
+                                                                      Section II-B:
+                  SPCC (i) = PPCC (i) + j × QPCC (i)                                           
+                                                                                                    Xinv
+                                                                                                         
+                                      ∗                                           VPCC_F = VPCC 1 −
+                           = VPCC × IPCC                                                            Xc
+73404                                                                                                                     VOLUME 13, 2025
+M. Nurunnabi et al.: Advancing Grid-Forming Inverter Technology
+
+
+
+
+                                                                   FIGURE 24. Harmonic spectrum of GFM inverter current under resistive
+                                                                   load: a) rated load, b) 25% of the rated load.
+
+
+FIGURE 23. Harmonic spectrum of GFM inverter current under high
+capacitive load a) LC filter) b) LCL filter.
+                                                                            g. Store (PPCC (i) , QPCC (i)) points for plotting.
+                                                                            h. Increment δinv angle:
+   3. Set inverter angle increment:
+                            360◦                                                                 δinv = δinv + 1δ inv
+                  1δ inv =       , initialize δ inv = 0◦
+                               N                                      5. After looping through 0◦ to 360◦ , plot stored points to
+   4. For i = 1, 2 . . . , N :                                           form the PWM Saturation Constraint boundary.
+        a. Compute inverter output voltage components:
+                                                                   APPENDIX B
+                         Einv_real (i) = Emax × cos(δinv )         Harmonic Spectrum and FFT Analysis: This appendix
+                         Einv_imag (i) = Emax × sin(δinv )         presents the FFT analysis of current waveforms under differ-
+          b. Determine complex inverter output voltage:            ent loading conditions and filter configurations to support the
+                                                                   THD results discussed in the main text. The harmonic spec-
+                    Einv (i) = Einv_real (i) + j × Einv_imag (i)   trum highlights the dominant harmonic orders and demon-
+                                                                   strates the filtering effectiveness of LC and LCL filters.
+          d. Compute inverter current at PCC based (5):
+                                                                   ACKNOWLEDGMENT
+                                  Einv (i) − VPCC_F
+                          IPCC (i) =                               This paper was originally drafted by all the authors of the
+                                         Ztotal                    paper, encompassing all sections and content. For enhance-
+          e. Calculate active and reactive power at PCC:           ments in language quality, grammatical accuracy, and overall
+                      SPCC (i) = PPCC (i) + j × QPCC (i)           presentation, the manuscript was subsequently revised and
+                                          ∗                        rewritten using the AI tool, ChatGPT by OpenAI. All
+                               = VPCC × IPCC                       AI-assisted revisions were meticulously reviewed, modified,
+          f. Thus explicitly:                                      and validated by the author to ensure adherence to scholarly
+                                                                   standards and the submission guidelines of IEEE Access.
+                             PPCC (i) = Re(SPCC (i))               This acknowledgment aligns with IEEE guidelines regarding
+                             QPCC (i) = Im(SPCC (i))               the disclosure of AI tool usage in manuscript preparation.
+
+VOLUME 13, 2025                                                                                                                    73405
+                                                                                                  M. Nurunnabi et al.: Advancing Grid-Forming Inverter Technology
+
+
+
+
+REFERENCES                                                                           [19] National Renewable Energy Laboratory. (2022). Technical
+ [1] J. Matevosyan, B. Badrzadeh, T. Prevost, E. Quitmann,                                Analysis of Ground Fault Detection Techniques for Inverter-Based
+     D. Ramasubramanian, H. Urdal, S. Achilles, J. MacDowell, S. H. Huang,                Distributed Energy Resources. [Online]. Available: https://www.nrel.
+     V. Vital, J. O’Sullivan, and R. Quint, ‘‘Grid-forming inverters: Are they            gov/docs/fy22osti/81104.pdf
+     the key for high renewable penetration?’’ IEEE Power Energy Mag.,               [20] B. Vega, C. Rahmann, R. Álvarez, and V. Vittal, ‘‘Determination of control
+     vol. 17, no. 6, pp. 89–98, Nov. 2019, doi: 10.1109/MPE.2019.2933072.                 requirements to impose on CIG for ensuring frequency stability of low
+ [2] H. Zhang, W. Xiang, W. Lin, and J. Wen, ‘‘Grid forming con-                          inertia power systems,’’ IEEE Access, vol. 10, pp. 44891–44908, 2022, doi:
+     verters in renewable energy sources dominated power grid: Con-                       10.1109/ACCESS.2022.3169489.
+     trol strategy, stability, application, and challenges,’’ J. Modern Power        [21] Z. Li, C. Zang, P. Zeng, H. Yu, S. Li, and J. Bian, ‘‘Control of a grid-
+     Syst. Clean Energy, vol. 9, no. 6, pp. 1239–1256, Nov. 2021, doi:                    forming inverter based on sliding-mode and mixed H2 /H∞ control,’’ IEEE
+     10.35833/MPCE.2021.000257.                                                           Trans. Ind. Electron., vol. 64, no. 5, pp. 3862–3872, May 2017, doi:
+                                                                                          10.1109/TIE.2016.2636798.
+ [3] J. D. Watson, Y. Ojo, K. Laib, and I. Lestas, ‘‘A scalable control design for
+     grid-forming inverters in microgrids,’’ IEEE Trans. Smart Grid, vol. 12,        [22] L. Thurner, A. Scheidler, F. Schafer, J.-H. Menke, J. Dollichon, F. Meier,
+     no. 6, pp. 4726–4739, Nov. 2021, doi: 10.1109/TSG.2021.3105730.                      S. Meinecke, and M. Braun, ‘‘Pandapower—An open-source Python tool
+                                                                                          for convenient modeling, analysis, and optimization of electric power sys-
+ [4] P. Kundur, N. J. Balu, and M. G. Lauby, Power System Stability and
+                                                                                          tems,’’ IEEE Trans. Power Syst., vol. 33, no. 6, pp. 6510–6521, Nov. 2018,
+     Control. New York, NY, USA: McGraw-Hill, 1994.
+                                                                                          doi: 10.1109/TPWRS.2018.2829021.
+ [5] D. B. Rathnayake, M. Akrami, C. Phurailatpam, S. P. Me,
+                                                                                     [23] S. M. Mohiuddin and J. Qi, ‘‘A unified droop-free distributed secondary
+     S. Hadavi, G. Jayasinghe, S. Zabihi, and B. Bahrani, ‘‘Grid forming
+                                                                                          control for grid-following and grid-forming inverters in AC microgrids,’’
+     inverter modeling, control, and applications,’’ IEEE Access, vol. 9,
+                                                                                          in Proc. IEEE Power Energy Soc. Gen. Meeting (PESGM), Montreal,
+     pp. 114781–114807, 2021, doi: 10.1109/ACCESS.2021.3104617.
+                                                                                          QC, Canada, Aug. 2020, pp. 1–5, doi: 10.1109/PESGM41954.2020.
+ [6] R. H. Lasseter, Z. Chen, and D. Pattabiraman, ‘‘Grid-forming invert-                 9282042.
+     ers: A critical asset for the power grid,’’ IEEE J. Emerg. Sel. Top-
+                                                                                     [24] C. Kammer, S. D’Arco, A. G. Endegnanew, and A. Karimi, ‘‘Convex
+     ics Power Electron., vol. 8, no. 2, pp. 925–935, Jun. 2020, doi:
+                                                                                          optimization-based control design for parallel grid-connected inverters,’’
+     10.1109/JESTPE.2019.2959271.
+                                                                                          IEEE Trans. Power Electron., vol. 34, no. 7, pp. 6048–6061, Jul. 2019.
+ [7] N. Mohan, Advanced Electric Drives: Analysis, Control, and Modeling
+                                                                                     [25] W. Zhou, N. Mohammed, and B. Bahrani, ‘‘Comprehensive modeling,
+     Using MATLAB/Simulink, 1st ed., Hoboken, NJ, USA: Wiley, Aug. 2014,
+                                                                                          analysis, and comparison of state-space and admittance models of PLL-
+     pp. 1–208.
+                                                                                          based grid-following inverters considering different outer control modes,’’
+ [8] M. E. Elkhatib, W. Du, and R. H. Lasseter, ‘‘Evaluation of inverter-                 IEEE Access, vol. 10, pp. 30109–30146, 2022.
+     based grid frequency support using frequency-watt and grid-forming PV           [26] M. Nurunnabi, S. Li, H. Mondal, Y.-K. Hong, M. Choi, and H. Won,
+     inverters,’’ in Proc. IEEE Power Energy Soc. Gen. Meeting (PESGM),                   ‘‘Performance evolution of combined grid-forming and grid-following
+     Aug. 2018, pp. 1–5, doi: 10.1109/PESGM.2018.8585958.                                 inverters with different filtering mechanisms,’’ in Proc. 11th Int.
+ [9] P. J. Hart, J. Goldman, R. H. Lasseter, and T. M. Jahns, ‘‘Impact of                 Conf. Power Electron. ECCE Asia (ICPE - ECCE Asia), May 2023,
+     harmonics and unbalance on the dynamics of grid-forming, frequency-                  pp. 1012–1017.
+     droop-controlled inverters,’’ IEEE J. Emerg. Sel. Topics Power Electron.,       [27] Z. Afshar, M. M. Zadeh, and S. M. T. Bathaee, ‘‘Sliding mode control
+     vol. 8, no. 2, pp. 976–990, Jun. 2020, doi: 10.1109/JESTPE.2019.                     of grid-connected inverters using inverter output current,’’ in Proc. IEEE
+     2949303.                                                                             Int. Conf. Environ. Electr. Eng. IEEE Ind. Commercial Power Syst. Eur.
+[10] W. Du, Z. Chen, K. P. Schneider, R. H. Lasseter, S. P. Nandanoori,                   (EEEIC/I&CPS Eur.), Jun. 2019, pp. 1–5.
+     F. K. Tuffner, and S. Kundu, ‘‘A comparative study of two widely used           [28] H. S. Das, S. Li, B. Lu, J. Wang, S. Rahman, and X. Fu, ‘‘Explor-
+     grid-forming droop controls on microgrid small-signal stability,’’ IEEE J.           ing dynamic P-Q capability and abnormal operations of inverter-based
+     Emerg. Sel. Topics Power Electron., vol. 8, no. 2, pp. 963–975, Jun. 2020,           resources,’’ IEEE J. Emerg. Sel. Topics Power Electron., vol. 12, no. 2,
+     doi: 10.1109/JESTPE.2019.2942491.                                                    pp. 1608–1618, Apr. 2024.
+[11] B. Lu, S. Li, H. S. Das, Y. Gao, J. Wang, and M. Baggu, ‘‘Dynamic               [29] J. H. Eto, R. Lasseter, D. Klapp, A. Khalsa, B. Schenkman, M. Illindala,
+     P-Q capability and abnormal operation analysis of a wind turbine                     and S. Baktiono, ‘‘The CERTS microgrid concept, as demonstrated at
+     with doubly fed induction generator,’’ IEEE J. Emerg. Sel. Top-                      the CERTS/AEP microgrid test bed,’’ Lawrence Berkeley Nat. Lab.,
+     ics Power Electron., vol. 10, no. 4, pp. 4854–4864, Aug. 2022, doi:                  Tech. Rep. LBNL-2001119, Sep. 2018.
+     10.1109/JESTPE.2021.3133527.                                                    [30] E. Alegria, T. Brown, E. Minear, and R. H. Lasseter, ‘‘CERTS microgrid
+[12] N. E. Nilsson and J. Mercurio, ‘‘Synchronous generator capability                    demonstration with large-scale energy storage and renewable generation,’’
+     curve testing and evaluation,’’ IEEE Trans. Power Del., vol. 9, no. 1,               IEEE Trans. Smart Grid, vol. 5, no. 2, pp. 937–943, Mar. 2014, doi:
+     pp. 414–424, Jan. 1994, doi: 10.1109/61.277713.                                      10.1109/TSG.2013.2286575.
+[13] Nat. Renew. Energy Lab. (2017). Smart Inverters: Applications                   [31] R. Panora, J. E. Gehret, M. M. Furse, and R. H. Lasseter, ‘‘Real-
+     in Power Systems (NREL/TP-5D00-68612). [Online]. Available:                          world performance of a CERTS microgrid in Manhattan,’’ IEEE
+     https://www.nrel.gov/grid/ieee-standard-1547/assets/pdfs/smart-inverters-            Trans. Sustain. Energy, vol. 5, no. 4, pp. 1356–1360, Oct. 2014, doi:
+     applications-in-power-systems.pdf                                                    10.1109/TSTE.2014.2301953.
+[14] Sandia Nat. Laboratories. (2012). Reactive Power Requirements for               [32] W. Du, Q. Jiang, M. J. Erickson, and R. H. Lasseter, ‘‘Voltage-
+     PV and Wind Generators [SAND2012-1098]. [Online]. Available:                         source control of PV inverter in a CERTS microgrid,’’ IEEE
+     https://energy.sandia.gov/wp-content/gallery/uploads/Reactive-Power-                 Trans. Power Del., vol. 29, no. 4, pp. 1726–1734, Aug. 2014, doi:
+     Requirements-for-PV-and-Wind-SAND2012-1098.pdf                                       10.1109/TPWRD.2014.2302313.
+[15] ERCOT. (2019). Inverter-Based Resource (IBR) Workshop. [Online].                [33] Z. Afshar, M. Mollayousefi, S. M. T. Bathaee, M. T. Bina, and
+     Available: http://ercot.com/content/wcm/key_documents_lists/176763/                  G. B. Gharehpetian, ‘‘A novel accurate power sharing method versus
+     ERCOT_IBR_Workshop_April_25_2019.pdf                                                 droop control in autonomous microgrids with critical loads,’’ IEEE
+[16] NERC. (2018). Reliability Guideline BPS-Connected Inverter-Based                     Access, vol. 7, pp. 89466–89474, 2019, doi: 10.1109/ACCESS.2019.
+     Resource Performance. [Online]. Available: https://www.nerc.com/                     2927265.
+     comm/OC_Reliability_Guidelines_DL/Inverter_Based_Resource_                      [34] Z. Afshar, M. M. Zadeh, S. M. T. Bathaee, and G. B. Gharehpetian,
+     Performance_Guideline.pdf                                                            ‘‘Primary and secondary frequency control of low-inertia microgrids with
+[17] M. Ivas, A. Marušić, J. G. Havelka, and I. Kuzle, ‘‘P-Q capability chart             battery energy storage and intermittent renewable energy resources,’’
+     analysis of multi-inverter photovoltaic power plant connected to medium              in Proc. 11th Power Electron., Drive Syst., Technol. Conf. (PEDSTC),
+     voltage grid,’’ Int. J. Elect. Power Energy Syst., vol. 116, Mar. 2020,              Tehran, Iran, Feb. 2020, pp. 1–6, doi: 10.1109/PEDSTC49159.2020.
+     Art. no. 105521, doi: 10.1016/j.ijepes.2019.105521.                                  9088470.
+[18] California Public Utilities Commission. (2016). Smart Inverter                  [35] M. M. Zadeh, Z. Afshar, M. J. Harandi, and S. M. T. Bathaee, ‘‘Fre-
+     Working Group (SIWG) Working Document. [Online]. Available:                          quency control of low inertia microgids in presence of wind and solar
+     https://www.cpuc.ca.gov/-/media/cpuc-website/divisions/energy-division/              units using fuzzy-neural controllers,’’ in Proc. 26th Int. Electr. Power
+     documents/rule21/smart-inverter-working-group/siwgworking                            Distribution Conf. (EPDC), Tehran, Iran, May 2022, pp. 54–59, doi:
+     docinrecord.pdf                                                                      10.1109/EPDC56235.2022.9817192.
+
+73406                                                                                                                                               VOLUME 13, 2025
+M. Nurunnabi et al.: Advancing Grid-Forming Inverter Technology
+
+
+
+
+                           MD NURUNNABI received the B.Sc. degree                                          HIMADRY SHEKHAR DAS (Student Member,
+                           from the Department of Electrical and Electronic                                IEEE) received the B.Sc. degree from the Depart-
+                           Engineering, Rajshahi University of Engineering                                 ment of Electrical and Electronic Engineering,
+                           and Technology, and the M.S. degree from the                                    Ahsanullah University of Science and Technol-
+                           Department of Electrical and Electronic Engi-                                   ogy (AUST), Dhaka, Bangladesh, in 2010, and
+                           neering, Khulna University of Engineering and                                   the M.Phil. degree from the School of Electrical
+                           Technology. He is currently pursuing the Ph.D.                                  Engineering, Universiti Teknologi Malaysia, Johor
+                           degree with the Department of Electrical and Com-                               Bahru, Malaysia, in 2018. He is currently pursuing
+                           puter Engineering, The University of Alabama,                                   the Ph.D. degree with the Department of Electri-
+                           Tuscaloosa, AL, USA. During his career, he com-                                 cal and Computer Engineering, The University of
+pleted an internship at Phase Technology, Rapid City, SD, USA, where he         Alabama, Tuscaloosa, AL, USA. He has published over 20 journal and
+worked on industry-level inverter projects using TI microcontrollers. He has    conference papers and volunteers as a reviewer for several prestigious jour-
+published several journal and conference papers throughout his journey          nals. His research focuses on power electronics, renewable energy, electric
+and volunteers as a reviewer for several prestigious journals. His research     vehicles, and the grid integration of inverter-based resources.
+interests include grid-forming inverters, renewable energy technology, and
+the integration of inverter-based resources into the grid.
+
+
+
+
+                           SHUHUI LI (Senior Member, IEEE) received the
+                           B.S. and M.S. degrees in electrical engineering
+                           from Southwest Jiaotong University, Chengdu,
+                           China, in 1983 and 1988, respectively, and the
+                           Ph.D. degree in electrical engineering from Texas
+                           Tech University, Lubbock, TX, USA, in 1999.
+                           From 1988 to 1995, he was at the School of Elec-
+                           trical Engineering, Southwest Jiaotong University,
+                           where he conducted research on electrified trains,
+                           power electronics, power systems, and power sys-
+tem harmonics. Between 1995 and 1999, he conducted research on wind
+power, artificial neural networks, and huge parallel processing applications.
+In 1999, he began as an Assistant Professor at Texas A&M University,
+Kingsville, TX, USA, and was promoted to an Associate Professor in 2003.
+In 2006, he joined The University of Alabama, Tuscaloosa, AL, USA, as an
+Associate Professor, and was later promoted to a Professor. His current
+research interests include renewable energy systems, power electronics,
+power systems, electric machines and drives, and the use of artificial neural
+networks in energy systems.
+
+
+
+
+VOLUME 13, 2025                                                                                                                                       73407
+

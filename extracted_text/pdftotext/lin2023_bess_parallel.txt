@@ -1,0 +1,865 @@
+2736                                                                                      IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 38, NO. 3, MAY 2023
+
+
+
+
+    Massively Parallel Modeling of Battery Energy
+ Storage Systems for AC/DC Grid High-Performance
+                Transient Simulation
+ Ning Lin , Member, IEEE, Shiqi Cao , Graduate Student Member, IEEE, and Venkata Dinavahi , Fellow, IEEE
+
+
+   Abstract—Extensive integration of power electronics appara-                   complex electric network operation scenarios as it implies the
+tuses complicates the modern power grid and consequently necessi-                very likelihood of their sudden connection or disconnection that
+tates time-domain transients study for its planning and operation.               consequently causes a powerflow redistribution or momentary
+In this work, a heterogeneous computing architecture utilizing
+the CPU and graphics processing unit (GPU) is proposed for the                   disequilibrium which could gradually intensify and eventually
+efficient study of interactions between a power grid network and                 cause instability. Hence, extensive utility-scale battery energy
+massive utility-scale battery energy storage systems (BESSs). The                storage systems (BESSs) are envisioned for voltage and fre-
+device-level electromagnetic transient (EMT) simulation aiming at                quency support [3], and some work with aggregated units have
+enhanced fidelity of the BESS is conducted simultaneously with
+                                                                                 been carried out [4], [5]. To gain an accurate insight into their
+electro-mechanical transient stability (TS) simulation which suf-
+fices system-level dynamic security assessment. Since the reser-                 efficacy for grid operation and planning purpose, it requires a
+vation of a large amount of energy storage units is computation-                 system-wide study with each individual unit modeled in de-
+ally intensive for the CPU, the concurrent multi-streaming, multi-               tail [6], which is infeasible to commercial simulation software
+threading capability of GPU is exploited to achieve asynchronous                 due to a heavy computational burden.
+sequential-parallel processing, so that the proposed EMT-TS co-
+                                                                                    Dynamic security assessment with electro-mechanical model-
+simulation can flexibly harness all available computing resources.
+The multi-rate scheme is adopted for further computational burden                ing in the phasor domain is prevalent regarding investigating the
+alleviation in addition to achieving timely information exchange.                voltage, angle, and frequency stability of AC and DC grids [7],
+It shows that the heterogeneous computation of an IEEE 118-bus                   [8]. It is carried out at the system level where various types
+system integrated with a substantial number of distributed bat-                  of converter-based energy sources and loads are lumped or
+teries becomes feasible following the achievement of a remarkable
+                                                                                 simplified [9], [10]. Although it suffices to show the entire
+speedup of over 200, and the device- as well as system-level accu-
+racy are validated by MATLAB/Simulink and DSAToolsTM /TSAT                       grid operation status, the positive-sequence transient stability
+simulation, respectively.                                                        (TS) simulation falls short of providing detailed device-level
+                                                                                 information, and the impact of an individual energy system with
+   Index Terms—AC/DC grid, battery energy storage,
+electromagnetic transients, graphics processing unit, high-                      an actual configuration and an exact control scheme on the bulk
+performance computing, parallel processing, power system                         AC network could also be unavailable. Additionally, a regular
+transient stability.                                                             time-step of a few milliseconds excludes typical power converter
+                                                                                 transients.
+                                                                                    The electromagnetic transient (EMT) simulation based on
+                           I. INTRODUCTION
+                                                                                 time-domain model discretization and linearization, in contrast,
+         ASSIVE integration of power-converter-based appara-
+M        tuses such as renewable energies and microgrids into a
+regional transmission and distribution grid diversifies its power
+                                                                                 can capture fast transients even in sub-microseconds [11]. The
+                                                                                 detailed models incorporated enable it to be a highly accurate ap-
+                                                                                 proach to evaluate electric power components and systems [12]–
+supply, whilst posing a challenge to the system dynamic secu-                    [14], especially a power converter controller. In the meantime, a
+rity [1], [2]. The semi-autonomy of these devices leads to more                  mandatory time-step typically ranging from a few to dozens of
+                                                                                 microseconds implies that it is more time-consuming than TS
+   Manuscript received 2 January 2022; revised 29 April 2022 and 2 July 2022;    assessment [15], [16]. Nevertheless, owing to a dominant se-
+accepted 1 August 2022. Date of publication 3 August 2022; date of current       quential processing manner, the efficiency of commercial EMT
+version 24 April 2023. This work was supported by the Natural Science and
+Engineering Research Council of Canada (NSERC). Paper no. TPWRS-00008-
+                                                                                 simulation software plunges alongside an increasing number of
+2022. (Corresponding author: Ning Lin.)                                          components as well as an expanding scale of the network. To
+   Ning Lin is with Powertech Labs Inc., Surrey, BC V3W 7R7, Canada (e-mail:     cater to the tremendous computing resource demand, multi-core
+ning3@ualberta.ca).
+   Shiqi Cao and Venkata Dinavahi are with the Department of Electrical and
+                                                                                 CPUs and their clusters are adopted as a solution [17]–[19].
+Computer Engineering, University of Alberta, Edmonton, AB T6G 2R3, Canada           The graphics processing unit (GPU) with an improving com-
+(e-mail: sc5@ualberta.ca; dinavahi@ualberta.ca).                                 putational capability supported by thousands of cores is an
+   Color versions of one or more figures in this article are available at
+https://doi.org/10.1109/TPWRS.2022.3196286.
+                                                                                 emerging platform for high-performance computing (HPC) of
+   Digital Object Identifier 10.1109/TPWRS.2022.3196286                          power systems and power electronics [20], [21], and remarkable
+
+
+                        0885-8950 © 2022 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                                      See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:06:14 UTC from IEEE Xplore. Restrictions apply.
+LIN et al.: MASSIVELY PARALLEL MODELING OF BATTERY ENERGY STORAGE SYSTEMS FOR AC/DC GRID HIGH-PERFORMANCE                                              2737
+
+
+
+speedups were gained with very limited computing hardware                       batteries, the simple 3-dimensional vectors for exponential zone
+resources in some scenarios which possess an explicit homo-                     voltage and the charging dynamics in an arbitrary EMT time-step
+geneity, or have an ideal system configuration consisting of mul-               take the forms of
+tiple identical subsystems which topologically exhibit perfect                                                                          
+                                                                                                                               A/s
+symmetry that caters to coarse parallelism [22]. Nevertheless,                    Eexp (t) = Ae−B·isat , L−1 Sch                            ,
+                                                                                                                          s/(B · |i|) + 1
+the GPU is not superior to the CPU in handling inhomogeneity                                                                   
+which is common in an electrical system. The evolving PCIe                                                          A/s
+                                                                                                × L−1 Sch                           ,           (2)
+and RAM technologies in the meantime enable efficient data                                                      s/(B · |i|) + 1
+exchange with other processors [23], especially the CPU, mak-                                                                                
+                                                                                                   K · Q · ĩ(t) K · Q · ĩ(t) K · Q · ĩ(t)
+ing a thorough utilization of all available computing resources in                Echg (t) =                     ,              ,               ,
+a computer feasible for fast online and offline study of practical                                isat + KQ Q isat + KQ Q |isat | + KQ Q
+power grids.                                                                                                                                    (3)
+   Therefore, in this work, heterogeneous CPU-GPU computing
+                                                                                where A, B, KQ are coefficients, i and ĩ are the battery current
+of large-scale electric power systems with both homogeneity
+                                                                                and its low frequency value, t is the time instant, K means the
+and inhomogeneity for more efficient simulation is investigated
+                                                                                polarization constant, Q denotes the capacity, and isat is current
+as an extension of pure-GPU application since it would be
+                                                                                capacity [24]. Similarly, the discharging dynamics of various
+computationally overwhelming to conventional methods. A TS-
+                                                                                battery types can also be assembled as a vector that shows an
+EMT co-simulation taking their respective merits into account
+                                                                                identical expression for all elements,
+is formed for transient analysis of a regional energy network
+                                                                                                                                  
+integrated with distributed grid-supporting BESSs. EMT mod-                                              K · Q · ĩ K · Q · ĩ
+                                                                                              Edsc =               ,           ,... .          (4)
+eling is carried out for power converters with fast transients,                                          Q − isat Q − isat
+while its counterpart targets the bulk power system. A detailed
+power converter model based on the transmission line link                       It can be inferred that the vectors in (2)–(4) expand alongside
+(TLL) model and state-space equation is proposed for a matrix                   an increase of BESSs in the regional grid, with all elements
+dimension reduction as well as converting the BESS inhomo-                      duplicated by corresponding times.
+geneity into its opposite so that fine-grained parallelism can be                  The presence of the s-domain function in (2) means vector
+achieved and ultimately a faster simulation speed. In addition                  Eexp is not imminently available for EMT simulation. Applica-
+to the single-instruction multiple-threading (SIMT) paradigm,                   tion of the Inverse Laplace Transform L−1 yields the following
+the multi-stream (MS) asynchronicity is explored for further                    differential equation in the time domain,
+efficiency improvement. Since the proposed heterogeneous HPC                             d
+methodology can address different types of computational bur-                               Eexp (t) = (B · |i(t)|)(Sch A − Eexp (t)),    (5)
+                                                                                         dt
+dens accordingly with limited CPU and GPU resources, it pro-                    which can then be discretized by approaches such as the Back-
+vides a benchmark solution for the efficient and comprehensive                  ward Euler method, i.e.,
+offline simulation of future power grids which are topologically
+becoming increasingly complex.                                                  Eexp (t) = (1 − |i(t)|BΔt)Eexp (t − Δt) + B · |i(t)|Sch AΔt,
+   The paper is organized as follows: Section II introduces                                                                                    (6)
+the detailed parallel BESS model, followed by AC/DC power                       where Δt is the simulation time-step.
+system modeling and TS-EMT co-simulation in Section III.                           It is noticed that Ae−Bisat , the exponential zone voltage of
+Section IV describes heterogeneous computing architecture for                   the lithium-ion battery, can be obtained directly, whereas that of
+simulation acceleration, and the results are given in Section V.                the other two types is iterative according to (6) and consequently
+Section VI presents the conclusions.                                            a proper initialization of each Eexp is needed.
+                                                                                   The state-of-charge (SOC) defined as the percentage of re-
+    II. DEVICE-LEVEL BESS PARALLEL EMT MODELING                                 maining charge to its nominal value is a critical factor that
+                                                                                determines the operation status of a BESS. Knowing the value
+A. Vectorized Battery Model
+                                                                                at an initial time instant t0 , it can be formulated as
+   The battery model can be depicted as a Thévenin equivalent                                                               t
+                                                                                                                                i(τ )
+circuit with a voltage source VBat in series with an internal                                   SOC(t) = SOC(t0 ) +                   dτ.      (7)
+impedance ZB . The controlled voltage source VBat contains                                                                   t0 Q
+5 parts, i.e., the constant voltage E0 , the polarization voltage                  When all elements are grouped into corresponding vectors
+Epol , the exponential zone voltage Eexp , and voltages induced                 and matrices for parallel processing, element-wise operations
+by the dynamic charge or discharge process Echg and Edsc , as                   are applied to their discrete forms. Take the dynamic charging
+expressed below,                                                                voltage vector of an array of batteries, for example, each element
+ VBat = E0 + Epol + Eexp + Sch Echg + (1 − Sch )Edsc , (1)                      is calculated independently, involving element-wise multiplica-
+                                                                                tion ◦ and division ,
+where Sch is a binary indicating the charging status with 1.
+As various types of batteries have different Eexp and Echg , the                   Echg = K ◦ Q ◦ ĩ ◦ [1  (isat + KQ ◦ Q),
+battery voltage is vectorized for parallel processing. Arranged
+in the sequence of lithium-ion, lead-acid, and nickel-cadmium                                1  (isat + KQ ◦ Q), 1  (|isat | + KQ ◦ Q)].             (8)
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:06:14 UTC from IEEE Xplore. Restrictions apply.
+2738                                                                                        IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 38, NO. 3, MAY 2023
+
+
+
+
+Fig. 1.   A battery array: (a) configuration, (b) scalable model.
+
+
+
+  Similarly, the general expression for the charging and dis-
+charging processes of various batteries can be vectorized for
+parallel processing on the GPU,
+             VBat = E0 + Epol + Eexp + Sch ◦ Echg
+                          + (I − Sch ) ◦ Edsc ,
+                         VBat ∈ [VBmin , VBmax ]                           (9)    Fig. 2.   Grid-connected BESSs: (a) Integration types, (b) control scheme.
+
+where VBmin , VBmax are vectors denoting the cut-off voltages
+and fully-charged voltages.
+   In the circuit EMT simulation, when nodal voltages, instead                    where GBS0 -IBeqS0 and GBSj -IBeqSj represent the Norton
+of mesh currents, are to be solved using Kirchhoff’s current law,                 equivalent circuit of the Np2 × Ns array and a Np1 × NSj array,
+the Thévenin equivalent circuit of the battery model VBat -ZB                     respectively. As can be seen, the scalable model can flexibly be
+needs to be transformed into its Norton counterpart with an                       as detailed as an entire Np × Ns array, and as computationally
+equivalent current source IBeq in parallel with the conductance                   efficient as a lumped equivalent unit by simply adjusting Np1
+GB . Assuming the internal resistances of all batteries under                     and Nsj . For a grid-wide study of an AC/DC grid, the lumped
+study are converted into the conductance and then grouped as                      battery array model is sufficient when the main focuses are
+a vector GB = [GB1 , GB2 ,... ], the current contribution of the                  converter transient performance and the consequent impact on
+batteries can be expressed as                                                     system stability.
+                           IBeq = VBat ◦ GB .                            (10)
+                                                                                  B. Grid-Connected BESS
+where the vector IBeq = [IBeq1 , IBeq2 ,... ].
+   The Norton equivalent circuit GB -IBeq of a battery can be ex-                    A power transmission and distribution network may incorpo-
+tended to an array of batteries for design, online monitoring, and                rate a substantial number of utility-scale BESSs, which work as
+management purposes. As shown in Fig. 1(a), all the batteries of                  part of a virtual power plant (VPP) for grid resilience enhance-
+a BESS are organized in an Np × Ns array so that each basic unit                  ment, or for temporary power supply. Despite different func-
+can be monitored. However, this micro-level modeling leads to a                   tions, they interact with the AC grid via 2 main structures [25],
+computational burden much higher than that of a lumped single                     i.e., a single 3-phase voltage-source converter (VSC) denoted as
+unit. A scalable model is thus proposed, as given in Fig. 1(b),                   Type 1, and the multi-section Type 2 which typically combines
+where an array of Np2 × Ns batteries can be lumped, and in each                   several serial or parallel bidirectional DC-DC converters and a
+of the remaining Np1 (Np1 ∈ [0, Np ]) branches, Ns -Nsj (Nsj ∈                    VSC, as given in Fig. 2(a).
+[0, Ns -1]) batteries need to be modeled individually. Then, the                     The VSC controller in the d-q frame as shown in Fig. 2(b)
+Norton equivalent circuit for the array can be expressed as                       applies to both BESS grid-integration manners. When the SOC is
+                                                                                  below its threshold SOC0 , the battery starts to charge or remain
+                        ⎛                        ⎞−1
+                                    Ns −Nsj                                       idle; otherwise, in addition to smoothing the power curve of
+                    
+                    Np1
+                                      
+  GB = GBS0 +           ⎝G−1BSj +           G−1
+                                              Bi
+                                                 ⎠ .          (11)                synchronous generators, it may be utilized for rapid frequency
+                       j=0                   i=1                                  control of the grid. In this case, the power order is dependent on
+                                                                                  the frequency deviation,
+                                                      Ns −Nsj
+                        
+                        Np1
+                            IBeqSj G−1
+                                    BSj +                     (IBeqi G−1
+                                                                      Bi )
+ IBeq = IBeqS0 +
+                                                      i=1
+                                                                           .                                                                              
+                                                      Ns −Nsj                                                                      Kf I
+                        j=0            G−1
+                                        BSj +         i=1     G−1
+                                                                Bi
+                                                                                      ∗
+                                                                                    P (s) = sgn(|fnom − f | − ζ)(fnom − f ) Kf P +                             ,
+                                                                                                                                    s
+                                                                         (12)                                                                             (13)
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:06:14 UTC from IEEE Xplore. Restrictions apply.
+LIN et al.: MASSIVELY PARALLEL MODELING OF BATTERY ENERGY STORAGE SYSTEMS FOR AC/DC GRID HIGH-PERFORMANCE                                               2739
+
+
+
+                                                                                 scheme, the diode unidirectional conduction should be consid-
+                                                                                 ered, alongside the static I-V characteristics, which are two
+                                                                                 main contributors to the non-linearity of the power switch. Fig. 3
+                                                                                 shows a complete model of the IGBT and its anti-parallel diode,
+                                                                                 which can eventually be converted into a Norton equivalent
+                                                                                 circuit.
+                                                                                    The nonlinear semiconductor switch model determines that
+                                                                                 the entire VSC circuit undergoes Newton-Raphson iteration
+                                                                                 for numerical convergence and accuracy, thus prolonging the
+                                                                                 execution time. The TSSM-based converter model, on the other
+                                                                                 hand, omits the nonlinear static characteristics of the power
+                                                                                 switch. Instead, it uses a distinct small and large conductance
+                                                                                 for OFF- and ON-state, respectively. The consequent exemption
+                                                                                 from Newton-Raphson iteration accelerates the matrix equation
+                                                                                 solution as well as the simulation.
+                                                                                    When bus voltages of the AC network are known, the VSC
+Fig. 3. Generic TLL-state-space model with nonlinear power switch for BESS       PCC voltage can be obtained instantly according to the trans-
+EMT simulation.
+                                                                                 former turn ratio. In this case, (14) takes the form of
+                                                                                                                        −1        
+                                                                                                 U4−6          A11 A12           J1
+where ζ is the grid frequency deviation tolerance, fnom is the                                             =                  ·       ,       (15)
+nominal frequency, Kf p and KkI are control parameters. The                                     U7−11          A21 A22           J2
+active power order is then taken as a reference of the outer-
+                                                                                 where
+loop controller in the d-q frame, and the output i∗d is then used                                                
+in inner-loop current control that generates the VSC switching                   A11 = GL3×3 , A12 = −GL3×3 , 03×2 ,
+signals Vgate along with the q-axis regulation which is virtually                                
+identical. The VSC is also able to control its DC bus voltage                           −GL3×3
+by setting the d-axis reference d∗R as voltage; similarly, in the                A21 =             ,
+                            ∗                                                            02×3
+q-axis, the control object qR can be either the voltage or reactive
+power at the point of common coupling (PCC).                                     A22 = Y5×5 , J1 = JL3×1 , J2 = [−JL1×3 , IDCeq , −IDCeq ]T .
+   1) Voltage Source Converter: The VSC in both schemes                                                                                (16)
+connects to the AC grid via a step-up transformer. In Fig. 3,
+taking its DC side as a Norton equivalent circuit Gdc and Jeq ,                  Knowing the PCC voltage U4−6 results in the direct solution of
+the converter contains up to 11 nodes if the transformer is taken                converter nodal voltages,
+into consideration, briefly expressed as
+                                                                                                    U7−11 = A−1
+                                                                                                             22 (J2 − A21 U4−6 ).                       (17)
+               ⎡                                            ⎤−1
+                            03×3 , 03×3       03×3 , 03×2
+           ⎢GTr +                                            ⎥                      2) Generic TLL-State-Space Model: In the Type 2 scheme,
+   U1−6        ⎢           03×3 , GL3×3 −GL3×3 , 03×2 ⎥                          a battery group has a small capacity and the bidirectional DC-
+             =⎢                                             ⎥
+  U7−11        ⎢      03×3 , −GL3×3 Y11 , Y12                 ⎥                  DC converter has an ultrahigh switching frequency typically
+               ⎣                                              ⎦
+                        02×3 , 02×3       Y21 , Y22                              above dozens of kilohertz. Consequently, it brings a considerable
+                                                               5×5               challenge to computation efficiency, as the time-step should not
+                                                                       T
+                                                                                 exceed a few microseconds to maintain the accuracy, especially
+  · JTr1×6 + [01×3 , JL1×3 ], [−JL1×3 , IDCeq , −IDCeq ]                     ,
+                                                                                 when pulse-width modulation which requires a high density of
+                                                                                 carrier data is utilized.
+                                                                                     The state-space model is adopted for the DC-DC converter
+                                                                        (14)     to ensure an alignment in the time-step. As shown in Fig. 3,
+where JTr and JL are the companion current of the transformer                    the battery represented by its Thévenin equivalent circuit is
+model and the 3-phase inductor, respectively, GTr is the trans-                  taken as an input; on the other hand, the VSC is nevertheless
+former admittance matrix, GL is the inductor conductance, and                    incompatible with the state-space model. The transmission line
+Matrix Yij containing the status of converter switches has a                     link model [27] is thus introduced noticing that both converters
+minimal dimension of 5 × 5.                                                      share the same DC bus. Take battery discharging mode for
+   The amount of computations arising from solving the 11-D                      instance, when switches S1 and T2 are under conduction, the
+matrix equation is dependent on the way that matrix Yij is                       mixed TLL-state-space model is
+handled. Detailed VSC modeling methods can be categorized as                                                                             
+the device-level model and two-state switch model (TSSM) [26].                     i˙L       −1
+                                                                                                       0     iL     1
+                                                                                                                          0      vBat       0
+                                                                                         =  G B L
+                                                                                                    −GCp          + L
+                                                                                                                        2GCp             +      vd ,
+To reflect the capacity limit as well as to reproduce the behaviors                v˙o        0        C
+                                                                                                             vo     0     C       vCi
+                                                                                                                                            0
+of a real converter under an actual configuration and control                                                                                  (18)
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:06:14 UTC from IEEE Xplore. Restrictions apply.
+2740                                                                                      IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 38, NO. 3, MAY 2023
+
+
+
+and when S1 and T1 are on, it is
+                                                
+                                                         
+  i˙L     −1    −1
+                        i L
+                                 1
+                                              0
+                                              vBat     −1
+       = GB1 L −GLCp         + L      2GCp          + L vd .
+  v˙o     C      C
+                        vo       0      C      vCi
+                                                       0
+                                                           (19)
+   Averaging the 2 equations according to the switching duty D
+leads to the following general state-space equation
+                        ẋ = Ax + Bu + E,                                (20)
+where x = [iL , vo ]T , u = [vBat , vC ] , and
+                                     i T
+
+                                                                   
+         −1                        1
+                 D−1
+                                          0                    D−1
+ A= G    BL
+        1−D      −GCp , B =
+                   L              L
+                                        2GCp , E =
+                                                                L        vd .
+         C         C
+                                  0      C                      0
+                                                       (21)
+  Discretization of (20) by the Trapezoidal rule yields the
+solution to proceed with EMT simulation,
+                          −1           
+                      AΔt              AΔt
+          xn = I −                I+         xn−1
+                        2                2
+                                                                                Fig. 4.   AC/DC grid integrated with renewable energies and BESSs.
+                                           
+                   BΔt
+                 +      (un + un−1 ) + EΔt .           (22)
+                    2
+   The bidirectional DC-DC converter is linked to the VSC by                    time-step is required to test the controller whilst ensuring nu-
+                   i                                                            merical convergence. Thus, a hybrid AC/DC grid can be deemed
+the TLL signal vC    . Following the derivation of output voltage vo
+at time instant t, the TLL reflection pulse at the DC-DC converter              as a multi-rate simulation system, and the general modeling is
+side which is also deemed as the incident pulse of the VSC at                   carried out for the AC and DC grids irrespective of their layouts
+the next time-step can be formulated as                                         or configurations.
+                   r
+                  vC (t + Δt) = vo (t) − vC
+                                          i
+                                            (t).                         (23)
+                                                                                A. Transient Stability Simulation
+   As mentioned, the DC side of VSC is always represented
+                                                                                   The AC grid under TS simulation can be divided into 2
+by a Norton equivalent circuit, regardless of the component it
+                                                                                categories from a numerical solution perspective, i.e., nonlinear
+connects to for a better model compatibility with various IGBT
+                                                                                components which are expressed by a set of differential equa-
+models. Therefore, for BESS Type 2 integration, a Thévenin-
+                                                                                tions, and the linear network with its nodal voltages solved by
+Norton transformation is conducted and Gdc and Jeq are depen-
+          r                                                                     an algebraic matrix equation, i.e.,
+dent on vC  and GCp . When the DC terminal voltage is solved
+by (17), the reflected pulse from the VSC should be updated
+                                                  i                                                              ẋ(t) = f (x(t), u(t)),                  (24)
+and subsequently taken as the incident pulse vC     for its DC-DC
+counterpart solution in the next time-step. It is noted that a TLL                                            V(t) = YN −1 · I(x(t)),                     (25)
+decouples the two converters, which can be processed in parallel
+for simulation acceleration.                                                    where YN represents the network admittance matrix. Lineariza-
+                                                                                tion of the differential equation leads to the state-space form of
+       III. MULTI-RATE TS-EMT MODEL OF AC/DC GRID                               (20) where A becomes the Jacobian matrix,
+   Fig. 4 shows the test bench where the AC grid based on the                              ⎡ ∂f                    ⎤        ⎡ ∂f                  ⎤
+                                                                                             ∂x1 , · · · , ∂xn                ∂u1 , · · · , ∂un
+                                                                                               1           ∂f1                  1           ∂f1
+IEEE 118-bus system consists of 3 zones, with a total generation                      ⎢                            ⎥     ⎢                        ⎥
+of 4.4 GW from synchronous generators, and an extra amount of                       A=⎢
+                                                                                      ⎣
+                                                                                                     ..
+                                                                                                          .        ⎥,B = ⎢
+                                                                                                                   ⎦     ⎣
+                                                                                                                                     ..
+                                                                                                                                          .       ⎥ , E = 0.
+                                                                                                                                                  ⎦
+800 MW from the wind farm (WF) and photovoltaic (PV) plant,
+                                                                                             ∂x1 , · · · , ∂xn                ∂u1 , · · · , ∂un
+                                                                                             ∂fn           ∂fn                ∂fn           ∂fn
+which are integrated via a 4-terminal DC grid. They compose a                                                                           (26)
+VPP along with BESSs which can be distributed on every bus to                      The generator is such a nonlinear component that the
+enhance grid resilience. However, for simplicity of description,                state-space equation applies, with a fundamental sixth-order
+5 groups of 100 BESS units are installed on Buses 56, 63, 43,                   model [28], two of which, i.e., rotor angle δ and speed ω,
+33, and 83, respectively.                                                       contributed by the rotor mechanical characteristics,
+   Transient stability simulation is dominant in the time-domain
+analysis of large-scale power systems mainly comprising of                                      ˙ = ωR · Δω(t),
+                                                                                               δ(t)                                                       (27)
+generators, transmission lines, transformers, shunts, etc., all of
+which tolerate a time-step of several milliseconds. The extensive                             ˙ = 1 [Tm (t) − Te (t) − D · Δω(t)],
+                                                                                            Δω(t)                                                         (28)
+integration of power converters, however, implies that a smaller                                  2H
+
+         Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:06:14 UTC from IEEE Xplore. Restrictions apply.
+LIN et al.: MASSIVELY PARALLEL MODELING OF BATTERY ENERGY STORAGE SYSTEMS FOR AC/DC GRID HIGH-PERFORMANCE                                                2741
+
+
+
+                                                                                  Fig. 2(b) to yield the three-phase modulation signals mabc . On
+                                                                                  the rectifier side, the current reference is obtained by
+                                                                                                                          
+                                                                                      ∗               ∗                         ∗
+                                                                                     Id/q = Kvp (Vd/q     − Vd/q ) + Kvi (Vd/q     − Vd/q )dt, (36)
+
+                                                                                  where quantities with superscript ∗ denote reference values, Vd∗
+                                                                                  and Vq∗ decide the AC voltage vM M C , and Kvp and Kvi are
+                                                                                  controller parameters.
+                                                                                     The submodule capacitor dynamics can be omitted in TS
+                                                                                  analysis since the converter output active and reactive powers
+                                                                                  are the focus. Therefore, using phase-shift control, the instan-
+Fig. 5.   MMC-based DC link dynamic model: circuit and controller.                taneous output phase voltage of the grid-forming MMC can be
+                                                                                  determined by the upper-arm and lower-arm modulation signals
+                                                                                  mu and ml , as
+and the other four which are fluxes ψ from the equivalent circuit
+                                                                                                          Vdc 
+                                                                                                              NL
+of its windings under the d-q frame,                                                             vM M C =        sgn(mu − c[i])
+                                                                                                          NL i=1
+                ψ̇f d (t) = ωR · [ef d (t) − Rf d if d (t)],             (29)                                                                  ⎤
+                                                                                                                    2N
+                                                                                                                    L
+                ψ̇1d (t) = −ωR · R1d i1d (t),                            (30)                                  −             sgn(ml −c[j])⎦ ,            (37)
+                                                                                                                   j=NL +1
+                ψ̇1q (t) = −ωR · R1q i1q (t),                            (31)
+                                                                                  where NL is the number of submodules per arm, c denotes the
+                ψ̇2q (t) = −ωR · R2q i2q (t),                            (32)     carrier signals and in each phase,
+where Rf d , R1d , R1q , and R2q are winding parameters, H and                                      mabc                 mabc
+                                                                                            mu =            − 0.5, md =         + 0.5.   (38)
+D are generator inertia and damping coefficient, ωR is the rated                                   Vdc /NL              Vdc /NL
+speed, and the remaining variables constitute the input vector u.                    Then, based on a DC link equivalent circuit on the rectifier
+The generator model order will have a further increase when its                   side, the phase voltage at the PCC can be expressed as
+controller is taken into account. For example, 3 additional states
+induced by the following excitation system,                                                              GLf vM M C − ILeq + ICeq + iRW
+                                                                                                CC =
+                                                                                             vPREC                                      ,                (39)
+                                                                                                                   GLf + GCf
+                                    1
+                        v1 (s) =         vc (s) + Λ(v1 (0)),             (33)     where iRW is the current injection of the WF and PV plant,
+                                 1 + sTR
+                                                                                  GLf , GCf , ILeq , and ICeq compose the discretized forms of the
+                        sTW
+    v2 (s) = KP SS            Δω(s) + Λ(Δω(0), v2 (0)),                  (34)     Lf -Cf filter in the AC yard. The 3-phase PCC voltage as the
+                      1 + sTW                                                     control object subsequently undergoes Park’s transformation so
+                           1 + sT1                                                that Vd and Vq in (36) can be obtained.
+                v3 (s) =           v2 (s) + Λ(v2 (0), v3 (0)),           (35)
+                           1 + sT2                                                   The inverter stations, as well as BESSs, are connected directly
+where T1 , T2 , TR , TW , and KP SS are AVR and PSS constants,                    to the main grid. Following the AC network solution of (25),
+and Λ() denotes a constant as a function of initial values.                       the PCC voltage magnitude Vpu and angle θ are known, which
+   Using (20) and (26), the state vector x in (27)–(35) can be                    participate in the BESS’s VSC control and solution, as in (17),
+solved. The subsequent acquirement of the current vector I                        and also in the MMC phase current derivation,
+
+                                                                                          P CC = GL (vM M C − 2vL − Vnom Vpu cos(θ)),
+                                                                                         iIN
+enables the network nodal voltages to be derivable from (25)                                 V                  i
+                                                                                                                                                         (40)
+since the admittance matrix YN is always known.
+                                                                                  where Vnom is the PCC nominal voltage. Then, the power of
+                                                                                  each inverter station and BESS can be calculated and used for
+B. DC Links for Renewable Energy Integration
+                                                                                  the main grid simulation.
+   The high-voltage direct current (HVDC) link based on the
+modular multilevel converter (MMC) is favored in delivering                               IV. HETEROGENEOUS COMPUTING ARCHITECTURE
+renewable energies from remote areas to the main grid. The
+                                                                                  A. Modular BESS Kernel Design
+HVDC converters and renewable generation units can be mod-
+eled in detail in a similar vectorized manner for massively                          Since a grid-connected BESS contains multiple types of
+parallel processing; however, when their powerflow conditions                     components, including the battery, VSC, DC-DC converter, and
+are the primary focus, the lumped averaged model is sufficient.                   controllers, each of them is taken independently and designed
+The rectifier acts as a grid-forming converter that provides a                    into a CUDA C++ kernel [29], i.e., a global function that
+stable three-phase voltage for the wind farm and PV plant, while                  can launch a predefined number of threads corresponding to
+the inverter regulates the DC link voltage, as given in Fig. 5,                   components of the same type when being invoked on the GPU
+where the controller has an identical d-q frame scheme given in                   using the SIMT paradigm. The IGBT/diode as a fundamental
+
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:06:14 UTC from IEEE Xplore. Restrictions apply.
+2742                                                                                       IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 38, NO. 3, MAY 2023
+
+
+
+
+                                                                                 Fig. 7.   AC/DC grid multi-rate, multi-stream CPU-GPU computing.
+
+
+
+Fig. 6. Modular BESS kernels design: (a) SIMT paradigm and global signal
+flow, (b) memory dispatch on device (left) and host (right).                     B. Heterogeneous Multi-Stream Computing Paradigm
+                                                                                    Due to a lower clock frequency and thread synchronization,
+                                                                                 the GPU is not always more efficient than its counterpart, es-
+                                                                                 pecially when handling a system with insufficient homogene-
+component of power converters, on the other hand, is taken as                    ity or dominated by inhomogeneity. Hence, the heterogeneous
+a CUDA C++ device function which can be directly called by                       CPU-GPU HPC paradigm which leads to a higher computing
+a kernel, as shown in Fig. 6(a). This modular software archi-                    resource utilization is adopted for simulating the AC/DC grid
+tecture provides a kernel-based library that enables a flexible                  more efficiently. The extent of homogeneity is taken as a core
+combination of batteries and converters in the high-performance                  criterion in terms of task assignment to the processors, along
+simulation.                                                                      with the expected simulation duration. CPU functions are de-
+   Based on the vectorized parallel EMT modeling, electrical                     signed for the IEEE 118-bus system and the 4-terminal DC grid
+quantities including inputs and outputs (I/Os) of each BESS                      including its source renewable energies since they demonstrate
+kernel are represented by arrays in the CUDA C++ program                         insufficient homogeneity and consequently are all inherently
+design. For instance, the main I/Os of the battery kernel include                processed successively, as shown in Fig. 7.
+its type, current, voltage, state of charge, and the Thévenin and                   Though the SIMT paradigm enables concurrency of threads
+Norton equivalent circuits. The VSC kernel and its controller                    launched by the same CUDA C++ kernel, different types
+kernel are shared by Type 1 and Type 2 utility-scale BESSs due                   of BESS components are still implemented sequentially. A
+to the proposal of the generic TLL-state-space model, where the                  pipelined scheme is applied to these kernels so that additional
+DC-DC converter kernel is peculiar to Type 2.                                    parallelism can be gained. Then, the three components, i.e., the
+   Initialization of the I/O arrays is generally required, and since             VSC, DC-DC converter, and the battery, are invoked in separate
+kernels are invoked from the host CPU, these variables are                       CUDA C++ streams, while the controllers are grouped with
+defined and initialized in the host before being copied to the                   the corresponding converters so that they are still implemented
+device GPU. Nevertheless, not all signals shall be handled in                    sequentially in the program. In the end, these streams are syn-
+the same manner – the simulation time instant and step size, as                  chronized before stepping out of the device.
+well as the VSC PWM carrier c, can be accessed directly by                          The converters and AC grid are processed with a time-step
+the GPU as an individual quantity, albeit they are not defined                   of 20 μs and 5 ms, respectively, and this multi-rate scheme
+on the device. Fig. 6(b) shows that once a kernel is invoked, a                  is realized by adopting two indices t and T representing their
+CPU signal is shared by all threads, and elements in an array                    time instants. Once the host takes over again, it either continues
+will be dispatched to each thread according to their addresses in                the converters computation when t is smaller than T , or, if the
+the memory and corresponding thread indices.                                     reverse is the case, proceeds with the AC grid dynamic sim-
+   The coexistence of both BESS types determines that the total                  ulation, which starts with solving the synchronous generators’
+thread number of the battery kernel NBat is a summation of the                   differential equation (24), followed by the network equation (25)
+number of DC converters and Type 1 VSCs,                                         to derive bus voltages. A full simulation loop completes after all
+                                                                                 history variables are updated.
+                                        NDC                                         Simulations of a 20-second duration are conducted on a server
+                 Nbat = NV SC −             + NDC .                     (41)
+                                        Npl                                      with 20-core Intel Xeon E5-2698 CPU, 192 GB RAM, and an
+                                                                                 NVIDIA Tesla V100 GPU. The computing speeds with Type 1
+The battery internal conductance array GB is the input of both                   BESS under different scales are summarized in Table I. With
+VSC and DC converter models. Thus, its elements are dispatched                   the nonlinear IGBT model, the default GPU simulation speeds
+to all threads launched by these two kernels.                                    are lower than that of the CPU when the number of BESS is
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:06:14 UTC from IEEE Xplore. Restrictions apply.
+LIN et al.: MASSIVELY PARALLEL MODELING OF BATTERY ENERGY STORAGE SYSTEMS FOR AC/DC GRID HIGH-PERFORMANCE                                              2743
+
+
+
+                             TABLE I
+             TYPE 1 BESS SIMULATION SPEED COMPARISON
+
+
+
+
+                             TABLE II
+             TYPE 2 BESS SIMULATION SPEED COMPARISON
+
+
+
+
+                                                                                Fig. 8. Summary of CPU and GPU computing performance: (a) 1 BESS, (b)
+                                                                                100 BESSs.
+
+
+                                                                                a tremendous computational burden, the proposed modeling
+                                                                                method and heterogeneous computing concept are validated in
+small. The multi-stream GPU execution gains about 1.8 times                     a two-step manner using commercial tools MATLAB/Simulink
+of speedup over CPU when the computing objective is 100                         and DSAToolsTM /TSAT, respectively.
+BESSs, and the acceleration rate SP keeps increasing alongside
+the BESS scales, reaching up to 228 when 50,000 BESSs are                       A. Model Testing
+simulated. A similar phenomenon is witnessed for the ideal
+                                                                                   The battery parallel EMT model is validated by the charging
+TSSM-based systems, and without Newton-Raphson iteration,
+                                                                                and discharging processes of a group of lead-acid batteries with a
+the simulation speed becomes faster. It can also be noticed that
+                                                                                total rated capacity of 1350 Ah. Since GPU programming allows
+the multi-stream scheme brings approximately an extra 10%
+                                                                                threads to have different parameters, the proposed computing
+speedup over the default mode. With each VSC linking to 20
+                                                                                method only requires one simulation for various circuit condi-
+parallel DC-DC converters, the speedups could reach around
+                                                                                tions. In Fig. 9(a), 3 GPU threads representing a discharging
+178 and 163 respectively for the nonlinear IGBT and TSSM
+                                                                                resistance of 1 Ω, 0.67 Ω, and 0.33 Ω are plotted. It shows
+cases when 200,000 batteries are involved, as listed in Table II.
+                                                                                that both the battery voltages and SOCs have a good agreement
+With the AC/DC grid taking merely 1.5 seconds for the same
+                                                                                with Simulink results. With the same resistances, the batteries
+simulation duration, it becomes feasible to accurately study
+                                                                                are charged till SOC = 100% in Fig. 9(b), which also gives
+a large-scale system with numerous BESSs by the proposed
+                                                                                identical curves. The results demonstrate that the duration of
+heterogeneous multi-stream computing architecture, e.g., the
+                                                                                both processes is approximately proportional to the charging
+total computational time for the AC/DC grid shown in Fig. 4
+                                                                                or discharging resistance. Fig. 9(c) provides 1 MW step-up
+is around 20 secs when all BESSs are Type 1, or 27 secs even if
+                                                                                and step-down test results of a Type 1 BESS unit in the HPC
+all BESSs integrated into are Type 2.
+                                                                                program and MATLAB/Simulink. The identical curves indicate
+   As for the scalable model, the computational burden reaches
+                                                                                an accurately implemented power converter model, including its
+its heaviest when all the battery units need to be simulated. Fig. 8
+                                                                                controller.
+provides the speeds of computing all the battery arrays in 1 BESS
+                                                                                   The power step test is also conducted for AC grid model
+and 100 BESSs, where each array is Np × Ns . It can be seen
+                                                                                validation and assuming that the BESS group at Bus 83 has a
+that while a larger Np or Ns leads to a higher speedup by the
+                                                                                sufficient capacity, the results of a single-bus injection are given
+GPU, the actual execution time texe is also longer. Since a more
+                                                                                in Fig. 10. At t = 10 s, an extra 500 MW load is added to Bus
+detailed model always exists, the modeling level is determined
+                                                                                59. Consequently, the generators witness a dramatic perturbation
+by the study purpose. Therefore, the individuality of a battery
+                                                                                with several bus voltages sagging below 0.9 p.u. momentarily,
+unit can be omitted in grid-scale analysis.
+                                                                                and decreasing generator frequencies due to a deficiency of
+                                                                                active power. Then, 3.5 s later, 834 MW is injected into the
+            V. AC/DC GRID SIMULATION RESULTS
+                                                                                network via Bus 83, the generator voltages and frequencies are
+  Since the TS analysis of an AC/DC grid integrated with                        generally restored after a few oscillations, and the rotor angles
+massive quantity of BESS EMT models is infeasible by pure                       enter a new steady-state. The DSAToolsTM /TSAT results are also
+TS or EMT simulation packages or even conventional hybrid                       provided for comparison to verify the modeling and simulation
+EMT-TS approach due to the simulation type constraint or                        method of the AC grid.
+
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:06:14 UTC from IEEE Xplore. Restrictions apply.
+2744                                                                                      IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 38, NO. 3, MAY 2023
+
+
+
+
+Fig. 9. BESS model validation: (a) battery discharging process, (b) battery
+                                                                                 Fig. 11. Overload test: (a), (b) generator frequencies, (c) generator bus volt-
+charging process, and (c) step responses of a BESS unit.
+                                                                                 ages, (d) generator rotor angle, (e), (f) power order and actual output of BESSs.
+
+
+
+
+                                                                                 B. Post-Contingency Stability Restoration
+                                                                                    As a single BESS group has limited capacity, power injections
+                                                                                 at the 5 buses which have BESS installations as indicated in
+                                                                                 Fig. 4 are then carried out, assuming that each of the 500 BESS
+                                                                                 units has a capacity of 2.0 MVA. When the same overload occurs,
+                                                                                 the BESSs are activated in a sequence of Buses 56, 63, 43, 33,
+                                                                                 and 83 to provide an adaptive active power compensation and
+                                                                                 a constant 0 MVAr injection, and Fig. 11 provides the results
+                                                                                 from the proposed heterogeneous simulation. Fig. 11(a), (b)
+                                                                                 give generator frequencies under various power compensation
+                                                                                 schemes. Frequency instability is witnessed if all 5 BESSs
+                                                                                 remain idle. Similarly, the 3 BESS groups in Zone 2 are inade-
+                                                                                 quate to maintain the AC/DC grid stable as the bus frequencies
+                                                                                 continue to drop. The participation of Zone 1 BESSs enables
+                                                                                 the generators to restore their frequencies, and the remedial
+                                                                                 process can be expedited with an extra contribution from its
+                                                                                 Zone 3 counterparts. Additionally, Fig. 11(c), (d) show that
+                                                                                 the entire grid remains stable under a new equilibrium. The
+                                                                                 activation of an individual BESS unit in these 5 groups is given
+                                                                                 in Fig. 11(e), (f), which show that the subsequent group partakes
+                                                                                 grid recovery only when its immediate previous counterpart
+                                                                                 reaches its maximum capacity, and since a power surplus is
+                                                                                 available, the last group remains below its limit.
+                                                                                    In Fig. 12, the corresponding stability reinstatement results
+Fig. 10. AC grid model test (left: proposed HPC method; right: TSAT): (a)        from DSAToolsTM /TSAT are provided for validation under the
+generator bus voltages, (b) relative rotor angles, and (c) generator speeds.     condition that all 5 groups of BESS are available. The output
+                                                                                 power of each BESS unit from EMT simulation is averaged
+
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:06:14 UTC from IEEE Xplore. Restrictions apply.
+LIN et al.: MASSIVELY PARALLEL MODELING OF BATTERY ENERGY STORAGE SYSTEMS FOR AC/DC GRID HIGH-PERFORMANCE                                                  2745
+
+
+
+
+Fig. 12. Overload test validation by DSAToolsTM /TSAT: (a) generator fre-
+quencies, (b) generator bus voltages, (c) generator rotor angle, (d) TSAT BESS
+equivalent power injection.
+
+
+
+
+                                                                                  Fig. 14. AC grid dynamics under zone separation: (a), (c), (e) grid frequency,
+                                                                                  rotor angle, and bus voltage without BESS, (b), (d), (f) grid frequency, rotor
+                                                                                  angle, and bus voltage with one BESS group in each zone.
+
+
+
+                                                                                  powers of the 4 converter stations in the DC grid when the wind
+                                                                                  velocity drops linearly from 11 m/s to 6 m/s between 15–20
+                                                                                  seconds. Assuming the 4 DC lines are identical, the total power
+                                                                                  generated by wind farms and PV plants are evenly shared by the
+                                                                                  2 inverter stations, meaning both of them have lost over 150 MW.
+                                                                                  The inadequacy of active power caused a frequency instability, as
+                                                                                  well as potential voltage insecurity, if no further action is taken,
+                                                                                  as shown in Fig. 13(b), (c). The 5 groups of BESSs intervene in
+                                                                                  a reverse sequence for resilience enhancement. It is noted that
+                                                                                  with 1 group in Zone 3 or 2 groups in Zone 1 and 3, the grid is still
+                                                                                  insecure in terms of frequency stability; the involvement of the
+                                                                                  third group in Zone 2 yields abundant active power for remedy
+                                                                                  of the frequency as it begins to rise. Fig. 13(d) demonstrates
+                                                                                  that all bus voltages of this large-scale system can recover. It is
+                                                                                  observed from Fig. 13(e), (f) that once the contingency occurs,
+                                                                                  the first group immediately participates in the remedial action at
+                                                                                  t1 ; nevertheless, it quickly reaches its reactive power capacity so
+Fig. 13. Remedy for WF generation reduction: (a) DC grid terminal power,
+(b) generator frequencies under various BESS compensations, (c) generator bus     that the second and third groups are activated at time instant t2
+voltages without BESS, (d) generator bus voltages with 3 BESS groups, (e) one     and t3 . The grid frequency begins to rise at around t4 , and then at
+BESS unit active power, (f) one BESS unit reactive power.                         t5 , when the grid frequency has already been within its deviation
+                                                                                  tolerance, the third BESS group reduces its output power so that
+                                                                                  the bus voltages can eventually maintain at the pre-contingency
+with a window equal to the time-step of TS simulation and then                    level.
+injected into the AC bus. The fact that the generator quantities are                  When a severe contingency, such as simultaneous faults on
+virtually identical to those from the heterogeneous simulation                    Bus 33, 30, and 23, appears at t0 , out-of-step and consequent
+in Fig. 11 demonstrates a sufficient accuracy of the proposed                     zone separation could occur if Tie Line 19–34 has a small
+modeling and computing method.                                                    capacity. As given in Fig. 14(a), generators in Zone 1 have a
+   The stochasticity of renewable energies also has a profound                    rising frequency, whilst their counterparts in Zone 2 and 3 are
+impact on the AC grid stability. Fig. 13(a) shows the active                      slowing down. Due to the asynchronism, the relative angles of
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:06:14 UTC from IEEE Xplore. Restrictions apply.
+2746                                                                                      IEEE TRANSACTIONS ON POWER SYSTEMS, VOL. 38, NO. 3, MAY 2023
+
+
+
+                                                                                 CUDA C++ kernels once they are implemented on the many-
+                                                                                 core GPU. In the meantime, the high clock frequency of CPU
+                                                                                 suggests the deployment of less homogeneous components in
+                                                                                 the AC/DC grid on it, so that a twofold hybrid simulation with
+                                                                                 a dramatically improved efficiency is formed, i.e., EMT-TS
+                                                                                 and CPU-GPU co-simulation. Remarkable speedups over pure
+                                                                                 CPU processing were obtained by the GPU in handling BESSs;
+                                                                                 nevertheless, an extra margin can still be sought by utilizing
+                                                                                 the multi-stream architecture. Therefore, it demonstrates that
+                                                                                 the HPC methodology utilizing diverse processors expands the
+                                                                                 scope of AC/DC systems that can be simulated efficiently since
+                                                                                 it caters to an increasingly heterogeneous energy network for
+                                                                                 which a grid-wide study of the interactions among numerous
+                                                                                 energy systems requires that their components are modeled in
+                                                                                 detail and computed which would otherwise be computationally
+                                                                                 overwhelming for conventional simulation methods.
+Fig. 15. Converter transients under zone separation: (a) BESS active power,
+(b) BESS reactive power, (c) DC grid power, and (d) DC grid terminal voltage.
+                                                                                                                    REFERENCES
+                                                                                  [1] N. Miller, “Keeping it together: Transient stability in a world of wind and
+                                                                                      solar generation,” IEEE Power Energy Mag., vol. 13, no. 6, pp. 31–39,
+generators in Zone 1 keep climbing and therefore, the entire                          Nov./Dec. 2015.
+system is insecure in terms of angle stability, along with voltage                [2] K. Ahmad, H. Mohsen, S. Mohammad, B. Sertac, and A. Haitham, “On
+instability since some bus voltages approach 1.08 pu, as shown                        the stability of the power electronics-dominated grid: A new energy
+                                                                                      paradigm,” IEEE Ind. Electron. Mag., vol. 14, no. 4, pp. 65–78, Dec. 2020.
+in Fig. 14(c) and (e). In contrast, with 3 BESS groups on Bus 33,                 [3] A. Prasanna, K. McCabe, B. Sigrin, and N. Blair, “Storage futures
+43, and 83 activated, no violation of any of the 3 system stability                   study: Distributed solar and storage outlook: Methodology and scenarios,”
+indices is witnessed. Fig. 14(b) demonstrates that the generator                      National Renewable Energy Laboratory, Golden, CO, USA, Tech. Rep.
+                                                                                      NREL/TP-7A40-79790, Jul. 2021.
+frequencies are restricted within ±0.03 Hz. In the meantime, a                    [4] V. Knap, S. Chaudhary, D. Stroe, M. Swierczynski, B. Craciun, and R.
+maximum angle difference slightly above 200 degrees as given                          Teodorescu, “Sizing of an energy storage system for grid inertial response
+in Fig. 14(d) implies that the AC/DC grid does not have any                           and primary frequency reserve,” IEEE Trans. Power Syst., vol. 31, no. 5,
+                                                                                      pp. 3447–3456, Sep. 2016.
+concern on angle stability. Fig. 14(f) shows that with the d-q                    [5] U. Datta, A. Kalam, and J. Shi, “Battery energy storage system to stabilize
+frame controller of BESSs, the bus voltages can restore their                         transient voltage and frequency and enhance power export capability,”
+pre-contingency levels.                                                               IEEE Trans. Power Syst., vol. 34, no. 3, pp. 1845–1857, May 2019.
+                                                                                  [6] M. Farrokhabadi, S. König, C. Cañizares, K. Bhattacharya, and T.
+   Fig. 15 provides some power converter transients after the                         Leibfried, “Battery energy storage system models for microgrid stability
+grid separation. The rising and falling frequencies in Zone 1 and                     analysis and dynamic simulation,” IEEE Trans. Power Syst., vol. 33, no. 2,
+Zone 2-3 respectively indicate a power surplus and deficiency                         pp. 2301–2312, Mar. 2018.
+                                                                                  [7] A. Mohammad and Q. Ahsan, “A mathematical model for the transient
+in these zones. Therefore, each BESS unit in Zone 1 absorbs                           stability analysis of a simultaneous AC–DC power transmission system,”
+approximately 0.5 MW, and units in the other 2 zones are                              IEEE Trans. Power Syst., vol. 33, no. 4, pp. 3510–3520, Jul. 2018.
+discharging with a power of 0.4 MW and 0.1 MW. Similarly,                         [8] I. Calero, C. Cañizares, and K. Bhattacharya, “Implementation of transient
+                                                                                      stability model of compressed air energy storage systems,” IEEE Trans.
+a BESS unit in Zone 2 and 3 also provides about 0.25 MVAr                             Power Syst., vol. 35, no. 6, pp. 4734–4744, Nov. 2020.
+and 0.6 MVAr to maintain stable bus voltages. The DC grid,                        [9] D. Kim, Y. Moon, and H. Nam, “A new simplified doubly fed induction
+as expected, is not significantly affected by the grid separation                     generator model for transient stability studies,” IEEE Trans. Energy Con-
+                                                                                      vers., vol. 30, no. 3, pp. 1030–1042, Sep. 2015.
+since the MMCs possess the functionality of regulating the DC                    [10] G. Lammert, D. Premm, L. Ospina, J. Boemer, M. Braun, and T. Cutsem,
+voltages so long as their PCC voltages are not subjected to severe                    “Control of photovoltaic systems for enhanced short-term voltage stability
+distortions.                                                                          and recovery,” IEEE Trans. Energy Convers., vol. 34, no. 1, pp. 243–254,
+                                                                                      Mar. 2019.
+                                                                                 [11] V. Dinavahi and N. Lin, Real-Time Electromagnetic Transient Simulation
+                           VI. CONCLUSION                                             of AC-DC Networks. Hoboken, NJ, USA: Wiley-IEEE, 2021.
+                                                                                 [12] T. Lan and K. Strunz, “Multiphysics transients modeling of solid oxide
+   This work illustrates heterogeneous sequential-parallel mod-                       fuel cells: Methodology of circuit equivalents and use in EMTP-type
+                                                                                      power system simulation,” IEEE Trans. Energy Convers., vol. 32, no. 4,
+eling and high-performance computing of an entire large-scale                         pp. 1309–1321, Dec. 2017.
+AC/DC grid integrated with massive utility-scale battery en-                     [13] N. Herath, S. Filizadeh, and M. Toulabi, “Modeling of a modular multilevel
+ergy storage systems for accurate power system stability study.                       converter with embedded energy storage for electromagnetic transient
+                                                                                      simulations,” IEEE Trans. Energy Convers., vol. 34, no. 4, pp. 2096–2105,
+Prompted by its extensive distribution in the modern power                            Dec. 2019.
+system for resilience enhancement, various types of battery                      [14] T. Pereira and M. Tavares, “Development of a voltage-dependent line
+EMT models are vectorized and modularized for element-wise                            model to represent the corona effect in electromagnetic transient program,”
+                                                                                      IEEE Trans. Power Del., vol. 36, no. 2, pp. 731–739, Apr. 2021.
+parallel multi-threading processing. The proposal of a generic                   [15] A. Constantin, A. Ellerbrock, F. Fernandez, and J. Rueb.beta, “co-
+TLL-state-space model improves parallelism so that prevalent                          simulation of power electronic dominated networks,” IEEE Power Energy
+BESS configurations can be programmed uniformly in the same                           Mag., vol. 18, no. 2, pp. 84–89, Mar./Apr. 2020.
+
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:06:14 UTC from IEEE Xplore. Restrictions apply.
+LIN et al.: MASSIVELY PARALLEL MODELING OF BATTERY ENERGY STORAGE SYSTEMS FOR AC/DC GRID HIGH-PERFORMANCE                                                           2747
+
+
+
+[16] K. Sano, S. Horiuchi, and T. Noda, “Comparison and selection of grid-tied                                  Shiqi Cao (Graduate Student Member, IEEE) re-
+     inverter models for accurate and efficient EMT simulations,” IEEE Trans.                                   ceived the B.Eng. degree in electrical engineering
+     Power Electron., vol. 37, no. 3, pp. 3462–3472, Mar. 2022.                                                 and automation from the East China University of
+[17] S. Jin, Z. Huang, R. Diao, D. Wu, and Y. Chen, “Comparative imple-                                         Science and Technology, Shanghai, China, in 2015,
+     mentation of high performance computing for power system dynamic                                           and the M.Eng. degree in power system from Western
+     simulations,” IEEE Trans. Smart Grid, vol. 8, no. 3, pp. 1387–1395,                                        University, London, ON, Canada, in 2017. He is
+     May 2017.                                                                                                  currently working toward the Ph.D. degree in elec-
+[18] R. Diao et al., “On parallelizing single dynamic simulation using HPC                                      trical and computer engineering with the University
+     techniques and APIs of commercial software,” IEEE Trans. Power Syst.,                                      of Alberta, Edmonton, AB, Canada. His research
+     vol. 32, no. 3, pp. 2225–2233, May 2017.                                                                   interests include transient stability analysis, real-time
+[19] S. Fan, H. Ding, A. Kariyawasam, and A. Gole, “Parallel electromagnetic                                    simulation, and field programmable gate arrays.
+     transients simulation with shared memory architecture computers,” IEEE
+     Trans. Power Del., vol. 33, no. 1, pp. 239–247, Feb. 2018.
+[20] Z. Zhou and V. Dinavahi, “Parallel massive-thread electromagnetic tran-
+     sient simulation on GPU,” IEEE Trans. Power Del., vol. 29, no. 3,
+     pp. 1045–1053, Jun. 2014.
+[21] N. Lin and V. Dinavahi, “Exact nonlinear micromodeling for fine-grained
+     parallel EMT simulation of MTDC grid interaction with wind farm,” IEEE
+     Trans. Ind. Electron., vol. 66, no. 8, pp. 6427–6436, Aug. 2019.                                            Venkata Dinavahi (Fellow, IEEE) received the
+[22] T. Cheng, N. Lin, and V. Dinavahi, “Hybrid parallel-in-time-and-                                            B.Eng. degree in electrical engineering from the
+     space transient stability simulation of large-scale AC/DC grids,” IEEE                                      Visvesvaraya National Institute of Technology, Nag-
+     Trans. Power Syst., early access, Feb. 25, 2022, doi: 10.1109/TP-                                           pur, India, in 1993, the M.Tech. degree in electrical
+     WRS.2022.3153450.                                                                                           engineering from the Indian Institute of Technology
+[23] NVIDIA Corp., “NVIDIA Ampere GA102 GPU architecture,” 2021.                                                 Kanpur, Kanpur, India, in 1996, and the Ph.D. degree
+[24] O. Tremblay and L. Dessaint, “Experimental validation of a battery                                          in electrical and computer engineering from the Uni-
+     dynamic model for EV applications,” World Electric Veh. J., vol. 3,                                         versity of Toronto, Toronto, ON, Canada, in 2000.
+     pp. 289–298, 2009.                                                                                          He is currently a Professor with the Department of
+[25] G. Wang et al., “A review of power electronics for grid connection of                                       Electrical and Computer Engineering, University of
+     utility-scale battery energy storage systems,” IEEE Trans. Sustain. Energy,                                 Alberta, Edmonton, AB, Canada. His research in-
+     vol. 7, no. 4, pp. 1778–1790, Oct. 2016.                                        terests include real-time simulation of power systems and power electronic
+[26] Working Group B4. 57, “Guide for the development of models for HVDC             systems, electromagnetic transients, device-level modeling, large-scale systems,
+     converters in a HVDC grid,” CIGRE, Paris, France, Tech. Rep. 604, 2014.         and parallel and distributed computing. He is a fellow of the Engineering Institute
+[27] S. Hui, K. Fung, and C. Christopoulos, “Decoupled simulation of DC-             of Canada.
+     linked power electronic systems using transmission-line links,” IEEE
+     Trans. Power Electron., vol. 9, no. 1, pp. 85–91, Jan. 1994.
+[28] P. Kundur, Power System Stability and Control., New York, NY, USA:
+     McGraw-Hill, 1994.
+[29] NVIDIA Corp, “CUDA C programming guide,” Nov. 2021.
+
+
+
+
+                            Ning Lin (Member, IEEE) received the B.Sc. and
+                            M.Sc. degrees in electrical engineering from Zhe-
+                            jiang University, Hangzhou, China, in 2008 and 2011,
+                            respectively, and the Ph.D. degree in electrical and
+                            computer engineering from the University of Alberta,
+                            Edmonton, AB, Canada, in 2018. He was an Engi-
+                            neer on substation automation, flexible AC transmis-
+                            sion systems, and HVDC transmission control and
+                            protection. He is currently a Senior Power System
+                            Consultant. His research interests include AC/DC
+                            grids, electromagnetic transient simulation, transient
+stability analysis, real-time emulation, and heterogeneous high-performance
+computing of power systems, and power electronics systems.
+
+
+
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 02:06:14 UTC from IEEE Xplore. Restrictions apply.
+

@@ -1,0 +1,750 @@
+IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 40, NO. 5, OCTOBER 2025                                                                                            2931
+
+
+
+
+    An Electromagnetic Transient Simulation Model of
+     MMC-BESS for Various Operating Conditions
+                 Shunliang Wang , Member, IEEE, Minghao Huang , Hao Tu , Senior Member, IEEE,
+             Rui Zhang , Graduate Student Member, IEEE, Junpeng Ma , Member, IEEE, Guangqiang Peng,
+                                      and Tianqi Liu , Senior Member, IEEE
+
+
+   Abstract—Existing electromagnetic transient (EMT) simulation
+models of the modular multilevel converter with an embedded
+battery energy storage system (MMC-BESS) often suffer from
+computational inefficiencies and difficulties in accurately simulat-
+ing fault behaviors. To address these issues, this paper proposes an
+efficient EMT model for the MMC-BESS. The proposed model im-
+proves the detailed equivalent model (DEM) by accounting for the
+complex scenarios where both switches in the same leg are simul-
+taneously turned off. The converter blocked state is simulated by
+incorporating auxiliary PSCAD switches and leveraging its built-in
+interpolation algorithms, while the battery disconnection is simu-
+lated by using supplementary decision formulas. Furthermore, a
+speedup calculation method is introduced to further optimize sim-
+ulation efficiency. Evaluation of the proposed model is performed
+in the context of an HVDC system in PSCAD/EMTDC simulation
+environment, encompassing steady-state operation, transient re-
+sponses, and faulted operating conditions. The results confirm the
+simulation accuracy and efficiency of the proposed model.
+   Index Terms—Electromagnetic transients (EMT) simulation,
+high-voltage direct current (HVDC) system, modular multilevel
+converter (MMC).                                                                   Fig. 1.   The topology of an MMC-BESS.
+
+
+                            I. INTRODUCTION
+   IN recent years, the world has witnessed a remarkable surge
+in the penetration rate of sustainable energy sources, includ-
+ing wind turbines and solar photovoltaics [1]. Owing to their
+inherent fluctuations and unpredictability [2], [3], the battery
+energy storage system (BESS), which possesses the capability of
+power smoothing, peak shaving, load balancing, and frequency
+regulation, has become an indispensable component in modern                        Fig. 2.   The topology of SMs in the MMC-BESS.
+power systems [4], [5], [6]. Among existing BESS technolo-
+gies, the modular multilevel converter with an embedded BESS                       advantages including high efficiency, large capacity, commend-
+(MMC-BESS) has emerged as one promising option, owing to its                       able modularity, and the flexibility of energy storage capacity
+                                                                                   adjustment [7], [8].
+   Received 20 January 2025; revised 14 June 2025; accepted 14 August 2025.           The topology of an MMC-BESS is depicted in Fig. 1, where
+Date of publication 18 August 2025; date of current version 25 September
+2025. This work was supported by Smart Grid-National Science and Technology        every phase leg comprises a multivalve and an arm inductor.
+Major Project under Grant 2024ZD0801600. Paper no. TPWRD-00095-2025.               Each multivalve is constructed by multiple series-connected
+(Corresponding author: Hao Tu.)                                                    submodules (SMs), whose topology is shown in Fig. 2 [9], [10],
+   Shunliang Wang, Minghao Huang, Hao Tu, Rui Zhang, Junpeng Ma,
+and Tianqi Liu are with the College of Electrical Engineering, Sichuan             [11], [12]. The battery is connected to the SM capacitor through
+University, Chengdu 610031, China (e-mail: slwang@scu.edu.cn; huang-               a Buck-Boost converter, reducing the DC filtering requirement,
+minghao2023@stu.scu.edu.cn; htu@ieee.org; rui_zhang@stu.scu.edu.cn;                enabling control of the battery current, and potentially increas-
+jma@scu.edu.cn; tqliu@scu.edu.cn).
+   Guangqiang Peng is with the China Southern Power Grid Extra High Volt-          ing the lifespan of the battery [13], [14]. The extensive use
+age Power Transmission Company, Guangzhou 510663, China (e-mail: peng-             of switching devices in the MMC-BESS poses challenges to
+guangqiang@ehv.csg.cn).                                                            electromagnetic transient (EMT) simulations, which are widely
+   Color versions of one or more figures in this article are available at
+https://doi.org/10.1109/TPWRD.2025.3599870.                                        used in practice to verify the MMC-BESS’s dynamic behaviors
+   Digital Object Identifier 10.1109/TPWRD.2025.3599870                            for various operating conditions, particularly during faults.
+      0885-8977 © 2025 IEEE. All rights reserved, including rights for text and data mining, and training of artificial intelligence and similar technologies.
+Personal use is permitted, but republication/redistribution requires IEEE permission. See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 06:31:06 UTC from IEEE Xplore. Restrictions apply.
+2932                                                                               IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 40, NO. 5, OCTOBER 2025
+
+
+
+    Conventionally, the detailed switching model (DSM) of the                   does not cover scenarios involving converter blocking and bat-
+MMC-BESS is used for EMT simulations. In DSM, every                             tery disconnection. Therefore, it necessitates further extensions
+circuit component is modeled as a parallel combination of an                    of the DEM to accurately represent these additional operational
+admittance and a current source. The entire system is then                      conditions.
+represented as an admittance matrix and current source matrix,                     To address the above issues, an improved DEM (IDEM) of
+with which the node voltages are solved for each time step [15].                MMC-BESS is developed in this paper. Compared to existing
+To accurately simulate the switching operation of power elec-                   methods, the novelty and contribution of the proposed IDEM
+tronics devices, the admittance matrix must be updated whenever                 are summarized as follows.
+there is a change in the switching state, a process known as                       r A modeling framework is established for MMC-BESS,
+re-triangulation [16]. Owing to the numerous switching devices                        enabling the development of an EMT model for sim-
+and their high-frequency switching characteristics, conventional                      ulating MMC-BESS’s response under various operating
+EMT modeling methods become exceedingly time-consuming                                conditions.
+and inefficient for simulating power systems with the MMC-                         r The IDEM accounts for the complex scenarios where both
+BESS.                                                                                 switches in the same leg are simultaneously turned off: by
+    To mitigate computational complexity, efficient models in-                        leveraging auxiliary PSCAD switches and its built-in inter-
+cluding detailed equivalent models (DEM) and average-value                            polation algorithms, it enables simulation of the converter
+models (AVM) have been developed. The AVM simplifies the                              blocked state; by introducing supplementary decision for-
+model by treating the multivalve or the entire MMC as a closed                        mulas, it facilitates the simulation of battery disconnection.
+box. In [17], the AVM of MMC is incorporated into the EMT                          r A speedup calculation method is proposed based on the
+environment and validated in an existing HVDC system. In                              IDEM by simplifying the model considering the operation
+[18] and [19], a specialized module called Blocking Module                            condition, which significantly reduces the number of ad-
+(BM) is incorporated in the AVM, allowing it to simulate the                          dition and multiplication operations and thereby improves
+dynamics of a blocked MMC during DC faults. The author in                             simulation efficiency.
+[20] proposes an AVM of MMC-BESS that uses average SM                              r The simulation accuracy and efficiency of the IDEM are
+capacitor voltages and battery current, and models the multivalve                     demonstrated through MMC-BESS responses under AC
+as a controlled voltage source. By ignoring the internal dynamics                     faults, DC faults, and battery disconnection scenarios.
+of the multivalve and the switching characteristics of power                       The remainder of this paper is structured as follows. Sec-
+electronic devices, AVMs are unable to simulate the internal                    tion II presents the operation modes of MMC-BESS. Section III
+electrical variables of the SMs and could potentially lead to                   presents the modeling framework. Section IV presents the pro-
+inaccurate simulation results.                                                  posed IDEM. In Section V, results verify the acceleration ratio
+    The DEM models each multivalve as a Thevenin equivalent                     and accuracy of the IDEM. In Section VI, the conclusion is
+circuit, such that the system admittance matrix’s dimension is                  presented.
+significantly reduced. Further, it can preserve the SM internal
+information by back-calculating the electrical variables inside
+the equivalent model. This solution is widely used for modeling                              II. OVERVIEW OF MMC-BESS OPERATION
+the MMC [21] and solid-state transformers (SST) [22], [23]. In                     This section begins with an overview of the operating modes
+[24], the DEM is proposed for MMCs consisting of multi-port                     of an MMC-BESS. Then, it introduces the Dommel algorithm
+SMs based on generalized Norton Equivalents. The work in [25]                   for EMT simulation, emphasizing the challenges associated with
+merges the DEM and AVM in a universal arm equivalent circuit                    using the DSM of MMC-BESS in such simulations.
+and dynamically adjusts the models used for simulation.
+    In the DEMs of MMC proposed in the above literature, the
+internal parameters of the Thevenin equivalent are adjusted                     A. Operating Modes of the MMC-BESS
+based on the firing pulses of the switches, which remains valid                    As illustrated in Fig. 2, the battery is integrated into the SM
+if the firing pulses for the upper and lower switches are comple-               of the MMC-BESS through a Buck-Boost converter. According
+mentary. However, during fault conditions, emergency control                    to the IGBT firing pulse FP1-4 for the four switches T1-4 , the
+actions may result in both switches in a leg being simultaneously               operation conditions of the SM can be divided into 9 states,
+turned off, thereby invalidating the existing models. To address                as shown in Table I. When F PN = 1, it indicates that IGBT
+this issue, the work in [26] introduces an enhanced DEM of                      TN is turned on, while F PN = 0 indicates that it is turned off.
+MMC that incorporates additional switches to select appropriate                 To avoid shoot-through, T1 (T3 ) and T2 (T4 ) are not turned on
+model branches corresponding to different operating conditions.                 simultaneously.
+    In the MMC-BESS SM shown in Fig. 2, not only can both                          When the system operates under normal conditions, the firing
+T1 and T2 be switched off during faults, but also both T3 and T4                pulses for IGBTs of T1 and T2 are complementary, and the
+can be switched off simultaneously in the battery disconnection                 SM can be either inserted or bypassed. The battery operates
+scenarios, resulting in more complex operation modes. In [27],                  in one of the four modes: discharging, charging, freewheeling,
+the DEM of MMC-BESS that follows the idea of replacing SMs                      and disconnection. Fig. 2 shows the combination of the two
+by Thevenin circuits is proposed and validated against DSM                      operation states of the SMs with the four operation modes of the
+under normal operating conditions. However, this model also                     battery under system normal operation conditions with positive
+
+         Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 06:31:06 UTC from IEEE Xplore. Restrictions apply.
+WANG et al.: ELECTROMAGNETIC TRANSIENT SIMULATION MODEL OF MMC-BESS FOR VARIOUS OPERATING CONDITIONS                                                     2933
+
+
+
+                               TABLE I                                            B. Challenges of Using the DSM of the MMC-BESS for EMT
+          OPERATION STATES OF SM BASED ON THE FIRING PULSES
+                                                                                  Simulation
+                                                                                     The nodal analysis method is the most common method for
+                                                                                  solving electromagnetic transient problems, with its foundation
+                                                                                  being the Dommel algorithm. This algorithm discretizes the
+                                                                                  system through numerical integration substitution and trans-
+                                                                                  forms each dynamic component into a Norton equivalent circuit
+                                                                                  comprising a conductance and a current source. Within each
+                                                                                  time step, the equivalent current source is updated, which is a
+                                                                                  function of the network’s historical values, while node voltage
+                                                                                  of the network is obtained by solving (1) using the nodal analysis
+                                                                                  method.
+
+                                                                                                                    YU =I                                (1)
+
+                                                                                     In (1), U denotes the nodal voltage vector, and I denotes the
+                                                                                  nodal current injection vector, which is composed of the inherent
+                                                                                  current sources in the circuit and the historical current sources
+                                                                                  obtained from discretization. Y denotes the system admittance
+                                                                                  matrix, whose dimension is identical to the node number.
+                                                                                     With the DSM, when there are switching actions in the sys-
+                                                                                  tem, the system topology and therefore its admittance matrix
+                                                                                  Y change accordingly. Consequently, it is necessary to perform
+                                                                                  the inverse operation (re-triangulation) on the new admittance
+                                                                                  matrix to solve for the voltage. In an MMC-BESS system, due
+                                                                                  to the large number of switches that operate at high frequencies,
+                                                                                  the admittance matrix changes frequently. Since the inversion of
+                                                                                  a large admittance matrix is computationally intensive and inef-
+                                                                                  ficient, the DSM of MMC-BESS poses significant computation
+                                                                                  burden on the EMT program, rendering it impractical for use in
+                                                                                  many cases.
+Fig. 3.   Normal operation states of SMs in MMC-BESS.
+
+
+current flowing into the SM. In Fig. 3, labels A-F correspond to                    III. DEVELOPMENT OF THE DETAILED EQUIVALENT MODEL
+the states A-F in Table I.                                                          This section first presents the proposed modeling framework
+   The operation mode of the battery is primarily controlled by                   based on the nodal analysis method. Then, by deriving the
+the connected Buck-Boost converter. Typically, the voltage of                     Thevenin equivalent for the multivalve and updating the inter-
+the capacitor exceeds that of the battery, with the Buck-Boost                    nal variables at each time step, the DEM of MMC-BESS is
+converter operating in boost mode. If F P3 = 1, F P4 = 0, the                     developed.
+battery is charging or discharging through the Buck-Boost con-
+verter. During charging, the current flows through the IGBT of
+                                                                                  A. The Proposed Modeling Framework
+T3 to charge the battery; during discharging, the current flows
+through the diode of T3 to discharge externally. When FP3 =0,                        Fig. 4 depicts the proposed modeling framework for MMC-
+F P4 = 1, the battery is in freewheeling mode, and the current                    BESS. It first partitions the original system into non-switching
+flows through the inductor and the IGBT of T4 .                                   subsystems and switching subsystems. The non-switching sub-
+   When F P3 = 0 and F P4 = 0, the battery becomes discon-                        system is characterized by a time-invariant admittance matrix,
+nected from the system, and the converter functions as a con-                     whereas the switching subsystem involves switches operating at
+ventional MMC. This operational mode is advantageous for                          high frequencies, resulting in a time-varying admittance matrix.
+minimizing switching losses during normal conditions or ac-                          For every simulation time step, the Thevenin equivalents of
+commodating scenarios such as battery failure or depletion.                       the switching subsystems are derived. Each switching subsystem
+   When F P1 = 0 and F P2 = 0, the IGBTs are turned off, and                      is represented as a combination of a time-varying resistor and a
+the switch pairs T1 and T2 act as diodes. The inserted and                        time-varying voltage source, simplifying it into a 3-node equiv-
+bypassed states of SMs depend on the current flow direction.                      alent circuit. This approach replaces the switching subsystem
+This operation condition corresponds to the states G, H, and I                    with a non-switching Thevenin equivalent, maintaining a fixed
+in Table I and typically arises when a DC fault occurs and the                    structure while incorporating time-varying parameters. Conse-
+batteries are disconnected due to failure or depletion, where it is               quently, the system’s admittance matrix is transformed into a
+essential to block the converter by turning T1 and T2 of the SMs                  fixed-structure matrix with a significantly reduced number of
+off.                                                                              dimensions, which can be efficiently solved using an EMT solver
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 06:31:06 UTC from IEEE Xplore. Restrictions apply.
+2934                                                                                 IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 40, NO. 5, OCTOBER 2025
+
+
+
+                                                                                  is a small value in milliohms; conversely, when the IGBT is
+                                                                                  turned off, its equivalent resistance is a large value in megaohms.
+                                                                                  Therefore, the switch pairs T1-4 can be modeled as two-state
+                                                                                  resistors R1-4 , respectively.
+                                                                                     According to the Dommel method and trapezoidal integration
+                                                                                  method, a dynamic component can be discretized and repre-
+                                                                                  sented as a voltage source in series with a resistor. Taking the
+                                                                                  capacitor CSM in the SM of Fig. 2 as an example, the trapezoidal
+                                                                                  integration approach is used to approximate the integration of
+                                                                                  the capacitor’s current, as indicated by (2). In (2), vC denotes
+                                                                                  the capacitor voltage, iC denotes the capacitor current, C refers
+                                                                                  to the capacitance value, and Δt refers to the time step in a
+                                                                                  fixed-step simulation setting.
+                                                                                                                     
+                                                                                                                  1 t
+                                                                                       vC (t) − vC (t − Δt) =               iC (τ )
+                                                                                                                  C t−Δt
+                                                                                                                       Δt
+                                                                                                                   ≈      · (iC (t) + iC (t − Δt))      (2)
+                                                                                                                       2C
+                                                                                      Defining
+                                                                                                Δt
+                                                                                       RC =        , VC,his = vC (t − Δt) + RC · iC (t − Δt)            (3)
+                                                                                                2C
+                                                                                      By substituting (3) into (2), vC (t) is expressed as
+                                                                                                        vC (t) = RC · iC (t) + VC,his                   (4)
+
+Fig. 4.   Framework of the proposed modeling method.                                 Therefore, the capacitor can be modeled as a series circuit
+                                                                                  comprising a resistor RC connected and a controlled voltage
+                                                                                  source VC,his , whose value is computed from the capacitor
+to compute the system-level variables including the current iport                 voltage and current from the last time step. Meanwhile, RC
+flowing into the switching subsystems.                                            is calculated based on the capacitance value and the simulation
+   Then, by exploiting iport and the internal variables from                      time step, and it is constant in a fixed-step simulation.
+the last time step t-Δt, the internal variables of the switching                     Similarly, the inductor LSM in the SM of Fig. 2 can also
+subsystems at time step t can be obtained. Using the calculated                   be equivalent to a resistor and a controlled voltage source,
+internal variables and the firing pulses at time step t, the Thevenin             with the process shown in (5)–(7), where vL represents the
+equivalent of the switching subsystem for the subsequent time                     inductor voltage, iL represents the inductor current, L denotes
+step t+Δt is obtained. The procedure repeats until the simulation                 the inductance value, RL denotes the resistance of the equivalent
+duration is reached.                                                              resistor, and VL,his denotes the controlled voltage source whose
+   In the modeling framework, each multivalve in the MMC-                         value is computed from the inductor voltage and current from
+BESS is treated as a switching subsystem since the SMs within                     the last time step.
+a multivalve can be combined as a single equivalent circuit. This                                               
+method reduces the number of switching subsystems to 6 regard-                                               1 t
+                                                                                     iL (t) − iL (t − Δt) =            vL (τ )
+less of the number of SMs, greatly reducing the computation                                                  L t−Δt
+time.
+                                                                                                                  Δt
+                                                                                                              ≈      · (vL (t) + vL (t − Δt))           (5)
+                                                                                                                  2L
+B. Derive Thevenin Equivalent for the Multivalves
+                                                                                                 2L
+                                                                                        RL =        , VL,his = −vL (t − Δt) − RL · iL (t − Δt) (6)
+   Considering the SM shown in Fig. 2, we first present its                                      Δt
+modeling method when the firing pulses for IGBTs of T1 (T3 ) and
+                                                                                                       vL (t) = RL · iL (t) + VL,his                    (7)
+T2 (T4 ) are complementary. The modeling method when T1 (T3 )
+and T2 (T4 ) are turned off simultaneously will be discussed in                      Additionally, the battery is represented by the Rint model,
+the next section.                                                                 consisting of an equivalent internal resistance Rbat and a voltage
+   In simulations, the pair of an IGBT with an antiparallel diode,                source Vbat [28], [29], [30]. The battery State of Charge (SOC)
+acting as a bidirectional switch with alternating conduction                      is computed as
+paths, can be considered as a resistor with two states. The state of                                                       
+the resistor depends on the firing pulses received by the IGBT in                                                       1 T
+                                                                                                 SOC(T ) = SOC0 −              ibat dt            (8)
+each pair. When the IGBT is turned on, its equivalent resistance                                                        Q 0
+
+
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 06:31:06 UTC from IEEE Xplore. Restrictions apply.
+WANG et al.: ELECTROMAGNETIC TRANSIENT SIMULATION MODEL OF MMC-BESS FOR VARIOUS OPERATING CONDITIONS                                                      2935
+
+
+
+                                                                                   and “||” means parallel connection between components.
+                                                                                      The equivalent circuit of a multivalve can be obtained by
+                                                                                   connecting the SMs in series, as shown in Fig. 6(b). Equation
+                                                                                   (12) and (13) gives Thevenin equivalent resistance RMV and
+                                                                                   Thevenin equivalent voltage VMV of a multivalve, where N is
+                                                                                   the number of SMs in a multivalve.
+                                                                                                                         N
+                                                                                                                         
+                                                                                                               VMV =            VSM,i                     (12)
+                                                                                                                         i=1
+Fig. 5.    Equivalent circuit of SM in MMC-BESS.
+                                                                                                                          N
+                                                                                                                          
+                                                                                                               RMV =            RSM,i                     (13)
+                                                                                                                          i=1
+
+                                                                                      The above treatment simplifies the original complex and
+                                                                                   time-varying network into a simple 3-node network, drastically
+                                                                                   reducing the dimensions of system admittance matrix. The com-
+                                                                                   putational effort required for deriving the Thevenin equivalent
+                                                                                   at each time step is negligible compared to inverting a large
+                                                                                   admittance matrix. Therefore, this method can greatly accelerate
+                                                                                   the simulation speed for MMC-BESS, particularly when the
+                                                                                   number of SMs is large.
+
+                                                                                   C. Update Internal Variables for the Multivalve
+                                                                                      As indicated by (2) and (5), to update the internal informa-
+                                                                                   tion of each SM at every simulation time step, it is necessary
+Fig. 6. Development of the equivalent circuit for the multivalve: (a) Equivalent   to not only preserve the capacitor voltage vC (t − Δt) and
+circuit of an SM; (b) Equivalent SMs connected in series; (c) Equivalent circuit   current iC (t − Δt), inductor voltage vL (t − Δt) and current
+of a multivalve.                                                                   iL (t − Δt) from the previous simulation time step, but also
+                                                                                   obtain the capacitor current iC (t) and inductor current iL (t)
+where SOC(T) denotes the SOC at time T, SOC0 denotes the ini-                      at the current time step.
+tial SOC, ibat denotes the current that flows out from the positive                   After substituting the equivalent circuits, the EMT solver can
+terminal of the battery, and Q denotes the battery capacity.                       compute the node voltages and the multivalve current iMV at
+   It is worth noting that the proposed MMC-BESS modeling                          time step t. As all SMs are in series, the SM current iSM is
+framework is compatible with other advanced battery model                          identical to the multivalve current, i.e., iSM = iMV . Considering
+such as the one in [30] with minor modifications. However, since                   the topology of each SM is fixed, the capacitor current iC (t)
+the focus of the paper is the EMT model of the MMC-BESS,                           and inductor current iL (t) can be calculated using (14)–(16),
+advanced battery models are not discussed.                                         where iSM (t) is provided by the EMT solver, R1-4 are deter-
+   With the above equivalent models for the capacitor, inductor,                   mined to the firing pulses of each SM, RL and RC are constant
+IGBT-diode switch pairs, and the battery, the SM circuit diagram                   values, VC,his and VL,his are historical value information that is
+can be transformed into an equivalent circuit as shown in Fig. 5.                  preserved, and Rbat and Vbat are given by the battery model.
+Moreover, the equivalent circuit can be externally modeled as a                                              R2       RDC2      VC,his
+two-port network comprising an equivalent resistor connected                       iC (t) = iSM (t) ·              ·          −
+                                                                                                         R2 + RR2eq RC + RDC2   RV Ceq
+in series with a voltage source according to Thevenin theorem,
+as shown in Fig. 6(a). The resistor RSM and voltage VSM are                                        Vbat − VL,his         R4         R1 + R2
+                                                                                               +                 ·                ·
+given as:                                                                                            RV Leq        R4 +(RDC1 +R3 ) RC +R1 +R2
+                                                                                                                                           (14)
+   RSM = R2  {R1 + RC  [R3 + R4  (RL + Rbat )]}    (9)
+                                                                                                               R2       RC        R4
+            R2                     b                                                iL (t) = −iSM (t) ·              ·        ·
+   VSM =          · VC,his ·                                                                                R2 +RR2eq RC +RDC2 R4 +Rbat +RL
+         R1 + R2               RC + b
+                                                                                                  VC,his     R1 + R2         R4
+                                     d        c                                                −          ·             ·
+         + (Vbat − VL,his ) ·              ·         (10)                                          RV Ceq R1 + R2 + RDC2 R4 + Rbat + RL
+                              Rbat + RL + d R3 + c
+                                                                                                   Vbat − VL,his
+where                                                                                          +                                                          (15)
+                                                                                                     RV Leq
+          a = R3 + [R4  (Rbat + RL )] b = a  (R1 + R2 )                          where
+          c = RC  (R1 + R2 )d = R4  (R3 + c)                            (11)                  RDC1 = RC  (R1 + R2 )
+
+             Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 06:31:06 UTC from IEEE Xplore. Restrictions apply.
+2936                                                                                 IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 40, NO. 5, OCTOBER 2025
+
+
+
+
+Fig. 7.   Current conduction paths. (a) Positive current. (b) Negative current.
+
+
+
+             RDC2 = R3 + R4  (Rbat + RL )
+            RV Leq = Rbat + RL + R4  (RDC1 + R3 )                                Fig. 8. Development of the equivalent circuit for the multivalve in the blocked
+                                                                                  state: (a) SM topology in the blocked state; (b) Equivalent circuit of an SM;
+            RV Ceq = RC + (R1 + R2 )  RDC2                                       (c) Equivalent SMs connected in series; and (d) Equivalent circuit of a multivalve.
+             RR2eq = R1 + RC  RDC2                                        (16)
+                                                                                  A. Equivalent Model in Converter Blocked State
+   By deriving the Thevenin equivalent and updating the internal                     As shown in Fig. 8, the switches T1 and T2 can be reduced
+variables of SMs at each time step, the proposed method can                       to diodes when the converter is blocked state. The SM internal
+significantly increase the simulation speed while preserving all                  components, including the capacitor, switches T3 and T4, the
+information inside the SMs.                                                       inductor LSM , and the battery, can be equivalent to a resistance
+                                                                                  RSM _in and voltage VSM _in given by
+             IV. IMPROVED DEM OF THE MMC-BESS
+                                                                                               RSM_in = RC  [R3 + R4  (RL + Rbat )]                          (17)
+   In the modeling framework presented in the last section, the
+                                                                                                                        b
+equivalent resistance of the switch pair is determined by the                                  VSM_in = VC,his ·             + (Vbat − VL,his )
+firing pulses. However, this is not true if the upper and lower                                                       RC + b
+switches are simultaneously turned off, which occurs when it is                                                        d         c
+                                                                                                             ×                ·                                (18)
+desired to block the MMC-BESS, e.g., during faults. In this case,                                                Rbat + RL + d R3 + c
+the SM turns into an uncontrolled diode rectification circuit,                    where
+where the conducting device (and thus the equivalent resistance)
+is governed by the current direction, as shown in Fig. 7.                             a = R3 + [R4  (Rbat + RL )]                b=a
+   As a result, the equivalent resistance R1 and R2 of T1 and                         c = RC                                      d = R4  (R3 + c)            (19)
+T2 are governed by the current direction. However, determining
+R1 and R2 at time t+Δt by measuring the multivalve current                           The equations for updating the internal variables, i.e., capac-
+iMV (t) in simulation can lead to significant errors. As the current              itor current iC (t) and inductor current iL (t) are as given by
+rate of change can be very large during faults, it is easy for the                                          RDC2      VC,his
+current to cross zero between t and t+Δt. Under such circum-                         iC (t) = iin (t) ·             −
+                                                                                                          RC + RDC2   RV Ceq
+stances, the switches’ state and their corresponding equivalent
+resistance R1 and R2 should change accordingly. However, in                                          Vbat − VL,his          R4
+                                                                                                 +                 ·                                           (20)
+fixed-step simulations, the current zero-crossing point might not                                      RV Leq        R4 + (RDC1 + R3 )
+be accurately captured, leading to discrepancies in the calculated
+                                                                                                                RC          R4
+node voltage at time t+Δt. Consequently, the calculated iMV (t)                      iL (t) = − iin (t) ·             ·
+might not cross zero, leading to incorrect equivalent resistance                                             RC + RDC2 R4 + Rbat + RL
+at the next time step. Over time, the cumulative errors can lead                                     VC,his      R4          Vbat − VL,his
+                                                                                                 −          ·              +                                   (21)
+to a substantial deviation from the expected simulation results,                                     RV Ceq R4 + Rbat + RL     RV Leq
+causing significant inaccuracies.
+                                                                                  where
+   In the following, the equivalent model for the MMC-BESS
+in the blocked state is first presented. Then, an IDEM is pro-                                 RDC1 = RC
+posed, which enables the simulation of the converter’s normal
+                                                                                               RDC2 = R3 + R4  (Rbat + RL )
+operation, the blocked state, and battery disconnection. Finally,
+a speedup calculation method of the IDEM is presented.                                        RV Leq = Rbat + RL + R4  (RDC1 + R3 )
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 06:31:06 UTC from IEEE Xplore. Restrictions apply.
+WANG et al.: ELECTROMAGNETIC TRANSIENT SIMULATION MODEL OF MMC-BESS FOR VARIOUS OPERATING CONDITIONS                                                     2937
+
+
+
+                                                                                     In contrast to T1 and T2 , which are connected to the external
+                                                                                  nodes of the Thevenin equivalent circuit, T3 and T4 are located
+                                                                                  inside the equivalent circuit. This position makes it impossible
+                                                                                  to add external PSCAD switches to detect the current direction
+                                                                                  and simulate the disconnection mode of the battery, where the
+                                                                                  IGBTs of T3 and T4 are simultaneously turned off. However, the
+                                                                                  ability of the equivalent model to obtain all internal electrical
+                                                                                  information of SMs, including the voltages and currents of
+                                                                                  the battery, inductor, and capacitor, enables the calculation of
+                                                                                  the voltage across the diode. This calculation allows for the
+Fig. 9.   Structure of the improved equivalent model.
+                                                                                  determination of the diode conduction state. Given that the
+                                                                                  diode’s forward voltage drop is vf , (24) illustrates the approach
+           RV Ceq = RC + RDC2                                                     to calculating the equivalent resistance R3 and R4 when T3 and
+            RR2eq = RC  RDC2                                            (22)     T4 are simultaneously turned off.
+                                                                                                  
+  As all the SMs have the same current ism , the diodes of all                                      Ron Vbat − vL − iL · Rbat − vC ≥ vf
+                                                                                           R3 ≈
+SMs exhibit consistent conduction behavior. This allows the                                         Rof f Vbat − vL − iL · Rbat − vC < vf
+equivalent representation of series-connected SMs as shown in                                       
+Fig. 8(c) with model parameters are given by                                                         Ron vL + iL · Rbat − Vbat ≥ vf
+                                                                                            R4 ≈                                                         (24)
+                                      N
+                                                                                                     Rof f vL + iL · Rbat − Vbat < vf
+                                      
+                         RMV_in =           RSM_in,i                                 By taking into account the aforementioned conditions, the
+                                      i=1                                         model proposed in this paper is capable of simulating any switch-
+                                      N
+                                                                                 ing combinations of the SM, which overcomes the limitations
+                          VMV_in =          VSM_in,i                     (23)     of the conventional DEM.
+                                      i=1
+
+where RM V _in represents the multivalve equivalent resistance                    C. Speedup Calculation Method of the Equivalent Model
+and VM V _in represents the equivalent voltage.
+                                                                                      As discussed in the previous subsections, the proposed equiv-
+                                                                                  alent model has two separate sets of equations for normal
+B. Proposed Improved Equivalent Model
+                                                                                  operation and blocked states, i.e., (9)–(16) gives (17)–(23),
+   To obtain the proposed improved equivalent model, an aux-                      respectively. In the following, a speedup calculation method is
+iliary IGBT is added in anti-parallel configuration with diode                    proposed to reduce computational load, which can be imple-
+TMV1 as depicted in Fig. 9. In the improved model, the auxiliary                  mented as a lookup table, as shown in Table II.
+IGBT allows both normal and blocked state operation, while                            In the speedup calculation method, all six allowable cases of
+the diodes of TMV1 and TMV2 are implemented using PSCAD                           equivalent resistance (R1 , R2 , R3 , R4 ) are listed by assuming
+switches with built-in interpolation algorithms.                                  that Ri (i = 1, 2, 3, 4) is 0 when conducting and infinite when
+   During normal operation, the auxiliary IGBT is switched on.                    turned off. Note that only six cases are allowed, while other
+If iM V > 0, the multivalve current flows into the equivalent                     combinations are invalid. Further, it is noteworthy that substitut-
+model through the diode of TMV1 , with iin = iM V . If iM V < 0,                  ing R1 to 0, R2 →, ism to iin into (9)–(11) and (14)–(16) gives
+the diode TMV2 remains reverse-biased, forcing the multivalve                     (17)–(22). Considering the above factors, during each simulation
+current to exit via the IGBT of TMV1 , maintaining iin = iM V .                   time step, the case of (R1 , R2 , R3 , R4 ) is determined by 1) setting
+Thus, iin = iM V holds regardless of current polarity. The model                  Ri (i = 1, 2, 3, 4) based on its gate firing pulse in normal
+updates its internal variables and external equivalence through                   operation; 2) overwriting R1 to 0, R2 to  if converter is in
+(9)–(15), where the equivalent resistances R1 and R2 are deter-                   blocked operation; 3) overwriting R3 and R4 according to (24)
+mined by the firing pulses of T1 and T2 .                                         if the battery is disconnected.
+   During the blocked state, the auxiliary IGBT turns off, and                        Once the case of (R1 , R2 , R3 , R4 ) is determined, the ex-
+the circuit topology transitions to the configuration shown in                    pressions for equivalent model parameters RSM , VSM , iC (t),
+Fig. 8(d). The PSCAD diodes of TMV1 and TMV2 enable the                           and iL (t) can be simplified accordingly. The simplified expres-
+accurate detection of zero-crossing moments and the conduction                    sions are given in Table II, which is selected and used to update
+path. When iM V > 0, the multivalve current flows through                         the equivalent model for the next time step.
+the diode of TMV1 , giving iin = iM V . When iM V < 0, the                            To update RSM , VSM , iC (t), and iL (t) with the simplified
+multivalve current flows through the diode of TMV2 , resulting                    expressions, intermediate variables Kfixed1-5 and Krun˙1-2 are
+in iin = iM V . Therefore, the current measuring point for the                   required. Here, Kfixed1-5 are the pre-calculated variables com-
+proposed equivalent model is positioned internally as iM V _me .                  puted only once at the start of the simulation, while Krun˙1-2 are
+The internal measurement ensures applicability in both normal                     runtime variables that require updating every time step.
+and blocked states, while the external measurement would fail                         The proposed method reduces the number of addition and
+to maintain validity during blocked states.                                       multiplication operations by over 10 times compared to the
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 06:31:06 UTC from IEEE Xplore. Restrictions apply.
+2938                                                                                 IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 40, NO. 5, OCTOBER 2025
+
+
+
+                                                                      TABLE II
+                                         SIMPLIFIED CALCULATION FORMULAS ACCORDING TO EQUIVALENT RESISTANCE
+
+
+
+
+                                                                                                                  TABLE IV
+                                                                                                            POWER SETPOINT CHANGES
+
+
+
+
+Fig. 10.   The test system used for validation.
+
+                               TABLE III
+                     PARAMETERS FOR THE TEST SYSTEM
+
+
+
+                                                                                  simulation software PSCAD, employing the following three
+                                                                                  models: (i) DSM, (ii) DEM, and (iii) the proposed IDEM. The
+                                                                                  DSM simulation results provide the reference benchmark for
+                                                                                  validating the other models. The simulations are conducted with
+                                                                                  a 10 μs time step unless otherwise specified.
+
+                                                                                  B. Control System for the MMC-BESS
+                                                                                     The control block diagram for the MMC-BESS is illustrated
+                                                                                  in Fig. 11. Functioning as a three-port system, the MMC-BESS
+                                                                                  interfaces with the DC side, AC side, and BESS side. The main
+                                                                                  controller manages the power flow of the AC and DC sides.
+                                                                                  On the AC side, an outer-loop power control combined with
+original equations. Moreover, due to the small number of cases,                   a conventional inner-loop current control is employed. On the
+the computational effort involved in the look-up table is minimal.                DC side, the power regulation is achieved by controlling the
+Consequently, this method can effectively increase the simula-                    DC bus current, while the capacitor voltage balance is achieved
+tion speed.                                                                       through circulating current control. Carrier Phase-Shift SPWM
+                                                                                  (CPS-SPWM) is used as the modulation method.
+                        V. MODEL VALIDATION                                          The BESS controller manages the operation of the batteries
+                                                                                  in the SMs. The average value of the SMs’ capacitor voltages
+A. Test System                                                                    is obtained. It is then fed to a PI controller to generate the
+   This paper employs the test system depicted in Fig. 10 for                     average current reference, which is further apportioned to each
+validating the performance of the IDEM, with its parameters                       SM through SOC Balancing control. A mode-check module
+given in Table III. Faults applied at the AC-side PCC and the                     decides whether the battery should be connected or disconnected
+DC bus are simulated. Simulations are carried out in the EMT                      depending on operating requirements.
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 06:31:06 UTC from IEEE Xplore. Restrictions apply.
+WANG et al.: ELECTROMAGNETIC TRANSIENT SIMULATION MODEL OF MMC-BESS FOR VARIOUS OPERATING CONDITIONS                                                      2939
+
+
+
+
+                                                                                  Fig. 12. Responses to power set-point changes. (a) DC side active power;
+                                                                                  (b) AC side active power. (c) AC side reactive power. (d) Battery side active
+                                                                                  power. (e) DC current. (f) AC side A phase current. (g) Average SM capacitor
+                                                                                  voltage of A-phase upper multivalve. (h) Average battery current.
+Fig. 11.   Control block diagram of the MMC-BESS.
+
+
+C. Normal Operation Condition
+   To demonstrate the performance of the IDEM during the
+steady state and power set-point changes, the power references
+for AC power (PAC, ref ) and DC power (PDC, ref ) are configured
+based on Table IV. The results in Fig. 12 show that both the
+IDEM and the DEM match the trajectory of the benchmark
+DSM well, demonstrating the ability to accurately simulate the
+MMC-BESS’s response.
+
+D. AC Three-Phase Fault
+   To validate the accuracy of the ID EM to simulate AC faults,
+a three-phase-to-ground fault at PCC is triggered at 1s, lasting
+0.05 s. The results in Fig. 13 show that both the IDEM and the
+DEM align well with the trajectory of the benchmarking DSM,
+demonstrating their ability to accurately simulate the system’s
+response during the AC fault.
+
+E. DC Line-to-Ground Fault
+   At 1s, a line-to-ground fault on the DC line is triggered, and the
+DC side breaker opens after 5 ms. Simulation results in Fig. 14
+show the power distribution within the system. Upon the DC
+circuit breaker opening, the power transmission on the DC side is
+interrupted, and the BESS is capable of supplying the necessary
+                                                                                  Fig. 13. Three-phase-to-ground fault at PCC. (a) AC side A phase current.
+power to the AC side. Both the IDEM and the DEM accurately                        (b) Average SM capacitor voltage of A-phase upper multivalve. (c) DC current.
+simulate this process.                                                            (d) Average battery current. (e) A phase PCC voltage.
+   Similarly, a line-to-ground fault on the DC line is triggered at
+1s, while the batteries are disconnected. The converter is blocked
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 06:31:06 UTC from IEEE Xplore. Restrictions apply.
+2940                                                                                IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 40, NO. 5, OCTOBER 2025
+
+
+
+
+Fig. 14. DC line-to-ground fault. (a) DC side active power. (b) AC side active
+power. (c) AC side reactive power. (d) Battery side active power.
+
+
+
+
+                                                                                 Fig. 16. Switching to conventional MMC operation mode. (a) AC side A phase
+                                                                                 current. (b) Average SM capacitor voltage of A-phase upper multivalve. (c) DC
+                                                                                 current. (d) Average battery current.
+
+                                                                                                                TABLE V
+                                                                                                 COMPUTATIONAL TIMES OF DIFFERENT MODELS
+
+
+
+
+Fig. 15. DC line-to-ground fault when the batteries are disconnected. (a)
+DC side active power. (b) AC side active power. (c) AC side reactive power.
+(d) Battery side active power.
+
+
+                                                                                 G. Computational Efficiency Comparison
+at 1.003s, and the DC side breaker opens at 1.005s. As shown
+                                                                                    Table V shows the computational times of different models
+in Fig. 15, the IDEM accurately captures the behavior of the
+                                                                                 under different simulation time steps and the number of SMs in a
+converter during and after the fault, whereas the DEM deviates
+                                                                                 multivalve. The results are obtained by running the simulations
+significantly from the actual behavior.
+                                                                                 for 6 seconds, which were conducted on a computer using an
+                                                                                 Intel i9-10900F CPU and 64GB RAM.
+                                                                                    Compared to the DSM, all the models significantly improve
+F. Disconnections of the Batteries                                               the simulation speed without losing any information within the
+   To demonstrate the performance of the IDEM under different                    SMs. Despite the increased number of nodes of the IDEM in
+battery modes, the batteries are disconnected at 2s, and the                     comparison with the DEM, the proposed IDEM has the highest
+converter operates as a conventional MMC. As illustrated in                      acceleration ratio owing to the internal algorithm optimization.
+Fig. 16, the IDEM accurately simulates this process while the                    Moreover, IDEM can simulate the blocked state of the MMC and
+conventional DEM is unable to simulate the battery disconnec-                    the disconnection mode of the batteries, which are indispensable
+tion mode and deviates significantly from the actual behavior.                   for MMC-BESS.
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 06:31:06 UTC from IEEE Xplore. Restrictions apply.
+WANG et al.: ELECTROMAGNETIC TRANSIENT SIMULATION MODEL OF MMC-BESS FOR VARIOUS OPERATING CONDITIONS                                                           2941
+
+
+
+                             VI. CONCLUSION                                         [17] J. Peralta, H. Saad, S. Dennetiere, J. Mahseredjian, and S. Nguefeu,
+                                                                                         “Detailed and averaged models for a 401-level MMC–HVDC system,”
+   A modeling method to develop an IDEM of the MMC-BESS                                  IEEE Trans. Power Del., vol. 27, no. 3, pp. 1501–1508, Jul. 2012.
+for electromagnetic transient simulations is presented. The pro-                    [18] A. Beddard, C. E. Sheridan, M. Barnes, and T. C. Green, “Improved
+                                                                                         accuracy average value models of modular multilevel converters,” IEEE
+posed IDEM can achieve the same accuracy as the DSM while                                Trans. Power Del., vol. 31, no. 5, pp. 2260–2269, Oct. 2016.
+greatly enhancing the simulation efficiency. Meanwhile, the                         [19] H. Saad et al., “Modular multilevel converter models for electromag-
+proposed IDEM is capable of simulating various operating con-                            netic transients,” IEEE Trans. Power Del., vol. 29, no. 3, pp. 1481–1489,
+                                                                                         Jun. 2014.
+ditions, including the converter blocking operation and battery                     [20] N. Herath and S. Filizadeh, “Average-value model for a modular multilevel
+disconnection mode, making it highly adaptable for investigat-                           converter with embedded storage,” IEEE Trans. Energy Convers., vol. 36,
+ing different control strategies for the MMC-BESS.                                       no. 2, pp. 789–799, Jun. 2021.
+                                                                                    [21] U. N. Gnanarathna, A. M. Gole, and R. P. Jayasinghe, “Efficient model-
+   The proposed IDEM has been validated against a DSM in                                 ing of modular multilevel HVDC converters (MMC) on electromagnetic
+PSCAD/EMTDC simulations under various conditions, includ-                                transient simulation programs,” IEEE Trans. Power Del., vol. 26, no. 1,
+ing normal operation, AC faults, DC faults, and battery dis-                             pp. 316–324, Jan. 2011.
+                                                                                    [22] M. Feng, C. Gao, J. Xu, C. Zhao, and G. Li, “Modeling for complex
+connection scenarios. Results confirm the IDEM’s capability in                           modular power electronic transformers using parallel computing,” IEEE
+replicating the DSM’s accuracy while significantly improving                             Trans. Ind. Electron., vol. 70, no. 3, pp. 2639–2651, Mar. 2023.
+simulation speed, with demonstrated acceleration ratios that                        [23] S. Xia, J. Xu, L. Guo, S. Li, and H. Guo, “Real-time modeling method for
+                                                                                         large-scale photovoltaic power stations using nested fast and simultaneous
+outperform both DSM and DEM approaches.                                                  solution,” IEEE Trans. Ind. Electron., vol. 72, no. 3, pp. 2679–2689,
+                                                                                         Mar. 2025.
+                                   REFERENCES                                       [24] J. Xu, S. Fan, C. Zhao, and A. M. Gole, “High-speed EMT modeling
+                                                                                         of MMCs with arbitrary multiport submodule structures using gener-
+ [1] X. Li, L. Wang, N. Yan, and R. Ma, “Cooperative dispatch of distributed             alized norton equivalents,” IEEE Trans. Power Del., vol. 33, no. 3,
+     energy storage in distribution network with PV generation systems,” IEEE            pp. 1299–1307, Jun. 2018.
+     Trans. Appl. Supercond., vol. 31, no. 8, Nov. 2021, Art. no. 0604304.          [25] X. Meng et al., “Combining detailed equivalent model with switching-
+ [2] Z. Guo, W. Wei, L. Chen, Z. Y. Dong, and S. Mei, “Impact of energy                  function-based average value model for fast and accurate simulation
+     storage on renewable energy utilization: A geometric description,” IEEE             of MMCs,” IEEE Trans. Energy Convers., vol. 35, no. 1, pp. 484–496,
+     Trans. Sustain. Energy, vol. 12, no. 2, pp. 874–885, Apr. 2021.                     Mar. 2020.
+ [3] R. M. Elavarasan et al., “A comprehensive review on renewable energy           [26] F. B. Ajaei and R. Iravani, “Enhanced equivalent model of the modular
+     development, challenges, and policies of leading indian states with an              multilevel converter,” IEEE Trans. Power Del., vol. 30, no. 2, pp. 666–673,
+     international perspective,” IEEE Access, vol. 8, pp. 74432–74457, 2020.             Apr. 2015.
+ [4] X. Yang et al., “Reverse-blocking modular multilevel converter for battery     [27] N. Herath, S. Filizadeh, and M. S. Toulabi, “Modeling of a modular
+     energy storage systems,” J. Modern Power Syst. Clean Energy, vol. 5,                multilevel converter with embedded energy storage for electromagnetic
+     no. 4, pp. 652–662, Jul. 2017.                                                      transient simulations,” IEEE Trans. Energy Convers., vol. 34, no. 4,
+ [5] M. Eskandari, A. Rajabi, A. V. Savkin, M. H. Moradi, and Z. Y. Dong, “Bat-          pp. 2096–2105, Dec. 2019.
+     tery energy storage systems (BESSs) and the economy-dynamics of mi-            [28] V. Johnson, “Battery performance models in advisor,” J. Power Sources,
+     crogrids: Review, analysis, and classification for standardization of BESSs         vol. 110, no. 2, pp. 321–329, Aug. 2002.
+     applications,” J. Energy Storage, vol. 55, Nov. 2022, Art. no. 105627.         [29] Y. Wang et al., “A comprehensive review of battery modeling and state
+ [6] M. Koller, T. Borsche, A. Ulbig, and G. Andersson, “Review of grid                  estimation approaches for advanced battery management systems,” Re-
+     applications with the Zurich 1 MW battery energy storage system,” Electric          newable Sustain. Energy Rev., vol. 131, Oct. 2020, Art. no. 110015.
+     Power Syst. Res., vol. 120, pp. 128–135, Mar. 2015.                            [30] S. M. Mousavi and M. Nikdel, “Various battery models for various simu-
+ [7] C. Jin, J. Zhao, and Z. Ji, “An active control scheme for MMC based energy          lation studies and applications,” Renewable Sustain. Energy Rev., vol. 32,
+     storage device,” in Proc. IEEE Int. Conf. Ind. Electron. Sustain. Energy            pp. 477–485, Apr. 2014.
+     Syst., 2018, pp. 88–93.
+ [8] Y. Xu, Z. Zhang, G. Wang, and Z. Xu, “Modular multilevel converter with                                 Shunliang Wang (Member, IEEE) received the B.S.
+     embedded energy storage for bidirectional fault isolation,” IEEE Trans.                                 and Ph.D. degrees in electrical engineering from
+     Power Del., vol. 37, no. 1, pp. 105–115, Feb. 2022.                                                     Southwest Jiaotong University, Chengdu, China, in
+ [9] T. Soong and P. W. Lehn, “Assessment of fault tolerance in modular                                      2010 and 2016, respectively. From 2017 to 2018, he
+     multilevel converters with integrated energy storage,” IEEE Trans. Power                                was a Visiting Scholar with the Department of En-
+     Electron., vol. 31, no. 6, pp. 4085–4095, Jun. 2016.                                                    ergy Technology, Aalborg University, Aalborg, Den-
+[10] N. Li, F. Gao, T. Hao, Z. Ma, and C. Zhang, “SOH balancing control                                      mark. He is currently a Professor with the College of
+     method for the MMC battery energy storage system,” IEEE Trans. Ind.                                     Electrical Engineering, Sichuan University, Chengdu,
+     Electron., vol. 65, no. 8, pp. 6581–6591, Aug. 2018.                                                    China. His current research interests include high
+[11] Z. Wang, H. Lin, Y. Ma, and T. Wang, “A prototype of modular multilevel                                 voltage direct current transmission, power electronics
+     converter with integrated battery energy storage,” in Proc. IEEE Appl.                                  based power system, topology, control, modulation,
+     Power Electron. Conf. Expo., 2017, pp. 434–439.                                and modeling of power converters. Dr. Wang was the recipient of the Best Paper
+[12] S. Ali, Z. Ling, K. Tian, and Z. Huang, “Recent advancements in sub-           Award at the IEEE International Electrical and Energy Conference 2019, 18th
+     module topologies and applications of MMC,” IEEE J. Emerg. Sel. Topics         international conference on AC and DC Power Transmission 2022, and the
+     Power Electron., vol. 9, no. 3, pp. 3407–3435, Jun. 2021.                      Outstanding Young Person Award for DC Power from the Chinese Society of
+[13] Q. Chen, R. Li, and X. Cai, “Analysis and fault control of hybrid modular      Electrical Engineering.
+     multilevel converter with integrated battery energy storage system,” IEEE
+     J. Emerg. Sel. Topics Power Electron., vol. 5, no. 1, pp. 64–78, Mar. 2017.
+[14] T. Soong and P. W. Lehn, “Evaluation of emerging modular multilevel                                      Minghao Huang received the B.S. degree in 2023,
+     converters for BESS applications,” IEEE Trans. Power Del., vol. 29, no. 5,                               from Sichuan University, Chengdu, China, where he
+     pp. 2086–2094, Oct. 2014.                                                                                is currently working toward the M.S. degree with
+[15] S. Gao, Y. Chen, Y. Song, Z. Yu, and Y. Wang, “An efficient half-bridge                                  the College of Electrical Engineering. His research
+     MMC model for EMTP-type simulation based on hybrid numerical inte-                                       focuses on the EMT simulation models.
+     gration,” IEEE Trans. Power Syst., vol. 39, no. 1, pp. 1162–1177, Jan. 2024.
+[16] S. Gao, Y. Song, Y. Chen, Z. Yu, and R. Zhang, “Fast simulation model of
+     voltage source converters with arbitrary topology using switch-state pre-
+     diction,” IEEE Trans. Power Electron., vol. 37, no. 10, pp. 12167–12181,
+     Oct. 2022.
+
+
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 06:31:06 UTC from IEEE Xplore. Restrictions apply.
+2942                                                                                 IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 40, NO. 5, OCTOBER 2025
+
+
+
+                           Hao Tu (Senior Member, IEEE) received the bache-                                  Guangqiang Peng received the B.S. and M.S. de-
+                           lor’s degree in electrical engineering from Xi’an Jiao-                           grees from Wuhan University, Wuhan, China, in
+                           tong University, Xi’an, China, in 2012, the master’s,                             2009 and 2012. He is currently a Senior Engineer
+                           degree in electrical engineering from RWTH Aachen                                 with China Southern Power Grid Extra High Voltage
+                           University, Aachen, Germany, in 2015, and the Ph.D.                               Power Transmission Company. His research interests
+                           degree in electrical engineering from North Carolina                              include HVdc control and protection and simulation
+                           State University, Raleigh, NC, USA, in 2020. From                                 technology.
+                           2018 to 2019, he was a Research Intern with GE
+                           Global Research Center, Niskayuna, NY, USA. From
+                           2020 to 2023, he was a Research Assistant Professor
+                           with the FREEDM Systems Center, North Carolina
+State University, Raleigh, NC, USA. Since 2024, he has been a tenure-track
+Associate Professor with the College of Electrical Engineering, Sichuan Univer-
+sity, Chengdu, China. His research interests include control of power electronics
+converters, energy storage systems, microgrids, and machine learning. He was
+the recipient of the Second Prize Best Paper Award from IEEE Transactions on
+Transportation Electrification in 2021. He has been an Associate Editor for the                              Tianqi Liu (Senior Member, IEEE) received the
+IEEE TRANSACTIONS ON TRANSPORTATION ELECTRIFICATION since 2024.                                              B.S. and M.S. degrees in electrical engineering from
+                                                                                                             Sichuan University, Chengdu, China, in 1982 and
+                                                                                                             1986, respectively, and the Ph.D. degree in electrical
+                                                                                                             engineering from Chongqing University, Chongqing,
+                                                                                                             China, in 1996. She is currently a Professor with the
+                           Rui Zhang (Graduate Student Member, IEEE) re-
+                                                                                                             College of Electrical Engineering, Sichuan Univer-
+                           ceived the B.S. and M.S. degrees in electrical engi-
+                                                                                                             sity. Her research interests include power system anal-
+                           neering, in 2015 and 2018, respectively, from Sichuan
+                           University, Chengdu, China, where he is currently                                 ysis and stability control, HVdc, optimal operation,
+                                                                                                             dynamic security analysis, dynamic state estimation,
+                           working toward the Ph.D. degree in electrical engi-
+                                                                                                             and the load forecast.
+                           neering with the College of Electrical Engineering.
+                           His research interests include power electronics, re-
+                           newable energy power generation system, and elec-
+                           tromagnetic transient simulation.
+
+
+
+
+                           Junpeng Ma (Member, IEEE) received the B.S. and
+                           Ph.D. degrees in electrical engineering from South-
+                           west Jiaotong University, Chengdu, China, in 2013
+                           and 2018, respectively. He was a Guest Ph.D. Stu
+                           dent with Aalborg University, from 2017 to 2018.
+                           He is currently an Associate Professor with Sichuan
+                           University, Chengdu, China. His research interests
+                           include the modeling and control of grid connected
+                           converters applied in the new energy and the HVdc
+                           system. Dr. Ma was the recipient of the Best Paper
+                           Award from the International Conference twice.
+
+
+
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 10,2026 at 06:31:06 UTC from IEEE Xplore. Restrictions apply.
+
