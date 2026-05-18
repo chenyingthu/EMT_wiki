@@ -81,9 +81,9 @@
 | 244 | symmetrical-components.md | methods | methods/protection-fault/symmetrical-components.md | P1 | 999 | 9706 | 7 | 20 | completed |
 | 322 | thevenin-norton-equivalent.md | methods | methods/network-solution/thevenin-norton-equivalent.md | P1 | 999 | 2399 | 8 | 12 | completed |
 | 278 | time-domain-impedance-estimation.md | methods | methods/signal-processing/time-domain-impedance-estimation.md | P1 | 999 | 4090 | 14 | 13 | completed |
-| 363 | transformer-network.md | methods | methods/network-solution/transformer-network.md | P1 | 999 | 1456 | 5 | 17 | pending |
+| 363 | transformer-network.md | methods | methods/network-solution/transformer-network.md | P1 | 999 | 1456 | 5 | 17 | completed |
 | 207 | transposed-three-phase-line.md | methods | methods/transmission-line/transposed-three-phase-line.md | P0 | 999 | 7515 | 9 | 6 | completed |
-| 400 | user-defined-code-model.md | models | models/equivalent/user-defined-code-model.md | P1 | 999 | 915 | 3 | 12 | pending |
+| 400 | user-defined-code-model.md | models | models/equivalent/user-defined-code-model.md | P1 | 999 | 915 | 3 | 12 | completed |
 | 296 | virtual-synchronous-generator.md | methods | methods/control/virtual-synchronous-generator.md | P1 | 999 | 3260 | 12 | 11 | completed |
 | 245 | vsc-mmc-test-system.md | models | models/equivalent/vsc-mmc-test-system.md | P1 | 999 | 9369 | 8 | 8 | completed |
 | 90 | yang-2018-dc-protection.md | methods | methods/protection-fault/yang-2018-dc-protection.md | P0 | 999 | 2386 | 13 | 10 | completed |
