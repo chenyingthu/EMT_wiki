@@ -340,105 +340,24 @@ updated: "2026-05-12"
 ## 来源论文
 
 | 论文 | 年份 |
-|------|------|
-| [[电磁暂态计算中新的变压器模型|电磁暂态计算中新的变压器模型]] | 1999 |
-| [[电磁暂态计算中新的变压器模型|电磁暂态计算中新的变压器模型]] | 1999 |
-| [[a-z-transform-model-of-transformers-for-the-study-of-electromagnetic-transients-|A Z-transform model of transformers for the study of electro]] | 2004 |
-| [[a-high-frequency-transformer-model-for-the-emtp-power-delivery-ieee-transactions|A high frequency transformer model for the EMTP - Power Deli]] | 2004 |
-| [[a-transformer-model-for-winding-fault-studies-power-delivery-ieee-transactions-o|A transformer model for winding fault studies - Power Delive]] | 2004 |
-| [[an-improved-low-frequency-transformer-model-for-use-in-gic-studies|An improved low-frequency transformer model for use in GIC s]] | 2004 |
-| [[an-improved-low-frequency-transformer-model-for-use-in-gic-studies|An improved low-frequency transformer model for use in GIC s]] | 2004 |
-| [[comparison-of-the-atp-version-of-the-emtp-and-the-netomac-program-for-simulation|Comparison of the ATP version of the EMTP and the NETOMAC pr]] | 2004 |
-| [[computation-of-the-periodic-steady-state-in-systems-with-nonlinear-components-us|Computation of the periodic steady state in systems with non]] | 2004 |
-| [[decision-tree-based-methodology-for-high-impedance-fault-detection|Decision tree-based methodology for high impedance fault det]] | 2004 |
-| [[modelling-of-circuit-breakers-in-the-electromagnetic-transients-program-power-sy|Modelling of circuit breakers in the Electromagnetic Transie]] | 2004 |
-| [[multi-port-frequency-dependent-network-equivalents-for-the-emtp-power-delivery-i|Multi-port frequency dependent network equivalents for the E]] | 2004 |
-| [[multiphase-power-flow-solutions-using-emtp-and-newtons-method-power-systems-ieee|Multiphase power flow solutions using EMTP and Newtons metho]] | 2004 |
-| [[power-converter-simulation-module-connected-to-the-emtp-power-systems-ieee-trans|Power converter simulation module connected to the EMTP - Po]] | 2004 |
-| [[rational-approximation-of-frequency-domain-responses-by-vector-fitting-power-del|Rational approximation of frequency domain responses by vect]] | 2004 |
-| [[state-equation-approximation-of-transfer-matrices-and-its-application-to-the-pha|State equation approximation of transfer matrices and its ap]] | 2004 |
-| [[three-phase-transformer-modelling-for-fast-electromagnetic-transient-studies-pow|Three phase transformer modelling for fast electromagnetic t]] | 2004 |
-| [[using-tacs-functions-within-empt-to-teach-protective-relaying-fundamentals-power|Using TACS Functions Within EMPT To Teach Protective Relayin]] | 2004 |
-| [[application-of-emtp-in-the-research-of-uhv-ac-power-transmission|Application of EMTP in the research of UHV AC power transmis]] | 2006 |
-| [[电力系统机电暂态和电磁暂态混合仿真程序设计和实现|电力系统机电暂态和电磁暂态混合仿真程序设计和实现]] | 2006 |
-| [[noda-a-binary-frequency-region-partitioning-algorithm-for-the-identification-of-|Noda | A Binary Frequency-Region Partitioning Algorithm for ]] | 2007 |
-| [[numerical-integration-by-the-2-stage-diagonally|Numerical Integration by the 2-Stage Diagonally Implicit Run]] | 2008 |
-| [[a-link-between-emtp-rv-and-flux3d-for-transformer-energization-studies|A link between EMTP-RV and FLUX3D for transformer energizati]] | 2009 |
-| [[frequency-adaptive-power-system-modeling-for|Frequency-Adaptive Power System Modeling for]] | 2009 |
-| [[including-magnetic-saturation-in-voltage-behind-reactance-induction-machine-mode|Including Magnetic Saturation in Voltage-Behind-Reactance In]] | 2010 |
-| [[modeling-of-ac-machines-using-a-voltage-behind-reactance-formulation-for-simulat|Modeling of ac machines using a voltage-behind-reactance for]] | 2010 |
-| [[能量回馈型电力电子负载的控制方法|能量回馈型电力电子负载的控制方法]] | 2010 |
-| [[39pes20116039582|39/pes.2011.6039582]] | 2011 |
-| [[an-iterative-real-time-nonlinear-electromagnetic-transient-solver-on-fpga|An Iterative Real-Time Nonlinear Electromagnetic Transient S]] | 2011 |
-| [[magnetically-saturable-voltage-behind-reactance-model-for-induction-machines|Magnetically Saturable Voltage Behind Reactance Model for In]] | 2011 |
-| [[a-vsc-hvdc-model-with-reduced-computational-intensity|A VSC-HVDC Model with Reduced Computational Intensity]] | 2012 |
-| [[comparison-between-electromechanical-transient-model-and-electromagnetic-transie|Comparison between electromechanical transient model and ele]] | 2013 |
-| [[development-of-data-translators-for-interfacing-13&14|Development of Data Translators for Interfacing Power-Flow P]] | 2013 |
-| [[dual-reversible-transformer-model-for-the-13&14|Dual Reversible Transformer Model for the]] | 2013 |
-| [[dual-reversible-transformer-model-for-the-13&14|Dual Reversible Transformer Model for the]] | 2013 |
-| [[electromechanical-transient-modeling-of-modular-multilevel-converter-based-multi|Electromechanical Transient Modeling of Modular Multilevel C]] | 2013 |
-| [[multi-fpga-digital-hardware-design-iet-gtd|Multi-FPGA digital hardware design for detailed large-scale ]] | 2013 |
-| [[dynamic-average-value-modeling-of-13&14|Dynamic Average-Value Modeling of]] | 2014 |
-| [[emtp-model-of-a-bidirectional-multilevel-solid-state-transformer-for-distributio|EMTP model of a bidirectional multilevel solid state transfo]] | 2014 |
-| [[基于adpss的电力系统和牵引供电系统机电电磁暂态混合仿真|基于ADPSS的电力系统和牵引供电系统机电–电磁暂态混合仿真]] | 2014 |
-| [[a-review-of-efficient-modeling-methods-for-modular-multilevel-converters|A review of efficient modeling methods for modular multileve]] | 2015 |
-| [[analysing-a-power-transformers-internal-response-to-system-transients-using-a-hy|Analysing a power transformer⠒s internal response to system ]] | 2015 |
-| [[duality-based-transformer-model-including-13&14|Duality-Based Transformer Model Including]] | 2015 |
-| [[duality-based-transformer-model-including-13&14|Duality-Based Transformer Model Including]] | 2015 |
-| [[duality-based-transformer-model-including-13&14|Duality-Based Transformer Model Including]] | 2015 |
-| [[29tpwrd20162518676-2|29/TPWRD.2016.2518676]] | 2016 |
-| [[29tpwrd20162518676-2|29/TPWRD.2016.2518676]] | 2016 |
-| [[duality-based-transformer-modeling-for-low-frequency-transients|Duality-Based Transformer Modeling for Low-Frequency Transie]] | 2016 |
-| [[duality-based-transformer-modeling-for-low-frequency-transients|Duality-Based Transformer Modeling for Low-Frequency Transie]] | 2016 |
-| [[duality-based-transformer-modeling-for-low-frequency-transients|Duality-Based Transformer Modeling for Low-Frequency Transie]] | 2016 |
-| [[nonlinear-magnetic-equivalent-circuit-based-real-time-sen-transformer-electromag|Nonlinear Magnetic Equivalent Circuit-Based Real-Time Sen Tr]] | 2016 |
-| [[nonlinear-magnetic-equivalent-circuit-based-real-time-sen-transformer-electromag|Nonlinear Magnetic Equivalent Circuit-Based Real-Time Sen Tr]] | 2016 |
-| [[saturable-reactor-hysteresis-model-based-on-jilesatherton-formulation-for-ferror|Saturable reactor hysteresis model based on Jiles–Atherton f]] | 2018 |
-| [[small-signal-dynamic-phasor-model-of-three-phase-dab-converter-for-solid-state-t-22|Small Signal Dynamic Phasor Model of Three-Phase DAB Convert]] | 2018 |
-| [[small-signal-dynamic-phasor-model-of-three-phase-dab-converter-for-solid-state-t|Small Signal Dynamic Phasor Model of Three-Phase DAB Convert]] | 2018 |
-| [[electromagnetic-transient-studies-of-large-distribution-systems-using-frequency-|Electromagnetic transient studies of large distribution syst]] | 2019 |
-| [[grounding-grids-in-electro-magnetic-transient-simulations-with-frequency-depende|Grounding grids in electro-magnetic transient simulations wi]] | 2019 |
-| [[mmc-upfc电磁-机电混合仿真技术研究|MMC-UPFC电磁-机电混合仿真技术研究]] | 2019 |
-| [[35tpwrd20192933610|Small Time-Step FPGA-based Real-Time Simulation of Power Sys]] | 2019 |
-| [[stability-of-algorithms-for-electro-magnetic-transient-simulation-of-networks-wi|Stability of Algorithms for Electro-Magnetic-Transient Simul]] | 2019 |
-| [[adaptive-modular-multilevel-converter-model-for-electromagnetic-transient-simula|Adaptive Modular Multilevel Converter Model for Electromagne]] | 2020 |
-| [[analysis-of-low-frequency-interactions-of-dfig-wind-turbine-systems-in-series-co|Analysis of low frequency interactions of DFIG wind turbine ]] | 2020 |
-| [[gpu-based-power-converter-transient-simulation-with-matrix-exponential-integrati|GPU-based power converter transient simulation with matrix e]] | 2020 |
-| [[time-domain-implementation-of-damping-factor-white-box-transformer-model-for-inc|Time-Domain Implementation of Damping Factor White-Box Trans]] | 2020 |
-| [[基于模块化双有源桥变流器的直流变电站设计方案|基于模块化双有源桥变流器的直流变电站设计方案]] | 2020 |
-| [[adaptive-heterogeneous-transient-analysis-of-wind-farm-integrated-comprehensive-|Adaptive Heterogeneous Transient Analysis of Wind Farm Integ]] | 2021 |
-| [[determination-of-the-saturation-curve-of-power-transformers-by-processing-transi|Determination of the saturation curve of power transformers ]] | 2021 |
-| [[determination-of-the-saturation-curve-of-power-transformers-by-processing-transi|Determination of the saturation curve of power transformers ]] | 2021 |
-| [[hierarchical-modeling-scheme-for-high-speed-electromagnetic-transient-emt-simula|Hierarchical Modeling Scheme for High-Speed Electromagnetic ]] | 2021 |
-| [[large-scale-hybrid-real-time-simulation-modeling-and-benchmark-for-nelson-river-|Large-scale hybrid real time simulation modeling and benchma]] | 2021 |
-| [[modelica-based-simulation-of-electromagnetic-transients-using-dynao-current-stat|Modelica-based simulation of electromagnetic transients usin]] | 2021 |
-| [[review-and-comparison-of-frequency-domain-curve-fitting-techniques-vector-fittin|Review and comparison of frequency-domain curve-fitting tech]] | 2021 |
-| [[级联h桥型电力电子变压器的闭锁状态等效建模方法-33|级联H桥型电力电子变压器的闭锁状态等效建模方法]] | 2021 |
-| [[考虑中间变压器饱和特性的电容式电压互感器宽频非线性模型|考虑中间变压器饱和特性的电容式电压互感器宽频非线性模型]] | 2021 |
-| [[a-transformer-model-with-hysteresis-characteristics-for-electromagnetic-transien|A Transformer Model With Hysteresis Characteristics for Elec]] | 2022 |
-| [[a-transformer-model-with-hysteresis-characteristics-for-electromagnetic-transien|A Transformer Model With Hysteresis Characteristics for Elec]] | 2022 |
-| [[a-transformer-model-with-hysteresis-characteristics-for-electromagnetic-transien|A Transformer Model With Hysteresis Characteristics for Elec]] | 2022 |
-| [[a-transformer-model-with-hysteresis-characteristics-for-electromagnetic-transien|A Transformer Model With Hysteresis Characteristics for Elec]] | 2022 |
-| [[analysis-and-prospect-of-development-of-chinas-independent-electromagnetic-trans-fix|Analysis and Prospect of Development of China]] | 2022 |
-| [[characteristic-analysis-of-high-frequency-resonance-of-flexible-high-voltage-dir|Characteristic Analysis of High-frequency Resonance of Flexi]] | 2022 |
-| [[efficient-steady-state-analysis-of-the-grid-using-electromagnetic-transient-mode|Efficient steady state analysis of the grid using electromag]] | 2022 |
-| [[electromagnetic-modeling-of-transformers-in-emt-type-software-by-a-circuit-based|Electromagnetic Modeling of Transformers in EMT-Type Softwar]] | 2022 |
-| [[electromagnetic-modeling-of-inductors-in-emt-type-software-by-three-circuit-base|Electromagnetic modeling of inductors in EMT-type software b]] | 2022 |
-| [[electromagnetic-modeling-of-inductors-in-emt-type-software-by-three-circuit-base|Electromagnetic modeling of inductors in EMT-type software b]] | 2022 |
-| [[electromechanical-electromagnetic-hybrid-simulation-technology-with-large-number|Electromechanical-electromagnetic Hybrid Simulation Technolo]] | 2022 |
-| [[electromechanical-electromagnetic-transient-hybrid-simulation-of-an-acdc-hybrid-|Electromechanical-electromagnetic transient hybrid simulatio]] | 2022 |
-| [[faster-than-real-time-hardware-emulation-of-extensive-contingencies-for-dynamic-|Faster-Than-Real-Time Hardware Emulation of Extensive Contin]] | 2022 |
-| [[modeling-and-electromagnetic-transient-simulation-of-vsc-hvdc-system|Modeling and electromagnetic transient simulation of VSC-HVD]] | 2022 |
-| [[multi-timescale-simulator-of-nonlinear-electrical-elements-by-interfacing-shifte|Multi-timescale simulator of nonlinear electrical elements b]] | 2022 |
-| [[multi-timescale-simulator-of-nonlinear-electrical-elements-by-interfacing-shifte|Multi-timescale simulator of nonlinear electrical elements b]] | 2022 |
-| [[new-compact-white-box-transformer-model-for-the-calculation-of-electromagnetic-t|New Compact White-Box Transformer Model for the Calculation ]] | 2022 |
-| [[the-averaged-value-model-of-a-flexible-power-electronics-based-substation-in-hyb|The Averaged-value Model of a Flexible Power Electronics Bas]] | 2022 |
-| [[the-averaged-value-model-of-a-flexible-power-electronics-based-substation-in-hyb|The Averaged-value Model of a Flexible Power Electronics Bas]] | 2022 |
-| [[基于umec的双芯sen变压器电磁暂态模型|基于UMEC的双芯Sen变压器电磁暂态模型]] | 2022 |
-| [[基于umec的双芯sen变压器电磁暂态模型|基于UMEC的双芯Sen变压器电磁暂态模型]] | 2022 |
-| [[级联h桥型电力电子变压器的电磁暂态等效建模方法|级联H桥型电力电子变压器的电磁暂态等效建模方法]] | 2022 |
-| [[级联h桥型电力电子变压器的电磁暂态等效建模方法|级联H桥型电力电子变压器的电磁暂态等效建模方法]] | 2022 |
-| [[高频隔离型电力电子变压器电磁暂态加速仿真方法与展望|高频隔离型电力电子变压器电磁暂态加速仿真方法与展望]] | 2022 |
+| [[2728一种用于lcc-hvdc系统小干扰稳定性分析的改进动态相量模型|一种用于LCC-HVDC系统小干扰稳定性分析的改进动态相量模型]] | 2026 
+| [[electromechanical-transientelectromagnetic-transient-hybrid-simulation-method-co|Electromechanical transientelectromagnetic transient hybrid ]] | 2026 |
+| [[experimental-research-on-high-voltage-transformer-transient-characteristics|Experimental research on high-voltage transformer transient ]] | 2026 |
+| [[modeling-of-cross-magnetization-effects-in-saturated-synchronous-machines-for-el|Modeling of cross-magnetization effects in saturated synchro]] | 2026 |
+| [[a-julia-based-simulation-platform-for-power-system-transients|A Julia-based simulation platform for power system transient]] | 2025 |
+| [[accelerating-electromagnetic-transient-simulations-using-graphical-processing-un|Accelerating electromagnetic transient simulations using gra]] | 2025 |
+| [[analysis-on-dynamic-characteristic-of-control-mode-for-800-kv-yun-guang-uhvdc|Analysis on dynamic characteristic of control mode for +/-80]] | 2025 |
+| [[mtof-a-novel-fpga-based-emt-toolbox-in-matlab|MTOF: A Novel FPGA-Based EMT Toolbox in MATLAB]] | 2025 |
+| [[modeling-method-for-dfig-based-wind-farm-in-high-efficiency-real-time-electromag|Modeling Method for DFIG-Based Wind Farm in High-Efficiency ]] | 2025 |
+| [[multirate-emt-simulation-of-power-electronic-transformers-with-high-precision-fi|Multirate EMT Simulation of Power Electronic Transformers Wi]] | 2025 |
+| [[simplified-emt-model-of-multiple-active-bridge-based-power-electronic-transforme|Simplified EMT Model of Multiple-Active-Bridge Based Power E]] | 2025 |
+| [[universal-decoupled-equivalent-circuit-models-of-solid-state-transformer-for-acc|Universal Decoupled Equivalent Circuit Models of Solid-State]] | 2025 |
+| [[中-国-电-机-工-程-学-报-37|中  国  电  机  工  程  学  报]] | 2025 |
+| [[基于fpga的变电站实时仿真培训系统|基于FPGA的变电站实时仿真培训系统]] | 2025 |
+| [[an-open-source-parallel-emt-simulation-framework|An open-source parallel EMT simulation framework]] | 2024 |
+| [[analytical-calculation-method-of-outer-loop-controller-parameters-of-hvdc-conver|Analytical Calculation Method of Outer Loop Controller Param]] | 2024 |
+| [[efficient-electromagnetic-transient-simulation-for-dfig-based-wind-farms-using-f|Efficient electromagnetic transient simulation for DFIG-base]] | 2024 |
+| [[initializing-emt-models-of-grid-forming-vscs-in-mtdc-systems|Initializing EMT models of grid forming VSCs in MTDC systems]] | 2024 |
 | [[a-novel-decoupled-emt-approach-and-parallel-simulation-framework-for-modularized|A Novel Decoupled EMT Approach and Parallel Simulation Frame]] | 2023 |
 | [[a-phase-domain-synchronous-machine-modeling-technique-by-using-magnetic-circuit-|A phase-domain synchronous machine modeling technique by usi]] | 2023 |
 | [[accuracy-enhancement-of-shifted-frequency-based-simulation-using-root-matching-a|Accuracy Enhancement of Shifted Frequency-Based Simulation U]] | 2023 |
@@ -452,28 +371,11 @@ updated: "2026-05-12"
 | [[modeling-for-large-scale-offshore-wind-farm-using-multi-thread-parallel-computin|Modeling for large-scale offshore wind farm using multi-thre]] | 2023 |
 | [[modeling-of-mmc-based-statcom-with-embedded-energy-storage-for-the-simulation-of|Modeling of MMC-based STATCOM with embedded energy storage f]] | 2023 |
 | [[on-site-measurement-of-the-hysteresis-curve-for-improved-modelling-of-transforme|On-site measurement of the hysteresis curve for improved mod]] | 2023 |
-| [[on-site-measurement-of-the-hysteresis-curve-for-improved-modelling-of-transforme|On-site measurement of the hysteresis curve for improved mod]] | 2023 |
 | [[optimized-high-frequency-white-box-transformer-model-for-implementation-in-atp-e|Optimized high-frequency white-box transformer model for imp]] | 2023 |
 | [[real-time-simulation-for-detailed-wind-turbine-model-based-on-heterogeneous-comp|Real-time simulation for detailed wind turbine model based o]] | 2023 |
 | [[一种级联h桥型电力电子变压器电磁暂态解耦与仿真模型|一种级联H桥型电力电子变压器电磁暂态解耦与仿真模型]] | 2023 |
-| [[an-open-source-parallel-emt-simulation-framework|An open-source parallel EMT simulation framework]] | 2024 |
-| [[analytical-calculation-method-of-outer-loop-controller-parameters-of-hvdc-conver|Analytical Calculation Method of Outer Loop Controller Param]] | 2024 |
-| [[efficient-electromagnetic-transient-simulation-for-dfig-based-wind-farms-using-f|Efficient electromagnetic transient simulation for DFIG-base]] | 2024 |
-| [[initializing-emt-models-of-grid-forming-vscs-in-mtdc-systems|Initializing EMT models of grid forming VSCs in MTDC systems]] | 2024 |
-| [[a-julia-based-simulation-platform-for-power-system-transients|A Julia-based simulation platform for power system transient]] | 2025 |
-| [[accelerating-electromagnetic-transient-simulations-using-graphical-processing-un|Accelerating electromagnetic transient simulations using gra]] | 2025 |
-| [[analysis-on-dynamic-characteristic-of-control-mode-for-800-kv-yun-guang-uhvdc|Analysis on dynamic characteristic of control mode for +/-80]] | 2025 |
-| [[mtof-a-novel-fpga-based-emt-toolbox-in-matlab|MTOF: A Novel FPGA-Based EMT Toolbox in MATLAB]] | 2025 |
-| [[modeling-method-for-dfig-based-wind-farm-in-high-efficiency-real-time-electromag|Modeling Method for DFIG-Based Wind Farm in High-Efficiency ]] | 2025 |
-| [[multirate-emt-simulation-of-power-electronic-transformers-with-high-precision-fi|Multirate EMT Simulation of Power Electronic Transformers Wi]] | 2025 |
-| [[simplified-emt-model-of-multiple-active-bridge-based-power-electronic-transforme|Simplified EMT Model of Multiple-Active-Bridge Based Power E]] | 2025 |
-| [[universal-decoupled-equivalent-circuit-models-of-solid-state-transformer-for-acc|Universal Decoupled Equivalent Circuit Models of Solid-State]] | 2025 |
-| [[中-国-电-机-工-程-学-报-37|中  国  电  机  工  程  学  报]] | 2025 |
-| [[基于fpga的变电站实时仿真培训系统|基于FPGA的变电站实时仿真培训系统]] | 2025 |
-| [[electromechanical-transientelectromagnetic-transient-hybrid-simulation-method-co|Electromechanical transientelectromagnetic transient hybrid ]] | 2026 |
-| [[experimental-research-on-high-voltage-transformer-transient-characteristics|Experimental research on high-voltage transformer transient ]] | 2026 |
-| [[modeling-of-cross-magnetization-effects-in-saturated-synchronous-machines-for-el|Modeling of cross-magnetization effects in saturated synchro]] | 2026 |
-| [[2728一种用于lcc-hvdc系统小干扰稳定性分析的改进动态相量模型|一种用于LCC-HVDC系统小干扰稳定性分析的改进动态相量模型]] | 2026 |
+| [[a-transformer-model-with-hysteresis-characteristics-for-electromagnetic-transien|A Transformer Model With Hysteresis Characteristics for Elec]] | 2022 |
+|
 ## 深度增强内容
 
 ## 1. 各类模型数学描述
@@ -589,108 +491,3 @@ $$\mathbf{L}_{fault} = \begin{bmatrix}
 $$L_f = \sigma \cdot \mu_0 N_f^2 \frac{A_{core}}{l_{mean}} \cdot k_c$$
 
 其中 $k_c$ 为考虑绕组重叠区域的修正系数。
-
----
-
-## 2. 仿真参数参考表
-
-| 模型类型 | 关键参数 | 典型取值/范围 | 来源论文 |
-|---------|---------|--------------|----------|
-| **磁滞模型** | 饱和磁化强度 $M_s$ | 1.6-2.0 T (硅钢片) | A Transformer Model With Hysteresis |
-| | 磁滞损耗系数 $k$ | 20-50 A/m | |
-| | 插值段数 | 最大回线分段：20-50段 | |
-| **高频白盒** | 有效频带 | 60 Hz - 200 kHz | A high frequency transformer model |
-| | 有理函数极点 | 6实极点 + 15对复极点 | |
-| | 导纳矩阵维度 | 21个→6个（模态分解后） | |
-| | 拟合误差 | <5%（高频阻抗） | |
-| **紧凑白盒** | 原矩阵维度 | 1278×1278 (n=213段, N=5组) | New Compact White-Box |
-| | SVD降秩后 | $\sum r_k \ll 1065$ | |
-| | 电感分支数 | 817,281→可处理范围 | |
-| **动态相量** | 保留谐波次数 | $k=\pm1,\pm3$ | Small Signal Dynamic Phasor |
-| | 状态矩阵维度 | 8阶（总） | |
-| | 适用频段 | 0 - $f_s/2$ (如0-5kHz) | |
-| | 相移控制范围 | $0^\circ \leq d \leq 90^\circ$ | |
-| **阻尼因子** | 状态变量数 $N$ | 88 (案例变压器) | Time-Domain Implementation |
-| | 外部端子 $n_1$ | 6 | |
-| | 内部节点 $n_2$ | 40 | |
-| | 初始化误差 | $<10^{-12}$ | |
-| **对偶Cauer** | 等效电路阶数 | 2阶(至1MHz), 7阶(至15MHz) | Duality-Based Transformer Model |
-| | 涡流电阻 $R_{eddy}$ | 频变：$R_{ac} \propto \sqrt{f}$ | |
-| **S参数** | 测量频带 | DC - 50 MHz | Expanding the measuring range |
-| | 端口数 | 多端口（一次/二次/接地） | |
-| **故障模型** | 漏磁系数 $\sigma$ | 0.01-0.5（随故障位置变化） | A transformer model for winding fault |
-| | 电流误差 | <10%（幅值/相位） | |
-| **GIC模型** | 低频扩展 | 0.01-100 Hz | An improved low-frequency model |
-| | 额定工况误差 | 1.98% (电流RMS) | |
-| | 功率因数误差 | 3% | |
-
----
-
-## 3. 模型选择指南
-
-### 3.1 按暂态 phenomena 选择
-
-| 应用场景 | 推荐模型 | 关键特性 | 计算成本 |
-|---------|---------|---------|---------|
-| **励磁涌流分析** | 磁滞-饱和模型 (Jiles-Atherton) | 剩磁追踪、主次回线、铁芯饱和 | 中 |
-| **铁磁谐振研究** | 对偶电路模型 + 磁滞 | 非线性电感拓扑、磁滞损耗 | 中-高 |
-| **雷电冲击/VFTO** | 高频白盒或S参数黑盒 | 宽频(>1MHz)、杂散电容、集肤效应 | 高 |
-| **GIC/直流偏磁** | 低频改进模型 + 涡流 | 0.01-1Hz精确、半波饱和、热效应 | 低-中 |
-| **内部故障定位** | 扩展BCTRAN/线圈分割 | 子绕组互感、故障端口建模 | 中 |
-| **固态变压器(SST)** | 动态相量模型(GSSA) | 开关平均、宽频小信号、多端口 | 低 |
-| **实时仿真(RTDS)** | 接口因子白盒 + 对角化 | 准实时(步长1μs)、诺顿等效 | 中 |
-| **大规模系统仿真** | 紧凑降阶模型 (SVD) | 低秩近似、ATP兼容 | 低 |
-
-### 3.2 按频率范围选择
-
-- **工频-低频(0-1kHz)**：对偶电路模型或改进GIC模型，重点考虑磁滞和涡流损耗
-- **中频(1kHz-100kHz)**：阻尼因子白盒模型，适用于操作过电压
-- **高频(100kHz-50MHz)**：S参数黑盒或高频白盒模型，考虑绕组电容和波过程
-
-### 3.3 按数据可用性选择
-
-- **设计参数完整**：白盒模型（基于几何尺寸）
-- **仅端口测试数据**：黑盒模型（矢量拟合/Y参数）
-- **有限元辅助**：混合灰盒模型（白/黑盒融合）
-
----
-
-## 4. 前沿研究方向
-
-### 4.1 模型降阶与计算效率优化
-基于**奇异值分解(SVD)的低秩分解**技术，将大规模白盒模型（如1278阶电感矩阵）压缩为紧凑等效电路，同时保持宽频精度。最新研究实现：
-- 辅助回路数量从1065个降至$\sum r_k$（有效秩）
-- ATP-EMTP元件数量限制突破（从10^6级降至可处理范围）
-- 六种不同降阶变体适配不同精度-效率权衡需求
-
-### 4.2 宽频统一建模
-开发覆盖**工频至MHz**的统一变压器模型，解决传统分段模型（低频磁路 vs 高频电路）的不连续问题：
-- 双侧Cauer电路实现1Hz-15MHz连续建模
-- 接口因子法实现状态空间与EMTP求解器无缝集成
-- 零额外节点的电阻网络优化，消除数值振荡
-
-### 4.3 多物理场耦合
-- **磁-热耦合**：在GIC研究中集成涡流损耗与热点温度计算
-- **磁-机械耦合**：变压器振动与铁芯磁致伸缩的联合建模
-
-### 4.4 数据驱动与混合建模
-- **白/灰盒融合**：结合有限元仿真（FLUX3D）与端口测量（S参数），解决高阻抗端子低频测量精度问题（误差从>15%降至<3%）
-- **现场数据验证**：利用实际开关暂态录波数据校准模型参数
-
-### 4.5 电力电子化变压器建模
-针对**固态变压器(SST)**和**电力电子变压器(PET)**：
-- 双有源桥(DAB)的广义状态空间平均(GSSA)模型，保留谐波交互
-- 级联H桥(CHB)闭锁状态的戴维南-诺顿等效建模
-- 高频链路(HFL)的宽频阻抗建模
-
-### 4.6 内部故障与保护配合
-- **分布式参数故障模型**：基于线圈分割的精确故障定位，漏磁系数随故障位置非线性变化建模
-- **内部过电压评估**：阻尼因子模型计算内部节点过电压（可达2.5-3.0 pu），为绝缘配合提供依据
-
-### 4.7 实时仿真与硬件在环(HIL)
-- **并行仿真框架**：解耦EMT方法实现多核并行加速
-- **FPGA实现**：基于状态空间的实数运算优化（复数转2×2实数块矩阵），支持步长1μs的准实时仿真
-
----
-
-*本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*

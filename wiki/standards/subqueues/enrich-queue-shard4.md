@@ -81,7 +81,7 @@
 | 111 | switching-function-method.md | methods | methods/power-electronics/switching-function-method.md | P0 | 999 | 2885 | 10 | 18 | completed |
 | 407 | thevenin-equivalent-model.md | models | models/equivalent/thevenin-equivalent-model.md | P1 | 999 | 3583 | 13 | 13 | completed |
 | 127 | thyristor-control.md | methods | methods/control/thyristor-control.md | P0 | 999 | 3359 | 10 | 10 | completed |
-| 113 | transformer-model.md | models | models/transformer/transformer-model.md | P0 | 999 | 2921 | 18 | 137 | pending |
+| 113 | transformer-model.md | models | models/transformer/transformer-model.md | P0 | 999 | 2874 | 18 | 58 | completed |
 | 79 | transmission-line-model.md | models | models/transmission-line/transmission-line-model.md | P0 | 999 | 2105 | 21 | 210 | pending |
 | 364 | universal-line-model.md | methods | methods/transmission-line/universal-line-model.md | P1 | 999 | 1454 | 5 | 13 | pending |
 | 327 | vector-control.md | methods | methods/control/vector-control.md | P1 | 999 | 2172 | 6 | 12 | pending |
