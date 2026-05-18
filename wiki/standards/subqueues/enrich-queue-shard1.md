@@ -71,7 +71,7 @@
 | 42 | real-time-simulation.md | topics | topics/simulation/real-time-simulation.md | P0 | 999 | 1250 | 1 | 129 | completed |
 | 320 | renewable-integration.md | methods | methods/system-studies/renewable-integration.md | P1 | 999 | 2535 | 10 | 13 | pending | completed 
 | 248 | sequence-component-method.md | methods | methods/protection-fault/sequence-component-method.md | P1 | 999 | 8489 | 10 | 7 | pending | completed 
-| 393 | single-phase-induction-machine.md | models | models/rotating-machine/single-phase-induction-machine.md | P1 | 999 | 1024 | 9 | 14 | pending |
+| 393 | single-phase-induction-machine.md | models | models/rotating-machine/single-phase-induction-machine.md | P1 | 999 | 2283 | 16 | 5 | completed |
 | 180 | small-signal-stability.md | methods | methods/stability-analysis/small-signal-stability.md | P0 | 999 | 5224 | 17 | 21 | pending | completed 
 | 305 | statcom.md | models | models/compensation/statcom.md | P1 | 999 | 3064 | 31 | 11 | pending | completed 
 | 411 | stiff-system-handling.md | methods | methods/numerical-methods/stiff-system-handling.md | P1 | 999 | 679 | 8 | 12 | pending |
