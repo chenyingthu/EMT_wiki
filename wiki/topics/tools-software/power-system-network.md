@@ -290,16 +290,16 @@ FDNE等值在宽频EMT分析中不可或缺，但多端口FDNE的阶数选择和
 
 ## 相关方法
 
-- [[nodal-analysis]] - 节点分析解法
-- [[network-equivalent]] - 网络等值理论
-- [[fdne-model]] - 频变网络等值
-- [[transmission-line-model]] - 输电线路详细模型
-- [[emt-simulation]] - 电磁暂态仿真
-- [[parallel-computing]] - 并行计算
-- [[co-simulation]] - 混合仿真
-- [[dynamic-phasor]] - 动态相量法
-- [[sparse-matrix-solver]] - 稀疏矩阵求解
-- [[frequency-dependent-modeling]] - 频率相关建模
+- [[methods/network-solution/nodal-analysis.md|nodal-analysis]] - 节点分析解法
+- [[topics/modeling-methods/network-equivalent.md|network-equivalent]] - 网络等值理论
+- [[models/equivalent/fdne-model.md|fdne-model]] - 频变网络等值
+- [[models/transmission-line/transmission-line-model.md|transmission-line-model]] - 输电线路详细模型
+- [[topics/simulation/emt-simulation.md|emt-simulation]] - 电磁暂态仿真
+- [[topics/simulation/parallel-computing.md|parallel-computing]] - 并行计算
+- [[topics/simulation/co-simulation.md|co-simulation]] - 混合仿真
+- [[topics/modeling-methods/dynamic-phasor.md|dynamic-phasor]] - 动态相量法
+- [[methods/network-solution/sparse-matrix-solver.md|sparse-matrix-solver]] - 稀疏矩阵求解
+- [[topics/modeling-methods/frequency-dependent-modeling.md|frequency-dependent-modeling]] - 频率相关建模
 
 ## 来源论文
 
