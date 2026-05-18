@@ -47,7 +47,7 @@
 | 321 | hybrid-converter-model.md | models | models/converter/hybrid-converter-model.md | P1 | 999 | 4615 | 18 | 6 | completed |
 | 202 | ieee-118-bus-system.md | topics | topics/test-system/ieee-118-bus-system.md | P0 | 999 | 6909 | 9 | 20 | completed |
 | 184 | impedance-measurement.md | methods | methods/signal-processing/impedance-measurement.md | P0 | 999 | 5416 | 24 | 13 | completed |
-| 143 | inductor-model.md | models | models/compensation/inductor-model.md | P0 | 999 | 3797 | 36 | 6 | pending | completed 
+| 143 | inductor-model.md | models | models/compensation/inductor-model.md | P0 | 999 | 2672 | 36 | 6 | completed | 
 | 277 | inverter-model.md | models | models/converter/inverter-model.md | P1 | 999 | 4150 | 56 | 17 | completed |
 | 97 | large-scale-power-system.md | topics | topics/simulation/large-scale-power-system.md | P0 | 999 | 2561 | 11 | 26 | completed |
 | 331 | least-squares-method.md | methods | methods/signal-processing/least-squares-method.md | P1 | 999 | 2031 | 8 | 13 | completed |
