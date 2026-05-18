@@ -57,7 +57,7 @@
 | 375 | multi-winding-transformer.md | models | models/transformer/multi-winding-transformer.md | P1 | 999 | 1360 | 3 | 15 | pending |
 | 194 | mutual-impedance.md | methods | methods/transmission-line/mutual-impedance.md | P0 | 999 | 5825 | 19 | 10 | pending | completed 
 | 257 | network-partitioning.md | topics | topics/modeling-methods/network-partitioning.md | P1 | 999 | 5774 | 13 | 27 | pending | completed 
-| 379 | norton-equivalent.md | methods | methods/network-solution/norton-equivalent.md | P1 | 999 | 1267 | 6 | 31 | pending |
+| 379 | norton-equivalent.md | methods | methods/network-solution/norton-equivalent.md | P1 | 999 | 4363 | 18 | 12 | completed |
 | 338 | numerical-laplace-transform.md | methods | methods/signal-processing/numerical-laplace-transform.md | P1 | 999 | 1868 | 3 | 10 | pending |
 | 212 | ould-bachir-2019-unified-avm.md | methods | methods/power-electronics/ould-bachir-2019-unified-avm.md | P0 | 999 | 9070 | 14 | 17 | pending | completed 
 | 370 | partial-fraction-expansion.md | methods | methods/signal-processing/partial-fraction-expansion.md | P1 | 999 | 1423 | 6 | 16 | pending |
