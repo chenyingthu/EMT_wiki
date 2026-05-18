@@ -54,7 +54,7 @@
 | 57 | mmc-hvdc-5-level.md | models | models/submodule/mmc-hvdc-5-level.md | P0 | 999 | 2896 | 19 | 15 | completed |
 | 358 | modal-transformation.md | methods | methods/transmission-line/modal-transformation.md | P1 | 999 | 4668 | 13 | 16 | completed |
 | 276 | mppt-control.md | methods | methods/control/mppt-control.md | P1 | 999 | 4172 | 10 | 13 | completed |
-| 70 | multirate-and-network-partitioning.md | topics | topics/modeling-methods/multirate-and-network-partitioning.md | P0 | 999 | 1871 | 16 | 12 | pending |
+| 70 | multirate-and-network-partitioning.md | topics | topics/modeling-methods/multirate-and-network-partitioning.md | P0 | 999 | 1871 | 16 | 12 | completed |
 | 231 | n-port-network.md | methods | methods/network-solution/n-port-network.md | P0 | 999 | 13295 | 22 | 11 | completed |
 | 342 | new-england-test-system.md | topics | topics/test-system/new-england-test-system.md | P1 | 999 | 1819 | 11 | 10 | pending |
 | 172 | numerical-damping-optimization.md | methods | methods/numerical-methods/numerical-damping-optimization.md | P0 | 999 | 4818 | 17 | 10 | pending |
@@ -88,4 +88,5 @@
 |||| 485 | 1 | 1 | 0 | harmonic-transfer-coefficient.md bc=3284, bf=12, 3 broken src wikilinks fixed |
 ||||| 485 | 1 | 1 | 0 | ibr.md bc=13677, bf=16, skip — footer remnant DUP_BLOCK, QG pass |
 ||||| 500 | 1 | 1 | 0 | lumped-parameter-model.md bc=3569, bf=17, 5-method taxonomy + CDA + VF + quant boundaries, QG pass |
+|||| 504 | 1 | 1 | 0 | multirate-and-network-partitioning.md bc=8926, bf=11, mermaid->SVG, Shu 2018 deep-review injected, QG pass |
 
