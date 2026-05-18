@@ -32,7 +32,7 @@
 | 356 | equivalent-circuit-method.md | methods | methods/network-solution/equivalent-circuit-method.md | P1 | 999 | 3828 | 16 | 18 | completed |
 | 61 | extinction-angle-calculation.md | methods | methods/power-electronics/extinction-angle-calculation.md | P0 | 999 | 1732 | 4513 | 19 | 8 | completed |
 | 185 | fault-ride-through.md | topics | topics/hvdc-facts/fault-ride-through.md | P0 | 999 | 5520 | 6 | 8 | completed |
-| 235 | finite-element-method.md | methods | methods/network-solution/finite-element-method.md | P1 | 999 | 14893 | 14 | 19 | pending |
+| 235 | finite-element-method.md | methods | methods/network-solution/finite-element-method.md | P1 | 999 | 14893 | 14 | 19 | completed |
 | 100 | fourier-series.md | methods | methods/signal-processing/fourier-series.md | P0 | 999 | 2619 | 10 | 15 | pending |
 | 376 | frequency-dependent-soil-model.md | methods | methods/transmission-line/frequency-dependent-soil-model.md | P1 | 999 | 1346 | 4 | 15 | pending |
 | 159 | full-bridge-smb.md | models | models/submodule/full-bridge-smb.md | P0 | 999 | 4354 | 46 | 20 | pending |
