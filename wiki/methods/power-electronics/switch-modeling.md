@@ -1,23 +1,23 @@
 ---
 title: "开关建模方法 (Switch Modeling)"
 type: method
-tags: [switch-modeling, power-electronics, fixed-admittance, adc, semiconductor, ideal-switch]
+tags: [switch-modeling, power-electronics, fixed-admittance, adc, semiconductor, ideal-switch, interpolation, cda]
 created: "2026-05-04"
-updated: "2026-05-10"
+updated: "2026-05-19"
 ---
 
 # 开关建模方法 (Switch Modeling)
 
 ## 1. 物理背景与工程需求
 
-EMT 仿矤中电力电子开关器件（IGBT、MOSFET、二极管、晶闸管）的导通、关断、触发和换相过程需要被精确表示。开关建模的精度直接决定电力电子仿矴的可信度——从系统级低频功率交换到器件级大艻扫动、损耗和电磁干扰。
+EMT 仿真中电力电子开关器件（IGBT、MOSFET、二极管、晶闸管）的导通、关断、触发和换相过程需要被精确表示。开关建模的精度直接决定电力电子仿真的可信度——从系统级低频功率交换到器件级大信号暂态、损耗和电磁干扰。
 
 开关建模在 EMT 中的工程需求包括：
 
-1. **系统级仿矴**：将门极信号、自然换流条件或保护逻辑转换成网络事件，更新开关支路的等效导纳或约束
-2. **实时仿矴效率**：开关状态变化导致导纳矩阵重构，实时仿矴中需固定导纳或预计算策略降低成本（Bonjour 2025）
-3. **器件层细节**：匍括反向恢复、结电容、死区畴变、开关损耗和高频振荡
-4. **事件处理**：开关时刻落在步长内部时需插值或子步长处理，否则波形和能量偏移
+1. **系统级仿真**：将门极信号、自然换流条件或保护逻辑转换成网络事件，更新开关支路的等效导纳或约束
+2. **实时仿真效率**：开关状态变化导致导纳矩阵重构，实时仿真中需固定导纳或预计算策略降低成本（Bonjour 2025）
+3. **器件层细节**：包括反向恢复、结电容、死区畸变、开关损耗和高频振荡
+4. **事件处理**：开关时刻落在步长内部时需插值或子步长处理，否则波形和能量偏移（Na 2023）
 
 ## 2. 数学描述
 
@@ -37,14 +37,13 @@ $$
 系统级实现将开关写为状态相关电阻：
 
 $$
-R_{\mathrm{sw}}(t)=
-\begin{cases}
+R_{\mathrm{sw}}(t)=\begin{cases}
 R_{\mathrm{on}}, & \text{ON}\\
 R_{\mathrm{off}}, & \text{OFF}
 \end{cases}
 $$
 
-节点导纳矩阵贡献为 $Y_{ii}\leftarrow Y_{ii}+G_{\mathrm{sw}}$, $Y_{ij}\leftarrow Y_{ij}-G_{\mathrm{sw}}$, $G_{\mathrm{sw}}=1/R_{\mathrm{sw}}$ 。$R_{\mathrm{off}}/R_{\mathrm{on}}$ 比值过大可能恶化导纳矩阵条件数。
+节点导纳矩阵贡献为 $Y_{ii}\leftarrow Y_{ii}+G_{\mathrm{sw}}$，$Y_{ij}\leftarrow Y_{ij}-G_{\mathrm{sw}}$，$G_{\mathrm{sw}}=1/R_{\mathrm{sw}}$。$R_{\mathrm{off}}/R_{\mathrm{on}}$ 比值过大可能恶化导纳矩阵条件数。
 
 ### 2.3 分段线性和详细模型
 
@@ -56,95 +55,224 @@ $$
 
 详细模型可进一步加入门极电路、结电容、反向恢复、热网络和损耗表。此类模型的可信度依赖器件数据手册、双脉冲试验或厂商模型。
 
-## 3. 计算模型与离散化
+## 3. EMT 建模方法
 
-### 3.1 固定导纳 ADC 模型（Bonjour 2025）
+### 3.1 二值电阻模型（RON/ROFF）
 
-Bonjour (2025) 的 BAM-ADC 模型将上下开关、桥臂电感和直流侧电容整合为统一模块，每个模块对外表现为固定导纳诺顿等效：
+**原理**：将开关状态映射为两个固定电阻值（$R_{\mathrm{on}}$ / $R_{\mathrm{off}}$），每次状态切换重新计算导纳矩阵并执行 LU 分解。
+
+**特点**：
+- 原理简单，实现直观
+- 拓扑事件触发后网络矩阵必须重构
+- 每次开关动作需 $O(K^3)$ 矩阵求逆（$K$ 为节点数）
+
+**量化性能**：
+- 时间复杂度：$O(2mN\cdot K^3)$（$m$ 为载波周期数，$N$ 为桥臂模块数）
+- 虚拟功率：$R_{\mathrm{off}}/R_{\mathrm{on}}$ 比值过大时显著
+- 精度：高（保留所有开关细节）
+
+**适用场景**：开关频率低、关注功率交换的系统级 EMT 仿真
+
+### 3.2 固定导纳 ADC 模型（Bonjour 2025）
+
+**原理**：将上下开关、桥臂电感和直流侧电容整合为统一桥臂模块（BAM），对外表现为固定导纳诺顿等效，历史注入源的更新代替矩阵重构。
+
+参数化 ADC 模型离散方程：
 
 $$
-i_{\mathrm{sw}}^n = G_{eq,\mathrm{sw}} u_{\mathrm{sw}}^n + I_{\mathrm{inj},\mathrm{sw}}^n
+i_{\mathrm{sw}}^n = G_{eq,\mathrm{sw}} u_{\mathrm{sw}}^n + I_{\mathrm{inj,sw}}^n
 $$
 
-历史注入源的更新规则包含参数化结构：
-
 $$
-I_{\mathrm{inj},\mathrm{sw}}^n = \alpha G_{eq,\mathrm{sw}} u_{\mathrm{sw}}^{n-1} + \beta i_{\mathrm{sw}}^{n-1}
+I_{\mathrm{inj,sw}}^n = \alpha\, G_{eq,\mathrm{sw}}\, u_{\mathrm{sw}}^{n-1} + \beta\, i_{\mathrm{sw}}^{n-1}
 $$
 
-其中 $\alpha$, $\beta$ 为可调参数。通过 Z 变换终值定理导出理想稳态条件，再以状态转移矩阵谱半径 $\rho(A_1)$ 为核心指标进行参数寻优，实现 $\rho(A_1)=0$，切换后单步误差收敛。
+其中 $\alpha$、$\beta$ 为可调参数。通过 Z 变换终值定理导出理想稳态条件：
 
-### 3.2 交叉重初始化（CRI）
+$$
+\alpha_i \neq -1,\ \beta_i = 1 \quad (\text{ON});\qquad
+\alpha_i = -1,\ \beta_i \neq 1 \quad (\text{OFF})
+$$
 
-开关状态切换时，历史源基于旧拓扑计算，直接使用会引入虚假初值误差。Bonjour (2025) 的 CRI 算法用切换前后的交叉状态量重置历史注入源，而不是重新组网求解。
+以状态转移矩阵谱半径 $\rho(A_1)$ 为核心指标进行参数寻优，实现 $\rho(A_1)=0$，切换后单步误差收敛。
 
-### 3.3 导纳矩阵更新策略
+**CRI 交叉重初始化**：开关状态切换时，基于切换前后交叉状态量重置历史注入源，而不是重新组网求解，消除切换初值误差。
 
-| 策略 | 机制 | 适用场景 | 代价 |
-|----------|------|----------|------|
-| 直接更新导纳 | 每次开关重新 LU 分解 | 开关频率低 | $O(n^3)$/次 |
-| 预计算导纳 | 所有开关组合预先计算 | 开关组合有限 | 存储成本随组合数指数增长 |
-| 固定导纳（Bonjour 2025） | $G_{eq}$ 保持不变，变化移入 $I_{hist}$ | 开关频繁、实时仿矴 | 需 CRI 消除初值误差 |
+**量化性能**：
+- 时间复杂度：$O(K^3)$（全程仅一次矩阵求逆）
+- 矩阵求逆次数：从 $2mN$ 次降至 1 次
+- 虚拟功率损耗：相比 L/C-ADC 显著降低
+- 精度：$\rho(A_1)=0$ 时暂态误差单步零收敛
 
-## 4. 实现方法与算法细节
+**适用场景**：开关频繁、实时仿真、MMC 变流器模块化建模
 
-### 4.1 建模层级
+### 3.3 半步长后向欧拉插值法（Na 2023）
 
-| 建模层级 | 保留内容 | 主要用途 | 主要风险 |
-|----------|----------|----------|----------|
-| 理想开关 | 导通/关断拓扑 | 拓扑逻辑、概念验证 | 无损耗和开关暂态 |
-| 二值电阻 | 状态相关导纳 | 系统级 EMT、保护事件 | 条件数和非物理漏流 |
-| 分段线性 | 近似伏安曲线 | 常规电力电子暂态 | 参数区段需校准 |
-| 详细器件 | 电容、恢复、门极和损耗 | 器件应力、EMI、损耗 | 参数多、计算刚性强 |
-| 热电耦合 | 温度相关参数 | 可靠性和热限制 | 需热边界和实验验证 |
+**原理**：检测到开关动作时刻 $t_z$ 后，先用线性插值获取 $t_z^-$ 状态；随后用半步长 BE 法计算 $t_z+\Delta t/2$，利用 BE 历史电流仅含连续状态变量的特性，避免梯形法因电压不连续导致的数值振荡；再用梯形法从 $t_z+\Delta t/2$ 推进到 $t_z+3\Delta t/2$ 以恢复精度；最后插值回原时间网格。
 
-### 4.2 事件检测与插值
+**BE 法电感历史电流**（仅含电流项，从根本上抑制振荡）：
 
-晶闸管、二极管和受控开关的触发条件不同，应分别建模。若开关时刻落在步长内部，需要插值处理否则波形和能量偏移。梯形积分等伴随模型在拓掑改变后需要重置历史项，否则可能出现数值振荡。
+$$
+I_{\mathrm{history}}^{BE}(t-\Delta t) = i_{km}(t-\Delta t)
+$$
 
-### 4.3 多开关同步动作
+**对比梯形法历史电流**（含电压项，开关时电压突变引发误差）：
 
-同一时刻多个开关动作可能造成奇异拓扑或冲击电流，需要拓扑约束检查。BAM-ADC 模型的改进型状态判定策略根据拓扑逻辑和接口电气量决定当前 BAM 状态，在特定非互补状态下保持模型可用。
+$$
+I_{\mathrm{history}}^{TR}(t-\Delta t) = i_{km}(t-\Delta t) + \frac{\Delta t}{2L}\bigl(v_k(t-\Delta t)-v_m(t-\Delta t)\bigr)
+$$
 
-## 5. 适用边界与失效模式
+**量化性能**（Na 2023，50 μs 步长）：
+- 虚假开关损耗：从普通插值法的 212.6 μJ 降至约 2 μJ，消除率 >99%
+- 电感电流/电压波形与 0.1 μs 参考解相位偏差趋近于 0
+- 计算耗时增加 <1%，无额外矩阵求逆
+- 开关时刻捕捉精度达到微秒级
 
-### 适用条件
+**适用场景**：固定步长 EMT 中电感支路较多的电力电子电路，防止数值振荡（chatter）
 
-- 系统级仿矴（二值电阻或固定导纳）适合开关频率低、关注功率交换的场景
-- 详细器件建模需要器件数据手册、双脉冲试验或厂商模型支撑
-- 实时仿矴中开关频繁时应优先选用固定导纳策略（Bonjour 2025）
+### 3.4 频域开关平均模型（Agudelo 2023, FD-AVM）
 
-### 失效模式
+**原理**：在频域中对 PWM 开关函数做平均处理，将高频开关动态等效为低频平均特性，显著减少时域采样需求；同时采用分时窗策略（Partitioned-time）将总仿真时间划分为若干独立时间窗。
 
-| 失效场景 | 原因 | 后果 |
-|----------|------|------|
-| 二值电阻比值过大 | $R_{\mathrm{off}}/R_{\mathrm{on}}$ 恶化条件数 | 矩阵病态，求解不稳定 |
-| 固定导纳切换后历史未更新 | 旧拓扑计算的 $I_{hist}$ 不匹配 | 虚拟功率、正鸣尖峰 |
-| 理想开关掩盖寄生参数 | 忽略结电容、散电感 | 过电压、高频振荡被错过 |
-| 缺少参数的详细器件模型 | 参数不可信或未核准 | 比简化模型更不可信 |
-| 开关时刻未插值 | 步长内开关事件被忽略 | 波形和能量偏移 |
+开关平均的频域卷积关系：
 
-### 关键约束
+$$
+\langle xy \rangle_k = \sum_i \langle x \rangle_{k-i}\,\langle y \rangle_i
+$$
 
-- Bonjour (2025) 的 BAM-ADC 模型中的 $\rho(A_1)=0$ 确保切换后单步误差收敛，但此结论针对 BAM 结构而非所有拓扑
-- 平均模型适合低频行为但不能替代保护动作、器件应力和电磁干扰分析
-- 开关损耗、反向恢复波形和死区畴变信息不能从二值电阻或理想开关模型获得
+Toeplitz 矩阵形式实现频域乘积运算。窗口接口采用样本重叠技术抑制逆数值拉普拉斯变换在半值收敛处的上升时间振荡。
 
-## 6. 应用案例
+**量化性能**（Agudelo 2023）：
+- 采样点总数：从单窗 $10^5$~$10^6$ 量级降至每窗 $10^3$~$10^4$ 量级
+- 仿真步长：从微秒级（1~10 μs）提升至毫秒级（0.1~1 ms），增大 100~1000 倍
+- 计算效率：比经典单窗 NLT 提升 5~10 倍，比非平均 FD 模型减少数值振荡 >90%
 
-### 案例 1：固定导纳 BAM-ADC 模型（Bonjour 2025）
+**适用场景**：光伏并网等需要长时暂态仿真的系统，牺牲高频 PWM 纹波换取计算效率
 
-场景：含多个 MMC 桥臂模块的变流器仿矴。BAM-ADC 将上下开关、桥臂电感和直流侧电容整合为统一模块，导纳矩阵全过程保持固定。通过 $\rho(A_1)=0$ 的参数优化和 CRI 算法，实现切换后单步误差收敛，矩阵求逆次数从 $2mN$ 降至 1 次。
+## 4. 数值稳定性分析框架（Zhao 2020）
 
-### 案例 2：FPGA 上的恒导纳开关修正算法
+### 4.1 问题的提出
 
-场景：实时仿矴中电力电子变流器的恒导纳建模。FPGA 上实现恒导纳模型，开关状态变化时修正历史源而非重新分解导纳矩阵，步长可小于 1 $\mu$s。
+EMT 仿真中插值和外推步骤是否破坏数值稳定性，长期缺乏严格理论判据。传统 A-稳定性 / L-稳定性分析仅适用于线性时不变（LTI）系统，而开关使系统成为切换系统。
 
-### 案例 3：LCC 换流器开关事件仿矴
+### 4.2 CQLF 稳定性框架
 
-场景：晶闸管换流器的自然换相过程仿矴。开关事件检测（电流零点、触发脉冲）、插值处理和历史项重置的组合保证波形精度。二值电阻模型在 $R_{\mathrm{off}}/R_{\mathrm{on}}$ 选择不当时产生非物理漏流。
+Zhao 2020 将线性插值和临界阻尼调整（CDA）等效为引入额外的开关状态，将原系统扩展为包含这些中间状态的切换系统。若扩展切换系统存在公共二次李雅普诺夫函数（$V(x)=x^TPx$），则仿真绝对稳定。
 
-## 7. 延伸阅读
+切换系统状态空间表示：
+
+$$
+\dot{x} = A_i x + B_i u,\qquad i\in\mathcal{P}
+$$
+
+CQLF 存在条件：
+
+$$
+A_i^T P + P A_i < 0,\quad \forall i\in\mathcal{P}
+$$
+
+**核心结论**：若原始切换系统在所有开关状态下严格无源，则广泛使用的线性插值和 CDA 会得到稳定仿真。
+
+**插值误差阶数**：标准线性插值局部误差 $O(\Delta t^2)$，两阶段插值方法精度可达二阶，误差系数约为标准方法的 0.25~0.3 倍。
+
+## 5. 形式化表达汇总
+
+### 5.1 理想开关互补约束
+
+$$
+\begin{cases}
+v_{\mathrm{sw}} = 0, & \text{ON}\\
+i_{\mathrm{sw}} = 0, & \text{OFF}
+\end{cases}
+$$
+
+### 5.2 二值电阻模型
+
+$$
+R_{\mathrm{sw}}(t) = \begin{cases} R_{\mathrm{on}}, & \text{ON}\\ R_{\mathrm{off}}, & \text{OFF} \end{cases},\qquad
+G_{\mathrm{sw}} = 1/R_{\mathrm{sw}}
+$$
+
+### 5.3 参数化 ADC 模型（Bonjour 2025）
+
+$$
+i_{\mathrm{sw}}^n = G_{eq,\mathrm{sw}}\, u_{\mathrm{sw}}^n + I_{\mathrm{inj,sw}}^n,\qquad
+I_{\mathrm{inj,sw}}^n = \alpha\, G_{eq,\mathrm{sw}}\, u_{\mathrm{sw}}^{n-1} + \beta\, i_{\mathrm{sw}}^{n-1}
+$$
+
+### 5.4 半步长 BE 插值流程
+
+**步骤 1**：在原始时间步 $t$ 处，使用开关前导纳矩阵 $Y_{\mathrm{old}}$ 和已知历史状态求解 $V(t)$。
+
+**步骤 2**：线性插值，将 $t-\Delta t$ 和 $t$ 时刻的节点电压、支路电流及历史电流项插值至实际开关动作时刻 $t_z$。
+
+**步骤 3**：切换至 $Y_{\mathrm{new}}$，采用半步长后向欧拉法计算 $t_z+\Delta t/2$ 时刻网络解。
+
+**步骤 4**：保持 $Y_{\mathrm{new}}$ 不变，采用梯形积分法计算 $t_z+3\Delta t/2$ 时刻网络解。
+
+**步骤 5**：通过线性插值或外推，将状态同步回原始时间网格点 $t$。
+
+### 5.5 CQLF 稳定性条件
+
+$$
+A_i^T P + P A_i < 0,\quad \forall i\in\mathcal{P}
+$$
+
+严格无源条件下，插值和 CDA 保证仿真数值稳定。
+
+## 6. 关键技术挑战
+
+### 6.1 事件检测与插值精度
+
+晶闸管、二极管和受控开关的触发条件不同，应分别建模。若开关时刻落在步长内部，需要插值处理否则波形和能量偏移。梯形积分等伴随模型在拓扑改变后需要重置历史项，否则可能出现数值振荡。Na 2023 的半步长 BE 插值法将虚假损耗从 212.6 μJ 降至约 2 μJ（>99% 消除），同时保持与工业瞬时插值法相同的计算步骤。
+
+### 6.2 固定导纳切换误差（CRI 必要性）
+
+开关状态切换时，历史源基于旧拓扑计算，直接使用会引入虚假初值误差。Bonjour 2025 的 CRI 算法用切换前后交叉状态量重置历史注入源，消除切换后单步误差，实现 $\rho(A_1)=0$ 的零谱半径收敛。
+
+### 6.3 数值振荡（Chatter）抑制
+
+电感电压在开关断开瞬间不连续，梯形法历史项同时含当前/过去状态会将不连续电压注入伴随电路，产生数值振荡。Na 2023 利用 BE 法历史电流仅含电感电流的特性，在 $t_z+\Delta t/2$ 步自然消除振荡，无需额外抑制步骤。Zhao 2020 的 CQLF 框架证明，若系统各开关状态严格无源，则线性插值和 CDA 必然数值稳定。
+
+### 6.4 多开关同步动作与拓扑奇异
+
+同一时刻多个开关动作可能造成奇异拓扑或冲击电流，需要拓扑约束检查。BAM-ADC 模型通过改进型状态判定策略（基于拓扑逻辑和接口电气量）处理非互补导通状态。
+
+### 6.5 开关比值与矩阵条件数
+
+$R_{\mathrm{off}}/R_{\mathrm{on}}$ 比值过大（典型值 $10^6$~$10^{12}$）会恶化导纳矩阵条件数，导致求解不稳定。固定导纳模型通过固定 $G_{eq}$ 而将状态变化移入 $I_{\mathrm{history}}$ 绕开此问题，但需 CRI 消除初值误差。
+
+## 7. 量化性能边界
+
+| 建模方法 | 时间复杂度 | 精度 | 虚拟功率 | 步长上限 | 适用场景 |
+|----------|-----------|------|----------|----------|----------|
+| 二值电阻 RON/ROFF | $O(2mN\cdot K^3)$ | 高（保留所有细节） | $R_{\mathrm{off}}/R_{\mathrm{on}}$ 比值相关 | μs 级 | 开关频率低、系统规模小 |
+| 固定导纳 ADC（Bonjour 2025） | $O(K^3)$（全程1次） | $\rho(A_1)=0$ 零收敛 | 显著降低 | 10~50 μs | 实时仿真、开关频繁 |
+| 半步长 BE 插值（Na 2023） | 与瞬时插值相同（+<1%） | 虚假损耗降低 >99% | 彻底消除 | 50 μs（测试） | 含电感支路的电力电子电路 |
+| 频域开关平均 FD-AVM（Agudelo 2023） | 比单窗 NLT 快 5~10 倍 | 牺牲 PWM 纹波 | 无（频域方法） | 0.1~1 ms（增大 100~1000×） | 长时暂态、光伏并网 |
+
+## 8. 适用边界与选择指南
+
+### 8.1 方法选择决策表
+
+| 应用场景 | 推荐方法 | 不推荐方法 |
+|----------|----------|------------|
+| 实时仿真（开关频繁） | 固定导纳 ADC + CRI | 二值电阻（矩阵爆炸） |
+| 器件级损耗/EMI 分析 | 详细器件模型 + 固定导纳插值 | 二值电阻（无寄生参数） |
+| 系统级低频功率交换 | 二值电阻或平均值模型 | 详细器件模型（过拟合） |
+| 长时暂态仿真（光伏等） | 频域开关平均 FD-AVM | 时域详细开关（全时间窗采样） |
+| 含电感支路的电力电子电路 | 半步长 BE 插值 | 普通插值（chatter 问题） |
+| 稳定性理论验证 | CQLF 框架（Zhao 2020） | 经验性阻尼调整 |
+
+### 8.2 失效边界
+
+- **二值电阻比值过大**：$R_{\mathrm{off}}/R_{\mathrm{on}}$ 恶化条件数 → 矩阵病态，求解不稳定
+- **固定导纳切换后历史未更新**：旧拓扑计算的 $I_{\mathrm{history}}$ 不匹配 → 虚拟功率、振荡尖峰
+- **理想开关掩盖寄生参数**：忽略结电容、漏电感 → 过电压、高频振荡被错过
+- **缺少参数的详细器件模型**：参数不可信或未核准 → 比简化模型更不可信
+- **开关时刻未插值**：步长内开关事件被忽略 → 波形和能量偏移
+
+## 9. 延伸阅读
 
 - [[fixed-admittance]]：固定导纳开关建模的专门页面
 - [[switching-function-method]]：开关状态的函数表达
@@ -153,32 +281,11 @@ $$
 - [[stiff-system-handling]]：处理开关和寄生参数造成的刚性
 - [[numerical-oscillation-suppression]]：开关事件后的数值振荡专门处理
 - [[fpga-real-time-simulation]]：FPGA 上开关建模的并行流水线实现
+- [[numerical-integration]]：梯形法、后向欧拉法等数值积分方法的详细推导
 
 ## 来源论文
 
-| 论文 | 年份 |
-|------|------|
-| [[2728nested-fast-and-simultaneous-solution-for-time-domain-simulation-of-integrat|Nested fast and simultaneous solution for time-domain simula]] | 2006 |
-| [[potential-risk-of-failures-in-switching-ehv-shunt-reactors|Potential risk of failures in switching EHV shunt reactors]] | 2006 |
-| [[application-of-emtp-rv-graphic-software-of-electromagnetic-transient-simulation|Application of EMTP-RV graphic software of electromagnetic t]] | 2007 |
-| [[a-link-between-emtp-rv-and-flux3d-for-transformer-energization-studies|A link between EMTP-RV and FLUX3D for transformer energizati]] | 2009 |
-| [[a-robust-and-efficient-iterative-scheme-for-the-emt-simulations-of-nonlinear-cir-fix|A Robust and Efficient Iterative Scheme for the EMT Simulati]] | 2011 |
-| [[a-combined-state-space-nodal-method-for-the-simulation-of-power-system-transient|A combined state-space nodal method for the simulation of po]] | 2011 |
-| [[a-combined-state-space-nodal-method-for-the-simulation-of-power-system-transient|A combined state-space nodal method for the simulation of po]] | 2011 |
-| [[modulation-index-dependent-thevenin-equivalent-circuit-model-of-vsc-and-apdr|Modulation Index Dependent Thévenin Equivalent Circuit Model]] | 2015 |
-| [[modeling-of-modular-multilevel-converters-with-different-levels-of-detail-13&14|Dynamic Electro-Magnetic-Thermal Modeling of MMC-Based DC-DC]] | 2017 |
-| [[modeling-of-modular-multilevel-converters-with-different-levels-of-detail-13&14|Dynamic Electro-Magnetic-Thermal Modeling of MMC-Based DC-DC]] | 2017 |
-| [[accurate-simulation-model-for-a-three-phase-ferroresonant-circuit-in-emtpatp|Accurate simulation model for a three-phase ferroresonant ci]] | 2018 |
-| [[real-time-mpsoc-based-electrothermal-transient-simulation-of-fault-tolerant-mmc-|Real-Time MPSoC-Based Electrothermal Transient Simulation of]] | 2019 |
-| [[an-inverter-model-simulating-accurate-harmonics-with-low-computational-burden-fo|An Inverter Model Simulating Accurate Harmonics with Low Com]] | 2020 |
-| [[hierarchical-device-level-modular-multilevel-converter-modeling-for-parallel-and|Hierarchical Device-Level Modular Multilevel Converter Model]] | 2020 |
-| [[comparison-and-selection-of-grid-tied-inverter-models-for-accurate-and-efficient|Comparison and Selection of Grid-Tied Inverter Models for Ac]] | 2021 |
-| [[compensation-method-for-parallel-real-time-emt-studies|Compensation method for parallel real-time EMT studies✰]] | 2021 |
-| [[fast-simulation-model-of-voltage-source-converters-with-arbitrary-topology-using|Fast Simulation Model of Voltage Source Converters With Arbi]] | 2022 |
-| [[fast-simulation-model-of-voltage-source-converters-with-arbitrary-topology-using|Fast Simulation Model of Voltage Source Converters With Arbi]] | 2022 |
-| [[an-automatable-approach-for-small-signal-stability-analysis-of-power-electronic-|An Automatable Approach for Small-Signal Stability Analysis ]] | 2023 |
-| [[equivalent-model-of-nearest-level-modulation-for-fast-electromagnetic-transient-|Equivalent model of nearest level modulation for fast electr]] | 2023 |
-| [[modelling-of-electromagnetic-transients-in-multi-unit-high-voltage-circuit-break|Modelling of electromagnetic transients in multi-unit high-v]] | 2024 |
-| [[非隔离型直流变压器的快速电磁暂态等效建模方法|非隔离型直流变压器的快速电磁暂态等效建模方法]] | 2024 |
-| [[a-julia-based-simulation-platform-for-power-system-transients|A Julia-based simulation platform for power system transient]] | 2025 |
-| [[a-new-model-of-trapped-charge-sources-in-switching-transient-studies-in-the-pres|A New Model of Trapped Charge Sources in Switching Transient]] | 2025 |
+- Cao 等 (2025) — 桥臂模块固定导纳 ADC 模型（BAM-ADC），参数化 α/β、CRI 算法、ρ(A₁)=0 收敛
+- Na 等 (2023) — 半步长后向欧拉插值法，虚假损耗降低 >99%，彻底消除 chatter
+- Zhao 等 (2020) — CQLF 稳定性框架，线性插值/CDA 等效为额外开关状态的条件证明
+- Agudelo 等 (2023) — 频域开关平均 FD-AVM，采样点降低 10^2~10^3 倍，步长增大 100~1000 倍
