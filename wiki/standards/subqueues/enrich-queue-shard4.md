@@ -57,7 +57,7 @@
 
 | 335 | modal-analysis.md | methods | methods/signal-processing/modal-analysis.md | P1 | 999 | 2536 | 10 | 12 | completed |
 | 81 | model-order-reduction.md | topics | topics/modeling-methods/model-order-reduction.md | P0 | 999 | 9970 | 19 | 45 | completed |
-| 121 | mtdc-model.md | models | models/equivalent/mtdc-model.md | P0 | 999 | 3190 | 31 | 17 | pending |
+| 121 | mtdc-model.md | models | models/equivalent/mtdc-model.md | P0 | 999 | 3190 | 31 | 17 | completed |
 | 101 | multiscale-modeling.md | models | models/equivalent/multiscale-modeling.md | P0 | 999 | 2620 | 13 | 9 | pending |
 | 325 | network-equation-solution.md | topics | topics/modeling-methods/network-equation-solution.md | P1 | 999 | 2297 | 15 | 19 | pending |
 | 406 | nodal-admittance-matrix.md | methods | methods/network-solution/nodal-admittance-matrix.md | P1 | 999 | 832 | 3 | 8 | pending |
