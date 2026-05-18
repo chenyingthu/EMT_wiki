@@ -43,7 +43,7 @@
 | 286 | harmonic-interaction.md | methods | methods/signal-processing/harmonic-interaction.md | P1 | 999 | 3566 | 14 | 12 | completed |
 || 220 | hierarchical-control.md | methods | methods/control/hierarchical-control.md | P0 | 999 | 10613 | 15 | 11 | completed |
 | 307 | hvdc-control.md | methods | methods/control/hvdc-control.md | P1 | 999 | 3004 | 7 | 10 | completed |
-| 215 | hybrid-simulation.md | topics | topics/simulation/hybrid-simulation.md | P0 | 999 | 9320 | 66 | 15 | pending |
+| 215 | hybrid-simulation.md | topics | topics/simulation/hybrid-simulation.md | P0 | 999 | 9320 | 66 | 15 | completed |
 | 372 | ieee-300-bus-system.md | topics | topics/test-system/ieee-300-bus-system.md | P1 | 999 | 1399 | 11 | 10 | pending |
 | 151 | impedance-relay.md | methods | methods/protection-fault/impedance-relay.md | P0 | 999 | 4045 | 17 | 15 | pending |
 | 39 | insulation-coordination.md | methods | methods/protection-fault/insulation-coordination.md | P0 | 999 | 1233 | 3 | 18 | pending |

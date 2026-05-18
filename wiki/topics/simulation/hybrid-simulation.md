@@ -8,19 +8,52 @@ created: "2026-05-02"
 # 混合仿真 (Hybrid Simulation)
 
 
-```mermaid
-graph TD
-    subgraph Ncmp[混合仿真 (Hybrid Simulation)]
-        N0[**时间步长**: 10-100 $\mu$s]
-        N1[**仿真时长**: 毫秒-秒级]
-        N2[**系统规模**: 通常<100节点]
-        N3[**模型细节**: 三相详细模型]
-        N4[**线路模型**: 分布参数/行波]
-        N5[**元件模型**: 非线性详细模型]
-        N6[**求解方法**: 时域数值积分]
-        N7[**计算成本**: 高]
-    end
-```
+<div style="text-align:center;margin:16px 0;">
+<svg viewBox="0 0 820 240" xmlns="http://www.w3.org/2000/svg">
+  <rect x="10" y="20" width="180" height="195" rx="6" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="100" y="42" font-family="Arial,sans-serif" font-size="13" font-weight="bold" text-anchor="middle" fill="#2563eb">EMT 域</text>
+  <text x="22" y="65" font-family="Arial,sans-serif" font-size="10" fill="#333">Δt: 10–100 μs</text>
+  <text x="22" y="81" font-family="Arial,sans-serif" font-size="10" fill="#333">时长: 毫秒–秒级</text>
+  <text x="22" y="97" font-family="Arial,sans-serif" font-size="10" fill="#333">规模: &lt;100 节点</text>
+  <text x="22" y="113" font-family="Arial,sans-serif" font-size="10" fill="#333">模型: 三相详细</text>
+  <text x="22" y="129" font-family="Arial,sans-serif" font-size="10" fill="#333">线路: 分布参数/行波</text>
+  <text x="22" y="145" font-family="Arial,sans-serif" font-size="10" fill="#333">元件: 非线性详细</text>
+  <text x="22" y="161" font-family="Arial,sans-serif" font-size="10" fill="#333">求解: 时域数值积分</text>
+  <text x="22" y="177" font-family="Arial,sans-serif" font-size="10" fill="#333">成本: 高</text>
+
+  <rect x="320" y="20" width="180" height="195" rx="6" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+  <text x="410" y="42" font-family="Arial,sans-serif" font-size="13" font-weight="bold" text-anchor="middle" fill="#d97706">混合仿真接口</text>
+  <text x="332" y="65" font-family="Arial,sans-serif" font-size="10" fill="#333">◆ 接口位置选择</text>
+  <text x="332" y="79" font-family="Arial,sans-serif" font-size="10" fill="#333">  – 时间尺度分离 (≥100×)</text>
+  <text x="332" y="93" font-family="Arial,sans-serif" font-size="10" fill="#333">  – 变量表征动态</text>
+  <text x="332" y="107" font-family="Arial,sans-serif" font-size="10" fill="#333">◆ 接口类型</text>
+  <text x="332" y="121" font-family="Arial,sans-serif" font-size="10" fill="#333">  – 电压 / 电流 / 功率</text>
+  <text x="332" y="135" font-family="Arial,sans-serif" font-size="10" fill="#333">  – 戴维南 / 诺顿等值</text>
+  <text x="332" y="149" font-family="Arial,sans-serif" font-size="10" fill="#333">◆ 插值方法</text>
+  <text x="332" y="163" font-family="Arial,sans-serif" font-size="10" fill="#333">  – 线性 / 三次样条</text>
+  <text x="332" y="177" font-family="Arial,sans-serif" font-size="10" fill="#333">◆ 同步协议</text>
+  <text x="332" y="191" font-family="Arial,sans-serif" font-size="10" fill="#333">  – t_sync = k·Δt_sync</text>
+
+  <rect x="630" y="20" width="180" height="195" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+  <text x="720" y="42" font-family="Arial,sans-serif" font-size="13" font-weight="bold" text-anchor="middle" fill="#16a34a">TS 域</text>
+  <text x="642" y="65" font-family="Arial,sans-serif" font-size="10" fill="#333">Δt: 1–10 ms</text>
+  <text x="642" y="81" font-family="Arial,sans-serif" font-size="10" fill="#333">时长: 秒–分钟级</text>
+  <text x="642" y="97" font-family="Arial,sans-serif" font-size="10" fill="#333">规模: 10,000+ 节点</text>
+  <text x="642" y="113" font-family="Arial,sans-serif" font-size="10" fill="#333">模型: 序网简化</text>
+  <text x="642" y="129" font-family="Arial,sans-serif" font-size="10" fill="#333">线路: 集中参数/等值</text>
+  <text x="642" y="145" font-family="Arial,sans-serif" font-size="10" fill="#333">元件: 准稳态线性化</text>
+  <text x="642" y="161" font-family="Arial,sans-serif" font-size="10" fill="#333">求解: 代数微分方程</text>
+  <text x="642" y="177" font-family="Arial,sans-serif" font-size="10" fill="#333">成本: 低</text>
+
+  <line x1="190" y1="50" x2="315" y2="50" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="505" y1="50" x2="625" y2="50" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <rect x="220" y="195" width="380" height="26" rx="6" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.5"/>
+  <text x="410" y="212" font-family="Arial,sans-serif" font-size="11" text-anchor="middle" fill="#7c3aed">时间尺度分离: Δt_TS / Δt_EMT ≥ 100</text>
+  <defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#333"/></marker></defs>
+</svg>
+</div>
+<p style="text-align:center;font-size:12px;color:#666;margin-top:8px;">图1 · 混合仿真：EMT域（蓝）与TS域（绿）通过接口（黄）协同</p>
 
 
 ## 核心原理详解
@@ -737,7 +770,3 @@ $$\hat{\epsilon} = f_{NN}(x_{system}, x_{partition}, t_{simulation})$$
 ## 来源论文
 
 见[[index]]中混合仿真相关文献。
-
----
-
-*最后更新: 2026-05-03*
