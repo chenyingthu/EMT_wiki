@@ -33,7 +33,7 @@
 | 140 | energy-storage-converter-model.md | models | models/renewable-storage/energy-storage-converter-model.md | P0 | 999 | 4010 | 20 | 13 | completed |
 | 195 | equivalent-modeling.md | models | models/equivalent/equivalent-modeling.md | P0 | 999 | 5945 | 28 | 11 | completed |
 | 69 | fast-system-simulation.md | topics | topics/simulation/fast-system-simulation.md | P0 | 999 | 1817 | 3707 | 13 | 24 | completed |
-| 56 | fdne-model.md | models | models/equivalent/fdne-model.md | P0 | 999 | 1656 | 8 | 50 | pending |
+| 56 | fdne-model.md | models | models/equivalent/fdne-model.md | P0 | 999 | 2079 | 6 | 20 | completed |
 | 142 | fixed-point-conversion.md | methods | methods/simulation-technology/fixed-point-conversion.md | P0 | 999 | 3783 | 11 | 13 | pending |
 | 275 | frequency-control.md | methods | methods/control/frequency-control.md | P1 | 999 | 4193 | 15 | 11 | pending |
 | 221 | frequency-domain-analysis.md | topics | topics/tools-software/frequency-domain-analysis.md | P0 | 999 | 11137 | 18 | 23 | pending |
