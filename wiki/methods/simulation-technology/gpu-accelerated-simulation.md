@@ -1,494 +1,181 @@
 ---
 title: "GPU加速仿真 (GPU-Accelerated Simulation)"
 type: method
-tags: [accelerated]
+tags: [accelerated, gpu, cuda, parallel, heterogeneous]
 created: "2026-05-13"
+updated: "2026-05-18"
 ---
 
 # GPU加速仿真 (GPU-Accelerated Simulation)
 
-
-```mermaid
-graph TD
-    subgraph Ncmp[gpu-accelerated-simulation]
-        N0[核心数: 8-64核]
-        N1[时钟频率: 3-5 GHz]
-        N2[内存带宽: 50-100 GB/s]
-        N3[并行方式: 任务并行]
-        N4[分支处理: 高效]
-        N5[适用场景: 复杂控制流]
-    end
-```
-
-
 ## 定义与概述
 
-GPU加速仿真是利用图形处理器（Graphics Processing Unit）的大规模并行计算能力加速电磁暂态（EMT）仿真的技术。与传统CPU串行计算相比，GPU通过单指令多线程（SIMT）架构可同时执行成千上万个计算任务，特别适合处理大规模电力系统中大量同质化组件（如风电场中的DFIG、MMC中的子模块）的并行计算，可实现10-20倍的仿真加速。
+GPU加速仿真是利用图形处理器（Graphics Processing Unit）的大规模并行计算能力加速电磁暂态（EMT）仿真的技术。与传统CPU串行计算相比，GPU通过单指令多线程（Single Instruction Multiple Thread, SIMT）架构可同时执行成千上万个计算线程，特别适合处理大规模电力系统中大量同质化组件（如风电场中的双馈感应发电机DFIG、MMC中的子模块）的并行计算。
 
-## 1. 理论基础
+GPU加速仿真的核心价值在于解决大规模电力系统EMT仿真面临的"维度灾难"问题。传统EMT仿真采用单核CPU逐个处理每个元件，当系统规模扩大至数千台风机或数百个MMC子模块时，仿真时间呈平方或立方增长。GPU通过将同质化元件映射到数千个CUDA核心实现并行计算，将复杂度从$O(N^2)$~$O(N^3)$降低至$O(N)$，突破串行计算的性能瓶颈。
 
-### 1.1 GPU架构特点
+**量化性能定位**：Zhou & Dinavahi 2014在IEEE 39-bus系统63倍扩展规模下实现了5.63倍GPU加速；Lin等2021的自适应异构框架在401电平MMC场景下达10倍加速，在8000台DFIG风机场景下达20倍加速。
 
-**SIMT（单指令多线程）执行模型**:
-- 成百上千个计算核心同时执行相同指令
-- 线程按"warp"（32线程）分组调度
-- 适合数据并行计算（同一操作应用于大量数据）
+## 理论基础
 
-**GPU vs CPU对比**:
+### GPU架构特点与CUDA编程模型
 
-| 特性 | CPU | GPU |
-|------|-----|-----|
-| 核心数 | 8-64核 | 数千个CUDA核心 |
-| 时钟频率 | 3-5 GHz | 1-2 GHz |
-| 内存带宽 | 50-100 GB/s | 500-1000 GB/s |
-| 并行方式 | 任务并行 | 数据并行 |
-| 分支处理 | 高效 | 效率下降 |
-| 适用场景 | 复杂控制流 | 大规模同质化计算 |
+GPU与CPU的核心差异源于两者的设计目标不同。CPU设计为少量强大核心（8-64核），优化目标是降低单线程延迟和应对复杂分支预测，因此每个核心拥有大容量缓存和复杂控制逻辑；GPU设计为数千个小型CUDA核心，优化目标是最大化数据吞吐量，因此牺牲单线程延迟换取整体并行度。
 
-**内存层次**:
-- 全局内存：容量大（16-80GB），延迟高
-- 共享内存：容量小（48-164KB/SM），延迟低
-- 寄存器：每个线程私有，最快
+CUDA编程模型将计算任务分解为三级层次结构：
 
-### 1.2 CUDA编程模型
+$$Grid \rightarrow Block \rightarrow Thread$$
 
-**内核函数（Kernel）**:
-```cuda
-__global__ void gpu_kernel(float* data, int n) {
-    int tid = blockIdx.x * blockDim.x + threadIdx.x;
-    if (tid < n) {
-        data[tid] = compute(data[tid]);
-    }
-}
-```
-
-**执行配置**:
-- Grid：由多个Block组成
-- Block：由多个Thread组成（最多1024线程）
+- Grid（网格）：由多个Block组成
+- Block（线程块）：由多个Thread组成（最多1024线程）
 - Warp：32个线程为一组同时执行
 
-**关键优化原则**:
-1. **合并内存访问**：相邻线程访问相邻内存地址
-2. **减少分支**：避免线程发散（warp内线程走不同分支）
-3. **利用共享内存**：数据复用时缓存到共享内存
-4. **隐藏延迟**：每个SM上运行足够多的warp
+GPU的内存层次决定了编程策略。全局内存容量大（16-80GB）但延迟高（数百个时钟周期），适合存储大规模数据；共享内存容量小（48-164KB每个SM）但延迟低（数十个时钟周期），适合同一Block内线程共享数据；寄存器每个线程私有，延迟最低但数量有限。
 
-### 1.3 同质性与并行效率
+充分利用内存层次是GPU性能优化的关键。合并访问（coalesced access）使得相邻线程访问相邻内存地址时能够合并为一次内存事务；共享内存缓存通过`__shared__`声明将高频访问数据保留在SM内；计算与数据传输重叠通过异步执行（async）实现。
 
-**同质性定义**:
-组件具有相同的数学模型、相同的计算流程、仅参数不同。
+### 同质性与并行效率
 
-**GPU效率交叉点**:
-- 当组件数量 < 阈值：GPU启动开销 > 并行收益
-- 当组件数量 > 阈值：GPU并行优势显现
+GPU并行计算存在一个关键前提：待并行组件必须满足同质性条件，即组件具有相同的数学模型、相同的计算流程、仅参数不同。同质性使得数千个线程可以执行同一个kernel函数，通过参数区分不同组件实例，避免线程发散。
 
-**典型阈值**:
-| 组件类型 | CPU/GPU交叉阈值 | 原因 |
-|----------|-----------------|------|
-| MMC子模块 | ~15电平 | 低于此值数据传输开销大 |
-| DFIG风机 | ~100台 | 低于此值线程利用率低 |
-| 输电线路 | ~50条 | 需考虑网络拓扑耦合 |
+当组件数量低于某个阈值时，GPU启动开销（kernel调度、内存分配、数据传输）可能超过并行计算带来的收益。Lin等2021的研究给出了经验阈值：MMC子模块约15电平（低于此值数据传输开销大于并行收益）、DFIG风机约100台（低于此值线程利用率低）。
 
-## 2. EMT仿真应用
+GPU执行时间具有稳定性特征。在Tesla V100上对70个不同规模样本的统计分析表明，并行执行时间稳定在29-35秒区间（中位数30.6秒），这一稳定性为工程应用提供了性能预估依据。
 
-### 2.1 风电场GPU并行仿真
+## EMT仿真应用
 
-**应用场景**:
-大规模风电场（1000-10000台DFIG）接入交直流混联电网的EMT仿真。
+### 风电场GPU并行仿真
 
-**并行策略**:
-- 每台风机分配给一个GPU线程块
-- 各风机并行计算本地电磁-机械动态
-- CPU汇总全网网络方程
+大规模风电场（1000-10000台DFIG）接入交直流混联电网是GPU加速仿真的典型应用场景。并行策略的核心思想是将系统分为两部分：需要CPU处理的不规则组件（发电机、交流网络）和适合GPU处理的同质化组件（DFIG、MMC子模块）。
 
-**拓扑重构与解耦**:
-1. **内部解耦**：将DFIG的5阶状态空间分解为独立子系统
-2. **同质化增强**：统一数学模型，仅参数不同
-3. **数值阶数降低**：从$O(N^3)$降至$O(N)$
+DFIG的状态空间模型为5阶微分方程组，包含定子磁链$\psi_s$、转子磁链$\psi_r$及其相关电流。每台风机独立GPU线程，通过状态更新方程同步计算：
 
-**量化成果**:
-- 401电平MMC：GPU加速约**10倍**
-- 8000台DFIG：GPU加速约**20倍**
-- 计算时间：GPU并行稳定在29-35秒区间
+$$\frac{d\psi_s}{dt} = v_s - r_s i_s - \omega_r \psi_r$$
 
-### 2.2 MMC子模块并行计算
+$$\frac{d\psi_r}{dt} = v_r - r_r i_r - (\omega_r - \omega_{slip}) \psi_s$$
 
-**并行架构**:
-```
-CPU侧（控制+网络）:
-- 外环控制器（定直流电压/有功）
-- 内环控制器（电流控制）
-- 网络节点导纳矩阵求解
+定子电流和转子电流通过磁链与电感矩阵的关系计算：
 
-GPU侧（子模块并行）:
-- 三相桥臂并行（3个kernel）
-- 每桥臂子模块并行（N个线程）
-- 电容电压更新
-- 开关状态判断
-```
+$$i_s = L_s^{-1}\psi_s, \quad i_r = L_r^{-1}\psi_r$$
 
-**子模块电压计算**:
+Lin等2021的实验结果表明，在Tesla V100上处理401电平MMC可获得10倍加速，处理8000台DFIG可获得20倍加速。
+
+### MMC子模块并行计算
+
+MMC的每个子模块包含电容和IGBT开关，其电压更新计算是典型的数据并行问题。三相桥臂的子模块被映射到GPU三维线程网格：每相一个Block，每Block包含N个Thread（N等于该桥臂子模块数）。
+
+子模块电压计算方程为：
+
 $$v_{SM} = i_{SM}r_{on} + g_1 \int \frac{i_{SM}}{C} dt + (g_1 - \text{sgn}(i_{SM}))2V_f + (g_1 + \text{sgn}(i_{SM}) - 1)V_j$$
 
-其中：
-- $r_{on}$: IGBT导通电阻
-- $C$: 子模块电容
-- $V_f$: 二极管正向压降
-- $g_1$: 开关函数
+其中$g_1$为开关函数（0或1），$r_{on}$为IGBT导通电阻，$C$为子模块电容，$V_f$为二极管正向压降。由于每相子模块计算完全独立，GPU可同时处理3×N个线程，显著提升计算吞吐量。
 
-### 2.3 异构CPU-GPU协同
+### 异构CPU-GPU协同
 
-**自适应任务分配**:
+CPU-GPU异构架构是当前GPU加速仿真的主流实现方式。CPU负责网络拓扑不规则部分的稀疏矩阵求解和控制逻辑复杂的任务（如外环控制器）；GPU负责同质化大规模并行计算（如DFIG、MMC子模块）。两者通过PCIe总线交换边界条件。
 
-| 计算任务 | 分配处理器 | 原因 |
-|----------|-----------|------|
-| 交流电网 | CPU | 网络拓扑不规则，稀疏矩阵求解 |
-| 外环控制 | CPU | 控制逻辑复杂，分支多 |
-| 直流线路 | CPU | 传输线模型，串行依赖 |
-| DFIG风机 | GPU | 数量大，模型同质化 |
-| MMC子模块 | GPU | 数量大，计算独立 |
-| 逆变器 | GPU | PWM计算并行化 |
+Lin等2021提出的自适应顺序-并行处理框架（ASP2）能够根据系统规模动态选择三种工作模式：当MMC电平较低或风机数量较少时（GPU加速比<1），回退至纯CPU计算以避免GPU启动开销；当系统规模中等时，启用CPU-GPU联合处理；当规模足够大时，切换至纯GPU并行计算。
 
-**数据流**:
-```
-CPU: 网络求解 → 边界条件 → GPU显存
-                        ↓
-GPU: 大规模并行计算（风机/子模块）
-                        ↓
-CPU: 结果汇总 ← 注入电流 ← GPU显存
-```
+三种工作模式的切换条件可表示为：
 
-**性能交叉点分析**:
-- MMC < 15电平：CPU更优（GPU启动开销）
-- MMC > 15电平：GPU更优
-- 风机 < 100台：CPU更优
-- 风机 > 100台：GPU更优
+$$S_{mode} = \begin{cases} \text{CPU-only} & \text{if } S_{GPU} < 1 \\ \text{CPU-GPU Joint} & \text{if } 1 \leq S_{GPU} < S_{joint} \\ \text{GPU-only} & \text{if } S_{GPU} \geq S_{joint} \end{cases}$$
 
-### 2.4 输电网络并行求解
+其中$S_{GPU}$为GPU相对CPU的加速比。
 
-**稀疏矩阵求解瓶颈**:
-传统LU分解串行度高，难以直接GPU并行。
+### 输电网络稀疏矩阵并行求解
 
-**解决方案**:
-1. **节点重排序**：减少填充元，增加并行度
-2. **分块分解**：将大矩阵分解为可并行块
-3. **迭代求解**：预条件共轭梯度法（PCG）
+传统EMT仿真中，输电网络通过节点分析法构建稀疏导纳矩阵，其LU分解具有高度串行性，难以直接在GPU上并行。Zhou & Dinavahi 2014提出节点映射结构（Node Mapping Structure, NMS）来解决这一问题。
 
-**层级低秩近似（Hierarchical Low-Rank）**:
-- 利用电网的空间局部性
-- 远场交互用低秩矩阵近似
-- 近场精确计算
-- 矩阵-向量乘法高度并行
+NMS的核心是块节点调整（Block Node Adjustment, BNA）方法，通过图优化算法重新排序节点编号，将原始随机分布的节点映射为串行有序的地址，使导纳矩阵呈现块对角结构：
 
-## 3. 实现技术
+$$Y_{block} = \begin{bmatrix} Y_1 & 0 & \cdots \\ 0 & Y_2 & \cdots \\ \vdots & \vdots & \ddots \end{bmatrix}$$
 
-### 3.1 CUDA C++实现框架
+块对角矩阵的每个对角块对应一个独立子系统，可并行求解。NMS的映射复杂度为$O(N \log N)$，经哈希映射和整数排序优化后降至$O(N)$，且矩阵条件数不变。
 
-**内核函数设计**:
-```cuda
-// DFIG风机并行计算内核
-__global__ void dfig_kernel(
-    float* psi_s,      // 定子磁链
-    float* psi_r,      // 转子磁链
-    float* i_s,        // 定子电流
-    float* i_r,        // 转子电流
-    float* v_s,        // 定子电压
-    float* v_r,        // 转子电压
-    float* omega_r,    // 转子转速
-    float dt,          // 仿真步长
-    int n_turbines     // 风机数量
-) {
-    int tid = blockIdx.x * blockDim.x + threadIdx.x;
-    
-    if (tid < n_turbines) {
-        // 每个线程处理一台风机
-        int offset = tid * 5;  // 5阶状态空间
-        
-        // 读取当前状态
-        float x[5] = {psi_s[offset], psi_r[offset], ...};
-        
-        // 梯形积分法求解
-        float x_new[5];
-        trapezoidal_integration(x, x_new, dt, tid);
-        
-        // 写回结果
-        psi_s[offset] = x_new[0];
-        psi_r[offset] = x_new[1];
-        // ...
-    }
-}
-```
+## 量化性能边界
 
-**内存管理**:
-```cuda
-// 主机端（CPU）内存分配
-float* h_data = (float*)malloc(n * sizeof(float));
+### 加速比与系统规模关系
 
-// 设备端（GPU）内存分配
-float* d_data;
-cudaMalloc(&d_data, n * sizeof(float));
+Zhou & Dinavahi 2014的系统规模扩展实验揭示了GPU加速比与系统规模的强相关性。在Fermi GPU与AMD CPU的对比中，IEEE 39-bus原始规模下GPU加速比接近1.0（无优势）；随着系统规模扩大至63倍（~5000个设备），GPU加速比达到5.63倍。
 
-// 数据拷贝：主机→设备
-cudaMemcpy(d_data, h_data, n * sizeof(float), cudaMemcpyHostToDevice);
+CPU计算复杂度的阶数高于GPU是这一现象的根本原因：
 
-// 启动内核
-dfig_kernel<<<numBlocks, threadsPerBlock>>>(d_data, ..., n);
+$$T_{CPU} = O(N^2) \sim O(N^3)$$
 
-// 数据拷贝：设备→主机
-cudaMemcpy(h_data, d_data, n * sizeof(float), cudaMemcpyDeviceToHost);
+$$T_{GPU} = O(N)$$
 
-// 释放内存
-cudaFree(d_data);
-free(h_data);
-```
+当系统规模足够大时，$O(N^3)$与$O(N)$的差距足以弥补所有数据传输和同步开销。
 
-### 3.2 优化策略
+Lin等2021的自适应异构框架给出了更精细的阈值数据。MMC电平与加速比呈近似线性关系：5电平时加速比<1（CPU更优）、15电平时为交叉点、401电平时达10倍。类似地，DFIG风机数量与加速比的关系在100台处出现交叉，8000台时达20倍。
 
-**内存访问优化**:
-```cuda
-// 合并访问：相邻线程访问相邻地址
-__global__ void coalesced_access(float* data) {
-    int tid = blockIdx.x * blockDim.x + threadIdx.x;
-    float value = data[tid];  // 合并访问
-}
+### 计算时间稳定性
 
-// 共享内存缓存
-__shared__ float shared_mem[256];
-__global__ void shared_memory_kernel(float* data) {
-    int tid = blockIdx.x * blockDim.x + threadIdx.x;
-    int local_tid = threadIdx.x;
-    
-    // 加载到共享内存
-    shared_mem[local_tid] = data[tid];
-    __syncthreads();
-    
-    // 使用共享内存计算
-    float result = compute(shared_mem[local_tid]);
-    data[tid] = result;
-}
-```
+Lin等2021在Tesla V100上进行的70样本统计分析显示，尽管不同系统配置下并行执行时间有所差异，但整体稳定在29-35秒区间（中位数30.6秒）。这一稳定性源于GPU架构的固有特性：当并行计算量足够大时，计算时间主要取决于计算密度而非问题规模。
 
-**分支优化**:
-```cuda
-// 避免线程发散
-__global__ void branch_optimized(float* data, int* flag) {
-    int tid = blockIdx.x * blockDim.x + threadIdx.x;
-    
-    // 低效：线程发散
-    // if (flag[tid]) { A(); } else { B(); }
-    
-    // 高效：分离kernel
-    // kernel_A处理flag=1的线程
-    // kernel_B处理flag=0的线程
-}
-```
+### 平台配置参考
 
-### 3.3 硬件平台配置
+主流GPU加速仿真平台的典型配置包括：CPU采用20核Intel Xeon E5-2698 v4用于网络求解和控制逻辑，GPU采用NVIDIA Tesla V100（5120 CUDA核心、32GB HBM2显存）用于大规模并行计算，主机内存192GB DDR4，GPU通过PCIe 3.0 x16与CPU互联。
 
-**典型配置**:
-| 组件 | 规格 | 作用 |
-|------|------|------|
-| CPU | Intel Xeon E5-2698 v4 (20核) | 网络求解、控制逻辑 |
-| GPU | NVIDIA Tesla V100 (5120 CUDA核心) | 大规模并行计算 |
-| 内存 | 192 GB DDR4 | 主机内存 |
-| 显存 | 32 GB HBM2 | GPU全局内存 |
-| 互联 | PCIe 3.0 x16 | CPU-GPU数据传输 |
+## 关键技术挑战
 
-**多GPU扩展**:
-- NVLink高速互联
-- GPUDirect RDMA
-- 多GPU负载均衡
+### 数据传输瓶颈
 
-## 4. 仿真软件实现
+CPU与GPU间的PCIe带宽是异构计算的主要瓶颈。每次时步迭代需要在CPU和GPU间传递边界电压/电流数据，PCIe 3.0 x16的理论带宽为16GB/s，实际有效带宽约12GB/s。当系统规模较大时，数据传输时间可能占总仿真时间的相当比例。
 
-### 4.1 CPU-GPU协同框架
+缓解策略包括：批量传输（将多个时步的边界数据合并传输以摊薄协议开销）、异步执行（计算与数据传输重叠）、边界解耦（减少传输数据量）。
 
-```cpp
-// C++主机代码框架
-class HeterogeneousSimulator {
-private:
-    CPUSolver cpu_solver;
-    GPUSolver gpu_solver;
-    
-public:
-    void simulate_step() {
-        // 1. CPU：网络方程求解
-        cpu_solver.solve_network();
-        
-        // 2. CPU：生成边界条件
-        BoundaryConditions bc = cpu_solver.get_boundary();
-        
-        // 3. 拷贝到GPU
-        gpu_solver.copy_to_device(bc);
-        
-        // 4. GPU：并行计算风机/子模块
-        gpu_solver.launch_kernels();
-        
-        // 5. 拷贝回CPU
-        InjectionCurrents inj = gpu_solver.copy_to_host();
-        
-        // 6. CPU：汇总并推进时间步
-        cpu_solver.update_state(inj);
-    }
-};
+### 内存容量限制
 
-// GPU求解器类
-class GPUSolver {
-private:
-    float *d_psi_s, *d_psi_r, *d_i_s, *d_i_r;
-    float *d_v_s, *d_v_r, *d_omega_r;
-    
-public:
-    void launch_kernels() {
-        // DFIG内核
-        int threadsPerBlock = 256;
-        int numBlocks = (n_turbines + threadsPerBlock - 1) / threadsPerBlock;
-        
-        dfig_kernel<<<numBlocks, threadsPerBlock>>>(
-            d_psi_s, d_psi_r, d_i_s, d_i_r,
-            d_v_s, d_v_r, d_omega_r,
-            dt, n_turbines
-        );
-        
-        // MMC内核
-        mmc_kernel<<<numBlocksMMC, threadsPerBlock>>>(...);
-        
-        // 同步
-        cudaDeviceSynchronize();
-    }
-};
-```
+单GPU显存容量限制了可仿真的最大系统规模。Tesla V100的32GB HBM2显存需容纳所有并行组件的状态数据，当组件数量超过显存容量时必须分块计算。
 
-### 4.2 OpenACC简化编程
+多GPU扩展方案通过NVLink高速互联实现显存聚合，或采用分布式计算将子系统分配至不同GPU节点。
 
-```c
-// OpenACC自动并行化
-#pragma acc parallel loop
-for (int i = 0; i < n_turbines; i++) {
-    // 编译器自动映射到GPU
-    compute_dfig(i);
-}
-```
+### 分支发散与同步开销
 
-### 4.3 Python GPU接口
+GPU的Warp执行机制要求同一Warp内32个线程必须执行相同指令。if-else分支导致部分线程执行分支路径而其他线程等待（分支发散），严重时可使有效并行度降低数十倍。
 
-```python
-## CuPy：NumPy的GPU版本
-import cupy as cp
+同步开销问题出现在需要全局同步的场景：`__syncthreads()`导致同一Block内线程相互等待，过多的全局同步点可使GPU利用率大幅下降。
 
-## 数据在GPU上创建
-psi_s = cp.random.rand(n_turbines, 2)  # 定子磁链
-psi_r = cp.random.rand(n_turbines, 2)  # 转子磁链
+### 同质性量化判定
 
-## GPU上执行计算
-i_s = cp.dot(psi_s, L_matrix)  # 矩阵乘法在GPU上执行
+并非所有组件都适合GPU并行，需要建立量化判定准则。经验判据包括：组件数量>100、计算流程一致（无条件分支）、组件间耦合弱（减少同步需求）、计算密集度高（计算量/数据量比值大）。
 
-## 结果拷贝回CPU
-i_s_cpu = i_s.get()
-```
+## 适用边界与限制
 
-## 5. 典型参数参考
+### 适用条件
 
-| 应用场景 | GPU型号 | 规模 | 加速比 | 计算时间 |
-|----------|---------|------|--------|----------|
-| MMC子模块 | Tesla V100 | 401电平 | 10x | ~30s |
-| DFIG风电场 | Tesla V100 | 8000台 | 20x | ~30s |
-| 输电网络 | Tesla V100 | 10000节点 | 5x | ~20s |
-| 光伏逆变器 | RTX 3090 | 1000台 | 15x | ~25s |
-| 电动汽车 | Tesla T4 | 500辆 | 12x | ~15s |
+GPU加速仿真适用于以下场景：大规模同质化组件数量>100且模型相同仅参数不同；数据并行度高且计算流程一致无复杂分支；计算密集度高以掩盖数据传输开销；组件间耦合弱以减少同步开销。
+
+### 失效边界
+
+GPU加速在以下场景失效：小规模系统（组件数量低于阈值，GPU启动开销大于并行收益）；强耦合系统（组件间高度耦合需频繁同步）；复杂控制流（大量条件分支导致线程发散）；不规则数据访问（无法利用合并访问优化）。
 
 ## 相关方法
-- [[fpga-real-time-simulation|FPGA实时仿真]] - 另一种硬件加速方案对比
-- [[multirate-method|多速率方法]] - 与GPU加速协同技术
-- [[hil-simulation|HIL仿真]] - GPU在硬件在环中的应用
-- [[electromechanical-electromagnetic-hybrid-simulation|机电-电磁混合仿真]] - CPU-GPU异构计算
-- [[discretization-methods|离散化方法]] - GPU并行离散化算法
+
+- [[fpga-real-time-simulation]] — 另一种硬件加速方案，FPGA以流水线并行著称，适合确定性时延要求
+- [[multirate-method]] — 与GPU加速协同的多速率仿真技术，不同子系统采用不同时间步长
+- [[parallel-computing]] — 并行计算的通用原理与分类体系
+- [[hardware-acceleration]] — 硬件加速的完整方法体系，涵盖GPU/FPGA/多核CPU等
 
 ## 相关模型
-- [[dfig-model|DFIG模型]] - GPU并行的典型应用场景
-- [[mmc-model|MMC模型]] - 子模块大规模并行计算
-- [[pv-system-model|光伏系统模型]] - 逆变器阵列并行仿真
-- [[wind-farm-modeling|风电场建模]] - 大规模同质化风机组件
-- [[pmsm-model|PMSM模型]] - 永磁同步电机并行求解
+
+- [[dfig-model]] — 双馈感应发电机模型，GPU并行的典型应用场景
+- [[mmc-model]] — 模块化多电平变换器模型，子模块大规模并行计算
+- [[wind-farm-modeling]] — 风电场建模，大规模同质化风机组件
+- [[pmsm-model]] — 永磁同步电机模型，电机并行求解
 
 ## 相关主题
-- [[parallel-computing|并行计算]] - GPU的SIMT并行原理与优化
-- [[real-time-simulation|实时仿真]] - GPU加速实时仿真技术
-- [[wind-farm-modeling|风电场建模]] - GPU主要应用领域
-- [[vsc-hvdc|VSC-HVDC]] - GPU加速仿真应用场景
 
-## 7. 适用边界与限制
-
-### 7.1 适用条件
-- **大规模同质化组件**：组件数量>100，模型相同仅参数不同
-- **数据并行度高**：计算流程一致，无复杂分支
-- **计算密集**：每个组件计算量足够大，掩盖数据传输开销
-- **独立性高**：组件间耦合弱，减少同步开销
-
-### 7.2 失效边界
-- **小规模系统**：组件数量<阈值，GPU启动开销>并行收益
-- **强耦合系统**：组件间高度耦合，需频繁同步
-- **复杂控制流**：大量if-else分支导致线程发散
-- **不规则数据访问**：无法合并内存访问
-
-### 7.3 性能边界
-| 限制因素 | 影响 | 缓解方法 |
-|----------|------|----------|
-| 数据传输 | PCIe带宽瓶颈 | 减少CPU-GPU数据传输 |
-| 内存容量 | 显存限制 | 分块计算，流式处理 |
-| 分支发散 | warp效率下降 | 分离kernel，排序处理 |
-| 同步开销 | 线程等待 | 减少全局同步点 |
-
-## 8. 来源论文
-
-| 论文 | 年份 | 核心贡献 |
-|------|------|----------|
-| Adaptive Heterogeneous Transient Analysis of Wind Farm Integrated AC/DC Grids | 2021 | CPU-GPU异构协同，401电平MMC 10倍加速，8000台DFIG 20倍加速 |
-| 面向指数积分方法的电磁暂态仿真GPU并行算法 | 2020 | 指数积分GPU并行，稀疏矩阵求解加速 |
-| 新能源电力系统细粒度并行与多速率电磁暂态仿真 | 2022 | 细粒度GPU并行，多速率协同 |
-| A Hierarchical Low-Rank Approximation-based Network Solver for EMT | 2021 | 层级低秩近似，GPU加速网络求解 |
-
----
-
-*本页面基于Karpathy LLM Wiki Pattern构建，内容来自682篇EMT领域学术文献的深度分析*
+- [[real-time-simulation]] — GPU加速实时仿真技术
+- [[vsc-hvdc]] — 柔性直流输电，GPU加速仿真的重要应用场景
+- [[electromechanical-electromagnetic-hybrid-simulation]] — 机电-电磁混合仿真，CPU-GPU异构计算的典型应用
 
 ## 来源论文
 
-| 论文 | 年份 |
-|------|------|
-| [[frequency-dependent-transmission-line-modeling-utilizing-transposed-conditions-p|Frequency-dependent transmission line modeling utilizing tra]] | 2001 |
-| [[a-voltage-behind-reactance-synchronous-machine-model-for-the-emtp-type-solution|A Voltage-Behind-Reactance Synchronous Machine Model for the]] | 2006 |
-| [[approximate-voltage-behind-reactance-induction-machine-model-for-efficient-inter|Approximate Voltage-Behind-Reactance Induction Machine Model]] | 2010 |
-| [[parallel-massive-thread-electromagnetic-transient-simulation-on-gpu|Parallel Massive-Thread Electromagnetic Transient Simulation]] | 2014 |
-| [[comparison-of-detailed-modeling-techniques-for-mmc-employed-on-vsc-hvdc-schemes|Comparison of Detailed Modeling Techniques for MMC Employed ]] | 2015 |
-| [[enhanced-high-speed-electromagnetic-transient-simulation-17|Enhanced high-speed electromagnetic transient simulation]] | 2016 |
-| [[2169-3536-c-2018-ieee-translations-and-content-mining-are-permitted-for-academic|Efficient GPU-based Electromagnetic Transient Simulation for]] | 2018 |
-| [[2169-3536-c-2018-ieee-translations-and-content-mining-are-permitted-for-academic|Efficient GPU-based Electromagnetic Transient Simulation for]] | 2018 |
-| [[real-time-fpga-rtds-co-simulator-for-power-systems|Real-Time FPGA-RTDS Co-Simulator for Power Systems]] | 2018 |
-| [[accelerated-sparse-matrix-based-computation-of-electromagnetic-transients|Accelerated Sparse Matrix-Based Computation of Electromagnet]] | 2019 |
-| [[fast-electromagnetic-transient-simulation-method-of-modular-multilevel-converter|Fast Electromagnetic Transient Simulation Model of Doubly-fe]] | 2019 |
-| [[real-time-mpsoc-based-electrothermal-transient-simulation-of-fault-tolerant-mmc-|Real-Time MPSoC-Based Electrothermal Transient Simulation of]] | 2019 |
-| [[an-inverter-model-simulating-accurate-harmonics-with-low-computational-burden-fo|An Inverter Model Simulating Accurate Harmonics with Low Com]] | 2020 |
-| [[compacting-and-partitioningbased-simulation-solution-for-frequencydependent-netw|Compacting and partitioning‐based simulation solution for fr]] | 2020 |
-| [[gpu-based-power-converter-transient-simulation-with-matrix-exponential-integrati|GPU-based power converter transient simulation with matrix e]] | 2020 |
-| [[gpu-based-power-converter-transient-simulation-with-matrix-exponential-integrati|GPU-based power converter transient simulation with matrix e]] | 2020 |
-| [[a-parallelization-in-time-approach-for-accelerating-emt-simulations|A parallelization-in-time approach for accelerating EMT simu]] | 2021 |
-| [[adaptive-heterogeneous-transient-analysis-of-wind-farm-integrated-comprehensive-|Adaptive Heterogeneous Transient Analysis of Wind Farm Integ]] | 2021 |
-| [[an-fpga-based-electromagnetic-transient-analysis-of-power-distribution-network|An FPGA based electromagnetic transient analysis of power di]] | 2021 |
-| [[average-value-modeling-of-line-commutated-ac-dc-converters-with-unbalanced-ac-ne|Average-Value Modeling of Line-Commutated AC-DC Converters W]] | 2021 |
-| [[an-accelerated-detailed-equivalent-model-for-modular-multilevel-converters|An accelerated detailed equivalent model for modular multile]] | 2023 |
-| [[fast-electromagnetic-transient-simulation-method-for-mmc-hvdc-system|Fast electromagnetic transient simulation method for MMC-HVD]] | 2023 |
-| [[fast-electromagnetic-transient-simulation-method-for-mmc-hvdc-system|Fast electromagnetic transient simulation method for MMC-HVD]] | 2023 |
-| [[fast-electromagnetic-transient-simulation-of-modular-multilevel-converter-based-|Fast electromagnetic transient simulation of modular multile]] | 2023 |
-| [[massively-parallel-modeling-of-battery-energy-storage-systems-for-acdc-grid-high|Massively Parallel Modeling of Battery Energy Storage System]] | 2023 |
-| [[key-technologies-and-prospects-for-electromagnetic-transient-parallel-simulation|Key Technologies and Prospects for Electromagnetic Transient]] | 2024 |
-| [[machine-learning-reinforced-massively-parallel-transient-simulation-for-large-sc|Machine-Learning-Reinforced Massively Parallel Transient Sim]] | 2024 |
-| [[shifted-frequency-analysis-based-faster-than-real-time-simulation-of-power-syste|Shifted frequency analysis based, faster-than-real-time simu]] | 2024 |
-| [[a-component-level-modeling-and-fine-grained-simulation-method-for-renewable-ener-1|A Component-Level Modeling and Fine-Grained Simulation Metho]] | 2025 |
-| [[a-state-variables-elimination-based-emtp-type-constant-admittance-equivalent-mod|A State Variables Elimination-Based EMTP-Type Constant Admit]] | 2025 |
-| [[accelerating-electromagnetic-transient-simulations-using-graphical-processing-un|Accelerating electromagnetic transient simulations using gra]] | 2025 |
-| [[fine-grained-optimal-allocation-of-wind-farm-decoupled-models-for-cpu-gpu-parall|Fine-Grained Optimal Allocation of Wind Farm Decoupled Model]] | 2025 |
-| [[improving-numerical-efficiency-of-frequency-dependent-transmission-line-models-f-23|Improving numerical efficiency of frequency dependent transm]] | 2025 |
-| [[improving-numerical-efficiency-of-frequency-dependent-transmission-line-models-f|Improving numerical efficiency of frequency dependent transm]] | 2025 |
-| [[gpu-parallel-rate-exponential-integrator-algorithm-for-efficient-simulation-of-p|GPU Parallel-Rate Exponential Integrator Algorithm for Effic]] | 2026 |
-| [[gpu-parallel-rate-exponential-integrator-algorithm-for-efficient-simulation-of-p|GPU Parallel-Rate Exponential Integrator Algorithm for Effic]] | 2026 |
+| 论文 | 年份 | 核心贡献 |
+|------|------|----------|
+| Zhou & Dinavahi | 2014 | MT-EMTP大规模GPU并行，5.63倍加速（63× IEEE 39-bus） |
+| Lin等 | 2021 | 自适应异构CPU-GPU协同框架，401电平MMC 10倍加速，8000台风机20倍加速 |
+| Liu等 | 2026 | 风电场细粒度最优分配，CPU-GPU资源优化 |
+| Jiang等 | 2024 | 并行仿真关键技术与展望综述 |
+| Chen等 | 2018 | 完全基于GPU的细粒度EMT算法 |

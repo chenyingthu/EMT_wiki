@@ -1,5 +1,6 @@
 # Sub-Queue Shard 3 — 75 pages
 ||| Cycle 8 | dsogi-pll.md | P1 SKIP (Quality Gate PASS: bc=4306≥2000, bf=11≥5, wikilinks fixed 9→11, no placeholder, src=0≤5000, max_block=8311≤15000) | 2026-05-18 03:10 |
+||| Cycle 10 | gpu-accelerated-simulation.md | P0 ENRICH (bc=663→4300, bf=1→9, no mermaid, added 8 block formulas, 3 methods, quant tables) | 2026-05-18 07:56 |
 
 > Generated: 2026-05-17 22:10
 
@@ -41,7 +42,7 @@
 
 | 217 | frequency-dependent-soil.md | methods | methods/transmission-line/frequency-dependent-soil.md | P0 | 999 | 9989 | 13 | 17 | completed |
 | 204 | gan-hemt.md | methods | methods/power-electronics/gan-hemt.md | P0 | 999 | 7075 | 15 | 10 | completed |
-| 149 | gpu-accelerated-simulation.md | methods | methods/simulation-technology/gpu-accelerated-simulation.md | P0 | 999 | 4003 | 1 | 45 | pending |
+| 149 | gpu-accelerated-simulation.md | methods | methods/simulation-technology/gpu-accelerated-simulation.md | P0 | 999 | 4300 | 9 | 11 | completed |
 | 410 | grid-side-converter.md | models | models/rotating-machine/grid-side-converter.md | P1 | 999 | 716 | 9 | 20 | pending |
 | 66 | gruson-2011-reduced-mmc.md | models | models/equivalent/gruson-2011-reduced-mmc.md | P0 | 999 | 1768 | 8 | 9 | pending |
 | 311 | hardware-acceleration.md | methods | methods/simulation-technology/hardware-acceleration.md | P1 | 999 | 2802 | 6 | 22 | pending |
