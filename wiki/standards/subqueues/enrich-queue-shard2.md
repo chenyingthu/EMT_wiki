@@ -56,7 +56,8 @@
 | 276 | mppt-control.md | methods | methods/control/mppt-control.md | P1 | 999 | 4172 | 10 | 13 | completed |
 | 70 | multirate-and-network-partitioning.md | topics | topics/modeling-methods/multirate-and-network-partitioning.md | P0 | 999 | 1871 | 16 | 12 | completed |
 | 231 | n-port-network.md | methods | methods/network-solution/n-port-network.md | P0 | 999 | 13295 | 22 | 11 | completed |
-| 342 | new-england-test-system.md | topics | topics/test-system/new-england-test-system.md | P1 | 999 | 1819 | 11 | 10 | pending |
+| 342 | new-england-test-system.md | topics | topics/test-system/new-england-test-system.md | P1 | 999 | 2128 | 7 | 18 | completed |
+
 | 172 | numerical-damping-optimization.md | methods | methods/numerical-methods/numerical-damping-optimization.md | P0 | 999 | 4818 | 17 | 10 | pending |
 | 413 | numerical-oscillation-suppression.md | methods | methods/numerical-methods/numerical-oscillation-suppression.md | P1 | 999 | 637 | 4 | 12 | pending |
 | 213 | parallel-in-time.md | methods | methods/simulation-technology/parallel-in-time.md | P0 | 999 | 9098 | 36 | 15 | pending |
