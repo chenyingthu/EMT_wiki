@@ -48,7 +48,7 @@
 | 397 | inertia-control.md | methods | methods/control/inertia-control.md | P1 | 963 | 5227 | 15 | 11 | completed |
 | 106 | iterative-solvers.md | methods | methods/network-solution/iterative-solvers.md | P0 | 999 | 3345 | 7 | 7 | completed |
 | 156 | large-scale-system-simulation.md | topics | topics/simulation/large-scale-system-simulation.md | P0 | 999 | 4195 | 7 | 58 | completed |
-| 43 | lightning-induced-voltage.md | topics | topics/protection-lightning/lightning-induced-voltage.md | P0 | 999 | 1286 | 8 | 17 | pending |
+| 43 | lightning-induced-voltage.md | topics | topics/protection-lightning/lightning-induced-voltage.md | P0 | 999 | 8575 | 12 | 10 | completed |
 | 369 | low-rank-and-efficient-solvers.md | topics | topics/modeling-methods/low-rank-and-efficient-solvers.md | P1 | 999 | 1426 | 10 | 9 | pending |
 | 365 | m3c.md | methods | methods/power-electronics/m3c.md | P1 | 999 | 1452 | 6 | 7 | pending |
 | 199 | midc.md | methods | methods/power-electronics/midc.md | P0 | 999 | 6229 | 22 | 12 | completed |
