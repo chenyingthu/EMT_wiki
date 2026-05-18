@@ -27,7 +27,7 @@
 || 179 | economic-dispatch.md | methods | methods/system-studies/economic-dispatch.md | P0 | 999 | 4685 | 26 | 19 | completed |
 | 71 | electromechanical-electromagnetic-hybrid.md | topics | topics/renewable-storage/electromechanical-electromagnetic-hybrid.md | P0 | 999 | 2120 | 8 | 19 | completed |
 
-| 136 | emi-filter-model.md | models | models/compensation/emi-filter-model.md | P0 | 999 | 3635 | 19 | 19 | pending |
+|| 136 | emi-filter-model.md | models | models/compensation/emi-filter-model.md | P0 | 999 | 3246 | 29 | 12 | completed |
 | 259 | emtp-atpdraw.md | methods | methods/system-studies/emtp-atpdraw.md | P1 | 999 | 5348 | 8 | 1 | pending |
 | 356 | equivalent-circuit-method.md | methods | methods/network-solution/equivalent-circuit-method.md | P1 | 999 | 1524 | 8 | 15 | pending |
 | 61 | extinction-angle-calculation.md | methods | methods/power-electronics/extinction-angle-calculation.md | P0 | 999 | 1732 | 1 | 9 | pending |

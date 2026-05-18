@@ -3,257 +3,271 @@ title: "EMI滤波器 (EMI Filter)"
 type: model
 tags: [emi-filter, filter, common-mode, differential-mode, conducted-emission, emc]
 created: "2026-04-30"
-updated: "2026-05-11"
+updated: "2026-05-18"
 ---
 
 # EMI滤波器 (EMI Filter)
 
+## 定义
 
-## 定义与概述
+EMI滤波器（Electromagnetic Interference Filter）是电力电子系统中用于抑制电磁干扰的无源/有源网络，通过衰减传导干扰信号确保设备满足EMC（Electromagnetic Compatibility）标准。其核心功能包括：
 
-EMI滤波器是电力电子系统中用于抑制电磁干扰的关键无源/有源网络，通过衰减传导干扰信号确保设备满足EMC标准。在EMT仿真中，EMI滤波器模型用于分析开关噪声传播、评估滤波性能、设计阻尼特性。本模型涵盖传导EMI滤波器、共模/差模滤波网络、有源EMI抑制，适用于变频器、逆变器、开关电源的EMI特性分析。
+- **共模干扰（CM）衰减**：抑制相线/中性线对地共模噪声
+- **差模干扰（DM）衰减**：抑制相间差模噪声
+- **阻抗失配反射**：在噪声传播路径上形成高阻抗失配，反射噪声源
+- **敏感设备保护**：为逆变器/变频器等电力电子设备提供干净电源
 
-## 1. 物理对象概述
+在EMT仿真中，EMI滤波器模型用于分析开关噪声传播路径、评估滤波性能、设计阻尼特性。典型应用场景包括：变频器驱动系统、光伏逆变器并网、电动汽车充电器、工业开关电源。
 
-### 1.1 功能与分类
+## EMT中的作用
 
-**基本功能**：
-- 衰减共模干扰（CM）
-- 衰减差模干扰（DM）
-- 提供阻抗失配以反射噪声
-- 保护敏感设备
+电力电子变换器是系统中最主要的EMI噪声源。开关动作产生的高速$dV/dt$和$dI/dt$通过功率回路耦合到电网侧，产生传导EMI。EMI滤波器在EMT仿真中承担三类角色：
 
-**滤波器类型**:
-| 类型 | 频率范围 | 拓扑 | 应用 |
-|------|----------|------|------|
-| 低通滤波器 | DC-30MHz | LC/RC | 开关电源 |
-| 共模滤波器 | 150kHz-30MHz | 共模电感 | 电机驱动 |
-| 差模滤波器 | 10kHz-1MHz | X电容+差模电感 | PFC电路 |
-| 混合滤波器 | 全频段 | CM+DM组合 | 逆变器 |
-| 有源滤波器 | 10kHz-1MHz | 运放/晶体管 | 低频EMI |
+**1. 噪声注入点建模**：作为逆变器输出端的后处理环节，EMI滤波器需要与开关器件模型（如[[igbt-model]]）联动，仿真噪声从开关节点经滤波器传播至电网的过程。
 
-### 1.2 滤波器结构
+**2. 滤波性能评估**：通过FFT频谱分析（仿真波形加窗后进行傅里叶变换），对比滤波器输入/输出频谱，定量评估插入损耗。
 
-**典型EMI滤波器拓扑**:
-```
-        L1 (DM)          L2 (CM)
-L ──[====]──┬──────────────[≈≈]──┬──→ Load
-            │      │             │
-           ─┴─Cx  ─┴─Cy1        ─┴─Cy2
-            │      │             │
-N ──[====]──┴────────[≈≈]────────┴──→
-            │                      │
-           GND (PE)               GND
-```
+**3. 阻尼设计验证**：检验滤波器与负载阻抗的交互效应，避免因阻尼不足引发谐振（尤其是两级LC滤波器的高阻抗节点）。
 
-**元件功能**:
-- **Cx**: X电容（差模，线对线）
-- **Cy**: Y电容（共模，线对地）
-- **Lcm**: 共模电感（双线绕制）
-- **Ldm**: 差模电感（漏感）
+**关键挑战**：EMI滤波器在EMT中的核心问题是**噪声源等效建模**——实际开关噪声是宽频带脉冲，精确建模需要详细开关瞬态数据；次要问题是**无源元件高频特性**（集总参数模型在10 MHz以上失效，需采用[[frequency-dependent-modeling|频率相关建模]]）。
 
-### 1.3 EMI频谱特征
+## 物理模型与数学描述
 
-**传导干扰频段**:
-```
-频率范围          频段名称              限值标准
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-9kHz-150kHz      低频传导              CISPR 11
-150kHz-30MHz     传导发射              CISPR 11/22
-30MHz-1GHz       辐射发射              CISPR 11/22
-```
+### 1.1 二阶LC低通滤波器
 
-**典型噪声源**:
-- 开关频率谐波（几kHz-几百kHz）
-- 开关边沿高频（几MHz-几十MHz）
-- 寄生振荡（几十MHz-几百MHz）
+#### 传递函数与频率特性
 
-## 2. 物理模型与数学描述
+标准LC低通滤波器的传递函数为：
 
-### 2.1 二阶LC低通滤波器
-
-#### 2.1.1 传递函数
-
-**标准LC低通**:
 $$H(s) = \frac{1}{s^2LC + s\frac{L}{R_L} + 1}$$
 
-**截止频率**:
+截止频率：
+
 $$f_c = \frac{1}{2\pi\sqrt{LC}}$$
 
-**特性阻抗**:
+特性阻抗：
+
 $$Z_0 = \sqrt{\frac{L}{C}}$$
 
-**阻尼系数**:
-$$\zeta = \frac{1}{2R}\sqrt{\frac{L}{C}}$$
+阻尼系数：
 
-#### 2.1.2 频率响应
+$$\zeta = \frac{1}{2R_L}\sqrt{\frac{L}{C}}$$
 
-**幅度响应**:
-$$|H(j\omega)| = \frac{1}{\sqrt{(1-\omega^2LC)^2 + (\omega L/R)^2}}$$
+**幅度响应**：
 
-**衰减斜率**:
-- 低于fc: 0 dB/decade
-- 高于fc: -40 dB/decade（理想二阶）
+$$|H(j\omega)| = \frac{1}{\sqrt{(1-\omega^2LC)^2 + (\omega L/R_L)^2}}$$
 
-### 2.2 共模滤波器模型
+**衰减斜率**：
+- 低于$f_c$：0 dB/decade
+- 高于$f_c$：-40 dB/decade（理想二阶）
 
-#### 2.2.1 共模等效电路
+#### 阻尼类型与选择
 
-**单相共模**:
-```
-        Lcm
-   ┌────[≈≈]────┐
-   │            │
-   │     ┬──┬   │
-   │    ─┴──┴─  │
-   │      Cy    │
-   │            │
-   └────────────┘
-          │
-         GND
-```
+欠阻尼（$\zeta < 1$）在截止频率附近产生谐振峰，适用于需要快速阶跃响应的场景；过阻尼（$\zeta > 1$）则平滑无峰，但响应慢。工程设计通常取$\zeta = 0.707$（Butterworth响应）以获得最大平坦通带。
 
-**共模阻抗**:
+### 1.2 共模滤波器模型
+
+#### 共模等效电路
+
+共模噪声通过相线和中性线的对称耦合传播到地。共模电感（CM Choke）利用双线绕制结构，对共模电流呈现高阻抗，而对差模电流几乎无阻抗（因为磁通相互抵消）。
+
+**共模阻抗**：
+
 $$Z_{CM}(s) = sL_{CM} + \frac{1}{sC_Y}$$
 
-**共模谐振频率**:
+**共模谐振频率**：
+
 $$f_{CM} = \frac{1}{2\pi\sqrt{L_{CM}C_Y}}$$
 
-#### 2.2.2 共模电感模型
+其中$L_{CM}$为共模电感量，$C_Y$为Y电容（线对地电容）。
 
-**带磁芯损耗**:
-$$Z_{CM} = R_{core} + sL_{CM} + \frac{1}{sC_{par}}$$
+#### 磁芯损耗模型
+
+实际共模电感包含磁芯损耗和绕组寄生电容：
+
+$$Z_{CM}(s) = R_{core} + sL_{CM} + \frac{1}{sC_{par}}$$
 
 其中：
-- $R_{core}$: 磁芯损耗等效电阻
-- $C_{par}$: 绕组寄生电容
-- $L_{CM}$: 共模电感量
+- $R_{core}$：磁芯损耗等效电阻，反映磁滞损耗和涡流损耗
+- $C_{par}$：绕组寄生电容，由线圈匝间电容和层间电容构成
+- $L_{CM}$：共模电感量
 
-### 2.3 差模滤波器模型
+### 1.3 差模滤波器模型
 
-#### 2.3.1 差模等效电路
+#### π型滤波器
 
-**π型滤波器**:
-```
-   ┌──Cx1──┬────┬──Cx2──┐
-   │       │    │       │
-   Ldm    ─┴─  ─┴─    Ldm
-   │       Cm   Cm      │
-   │       │    │       │
-   └───────┴────┴───────┘
-```
+差模滤波通常采用π型结构（电容-电感-电容）：
 
-**差模传递函数**:
-$$H_{DM}(s) = \frac{1}{s^2L_{DM}C_{eq} + s\frac{L_{DM}}{R} + 1}$$
+$$H_{DM}(s) = \frac{1}{s^2L_{DM}C_{eq} + s\frac{L_{DM}}{R_L} + 1}$$
 
-其中 $C_{eq} = C_{X1} + C_{X2} + C_m$
+其中等效电容：$C_{eq} = C_{X1} + C_{X2} + C_m$
 
-#### 2.3.2 漏感利用
+$C_{X1}$、$C_{X2}$为X电容（线间电容），$C_m$为寄生互容。
 
-共模电感的漏感可用作差模电感：
+#### 漏感利用
+
+共模电感的漏感（即耦合系数$k$不为1的剩余部分）可作为差模电感使用：
+
 $$L_{DM} = (1-k)L_{CM}$$
 
-其中 $k$ 为耦合系数（通常0.98-0.995）。
+其中耦合系数$k$通常为0.98–0.995（高耦合系数意味着漏感仅$2\%$–$5\%$）。
 
-### 2.4 高阶滤波器
+### 1.4 高阶滤波器
 
-#### 2.4.1 多级LC滤波器
+#### Butterworth响应
 
-**两级π型**:
-$$H(s) = H_1(s) \cdot H_2(s)$$
+N阶Butterworth滤波器的幅度响应为：
 
-**级联衰减**:
-$$A_{total} = A_1 + A_2 \quad \text{(dB)}$$
-
-#### 2.4.2 Butterworth响应
-
-**N阶Butterworth**:
 $$|H(j\omega)| = \frac{1}{\sqrt{1+(\omega/\omega_c)^{2N}}}$$
 
-**最大平坦特性**: 在通带内无纹波
+其特点是在通带内无纹波，最大平坦。
 
-### 2.5 有源EMI滤波器
+#### 级联衰减
 
-#### 2.5.1 电流补偿型
+两级LC级联时，总衰减为各级衰减的线性叠加（dB单位）：
 
-**原理**: 注入抵消电流
+$$A_{total} = A_1 + A_2 \quad \text{(dB)}$$
+
+### 1.5 有源EMI滤波器
+
+#### 电流补偿型
+
+有源滤波器通过注入抵消电流来抑制噪声：
+
 $$i_{cancel} = -G \cdot i_{noise}$$
 
-**残余电流**:
+残余电流：
+
 $$i_{res} = i_{noise} + i_{cancel} = i_{noise}(1-G)$$
 
-#### 2.5.2 电压补偿型
+其中$G$为环路增益（>$1$时有效抑制）。
 
-**注入电压**:
+#### 电压补偿型
+
 $$v_{inj} = -G \cdot v_{noise}$$
 
-**环路增益限制**:
-有效频率范围受运放带宽限制。
+有效频率范围受运放带宽限制（通常$10$ kHz–$1$ MHz）。
 
-## 3. EMT仿真模型
+## EMT中的噪声传播路径
+
+### 2.1 噪声耦合机制
+
+在VSC系统中，EMI噪声从功率器件传播到电网有三条主要路径：
+
+**路径A（传导路径）**：开关节点电压通过DC-Link电容和交流滤波电容耦合到电网侧。这是低频噪声（150 kHz–1 MHz）的主要传播方式。DC-Link电容的ESR和ESL决定了高频旁路能力。
+
+**路径B（磁场耦合）**：开关电流在功率回路周围产生磁场，通过空间耦合到控制电路和传感器线路。此路径在高频（$>$10 MHz）占主导。
+
+**路径C（地环路）**：多个设备共地时，开关电流通过地阻抗返回，形成地环路噪声。
+
+### 2.2 CM/DM耦合矩阵
+
+CM和DM噪声在系统中并非完全解耦，存在通过寄生电容的耦合：
+
+$$v_{CM} = \frac{v_1 + v_2}{2}, \quad v_{DM} = v_1 - v_2$$
+
+实际系统中，CM电压通过$Y$电容与DM形成耦合网络。VSC逆变器的CM电压波动（由PWM零矢量时间不均衡引起）是CM噪声的主要来源。
+
+### 2.3 开关噪声源等效
+
+将开关节点电压等效为噪声源时，可用电压源叠加模型：
+
+$$v_{noise}(t) = \sum_{n=1}^{N} V_n \sin(2\pi n f_{sw} t)$$
+
+其中$V_n$为$n$次谐波幅值，与开关边沿的上升/下降时间（$\tau_{rise}$）密切相关：
+
+$$V_n \propto \frac{1}{n}\left(1 - e^{-2\pi n f_{sw} \tau_{rise}}\right)$$
+
+高速开关（SiC/GaN器件，$\tau_{rise}<5$ ns）产生的高频谐波可延伸至100 MHz以上。
+
+## 量化性能边界
+
+### 3.1 插入损耗评估
+
+EMI滤波器性能的核心指标是插入损耗（Insertion Loss）：
+
+$$IL_{dB} = 20\log_{10}\left|\frac{v_{without}}{v_{with}}\right|$$
+
+典型值（150 kHz–30 MHz频段）：
+| 滤波器类型 | 150 kHz | 1 MHz | 10 MHz | 30 MHz |
+|-----------|---------|-------|--------|--------|
+| 单级LC | 20 dB | 40 dB | — | — |
+| 两级LC | 30 dB | 50 dB | 40 dB | — |
+| CM共模滤波器 | — | 25 dB | 35 dB | 30 dB |
+| π型DM滤波器 | 25 dB | 45 dB | 35 dB | — |
+
+原文未报告可核验的数值结果。上述数据基于标准LC滤波器理论计算和典型工程经验值，不同拓扑的实际插入损耗可能偏差$\pm 10$ dB。
+
+### 3.2 谐振风险
+
+两级LC滤波器的高阻抗节点与后端高阻性负载交互时可能激发谐振：
+
+$$f_{res} = \frac{1}{2\pi}\sqrt{\frac{1}{L_1C_1} + \frac{1}{L_2C_2}}$$
+
+阻尼电阻$R_d$的推荐值（Butterworth设计）：
+
+$$R_d = 2\sqrt{\frac{L_1}{C_1}} = 2\sqrt{\frac{L_2}{C_2}}$$
+
+### 3.3 仿真步长约束
+
+EMI滤波器的EMT仿真受高频特性约束。共模电感高频模型（$>$10 MHz）若采用集总参数，需要极小仿真步长：
+
+$$\Delta t \leq \frac{1}{10 f_{max}} = \frac{1}{10 \times 30 \text{ MHz}} \approx 3.3 \text{ ns}$$
+
+采用[[multirate-method|多速率方法]]时，EMI分析可用较大步长（$1$–$5$ μs），而开关瞬态用ns级步长。
+
+## EMT仿真模型
 
 ### 3.1 离散化实现
 
-**LC滤波器离散模型**:
-```
-Vout[k] = (2*Vout[k-1] - Vout[k-2] + (Ts^2/LC)*Vin[k]) / (1 + Ts/(2RC))
-```
+LC滤波器的时域离散化（梯形法则）：
 
-**状态空间形式**:
-```
-x[k+1] = A*x[k] + B*u[k]
-y[k] = C*x[k] + D*u[k]
-```
+$$i_L[k+1] = i_L[k] + \frac{\Delta t}{L}(v_{in}[k] - v_C[k])$$
+
+$$v_C[k+1] = v_C[k] + \frac{\Delta t}{C}i_L[k]$$
+
+输出电压：
+
+$$v_{out}[k+1] = v_C[k+1] + R_d \cdot i_L[k+1]$$
 
 ### 3.2 共模/差模分离
 
-**共模电压**:
-$$v_{CM} = \frac{v_1 + v_2}{2}$$
+**共模电压**：
 
-**差模电压**:
-$$v_{DM} = v_1 - v_2$$
+$$v_{CM} = \frac{v_L + v_N}{2}$$
 
-**分离网络**:
-```fortran
-! 共模/差模分离
-V_CM = (V_L + V_N) / 2.0
-V_DM = V_L - V_N
+**差模电压**：
 
-! 分别通过CM和DM滤波器
-V_CM_OUT = CM_FILTER(V_CM)
-V_DM_OUT = DM_FILTER(V_DM)
+$$v_{DM} = v_L - v_N$$
 
-! 重构输出
-V_L_OUT = V_CM_OUT + V_DM_OUT/2.0
-V_N_OUT = V_CM_OUT - V_DM_OUT/2.0
-```
+分离后分别通过独立滤波器，最后重构：
+
+$$v_L^{out} = v_{CM}^{out} + \frac{v_{DM}^{out}}{2}, \quad v_N^{out} = v_{CM}^{out} - \frac{v_{DM}^{out}}{2}$$
 
 ### 3.3 EMI频谱分析
 
-**FFT分析流程**:
-1. 时域仿真获取电流/电压波形
-2. 加窗（Hanning/Hamming）
-3. FFT变换
-4. CISPR准峰值检波器模拟
+FFT频谱分析的仿真流程：
 
-**准峰值检波器**:
+1. 时域仿真获取电压/电流波形
+2. 加窗（Hanning或Hamming窗减少频谱泄漏）
+3. FFT变换获取频谱
+4. 施加CISPR准峰值检波器
+
+**准峰值检波器参数**（CISPR 16-1-1）：
+
 $$\tau_{charge} = 1 \text{ ms}, \quad \tau_{discharge} = 160 \text{ ms}$$
 
-## 4. 仿真软件实现
+## 仿真软件实现
 
 ### 4.1 PSCAD/EMTDC实现
 
-**LC低通滤波器**:
+**LC低通滤波器**：
 ```fortran
-! LC滤波器离散模型
-! 电感电流
+! 电感电流更新
 I_L = I_L_OLD + DT/L * (V_IN - V_C)
-! 电容电压
+! 电容电压更新
 V_C = V_C_OLD + DT/C * I_L
-! 输出
-V_OUT = V_C
-
-! 阻尼（可选）
+! 阻尼电阻（可选）
 IF (R_DAMP > 0) THEN
   I_R = V_C / R_DAMP
   I_C = I_L - I_R
@@ -261,217 +275,141 @@ IF (R_DAMP > 0) THEN
 END IF
 ```
 
-**共模滤波器**:
+**共模电感模型**：
 ```fortran
-! 共模电感模型
 V_CM = (V_L + V_N) / 2.0
-
-! 磁芯饱和模型（可选）
 IF (ABS(I_CM) > I_SAT) THEN
-  L_CM_EFF = L_CM * I_SAT / ABS(I_CM)
+  L_CM_EFF = L_CM * I_SAT / ABS(I_CM)  ! 饱和效应
 ELSE
   L_CM_EFF = L_CM
 END IF
-
-! 共模电流
 I_CM = I_CM_OLD + DT/L_CM_EFF * (V_CM - V_CY)
-! Y电容电压
 V_CY = V_CY_OLD + DT/CY * I_CM
 ```
 
-**EMI测量（CISPR频段）**:
+**EMI测量（CISPR频段）**：
 ```fortran
-! 准峰值检波器简化模型
+! 准峰值检波器
 V_QP = V_QP_OLD + DT/TAU_CHARGE * (V_PEAK - V_QP_OLD)
 IF (V_PEAK < V_QP) THEN
   V_QP = V_QP_OLD - DT/TAU_DISCHARGE * V_QP_OLD
 END IF
-
-! CISPR 11 B类限值 (dBμV)
-! 150kHz-500kHz: 66-56 (线性下降)
-! 500kHz-5MHz: 56
-! 5MHz-30MHz: 60
 ```
 
 ### 4.2 MATLAB/Simulink实现
 
-**S域滤波器模型**:
 ```matlab
-function v_out = lc_filter(v_in, params)
-    % LC低通滤波器
-    s = tf('s');
-    L = params.L;
-    C = params.C;
-    R = params.R_load;
-    
-    % 传递函数
-    H = 1 / (s^2*L*C + s*L/R + 1);
-    
-    % 离散化
-    Hd = c2d(H, params.Ts, 'tustin');
-    
-    % 滤波
-    v_out = lsim(Hd, v_in, []);
+function v_out = lc_filter(v_in, L, C, R, Ts)
+    % 离散状态空间模型
+    A = [0 -1/L; 1/C -1/(R*C)];
+    B = [1/L; 0];
+    Cmat = [0 1];
+    D = 0;
+    sys = ss(A, B, Cmat, D);
+    sysd = c2d(sys, Ts, 'tustin');
+    v_out = lsim(sysd, v_in);
 end
 
 function [cm, dm] = mode_separation(v1, v2)
-    % 共模/差模分离
-    cm = (v1 + v2) / 2;
-    dm = v1 - v2;
+    cm = (v1 + v2) / 2;  % 共模
+    dm = v1 - v2;         % 差模
 end
 
-function [f, mag] = emi_spectrum(v, Ts)
-    % EMI频谱分析
+function [f, mag_dBuV] = emi_spectrum(v, Ts, window_type)
     N = length(v);
-    window = hanning(N);
-    v_win = v .* window;
-    
-    % FFT
-    V_fft = fft(v_win);
-    V_mag = abs(V_fft(1:N/2+1)) * 2/N;
-    
-    % 频率轴
-    f = (0:N/2)/(N*Ts);
-    
-    % 转换为dBμV
-    mag = 20*log10(V_mag / 1e-6);
+    if strcmp(window_type, 'hanning')
+        w = hanning(N);
+    else
+        w = hamming(N);
+    end
+    V_fft = fft(v .* w);
+    V_mag = abs(V_fft(1:N/2+1)) * 2 / N;
+    f = (0:N/2) / (N * Ts);
+    mag_dBuV = 20*log10(V_mag / 1e-6);
 end
 ```
 
-## 5. 典型参数参考
+## 典型参数参考
 
 ### 5.1 单相逆变器EMI滤波器
 
 | 参数 | 符号 | 典型值 | 说明 |
 |------|------|--------|------|
-| 共模电感 | Lcm | 1-10 mH | 双线绕制 |
-| Y电容 | Cy | 1-10 nF | 安全限值影响 |
-| X电容 | Cx | 0.1-2 μF | 差模滤波 |
-| 差模电感 | Ldm | 10-100 μH | 漏感或独立 |
-| 截止频率 | fc | 1-10 kHz | 低于开关频率 |
+| 共模电感 | $L_{CM}$ | 1–10 mH | 双线绕制，磁芯高磁导率 |
+| Y电容 | $C_Y$ | 1–10 nF | 受漏电流限制（$<5$ mA） |
+| X电容 | $C_X$ | 0.1–2 μF | 差模滤波，耐压需满足AC额定 |
+| 差模电感 | $L_{DM}$ | 10–100 μH | 漏感利用或独立绕制 |
+| 截止频率 | $f_c$ | 1–10 kHz | 低于开关频率（通常$<0.1 f_{sw}$） |
+| 阻尼电阻 | $R_d$ | 1–10 Ω | Butterworth设计 |
 
 ### 5.2 三相变频器滤波器
 
 | 参数 | 典型值 | 说明 |
 |------|--------|------|
-| 共模电感 | 3×10 mH | 三相磁环 |
-| Y电容 | 10 nF/相 | 受漏电流限制 |
+| 共模电感 | $3 \times 10$ mH | 三相磁环或三相共模电感 |
+| Y电容 | 10 nF/相 | 受总漏电流$<15$ mA限制 |
 | X电容 | 4.7 μF | 线间连接 |
-| 差模电感 | 50 μH | 每相独立 |
+| 差模电感 | 50 μH/相 | 每相独立绕制 |
 
-### 5.3 CISPR 11限值（B类设备）
+### 5.3 CISPR 11传导发射限值（B类设备）
 
 | 频率范围 | 准峰值限值 | 平均值限值 |
 |----------|------------|------------|
-| 150kHz-500kHz | 66-56 dBμV | 56-46 dBμV |
-| 500kHz-5MHz | 56 dBμV | 46 dBμV |
-| 5MHz-30MHz | 60 dBμV | 50 dBμV |
+| 150 kHz–500 kHz | 66–56 dBμV（线性下降） | 56–46 dBμV |
+| 500 kHz–5 MHz | 56 dBμV | 46 dBμV |
+| 5 MHz–30 MHz | 60 dBμV | 50 dBμV |
 
-## 6. 相关主题与链接
+## 相关主题与链接
 
-### 6.1 相关模型
-- [[igbt-model|IGBT模型]] - 主要噪声源
-- [[pwm-modulator-model|PWM调制器]] - 谐波分析
-- [[inductor-model|电感模型]] - 磁饱和特性
-- [[capacitor-model|电容模型]] - ESR/ESL影响
-- [[vsc-model|VSC模型]] - 典型应用场景
+### 相关模型
 
-### 6.2 相关方法
-- FFT分析 - 频谱处理
-- [[frequency-dependent-modeling|频率相关建模]] - 宽频特性
-- [[multirate-method|多速率方法]] - EMI与系统级仿真
+- [[igbt-model]] — 主要EMI噪声源，开关边沿高频谐波产生
+- [[pwm-modulator-model]] — PWM调制产生的谐波频谱分析
+- [[inductor-model]] — 共模电感高频建模，磁饱和特性
+- [[capacitor-model]] — X/Y电容的ESR/ESL高频特性
+- [[vsc-model]] — 典型EMI滤波器应用场景
 
-### 6.3 相关主题
-- EMC设计 - 电磁兼容
-- 传导干扰 - 测试方法
-- 开关噪声 - 产生机理
-- 磁元件设计 - 共模电感
+### 相关方法
 
-## 7. 适用边界与限制
+- [[frequency-dependent-modeling]] — 无源元件宽频特性（>10 MHz）
+- [[multirate-method]] — EMI高频分析与系统级仿真的时间尺度分离
 
-### 7.1 适用条件
-- **频率范围**: 传导干扰频段（<30MHz）
-- **线性区域**: 元件工作在线性区
-- **温度范围**: 元件额定温度
-- **电压等级**: 不超过元件耐压
-
-### 7.2 模型限制
-- **辐射EMI**: 未建模空间辐射
-- **非线性磁芯**: 大信号饱和简化处理
-- **温度影响**: 参数温度漂移未建模
-- **寄生参数**: 部分PCB寄生参数忽略
-
-### 7.3 量化性能边界
-
-EMI 滤波器的 EMT 仿真精度高度依赖于元件高频寄生参数和 PCB 布局的准确建模。目前公开文献中缺乏针对 EMI 滤波器独立 EMT 建模方法的大规模可比量化评估。
-
-**数据缺口声明**：截至当前知识范围，未找到针对 EMI 滤波器 EMT 建模精度的独立量化性能数据。EMI 滤波器的仿真精度主要取决于其构成元件（共模电感、X/Y 电容）的高频寄生参数建模精度，以及 PCB 走线分布参数的准确提取。建议用户根据具体应用频段（CISPR 传导发射标准：150 kHz~30 MHz）选择合适的元件高频模型（如含 ESR/ESL 的电容模型和含寄生电容的共模电感模型），并通过与实测 EMI 频谱对比验证仿真精度。
-
-这些量化数据不构成对 EMI 滤波器建模方法的全面性能评价，只说明在特定测试条件下可获得的能力边界。
-
-## 适用边界与失败模式
+## 适用边界与限制
 
 ### 适用条件
-- **频率范围**: 传导干扰频段（<30MHz）
-- **线性区域**: 元件工作在线性区
-- **温度范围**: 元件额定温度
-- **电压等级**: 不超过元件耐压
+
+- **频率范围**：传导干扰频段（9 kHz–30 MHz），超出此频段需考虑辐射EMI模型
+- **线性区域**：无源元件工作在线性区（磁芯未饱和）
+- **集总参数假设**：PCB走线长度$<\lambda/20$（约30 MHz以下成立）
 
 ### 失效边界
-- **辐射EMI**: 未建模空间辐射
-- **非线性磁芯**: 大信号饱和简化处理
-- **温度影响**: 参数温度漂移未建模
-- **寄生参数**: 部分PCB寄生参数忽略
+
+- **高频辐射**：>30 MHz时集总参数模型失效，需分布参数模型
+- **非线性磁芯**：大电流导致磁芯饱和，共模电感量显著下降
+- **温度影响**：磁芯材料参数（$B_{sat}$、损耗）随温度变化，$100°C$以上需补偿
+- **寄生参数**：绕组间电容、PCB分布电感在高频下不可忽略（>$5$ MHz时需精确提取）
 
 ### 关键假设
-1. 元件工作在弱信号线性区域（磁芯未饱和）
-2. 共模和差模可分离处理（实际存在模态耦合）
-3. PCB走线寄生参数可等效为集总参数
-4. 负载阻抗匹配良好（失配影响滤波性能）
 
-## 代表性来源
+1. CM和DM可解耦处理（实际通过寄生电容存在耦合）
+2. 负载阻抗已知且恒定（失配会改变滤波器响应）
+3. 磁芯为线性材料（弱信号假设）
+4. PCB走线寄生参数以集总参数等效
 
-- [[inductor-model|电感模型]] - 共模电感高频建模
-- [[capacitor-model|电容模型]] - X/Y电容高频建模
-- [[frequency-dependent-modeling|频率相关建模]] - 宽频特性建模
+### 开放问题
 
-## 与相关页面的关系
-
-- [[igbt-model|IGBT模型]] - 主要噪声源
-- [[pwm-modulator-model|PWM调制器]] - 谐波分析
-- [[inductor-model|电感模型]] - 共模电感磁饱和
-- [[capacitor-model|电容模型]] - ESR/ESL影响
-
-## 开放问题
-
-- 宽禁带器件（SiC/GaN）高频开关下的 EMI 滤波器建模
-- 有源 EMI 滤波器的 EMT 仿真实现
-- 含磁芯饱和的非线性共模电感建模
-- PCB 分布参数对 EMI 滤波器性能的量化影响
+- 宽禁带器件（SiC/GaN）的高频开关（$\tau_{rise}<5$ ns）对EMI滤波器设计的量化影响尚缺乏系统性EMT建模研究
+- 有源EMI滤波器的实时闭环控制EMT仿真实现尚无成熟方法
+- 含磁芯饱和的非线性共模电感EMT模型精度有待提高
+- PCB分布参数（走线电感、过孔阻抗）对EMI滤波器性能的定量影响尚需实验验证
 
 ## 参考标准
 
-- CISPR 11 - 工业、科学和医疗设备射频骚扰特性
-- CISPR 22/32 - 信息技术设备电磁兼容
-- IEC 60939 - 电磁干扰抑制用无源滤波器
-
----
-
-*本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*
+- **CISPR 11** — 工业、科学和医疗设备射频骚扰特性限值
+- **CISPR 22/32** — 信息技术设备电磁兼容
+- **IEC 60939** — 电磁干扰抑制用无源滤波器总规范
+- **IEEE 519** — 谐波控制建议（电网侧谐波限值）
 
 ## 来源论文
 
-| 论文 | 年份 |
-|------|------|
-| [[comparison-of-the-atp-version-of-the-emtp-and-the-netomac-program-for-simulation|Comparison of the ATP version of the EMTP and the NETOMAC pr]] | 2004 |
-| [[comparison-between-electromechanical-transient-model-and-electromagnetic-transie|Comparison between electromechanical transient model and ele]] | 2013 |
-| [[dynamic-average-value-modeling-of-13&14|Dynamic Average-Value Modeling of]] | 2014 |
-| [[a-multi-functional-series-compensator-to-squirrel-cage-induction-generator|A multi-functional series compensator to squirrel cage induc]] | 2015 |
-| [[average-value-modeling-of-line-commutated-ac-dc-converters-with-unbalanced-ac-ne|Average-Value Modeling of Line-Commutated AC-DC Converters W]] | 2021 |
-| [[control-and-simulation-of-a-grid-forming-inverter-for-hybrid-pv-battery-plants-i|Control and Simulation of a Grid-Forming Inverter for Hybrid]] | 2021 |
-| [[large-scale-hybrid-real-time-simulation-modeling-and-benchmark-for-nelson-river-|Large-scale hybrid real time simulation modeling and benchma]] | 2021 |
-| [[electromechanical-electromagnetic-hybrid-simulation-technology-with-large-number|Electromechanical-electromagnetic Hybrid Simulation Technolo]] | 2022 |
-| [[electromechanical-electromagnetic-transient-hybrid-simulation-of-an-acdc-hybrid-|Electromechanical-electromagnetic transient hybrid simulatio]] | 2022 |
-| [[a-steady-state-initialization-procedure-for-generic-voltage-source-converters-in|A steady-state initialization procedure for generic voltage-]] | 2023 |
-| [[modeling-for-large-scale-offshore-wind-farm-using-multi-thread-parallel-computin|Modeling for large-scale offshore wind farm using multi-thre]] | 2023 |
-| [[analysis-on-dynamic-characteristic-of-control-mode-for-800-kv-yun-guang-uhvdc|Analysis on dynamic characteristic of control mode for +/-80]] | 2025 |
+> 注：本页面涉及的主题（EMI滤波器EMT建模）在EMT_LLM_Wiki的论文收集范围内无直接对应论文。上述内容基于EMT Wiki关联知识页中的EMI相关内容（[[igbt-model]]和[[inductor-model]]）和电力电子基础理论构建。量化数据基于理论计算和工程经验值，原文未报告可核验的独立数值实验数据。
