@@ -78,7 +78,7 @@
 | 268 | power-system-network.md | topics | topics/tools-software/power-system-network.md | P1 | 999 | 4366 | 17 | 10 | completed |
 | 368 | protection-system.md | topics | topics/protection-lightning/protection-system.md | P1 | 999 | 2130 | 8 | 16 | completed |
 | 116 | pwm-modulation.md | methods | methods/power-electronics/pwm-modulation.md | P0 | 999 | 3049 | 10 | 8 | completed |
-| 47 | relay-protection.md | topics | topics/protection-lightning/relay-protection.md | P0 | 999 | 1404 | 10 | 17 | pending |
+| 47 | relay-protection.md | topics | topics/protection-lightning/relay-protection.md | P0 | 999 | 4285 | 9 | 14 | completed |
 | 301 | rotating-machine-modeling.md | topics | topics/component-modeling/rotating-machine-modeling.md | P1 | 999 | 3139 | 15 | 16 | pending |
 | 351 | shifted-frequency-analysis.md | topics | topics/modeling-methods/shifted-frequency-analysis.md | P1 | 999 | 1646 | 11 | 11 | pending |
 | 328 | small-perturbation-linearization.md | methods | methods/stability-analysis/small-perturbation-linearization.md | P1 | 999 | 2129 | 6 | 11 | pending |
