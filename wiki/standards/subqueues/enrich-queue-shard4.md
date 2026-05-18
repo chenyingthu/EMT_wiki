@@ -77,7 +77,7 @@
 | 381 | small-signal-analysis.md | methods | methods/stability-analysis/small-signal-analysis.md | P1 | 999 | 1213 | 4 | 31 | completed |
 | 374 | srf-pll.md | methods | methods/control/srf-pll.md | P1 | 999 | 1379 | 4 | 9 | completed |
 
-| 377 | surge-arrester-model.md | models | models/protection/surge-arrester-model.md | P1 | 999 | 1331 | 13 | 25 | pending |
+| 377 | surge-arrester-model.md | models | models/protection/surge-arrester-model.md | P1 | 999 | 4106 | 23 | 20 | completed |
 | 111 | switching-function-method.md | methods | methods/power-electronics/switching-function-method.md | P0 | 999 | 2885 | 10 | 18 | completed |
 | 407 | thevenin-equivalent-model.md | models | models/equivalent/thevenin-equivalent-model.md | P1 | 999 | 3583 | 13 | 13 | completed |
 | 127 | thyristor-control.md | methods | methods/control/thyristor-control.md | P0 | 999 | 3359 | 10 | 10 | completed |
