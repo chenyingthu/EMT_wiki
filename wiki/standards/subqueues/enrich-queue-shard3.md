@@ -46,7 +46,7 @@
 | 410 | grid-side-converter.md | models | models/rotating-machine/grid-side-converter.md | P1 | 999 | 3203 | 17 | 23 | completed |
 | 66 | gruson-2011-reduced-mmc.md | models | models/equivalent/gruson-2011-reduced-mmc.md | P0 | 999 | 2369 | 8 | 9 | completed |
 | 311 | hardware-acceleration.md | methods | methods/simulation-technology/hardware-acceleration.md | P1 | 999 | 2802 | 6 | 22 | pending |
-| 190 | hbsm.md | methods | methods/power-electronics/hbsm.md | P0 | 999 | 5623 | 12 | 15 | pending |
+| 190 | hbsm.md | methods | methods/power-electronics/hbsm.md | P0 | 999 | 1718 | 12 | 13 | completed |
 | 192 | high-performance-computing.md | methods | methods/simulation-technology/high-performance-computing.md | P0 | 999 | 5691 | 10 | 12 | pending |
 | 234 | hybrid-acdc-system.md | topics | topics/hvdc-facts/hybrid-acdc-system.md | P0 | 999 | 18632 | 27 | 14 | pending |
 | 384 | ideal-transformer-equivalent.md | methods | methods/network-solution/ideal-transformer-equivalent.md | P1 | 999 | 1199 | 7 | 12 | pending |

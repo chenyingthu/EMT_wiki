@@ -299,14 +299,23 @@ $$Y_{reduced} = Y_{aa} - Y_{ab} Y_{bb}^{-1} Y_{ba}$$
 
 ## 与相关方法的关系
 
-- **[[half-bridge-submodule]]**：半桥子模块的主要方法页，包含完整的四种建模层级详解、公式推导、算法步骤和仿真验证。HBSM 页面作为缩写入口，指向此完整方法页。
 - **[[fbsm]]**：全桥子模块可输出 +、-、0 三种电平且具备故障阻断能力；HBSM 与 FBSM 在 EMT 建模中共享戴维南/诺顿等效框架，但控制逻辑和故障响应不同。
-- **[[nearest-level-modulation]]**：HBSM 的输出电压波形由 NLM 或 CPS-SPWM 通过排序分配插入状态确定。
+- **[[nearest-level-control]]**：HBSM 的输出电压波形由最近电平调制（NLM）或 CPS-SPWM 通过排序分配插入状态确定。
 - **[[mmc-model]]**：HBSM 是 MMC 的基础构建单元，MMC 页面组织 HBSM 与桥臂交互的系统层面。
 - **[[average-value-model]]**：AVM 忽略单个 HBSM 的开关离散性，以桥臂平均开关函数替代。
 - **[[mbsm]]**：多桥臂/混合子模块扩展了 HBSM 的能力边界。
 - **[[circulating-current-suppression]]**：子模块层状态与桥臂内部循环电流抑制的相关背景。
 - **[[companion-circuit]]**：Dommel 离散是 HBSM 电容和桥臂电感统一离散的底层数学框架。
+- **[[half-bridge-submodule]]**：与本页面为同一主题的详细方法页，包含完整的四种建模层级详解、公式推导和算法步骤。
+
+## EMT 建模方法总结
+
+| 建模层级 | 核心思想 | 计算效率 | SM 级精度 | 代表性论文 |
+|---------|---------|---------|---------|-----------|
+| 开关级 TDM | 每个 IGBT/Diode 两态电阻 | 最低 | 完整 | Beddard 2015 |
+| 戴维南等效 DEM | 桥臂 SM 等效为单个戴维南支路 | 中等 | 完整 | Xu 2015 |
+| 混合积分 Gao 2023 | 梯形+中点法 + 蛙跳解耦 | 高 | 完整 | Gao 2023 |
+| 平均值 AVM | 桥臂平均开关函数替代 | 最高 | 丢失 | Xu 2015 |
 
 ## 来源论文
 
@@ -315,14 +324,3 @@ $$Y_{reduced} = Y_{aa} - Y_{ab} Y_{bb}^{-1} Y_{ba}$$
 - [[comparison-of-detailed-modeling-techniques-for-mmc-employed-on-vsc-hvdc-schemes]] — Beddard 2015, IEEE TPWRD：TDM/DEM/AM 三模型首次客观对比
 - [[the-diode-clamped-half-bridge-mmc-structure-with-internal-spontaneous-capacitor-]] — Xu 2018：二极管钳位 HBSM 自均压拓扑
 - [[analytical-modeling-of-the-half-bridge-leg-using-an-associated-discrete-circuit-]] — Lai 2026, IEEE TPWRS：GaN 半桥腿 ADC 解析模型
-
----
-
-*本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*
-
-## 来源论文
-
-| 论文 | 年份 |
-|------|------|
-| [[combining-detailed-equivalent-model-with-switching-function-based-average-value-|Combining Detailed Equivalent Model With Switching-Function-]] | 2020 |
-| [[a-state-space-approach-for-accelerated-simulation-of-modular-multilevel-converte|A state-space approach for accelerated simulation of modular]] | 2025 |
