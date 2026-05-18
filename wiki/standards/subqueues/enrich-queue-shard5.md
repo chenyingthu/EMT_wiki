@@ -87,7 +87,7 @@
 
 | 209 | vector-fitting.md | methods | methods/signal-processing/vector-fitting.md | P0 | 999 | 8394 | 15 | 14 | completed |
 | 46 | vsc-hvdc.md | topics | topics/hvdc-facts/vsc-hvdc.md | P0 | 999 | 1392 | 7 | 126 | completed |
-| 83 | wideband-oscillation-stability.md | topics | topics/stability-analysis/wideband-oscillation-stability.md | P0 | 999 | 2187 | 11 | 15 | pending |
+| 83 | wideband-oscillation-stability.md | topics | topics/stability-analysis/wideband-oscillation-stability.md | P0 | 999 | 2824 | 9 | 14 | completed |
 
 
 |||| 411 | 1 | 1 | 0 | grounding-lightning-overvoltage.md enriched: bc 1657→3258, bf 17≥5 pass, removed DUP_BLOCK mermaid, added Alipio2023/Lima2026/Meyberg2026/DeAraujo2021 grounding models |
@@ -105,3 +105,4 @@
 ||||||||||| 458 | 1 | 1 | 0 | thevenin-equivalent.md enriched: bc 1590→4053, bf 6→13 pass, removed mermaid, added 5 EMT methods (static/EMT time-domain/multi-port/frequency-dependent/modulation-index dependent), 60 inline formulas, 10 sections, all 14 wikilinks valid |
 ||||||||||| 459 | 1 | 1 | 0 | transformer-modeling.md enriched: bc 1290→3773, bf 9→12 pass, mermaid→removed, added Z-transform (Su1990), duality (Shafieipour2020), white-box reduction (Mombello2022), inrush quantification (Velásquez2023), Jiles-Atherton, 9 sections, all 24 wikilinks valid |
 |||||||||| 460 | 1 | 1 | 0 | transmission-line-modeling.md enriched: bc 2130→3844, bf 18→28 pass, removed mermaid→replaced with 5-method table, added FLE+MCNR, FPGA-FDPD, Gustavsen parallel line coupling, 8 sections, all 18 wikilinks valid, Quality Gate PASS |
+|||||||||| 461 | 1 | 1 | 0 | wideband-oscillation-stability.md enriched: bc 1167→2824, bf 11→9, removed mermaid (replaced with flowchart), added 5 oscillation mechanisms (negative damping/impedance coupling/time-delay/mode coupling/resonance), 6 EMT modeling methods, Z-Tool quantitative data (<2% error, 8x speedup), 12 sections, all 14 wikilinks valid, Quality Gate PASS |
