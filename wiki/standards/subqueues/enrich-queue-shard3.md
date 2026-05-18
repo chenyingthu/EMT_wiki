@@ -64,7 +64,8 @@
 | 95 | mmc-modeling.md | topics | topics/component-modeling/mmc-modeling.md | P0 | 999 | 2475 | 14 | 30 | completed |
 | 273 | model-compatibility-layer.md | methods | methods/system-studies/model-compatibility-layer.md | P1 | 999 | 4232 | 8 | 31 | completed |
 | 382 | mt-hvdc-test-system.md | topics | topics/hvdc-facts/mt-hvdc-test-system.md | P1 | 999 | 2490 | 6 | 7 | completed |
-| 283 | multirate-method.md | methods | methods/simulation-technology/multirate-method.md | P1 | 999 | 3644 | 17 | 60 | pending |
+| 283 | multirate-method.md | methods | methods/simulation-technology/multirate-method.md | P1 | 999 | 3553 | 17 | 27 | completed |
+
 | 126 | nearest-level-control.md | methods | methods/power-electronics/nearest-level-control.md | P0 | 999 | 3353 | 17 | 13 | pending |
 | 300 | newton-raphson-method.md | methods | methods/network-solution/newton-raphson-method.md | P1 | 999 | 3198 | 7 | 7 | pending |
 | 82 | numerical-integration-error.md | methods | methods/numerical-methods/numerical-integration-error.md | P0 | 999 | 2150 | 4 | 13 | pending |

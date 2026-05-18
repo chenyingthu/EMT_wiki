@@ -233,84 +233,35 @@ $$
 
 ## 7. 延伸阅读
 
-- [[interpolation-method]]：慢到快方向和事件同步的关键接口技术
-- [[numerical-integration]]：决定每个子系统内部的离散推进
-- [[stiff-system-handling]]：多时间尺度带来的刚性需求和局部小步长
-- [[fixed-admittance]]：减少快区频繁开关造成的矩阵重构
-- [[dynamic-phasor]]：多速率慢区建模的常见候选
-- [[average-value-model]]：多速率慢区建模的另一候选
-- [[companion-circuit]]：快区开关动作时的历史项重置
-- [[network-equivalent]] 和 [[fdne-model]]：分区接口的等效网络表达
-- [[co-simulation]]：松耦合多工具协同仿真（与紧耦合多速率不同但相关）
-- [[parallel-computing]]：多速率与并行策略的配合
+- [[methods/numerical-methods/interpolation-method.md]]：慢到快方向和事件同步的关键接口技术
+- [[methods/numerical-methods/numerical-integration.md]]：决定每个子系统内部的离散推进
+- [[methods/numerical-methods/stiff-system-handling.md]]：多时间尺度带来的刚性需求和局部小步长
+- [[methods/numerical-methods/fixed-admittance.md]]：减少快区频繁开关造成的矩阵重构
+- [[topics/modeling-methods/dynamic-phasor.md]]：多速率慢区建模的常见候选
+- [[methods/power-electronics/average-value-model.md]]：多速率慢区建模的另一候选
+- [[methods/numerical-methods/companion-circuit.md]]：快区开关动作时的历史项重置
+- [[topics/modeling-methods/network-equivalent.md]] 和 [[models/equivalent/fdne-model.md]]：分区接口的等效网络表达
+- [[topics/simulation/co-simulation.md]]：松耦合多工具协同仿真（与紧耦合多速率不同但相关）
+- [[topics/simulation/parallel-computing.md]]：多速率与并行策略的配合
 
 *页面基于 Sinkar (2025)、Tarazona (2021)、Shu (2017) 和 Mu (2014) 的证据写作。*
 
 ## 来源论文
-
-| 论文 | 年份 |
-|------|------|
-| [[interfacing-techniques-for-transient-stability-and-electromagnetic-transient-hyb-fix|Interfacing Techniques for Transient Stability and Electroma]] | 2009 |
-| [[including-magnetic-saturation-in-voltage-behind-reactance-induction-machine-mode|Including Magnetic Saturation in Voltage-Behind-Reactance In]] | 2010 |
-| [[magnetically-saturable-voltage-behind-reactance-model-for-induction-machines|Magnetically Saturable Voltage Behind Reactance Model for In]] | 2011 |
-| [[multi-fpga-digital-hardware-design-iet-gtd|Multi-FPGA digital hardware design for detailed large-scale ]] | 2013 |
-| [[a-parallel-multi-rate-electromagnetic-transient-simulation-algorithm-based-on-ne|基于传输线分网的并行多速率电磁暂态仿真算法]] | 2014 |
-| [[a-parallel-multi-rate-electromagnetic-transient-simulation-algorithm-based-on-ne|基于传输线分网的并行多速率电磁暂态仿真算法]] | 2014 |
-| [[frequency-domain-simulation-of-electromagnetic-transients-using-variable|Frequency-Domain Simulation of Electromagnetic Transients Us]] | 2015 |
-| [[a-hybrid-simulation-tool-for-the-study-of-pv-integration-impacts-on-distribution|A Hybrid Simulation Tool for the Study of PV Integration Imp]] | 2016 |
-| [[co-simulation-of-electromagnetic-transients-and-phasor-models-a-relaxation-appro|Co-Simulation of electromagnetic transients and Phasor model]] | 2016 |
-| [[co-simulation-of-electromagnetic-transients-and-phasor-models-a-relaxation-appro|Co-Simulation of electromagnetic transients and Phasor model]] | 2016 |
-| [[基于rtds和fpga联合仿真平台的多速率实时仿真方法|基于RTDS和FPGA联合仿真平台的多速率实时仿真方法]] | 2016 |
-| [[34tpwrd20172749427|34/TPWRD.2017.2749427]] | 2017 |
-| [[a-multirate-emt-co-simulation-of-large-ac-and-mmc-based-mtdc-systems|A Multirate EMT Co-Simulation of Large AC and MMC-Based MTDC]] | 2017 |
-| [[a-full-frequency-dependent-line-model-based-on-folded-line-equivalencing-and-lat|A full frequency dependent line model based on folded line e]] | 2017 |
-| [[a-full-frequency-dependent-line-model-based-on-folded-line-equivalencing-and-lat|A full frequency dependent line model based on folded line e]] | 2017 |
-| [[half-wavelength-system-transients-stability-simulation-using-dynamic-phasor-mode|输电线路工频动态相量模型在半波长交流输电系统机电暂态仿真中的应用研究]] | 2017 |
-| [[co-simulation-of-electrical-networks-by-interfacing-emt-and-dynamic-phasor-simul|Co-simulation of electrical networks by interfacing EMT and ]] | 2018 |
-| [[co-simulation-of-electrical-networks-by-interfacing-emt-and-dynamic-phasor-simul|Co-simulation of electrical networks by interfacing EMT and ]] | 2018 |
-| [[a-multi-area-thevenin-equivalent-based-multi-rate-co-simulation-for-control-desi|A multi-area Thevenin equivalent based multi-rate co-simulat]] | 2019 |
-| [[hybrid-transient-stability-simulation-using-dynamic-phasor-based-interface-model|Hybrid Transient Stability Simulation Using Dynamic Phasor B]] | 2019 |
-| [[multi-scale-induction-machine-model-in-the-phase-domain-with-constant-inner-impe|Multi-scale Induction Machine Model in the Phase Domain with]] | 2019 |
-| [[适用于电磁暂态高效仿真的变流器分段广义状态空间平均模型|适用于电磁暂态高效仿真的变流器分段广义状态空间平均模型]] | 2019 |
-| [[an-inverter-model-simulating-accurate-harmonics-with-low-computational-burden-fo|An Inverter Model Simulating Accurate Harmonics with Low Com]] | 2020 |
-| [[hierarchical-device-level-modular-multilevel-converter-modeling-for-parallel-and|Hierarchical Device-Level Modular Multilevel Converter Model]] | 2020 |
-| [[iet-generation-transmission-distribution|IET Generation, Transmission & Distribution]] | 2020 |
-| [[适用于电磁暂态仿真的变阶变步长3s-dirk算法|适用于电磁暂态仿真的变阶变步长3S-DIRK算法]] | 2020 |
-| [[multi-scale-formulation-of-admittance-based-modeling-of-cables|Multi-scale formulation of admittance-based modeling of cabl]] | 2021 |
-| [[real-time-rms-emt-co-simulation-and-its-application-in-hil-testing-of-protective|Real-time RMS-EMT co-simulation and its application in HIL t]] | 2021 |
-| [[shifted-frequency-analysis-emtp-multirate-simulation-of-power-systems|Shifted frequency analysis-EMTP multirate simulation of powe]] | 2021 |
-| [[interfacing-real-time-and-offline-power-system-simulation-tools-using-udp-or-fpg|Interfacing real-time and offline power system simulation to]] | 2022 |
-| [[中-国-电-机-工-程-学-报-34|中  国  电  机  工  程  学  报]] | 2022 |
-| [[2728基于电压源换流器的高压直流输电系统多尺度暂态建模与仿真研究|基于电压源换流器的高压直流输电系统多尺度暂态建模与仿真研究]] | 2022 |
-| [[大规模电力电子设备接入的电力系统混合仿真接口技术综述|大规模电力电子设备接入的电力系统混合仿真接口技术综述]] | 2022 |
-| [[a-multi-solver-framework-for-co-simulation-of-transients-in-modern-power-systems|A multi-solver framework for co-simulation of transients in ]] | 2023 |
-| [[a-multi-solver-framework-for-co-simulation-of-transients-in-modern-power-systems|A multi-solver framework for co-simulation of transients in ]] | 2023 |
-| [[a-multi-solver-framework-for-co-simulation-of-transients-in-modern-power-systems|A multi-solver framework for co-simulation of transients in ]] | 2023 |
-| [[average-value-model-for-voltage-source-converters-with-direct-interfacing-in-emt|Average-Value Model for Voltage-Source Converters With Direc]] | 2023 |
-| [[benchmark-high-fidelity-emt-models-for-power|Benchmark High-Fidelity EMT Models for Power]] | 2023 |
-| [[massively-parallel-modeling-of-battery-energy-storage-systems-for-acdc-grid-high|Massively Parallel Modeling of Battery Energy Storage System]] | 2023 |
-| [[parallelization-of-emt-simulations-for-integration-of-inverter-based-resources|Parallelization of EMT simulations for integration of invert]] | 2023 |
-| [[parallelization-of-emt-simulations-for-integration-of-inverter-based-resources|Parallelization of EMT simulations for integration of invert]] | 2023 |
-| [[real-time-hil-emulation-of-drm-with-machine-learning-accelerated-wbg-device-mode|Real-Time HIL Emulation of DRM With Machine Learning Acceler]] | 2023 |
-| [[real-time-simulation-for-detailed-wind-turbine-model-based-on-heterogeneous-comp|Real-time simulation for detailed wind turbine model based o]] | 2023 |
-| [[a-semi-analytical-approach-for-state-space-electromagnetic-transient-simulation|A Semi-Analytical Approach for State-Space Electromagnetic T]] | 2024 |
-| [[key-technologies-and-prospects-for-electromagnetic-transient-parallel-simulation|Key Technologies and Prospects for Electromagnetic Transient]] | 2024 |
-| [[key-technologies-and-prospects-for-electromagnetic-transient-parallel-simulation|Key Technologies and Prospects for Electromagnetic Transient]] | 2024 |
-| [[multi-scale-modeling-of-synchronous-machine-with-constant-conductance-matrix-in-|Multi-scale Modeling of Synchronous Machine With Constant Co]] | 2024 |
-| [[numerically-efficient-average-value-model-for-voltage-source-converters-in-nodal|Numerically Efficient Average-Value Model for Voltage-Source]] | 2024 |
-| [[新能源电力系统细粒度并行与多速率电磁暂态仿真|新能源电力系统细粒度并行与多速率电磁暂态仿真]] | 2024 |
-| [[electromagnetic-transient-modeling-and-simulation-of-large-power-systems-emt-sim|Electromagnetic Transient Modeling and Simulation of Large P]] | 2025 |
-| [[electromagnetic-transient-modeling-and-simulation-of-large-power-systems-emt-sim|Electromagnetic Transient Modeling and Simulation of Large P]] | 2025 |
-| [[multirate-emt-simulation-of-power-electronic-transformers-with-high-precision-fi|Multirate EMT Simulation of Power Electronic Transformers Wi]] | 2025 |
-| [[multirate-emt-simulation-of-power-electronic-transformers-with-high-precision-fi|Multirate EMT Simulation of Power Electronic Transformers Wi]] | 2025 |
-| [[sfa-emt-hybrid-simulation-of-power-systems-application-to-hvdc-systems|SFA-EMT hybrid simulation of power systems: Application to H]] | 2025 |
-| [[sfa-emt-hybrid-simulation-of-power-systems-application-to-hvdc-systems|SFA-EMT hybrid simulation of power systems: Application to H]] | 2025 |
-| [[stability-assessment-of-multi-rate-electromagnetic-transient-simulations|Stability Assessment of Multi-Rate Electromagnetic Transient]] | 2025 |
-| [[stability-assessment-of-multi-rate-electromagnetic-transient-simulations|Stability Assessment of Multi-Rate Electromagnetic Transient]] | 2025 |
-| [[decoupled-detailed-equivalent-model-for-parallel-and-multi-rate-emt-type-simulat|Decoupled Detailed Equivalent Model for Parallel and Multi-R]] | 2026 |
-| [[decoupled-detailed-equivalent-model-for-parallel-and-multi-rate-emt-type-simulat|Decoupled Detailed Equivalent Model for Parallel and Multi-R]] | 2026 |
-| [[2728multi-rate-real-time-hybrid-simulation-of-controllable-line-commutated-conve|Multi-rate real time hybrid simulation of controllable line ]] | 2026 |
-| [[2728multi-rate-real-time-hybrid-simulation-of-controllable-line-commutated-conve|Multi-rate real time hybrid simulation of controllable line ]] | 2026 |
-| [[multirate-method-for-dynamic-phasor-simulation-of-large-scale-power-systems|Multirate Method for Dynamic Phasor Simulation of Large-Scal]] | 2026 |
-| [[multirate-method-for-dynamic-phasor-simulation-of-large-scale-power-systems|Multirate Method for Dynamic Phasor Simulation of Large-Scal]] | 2026 |
-| [[stability-improved-network-partition-based-on-a-small-step-synthesis-model-for-e|Stability-improved network partition based on a small-step s]] | 2026 |
+| 论文 | 年份 | 说明 |
+|------|------|------|
+| [[a-parallel-multi-rate-electromagnetic-transient-simulation-algorithm-based-on-ne]] | 2014 | Mu et al. — 传输线分网并行多速率算法，开创传输线延迟解耦接口 |
+| [[a-multirate-emt-co-simulation-of-large-ac-and-mmc-based-mtdc-systems]] | 2017 | Shu et al. — AC-MTDC 大系统多速率协同，滑动窗口样条预测 |
+| [[shifted-frequency-analysis-emtp-multirate-simulation-of-power-systems]] | 2021 | Tarazona et al. — SFA-EMT 混合仿真框架 |
+| [[real-time-rms-emt-co-simulation-and-its-application-in-hil-testing-of-protective]] | 2021 | Li et al. — 实时 RMS-EMT 协同仿真 |
+| [[hierarchical-device-level-modular-multilevel-converter-modeling-for-parallel-and]] | 2020 | Moon et al. — MMC 并行分层建模 |
+| [[a-multi-solver-framework-for-co-simulation-of-transients-in-modern-power-systems]] | 2023 | Van Hertem et al. — 多求解器协同仿真框架 |
+| [[parallelization-of-emt-simulations-for-integration-of-inverter-based-resources]] | 2023 | Ng et al. — IBR 并行 EMT 仿真加速 |
+| [[massively-parallel-modeling-of-battery-energy-storage-systems-for-acdc-grid-high]] | 2023 | Rueda et al. — 储能系统大规模并行建模 |
+| [[key-technologies-and-prospects-for-electromagnetic-transient-parallel-simulation]] | 2024 | Shu et al. — 并行 EMT 仿真技术综述 |
+| [[a-semi-analytical-approach-for-state-space-electromagnetic-transient-simulation]] | 2024 | Al-Hasheim et al. — 状态空间半解析 EMT |
+| [[multirate-emt-simulation-of-power-electronic-transformers-with-high-precision-fi]] | 2025 | Liu et al. — PET 多速率 EMT，建模精度与效率平衡 |
+| [[sfa-emt-hybrid-simulation-of-power-systems-application-to-hvdc-systems]] | 2025 | Tarazona et al. — SFA-EMT 在 HVDC 中的验证 |
+| [[stability-assessment-of-multi-rate-electromagnetic-transient-simulations]] | 2025 | Sinkar et al. — lifting 特征值稳定性评估 |
+| [[decoupled-detailed-equivalent-model-for-parallel-and-multi-rate-emt-type-simulat]] | 2026 | Yang et al. — 解耦详细等值模型 |
+| [[multirate-method-for-dynamic-phasor-simulation-of-large-scale-power-systems]] | 2026 | Liu et al. — 动态相量多速率方法 |
+| [[stability-improved-network-partition-based-on-a-small-step-synthesis-model-for-e]] | 2026 | Zhang et al. — 稳定性改进网络分区 |
