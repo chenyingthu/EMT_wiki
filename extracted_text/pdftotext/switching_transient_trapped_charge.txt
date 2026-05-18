@@ -1,0 +1,617 @@
+                                                                                                                        IEEE POWER & ENERGY SOCIETY SECTION
+
+
+Received 26 January 2025, accepted 18 February 2025, date of publication 20 February 2025, date of current version 3 March 2025.
+Digital Object Identifier 10.1109/ACCESS.2025.3544109
+
+
+
+
+A New Model of Trapped Charge Sources in
+Switching Transient Studies in the
+Presence of Shunt Reactors
+MOHSEN AKAFI-MOBARAKEH 1 , REZA SHARIATINASAB 1 , (Senior Member, IEEE),
+PIERLUIGI SIANO 2,3 , (Senior Member, IEEE), BEHROOZ VAHIDI 4 , (Senior Member, IEEE),
+AND HAMID REZA NAJAFI1
+1 Department of Electrical and Computer Engineering, University of Birjand, Birjand 9717434765, Iran
+2 Department of Management and Innovation Systems, University of Salerno, 84084 Fisciano, Italy
+3 Department of Power Systems, National University of Science and Technology POLITEHNICA Bucharest, 060042, Bucharest, Romania
+4 Department of Electrical Engineering, Amirkabir University of Technology (Tehran Polytechnic), Tehran 1591634311, Iran
+
+Corresponding author: Pierluigi Siano (psiano@unisa.it)
+The work of Pierluigi Siano was supported in part by the Ministry of Research, Innovation and Digitalization under Project
+PNRR-C9-I8-760090/23.05.2023 CF30/14.11.2022.
+
+
+
+
+  ABSTRACT Insulation coordination studies are of great importance in power grid reliability. In this paper,
+  a new method is proposed for modeling trapped charge sources (TCS) in switching transient studies. The
+  TCS is used to take into account the voltage stored in line capacitors during reclosing operation after
+  fault occurrence. The proposed model is designed based on the active filter concept, thus overcoming
+  the limitations of conventional TCS for simulating transient states in EMTP/ATPDraw. Given the natural
+  frequencies of a transmission line to which the proposed TCS (PTCS) is connected, it injects the appropriate
+  frequencies and eliminates voltage oscillations which limit the use of TCS. To verify the efficiency of the
+  PTCS, it is implemented in a real system with a shunt reactor, and the results are then compared with field
+  measurements. A comparison of the results shows that the PTCS eliminates the voltage oscillations in the
+  simulation before closing and provides a smooth voltage with the desired amplitude. Using the proposed
+  model, the maximum line switching overvoltage is correctly calculated; this, in turn, results in a more
+  accurate transmission line insulation design, which is technically and economically beneficial.
+
+
+  INDEX TERMS Insulation coordination, trapped charge sources, EMTP/ATPDraw, shunt reactor.
+
+
+I. INTRODUCTION                                                                                   insulation design stage, the designer should consider the
+One of the major reasons behind the transmission line                                             worst case that may involve an open end-of-line and
+reliability reduction and transmission line outage, especially                                    the trapped charge voltage. In other words, the line has
+for voltage levels above 345 kV, is the insulation failure                                        to be disconnected from the feeding substation after a
+due to switching overvoltages [1]. Therefore, the network                                         blackout and re-energized after a short time under no-load
+insulation should be designed such that the stresses caused                                       conditions. In [2], insulation coordination was investigated
+by overvoltages are less than the allowable value. For                                            by considering switching overvoltages. In this reference,
+this purpose, the amplitude and location of the maximum                                           the uncertainty in the insulator response against switching
+switching overvoltage in a transmission line should be                                            overvoltage stresses was assumed to be Gaussian. Then, the
+identified. Moreover, by running transient state simulations                                      statistical distribution of the maximum overvoltage stress
+and regarding economic considerations, a proper method                                            of circuit breaker (CB) closing, caused by both the closing
+should be used to reduce the associated costs [2]. In the                                         point uncertainty and the trapped charge, was obtained from
+                                                                                                  simulation or field data. Consequently, the insulation risk
+   The associate editor coordinating the review of this manuscript and                            of failure was calculated from the intersection of insulation
+approving it for publication was Sarasij Das            .                                         stress and strength curves.
+                                                  2025 The Authors. This work is licensed under a Creative Commons Attribution 4.0 License.
+37118                                                    For more information, see https://creativecommons.org/licenses/by/4.0/                   VOLUME 13, 2025
+M. Akafi-Mobarakeh et al.: New Model of TCS in Switching Transient Studies
+
+
+
+
+    In [3] and [4], switching stresses and the resulting risk                TABLE 1. Comparison with related works.
+were calculated using the ANFIS neural network. In the
+simulations in [4], the TCS in the phases was modeled
+using three DC voltage sources in series with an impedance,
+according to [5]. In [6], the insulation coordination of the
+transmission line against overvoltages simultaneously driven
+by lightning and switching was investigated. In this study,
+the default ATP trapped charge model was employed, and no
+shunt compensation reactor was considered.
+    In the past, shunt reactors were employed to reduce
+transient overvoltages [7], but with the development of zinc
+oxide surge arresters, this application of shunt reactors was
+abandoned [8]. However, today, shunt reactors are used for                   TABLE 2. Equivalent grid impedance seen by receiving substations in the
+                                                                             line under study [15].
+steady-state voltage control [9]. Therefore, during low-load
+or no-load periods, the reactors are normally connected to
+the lines and should be considered in the transmission line
+energization studies [10]. In [11] and [12], studies on shunt
+reactors focus on transient states followed by energization
+and de-energization of the reactors. Although the presence
+of shunt reactors has an important effect on switching
+overvoltages, no accurate method has so far been proposed to
+model the worst-case switching in a line equipped with these
+devices. Indeed, the recorded field data have generally been
+                                                                             in Figure 1 [15]. Switching operation is performed on the
+considered sufficient (see [13] and [14]), and the installation
+                                                                             transmission line SA913, as shown in Figure 2, by using the
+of shunt reactors has been ignored in some studies ( [15]
+                                                                             Electro-Magnetic Transients Program/Alternative Transients
+and [16]).
+                                                                             Program (EMTP/ATP). A 121 MVAr shunt reactor is
+    The purpose of this paper is to present a new model
+                                                                             installed at the end of the transmission line with a loss
+for TCS during line reclosing by using an active frequency
+                                                                             of 15%. The capacity of the reactor is equal to 75% of
+filter. Furthermore, the PTCS does not have the limitations
+                                                                             the reactive power passing through the line under no-load
+of conventional TCS in the presence of shunt reactors
+                                                                             condition.
+while the transient states are simulated by EMTP/ATPDraw.
+The results of the proposed model are in good agreement
+with the field measurements and show that this model can
+eliminate the oscillations due to the trapped charge modeling
+in the calculation of switching stresses. The main novel
+contributions of this paper are summarized as follows:
+- Development of a new trapped charge source that can be
+   utilized for transmission line switching studies without
+   the limitations of existing end-line reactors and without
+   disturbing oscillations at the start of the simulation.
+- Enabling statistical switching simulations for insulation
+   coordination studies under worst-case overvoltage scenar-
+   ios in the presence of end-line reactors.
+- Incorporation of end-line reactors and trapped load simula-                FIGURE 1. Single-line diagram of the southern grid [5].
+
+   tion capabilities using the ‘‘model’’ feature of the software,
+   which enhances accuracy and usability for real-world                         The feeding substation at the sending end of line
+   applications.                                                             KM312 is connected to receiving substations KM284
+- Facilitation of transient overvoltage studies during reclos-               and KM285 through lines SL102 and SA912, respec-
+   ing operations in the presence of end-line reactors.                      tively. For modeling the back impedance of KM284 and
+Table 1 comparing the proposed method with other related                     KM285 substations, the Thevenin equivalent impedance
+works is provided below to highlight the distinct advantages                 is used, which is obtained from short-circuit calculations
+of this study:                                                               (Table 2).
+                                                                                The statistic switch, STAT, is used [17], and the source
+II. SYSTEM UNDER STUDY                                                       that models the trapped charge is connected to point B after
+For simulation, the case study is a real 400 kV power                        switching (Figure 2). Transmission lines are modeled using
+grid in southern Iran, according to the single-line diagram                  J-Marti’s frequency-dependent method [18].
+
+VOLUME 13, 2025                                                                                                                               37119
+                                                                           M. Akafi-Mobarakeh et al.: New Model of TCS in Switching Transient Studies
+
+
+
+
+     FIGURE 2. The line under study (SA913) in EMTP/ATPDraw.
+
+
+
+
+III. SWITCHING IN TRANSMISSION LINES                                      healthy phases. Figure 3 shows the transient voltage between
+When a transmission line is energized, the voltage reaches the            CB contacts in the worst case without the presence of the
+end of the line as a propagating wave and is then reflected.              shunt reactor. The smooth lines represent the DC voltages
+The reflected wave travels toward the source and then moves               of the TCS before closing. These voltages are modeled by
+back to the end of the line after reflection [19]. The original           the default TCS in ATP. The trapped charge voltages for the
+voltage and successive reflections produce an overvoltage.                worst-case overvoltages are selected to be 1, −1, and 1 p.u.
+Depending on the conditions, the overvoltage may have an                  [5]. These values provide the worst-case inter-phase voltage
+amplitude of up to three times the source voltage amplitude,              induction before closing. Therefore, it is desired that the
+at the end of the line [1]. The higher the voltage difference             voltage difference across the contacts becomes about 2 p.u.
+across the CB contacts at closing, the larger the voltage                 before closing.
+amplitude at the end of the line. In insulation coordination                 When a shunt reactor is used at the end of the line,
+problems, the worst-case conditions must be considered for                the frequency response of the network is disturbed because
+voltage stresses. One of these critical conditions occurs when            the natural frequency of the reactor inductance is added to the
+a CB is reclosed after fault occurrence.                                  system. Figure 4 shows the transient line to ground voltage of
+   When the transmission line is disconnected from the                    the CB contacts after adding the reactor. The transient line to
+feeding substation, the line voltage will not be zero due                 ground voltage of the CB contacts in the presence of a shunt
+to the stray capacitance, and this voltage is equal to the                reactor and without trapped charge is shown in Figure 5.
+source voltage at the instant of closing. If the opening occurs              By comparing Figures 3 and 5, it can be seen that, except
+when the source instantaneous voltage is at its maximum, the              for the resonance overvoltages, the shunt reactor reduces the
+trapped charge is maximum.                                                switching overvoltages as expected.
+
+
+
+
+                                                                          FIGURE 4. The transient line to ground voltage of breaker contacts when
+FIGURE 3. Transient line to ground voltage of line and source side when
+                                                                          three phases are closed in the presence of a shunt compensator at the
+three phases are closed without shunt compensator (trapped charge
+                                                                          end of the line (trapped charge included).
+included).
+
+  Another cause of trapped charge is an unsymmetrical fault                 Therefore, the results in Figure 4 are incorrect. Because
+occurrence that will result in the charge remaining in the                not only the presence of the reactor does not reduce the
+
+37120                                                                                                                                 VOLUME 13, 2025
+M. Akafi-Mobarakeh et al.: New Model of TCS in Switching Transient Studies
+
+
+
+
+                                                                             As shown in Figure 6, consider a transmission line between
+                                                                             nodes k and m.
+
+
+
+
+                                                                             FIGURE 6. Transmission line between two nodes k and m.
+
+
+                                                                                In the frequency domain, the voltage and current of the
+                                                                             transmission line at the ends are equal to [21]:
+
+FIGURE 5. The transient line to ground voltage of breaker contacts when
+                                                                               Vk (ω) = cosh [γ (ω)l] Vm (ω) − Zc (ω) sinh [γ (ω)l] Im (ω)
+three phases are closed in the presence of a shunt compensator (trapped                                                                  (1)
+charge not included).
+
+                                                                             and
+                                                                                            1
+overvoltages, but also at the first moment, an overvoltage of                  Ik (ω) =          sinh [γ (ω)l] Vm (ω) − cosh [γ (ω)l] Im (ω)
+                                                                                          Zc (ω)
+about a few megavolts is generated at the end of the line.
+                                                                                                                                           (2)
+Consequently, it can be concluded that the modeling of TCS
+by the default ATP model is inaccurate.                                      where Zc (ω) and γ (ω) are, respectively, the wave impedance
+   Another approach for modeling the TCS is to use three                     and the transmission line propagation constant given as
+DC voltage sources in series with an inductive-resistive                     follows:
+impedance and three corresponding CBs at the sending end                                                 p
+of the line [5]. Using this method causes the shunt reactor                                    Zc (ω) = Z ′ (ω) . Y ′ (ω)             (3)
+to resonate with the stray capacitance and generate a large
+                                                                                                         s
+                                                                                                            Z ′ (ω)
+overvoltage before line energization; thus, this is also not                                    γ (ω) =                               (4)
+an appropriate solution. To cope with the mentioned issues,                                                 Y ′ (ω)
+a new method is proposed in this article to take account of the              where Z ′ (ω) and Y ′ (ω) are, respectively, the series impedance
+trapped charge.                                                              and parallel admittance of the transmission line. The J-Marti
+   The process of opening the main switch and re-closing                     frequency-dependent equivalent circuit for the transmission
+it after a short time is a simple approach that can be                       line is shown in Figure 7.
+used in transient state simulation to account for the trapped
+charge. However, this approach is not suitable for statis-
+tical switching with a large number of simulations (e.g.,
+400 simulations [20]). In statistical switching, a constant DC
+voltage is chosen on the line side with an opposite polarity
+with respect to the source side at a time near the closing
+instant. In this case, the closing instants of the main switch
+can be described by a statistical distribution [17]. Therefore,
+in the insulation design, surge arrester placement on the
+transmission line requires numerous simulations for each
+surge arrester installation. This technique has two drawbacks.
+First, the opening and closing times cannot be adjusted for
+all states of the simulation. Second, this technique does not                FIGURE 7. Equivalent circuit of transmission line in J-Marti model.
+provide the exact overvoltages at the worst-case switching
+conditions, so proper insulation coordination cannot be                         In Figure 7, IkHistory and ImHistory are determined by the
+achieved.                                                                    following equations:
+                                                                                          Ik History = A(ω)(Vm (ω) + Zc (ω)Im (ω))                   (5)
+IV. PROPOSED METHOD
+                                                                                          Im History = A(ω)(Vk (ω) + Zc (ω)Ik (ω))                   (6)
+A. METHOD THEORY
+To model transient overvoltages in long transmission lines,                  where Zc (ω) and A(ω) are, respectively, the wave impedance
+EMTP/ATPDraw uses the J-Marti model, which includes                          and weight function in the frequency domain. Since contin-
+high-frequency transmission line losses. The J-Marti model                   uous integration is not possible by computer-aided discrete
+is implemented in the software using the LCC routine.                        methods, a trapezoidal technique is employed in EMTP.
+
+VOLUME 13, 2025                                                                                                                                    37121
+                                                                              M. Akafi-Mobarakeh et al.: New Model of TCS in Switching Transient Studies
+
+
+
+
+Therefore, the integral of the operator is transformed into the
+following form [22]:
+                    Zt
+                                     1t
+          1S =           f (t)dt =      (f (t) + f (t − 1t))           (7)
+                                     2
+                  t−1t
+where 1t is the simulation time step, and f (t) can be either
+the inductor current or the capacitor voltage. EMTP uses
+curve fitting methods to calculate the integrals in the Fourier
+transform of Zc (ω) and A(ω). Thus, Zc (ω) and A(ω) in the
+Laplace domain are given as [9]:
+               N (s)        (s + z1 )(s + z2 ) . . . (s + zn1 )
+      Zc (s) =        =H                                        (8)
+               D(s)        (s + p1 )(s + p2 ) . . . (s + pn2 )               FIGURE 8. Fitted Zc (s) amplitude-phase diagram.
+                     (s + z1 )(s + z2 ) . . . (s + zn )
+       A(s) = e−sτ                                              (9)
+                    (s + p1 )(s + p2 ) . . . (s + pm )
+where τ is the time step of the simulation. In the line under
+study (line SA913 in Figure 2), the orders of Zc (s) and A(s)
+are obtained according to Table 3.
+
+TABLE 3. Order of Zc (s) and A(s) for three phases in LCC Routine of
+ATP/EMTP.
+
+
+
+
+                                                                             FIGURE 9. Fitted A(s) amplitude-phase diagram.
+   Figures 8 and 9 show, respectively, the fitted Zc (s) and A(s)
+amplitude-phase diagrams.
+   The frequency responses, shown in Figures 8 and 9,
+                                                                                The trapped charge voltage amplitude in the line must be
+are fitted using the method presented in [23]. Fitting the
+                                                                             at most equal to the voltage peak of the source from which
+frequency response simplifies the simulation of transmission
+                                                                             the line is disconnected. Therefore, a current source must
+line transients.
+                                                                             be considered for injecting current; this current source filters
+   According to Table 3, the order of polynomials, and
+                                                                             the natural frequency components of the line and reactor and
+therefore, the coefficients A(s) and Zc (s) are different. The
+                                                                             generates a constant voltage before CB closing.
+obtained frequency ranges and responses are shown in
+                                                                                Suppose a smooth voltage amplitude of V0 at point k
+Figures 8 and 9. From the point of view of signal and system
+                                                                             (Figure 7). The amplitude of V0 depends on the instantaneous
+analyses, filters are a special type of linear time-invariant
+                                                                             voltage of the line just before opening, which, in the worst
+components that pass some frequencies and reject others
+                                                                             case, can be equal to one per unit with opposite polarity at the
+by varying the zero/pole configuration of the system [24].
+                                                                             other pole of CB connected to the substation. Accordingly,
+Therefore, PTCS with such a function is a filter. Therefore,
+                                                                             in the Laplace domain:
+the zeros and poles of the transmission line have to be
+identified. Then, according to the frequency response, the                                                            V0
+poles of PTCS have to be arranged in a way that the                                                        Vk (s) =                                (10)
+                                                                                                                       s
+oscillations by the line poles and the shunt reactor (before
+CB closing) do not appear in the line side voltage.                          If
+   The PTCSs are modeled by obtaining a given smooth
+voltage at the line side [18]. This source should generate                                         Vm (s) = −(R + Ls)Im (s)                        (11)
+voltage by injecting an electrical charge into the line
+disconnected from the source. The required electrical charge                 where Im (s) is the current im (t) in the Laplace domain,
+is provided by current injection. When a shunt reactor is                    as shown in Figure 7; R and L are, respectively, the resistance
+installed at the end of the line, the natural frequencies of the             and inductance of the shunt reactor.
+reactor and line stray capacitance cause oscillating frequency                  To satisfy the condition of Eq. (10), the current delivered
+components in the voltage of PTCS, and their amplitude                       by the PTCS is obtained from the circuit laws in the Laplace
+exceeds the source amplitude.                                                domain. By applying Ohm’s law to node k, the following
+
+37122                                                                                                                                    VOLUME 13, 2025
+M. Akafi-Mobarakeh et al.: New Model of TCS in Switching Transient Studies
+
+
+
+
+equation is derived:                                                         of Eq. (13) in the time domain using MATLAB, and then,
+                V0                                                         applying the time values Is to MODEL in ATP.
+                    = Zc (s). Is (s) + Ik History      (12)                     Figure 11 shows the time values of the PTCS for phase
+                 s
+                                                                             A. The sampling frequency is chosen 100 kHz to be
+where Is (s) is the PTCS to eliminate voltage oscillations.                  exactly equal to the simulation time step in ATP, i.e.,
+After simplification and using (5) and (6) in the circuit of                 10 microseconds. Since MODEL has a limited capability to
+Figure 7, the following equation is obtained:                                read samples, first, only 43000 samples are transferred to
+                       V0               1                                    MODEL.
+  Is (s) =          2
+                                     [       − A2 (s).F(s)]           (13)
+             s[1 + A (s).F(s).Zc (s)] Zc (s)                                    The line under study with the trapped charge modeling in
+where                                                                        the proposed method is implemented as follows:
+                                                                               1) The transmission line under study has to be implemented
+                               −2Zc2 (s)                                           as explained in Section II.
+                  F(s) =                    + Zc (s)                  (14)
+                            R + Ls + Zc (s)                                    2) Routine LCC is executed and the polynomial coeffi-
+Consequently, the transfer function of the PTCS is derived                         cients A(s) and Zc (s) are extracted from the LCC routine
+using Eq. (13).                                                                    file in EMTP.
+                                                                               3) By inserting the polynomials obtained in the previous
+B. IMPLEMENTATION OF PTCS                                                          step into Eqs. (13) and (14), the transfer function that
+To implement the PTCS, Is (s), the programming block                               models the TCS is derived.
+MODEL is employed as shown in Figure 10.                                     Due to the limited memory allocated to MODEL in EMTP,
+                                                                             first, 43,000 samples are transferred to EMTP and the final
+                                                                             statistical switching simulation is executed. The flowchart of
+                                                                             the proposed method is shown in Figure 12.
+
+
+
+
+FIGURE 10. Implementation of the PTCS.
+
+
+
+
+FIGURE 11. Time values of TCS of phase A (IsA(t) ).
+
+   Therefore, the default interface type 60 in ATP is used to
+connect the MODEL command to the transmission line [17].
+The three sources in Figure 10 are substituted for the TCS
+in Figure 2. The order of the numerator and denominator                      FIGURE 12. Flowchart of proposed trapped charge sources in switching
+of the proposed source is high for modeling the trapped                      transient studies in the presence of shunt reactors.
+charge, so the limitations of ATP prevent inserting these high
+orders into the MODEL environment. To resolve this issue,                      The MODEL script of PTCS is shown in Figure 13.
+the authors suggest first approximating the transfer function                The MODEL block is a built-in programming feature of
+
+VOLUME 13, 2025                                                                                                                              37123
+                                                                   M. Akafi-Mobarakeh et al.: New Model of TCS in Switching Transient Studies
+
+
+
+
+ATP software that effectively processes the required inputs,      the amplitude of the propagating wave, as well as the wave
+performs the necessary analysis, and outputs the results to the   impedance before and after the point under study.
+transient simulation at each time step. As shown in Figure 13,
+                                                                               VTL (t) = Vtrp − (Vtrp − VTL0 ) cos(ωt)                  (15)
+the programming used in this block is an advanced version of
+FORTRAN.                                                          where Vtrp is trapped charge, VTL0 is the initial fluctuating
+   In accordance with FORTRAN rules, constants are defined        voltage.
+at the beginning. Based on the principles of trapped charge          The frequency of voltage fluctuations is equal to the natural
+implementation in ATP, PTCS must inject the trapped charge        frequency of the RLC circuit as follows:
+current into the transmission line before the CB closes and                                       √
+the substation voltage is applied. Therefore, the instantaneous                           ω = 1/ LC                           (16)
+values of 43,000 samples, extracted from MATLAB, are              where L and C denote, respectively, the equivalent inductance
+defined in the variable Ista is shown in Figure 13. The first     and capacitance of the transmission line seen from the
+and 43,000th samples are visible in the script diagram. Due       substation.
+to display space limitations, the notation ‘‘/// 43000’s sample      Actually, according to (15), overvoltage depends on the
+imported from MATLAB’’ replaces the remaining 42,998              presence of the reactor and the wave impedance of the
+samples.                                                          line. As a rule of thumb, the difference in overvoltages in
+   Figure 11 illustrates the time-domain values of IsA (t) for    the presence and absence of the reactor is small. This is
+phase A. Similarly, the variables Istb and Istc are defined       because when the end of the line is open, the impedance
+for the other phases, and their values are utilized in the        is infinite with a maximum overvoltage of 2 p.u.; in the
+simulation.                                                       presence of the reactor, the overvoltage can be less; however,
+   As shown in Figure 13, additional variables are defined        the overvoltages due to power frequency are added to this
+to transfer the calculated values to the output terminals         overvoltage.
+of the MODEL. Furthermore, a conditional statement is
+implemented to handle the moment when the trapped charge          V. SIMULATION RESULT
+is removed, and the main CB is closed.                            The TCS is modeled using the proposed method, and the
+                                                                  transient line to ground voltage of CB contacts for three
+                                                                  phases is shown in Figure 14.
+                                                                     As can be observed, unlike Figure 4, the amplitude of
+                                                                  switching stresses in this case is in the range of Figure 3.
+                                                                  In Figure 3, a shunt reactor is installed at the end of the line.
+                                                                  There is little difference between the overvoltage amplitudes
+                                                                  in Figures. 3 and 13. In Figure 14, the trapped charge voltage
+                                                                  is smooth before the CB closing. This is because, according
+                                                                  to (10) to (14), the frequency spectrum of the PTCS has
+                                                                  been determined so that the line voltage is smooth before
+                                                                  closing.
+
+
+
+
+FIGURE 13. Proposed ATP/MODEL script.                             FIGURE 14. Transient voltage in the presence of the PTCS and reactor.
+
+
+  The validity of the simulation results in the presence of a       Figure 15 shows the overvoltage profile at points N1 to N10
+shunt reactor can be tested by using wave propagation rules.      as shown in Figure 2. In this figure, the reactor with 75%
+According to these rules, the voltage at each point depends on    compensation is modeled using the PTCS.
+
+37124                                                                                                                         VOLUME 13, 2025
+M. Akafi-Mobarakeh et al.: New Model of TCS in Switching Transient Studies
+
+
+
+
+                                                                             FIGURE 17. Measured transient wave using oscillogram at Lakeville
+                                                                             station [11].
+FIGURE 15. Effect of the presence of reactor on maximum overvoltage
+profile with 75% compensation.
+
+
+
+
+FIGURE 16. Effect of the presence of reactor on maximum overvoltage
+profile with 53% compensation.                                               FIGURE 18. Comparison of simulation results with field data.
+
+
+
+
+   As shown in Figure 15, the values of overvoltages are                     station for a 765-kV transmission line [13]. The field
+slightly higher in the presence of a shunt reactor due to the                measurements have been performed for re-energizing a
+power frequency overvoltages. To reduce power frequency                      330-mile transmission line fed by Lakeville station and
+overvoltages, the optimal reactor capacity needs to be                       opened at Kammer station (Figure 17). A 300 MVAr reactor is
+implemented. For example, if the compensator capacity is                     installed at one end of the line, and a 350-ohm closing resistor
+reduced to 53%, the maximum overvoltage profile is obtained                  is used to suppress the overvoltages.
+as shown in Figure 16. In this case, not only the reactor does                  According to Figure 17, the measured maximum over-
+not increase the overvoltages but also it improves them by 2%.               voltage is 1.96 p.u. The transmission line under study is
+   Therefore, bi-objective optimization is required to simulta-              implemented in EMTP, and the PTCS injects current using the
+neously improve transient and steady-state overvoltages. The                 proposed method. Figure 18 compares the simulation results
+designer can determine the significant factors of transient and              with the extracted field data.
+steady-state compensations.                                                     As shown in Figure 18, the proposed method determines
+   The statistical switching is performed using the proposed                 a maximum overvoltage of 2 p.u. The data are interpolated
+trapped charge source in accordance with the principles                      from Figure 17. However, field measurements, with a slight
+presented in [17] to compare the results of the present                      difference (about 2%), show 1.96 p.u. In addition, the PTCS
+study with those of [25]. The mean values of overvoltages                    has a value of 0.645 p.u., which is exactly equal to the
+with and without the reactor are 1.573 and 1.632 per                         instantaneous voltage before closing at the station. The
+unit, respectively. The 2.05 times standard deviations are                   oscillation patterns of the real and simulated voltages are
+0.976 and 1.899, which are in good agreement with the                        similar. The difference can be attributed to the simulation
+practical measurements [25]. Moreover, it can be seen that                   requirements such as the fitting of the wave impedance of the
+the proposed trapped charge source simulates the worst                       line.
+overvoltage condition.
+   To verify the efficiency of the proposed method, the                      VI. CONCLUSION
+simulation results of the proposed method are compared                       In this paper, a new TCS model was proposed. The proposed
+with the results of transient voltage measurement at the                     model was designed to generate a smooth voltage on the
+
+VOLUME 13, 2025                                                                                                                              37125
+                                                                                       M. Akafi-Mobarakeh et al.: New Model of TCS in Switching Transient Studies
+
+
+
+
+transmission line before the CB closing. The sets of zeros and                        [15] R. Shariatinasab, B. Vahidi, S. H. Hosseinian, and A. Ametani, ‘‘Optimiza-
+poles of the proposed source were based on the frequency                                   tion of surge arrester’s location on EHV and UHV power networks using
+                                                                                           simulation optimization method,’’ IEEJ Trans. Power Energy, vol. 128,
+content of the transmission line connected to the source.                                  no. 12, pp. 1465–1472, 2008.
+Zeros and poles arrangement of PTCS may cause resonant                                [16] F. Deyhim and R. Ghanizdeh, ‘‘Insulation risk assessment of controlled
+overvoltage oscillations. The proposed model acts as an                                    switching considering pre-strike voltage and line trapped charge,’’ IET Sci.,
+                                                                                           Meas. Technol., vol. 13, no. 2, pp. 139–148, Mar. 2019.
+active filter and, while eliminating the oscillations, does not                       [17] H. Høidalen, L. Prikler, and J. Hall, ‘‘ATPDraw-graphical preprocessor to
+have the limitations of the conventional TCS in the closing                                ATP, windows version,’’ in Proc. Int. Conf. Power Syst. Transients, 1999,
+simulation of a transmission line connected to a shunt reactor.                            pp. 20–24.
+                                                                                      [18] J. R. Marti, ‘‘Accurate modelling of frequency-dependent transmission
+To implement the proposed model, the coefficients of the                                   lines in electromagnetic transient simulations,’’ IEEE Trans. Power
+transfer function were derived using the LCC subroutine,                                   App. Syst., vols. PAS–101, no. 1, pp. 147–157, Jan. 1982.
+a built-in feature of EMTP/ATP. Given the high order of                               [19] A. Greenwood, Electrical Transients in Power Systems. Hoboken, NJ,
+                                                                                           USA: Wiley, 1991.
+the transfer function, time-domain samples were computed                              [20] H. Khalilnezhad, M. Popov, L. van der Sluis, J. A. Bos, and A. Ametani,
+externally and imported into the MODEL environment in                                      ‘‘Statistical analysis of energization overvoltages in EHV hybrid OHL–
+ATP. This intermediate step ensured accurate implementation                                cable systems,’’ IEEE Trans. Power Del., vol. 33, no. 6, pp. 2765–2775,
+                                                                                           Dec. 2018.
+while addressing software limitations To verify the effective-                        [21] L. F. Woodruff, Principles of Electric Power Transmission. Hoboken, NJ,
+ness of the proposed method, the simulation results were                                   USA: Wiley, 1938.
+compared with field data. The proposed model was able to                              [22] E. Haginomori, T. Koshiduka, J. Arai, and H. Ikeda, Power System Tran-
+                                                                                           sient Analysis: Theory and Practice Using Simulation Programs (ATP-
+determine the switching overvoltages with a slight error in                                EMTP). Hoboken, NJ, USA: Wiley, 2016, doi: 10.1002/9781118737491.
+the presence of a shunt reactor.                                                      [23] B. Gustavsen and A. Semlyen, ‘‘Rational approximation of frequency
+                                                                                           domain responses by vector fitting,’’ IEEE Trans. Power Del., vol. 14,
+                                                                                           no. 3, pp. 1052–1061, Jul. 1999, doi: 10.1109/61.772353.
+REFERENCES
+                                                                                      [24] A. V. Oppenheim and R. W. Shaffer, Discrete-Time Signal Processing.
+ [1] J. Das, Transients in Electrical Systems. New York, NY, USA: McGraw-                  Upper Saddle River, NJ, USA: Prentice-Hall, 1989.
+     Hill, 2010.                                                                      [25] Insulation Co-ordination—Part 2: Application Guide, Standard 60071-2:
+ [2] A. R. Hileman, ‘‘Insulation coordination for power systems,’’ IEEE Power              1996, Int. Electrotechnical Commission, 1996.
+     Eng. Rev., vol. 19, no. 9, p. 43, Sep. 1999.
+ [3] R. Shariatinasab, J. G. Safar, and M. A. Mobarakeh, ‘‘Develop-
+     ment of an adaptive neural-fuzzy inference system based meta-
+     model for estimating lightning related failures in polluted envi-
+     ronments,’’ IET Sci., Meas. Technol., vol. 8, no. 4, pp. 187–195,
+     Jul. 2014.
+ [4] R. Shariatinasab, M. A. Mobarakeh, and M. Farshad, ‘‘Estima-
+     tion of switching overvoltages on transmission lines using neuro-
+     fuzzy method,’’ Intell. Syst. Electr. Eng., vol. 3, no. 3, pp. 55–66,
+     Nov. 2012.                                                                                                  MOHSEN AKAFI-MOBARAKEH received the
+ [5] S. Hosseinian, M. Abedi, and B. Vahidi, ‘‘Digital computer                                                  M.S. degree in electrical engineering from the Uni-
+     studies of random switching of Iranian standard 400 kV lines,’’                                             versity of Birjand, Birjand, Iran, in 2013, where
+     in Proc. 3rd Int. Conf. Properties Appl. Dielectr. Mater., 1991,                                            he is currently pursuing the Ph.D. degree. He has
+     pp. 542–545.                                                                                                been involved in several national and industrial
+ [6] R. Shariatinasab, B. Vahidi, S. H. Hosseinian, and A. Ametani, ‘‘Proba-                                     projects, including smart grid development, insula-
+     bilistic evaluation of optimal location of surge arresters on EHV and UHV                                   tion coordination, and electric vehicle integration.
+     networks due to switching and lightning surges,’’ IEEE Trans. Power Del.,                                   His research interests include insulation coordina-
+     vol. 24, no. 4, pp. 1903–1911, Oct. 2009.                                                                   tion of lightning and switching overvoltages, and
+ [7] A. Clerici, G. Ruckstuhl, and A. Vian, ‘‘Influence of shunt reactors on                                     statistical and AI-based modeling.
+     switching surges,’’ IEEE Trans. Power App. Syst., vols. PAS–89, no. 8,
+     pp. 1727–1736, Nov. 1970.
+ [8] R. Shariatinasab, J. Ghayur Safar, and H. Falaghi, ‘‘Optimisation
+     of arrester location in risk assessment in distribution network,’’
+     IET Gener., Transmiss. Distrib., vol. 8, no. 1, pp. 151–159,
+     Jan. 2014.
+ [9] J. J. Grainger and W. D. Stevenson, Power System Analysis. NJ, USA:
+     McGraw-Hill, 2003.
+[10] L. Prikler, G. Bán, and G. Bánfai, ‘‘EMTP models for simulation of shunt
+     reactor switching transients,’’ Int. J. Electr. Power Energy Syst., vol. 19,                                REZA SHARIATINASAB (Senior Member, IEEE)
+     no. 4, pp. 235–240, May 1997.                                                                               received the B.S. degree in electrical engineer-
+[11] X. Luo, C. Huang, Y. Jiang, and S. Guo, ‘‘An adaptive three-phase                                           ing from the Ferdowsi University of Mashhad,
+     reclosure scheme for shunt reactor-compensated transmission lines based                                     Mashhad, Iran, in 2000, and the M.Sc. and
+     on the change of current spectrum,’’ Electr. Power Syst. Res., vol. 158,
+                                                                                                                 Ph.D. degrees in electrical engineering from
+     pp. 184–194, May 2018.
+                                                                                                                 the Amirkabir University of Technology (Tehran
+[12] S. Bojić, B. Babić, and I. Uglešić, ‘‘Comparative research into transients by
+     switching of high voltage shunt reactor,’’ Electr. Power Syst. Res., vol. 162,
+                                                                                                                 Polytechnique), Tehran, Iran, in 2003 and 2009,
+     pp. 74–82, Sep. 2018.                                                                                       respectively. In September 2007, he was a Visiting
+[13] A. Hauspurg, G. S. Vassell, G. I. Stillman, J. H. Charkow, and J. C. Haahr,                                 Scientist with Doshisha University, Kyoto, Japan.
+     ‘‘Overvoltages on the AEP 765-kV system,’’ IEEE Trans. Power App. Syst.,                                    In 2009, he joined the Electrical and Computer
+     vols. PAS–88, no. 9, pp. 1329–1342, Sep. 1969.                                   Engineering Department, University of Birjand, Birjand, Iran, where he is
+[14] W. G. Cigre, ‘‘Switching overvoltages in EHV and UHV systems with                currently a Professor of Electrical Engineering. His current research interests
+     special reference to closing and reclosing transmission lines,’’ Electra,        include high voltage engineering, lightning and switching transients, and
+     vol. 30, pp. 70–122, Jun. 1973.                                                  electromagnetic compatibility.
+
+37126                                                                                                                                                  VOLUME 13, 2025
+M. Akafi-Mobarakeh et al.: New Model of TCS in Switching Transient Studies
+
+
+
+
+                           PIERLUIGI SIANO (Senior Member, IEEE)                                            HAMID REZA NAJAFI received the B.Eng. and
+                           received the M.Sc. degree in electronic engineer-                                M.Eng. degrees from the Ferdowsi University of
+                           ing and the Ph.D. degree in information and elec-                                Mashhad, Iran, in 1981 and 1991, respectively, and
+                           trical engineering from the University of Salerno,                               the Ph.D. degree from Iran University of Science
+                           Salerno, Italy, in 2001 and 2006, respectively.                                  and Technology (IUST), Iran, in 2004. He has been
+                           He is currently a Full Professor of electrical power                             a Lecturer at the Faculty of Engineering, Univer-
+                           systems and the Scientific Director of the Smart                                 sity of Birjand, Iran, since 1993. He is currently
+                           Grids and Smart Cities Laboratory, Department of                                 a Professor with the Electrical Power Engineering
+                           Management and Innovation Systems, University                                    Department, University of Birjand. His research
+                           of Salerno. His research interests include demand                                interests include power system modeling, HVdc
+response, energy management, the integration of distributed energy resources      and FACTS, reliability of power systems, distributed generation, application
+in smart grids, electricity markets, and the planning and management of           of ANN, and fuzzy systems in power systems.
+power systems. In these research fields, he has co-authored more than
+800 articles, including more than 400 international journals that received
+in Scopus more than 22 000 citations with an H-index of 71. Since 2019,
+he has been awarded as a Highly Cited Researcher in Engineering by
+the Web of Science Group. He has been the Chair of the IES TC on
+Smart Grids. He is an Editor of the Power & Energy Society Section of
+IEEE ACCESS, IEEE TRANSACTIONS ON POWER SYSTEMS, IEEE TRANSACTIONS ON
+INDUSTRIAL INFORMATICS, IEEE TRANSACTIONS ON INDUSTRIAL ELECTRONICS, and
+IEEE SYSTEMS JOURNAL.
+
+
+
+
+                          BEHROOZ VAHIDI (Senior Member, IEEE) was
+                          born in Abadan, Iran. He received the B.S.
+                          degree in electrical engineering from the Sharif
+                          University of Technology, Tehran, Iran, in 1980,
+                          the M.S. degree in electrical engineering from
+                          the Amirkabir University of Technology, Tehran,
+                          in 1989, and the Ph.D. degree in electrical
+                          engineering from The University of Manchester
+                          Institute of Science and Technology, U.K., in 1997.
+                          From 1980 to 1986, he worked in industry as a
+Chief Engineer in the field of high voltage. Since 1989, he has been with the
+Department of Electrical Engineering, Amirkabir University of Technology,
+where he is currently a Professor. He has authored or co-authored more than
+550 papers, and 17 books or book chapters on high-voltage engineering and
+power systems. His main research interests include high voltage, electrical
+insulation, power system transients, lightning protection, and pulsed-power
+technology. He was selected as a Distinguished Researcher of Iran by the
+Ministry of Higher Education of Iran, in 2011, and Iranian Association of
+Electrical and Electronics Engineers, in 2012.
+
+
+
+
+VOLUME 13, 2025                                                                                                                                        37127
+

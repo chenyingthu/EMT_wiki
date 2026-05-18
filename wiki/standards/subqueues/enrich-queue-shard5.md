@@ -73,14 +73,17 @@
 | 137 | simulation-practice-guide.md | topics | topics/tools-software/simulation-practice-guide.md | P0 | 999 | 3640 | 9 | 14 | completed |
 | 166 | small-signal-stability-analysis.md | methods | methods/stability-analysis/small-signal-stability-analysis.md | P0 | 999 | 4630 | 18 | 12 | completed |
 | 378 | statcom-model.md | models | models/compensation/statcom-model.md | P1 | 999 | 1275 | 4 | 16 | pending |
-| 340 | steady-state-initialization.md | topics | topics/simulation/steady-state-initialization.md | P1 | 999 | 1825 | 14 | 13 | pending |
+| 340 | steady-state-initialization.md | topics | topics/simulation/steady-state-initialization.md | P1 | 999 | 9487 | 16 | 15 | completed |
+
+
 | 398 | svc-model.md | models | models/compensation/svc-model.md | P1 | 999 | 959 | 3 | 13 | pending |
 | 65 | switching-transient.md | topics | topics/stability-analysis/switching-transient.md | P0 | 999 | 1758 | 10 | 19 | completed |
 | 344 | thevenin-equivalent.md | methods | methods/network-solution/thevenin-equivalent.md | P1 | 999 | 1782 | 6 | 10 | pending |
 | 347 | time-domain-formulation.md | methods | methods/system-studies/time-domain-formulation.md | P1 | 999 | 1718 | 5 | 14 | pending |
 | 357 | transformer-modeling.md | topics | topics/component-modeling/transformer-modeling.md | P1 | 999 | 1521 | 9 | 18 | pending |
 | 317 | transmission-line-modeling.md | topics | topics/component-modeling/transmission-line-modeling.md | P1 | 999 | 2642 | 18 | 20 | pending |
-| 294 | upfc-model.md | models | models/compensation/upfc-model.md | P1 | 999 | 3334 | 16 | 9 | pending |
+| 294 | upfc-model.md | models | models/compensation/upfc-model.md | P1 | 999 | 3262 | 16 | 14 | completed |
+
 | 209 | vector-fitting.md | methods | methods/signal-processing/vector-fitting.md | P0 | 999 | 8394 | 15 | 14 | completed |
 | 46 | vsc-hvdc.md | topics | topics/hvdc-facts/vsc-hvdc.md | P0 | 999 | 1392 | 7 | 126 | completed |
 | 83 | wideband-oscillation-stability.md | topics | topics/stability-analysis/wideband-oscillation-stability.md | P0 | 999 | 2187 | 11 | 15 | pending |
@@ -92,3 +95,5 @@
 |||||||| 430 | 1 | 0 | 0 | inertia-control.md enriched: bc 963→5227, bf 5→15 pass, 6 EMT methods (A-F), 15 block+83 inline formulas, 10 sections, all wikilinks valid |
 ||||||||| 453 | 1 | 0 | 0 | m3c.md enriched: bc 1262→5359, bf 6→21 pass, replaced mermaid with 8-col method table, added dual αβ0 decoupling model + phasor model, 4 EMT methods, 10 sections, all wikilinks valid |
 |||||||||| 454 | 1 | 0 | 0 | pmsg-single-unit.md enriched: bc 3199≥2000, bf 18≥5, footer DUP_BLOCK removed, 5 broken wikilinks fixed with full paths |
+|||||| 455 | 1 | 1 | 0 | upfc-model.md enriched: bc 3262≥2000 pass, bf 16≥5, lightweight footer remnant case, 14 wikilinks all valid, SVG skip (formulas dense) |
+||||||||| 456 | 1 | 1 | 0 | steady-state-initialization.md enriched: bc 1825→9487, bf 14→16 pass, mermaid→SVG 4-layer flowchart, added shooting method + MTDC + MMC SM init, 15 wikilinks all valid |
