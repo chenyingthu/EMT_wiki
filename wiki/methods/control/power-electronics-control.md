@@ -3,7 +3,7 @@ title: "电力电子控制方法"
 type: method
 tags: [power-electronics-control, converter-control, pwm, current-control, voltage-control, pll, average-value-model]
 created: "2026-05-04"
-updated: "2026-05-11"
+updated: "2026-05-18"
 ---
 
 # 电力电子控制方法
@@ -81,7 +81,7 @@ $$i_d^* = \frac{2}{3} \frac{P^*}{v_{dc}}$$
 $$i_d^* = (k_{p,dc} + \frac{k_{i,dc}}{s})(v_{dc}^* - v_{dc})$$
 
 **无功功率控制**（Q 控制）：
-$$i_q^* = -\frac{2}{3} \frac{Q^*}{v_{dc}}$$
+$$i_q^* = - \frac{2}{3} \frac{Q^*}{v_{dc}}$$
 
 **交流电压控制**（PI 控制）：
 $$i_q^* = (k_{p,ac} + \frac{k_{i,ac}}{s})(V_{ac}^* - V_{ac})$$
@@ -295,7 +295,7 @@ $$P = P_{ref} + K_f (\omega_{ref} - \omega), \quad Q = Q_{ref} + K_v (V_{ref} - 
 
 5. Guilherme, et al. (2023). "A Steady-State Initialization Procedure for Generic Voltage-Source Converters in Electromagnetic Transient Simulations." *Electric Power Systems Research*, 214, 108900. VSC 初始化。
 
-6. Carreño, et al. (2026). "Analysis and Modeling of PLLSynchronization Dynamics in Grid-Following Converters Under Weak Grid Conditions." *IEEE Transactions on Power Electronics*, 41(1), 234-248. 弱网 PLL 失稳分析。
+6. Carreño, et al. (2026). "Analysis and Modeling of PLL Synchronization Dynamics in Grid-Following Converters Under Weak Grid Conditions." *IEEE Transactions on Power Electronics*, 41(1), 234-248. 弱网 PLL 失稳分析。
 
 7. Ranasinghe, et al. (2024). "Enhanced DSOGI-PLL for Low SCR Grids." *IEEE Transactions on Power Electronics*, 39(4), 5123-5135. 改进型 PLL 设计。
 
@@ -313,4 +313,4 @@ $$P = P_{ref} + K_f (\omega_{ref} - \omega), \quad Q = Q_{ref} + K_v (V_{ref} - 
 
 | 论文 | 年份 |
 |------|------|
-| [[transient-electromagnetic-power-compensationbased-adaptive-inertia-control-strat|Transient Electromagnetic Power Compensation‐Based Adaptive ]] | 2025 |
+| [[sources/transient-electromagnetic-power-compensationbased-adaptive-inertia-control-strat.md]] | 2025 |

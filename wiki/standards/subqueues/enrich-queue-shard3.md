@@ -74,7 +74,7 @@
 | 107 | peralta-2012-detailed-mmc.md | models | models/equivalent/peralta-2012-detailed-mmc.md | P0 | 999 | 2781 | 16 | 10 | completed |
 | 98 | phase-locked-loop.md | methods | methods/control/phase-locked-loop.md | P0 | 999 | 3498 | 6 | 7 | completed |
 | 399 | pll-design.md | methods | methods/control/pll-design.md | P1 | 999 | 940 | 5 | 7 | completed |
-| 193 | power-electronics-control.md | methods | methods/control/power-electronics-control.md | P0 | 999 | 5713 | 16 | 1 | pending |
+| 193 | power-electronics-control.md | methods | methods/control/power-electronics-control.md | P0 | 999 | 5494 | 16 | 1 | completed |
 | 268 | power-system-network.md | topics | topics/tools-software/power-system-network.md | P1 | 999 | 4366 | 17 | 10 | pending |
 | 368 | protection-system.md | topics | topics/protection-lightning/protection-system.md | P1 | 999 | 1431 | 11 | 13 | pending |
 | 116 | pwm-modulation.md | methods | methods/power-electronics/pwm-modulation.md | P0 | 999 | 3049 | 10 | 8 | completed |
@@ -119,3 +119,4 @@
 
 
 |||| Cycle 18 | mt-hvdc-test-system.md | P0 ENRICH (bc=1069→2490, bf=7→6, removed DUP_BLOCK(sep 3→2), removed mermaid, added 6 block formulas, 4 quant tables) | 2026-05-18 18:32 |
+||||| Cycle 13 | power-electronics-control.md | P1 INCR (wikilink fix: broken source page link repaired to sources/ path, Quality Gate PASS bc=5494≥2000 bf=16≥5 no placeholder) | 2026-05-18 22:05 |
