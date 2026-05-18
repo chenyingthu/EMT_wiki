@@ -74,7 +74,7 @@
 | 236 | renewable-energy-integration.md | topics | topics/renewable-storage/renewable-energy-integration.md | P1 | 999 | 14216 | 12 | 28 | completed |
 | 203 | runge-kutta-in-emt.md | methods | methods/numerical-methods/runge-kutta-in-emt.md | P0 | 999 | 6997 | 25 | 9 | completed |
 | 227 | signal-processing.md | methods | methods/signal-processing/signal-processing.md | P0 | 999 | 12589 | 25 | 21 | completed |
-| 381 | small-signal-analysis.md | methods | methods/stability-analysis/small-signal-analysis.md | P1 | 999 | 1213 | 4 | 31 | pending |
+| 381 | small-signal-analysis.md | methods | methods/stability-analysis/small-signal-analysis.md | P1 | 999 | 1213 | 4 | 31 | completed |
 | 374 | srf-pll.md | methods | methods/control/srf-pll.md | P1 | 999 | 1379 | 4 | 9 | pending |
 | 84 | state-space-method.md | methods | methods/numerical-methods/state-space-method.md | P0 | 999 | 2214 | 0 | 107 | pending |
 | 377 | surge-arrester-model.md | models | models/protection/surge-arrester-model.md | P1 | 999 | 1331 | 13 | 25 | pending |
