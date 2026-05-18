@@ -27,7 +27,7 @@
 | 255 | droop-control-model.md | models | models/control/droop-control-model.md | P1 | 999 | 3130 | 38 | 8 | completed |
 | 225 | earth-return-impedance.md | methods | methods/transmission-line/earth-return-impedance.md | P0 | 999 | 12075 | 17 | 15 | completed |
 | 88 | electromechanical-electromagnetic-hybrid-simulation.md | topics | topics/simulation/electromechanical-electromagnetic-hybrid-simulation.md | P0 | 999 | 2334 | 5262 | 77 | 28 | completed 
-| 269 | electromechanical-transient.md | topics | topics/stability-analysis/electromechanical-transient.md | P1 | 999 | 4354 | 38 | 44 | pending |
+| 269 | electromechanical-transient.md | topics | topics/stability-analysis/electromechanical-transient.md | P1 | 999 | 4354 | 38 | 44 | completed |
 | 48 | emtp-atp.md | methods | methods/system-studies/emtp-atp.md | P0 | 999 | 1432 | 4 | 8 | pending |
 | 361 | equal-area-criterion.md | methods | methods/stability-analysis/equal-area-criterion.md | P1 | 999 | 1474 | 7 | 8 | pending |
 | 168 | exponential-integrator.md | methods | methods/numerical-methods/exponential-integrator.md | P0 | 999 | 4685 | 14 | 10 | pending |
