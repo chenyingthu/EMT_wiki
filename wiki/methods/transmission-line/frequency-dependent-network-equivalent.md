@@ -244,7 +244,3 @@ FDNE的理论基础是线性时不变系统假设。当外部系统含HVDC换流
 - [[efficient-implementation-of-multi-port-frequency-dependent-network-equivalents-f]] - 高阶FDNE诺顿等效实现（5-5000Hz误差8.805×10⁻⁵ mho，Type-69 29%耗时）
 - Gustavsen, B. and Semlyen, A., "Rational Approximation of Frequency Domain Responses," *IEEE TD*, 1999. - 矢量拟合奠基性工作
 - Morched, A., et al., "A Multipurpose Frequency Scanning Technique," *IEEE PAS*, 1992. - 频率扫描技术开创者
-
----
-
-*本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。量化数据均标注来源，未报告具体数值的结论注明"原文未报告可核验的数值结果"。*
