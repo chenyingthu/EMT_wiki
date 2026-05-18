@@ -38,7 +38,7 @@
 | 324 | frequency-scan.md | methods | methods/stability-analysis/frequency-scan.md | P1 | 999 | 2318 | 9 | 16 | completed |
 | 226 | gis.md | methods | methods/protection-fault/gis.md | P0 | 999 | 12261 | 18 | 9 | completed |
 | 292 | grid-forming-control.md | methods | methods/control/grid-forming-control.md | P1 | 999 | 3366 | 10 | 14 | completed |
-| 214 | grounding-system-modeling.md | methods | methods/protection-fault/grounding-system-modeling.md | P0 | 999 | 9241 | 15 | 11 | pending |
+| 214 | grounding-system-modeling.md | methods | methods/protection-fault/grounding-system-modeling.md | P0 | 999 | 9241 | 15 | 11 | completed |
 | 182 | half-bridge-smb.md | models | models/submodule/half-bridge-smb.md | P0 | 999 | 5302 | 42 | 15 | pending |
 | 286 | harmonic-interaction.md | methods | methods/signal-processing/harmonic-interaction.md | P1 | 999 | 3566 | 14 | 12 | pending |
 | 220 | hierarchical-control.md | methods | methods/control/hierarchical-control.md | P0 | 999 | 10613 | 15 | 11 | pending |
