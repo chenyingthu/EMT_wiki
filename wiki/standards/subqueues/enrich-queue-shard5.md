@@ -57,9 +57,8 @@
 
 | 326 | multi-terminal-dc.md | methods | methods/system-studies/multi-terminal-dc.md | P1 | 999 | 2287 | 7 | 15 | completed |
 | 165 | multithreaded-parallel-computing.md | methods | methods/simulation-technology/multithreaded-parallel-computing.md | P0 | 999 | 4593 | 9 | 15 | completed |
-| 117 | network-equivalent.md | topics | topics/modeling-methods/network-equivalent.md | P0 | 999 | 3117 | 4 | 112 | pending |
+| 117 | network-equivalent.md | topics | topics/modeling-methods/network-equivalent.md | P0 | 999 | 3117 | 11064 | 15 | 112 | completed |
 | 85 | nodal-analysis.md | methods | methods/network-solution/nodal-analysis.md | P0 | 999 | 2241 | 13 | 205 | pending |
-| 40 | numerical-inverse-laplace-transform.md | methods | methods/signal-processing/numerical-inverse-laplace-transform.md | P0 | 999 | 1237 | 6 | 15 | pending |
 | 122 | optimal-power-flow.md | methods | methods/system-studies/optimal-power-flow.md | P0 | 999 | 3207 | 9 | 13 | completed |
 | 87 | parameter-identification.md | methods | methods/signal-processing/parameter-identification.md | P0 | 999 | 2311 | 9 | 16 | completed |
 | 92 | pet.md | methods | methods/power-electronics/pet.md | P0 | 999 | 2392 | 5 | 13 | completed |
