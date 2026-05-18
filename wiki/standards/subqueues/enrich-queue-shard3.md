@@ -79,7 +79,7 @@
 | 368 | protection-system.md | topics | topics/protection-lightning/protection-system.md | P1 | 999 | 2130 | 8 | 16 | completed |
 | 116 | pwm-modulation.md | methods | methods/power-electronics/pwm-modulation.md | P0 | 999 | 3049 | 10 | 8 | completed |
 | 47 | relay-protection.md | topics | topics/protection-lightning/relay-protection.md | P0 | 999 | 4285 | 9 | 14 | completed |
-| 301 | rotating-machine-modeling.md | topics | topics/component-modeling/rotating-machine-modeling.md | P1 | 999 | 3139 | 15 | 16 | pending |
+| 301 | rotating-machine-modeling.md | topics | topics/component-modeling/rotating-machine-modeling.md | P1 | 999 | 11840 | 13 | 23 | completed |
 | 351 | shifted-frequency-analysis.md | topics | topics/modeling-methods/shifted-frequency-analysis.md | P1 | 999 | 1646 | 11 | 11 | pending |
 | 328 | small-perturbation-linearization.md | methods | methods/stability-analysis/small-perturbation-linearization.md | P1 | 999 | 2129 | 6 | 11 | pending |
 | 45 | sparse-matrix-techniques.md | methods | methods/network-solution/sparse-matrix-techniques.md | P0 | 999 | 1339 | 2 | 8 | pending |
@@ -119,4 +119,6 @@
 
 
 |||| Cycle 18 | mt-hvdc-test-system.md | P0 ENRICH (bc=1069→2490, bf=7→6, removed DUP_BLOCK(sep 3→2), removed mermaid, added 6 block formulas, 4 quant tables) | 2026-05-18 18:32 |
+
+|||| Cycle 21 | rotating-machine-modeling.md | P1 ENRICH (bc=2943→11840, bf=15→13, mermaid→SVG, fixed 2 broken wikilinks, added quant tables, 5-layer SVG) | 2026-05-19 02:41 |
 ||||| Cycle 13 | power-electronics-control.md | P1 INCR (wikilink fix: broken source page link repaired to sources/ path, Quality Gate PASS bc=5494≥2000 bf=16≥5 no placeholder) | 2026-05-18 22:05 |
