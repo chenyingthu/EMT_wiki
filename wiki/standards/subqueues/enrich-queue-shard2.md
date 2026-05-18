@@ -29,7 +29,7 @@
 
 || 136 | emi-filter-model.md | models | models/compensation/emi-filter-model.md | P0 | 999 | 3246 | 29 | 12 | completed |
 | 259 | emtp-atpdraw.md | methods | methods/system-studies/emtp-atpdraw.md | P1 | 999 | 5167 | 11 | 0 | completed |
-| 356 | equivalent-circuit-method.md | methods | methods/network-solution/equivalent-circuit-method.md | P1 | 999 | 1524 | 8 | 15 | pending |
+| 356 | equivalent-circuit-method.md | methods | methods/network-solution/equivalent-circuit-method.md | P1 | 999 | 3828 | 16 | 18 | completed |
 | 61 | extinction-angle-calculation.md | methods | methods/power-electronics/extinction-angle-calculation.md | P0 | 999 | 1732 | 1 | 9 | pending |
 | 185 | fault-ride-through.md | topics | topics/hvdc-facts/fault-ride-through.md | P0 | 999 | 5520 | 6 | 8 | pending |
 | 235 | finite-element-method.md | methods | methods/network-solution/finite-element-method.md | P1 | 999 | 14893 | 14 | 19 | pending |
