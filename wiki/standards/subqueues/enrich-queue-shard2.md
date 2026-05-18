@@ -39,7 +39,7 @@
 | 118 | grid-forming-inverter.md | models | models/converter/grid-forming-inverter.md | P0 | 999 | 3095 | 20 | 12 | completed |
 | 158 | grounding-system.md | topics | topics/protection-lightning/grounding-system.md | P0 | 999 | 4342 | 39 | 10 | completed |
 | 89 | half-bridge-submodule.md | methods | methods/power-electronics/half-bridge-submodule.md | P0 | 999 | 2349 | 8 | 13 | completed |
-| 389 | harmonic-transfer-coefficient.md | methods | methods/signal-processing/harmonic-transfer-coefficient.md | P1 | 999 | 1095 | 5 | 23 | pending |
+| 389 | harmonic-transfer-coefficient.md | methods | methods/signal-processing/harmonic-transfer-coefficient.md | P1 | 999 | 3284 | 12 | 22 | completed |
 | 254 | high-frequency-transient-analysis.md | methods | methods/protection-fault/high-frequency-transient-analysis.md | P1 | 999 | 6226 | 30 | 18 | completed |
 | 74 | hybrid-acdc-network.md | topics | topics/hvdc-facts/hybrid-acdc-network.md | P0 | 999 | 1960 | 11 | 44 | pending |
 | 232 | ibr.md | methods | methods/system-studies/ibr.md | P0 | 999 | 13677 | 16 | 14 | pending |
@@ -85,4 +85,5 @@
 | 178 | weak-grid-vsc.md | models | models/equivalent/weak-grid-vsc.md | P0 | 999 | 5212 | 32 | 14 | pending |
 ||| 420 | 1 | emtp-atpdraw.md | bc=5167, bf=11, real_dup_fix + sinkar/colqui enrichment |
 |||| 421 | 1 | 1 | 0 | extinction-angle-calculation.md bc=4513, bf=19 |
+|||| 485 | 1 | 1 | 0 | harmonic-transfer-coefficient.md bc=3284, bf=12, 3 broken src wikilinks fixed |
 
