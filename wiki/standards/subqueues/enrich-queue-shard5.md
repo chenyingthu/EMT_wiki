@@ -62,8 +62,8 @@
 | 122 | optimal-power-flow.md | methods | methods/system-studies/optimal-power-flow.md | P0 | 999 | 3207 | 9 | 13 | completed |
 | 87 | parameter-identification.md | methods | methods/signal-processing/parameter-identification.md | P0 | 999 | 2311 | 9 | 16 | completed |
 | 92 | pet.md | methods | methods/power-electronics/pet.md | P0 | 999 | 2392 | 5 | 13 | completed |
-| 228 | phasor-model.md | methods | methods/system-studies/phasor-model.md | P0 | 999 | 12624 | 21 | 18 | pending |
-| 295 | pmsg-single-unit.md | methods | methods/system-studies/pmsg-single-unit.md | P1 | 999 | 3286 | 18 | 5 | pending |
+| 228 | phasor-model.md | methods | methods/system-studies/phasor-model.md | P0 | 999 | 12624 | 21 | 18 | completed |
+| 295 | pmsg-single-unit.md | methods | methods/system-studies/pmsg-single-unit.md | P1 | 999 | 3286 | 18 | 5 | completed |
 | 337 | power-electronics.md | topics | topics/component-modeling/power-electronics.md | P1 | 999 | 1890 | 10 | 30 | pending |
 | 237 | power-system.md | topics | topics/tools-software/power-system.md | P1 | 999 | 13841 | 14 | 15 | pending |
 | 239 | pv-power-plant.md | topics | topics/renewable-storage/pv-power-plant.md | P1 | 999 | 12468 | 15 | 27 | pending |
@@ -91,3 +91,4 @@
 ||||| 413 | 1 | 0 | 0 | ieee-1547.md enriched: bc 1695→4806, bf 3→15 pass, added Nurunnabi2025 PQ capability + EVR metrics + IEEE 1547-2018 voltage/frequency ride-through tables, 9 wikilinks |
 |||||||| 430 | 1 | 0 | 0 | inertia-control.md enriched: bc 963→5227, bf 5→15 pass, 6 EMT methods (A-F), 15 block+83 inline formulas, 10 sections, all wikilinks valid |
 ||||||||| 453 | 1 | 0 | 0 | m3c.md enriched: bc 1262→5359, bf 6→21 pass, replaced mermaid with 8-col method table, added dual αβ0 decoupling model + phasor model, 4 EMT methods, 10 sections, all wikilinks valid |
+|||||||||| 454 | 1 | 0 | 0 | pmsg-single-unit.md enriched: bc 3199≥2000, bf 18≥5, footer DUP_BLOCK removed, 5 broken wikilinks fixed with full paths |
