@@ -78,7 +78,7 @@
 
 | 398 | svc-model.md | models | models/compensation/svc-model.md | P1 | 999 | 2248 | 9 | 13 | completed |
 | 65 | switching-transient.md | topics | topics/stability-analysis/switching-transient.md | P0 | 999 | 1758 | 10 | 19 | completed |
-| 344 | thevenin-equivalent.md | methods | methods/network-solution/thevenin-equivalent.md | P1 | 999 | 1782 | 6 | 10 | pending |
+| 344 | thevenin-equivalent.md | methods | methods/network-solution/thevenin-equivalent.md | P1 | 999 | 4053 | 13 | 14 | completed |
 | 347 | time-domain-formulation.md | methods | methods/system-studies/time-domain-formulation.md | P1 | 999 | 1718 | 5 | 14 | pending |
 | 357 | transformer-modeling.md | topics | topics/component-modeling/transformer-modeling.md | P1 | 999 | 1521 | 9 | 18 | pending |
 | 317 | transmission-line-modeling.md | topics | topics/component-modeling/transmission-line-modeling.md | P1 | 999 | 2642 | 18 | 20 | pending |
@@ -101,3 +101,4 @@
 |||||||||| 456 | 1 | 1 | 0 | power-system.md wikilink fix: 15 bare filenames → full relative paths (topics/, methods/), all wikilinks now valid. Page already PASSED Quality Gate (bc=13957≥2000, bf=14≥5, no placeholder, no DUP_BLOCK). Incremental fix only. |
 
 |||||| 457 | 1 | 1 | 0 | statcom-model.md enriched: bc 1275→3371, bf 4→14 pass, added chain-STATCOM fast equivalent (Zhang 2019, O(4N), 80% speedup, <1.2% error), MMC-STATCOM ESS interface (Stepanov 2023, 4-level DM/DEM/AEM/AVM, 0.05s/0.1s/0.3s decoupling), 10 sections, all 25 wikilinks valid |
+||||||||||| 458 | 1 | 1 | 0 | thevenin-equivalent.md enriched: bc 1590→4053, bf 6→13 pass, removed mermaid, added 5 EMT methods (static/EMT time-domain/multi-port/frequency-dependent/modulation-index dependent), 60 inline formulas, 10 sections, all 14 wikilinks valid |
