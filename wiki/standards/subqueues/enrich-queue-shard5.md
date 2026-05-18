@@ -50,7 +50,7 @@
 | 156 | large-scale-system-simulation.md | topics | topics/simulation/large-scale-system-simulation.md | P0 | 999 | 4195 | 7 | 58 | completed |
 | 43 | lightning-induced-voltage.md | topics | topics/protection-lightning/lightning-induced-voltage.md | P0 | 999 | 8575 | 12 | 10 | completed |
 | 369 | low-rank-and-efficient-solvers.md | topics | topics/modeling-methods/low-rank-and-efficient-solvers.md | P1 | 999 | 10450 | 97 | 13 | completed |
-| 365 | m3c.md | methods | methods/power-electronics/m3c.md | P1 | 999 | 1452 | 6 | 7 | pending |
+| 365 | m3c.md | methods | methods/power-electronics/m3c.md | P1 | 999 | 5359 | 21 | 9 | completed |
 | 199 | midc.md | methods | methods/power-electronics/midc.md | P0 | 999 | 6229 | 22 | 12 | completed |
 | 242 | modal-decomposition.md | methods | methods/transmission-line/modal-decomposition.md | P1 | 999 | 10356 | 11 | 11 | completed |
 | 250 | model-verification-benchmark.md | topics | topics/test-system/model-verification-benchmark.md | P1 | 999 | 8088 | 11 | 17 | pending |
@@ -89,4 +89,5 @@
 |||| 411 | 1 | 1 | 0 | grounding-lightning-overvoltage.md enriched: bc 1657→3258, bf 17≥5 pass, removed DUP_BLOCK mermaid, added Alipio2023/Lima2026/Meyberg2026/DeAraujo2021 grounding models |
 ||||| 412 | 1 | 0 | 0 | hilbert-transform.md enriched: bc 1217→4692, bf 10→22 pass, removed mermaid, added SFA/HHT deep-review content, 4 EMT methods |
 ||||| 413 | 1 | 0 | 0 | ieee-1547.md enriched: bc 1695→4806, bf 3→15 pass, added Nurunnabi2025 PQ capability + EVR metrics + IEEE 1547-2018 voltage/frequency ride-through tables, 9 wikilinks |
-|||||| 430 | 1 | 0 | 0 | inertia-control.md enriched: bc 963→5227, bf 5→15 pass, 6 EMT methods (A-F), 15 block+83 inline formulas, 10 sections, all wikilinks valid |
+|||||||| 430 | 1 | 0 | 0 | inertia-control.md enriched: bc 963→5227, bf 5→15 pass, 6 EMT methods (A-F), 15 block+83 inline formulas, 10 sections, all wikilinks valid |
+||||||||| 453 | 1 | 0 | 0 | m3c.md enriched: bc 1262→5359, bf 6→21 pass, replaced mermaid with 8-col method table, added dual αβ0 decoupling model + phasor model, 4 EMT methods, 10 sections, all wikilinks valid |
