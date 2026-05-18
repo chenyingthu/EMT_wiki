@@ -43,7 +43,7 @@
 | 217 | frequency-dependent-soil.md | methods | methods/transmission-line/frequency-dependent-soil.md | P0 | 999 | 9989 | 13 | 17 | completed |
 | 204 | gan-hemt.md | methods | methods/power-electronics/gan-hemt.md | P0 | 999 | 7075 | 15 | 10 | completed |
 | 149 | gpu-accelerated-simulation.md | methods | methods/simulation-technology/gpu-accelerated-simulation.md | P0 | 999 | 4300 | 9 | 11 | completed |
-| 410 | grid-side-converter.md | models | models/rotating-machine/grid-side-converter.md | P1 | 999 | 716 | 9 | 20 | pending |
+| 410 | grid-side-converter.md | models | models/rotating-machine/grid-side-converter.md | P1 | 999 | 3203 | 17 | 23 | completed |
 | 66 | gruson-2011-reduced-mmc.md | models | models/equivalent/gruson-2011-reduced-mmc.md | P0 | 999 | 1768 | 8 | 9 | pending |
 | 311 | hardware-acceleration.md | methods | methods/simulation-technology/hardware-acceleration.md | P1 | 999 | 2802 | 6 | 22 | pending |
 | 190 | hbsm.md | methods | methods/power-electronics/hbsm.md | P0 | 999 | 5623 | 12 | 15 | pending |
