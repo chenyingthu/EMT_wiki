@@ -72,7 +72,7 @@
 | 280 | numerical-stability.md | topics | topics/simulation/numerical-stability.md | P1 | 999 | 3948 | 12 | 15 | completed |
 | 288 | parallel-line-protection.md | methods | methods/protection-fault/parallel-line-protection.md | P1 | 999 | 3511 | 17 | 8 | completed |
 | 107 | peralta-2012-detailed-mmc.md | models | models/equivalent/peralta-2012-detailed-mmc.md | P0 | 999 | 2781 | 16 | 10 | completed |
-| 98 | phase-locked-loop.md | methods | methods/control/phase-locked-loop.md | P0 | 999 | 2578 | 4 | 10 | pending |
+| 98 | phase-locked-loop.md | methods | methods/control/phase-locked-loop.md | P0 | 999 | 3498 | 6 | 7 | completed |
 | 399 | pll-design.md | methods | methods/control/pll-design.md | P1 | 999 | 940 | 5 | 7 | completed |
 | 193 | power-electronics-control.md | methods | methods/control/power-electronics-control.md | P0 | 999 | 5713 | 16 | 1 | pending |
 | 268 | power-system-network.md | topics | topics/tools-software/power-system-network.md | P1 | 999 | 4366 | 17 | 10 | pending |
