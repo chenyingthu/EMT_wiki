@@ -1,10 +1,9 @@
-
 ---
 title: "数值振荡抑制 (Numerical Oscillation Suppression)"
 type: method
 tags: [numerical-oscillation, cda, interpolation, backward-euler, 2s-dirk]
 created: "2026-05-02"
-updated: "2026-05-10"
+updated: "2026-05-19"
 ---
 
 # 数值振荡抑制 (Numerical Oscillation Suppression)
@@ -31,8 +30,6 @@ updated: "2026-05-10"
 | EMTP-RV | 梯形法 + CDA | 积分公式切换 |
 | XTAP | 2S-DIRK（可选） | 替换积分器 |
 
----
-
 ## 2. 数学描述
 
 ### 振荡的数学根源
@@ -53,6 +50,22 @@ $$
 
 这就是数值振荡的数学本质——步间交替但不发散。
 
+### 梯形法伴随电路的等效电导与历史源
+
+电感 $L$ 的梯形法离散化（伴随电导与历史电流源）：
+
+$$
+G_{L\text{-TR}} = \frac{\Delta t}{2L}, \quad h_L(t) = i(t-\Delta t) + \frac{\Delta t}{2L}\,u(t-\Delta t)
+$$
+
+电感 $L$ 的后向欧拉离散化（CDA 替换公式）：
+
+$$
+G_{L\text{-BE}} = \frac{\Delta t}{L}, \quad h_L(t) = i(t-\Delta t)
+$$
+
+两种方法等效电导差 2 倍——后向欧拉的电导是梯形法的 2 倍，这是后向欧拉在同一 $\Delta t$ 下提供更强阻尼的数学根源。
+
 ### 振荡的物理触发场景
 
 Nzale et al. (2021) 系统分析了三种误差的叠加效应：
@@ -61,17 +74,23 @@ Nzale et al. (2021) 系统分析了三种误差的叠加效应：
 2. **同时换相遗漏**：多个器件在极短时间内联动切换
 3. **历史项污染**：切换前拓扑的历史信息带入切换后网络
 
----
-
 ## 3. 计算模型与离散化
 
 ### 策略一：事件插值 + 半步 BE（Na et al., 2023）
 
 BE 的历史电流源只依赖上一时刻的电感电流 $i_L(t_z)$，不像梯形法还依赖电压差，因此不会把电压不连续注入历史项。
 
+**Na 2023 方法的 5 步计算流程**：
+
+1. 用旧拓扑 $Y_{\text{old}}$ 求 $t$ 时刻解（式（1））
+2. 将所有节点电压、电流、历史项插值到开关时刻 $t_z$
+3. 更新拓扑为新 $Y_{\text{new}}$，用**后向欧拉法**在 $t_z + \Delta t/2$ 处求解
+4. 将状态插值回原始时间网格 $t$
+5. 恢复梯形法继续仿真
+
 **量化效果**（Na et al. 2023, 双有源桥）：
 - 虚假开关损耗：212.6 $\mu$J（普通插值）$\to$ 约 2 $\mu$J（该方法），消除率 > 99%
-- 消除了瞬时插值法固有的“提前一个时间步”的数值误差
+- 消除了瞬时插值法固有的"提前一个时间步"的数值误差
 - 半步 BE 的等效导纳与全步梯形法兼容，无需额外矩阵分解
 
 ### 策略二：CDA（Critical Damping Adjustment）
@@ -83,13 +102,44 @@ Marti 和 Lin (1989) 提出，EMTP 中最经典的振荡抑制：
 突变时刻：... 梯形法 -> [开关动作] -> BE(半步) -> BE(半步) -> 梯形法 -> ...
 ```
 
+**CDA 算法详细步骤**：
+
+1. 正常时间步使用梯形法：$G_{L\text{-TR}} = \Delta t/(2L)$
+2. 检测到不连续点（电感电流中断或电容电压突加）时，触发 CDA
+3. 执行第一个半步（$\Delta t/2$）后向欧拉：$G_{L\text{-BE}} = \Delta t/L$（步长减半）
+4. 执行第二个半步（$\Delta t/2$）后向欧拉：在 $t+\Delta t/2$ 时刻再次使用 BE
+5. 在恰好一个 $\Delta t$ 内完成完全临界阻尼（阻尼比 $\zeta = 1.0$）
+6. 下一个时间步自动恢复梯形法
+
 Zhao et al. (2020) 用 CQLF 理论证明了 CDA 在严格无源条件下不破坏稳定性。
 
 ### 策略三：2S-DIRK 替代主积分器
 
-Noda (2014) 将 2S-DIRK 用于 EMT。不需要 CDA 的事件检测机制，由积分格式本身避免振荡。代价：每步两次隐式求解。
+Noda (2014) 将 2S-DIRK 用于 EMT。不需要 CDA 的事件检测机制，由积分格式本身避免振荡。
 
----
+**2S-DIRK 两阶段公式**（Noda 2014）：
+
+中间时刻：
+$$
+\tilde{t}_n = t_{n-1} + ah, \quad a = 1 - \frac{1}{\sqrt{2}} \approx 0.2929
+$$
+
+第一阶段（后向欧拉形式）：
+$$
+\tilde{y}_n = y_{n-1} + \tilde{h}\,f(\tilde{t}_n, \tilde{y}_n), \quad \tilde{h} = ah
+$$
+
+阶段间转换：
+$$
+\tilde{y}_{n-1} = \alpha\,y_{n-1} + \beta\,\tilde{y}_n, \quad \alpha = -\sqrt{2}, \quad \beta = 1+\sqrt{2}
+$$
+
+第二阶段（后向欧拉形式）：
+$$
+y_n = \tilde{y}_{n-1} + \tilde{h}\,f(t_n, y_n)
+$$
+
+**与 CDA 的对比**：当突变来自控制系统限幅等不可检测机制时，2S-DIRK 由积分格式本身避免持续振荡，而 CDA 依赖显式事件检测。
 
 ## 4. 实现方法与算法细节
 
@@ -111,8 +161,6 @@ $$
 | TR+BE+线性插值 | 约 3000 倍 | 每次事件 1 次额外求解 |
 | TR+BE+插值+外推重初始化 | 约 3000 倍 | 每次事件 2 次额外求解 |
 | 2S-DIRK（替代主积分器） | 无持续振荡 | 每步 2 次隐式求解 |
-
----
 
 ## 5. 适用边界与失效模式
 
@@ -138,8 +186,6 @@ $$
 - Na et al. (2023) 方法使虚假损耗降低 > 99%
 - 若高频暂态是研究对象（GIS VFTO），强阻尼策略需谨慎
 
----
-
 ## 6. 应用案例
 
 ### RL 电路的振荡消除对比
@@ -158,15 +204,13 @@ $$
 
 数值试验请使用 EMTP 类软件或自行编程实现。
 
----
-
 ## 7. 延伸阅读
 
 ### 核心参考文献
 
 - [[an-improved-high-accuracy-interpolation-method-for-switching-devices-in-emt-simu]] — Na et al. (2023)：插值+半步 BE，损耗降 > 99%
 - [[stability-evaluation-of-interpolation-extrapolation-and-numerical-oscillation-da]] — Zhao et al. (2020)：CQLF 稳定性框架
-- [[suppression-of-numerical-oscillations-in-the-emtp-power-systems]] — Marti (2004)：CDA 算法
+- [[suppression-of-numerical-oscillations-in-the-emtp-power-systems-power-systems-ie]] — Marti (2004)：CDA 算法
 - [[accurate-time-domain-simulation-of-power-electronic-circuits]] — Nzale et al. (2021)：三种误差源
 - [[supplementary-techniques-for-2s-dirk-based-emt-simulations]] — Noda (2014)：2S-DIRK 替代方案
 

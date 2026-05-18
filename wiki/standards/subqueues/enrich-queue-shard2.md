@@ -59,7 +59,7 @@
 | 342 | new-england-test-system.md | topics | topics/test-system/new-england-test-system.md | P1 | 999 | 2128 | 7 | 18 | completed |
 
 | 172 | numerical-damping-optimization.md | methods | methods/numerical-methods/numerical-damping-optimization.md | P0 | 999 | 4818 | 17 | 10 | completed |
-| 413 | numerical-oscillation-suppression.md | methods | methods/numerical-methods/numerical-oscillation-suppression.md | P1 | 999 | 637 | 4 | 12 | pending |
+| 413 | numerical-oscillation-suppression.md | methods | methods/numerical-methods/numerical-oscillation-suppression.md | P1 | 999 | 637 | 2267 | 10 | 12 | completed 
 | 213 | parallel-in-time.md | methods | methods/simulation-technology/parallel-in-time.md | P0 | 999 | 9098 | 36 | 15 | pending |
 | 161 | passivity-enforcement.md | methods | methods/signal-processing/passivity-enforcement.md | P0 | 999 | 4401 | 20 | 19 | pending |
 | 233 | phase-domain-modeling.md | topics | topics/modeling-methods/phase-domain-modeling.md | P0 | 999 | 15473 | 21 | 30 | pending |
