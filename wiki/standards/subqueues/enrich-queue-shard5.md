@@ -53,7 +53,8 @@
 | 365 | m3c.md | methods | methods/power-electronics/m3c.md | P1 | 999 | 5359 | 21 | 9 | completed |
 | 199 | midc.md | methods | methods/power-electronics/midc.md | P0 | 999 | 6229 | 22 | 12 | completed |
 | 242 | modal-decomposition.md | methods | methods/transmission-line/modal-decomposition.md | P1 | 999 | 10356 | 11 | 11 | completed |
-| 250 | model-verification-benchmark.md | topics | topics/test-system/model-verification-benchmark.md | P1 | 999 | 8088 | 11 | 17 | pending |
+| 250 | model-verification-benchmark.md | topics | topics/test-system/model-verification-benchmark.md | P1 | 999 | 5113 | 11 | 14 | completed |
+
 | 326 | multi-terminal-dc.md | methods | methods/system-studies/multi-terminal-dc.md | P1 | 999 | 2287 | 7 | 15 | completed |
 | 165 | multithreaded-parallel-computing.md | methods | methods/simulation-technology/multithreaded-parallel-computing.md | P0 | 999 | 4593 | 9 | 15 | completed |
 | 117 | network-equivalent.md | topics | topics/modeling-methods/network-equivalent.md | P0 | 999 | 3117 | 4 | 112 | pending |

@@ -25,80 +25,41 @@ $$\epsilon_{\mathrm{rms}} = \sqrt{\frac{\sum_k (y_k - y_k^{\mathrm{ref}})^2}{\su
 其中 $y_k$ 是波形采样，$F$ 是峰值、到达时间、频率或动作时间等特征量。报告这些指标时必须同时说明参考解来源、采样窗口、滤波处理和归一化方式。
 
 <div style="text-align:center;margin:16px 0;">
-<svg viewBox="0 0 900 420" xmlns="http://www.w3.org/2000/svg">
-  <rect x="0" y="0" width="900" height="420" fill="#ffffff" rx="8"/>
-  <!-- Title -->
-  <text x="450" y="30" text-anchor="middle" font-size="16" font-weight="bold" fill="#333">模型验证与基准测试的方法体系</text>
-  
-  <!-- 验证层次 -->
-  <rect x="30" y="55" width="200" height="70" rx="6" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
-  <text x="130" y="80" text-anchor="middle" font-size="13" font-weight="bold" fill="#2563eb">单元验证</text>
-  <text x="130" y="100" text-anchor="middle" font-size="11" fill="#475569">RLC/开关/变压器/线路</text>
-  <text x="130" y="116" text-anchor="middle" font-size="11" fill="#475569">与解析解/频响对比</text>
-  
-  <rect x="30" y="140" width="200" height="70" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
-  <text x="130" y="165" text-anchor="middle" font-size="13" font-weight="bold" fill="#16a34a">子系统验证</text>
-  <text x="130" y="185" text-anchor="middle" font-size="11" fill="#475569">换流器/线路段/保护链路</text>
-  <text x="130" y="201" text-anchor="middle" font-size="11" fill="#475569">接口变量与事件时序</text>
-  
-  <rect x="30" y="225" width="200" height="70" rx="6" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
-  <text x="130" y="250" text-anchor="middle" font-size="13" font-weight="bold" fill="#d97706">系统级基准</text>
-  <text x="130" y="270" text-anchor="middle" font-size="11" fill="#475569">IEEE/CIGRE测试系统</text>
-  <text x="130" y="286" text-anchor="middle" font-size="11" fill="#475569">统一扰动+波形/成本对比</text>
-  
-  <!-- 方法 -->
-  <rect x="280" y="55" width="200" height="70" rx="6" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/>
-  <text x="380" y="80" text-anchor="middle" font-size="13" font-weight="bold" fill="#7c3aed">回放仿真</text>
-  <text x="380" y="100" text-anchor="middle" font-size="11" fill="#475569">POI录波驱动IBR模型</text>
-  <text x="380" y="116" text-anchor="middle" font-size="11" fill="#475569">Sun et al. 2024</text>
-  
-  <rect x="280" y="140" width="200" height="70" rx="6" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/>
-  <text x="380" y="165" text-anchor="middle" font-size="13" font-weight="bold" fill="#7c3aed">跨工具对比</text>
-  <text x="380" y="185" text-anchor="middle" font-size="11" fill="#475569">ATP vs NETOMAC vs RTDS</text>
-  <text x="380" y="201" text-anchor="middle" font-size="11" fill="#475569">Lehn & Rittiger 1995</text>
-  
-  <rect x="280" y="225" width="200" height="70" rx="6" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/>
-  <text x="380" y="250" text-anchor="middle" font-size="13" font-weight="bold" fill="#7c3aed">HIL基准验证</text>
-  <text x="380" y="270" text-anchor="middle" font-size="11" fill="#475569">RTDS+硬件闭环+TFR</text>
-  <text x="380" y="286" text-anchor="middle" font-size="11" fill="#475569">Zhou et al. 2021</text>
-  
-  <!-- 误差指标 -->
-  <rect x="530" y="55" width="340" height="100" rx="6" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
-  <text x="700" y="80" text-anchor="middle" font-size="13" font-weight="bold" fill="#d97706">误差量化指标</text>
-  <text x="560" y="100" text-anchor="start" font-size="11" fill="#475569">$\epsilon_{\mathrm{rms}}$ — 归一化波形均方根误差</text>
-  <text x="560" y="118" text-anchor="start" font-size="11" fill="#475569">$\epsilon_F$ — 特征量相对误差（峰值/到达时间）</text>
-  <text x="560" y="136" text-anchor="start" font-size="11" fill="#475569">MAE — 归一化平均绝对误差（Beddard 2015）</text>
-  <text x="560" y="154" text-anchor="start" font-size="11" fill="#475569">功率不平衡度、接口反射误差（混合仿真）</text>
-  
-  <!-- 基准测试系统 -->
-  <rect x="530" y="175" width="340" height="100" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
-  <text x="700" y="200" text-anchor="middle" font-size="13" font-weight="bold" fill="#16a34a">经典基准测试系统</text>
-  <text x="560" y="220" text-anchor="start" font-size="11" fill="#475569">IEEE-39 / IEEE-118 节点系统（含PV/IBR）</text>
-  <text x="560" y="238" text-anchor="start" font-size="11" fill="#475569">CIGRE HVDC Benchmark System（±400kV/600MW）</text>
-  <text x="560" y="256" text-anchor="start" font-size="11" fill="#475569">Nelson River 三双极LCC-HVDC多馈入系统</text>
-  <text x="560" y="274" text-anchor="start" font-size="11" fill="#475569">IEEE Task Force 混合仿真接口测试系统</text>
-  
-  <!-- 关键原则 -->
-  <rect x="530" y="295" width="340" height="100" rx="6" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
-  <text x="700" y="320" text-anchor="middle" font-size="13" font-weight="bold" fill="#dc2626">关键原则</text>
-  <text x="560" y="340" text-anchor="start" font-size="11" fill="#475569">• 误差准则必须绑定模型类型、测试系统、采样窗口和参考解</text>
-  <text x="560" y="358" text-anchor="start" font-size="11" fill="#475569">• 只比较峰值可能遗漏相位、波前、频率和保护动作时序差异</text>
-  <text x="560" y="376" text-anchor="start" font-size="11" fill="#475569">• 跨工具一致 ≠ 真实准确；多个工具可能共享同一简化假设</text>
-  
-  <!-- 箭头 -->
-  <line x1="230" y1="100" x2="270" y2="100" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <line x1="230" y1="185" x2="270" y2="185" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <line x1="230" y1="270" x2="270" y2="270" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <line x1="480" y1="100" x2="520" y2="100" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <line x1="480" y1="185" x2="520" y2="185" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <line x1="480" y1="270" x2="520" y2="270" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)"/>
-  
-  <defs>
-    <marker id="arrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
-      <path d="M0,0 L8,3 L0,6" fill="#333"/>
-    </marker>
-  </defs>
-</svg>
+<table border="1" cellpadding="8" cellspacing="0" style="margin:auto;border-collapse:collapse;font-size:13px;">
+<tr style="background:#f8fafc;">
+  <th colspan="3" style="font-weight:bold;border:1px solid #ccc;padding:8px;">模型验证与基准测试的方法体系</th>
+</tr>
+<tr style="background:#dbeafe;">
+  <td style="border:1px solid #ccc;padding:8px;text-align:center;font-weight:bold;color:#2563eb;">单元验证<br><span style="font-size:11px;color:#475569;">RLC/开关/变压器/线路<br>与解析解/频响对比</span></td>
+  <td style="border:1px solid #ccc;padding:8px;text-align:center;font-weight:bold;color:#16a34a;">子系统验证<br><span style="font-size:11px;color:#475569;">换流器/线路段/保护链路<br>接口变量与事件时序</span></td>
+  <td style="border:1px solid #ccc;padding:8px;text-align:center;font-weight:bold;color:#d97706;">系统级基准<br><span style="font-size:11px;color:#475569;">IEEE/CIGRE测试系统<br>统一扰动+波形/成本对比</span></td>
+</tr>
+<tr style="background:#ede9fe;">
+  <td style="border:1px solid #ccc;padding:8px;text-align:center;font-weight:bold;color:#7c3aed;">回放仿真<br><span style="font-size:11px;color:#475569;">POI录波驱动IBR模型<br>Sun et al. 2024</span></td>
+  <td style="border:1px solid #ccc;padding:8px;text-align:center;font-weight:bold;color:#7c3aed;">跨工具对比<br><span style="font-size:11px;color:#475569;">ATP vs NETOMAC vs RTDS<br>Lehn & Rittiger 1995</span></td>
+  <td style="border:1px solid #ccc;padding:8px;text-align:center;font-weight:bold;color:#7c3aed;">HIL基准验证<br><span style="font-size:11px;color:#475569;">RTDS+硬件闭环+TFR<br>Zhou et al. 2021</span></td>
+</tr>
+<tr style="background:#fef3c7;">
+  <td style="border:1px solid #ccc;padding:8px;" colspan="3">
+    <strong style="color:#d97706;">误差量化指标：</strong>
+    <code style="font-size:11px;">$\epsilon_{\mathrm{rms}}$</code> 归一化波形均方根误差 ·
+    <code style="font-size:11px;">$\epsilon_F$</code> 特征量相对误差 ·
+    <code style="font-size:11px;">MAE</code> 归一化平均绝对误差
+  </td>
+</tr>
+<tr style="background:#dcfce7;">
+  <td style="border:1px solid #ccc;padding:8px;" colspan="3">
+    <strong style="color:#16a34a;">经典基准测试系统：</strong>
+    IEEE-39 / IEEE-118 节点系统 · CIGRE HVDC Benchmark (±400kV/600MW) · Nelson River 三双极LCC-HVDC
+  </td>
+</tr>
+<tr style="background:#fee2e2;">
+  <td style="border:1px solid #ccc;padding:8px;" colspan="3">
+    <strong style="color:#dc2626;">关键原则：</strong>
+    <span style="font-size:11px;">误差准则必须绑定模型类型/测试系统/采样窗口/参考解 · 只比较峰值可能遗漏相位/波前/频率差异 · 跨工具一致≠真实准确</span>
+  </td>
+</tr>
+</table>
 </div>
 <p style="text-align:center;font-size:12px;color:#666;margin-top:8px;">图1 · 模型验证与基准测试的方法体系总览</p>
 
@@ -368,11 +329,5 @@ Zhou 2021 在 Nelson River 系统中的实践表明，实时 HIL 仿真的瓶颈
 - **Sano 等 2022** — 系统比较五种并网逆变器建模方法（SW/VI/AV/CCI/SCI）的动态行为和计算时间，建立精度-效率权衡框架和场景-模型选择指南
 - **Jalili-Marandi 等 2009**（IEEE Task Force）— 系统构建 TS-EMT 混合仿真的标准化接口技术框架，讨论网络分割、接口等值、多速率同步和频移集成方法
 - **Lehn 和 Rittiger 1995** — 经典跨工具对比研究，对比 ATP/EMTP 与 NETOMAC 在 CIGRE HVDC Benchmark System 上的仿真结果，揭示时间步长对结果的影响
-
-## 来源论文
-
-| 论文 | 年份 |
-|------|------|
-| [[development-of-data-translators-for-interfacing-13&14|Development of Data Translators for Interfacing Power-Flow P]] | 2013 |
-| [[inverter-based-resources-model-verification-using-electromagnetic-transient-play|Inverter-Based Resources Model Verification Using Electromag]] | 2024 |
-| [[frequency-and-transient-responses-of-a-275-kv-pressure-oil-filled-cable-model-va|Frequency and transient responses of A 275 kV pressure oil-f]] | 2025 |
+- **Task Force on Interfacing Techniques（de León 等）2013** — 系统总结潮流程序到 EMTP 型程序的数据翻译器开发经验与工程教训，包括数据语义映射、参数转换、缺失数据补全和格式不一致处理
+- **Liu 等 2025** — 建立 275 kV 压力充油管型电缆的宽频 EMT 模型，利用 MoM-SO 方法计算单位长度参数并用现场测量波形验证投切、故障和雷击暂态仿真
