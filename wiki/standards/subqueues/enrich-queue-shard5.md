@@ -42,7 +42,7 @@
 
 | 219 | heterogeneous-computing.md | methods | methods/simulation-technology/heterogeneous-computing.md | P0 | 999 | 10303 | 7 | 9 | completed |
 | 58 | hilbert-transform.md | methods | methods/signal-processing/hilbert-transform.md | P0 | 999 | 1665 | 10 | 14 | completed |
-| 171 | hybrid-modeling.md | methods | methods/simulation-technology/hybrid-modeling.md | P0 | 999 | 4792 | 20 | 8 | pending |
+| 171 | hybrid-modeling.md | methods | methods/simulation-technology/hybrid-modeling.md | P0 | 999 | 4720 | 20 | 8 | completed |
 | 60 | ieee-1547.md | methods | methods/protection-fault/ieee-1547.md | P0 | 999 | 1695 | 3 | 5 | pending |
 | 373 | impedance-modeling.md | methods | methods/stability-analysis/impedance-modeling.md | P1 | 999 | 1387 | 9 | 17 | pending |
 | 397 | inertia-control.md | methods | methods/control/inertia-control.md | P1 | 999 | 963 | 5 | 11 | pending |
@@ -88,4 +88,3 @@
 
 |||| 411 | 1 | 1 | 0 | grounding-lightning-overvoltage.md enriched: bc 1657→3258, bf 17≥5 pass, removed DUP_BLOCK mermaid, added Alipio2023/Lima2026/Meyberg2026/DeAraujo2021 grounding models |
 ||||| 412 | 1 | 0 | 0 | hilbert-transform.md enriched: bc 1217→4692, bf 10→22 pass, removed mermaid, added SFA/HHT deep-review content, 4 EMT methods |
-
