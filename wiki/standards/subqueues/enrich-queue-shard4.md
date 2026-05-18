@@ -60,7 +60,7 @@
 | 121 | mtdc-model.md | models | models/equivalent/mtdc-model.md | P0 | 999 | 3190 | 31 | 17 | completed |
 | 101 | multiscale-modeling.md | models | models/equivalent/multiscale-modeling.md | P0 | 999 | 4056 | 17 | 13 | completed |
 | 325 | network-equation-solution.md | topics | topics/modeling-methods/network-equation-solution.md | P1 | 999 | 2297 | 15 | 19 | completed |
-| 406 | nodal-admittance-matrix.md | methods | methods/network-solution/nodal-admittance-matrix.md | P1 | 999 | 832 | 3 | 8 | pending |
+| 406 | nodal-admittance-matrix.md | methods | methods/network-solution/nodal-admittance-matrix.md | P1 | 999 | 3403 | 7 | 6 | completed |
 | 112 | numerical-integration-methods.md | topics | topics/simulation/numerical-integration-methods.md | P0 | 999 | 2919 | 19 | 22 | pending |
 | 312 | offline-to-realtime-porting.md | methods | methods/simulation-technology/offline-to-realtime-porting.md | P1 | 999 | 2793 | 5 | 16 | completed |
 | 265 | parallel-transmission-line.md | methods | methods/transmission-line/parallel-transmission-line.md | P1 | 999 | 4762 | 9 | 14 | completed |
