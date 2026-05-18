@@ -75,8 +75,8 @@
 | 203 | runge-kutta-in-emt.md | methods | methods/numerical-methods/runge-kutta-in-emt.md | P0 | 999 | 6997 | 25 | 9 | completed |
 | 227 | signal-processing.md | methods | methods/signal-processing/signal-processing.md | P0 | 999 | 12589 | 25 | 21 | completed |
 | 381 | small-signal-analysis.md | methods | methods/stability-analysis/small-signal-analysis.md | P1 | 999 | 1213 | 4 | 31 | completed |
-| 374 | srf-pll.md | methods | methods/control/srf-pll.md | P1 | 999 | 1379 | 4 | 9 | pending |
-| 84 | state-space-method.md | methods | methods/numerical-methods/state-space-method.md | P0 | 999 | 2214 | 0 | 107 | pending |
+| 374 | srf-pll.md | methods | methods/control/srf-pll.md | P1 | 999 | 1379 | 4 | 9 | completed |
+
 | 377 | surge-arrester-model.md | models | models/protection/surge-arrester-model.md | P1 | 999 | 1331 | 13 | 25 | pending |
 | 111 | switching-function-method.md | methods | methods/power-electronics/switching-function-method.md | P0 | 999 | 2885 | 10 | 18 | completed |
 | 407 | thevenin-equivalent-model.md | models | models/equivalent/thevenin-equivalent-model.md | P1 | 999 | 3583 | 13 | 13 | completed |
