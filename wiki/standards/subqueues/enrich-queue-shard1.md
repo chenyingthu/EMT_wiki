@@ -61,7 +61,7 @@
 | 379 | norton-equivalent.md | methods | methods/network-solution/norton-equivalent.md | P1 | 999 | 4363 | 18 | 12 | completed |
 | 338 | numerical-laplace-transform.md | methods | methods/signal-processing/numerical-laplace-transform.md | P1 | 999 | 1868 | 3 | 10 | completed |
 | 212 | ould-bachir-2019-unified-avm.md | methods | methods/power-electronics/ould-bachir-2019-unified-avm.md | P0 | 999 | 9070 | 14 | 17 | pending | completed 
-| 370 | partial-fraction-expansion.md | methods | methods/signal-processing/partial-fraction-expansion.md | P1 | 999 | 1423 | 6 | 16 | pending |
+| 370 | partial-fraction-expansion.md | methods | methods/signal-processing/partial-fraction-expansion.md | P1 | 999 | 1423 | 6 | 16 | completed |
 | 304 | phase-domain-model.md | topics | topics/modeling-methods/phase-domain-model.md | P1 | 999 | 3078 | 6 | 15 | pending | completed 
 | 144 | pi-controller-model.md | models | models/control/pi-controller-model.md | P0 | 999 | 3936 | 30 | 9 | completed |
 | 105 | pmsm-model.md | models | models/rotating-machine/pmsm-model.md | P0 | 999 | 2739 | 14 | 23 | pending | completed 
