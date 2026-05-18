@@ -63,7 +63,7 @@
 | 401 | microgrid-distribution-network.md | topics | topics/renewable-storage/microgrid-distribution-network.md | P1 | 999 | 10882 | 7 | 15 | completed |
 | 95 | mmc-modeling.md | topics | topics/component-modeling/mmc-modeling.md | P0 | 999 | 2475 | 14 | 30 | completed |
 | 273 | model-compatibility-layer.md | methods | methods/system-studies/model-compatibility-layer.md | P1 | 999 | 4232 | 8 | 31 | completed |
-| 382 | mt-hvdc-test-system.md | topics | topics/hvdc-facts/mt-hvdc-test-system.md | P1 | 999 | 1206 | 7 | 10 | pending |
+| 382 | mt-hvdc-test-system.md | topics | topics/hvdc-facts/mt-hvdc-test-system.md | P1 | 999 | 2490 | 6 | 7 | completed |
 | 283 | multirate-method.md | methods | methods/simulation-technology/multirate-method.md | P1 | 999 | 3644 | 17 | 60 | pending |
 | 126 | nearest-level-control.md | methods | methods/power-electronics/nearest-level-control.md | P0 | 999 | 3353 | 17 | 13 | pending |
 | 300 | newton-raphson-method.md | methods | methods/network-solution/newton-raphson-method.md | P1 | 999 | 3198 | 7 | 7 | pending |
@@ -115,3 +115,5 @@
 
 ||||| Cycle 14 | model-compatibility-layer.md | P1 SKIP (Quality Gate PASS: bc=4232≥2000, bf=8≥5, no placeholder, no DUP_BLOCK, wikilinks 31 all valid, src=813≤5000, max_block=7843≤15000) | 2026-05-18 19:15 |
 
+
+|||| Cycle 18 | mt-hvdc-test-system.md | P0 ENRICH (bc=1069→2490, bf=7→6, removed DUP_BLOCK(sep 3→2), removed mermaid, added 6 block formulas, 4 quant tables) | 2026-05-18 18:32 |
