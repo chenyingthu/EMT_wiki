@@ -50,7 +50,7 @@
 | 169 | jiles-atherton-model.md | methods | methods/power-electronics/jiles-atherton-model.md | P0 | 999 | 4727 | 12 | 10 | completed |
 | 91 | large-timestep-simulation.md | methods | methods/numerical-methods/large-timestep-simulation.md | P0 | 999 | 2392 | 6 | 16 | completed |
 | 187 | lightning-overvoltage.md | topics | topics/protection-lightning/lightning-overvoltage.md | P0 | 999 | 5528 | 17 | 22 | completed |
-| 163 | low-rank-solver.md | methods | methods/network-solution/low-rank-solver.md | P0 | 999 | 4516 | 22 | 22 | pending |
+| 163 | low-rank-solver.md | methods | methods/network-solution/low-rank-solver.md | P0 | 999 | 4516 | 22 | 22 | completed |
 | 177 | magnetic-saturation-modeling.md | methods | methods/power-electronics/magnetic-saturation-modeling.md | P0 | 999 | 5075 | 25 | 18 | pending | completed 
 | 385 | mixed-sensitivity-optimization.md | methods | methods/control/mixed-sensitivity-optimization.md | P1 | 999 | 1180 | 4 | 10 | pending |
 | 354 | modal-domain-decoupling.md | methods | methods/transmission-line/modal-domain-decoupling.md | P1 | 999 | 1581 | 5 | 13 | pending |
