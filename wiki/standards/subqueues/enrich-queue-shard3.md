@@ -50,7 +50,7 @@
 | 311 | hardware-acceleration.md | methods | methods/simulation-technology/hardware-acceleration.md | P1 | 999 | 2761 | 6 | 22 | completed |
 | 190 | hbsm.md | methods | methods/power-electronics/hbsm.md | P0 | 999 | 1718 | 12 | 13 | completed |
 | 192 | high-performance-computing.md | methods | methods/simulation-technology/high-performance-computing.md | P0 | 999 | 5691 | 10 | 12 | completed |
-| 234 | hybrid-acdc-system.md | topics | topics/hvdc-facts/hybrid-acdc-system.md | P0 | 999 | 18632 | 27 | 14 | pending |
+| 234 | hybrid-acdc-system.md | topics | topics/hvdc-facts/hybrid-acdc-system.md | P0 | 999 | 18632 | 27 | 14 | completed |
 | 384 | ideal-transformer-equivalent.md | methods | methods/network-solution/ideal-transformer-equivalent.md | P1 | 999 | 1199 | 7 | 12 | pending |
 | 145 | igbt-model.md | models | models/basic-component/igbt-model.md | P0 | 999 | 3959 | 30 | 13 | pending |
 | 412 | induction-machine.md | models | models/rotating-machine/induction-machine.md | P1 | 999 | 650 | 10 | 10 | pending |

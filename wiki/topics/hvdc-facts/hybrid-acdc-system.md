@@ -582,11 +582,4 @@ Lin 等 [2021] 指出，DFIG 风电场的机电暂态（转子运动，秒级）
 
 - **Liu et al. 2014** — "Electro-mechanical transient modeling of MMC based multi-terminal HVDC system"，Electrical Power and Energy Systems。提出 MMC-MTDC 系统的机电暂态建模方法，为混合仿真中的直流侧等值提供了基础。
 
-## 来源论文
 
-| 论文 | 年份 |
-|------|------|
-| [[comparison-between-electromechanical-transient-model-and-electromagnetic-transie|Comparison between electromechanical transient model and ele]] | 2013 |
-| [[electro-mechanical-transient-modeling-of-mmc-based-multi-terminal-hvdc-system-wi-15|Electro-mechanical transient modeling of MMC based multi-ter]] | 2019 |
-| [[electro-mechanical-transient-modeling-of-mmc-based-multi-terminal-hvdc-system-wi|Electro-mechanical transient modeling of MMC based multi-ter]] | 2019 |
-| [[initializing-emt-models-of-grid-forming-vscs-in-mtdc-systems|Initializing EMT models of grid forming VSCs in MTDC systems]] | 2024 |
