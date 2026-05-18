@@ -1,0 +1,801 @@
+5402                                                                              IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 37, NO. 6, DECEMBER 2022
+
+
+
+
+         Electromagnetic Modeling of Transformers in
+        EMT-Type Software by a Circuit-Based Method
+             Sadegh Rahimi Pordanjani , Mohammed Naïdjate , Nicolas Bracikowski , Mircea Fratila ,
+                  Jean Mahseredjian , Fellow, IEEE, and Afshin Rezaei-Zare, Senior Member, IEEE
+
+
+   Abstract—This work proposes a fully circuit-based method for                  models employed in EMT-type software. In fact, existing topo-
+modelling electrical transformers. This method not only offers the               logical transformer models are best suited for situations where
+advantages of circuit-based methods and can be implemented in                    the model’s input data is test based, such as open-circuit and
+electromagnetic transient (EMT) type software, but it can also
+provide a detailed representation of transformers, comparable to                 short-circuit tests, for example. Despite the significant gains
+the finite element method (FEM). The proposed method enables a                   achieved to make these models more physically meaningful [6],
+detailed geometrical modelling, as well as representation of mag-                [7], they are unable to account in detail for internal behavior
+netic flux paths and consideration of iron core saturation. It can               of magnetic effects, including local magnetic saturation and
+be implemented in EMT-type software to see the effect of power                   local magnetic flux leakages, since they use a limited number of
+networks on transformers. In addition, the proposed method can
+represent internal faults in transformers. The problem is con-                   elements to represent flux paths.
+strained to a 2-D domain, which is often used in FEMs to represent                  A finite element method (FEM) [8] can accurately account
+the magnetic behavior of power equipment. Finite element analysis                for material nonlinearity, geometrical complexity, and material
+based on ANSYS Maxwell is used to verify the proposed method.                    anisotropy, making it ideal for representing completely the mag-
+  Index Terms—Transformer model, electromagnetic transients,                     netic device internal behavior [9]. Field solvers, on the other
+magnetic circuits, finite element method (FEM), winding fault.                   hand, lack the variety of power system components needed to
+                                                                                 simulate a practical power network comprising control systems,
+                           I. INTRODUCTION                                       surge arresters, circuit breakers, and multiphase transmission
+        AGNETIC devices such as transformers and rotating                        lines. To address this issue, the solutions of field equations and
+M       electrical machines play a critical role in power systems.
+In order to accurately simulate phenomena like inrush currents,
+                                                                                 circuit equations can be combined with each other. In the com-
+                                                                                 bination of circuit-based methods and FEM, 2-D FEM is usually
+internal faults, ferroresonance and harmonic generation, detailed                the method of choice for predicting magnetic behavior in power
+modelling of magnetic devices is a key issue in power system                     equipment, due to the difficulty of 3-D, which derives from the
+transient simulations. It is also critical for designers to exam-                complexity of the geometry and time-consuming challenges.
+ine how the external network affects magnetic device internal                       Two strategies are used to combine the solutions of field
+behavior. Circuit simulators and field solvers are two common                    equations and circuit equations: direct and indirect.
+tools used to carry out these analyses.                                             The direct method combines and solves simultaneously field
+   EMT-type software, such as EMTP [1], employ lumped pa-                        equations and circuit equations [10]. To solve the magnetic
+rameter approaches to model transformers. Topological trans-                     equations, a formulation involving the magnetic vector potential
+former models [2]–[5] are the most common lumped parameter                       is used. The conductor current is expressed in terms of current
+                                                                                 density, and the flux linkage is determined from the potential
+   Manuscript received 21 December 2021; revised 31 March 2022; accepted 9       vector to establish the coupling. Step-by-step numerical integra-
+May 2022. Date of publication 23 May 2022; date of current version 28 Novem-     tion is used to solve the time-dependent differential system that
+ber 2022. Paper no. TPWRD-01906-2021. (Corresponding author: Sadegh              results from coupling. A Newton–Raphson iterative approach is
+Rahimi Pordanjani.)
+   Sadegh Rahimi Pordanjani is with the Department of Electrical En-             utilized to account for the magnetic and electric nonlinearities.
+gineering, Polytechnique Montreal, H3T 1J4 Montreal, Canada (e-mail:             However, because it cannot provide enough network component
+sadegh.rahimi-pordanjani@polymtl.ca).                                            models, this strategy is not ideal for complicated and large power
+   Mohammed Naïdjate is with CRTT, University of Nantes, 44035 Saint
+Nazaire, France (e-mail: mohammed.naidjate@univ-nantes.fr).                      networks.
+   Nicolas Bracikowski is with IREENA Laboratory, Nantes University, 44035          The indirect method allows the FEM-based model and EMT
+Saint Nazaire, France (e-mail: nicolas.bracikowski@univ-nantes.fr).              circuit portions to be treated separately while maintaining con-
+   Mircea Fratila is with THEMIS, EDF Lab Paris-Saclay, 91120 Palaiseau,
+France (e-mail: mircea.fratila@edf.fr).                                          nection via coupling coefficients [11]. In contrast to direct meth-
+   Jean Mahseredjian is with Ecole Polytechnique, H3T 1J4 Montreal, Canada       ods, indirect methods can be used to study the behavior of mag-
+(e-mail: jean.mahseredjian@polymtl.ca).                                          netic devices in vast power networks with a variety of component
+   Afshin Rezaei-Zare is with the Electrical Engineering and Computer Science
+Department, York University-Keele Campus, M3J 2S5 Toronto, Canada (e-mail:       models. Because the solved equations are nonlinear, the indirect
+rezaei@yorku.ca).                                                                techniques require numerous iterations between the field and
+   Color versions of one or more figures in this article are available at        circuit sections, which significantly deteriorates computational
+https://doi.org/10.1109/TPWRD.2022.3177137.
+   Digital Object Identifier 10.1109/TPWRD.2022.3177137                          performance. Although both coupling-based approaches can be
+
+                        0885-8977 © 2022 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+                                      See https://www.ieee.org/publications/rights/index.html for more information.
+
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 14:03:59 UTC from IEEE Xplore. Restrictions apply.
+PORDANJANI et al.: ELECTROMAGNETIC MODELING OF TRANSFORMERS IN EMT-TYPE SOFTWARE                                                                       5403
+
+
+
+quite accurate, their main disadvantages are extensive calcula-                 authors of [13] used a 3D RNM [14] for calculating leakage
+tion periods and numerous numerical challenges in implemen-                     inductances, however it kept the limitations explained above
+tation [11]. Other difficulties and performance issues arise with               for the 2D model. Although the methodology provided in this
+both direct and indirect coupling approaches when modelling a                   paper is in 2D, a method known as the double-2D method [17]
+circuit using FEM that contains multiple magnetic devices.                      may be used to represent the transformer in 3D by integrating
+   This paper presents a new strategy for coupling field and                    several 2D models in perpendicular planes, which the authors
+circuit equations using exclusively circuit-based methods. A                    will investigate further in future studies.
+meshed circuit-based method is proposed for modelling mag-                         Recently, [18] proposed mesh modelling of transformers us-
+netic devices in great detail and accuracy. The Hopkinson anal-                 ing MEC in EMTP by establishing virtual circuits to account
+ogy [12], commonly known as the magnetic equivalent circuit                     for magnetic flux distribution, which adds complexity to EMT-
+(MEC) or Reluctance Network Model (RNM), is used to create                      type software. In this paper, magnetic flux distribution is ac-
+this circuit-based technique. In fact, the meshed version of RNM                complished utilizing available elements in EMT-type software,
+is developed to provide a distributed circuit-based representation              which simplifies implementation.
+of magnetic devices which is called Distributed Reluctance Net-                    One of the most appealing aspects of DRNM presented in our
+work Model (DRNM). This paper also implements the proposed                      paper, is its ability to simulate internal faults in transformers.
+mesh models in EMT-type software, utilizing equivalent electric                 Existing circuit-based models used to model internal faults
+elements. Unlike existing topological approaches in EMT-type                    [19], [20], have limitations for accurately representing leakage
+software that use a limited number of flux paths to represent                   flux paths and inductances associated with them, as well as
+the field behavior of a magnetic device, the DRNM suggested                     accounting for the effect of the core, all of which are critical
+in this research is able to use a large number of flux paths. The               for investigating internal faults. The proposed method not only
+proposed new approach in this research is to discretize space                   represents leakage flux paths accurately, but it also considers the
+into electric/magnetic circuits. In addition, unlike topological                effect of the core, including saturation behavior.
+models, this paper employs meshing and like in FEM, it allows to                   This paper starts by describing the principles of the proposed
+adapt to accuracy requirements. In fact, the most important con-                method for a basic two-winding single-phase transformer in
+tribution of this research is the accurate incorporation of an effi-            Section II. Section III extends the proposed method to a real
+cient FEM-like approach in EMT-type software. The proposed                      two-winding three-phase transformer. Section IV shows how to
+method outperforms methods that combine FEM and circuit                         represent internal faults such as turn-to-turn and turn-to-ground
+methods in terms of computational performance while maintain-                   faults. Finally, in Section V, the results for normal operating
+ing accuracy. It is also possible to represent non-homogeneous                  conditions, internal fault conditions, and a transient phenomenon
+materials with magnetic saturation and incorporate all leakage                  are compared to those from FEM solution.
+and fringing flux paths.
+   An approach termed ‘reluctance network model’ [13] has                                                  II. METHODOLOGY
+been used to represent a meshed form of the transformer model
+using circuit elements (see also [14]–[16]). The proposed so-                      In this section, the proposed circuit-based method, DRNM,
+lution [13] is primarily for design purposes, whereas the one                   is explained for a single-phase shell-type transformer which is
+presented in our paper is for electromagnetic transient studies.                shown in Fig. 1. The primary winding is connected to the voltage
+Due to the design objective of [13], the number of nodes and                    source UP through resistance RP and the secondary winding is
+elements is minimized to allow for repeated iterations in op-                   connected to the resistive load RL through resistance RS . Imple-
+timization methods. The model has between 50 to 100 nodes.                      menting an electromagnetic model for the defined transformer,
+In our work, the number of elements in the models is ranging                    using DRNM, includes three main steps. Firstly, the space of
+from 1000 to 3000, to demonstrate all details of transformer                    the problem is meshed into suitable number of elements based
+geometry. In addition, [13] was originally presented for the                    on required accuracy. Secondly, Maxwell’s equations including
+purpose of calculating leakage inductances, and as such, aimed                  Ampere’s and Faraday’s are employed for the coupling parts.
+to distribute elements in the air that are crucial for leakage induc-           Finally, the boundary conditions are imposed.
+tance calculations, but not the core, particularly the columns. In                 In this section, as shown in Fig. 1(a), the problem space
+our contribution, the core, the air, the windings, and even the tank            is meshed into 24 elements. The magnetic flux paths in each
+are divided into elements (meshes) and detailed representations                 element are represented by two horizontal and two vertical
+of magnetic flux paths are provided for each of them. Due to                    reluctances. To impose the boundary conditions, reluctances
+the lack of coupling between the transformer model and the                      perpendicular to the outside sides of the problem space are elim-
+external circuit in [13], such a model cannot be utilized to study              inated. In Fig. 1(a), the eliminated reluctances are represented
+the transformer’s transient behavior in a network. Not only mag-                by dashed blue reluctances.
+netomotive force sources, but also electromotive force sources                     The values of the magnetomotive force sources are derived
+have been distributed in our research to enable coupling between                by applying Ampere’s law as follows
+the magnetic equivalent circuit and the external electric circuit.                                           F = NM M F I                              (1)
+Mutators have been used to achieve this coupling, whereas [13]
+distributed only magnetomotive force sources, not electromotive                 where F = [ℱ1 ℱ2 . . . ℱ12 ]T with [ℱ1 ℱ2 . . . ℱ12 ]
+force sources, implying the absence of mutators. Also, the                      as the values of the magnetomotive force sources indicated in
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 14:03:59 UTC from IEEE Xplore. Restrictions apply.
+5404                                                                               IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 37, NO. 6, DECEMBER 2022
+
+
+
+
+Fig. 1.   (a) Distributed magnetic circuit with magnetomotive forces and (b) schematic of transformer winding turns and external circuit.
+
+
+
+Fig. 1(a). And I = [ ip is ]T which iP and iS are the primary
+and secondary winding currents, respectively. The components
+of NM M F which has been introduced to relate F and I are
+derived using curves of the magnetomotive force distribution
+along the x axis for the primary and secondary windings (ℱp (x)
+and ℱs (x)) presented below the transformer in Fig. 1(a). On
+each position in the x axis, the sum of the magnetomotive force
+sources displayed on the magnetic equivalent circuit must equal
+the sum of ℱs (x) and ℱp (x) at that point. For example, the sum
+of ℱ1 and ℱ7 in the circuit which are on the same position of
+x = X, equals the sum of ℱp (x) and ℱs (x) at that position,
+                                                                                  Fig. 2. DRNM for a transformer (magnetic and electric circuits, as well as
+which are ℱp (X) = 2ip and ℱs (X) = 0, and because the                            their coupling).
+circuit has horizontal symmetry, the values of ℱ1 and ℱ7 are
+the same, and their values equal ip . The other components of
+NM M F are derived using the same rule as follows.
+                                                                                  where
+                                                               T                                                                              
+                            12 22 21 12 22 21                                             EP               Eab + Ecd + Eef + Egh
+          NM M F =                                                         (2)         E=                =                                              (5)
+                            01 22 10 01 22 10                                             ES               EAB + ECD + EEF + EGH
+
+    Until now, only the magnetic circuit has been included. Fara-                      Φ = [ϕ1 ϕ2 ϕ3 ϕ4 ϕ5 ϕ6 ϕ7 ϕ8 ϕ9 ϕ10 ϕ11 ϕ12 ]T                   (6)
+day’s law is used to include the electric circuit and the coupling                      NEM F = NTM M F                                                 (7)
+of the electric and the magnetic circuits. Fig. 1(b) presents the
+schematic diagram for winding configuration demonstrating the                        In which EAB , ECD , EEF , EGH , Eab , Ecd , Eef and Egh
+total magnetic fluxes within each winding turn. The induced                       are the electromotive forces induced in the turns AB, CD, EF,
+voltage in each turn is determined by the fluxes that flow through                GH, ab, cd, ef, and gh respectively. Moreover ϕ1 , ϕ2 , ϕ3 , …,
+it. For instance, in the turn AB of the secondary winding which                   ϕ12 are the magnetic fluxes that pass through the winding turns
+encloses the fluxes ϕ9 and ϕ10 , the voltage EAB is induced                       which have been displayed in Fig. 1(a). And NEM F is the matrix
+which is derived by                                                               introduced to relate E and Φ.
+                                                                                     Finally, the interface between the magnetic and electric cir-
+                                      d                                           cuits is derived using the above-mentioned relations and rules,
+                        EAB = −          (ϕ9 + ϕ10 )                       (3)
+                                      dt                                          as shown in Fig. 2. The magnetic circuit is shown in black, while
+                                                                                  the primary and secondary winding electric circuits are shown
+   The voltages induced in other turns and the fluxes passing
+                                                                                  in blue and green, respectively. Coupling between the magnetic
+through them have the same relationship. Then, by adding the
+                                                                                  circuit with both the primary and secondary electric circuits
+voltages induced in the turns of each winding, the total induced
+                                                                                  has been achieved using a specific type of mutator element:
+voltages in the primary winding Ep and secondary winding Es
+                                                                                  Type-2 L-R mutator [21]. Fig. 3 depicts the Type-2 L-R mutator
+are given by
+                                                                                  in schematic form. In EMT-type programs, two coupled series
+                                    d                                             R-L branches can be deployed to implement this type of mutator
+                            E=−        NEM F Φ                             (4)    [7]. The values of self and mutual resistances and inductances
+                                    dt
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 14:03:59 UTC from IEEE Xplore. Restrictions apply.
+PORDANJANI et al.: ELECTROMAGNETIC MODELING OF TRANSFORMERS IN EMT-TYPE SOFTWARE                                                                            5405
+
+
+
+
+Fig. 3.   Type-2 L-R mutator.
+
+
+
+
+                                                                                  Fig. 5. Cross-section of left half of the core (Only the windings on the middle
+                                                                                  column have been displayed.).
+
+
+Fig. 4.   Schematic of a three-phase three-legged core-type transformer.
+
+
+
+corresponding to the two branches are determined as follows.
+                                        
+  v1        0 0        i1       0 −𝒩        d i1
+       =                    +                             (8)
+  v2       𝒩 0         i2       0     0     dt i2
+
+where 𝒩 is the coupling factor of the mutator and v1 and i1 are
+the current and voltage of the electric circuit which is displayed
+on the left side of Fig. 3 and represent the electric current and
+voltage, respectively, while v2 and i2 are the current and voltage
+of the magnetic equivalent circuit which is shown on the right
+side of Fig. 3 and represent magnetomotive force ℱ and magnetic
+flux ϕ , respectively.
+
+   III. DISTRIBUTED RELUCTANCE NETWORK MODEL FOR A
+                                                                                  Fig. 6.   Circuits of four cell types (A, B, C, and D).
+                THREE-PHASE TRANSFORMER
+   In this section, DRNM, which was introduced in the previous
+section, is developed for a three-phase three-legged core-type
+                                                                                  phase on the middle column of the core. It is worth noting that
+transformer shown in Fig. 4. In addition, the problem space
+                                                                                  DRNM has been proposed to be capable of representing a wide
+is meshed into a configurable number of elements, and the
+                                                                                  range of operating conditions, and because out of core flux paths
+formulae required to calculate the properties of each element
+                                                                                  in the air and tank play a significant role in transformer behavior
+are presented in detail.
+                                                                                  under unbalanced operating conditions, the effect of the tank
+   These steps are followed to implement DRNM for transformer
+                                                                                  and air outside the core has been considered for three-phase
+model in EMT-type software. First, the problem space is subdi-
+                                                                                  transformers, as illustrated in Fig. 5. Here, due to the vertical
+vided into elements using a mesh refinement approach, which
+                                                                                  symmetry of the core, only the meshing for the left side of
+progresses from coarse to finer meshes until the accuracy of
+                                                                                  the core is explained, as illustrated in Fig. 5. DRNM for this
+results reaches a satisfactory level. Second, the model’s elements
+                                                                                  transformer is made up of four general types of cells: Type-A,
+are drawn from a set of generic types of elements. Third, the
+                                                                                  Type-B, Type-C, and Type-D which have been indicated in
+elements are connected based on how the transformer is meshed
+                                                                                  Fig. 6. Each of the four types of elements contains four linear
+as well as the transformer winding connections. Finally, the
+                                                                                  or nonlinear reluctances called Ru , Rd , Rr and Rl . A pair of
+values for the model’s elements are determined. In the following
+                                                                                  mutators for HV winding is included in Type-B cells. In addition,
+sections, these steps are described in detail.
+                                                                                  Type-C cells include two pairs of mutators, one pair for HV
+                                                                                  winding and the other pair for LV winding. A pair of mutators
+A. Meshing and Indexing                                                           for LV winding is present in Type-D cells. In Fig. 6, the coupling
+  Since all three phases of the transformer are similar, the                      factors of the mutators associated to HV and LV windings are
+meshing, indexing, and value determination processes are the                      defined by βij and γij , respectively. As illustrated in Fig. 5,
+same for all three, and here, they are only explained for the                     Type-A elements are used in parts 1 and 7, Type-B elements are
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 14:03:59 UTC from IEEE Xplore. Restrictions apply.
+5406                                                                               IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 37, NO. 6, DECEMBER 2022
+
+
+
+
+                                                                                                            Rv2 = h2 / (μ2 .d.W )                       (15)
+                                                                                                            Rh1 = W/ (μ1 .d.h1 )                        (16)
+                                                                                                            Rh2 = W/ (μ2 .d.h1 )                        (17)
+
+
+
+                                                                                     Finally, the parameters of the mutators of the Type-B, Type-C,
+Fig. 7.   One nonuniform cell sample with two distinct materials.
+                                                                                  and Type-D elements depicted in Fig. 6 are found by applying
+                                                                                  Ampere’s law and Faraday’s law in distributed form. The cou-
+                                                                                  pling factors βij and γij , which are related to the mutators of the
+used in parts 2 and 5, Type-C elements are used in parts 3, 4,                    HV and LV windings of the element in ith column and j th row,
+and 6, and Type-D elements are used in parts 33, 44, and 66.                      are given by (18) and (19) shown at the bottom of the next page
+                                                                                  respectively. Where Np and Ns represent the number of HV and
+B. Determination of Circuit Parameters                                            LV winding turns, respectively. Wp and Ws are the widths of
+  The parameters for elements are calculated in the manner                        the HV and LV windings, respectively, and Hp and Hs are the
+shown below. Reluctances, both linear and nonlinear, are com-                     heights of the HV and LV windings. xi−1 , xi , yj−1 and yj are
+puted first. The linear reluctances are given by                                  the horizontal and vertical coordinates of the cell placed in ith
+                                                                                  column and j th row. X0 , X1 , Y1 and Y2 are the horizontal and
+                               R = l/(μ0 S)                                (9)
+                                                                                  vertical coordinates of the HV winding and X2 , X3 , Y0 and Y3
+where l and S denote the mean length and cross-section of                         are the horizontal and vertical coordinates of the LV winding.
+the flux path that reluctance represents, and μ0 is the magnetic                  X4 is the horizontal coordinate of the center of the core.
+permeability of air. To express nonlinear reluctances, a piecewise
+linear function with given number of segments is used to depict                   C. Connection of Model Elements
+the magnetizing curve. The slope between change points p and
+                                                                                     After finding and assigning the parameters for each element,
+p-1 defines the incremental magnetic relative permeability μp
+                                                                                  the elements must now be connected. As it can be observed in
+of each segment of the piecewise linear curve.                                                                               (1)    (2)   (3)
+                                                                                  the elements presented in Fig. 6, nodes nij , nij , nij , and
+                                 1 Bp − Bp−1                                        (4)
+                         μp =                                            (10)     nij are the nodes related to the magnetic part of the element
+                                 μ0 Hp − Hp−1
+                                                                                  placed in ith column and j th row of Fig. 5. In Algorithm 1, it has
+As a result, nonlinear reluctance curves are modelled using                       been shown how magnetic parts of the elements are connected
+a piecewise linear form. The incremental reluctance Rp of                         through these nodes.
+segment p of the piecewise-linear curve is defined as the slope                      Algorithm 2 and Algorithm 3 are used to establish the internal
+between changepoints p and p-1                                                    electrical connections between elements. As it can be observed
+                                                                                                                              (1) (2) (3)           (4)
+                                                                                  in the elements presented in Fig. 6, nodes pij , pij , pij , and pij
+                   Rp = (vp − vp−1 ) / (ip − ip−1 )                      (11)
+                                                                                  are the nodes related to the HV winding of the element placed in
+where Rp is determined by (9) with μ set to μp .                                  ith column and j th row of Fig. 5 and they are connected using the
+   In (9)–(11), each mesh was assumed to be made up of a                                                                           (1) (2) (3)
+                                                                                  procedure presented in Algorithm 2. Nodes sij , sij , sij , and
+single material. However, depending on the size and location of                     (4)
+                                                                                  sij are the nodes related to the LV winding of that element and
+the element, it could include several different types of materials
+                                                                                  they are connected using the procedure presented in Algorithm
+with different permeabilities. Fig. 7 illustrates a nonuniform cell
+                                                                                  3. The internal electrical connections for two other transformer
+made up of two tubes with two different materials with relative
+                                                                                  phases are established using the same algorithms.
+permeabilities of μ1 and μ2 . Two tubes have the same width
+and thickness (W and d in Fig. 7), but not the same heights (h1
+                                                                                                     IV. STUDY OF INTERNAL FAULTS
+and h2 in Fig. 7). The following formula is used to compute the
+equivalent reluctances for this cell                                                 In this section, the proposed DRNM is used to model internal
+                                                                                  faults in transformers using EMT-type software. To accomplish
+           Ru = Rd = (Rv1 + Rv2 ) /2                                     (12)
+                                                                                  this, the faulty part of the winding is treated as a distinct winding,
+           Rl = Rr = (Rh1 + Rh2 ) / (2 (Rh1 + Rh2 ))                     (13)     and the healthy parts of the winding are also treated as distinct
+                                                                                  windings. The fault between a coil and the ground, as well as the
+where Ru and Rd are the vertical reluctances for the equivalent
+                                                                                  fault between two turns of a winding, are both modelled using
+cell, Rv1 and Rv2 are the vertical reluctances for the upper and
+                                                                                  DRNM. To model a coil-to-earth fault, the faulty winding is
+lower tubes of the cell, respectively. Rl and Rr are the horizontal
+                                                                                  divided into two parts, as shown in Fig. 8(a). And as illustrated
+reluctances for the equivalent cell and Rh1 and Rh2 are the
+                                                                                  in Fig. 8(b), the faulty winding is divided into three parts to
+horizontal reluctances for the upper and lower parts of the cell,
+                                                                                  model a turn-to-turn fault. In DRNM, each new part is treated as
+respectively. Rv1 , Rv2 , Rh1 and Rh2 are given by
+                                                                                  a distinct winding, with Ampere’s and Faraday’s laws applied
+                         Rv1 = h1 / (μ1 .d.W )                           (14)     independently. The distinct parts are then connected to one
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 14:03:59 UTC from IEEE Xplore. Restrictions apply.
+PORDANJANI et al.: ELECTROMAGNETIC MODELING OF TRANSFORMERS IN EMT-TYPE SOFTWARE                                                                       5407
+
+
+
+
+ Algorithm 1: Internal Magnetic Connections.                                      Algorithm 2: Electric Connections for HV Winding.
+    for j ∗ ← 1 to N ∗∗ do                                                                for j ← j2∗ to j3∗∗ do
+           for i∗∗∗ ← 1 to (2M ∗∗∗∗ ) do                                                      for i ← i∗∗∗
+                                                                                                       1    to (2M − i1 ) do
+               if j < N & i < 2M                                                                              (2) (1)
+                                                                                                  connect (pij , p(i+1)j )
+                              (2)   (4)
+                    connect (nij , n(i+1)j )                                                                         (4)    (3)
+                                                                                                          connect (pij , p(i+1)j )
+                                (3)   (1)
+                      connect (nij , ni(j+1) )                                                     end
+                                                                                                              (2)                 (3)
+                  elseif j = N & i < 2M                                                            connect (p(2M −i1 +1)∗∗∗∗ j , p(i1 )j )
+                                (2)   (4)
+                      connect (nij , n(i+1)j )                                                     if j > j2 then
+                  elseif j < N & i = 2M                                                                           (4)               (1)
+                                                                                                        connect (p(2M −i1 +1)j , p(i1 )(j−1) )
+                                (3)   (1)
+                      connect (nij , ni(j+1) )                                                     end
+                  end                                                                        end
+            end
+      end                                                                          ∗: j2 is the row number of the lowest cells related to HV
+                                                                                     winding in Fig. 5.
+   ∗: j is the row number of the cell.                                             ∗∗: j3 is the row number of the highest cells related to HV
+   ∗∗: N is the total number of rows in Fig. 5.                                        winding in Fig. 5.
+   ∗∗∗: i is the column number of the cell.                                        ∗∗∗: i1 is the column number of the leftmost cells related
+  ∗∗∗∗: M is total number of columns in Fig. 5.                                         to HV winding in Fig. 5.
+                                                                                   ∗∗∗∗ :2M − i1 + 1 is the column number of the rightmost
+                                                                                         cells related to right part of HV winding which due to
+                                                                                         the symmetry has not been shown in Fig. 5.
+another, with the faulty part is also being connected to the
+impedance of the fault. The steps in the prior section are almost
+followed to model internal faults. However, because additional
+parts have been introduced, new elements must be defined, their                 as shown at the bottom of this page where Np is the number of
+parameters set, and their connections made.                                     turns of HV winding. And for the turn to earth fault shown in
+                                                                                                        
+   A pair of mutators are added to the model exclusively for                    Fig. 8(a), Wp and Wp are the width of the faulty and healthy
+each part of the faulty winding that was deemed as a separate                   parts of HV winding, X0 , X0 , Y1 and Y2 are the horizontal and
+winding. Fig. 9 shows three new defined element types (Type-                    vertical coordinates of the faulty part of HV winding and X0 ,
+                                                                                  
+B1 , Type-B2 , and Type-C1) for a case involving a coil-to-earth                X0 , Y1 and Y2 are the horizontal and vertical coordinates of the
+fault. For a turn-to-turn fault case, four new defined elements                 healthy part of HV winding. And for the turn-to-turn fault shown
+                                                                                                           
+are displayed in Fig. 10. The parameters of the new mutators                    in Fig. 8(b), Wp and Wp are the widths of the healthy parts of
+                                                                                                     
+shown in Fig. 9 and Fig. 10 are given by (20), (21) and (22),                   HV winding, and Wp is the width of the faulty part. X0 , X0 , Y1
+
+                             ⎧ N (y −y )         xi−1 +xi
+                             ⎨ p2Wjp Hj−1
+                                      p             2     − X0        xi−1 ≥ X0 ,         x i ≤ X1 ,        yj−1 ≥ Y1 ,       yj ≤ Y 2
+                     βij =                                                                                                                             (18)
+                             ⎩ Np (yj −yj−1 )                          xi−1 ≥ X1 ,         x i ≤ X4 ,        yj−1 ≥ Y1 ,          yj ≤ Y 2
+                                     2Hp
+                             ⎧
+                                 (yj −yj−1 )     xi−1 +xi
+                             ⎨ Ns2W   H             2     − X2        xi−1 ≥ X2 ,         x i ≤ X3 ,        yj−1 ≥ Y0 ,       yj ≤ Y 3
+                                       s   s
+                     γij =                                                                                                                             (19)
+                             ⎩ Ns (yj −yj−1 )                         xi−1 ≥ X3 ,         x i ≤ X4 ,        yj−1 ≥ Y0 ,      yj ≤ Y 3
+                                     2Hs
+
+
+
+                              ⎧ Np (yj −yj−1 )   xi−1 +xi
+                              ⎨ 2Wp Hp              2     − X0         xi−1 ≥ X0 ,         xi ≤ X0 ,        yj−1 ≥ Y1 ,          yj ≤ Y 2
+                       
+                      βij =                                                                                                                            (20)
+                              ⎩ Np Wp (yj −yj−1 )                     xi−1 ≥ X0 ,        x i ≤ X4 ,        yj−1 ≥ Y1 ,          yj ≤ Y 2
+                                      2Wp Hp
+                              ⎧
+                              ⎪ N (y −y    )     xi−1 +xi                                            
+                              ⎨ p2Wjp Hj−1
+                                        p           2     − X0        xi−1 ≥ X0 ,        x i ≤ X0 ,        yj−1 ≥ Y1 ,          yj ≤ Y 2
+                       
+                      βij =                                                                                                                            (21)
+                              ⎪     
+                              ⎩ Np Wp (yj −yj−1 )                                    
+                                      2Wp Hp                            xi−1 ≥ X0 ,         x i ≤ X4 ,        yj−1 ≥ Y1 ,         yj ≤ Y 2
+                              ⎧
+                              ⎪ N (y −y    )     xi−1 +xi                          
+                              ⎨ p2Wjp Hj−1
+                                        p           2     − X0          xi−1 ≥ X0 ,        x i ≤ X1 ,         yj−1 ≥ Y0 ,         yj ≤ Y 3
+                       
+                      βij =                                                                                                                            (22)
+                              ⎪
+                              ⎩
+                                      
+                                  Np Wp (yj −yj−1 )
+                                      2Wp Hp                            xi−1 ≥ X1 ,        x i ≤ X4 ,         yj−1 ≥ Y0 ,         yj ≤ Y 3
+
+
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 14:03:59 UTC from IEEE Xplore. Restrictions apply.
+5408                                                                               IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 37, NO. 6, DECEMBER 2022
+
+
+
+
+ Algorithm 3: Electric Connections for LV Winding.
+         for j ← j1∗ to j4∗∗ do
+             for i ← i∗∗∗
+                      2    to (2M − i2 ) do
+                             (2) (1)
+                 connect (sij , s(i+1)j )
+                                    (4)   (3)
+                       connect (sij , s(i+1)j )
+                   end
+                             (2)                  (3)
+                   connect (s(2M −i2 +1)∗∗∗∗ j , s(i2 )j )
+                   if j > j1 then
+                                  (4)               (1)
+                        connect (s(2M −i2 +1)j , s(i2 )(j−1) )
+                   end
+             end
+
+   ∗: j1 is the row number of the lowest cells related to LV
+      winding in Fig. 5.
+   ∗∗: j4 is the row number of the highest cells related to LV
+       winding in Fig. 5.
+   ∗∗∗: i2 is the column number of the leftmost cells related
+        to LV winding in Fig. 5.
+   ∗∗∗∗: 2M − i2 + 1 is the column number of the rightmost                         Fig. 9.    Circuits of cell types related to the mesh generated in Fig. 8(a).
+          cells related to right part of LV winding which due to
+          the symmetry has not been shown in Fig. 5.
+
+
+
+
+Fig. 8. Meshes generated for a portion of a faulty transformer with fault on
+the middle column’s HV winding. (a) Turn to earth fault. (b) Turn to turn fault.   Fig. 10.    Circuits of cell types related to the mesh generated in Fig. 8(b).
+
+
+                                                                                   three-phase three-leg transformer, except that two additional
+and Y2 are the horizontal and vertical coordinates of the healthy                  columns with no winding contain only type-A elements with
+part of HV winding which is on the left side of the faulty part and                nonlinear reluctances and they don’t have the coupling elements
+        
+X0 , X0 , Y1 and Y2 are the horizontal and vertical coordinates                   (mutators).
+                                               
+of the faulty part of HV winding and X0 , X0 , Y1 and Y2 are
+the horizontal and vertical coordinates of the healthy part of HV
+winding which is located on the right side of the faulty part.                                           V. RESULTS AND VALIDATION
+The rules for all magnetic/electric connections of the model are                      In this section, the proposed DRNM approach is implemented
+identical to the rules outlined in the preceding section. Except                   for the three-phase transformer shown in Fig. 4, whose charac-
+that the faulty winding is divided into distinct windings, and the                 teristics are listed in Table I and dimensions are listed in Table II,
+connections between the mutators for each distinct winding are                     as well as the magnetic properties of the iron core, are presented
+made by the procedure presented in Algorithm 4.                                    in Table III. The DRNM approach is implemented using EMTP
+   Until now, we have discussed the model creation procedure                       [1] and FEM is solved using ANSYS Electromagnetics.
+for a three-phase three-leg transformer. For a three-phase five-                      Initially, we must determine the suitable mesh size before we
+leg transformer, all of the steps are identical to those for a                     can obtain the results. In a similar way to FEM, the accuracy that
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 14:03:59 UTC from IEEE Xplore. Restrictions apply.
+PORDANJANI et al.: ELECTROMAGNETIC MODELING OF TRANSFORMERS IN EMT-TYPE SOFTWARE                                                                             5409
+
+
+
+
+ Algorithm 4: Electric Connections for HV Winding.
+         for j ← j2 to j3 do
+                        ∗   ∗∗   ∗∗∗
+             for w ←{i1 , i1 , i1 }
+             for i ← w to (2M − w) do
+                               (2) (1)
+                   connect (pij , p(i+1)j )
+                                   (4)    (3)
+                      connect (pij , p(i+1)j )
+               end
+                          (2)               (3)
+               connect (p(2M −w+1)∗∗∗∗ j , p(w)j )
+                if j > j2 then                                                  Fig. 11.   Convergence of a global metric (blue) and a local metric (red).
+                                (4)             (1)
+                      connect (p(2M −w+1)j , p(w)(j−1) )
+               end
+            End
+      end
+      
+  ∗: i1 : for turn-to-earth fault in Fig. 8(a) is the column
+     number of the leftmost cells related to the faulty part of
+     HV winding called part 2a, and for turn-to-turn fault
+     shown in Fig. 8(b) is the column number of the leftmost
+     cells related to the healthy part of HV winding called
+     part 2a.
+       
+  ∗∗: i1 : for turn to earth fault in Fig. 8(a) is the column
+      number of the leftmost cells related to the healthy part                  Fig. 12.   V-I characteristic for open-circuit.
+      of HV winding and for turn to turn fault in Fig. 8(b) is
+      the column number of the leftmost cells related to the
+      faulty part of HV winding called part 2b.
+          
+  ∗∗∗: i1 : for turn-to-turn fault in Fig. 8(b) is the column
+        number of the leftmost cells related to the healthy part
+        of HV winding called part 2c.
+  ∗∗∗∗: 2M − w + 1 is the column number of the rightmost
+           cells related to right part of different sections of HV
+           windings which due to the symmetry has not been
+           shown in Fig. 8.
+
+
+
+can be obtained from DRNM is directly related to the mesh that is               Fig. 13.   Primary winding currents in three phases during open-circuit.
+used. As the elements are reduced in size and the mesh is refined,
+the computed solution will approach the true solution. However,
+as the number of elements increases, the computational burden                   compared to those obtained from FEM in 2-D. They are around
+increase, and as a result, a technique known as mesh refinement                 1-2 percent close in linear operating conditions, and 3-4 percent
+is used. Mesh refinement is a process in which the mesh size is                 close in saturated operating conditions. In addition, as an ex-
+successively reduced, and the results are compared. Two mesh                    ample, the current of the primary windings has been shown in
+refinement metrics are investigated to determine whether the                    Fig. 13, when the voltage exciting the primary winding is set to
+mesh refinement has resulted in a converged solution. One local                 20 kV and the secondary winding is open-circuit. The results
+metric and one global metric are used in this paper. The local                  are extremely similar to those obtained by using FEM.
+metric is the magnetic flux amplitude in a single spot on the                      Second, in order to obtain short-circuit results, the secondary
+core, while the global metric is the current of the HV winding.                 winding is short-circuited, and the current of the primary wind-
+Fig. 11 illustrates the convergence of both the global (red) and                ing which has been excited at various voltage levels is derived. In
+local (blue) metrics with 1% error bars in comparison to the                    Fig. 14, the DRNM results for the voltage-current characteristic
+most refined solution. After weighing all of these factors, the                 of the primary winding are compared to the FEM results, and
+mesh size for DRNM is set to 2848. In addition, the FEM mesh                    they differ by roughly 2-3 percent. Fig. 15 shows the current of
+includes 3292 elements.                                                         the primary winding when its excitation voltage is set to 1000 V
+   First, open-circuit results are acquired by unloading the sec-               and the secondary winding is short circuited. Again, the DRNM
+ondary, exciting the primary winding at various voltage levels,                 results for a short-circuit are matched with FEM results.
+and deriving the current in the primary winding. In Fig. 12,                       DRNMs, like FEM, can reflect the internal behavior of mag-
+rms voltage-current characteristics derived from DRNM are                       netic devices. For example, as illustrated in Fig. 16, the magnetic
+
+          Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 14:03:59 UTC from IEEE Xplore. Restrictions apply.
+5410                                                                               IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 37, NO. 6, DECEMBER 2022
+
+
+
+
+                                                                                  Fig. 18. Flux density distribution in transformer under unbalanced operating
+                                                                                  condition (zero-sequence flux paths) in (a) three-leg transformer and (b) five-leg
+                                                                                  transformer.
+
+Fig. 14.   V-I characteristic while short-circuiting the secondary side.
+
+
+
+
+                                                                                  Fig. 19. Description of the circuit of transformer energization (transformer
+                                                                                  with Star-Delta connection and secondary is unloaded).
+
+
+
+                                                                                  been able to provide a good resolution of flux paths in such a way
+Fig. 15.   Primary winding currents in three phases during short-circuit.         that even the flux distribution in the edges has been successfully
+                                                                                  represented.
+                                                                                     Furthermore, DRNM is capable of depicting the behavior
+                                                                                  of magnetic flux paths when operating under unbalanced op-
+                                                                                  erating conditions. For a three-leg transformer and a five-leg
+                                                                                  transformer, examples of flux distributions for an unbalanced
+                                                                                  operating condition involving zero-sequence flux paths were
+                                                                                  derived using DRNM, and they are depicted in Fig. 18(a) and
+                                                                                  (b). As can be seen, the zero-sequence flux in the three-leg core
+                                                                                  is unable to close its paths within the core and is forced to
+                                                                                  close them through the tank. Furthermore, it can be seen that
+                                                                                  DRNM has been able to present peak values of flux densities
+                                                                                  that can be used to detect the positions of spots that are likely
+Fig. 16. Magnetic flux density B regarding a point placed exactly in the center   to experience excessive local heating. However, in the case of
+of left air-gap between the HV and LV windings of phase A.
+                                                                                  a five-leg transformer, the zero-sequence flux closes the path
+                                                                                  through the two additional legs that lack windings, and it can be
+                                                                                  seen that DRNM accurately depicts the flux density distribution
+                                                                                  in this case.
+                                                                                     To demonstrate that the proposed model can be used to study
+                                                                                  transformer electromagnetic transients, an example of energiz-
+                                                                                  ing the transformer connected to an RL impedance and a voltage
+                                                                                  source (the circuit has been shown in Fig. 19) is investigated.
+                                                                                  The 3 phases are energized simultaneously. The inrush current
+Fig. 17. Flux density distribution for (a) open-circuit and (b) short-circuit     generated by DRNM is compared to that of FEM. The phase
+condition.                                                                        b inrush currents are shown in Fig. 20. The maximum relative
+                                                                                  error between DRNM and FEM is 3 percent.
+                                                                                     Finally, DRNM’s capacity to represent internal faults is
+flux of a local point, calculated by DRNM and FEM, are very                       demonstrated. To begin, only the phase on the middle column
+similar. Also, it is essential to represent how magnetic flux is                  of the core is considered energized to validate the accuracy of
+distributed across a transformer’s core, windings, and air in                     DRNM in representing the leakage flux paths during internal
+order to calculate core losses and determine magnetic flux paths                  faults. Transformer windings are multi-layered in this case, with
+under various operating conditions. Fig. 17 shows two examples                    ten layers in the high-voltage winding.
+of flux distribution for open-circuit and short-circuit operating                    First, an internal fault with resistance Rf between the
+conditions derived by DRNM. It is apparent that DRNM has                          second and third layers of the HV winding is investigated.
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 14:03:59 UTC from IEEE Xplore. Restrictions apply.
+PORDANJANI et al.: ELECTROMAGNETIC MODELING OF TRANSFORMERS IN EMT-TYPE SOFTWARE                                                                              5411
+
+
+
+
+Fig. 20.   Inrush currents, solved with DRNM and FEM.                             Fig. 22. Per unit current of the affected winding for different fault resistance
+                                                                                  and different fault locations in the HV winding. (The base current in this figure
+                                                                                  is the winding current when there is no fault).
+
+
+
+
+Fig. 21. Currents during an inter-turn fault with Rf = 3 Ω, Rload
+= 1.3681 Ω.                                                                       Fig. 23. Per unit current of the affected winding for different fault resistance
+                                                                                  and different fault locations in the LV winding. (The base current in this figure
+                                                                                  is the winding current when there is no fault).
+
+The HV winding is connected at its nominal voltage in this
+case, whereas the LV winding is connected to a resistive load of
+Rload = 1.37 Ω which makes nominal current to flow through
+the transformer. The currents of the healthy and faulty sections
+of the HV winding, denoted by Ip and If , as well as the current
+of the LV winding, denoted by Is , are determined using DRNM
+and FEM for various values of Rf . Fig. 21 shows the Ip , Is , and
+If derived for Rf = 3 Ω.
+   Second, to demonstrate DRNM’s robustness for representing
+various internal faults, we calculated fault currents for various
+fault locations and fault resistances using DRNM and compared
+                                                                                  Fig. 24.   DRNM vs. FEM in terms of computation time.
+them to those obtained using FEM. When the fault is located at
+a distance of 5% of coil from the neutral point, the fault current
+for various fault resistors is calculated first, and then the fault
+current for various fault resistors is calculated at fault located                is approximately eight times faster than FEM under linear op-
+at distances of 10, 20, 30, and 40% of coil from the neutral                      eration conditions. Additionally, DRNM is approximately three
+point. This procedure is performed for both windings, one fault                   times faster than FEM in saturated operation conditions with a
+is occurring in the HV winding and another fault is in the LV                     high degree of nonlinearity. DRNM is computationally faster
+winding.                                                                          than FEM since it solves equations that are simpler, as DRNM
+   Figs. 22 and 23 illustrate the derived fault currents for internal             considers the flux path in two directions, whereas FEM considers
+faults in HV and LV windings using both DRNM and FEM. The                         it in multiple directions. Furthermore, contrary to DRNM, where
+difference between DRNM and FEM is less than 2% in cases                          the direction of the flux path is known prior to application, in
+where the faulty coil section exceeds 20% of the coil and around                  FEM, the direction of the flux path is also one of the unknowns
+4% in cases where the faulty coil section is less than 20% of the                 that must be determined. Notably, the speed advantage of DRNM
+coil.                                                                             over FEM is better demonstrated when modelling transformers
+   One of the critical characteristics of DRNM that should be                     in large power systems.
+compared to FEM is their computational speed. To accomplish                           In this paper the core losses have not been considered. The
+this, simulations were run for 32 ms with a 1 μs time step, and                   DRNM is proposed primarily for studies of steady-state oper-
+as previously stated, the mesh size for DRNM is 2848, while the                   ation, inrush currents, ferroresonance, internal faults between
+mesh size for FEM is 3292. As can be seen in Fig. 24, DRNM                        turns or windings, or to determine the zero-sequence impedance
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 14:03:59 UTC from IEEE Xplore. Restrictions apply.
+5412                                                                               IEEE TRANSACTIONS ON POWER DELIVERY, VOL. 37, NO. 6, DECEMBER 2022
+
+
+
+and air-core inductances. However, we will integrate eddy cur-                     [3] S. Jazebi et al., “Duality derived transformer models for low-frequency
+rent losses in future work, which may be deduced from the                              electromagnetic transients—Part I: Topological models,” IEEE Trans.
+                                                                                       Power Del., vol. 31, no. 5, pp. 2410–2419, Oct. 2016.
+approach described in [22]. In which a coupled technique is                        [4] A. Rezaei-Zare, “Enhanced transformer model for Low- and Mid-
+used between the RNM and the eddy current circuit models.                              Frequency transients—Part I: Model development,” IEEE Trans. Power
+                                                                                       Del., vol. 30, no. 1, pp. 307–315, Feb. 2015.
+                                                                                   [5] M. Lambert, M. Martínez-Duró, A. Rezaei-Zare, and J. Mahseredjian,
+                            VI. CONCLUSION                                             “Topological transformer leakage modeling with losses,” IEEE Trans.
+                                                                                       Power Del., vol. 35, no. 6, pp. 2692–2699, Dec. 2020.
+   A new meshed approach was proposed in this paper to make                        [6] M. Akbari, A. Rezaei-Zare, M. A. M. Cheema, and T. Kalicki, “Air
+circuit-based methods as similar to FEMs as possible, in order                         gap inductance calculation for transformer transient model,” IEEE Trans.
+to provide a detailed representation of transformers in power                          Power Del., vol. 36, no. 1, pp. 492–494, Feb. 2021.
+                                                                                   [7] M. Lambert, J. Mahseredjian, M. M. Duró, and F. Sirois, “Magnetic
+networks. This proposed approach can also be applied to any                            circuits within electric circuits: Critical review of existing methods and
+transformer topology. It was demonstrated that the proposed                            new mutator implementations,” IEEE Trans. Power Del., vol. 30, no. 6,
+technique can accurately portray the internal and external behav-                      pp. 2427–2434, Dec. 2015.
+                                                                                   [8] P. Silvester and R. Ferrari, Finite Elements for Electrical Engineers, 2nd
+ior of three-phase transformer. And it can be used to investigate                      ed., Cambridge, U.K.: Cambridge Univ. Press, 1990.
+the transformer in both steady-state and transient state. The                      [9] K. Yamada, Y. Takahashi, and K. Fujiwara, “Simplified 3-D modeling for
+proposed method can be utilized to represent internal faults in                        skewed rotor slots with end-ring of cage induction motors,” IEEE Trans.
+                                                                                       Magn., vol. 52, no. 3, Mar. 2016, Art. no. 8101604.
+transformers in such a way that not only can leakage flux path                    [10] F. Meng, D. Wang, Z. Liu, and W. Su, “Fast circuit-field coupling analysis
+be accurately represented, but also the effect of the core can                         for skewed induction motor,” IEEE Trans. Ind. Electron., vol. 68, no. 6,
+be considered. Both turn to earth and turn-to-turn faults can be                       pp. 5088–5099, Jun. 2021.
+                                                                                  [11] S. Dennetière, Y. Guillot, J. Mahseredjian, and M. Rioual, “A link between
+modelled using this approach. This approach can also be used                           EMTP-RV and FLUX3D for transformer energization studies,” in Proc.
+to model multi-winding transformers that are often employed in                         Int. Conf. Power Syst. Transients, 2007, pp. 5088–5099.
+power electronic applications. The derived results were validated                 [12] J. Hopkinson and E. Hopkinson, “Dynamo-electric machinery,” Philos.
+                                                                                       Trans. Roy. Soc. A, vol. 177, pp. 331–358, 1886.
+using the FEM, and it was determined that they were extremely                     [13] J. Turowski, M. Turowski, and M. Kopec, “Method of three-dimensional
+similar to the FEM results, with an error of less than 3% in most                      network solution of leakage field of three-phase transformers,” IEEE
+situations, showing high modelling accuracy.                                           Trans. Magn., vol. 26, pp. 2911–2919, no. 5, Sep. 1990.
+                                                                                  [14] J. Turowski, “Fast computation of coupled fields in complex, 3-D, indus-
+                                                                                       trial electromagnetic structures,” COMPEL, vol. 17, no. 4, pp. 489–505,
+                                 APPENDIX                                              1998.
+                                                                                  [15] X. M. Lopez-Fernandez and C. Alvarez-Marino, P. Penabad-Duran, and J.
+                                  TABLE I                                              Turowski, “RNM2D_0 fast stray losses hazard evaluation on transformer
+                      SPECIFICATIONS OF TRANSFORMER                                    tank wall & cover due to zero sequence,” in Proc. 3rd Int. Adv. Res.
+                                                                                       Workshop Transformers, 2010, pp. 338–343.
+                                                                                  [16] J. Sykulski, J. Stoll, R. Sikora, K. Pawluk, J. Turowski, and K. Zakrzewski,
+                                                                                       Computational Magnetics. London, U.K.: Chapman & Hall, 1995.
+                                                                                  [17] R. Prieto, J. A. Cobos, O. Garcia, P. Alou, and J. Uceda, “Model of
+                                                                                       integrated magnetics by means of ‘double 2D’ finite element analysis
+                                                                                       techniques,” in Proc. 30th Annu. IEEE Power Electron. Specialists Conf.,
+                                                                                       1999, pp. 598–603.
+                              TABLE II                                            [18] M. Naïdjate et al., “An intelligent reluctance network model for the study
+          DESIGN AND GEOMETRICAL PARAMETERS OF TRANSFORMER                             of large power and distribution transformers,” in Proc. 6th Int. Adv. Res.
+                                                                                       Workshop Transformers, Córdoba, Spain, 2019, pp. 89–92.
+                                                                                  [19] L. M. R. Oliveira and A. J. M. Cardoso, “Leakage inductances calculation
+                                                                                       for power transformers interturn fault studies,” IEEE Trans. Power Del.,
+                                                                                       vol. 30, no. 3, pp. 1213–1220, Jun. 2015.
+                                                                                  [20] S. C. Athikessavan, E. Jeyasankar, S. S. Manohar, and S. K. Panda, “Inter-
+                                                                                       turn fault detection of dry-type transformers using core-leakage fluxes,”
+                                                                                       IEEE Trans. Power Del., vol. 34, no. 4, pp. 1230–1241, Aug. 2019.
+                                                                                  [21] L. O. Chua, “Synthesis of new nonlinear network elements,” Proc. IEEE,
+                                                                                       vol. 56, no. 8, pp. 1325–1340, Aug. 1968.
+                                                                                  [22] K. Nakamura, S. Hisada, K. Arimatsu, T. Ohinata, K. Sakamoto, and O.
+                              TABLE III                                                Ichinokura, “Iron loss calculation in a three-phase-laminated-core variable
+       B-H CURVE OF THE MAGNETIC CHARACTERISTIC OF THE IRON CORE                       inductor based on reluctance network analysis,” IEEE Trans. Magn.,
+                                                                                       vol. 45, no. 10, pp. 4781–4784, Oct. 2009.
+
+
+
+
+                                  REFERENCES
+                                                                                  Sadegh Rahimi Pordanjani received the B.Sc. degree in electrical engineering
+ [1] J. Mahseredjian, S. Dennetière, L. Dubé, B. Khodabakhchian, and L.           from the Isfahan University of Technology, Isfahan, Iran, in 2013, and the M.Sc.
+     Gérin-Lajoie, “On a new approach for the simulation of transients in power   degree in electrical engineering from the University of Tehran, Tehran, Iran,
+     systems,” Electric Power Syst. Res., vol. 77, no. 11, pp. 1514–1520, 2007.   in 2016. He is currently working toward the Ph.D. degree with Polytechnique
+ [2] J. A. Martinez and B. A. Mork, “Transformer modeling for low- and mid-       Montreal, Montreal, QC, Canada. Since April 2022, he has been with OPAL-RT,
+     frequency transients—A review,” IEEE Trans. Power Del., vol. 20, no. 2,      where his work focuses on power system modeling and real-time simulation.
+     pp. 1625–1632, Apr. 2005.                                                    His research focuses on electromagnetic transients in power systems.
+
+
+
+           Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 14:03:59 UTC from IEEE Xplore. Restrictions apply.
+PORDANJANI et al.: ELECTROMAGNETIC MODELING OF TRANSFORMERS IN EMT-TYPE SOFTWARE                                                                               5413
+
+
+
+Mohammed Naïdjate received the Engineering degree in electronics and               Jean Mahseredjian (Fellow, IEEE) received the Ph.D. degree in electrical
+the master’s degree in photovoltaic physics from the University of Laghouat,       engineering from Polytechnique Montréal, Montréal, QC, Canada, in 1991.
+Laghouat, Algeria, in 2009 and 2012, respectively, and the Ph.D. degree in         From 1987 to 2004, he was with IREQ (Hydro-Québec), Montréal, QC, Canada,
+2021. He was an Assistant Professor with the Ecole Normale Supérieure of           where he worked on research and development activities related to the simulation
+Laghouat from 2012 to 2017, and then a Researcher with the University of           and analysis of electromagnetic transients. In December 2004, he joined the
+Nantes, Nantes, France, from 2017 to 2022. He is currently conducting his          Faculty of Electrical Engineering, Polytechnique Montréal.
+postdoctoral research with the Ecole Polytechnique of Montreal, Montreal, QC,
+Canada. His research interests include electromagnetic (EM) devices modeling,
+computational electromagnetics, and the conception of electromagnetic sensors.
+
+
+
+
+Nicolas Bracikowski received the B.Sc. and M.Sc. degrees in electrical en-         Afshin Rezaei-Zare (Senior Member, IEEE) received the B.Sc., M.Sc., and
+gineering from the University of Artois, Artois, France, and the Ph.D. degree      Ph.D. degrees (with Hons.) in electrical engineering from the University of
+from Ecole Centrale de Lille, Lille, France, in 2012. Since 2013, he has been an   Tehran, Tehran, Iran, in 1998, 2000, and 2007, respectively. From 2007 to
+Associate Professor with Nantes University, Nantes, France, where he carries       2009, he was a Postdoctoral Fellow with the Department of Electrical and
+out research with IREENA Laboratory. His research interests include optimal        Computer Engineering, University of Toronto, Toronto, ON, Canada. From
+design of electrotechnical device, multiphysics lumped models, and acoustic        2010 to 2017, he was with the Department of Special Studies, Hydro One
+noise in electrical machine.                                                       Networks Inc., Toronto, ON, Canada. In 2017, he joined the Department of
+                                                                                   Electrical Engineering and Computer Science, York University, Toronto, ON,
+Mircea Fratila graduated in electrical engineering from the University Po-         Canada, as an Associate Professor. His research interests include power system
+litehnica of Bucharest, Bucharest, Romania, in 2009, and the Ph.D. degree in       resilience to geomagnetic disturbances, electromagnetic transients in power sys-
+electrical engineering from the University of Lille 1, Lille, France, in 2012.     tems, microgrids, and electrified transportation. He is a registered Professional
+In 2014, he joined Electricité de France, R&D Division, France, and has            Engineer in the Province of Ontario, Canada, and an Associate Editor for the
+been deeply involved in rotating electrical machines modeling for diagnostic       IEEE TRANSACTIONS ON POWER DELIVERY and IEEE POWER ENGINEERING
+purposes.                                                                          LETTERS.
+
+
+
+
+            Authorized licensed use limited to: Tsinghua University. Downloaded on April 09,2026 at 14:03:59 UTC from IEEE Xplore. Restrictions apply.
+

@@ -1,0 +1,728 @@
+Received June 8, 2020, accepted August 11, 2020, date of publication August 20, 2020, date of current version September 1, 2020.
+Digital Object Identifier 10.1109/ACCESS.2020.3018323
+
+
+
+
+Application of Duality-Based Equivalent Circuits
+for Modeling Multilimb Transformers Using
+Alternative Input Parameters
+MOHAMMAD SHAFIEIPOUR 1 , (Member, IEEE), WALDEMAR ZIOMEK2 , (Senior Member, IEEE),
+ROHITHA P. JAYASINGHE 1 , (Member, IEEE), JUAN CARLOS GARCIA ALONSO1 ,
+AND ANIRUDDHA M. GOLE3 , (Life Fellow, IEEE)
+1 Manitoba Hydro International Ltd., Winnipeg, MB R3P 1A3, Canada
+2 PTI Transformers LP, Winnipeg, MB R3T 0L7, Canada
+3 Department of Electrical and Computer Engineering, University of Manitoba, Winnipeg, MB R3T 2N2, Canada
+
+Corresponding author: Mohammad Shafieipour (mohammad.shafieipour@sestech.com)
+
+
+
+
+  ABSTRACT The principle of duality is applied for electromagnetic transient (EMT) modeling of industry
+  scale (i.e. 50, 390 MVA) multilimb transformers. While saturation, hysteresis, deep-saturation, and remanent
+  flux are accounted for, the need for transformer internal design information such as core dimension or
+  material is eliminated. This is achieved by formulating the equivalent circuits with an alternative set of
+  parameters that are either provided by the manufacturer or can be determined using conventional techniques.
+  Open-circuit tests confirm that the models produce accurate excitation currents at different saturation levels
+  when compared with measurement results. Furthermore, the models facilitate correct short-circuit condition
+  with support for arbitrary number of windings. Upon validating the models, inrush current is simulated and
+  the worst-case scenario is determined due to potential remanent flux values. The findings agree with an
+  established EMT simulation model as well as manufacturer analytical approximations. Simulated hysteresis
+  loops are also investigated.
+
+
+  INDEX TERMS Principle of duality, 3-limb and 5-limb transformer models, miltilimb multiwinding
+  transformers, inrush current, remanent flux, hysteresis loop, electromagnetic transient.
+
+
+
+I. INTRODUCTION                                                                                generally increased in recent years. One important example
+In recent years, the importance of sustainable development                                     of such equipment are three-phase transformers which are
+has urged the electric power generation industry to rapidly                                    constructed on a single multilimb core as it is economi-
+expand investments in environmental-friendly forms of gen-                                     cally and logistically more advantageous to build small- and
+erating electric power such as solar and wind power tech-                                      medium-sized transformers on a single core. Such cores are
+nologies. Therefore, interest have grown in using power                                        typically 3-legged or 5-legged as depicted in Fig. 1. Conse-
+system equipment that facilitates generation, transmission                                     quently in recent years, there has been an increased demand
+and distribution of electric power resulted from renew-                                        for more accurate and numerically robust three- and five-limb
+able energy. This includes power electronics, solar photo-                                     transformer models for wide-band [1] and low-frequency
+voltaics, inverter transformers, etc. Moreover, grids which                                    [2] electromagnetic transient (EMT) analysis. Among the
+carry renewable energy typically consist of a combination                                      available techniques for the latter, the principle of duality
+of small- and medium-sized inverter-based generators such                                      has been shown to be accurate and numerically robust for
+as solar panels and wind turbines as well as energy storage                                    modeling many transformer topologies including multilimb
+systems such as batteries and flywheels. As a result, the use                                  cores [3]–[9]. Such models require internal design informa-
+of small- and medium-sized power system equipment has                                          tion (e.g. core material, core dimensions, number of turns
+                                                                                               in the windings) or results from unconventional tests (i.e.
+   The associate editor coordinating the review of this manuscript and                         with open terminals) in order to determine parameters of
+approving it for publication was Mehmet Alper Uslu.                                            the magnetizing branches. These parameters are pertinent to
+
+                     This work is licensed under a Creative Commons Attribution 4.0 License. For more information, see https://creativecommons.org/licenses/by/4.0/
+VOLUME 8, 2020                                                                                                                                                        153353
+                                                      M. Shafieipour et al.: Application of Duality-Based Equivalent Circuits for Modeling Multilimb Transformers
+
+
+
+
+                                                                                  the extent to which different parts of the transformer geom-
+                                                                                  etry are to be discretized. That is, how many magnetizing
+                                                                                  branches (linear or non-linear) are used to model different
+                                                                                  parts of the iron core and possibly tank, as well as how many
+                                                                                  linear elements are used to represent the leakage inductances.
+                                                                                  In this section, the principles that are followed in this paper
+                                                                                  are discussed. Throughout the paper, discussions are made for
+FIGURE 1. Principle of duality directly applied on the iron core of
+(a) 3-limb and (b) 5-limb transformers.                                           both 3- and 5-limb core models where winding limb (w) and
+                                                                                  yoke (y) apply to both cases, while outer limb (o) is only
+open-circuit test condition and heavily influence saturation                      applicable to the 5-limb case.
+studies. This is a practical limitation as such information is
+seldom available. Furthermore, to the best of our knowledge,                      1) IRON CORE
+available multilimb transformer models are limited to 2- and                      Different authors have proposed different approaches for
+3-winding cases. This is perhaps due to the difficulties arising                  modeling the iron core of multilimb transformers based on
+in the enforcement of zero-sequence leakage inductances                           the principle of duality [3], [5]–[9]. Finer discretizations
+for arbitrary number of windings. Although in this paper                          (i.e. using more non-linear inductors to represent the iron
+we do not provide a solution to this problem and neglect                          core) are believed to produce more accurate results. However,
+zero-sequence tests, we attempt to clarify this difficulty for                    when forming duality-based transformer models in EMT-type
+future studies. It should be noted that while transformers do                     programs, it is not only required to correctly represent the
+not typically have more than three physical windings, inclu-                      magnetic behavior of the device, it is also imperative to
+sion of different tap positions with accessible terminals in                      define the circuit parameters based on the available data.
+EMT simulations requires transformer models to be extended                        Fig. 1 depicts the approach taken in this paper for 3- and
+beyond the physical number of windings and thus essential in                      5-limb cases. This is a generalization from linear inductors
+some EMT studies.                                                                 in [15] to non-linear inductors and linear resistors. That is,
+   In this paper, we formulate duality-derived models with                        in accordance with the guidelines for slow transients [16], the
+an alternative set of required input parameters. They are                         non-linear (hysteresis) inductances model saturation, hystere-
+namely; the nameplate data, factory acceptance test (FAT)                         sis, and deep-saturation phenomena, while linear resistances
+report, core aspect-ratios, air-core inductance, hysteresis                       account for the core eddy current loss. Note that in Fig. 1 and
+loop width, and the knee voltage. The resulting equivalent                        throughout the paper, parameters with a tilde (e.g. L̃) have
+circuits fall into the category of gray-box models [3] as                         saturable/hysteresis nature, otherwise they are assumed to be
+they are configured to match the target topology (Fig. 1)                         linear (e.g. R). It was shown in [15] that discretizing the iron
+with parameters to be determined. Since all the required                          core of 3- and 5-limb transformers as shown in Fig. 1, allows
+parameters are traditionally used in EMT computations                             for determining the linear magnetizing parameters. It does not
+[10]–[13], they are either provided by the manufacturer or                        require detail information about the core or unconventional
+can be obtained via conventional calculation, measurement,                        tests. Instead, it ensures the accuracy of EMT simulations for
+or approximation techniques, some of which are reviewed in                        the open-circuit condition based on the core aspect-ratios
+this paper (Section II-E). Consequently, the models exhibit
+                                                                                                   sy              ly             sy             ly
+accurate open-circuit test behavior. In order to ensure correct                             rs =      ,     rl =      ,   rs0 =      ,   rl0 =      .        (1)
+short-circuit test condition, the method of [14] is applied to                                     sw              lw             so             lo
+multilimb core models with support for arbitrary number of                        In (1), the cross-sectional area and the effective length of
+windings. The resulting duality-based equivalent circuits are                     the winding limbs (sw , lw ), yokes (sy , ly ), and outer limbs
+used to model a 50 MVA 3-limb 3-winding transformer and                           (so , lo ) are as shown in Fig. 1. In [15], it was shown that
+a 390 MVA 5-limb 2-winding unit. Results are compared                             by knowing the magnetizing current Im along with rs and
+against excitation current measurements under several satura-                     rl of a 3-limb core transformer, it is possible to compute
+tion conditions as well as leakage inductance tests. To accom-                    linear inductances for winding limb Lw and yoke Ly with
+modate the study, sufficient saturation levels of the core have                   machine precision accuracy. The 5-limb core construction
+been achieved at the manufacturer’s testing facility despite                      was also discussed where in addition to rs and rl , the core
+the industrial scales of the transformers. Subsequently, the                      aspect-ratios for the outer limb (i.e. rs0 and rl0 ) along with Im
+models are used for calculating inrush current due to different                   could be used to precisely compute linear inductances for
+remanent flux scenarios. Finally, the computed hysteresis                         the winding limb Lw , yoke Ly , and outer-limb Lo . In other
+loops are studied.                                                                words, by knowing the average magnetizing current and core
+                                                                                  aspect-ratios, one can exactly determine the associated linear
+II. MODELING APPROACH                                                             inductances for individual core sections of 3-limb and 5-limb
+A. PRELIMINARIES                                                                  transformers. The same concept can be used in determining
+The first step towards forming the equivalent circuit of a                        other linear core parameters from pertinent average values.
+transformer based on the principle of duality, is to determine                    Table 1 summarizes such parameters useful for the purpose
+
+153354                                                                                                                                            VOLUME 8, 2020
+M. Shafieipour et al.: Application of Duality-Based Equivalent Circuits for Modeling Multilimb Transformers
+
+
+
+
+TABLE 1. Input vs. output parameters for the method of [15].                        that most transformers are meant to be energized from a
+                                                                                    unique terminal, non-reversible models are commonly pre-
+                                                                                    ferred unless power flow needs to switch direction during
+                                                                                    operation. Examples include transformers in a storage system
+                                                                                    and high-frequency transformers in dc-dc converters of dc
+                                                                                    systems.1 The second limitation of using the method of [14]
+                                                                                    is that while the resulting n-winding models can enforce
+                                                                                    n(n − 1)/2 positive-sequence leakage inductances, they do
+of this paper. From Table 1, it is realized that one can obtain                     not necessarily ensure all n(n − 1)/2 zero-sequence leak-
+linear resistances Rw , Ry , Ro from the average core eddy cur-                     age inductance measurements. For 5-limb core as well as
+rent losses Ic . Also, the average air-core inductance L air can                    three-phase bank models, this limitation is insignificant as
+be used to determine air-core inductances for individual core                       the zero-sequence flux closes its path mainly through the iron
+sections Lwair , Lyair , Loair . Finally, the average hysteresis loop               core. However, for 3-limb models, considering zero-sequence
+width D can be used to calculate loop widths associated with                        tests may become important, especially in studies involv-
+winding limb Dw , yoke Dy , and outer limb Do . Note that [15]                      ing unbalanced energizations or unbalanced faults [3], [5].
+contains the mathematical proof for the first row of Table 1                        A 3-limb transformer model that ensures both positive- and
+(i.e. computing Lw , Ly , Lo ) and the other three rows can be                      zero-sequence leakage inductances with support for arbitrary
+proven similarly. As shown in Section II-C3, these parameters                       number of windings will be a subject of future work.
+can be used to formulate non-linear magnetizing branches
+and thus eliminating the need for internal design information                        B. EQUIVALENT CIRCUITS
+or unconventional tests.                                                            The equivalent circuits shown in Fig. 2 are applied for mod-
+                                                                                    eling multiwinding 3- and 5-limb transformers. The mutual
+2) LEAKAGE INDUCTANCES                                                              inductances for each phase enforce positive-sequence leakage
+Several methodologies exist when dealing with the leakage                           measurements and allow for arbitrary number of windings i =
+inductances of duality models [2]. In this paper, we adopt                          1, . . . , n. As typically done in duality-derived models, ideal
+the mutual couplings approach originally introduced in [8]                          transformers are used to isolate the core from the winding
+for 3-winding transformers and generalized to multiwinding                          terminals where desired connections (i.e. delta, Y, Zigzag)
+transformers in [14]. It is simple and general while being                          can be configured. The turns ratios for ideal transformers
+accurate and numerically robust. In addition to the already                         (Ni :Nc ) are dictated by the single-phase winding voltage Vi
+published work [2], [8], [14], the authors have verified it                         and the reference voltage used at the core (i.e. core voltage
+to be reliable for leakage inductance modeling where up                             Vc ). In Section II-D, guidelines for choosing Vc are discussed.
+to 12 windings are assumed. Therefore, it is suitable for                           The parallel hysteresis inductor-resistor pairs in Fig. 2, are
+EMT studies involving multiple tap positions. This includes                         used to represent different parts of the iron cores consistent
+3-phase bank as well as 3-limb and 5-limb transformers                              with the discretizations in Fig. 1. In both equivalent circuits,
+studied in this paper.                                                              it is noticed that Rw ||L̃w pairs are connected to the mutual
+   Despite the aforementioned advantages, it should be noted                        inductances where winding 1 is connected. Other windings
+that models based on the method of [14] (including the                              are separated from the iron core through mutual inductances.
+ones presented in this paper), have two limitations. First,                         Therefore, as indicated in the figure, the specified air-core
+they are inherently ‘‘non-reversible’’ as studied in [18].                          inductance L air is seen from winding 1 only. This makes the
+Reversible and non-reversible models behave similarly in                            models non-reversible as discussed earlier in Section II-A2.
+the linear region and around the knee area. However,                                   It is important to note that while the equivalent circuits
+in the deep-saturation region, non-reversible models are less                       of Fig. 2 are somewhat similar to existing low-frequency
+accommodating. That is, they are tuned to produce correct                           multilimb models such as [3], [4], [7]–[9], they have been
+deep-saturation results (e.g. inrush current) when energized                        adequately simplified according to the principles discussed in
+from a specific winding. Parameter adjustments may be                               Section II-A. Such simplifications facilitate formulation with
+required if energized from different windings. The adjust-                          the available set of input parameters while providing support
+ments are primarily needed for the air-core inductance as                           for arbitrary number of windings.
+deep-saturation results are mostly dependent on this param-
+eter. In contrast, reversible models produce accurate results                       C. FORMULATION
+regardless of which terminal they are energized from [6],                           1) LEAKAGE INDUCTANCES
+[17], [18]. This is achieved by incorporating air-core induc-                       The leakage inductances are typically measured by perform-
+tances seen from all terminals into the formulation which                           ing the standard impedance voltage tests [19]. It is based on
+typically results in a system of nonlinear algebraic equa-
+                                                                                      1 Deep-saturation condition is typically occurred in black-start inrush
+tions. Therefore, reversible models are more computation-
+                                                                                    current studies where the direction of power is inherently known. Thus,
+ally expensive and require extra input parameters compared                          non-reversible models are applicable to a wide range of studies even in such
+with their non-reversible counterparts. Considering the fact                        applications.
+
+VOLUME 8, 2020                                                                                                                                          153355
+                                                      M. Shafieipour et al.: Application of Duality-Based Equivalent Circuits for Modeling Multilimb Transformers
+
+
+
+
+FIGURE 2. Duality-based equivalent circuits used for modeling multiwinding (a) 3-limb and (b) 5-limb transformers.
+
+
+
+
+short-circuit test between windings i and j, while all other                      using the method of [15] if the total core eddy current loss Ic
+windings are open. Therefore for an n-winding transformer,                        is known. As explained in Section II-E3, Ic can be obtained
+n(n − 1)/2 short-circuit tests are carried out. The supplied                      from information in the FAT report or nameplate. Therefore,
+voltage Vi at winding i is increased until about 1 per-unit (pu)                  Rw , Ry , and Ro can be computed.
+current flows through winding i (i.e. Ii ≃ 1 pu). As winding                         It should be noted that incorporation of non-linear effects
+j is short-circuited, a small voltage at winding i is expected                    such as anomalous (excess) losses [20] is generally rec-
+to produce 1 pu current (i.e. Vi  1 pu). Subsequently,                           ommended, especially for high-frequency applications and
+by neglecting winding resistances, the leakage inductances                        could be introduced in this work too. Nevertheless, assuming
+are computed as                                                                   linear core eddy current loss is known to be valid for many
+                    1 Vi                                                          low-frequency transient applications [16]–[18] which corrob-
+          Li,j =     · ,       i, j = 1, . . . , n,    i 6 = j,         (2)       orates with our experience including the results presented in
+                   jω Ii
+                                                                                  this paper. Since inclusion of anomalous losses would require
+where ω = 2πf with f being the transformer’s operating                            additional input parameters, in this work we have limited the
+frequency. The leakage inductances Li,j in (2) are typically                      core loss to linear core eddy current loss and hysteresis loss
+provided by the manufacturer via standard FAT report or                           (see also Section II-E3).
+nameplate as leakage reactances Xi,j in pu. Note that in terms
+of real values, inductance L and reactance X are related as a                     3) HYSTERESIS INDUCTORS
+function of frequency X = jωL. However, when pu values are                        The hysteresis inductors in the equivalent circuits shown in
+considered, they are numerically equivalent and interchange-                      Fig. 2, represent the non-linear magnetizing currents corre-
+able. From a total of n(n − 1)/2 leakage inductances, n − 1                       sponding to the different parts of the core. Using saturable or
+self inductances Li,i+1 can directly be used in the equivalent                    hysteresis inductors that would require non-linear character-
+circuits of Fig. 2. The mutual inductances Mi,j are obtained                      istic of the core material and dimensions such as B–H data
+as [14]                                                                           [6] or the Jiles–Atherton method [9] is applicable. However,
+                 1                                                                in this paper our aim is to develop gray-box models that do
+         Mi,j = (Li,j+1 + Li+1,j − Li,j − Li+1,j+1 ).       (3)
+                 2                                                                not require such data. To do so, we start from the asymptotic
+The generality of the above described leakage inductance                          equation used to model saturation of the core [13] (see also
+modeling allows for splitting the physical windings to multi-                     Fig. 2 in [22])
+ple sub-windings with appropriate voltage levels and leakage                                    p
+                                                                                                   (λ − λ0 )2 + 4dL air + λ − λ0    d
+inductances. This is typically done when multiple tap posi-                             ĩ(λ) =                                   − 0
+                                                                                                               2L air               λ
+tions are to be accessed during EMT simulations.                                                                 Vc
+                                                                                           λ = k · λc , λc =
+                                                                                            0
+
+                                                                                                         √        ω
+2) LINEAR RESISTANCES                                                                                                                         (4)
+                                                                                                −b − b2 − 4ac               L air
+The equivalent circuits of Fig. 2 consist of linear resistors.                              d=                        , a= 2
+The copper losses for individual windings are represented                                                 2a                 λ0
+using winding resistances (R1 , . . . , Rn ). The linear resis-                                 L air Im − λc
+                                                                                            b=                , c = Im (L air Im − λc + λ0 ).
+tances Rw , Ry , and Ro are included to model core eddy current                                        λ0
+losses in the winding limbs, yokes, and outer limbs, respec-                      All parameters in (4) have already been defined except for
+tively. As summarized in Table 1, they can be determined                          the knee voltage k. In order to include the hysteresis effect,
+
+153356                                                                                                                                            VOLUME 8, 2020
+M. Shafieipour et al.: Application of Duality-Based Equivalent Circuits for Modeling Multilimb Transformers
+
+
+
+
+                                                                                    similar to that of (4) and (5) which can be computed from
+                                                                                    information available in the FAT report and/or nameplate.
+                                                                                    In order to derive λ0α , we start from the classical definition
+                                                                                    of flux linkage based on the core and winding details [6]
+
+                                                                                                       λ0α = N · B · sα ,     α = w, y, o        (8)
+
+                                                                                    where N is the number of turns of the energized winding
+                                                                                    and B is the magnetic flux density. In (8), sα refers to the
+                                                                                    core cross-sectional areas for winding limb sw , yoke sy , and
+FIGURE 3. Saturation curve and major hysteresis loop based on (4)                   outer limb so as depicted in Fig. 1. Despite simplicity of (8),
+and (5).                                                                            in many studies, neither N , B, nor sα are available to system
+                                                                                    designers and thus (8) has limited application. Alternatively,
+the first line of (4) is extended to include the hysteresis loop                    similar to the definition of λ0 in the second line of (4), we can
+width D [10]                                                                        write λ0w as
+              p
+                (−λ − λ0 )2 + 4dL air − λ − λ0     d      D                                                                   Vc
+   q
+ ĩ (λ) = ±(                                    − 0) ± ,                                                         λ0w = kw ·                      (9)
+                             2L air               λ       2                                                                   ω
+                                            q = 1, 2, 3, 4 (5)
+                                                                                    where kw is the knee voltage corresponding to the winding
+where ĩ1 to ĩ4 are the hysteresis magnetizing currents for the                    limb. As explained later in Section II-E4, kw can be obtained
+first to fourth quadrants obtained from all four combinations                       or approximated from information provided by the manufac-
+of ± signs. Fig. 3 plots the saturation curve and major hystere-                    turer. Other parameters (Vc , ω) are also known and thus λ0w
+sis loop defined in (4) and (5). Note that if the loop width is                     can be computed using (9). Subsequently, using (1) and (8),
+zero, (5) reduces to the asymptotic equations modeling only                         it is easy to establish the following relations
+saturation with no hysteresis effect. Such representation of
+                                                                                                                                    rs 0
+hysteresis/saturation is sometimes referred to as the ‘‘basic                                           λ0y = rs · λ0w ,    λ0o =      ·λ .     (10)
+hysteresis’’ model [13]. Based on (5), the hysteresis induc-                                                                        rs0 w
+                                           q         q
+tance in all quadrants for winding limb L̃w , yoke L̃y , and outer                  This makes all parameters in (6) and (7) available. Thus, the
+        q                                                                                                                  q
+limb L̃o can be expressed as                                                        sought-after hysteresis inductances L̃α can be evaluated.
+                   Vc                                                                  It is important to realize that computing the hysteresis
+      L̃αq (λ) =                                                                    inductances as formulated in (6), requires input parame-
+                   jω
+                    "                                                               ters that are provided by the manufacturer or otherwise can
+                           (−λ − λ0α )2 + 4dα Lαair − λ − λ0α
+                        p
+                   · ±(                                                             be determined using feasible techniques as exemplified in
+                                        2Lαair                                      Section II-E. Therefore, the practically-challenging task of
+                                             Dα −1                                  measuring magnetizing parameters with open-terminal tests
+                                                 
+                                     dα
+                                  − 0 )±             ,                              [7], [8] is circumvented while rarely-available knowledge
+                                    λα         2
+                                                                                    of the core dimensions or material properties [6], [9] is not
+                   q = 1, 2, 3, 4, α = w, y, o                            (6)
+                                                                                    required.
+where the following definitions are used                                               Another important characteristic of the hysteresis induc-
+                  p                                                                 tances in (6) should be noted. They provide smooth non-linear
+           −bα − bα 2 − 4aα cα           L air
+   dα =                           , aα = α 2                                        functions as opposed to other forms of non-linear functions
+                   2aα                   λ0α                                        such as piecewise linear. In other words, the non-linear
+                       Vc
+              Lαair · jωL α
+                            − λc                                                    functions applied for formulating the magnetizing branches
+     bα =                                                                           in Fig. 2 are smooth as the core saturates and transitions
+                        λ0α
+                                                                                    from linear, to saturation, and deep-saturation regions. This
+               Vc          Vc
+     cα =         (L air ·    − λc + λ0α ),              α = w, y, o. (7)           is consistent with the physical nature of the saturation and
+              jωLα α jωLα                                                           hysteresis phenomena. Evidently, by increasing the number
+When obtaining the values of hysteresis inductances using                           of segments in piecewise linear methods, one can obtain func-
+(6) and (7), it is realized that Lαair , Lα , and Dα , are available                tions that can accurately represent the non-linear nature of the
+from Table 1. In other words, the air-core inductance (Lαair ),                     physical phenomena. Therefore, hysteresis-aware techniques
+equivalent linear inductance (Lα at V = 1 pu), and the loop                         based on both types of functions can be shown to produce
+width (Dα ) for individual core sections (α = w, y, o) are                          accurate results. However, this increases the computational
+computed using the method of [15]. Subsequently, they are                           complexity of piecewise-linear-based methods and can have
+used in (6) and (7) for obtaining the hysteresis inductances                        negative impact on the simulation speed [23] and numerical
+associated with different parts of 3-limb and 5-limb cores.                         stability [24]. Therefore, smooth non-linear functions (such
+Moreover, except for λ0α , other parameters (ω, Vc , λc ) are                       as the ones presented) are preferable in EMT simulations.
+
+VOLUME 8, 2020                                                                                                                                153357
+                                               M. Shafieipour et al.: Application of Duality-Based Equivalent Circuits for Modeling Multilimb Transformers
+
+
+
+
+D. IMPLEMENTATION                                                          the same flux from winding limbs to yokes, sw is usually the
+One of the main advantages of duality models is the fact that              same as sy and thus rs = 1. The other ratio can simply be
+they can be effortlessly implemented using standard drag-                  approximated from a dimensionless 2-D image of the core or
+and-drop circuit elements available in EMT-type programs.                  tank as rl = length/height.
+This is recognized by other authors [2], [6], [8], [14]. Addi-
+tionally, it is important to realize that electric circuits formed         2) AIR-CORE INDUCTANCE (Lair )
+from standard circuit elements available in EMT-type pro-                  The air-core inductance (like many other electrical
+grams are likely to be robust against numerical inaccuracies               parameters), may be accurately computed using rigorous
+and instabilities. This is because standard circuit elements are           computational electromagnetic techniques such as the finite
+designed for efficient and reliable EMT simulations. There-                element method [27] or the method-of-moments [28]. Ana-
+fore, electric circuits based on such elements are preferred not           lytical formulations are also available [29]. However, this
+merely for their ease of implementation but also due to their              requires detail information about the transformer inner
+reliable numerical accuracy and stability under different oper-            design. Although manufacturers rarely provide such detail
+ating conditions. In this work, the equivalent circuits of Fig. 2          due to intellectual property concerns, they may provide L air
+are implemented in the commercial software PSCAD [13].                     if requested. Alternatively, measurement techniques such as
+It provides circuit elements for all electrical components                 [30] are available for accurate and safe measuring of the
+needed to form the equivalent circuits. When implementing                  air-core inductance.
+duality models, an appropriate core voltage Vc should be cho-                 In some studies, rather than the actual air-core induc-
+sen. To avoid numerical instability, realistic turns ratios for            tance of the transformer, a pre-determined inrush current is
+ideal transformers are required and thus we use Vc = Min(Vi )              assumed for a certain condition and its corresponding L air
+as suggested in [7]. The above implementation guidelines                   is computed for further analysis. This is a common practice
+are followed in this work and the models are available in                  when performing sensitivity analysis specially if the trans-
+[25]. In Section III, it is shown through numerical results that           former has not been built or purchased. Such ‘‘reference
+building the equivalent circuits as suggested above, ensures               inrush current’’ may be due to field data from similar trans-
+accurate and numerically robust models. However, the recom-                formers, worst-case scenario calculations such as [31], [32],
+mended guidelines should not be considered as restrictions.                or even empirical values.2 In such cases, it is possible to
+As such, it is expected that other EMT-type programs are                   run multiple EMT simulations and experimentally adjust L air
+applicable and other reference voltages could be applied or                until matching inrush current is simulated. Since the inrush
+explored.                                                                  current is primarily impacted by the air-core inductance, other
+                                                                           parameters can be left unchanged when running multiple
+E. PARAMETER DETERMINATION                                                 EMT simulations. It is expected that the model behavior in the
+The required input parameters used in formulating the pre-                 linear region and around the knee area would not be impacted
+sented equivalent circuits can be categorized into two groups.             by different L air values. Hence such experimental finding of
+First, parameters that are readily available from standard                 the air-core inductance is a relatively easy process. Note how-
+FAT report and/or nameplate (e.g. winding voltages, leakage                ever that inrush current is highly sensitive to the resistance
+inductances, operating frequency, etc). Second, values which               of the source and the connection cable, the remanence, and
+are not part of the standard FAT report or nameplate, but have             the circuit breaker. Hence, care must be taken when setting
+traditionally been used in EMT studies. Therefore, they may                up such simulation experiments. It is important to note that
+be provided by the manufacturer (initially or upon request)                realistic air-core inductance values are typically in the range
+or can be accurately estimated using already existing tech-                of 0.1 pu to 0.3 pu. Too much deviations from this range is a
+niques. Using the first group is straightforward and requires              clear indication that L air has not been properly computed.
+no further discussion. The second group of parameters along
+with several useful estimation techniques are discussed next.              3) LOOP WIDTH (D) AND CORE EDDY CURRENT LOSS (Ic )
+                                                                           Standard FAT reports include ‘‘no load loss’’ which is some-
+                                                                           times referred to as ‘‘total core loss’’. The dominating factors
+1) CORE ASPECT-RATIOS (rs , rl , rs0 , rl0 )                               contributing to such loss near the fundamental frequency are
+The manufacturer may provide core dimensions in which                      the core eddy current loss Ic and hysteresis loss Ih . In the
+case the ratios can be computed using (1). The ratios can                  presented models, the core eddy current loss is considered
+also be approximated quite accurately from dimensionless                   using linear resistors parallel with hysteresis inductors. The
+schematics of the core. This is because only the ratio is needed           hysteresis loss is dictated by the loop width D. Therefore,
+rather than the actual dimensions. Furthermore, it may be                  by knowing how much of the total core loss corresponds to the
+possible to accurately approximate these ratios by merely                  core eddy current loss, the ratio Ic /(Ic + Ih ) is determined and
+looking at a dimensionless image of the tank using gray-box                can be used to set the value of the core eddy current loss in the
+approximations such as [26]. A very simple but effective
+method for approximating 3-limb core aspect-ratios is worth                  2 In our experience, empirical peak inrush current values are typically in
+noting; by knowing that 3-limb cores are designed to carry                 the range of 6 to 12 times the rated current.
+
+153358                                                                                                                                     VOLUME 8, 2020
+M. Shafieipour et al.: Application of Duality-Based Equivalent Circuits for Modeling Multilimb Transformers
+
+
+
+
+model. Subsequently, D can be found by performing multiple                          TABLE 2. Details of the studied 3-limb transformer.
+EMT experiments until the reported no load loss is produced
+by the model. Similarly, if the loop width is provided by
+the manufacturer, one can set the value of D and find the
+corresponding Ic via EMT experiments. In the case that the
+ratio Ic /(Ic + Ih ) is not known, a 50% − 50% split between Ic
+and Ih may be assumed since other non-linear effects such as
+anomalous losses are neglected.
+
+4) WINDING LIMB KNEE VOLTAGE (kw )
+Unlike other parameters discussed in this paper, the knee
+voltage does not have a direct physical meaning. Rather, it is
+mathematically defined to form asymptotic equations. Nev-                           TABLE 3. Details of the studied 5-limb transformer.
+ertheless, the concept of knee voltage has traditionally been
+used for representing saturation/hysteresis of transformers’
+core [13]. Therefore, manufacturers may provide this parame-
+ter. For single-phase and three-phase bank transformers, only
+one knee voltage k is defined (4). For multilimb transformers,
+the provided knee voltage typically corresponds to winding
+limb kw , which can be used in (9). If ky or ko are available,
+they can be used to obtain kw using core aspect-ratios similar
+to (10). In the case that the knee voltage is not provided by
+the manufacturer, system engineers may rely on optimization
+techniques to approximate it from saturation characteristic
+curve (V –I data) [34]. Values in the range of 1 pu to 1.25 pu
+may be considered realistic but too much deviations from                            Section II-E. While most of the information in the tables
+this range is a sign of numerical inaccuracy or inappropriate                       are needed to build duality-based models of Fig. 2, extra
+approximation mechanism.                                                            information is added for interested readers. This includes core
+                                                                                    dimensions (sw , lw , sy , ly ), nominal magnetic flux density B,
+III. NUMERICAL RESULTS                                                              number of turns N1 , and core material (23ZDKH85 [36])
+The transformers under consideration are designed and man-                          where details such as B–H data can be extracted.
+ufactured by a Winnipeg transformer plant, PTI Transformers
+LP and further commissioned in the relevant industry. Due to                        B. MODEL VALIDATION
+the industrial scales of the devices (i.e. 50, 390 MVA) and                         1) LEAKAGE INDUCTANCES
+the nature of the study specially saturation experiments, tests
+                                                                                    The three short-circuit tests for the 3-limb model are simu-
+have been performed at the company’s testing facility [35]
+                                                                                    lated and results are compared with the leakage reactances
+with additional safety measures.
+                                                                                    in Table 2. The simulated values are X1,2 = 0.076055 pu,
+                                                                                    X1,3 = 0.114039 pu, and X2,3 = 0.136033 pu. In all cases,
+A. TRANSFORMERS’ DETAIL                                                             errors less than 0.1% is observed. For the the 5-limb case, the
+Details of the 3-limb transformer are given in Table 2. The                         simulated leakage reactance is X1,2 = 0.06843 pu which is
+air-core reactance X air is associated with the 138 kV terminal.                    accurate according to Table 3.
+As the model is non-reversible, winding 1 is assigned to
+this terminal. The other two windings are arbitrarily assigned                      2) EXCITATION CURRENT WITH DIFFERENT SATURATION
+to 13.8 kV and 6.972 kV terminals. Note that the tertiary                           LEVELS
+winding is buried and thus X1,3 , X2,3 as well as R1,3 , R2,3 are                   Excitation currents are obtained by performing open-circuit
+estimated values. The loop width q   is available as a percentage                   test for both 3- and 5-limb transformers where winding 2 is
+of the magnetizing current Im = I82 − Ic2 . Tests have been                         energized and the other terminal(s) are left open. Typically
+carried out for the base power rating of 50 MVA.                                    such tests are done at the nominal voltage. However, for the
+   A 2-winding 5-limb transformer is considered with details                        purpose of this study the test was expanded to drive the cores
+given in Table 3. The provided X air is for the 238 kV side.                        into different saturation levels.
+Thus, winding 1 is used for this terminal. Tests are performed                         Figs. 4-6 compare excitation current waveforms from sim-
+for the base power rating of 390 MVA.                                               ulation and measurement tests for the 3-limb case. The agree-
+   All parameters in Tables 2 and 3 are supplied by the                             ment between measurement tests and simulations may be
+manufacturer except for the knee voltage and loop width                             considered satisfactory. This is despite the fact that some
+which are determined using the techniques explained in                              deviations between measurement and simulation results exist
+
+VOLUME 8, 2020                                                                                                                                153359
+                                                   M. Shafieipour et al.: Application of Duality-Based Equivalent Circuits for Modeling Multilimb Transformers
+
+
+
+
+FIGURE 4. Simulated vs. measured excitation current for the 3-limb             FIGURE 6. Simulated vs. measured excitation current for the 3-limb
+transformer energized from winding 2 with V2 = 12.452 kV ≃ 0.9 pu.             transformer energized from winding 2 with V2 = 15.612 kV ≃ 1.13 pu.
+
+
+
+
+                                                                               FIGURE 7. Comparing average excitation currents for the 5-limb
+                                                                               transformer.
+
+
+                                                                               with the discussion made in Section II-A2. Therefore, excita-
+                                                                               tion current measurements can be used to validate the models
+                                                                               regardless of the energized winding.
+
+                                                                               C. INRUSH CURRENT CALCULATION
+FIGURE 5. Simulated vs. measured excitation current for the 3-limb
+transformer energized from winding 2 with V2 = 13.808 kV ≃ 1 pu.               Inrush current is simulated by energizing the transformer
+                                                                               from the HV side (winding 1) with 1 pu voltage. Other wind-
+                                                                               ings are left unloaded. As discussed earlier in Section II-A2,
+mainly due to measurement under stress. For example in                         the models are non-reversible and thus inrush current exper-
+Fig. 6, measurement results for later cycles in phase A are                    iments with energizations from other windings require X air
+plagued with DC shift and the observed mismatch should not                     to be adjusted. To avoid current limitation by the system
+be considered as error in the simulations. Also in Fig. 6, larger              impedance, ideal source is applied. The breaker is closed at
+discrepancy between simulation and measurement results at                      the zero-crossing of phase A which leads to the maximum
+the peak values may be explained by the low resolution of                      current in this phase.
+the measurement recordings not capturing sharp spikes due
+to high saturation levels.                                                     1) NO REMANENCE
+   For the 5-limb case, the exciting current waveforms are not                 The inrush current is assumed with no remanent flux in the
+available. Therefore, we compare the average current magni-                    core. In theory, it is possible to physically perform such
+tude values I8 = (|I8a | + |I8b | + |I8c |)/3 as a percentage of               test by demagnetizing the transformer before energization.
+the rated current. This comparison may be sufficient in many                   However, such tests are usually not performed unless lab-
+studies as typically information about the core saturation is                  oratory size transformers are considered [6], [9]. Reasons
+only available in terms of a V –I curve. Fig. 7 plots the results.             include safety concerns, required voltage level, equipment
+It can be seen that the simulated saturation curve closely                     damage, etc. Therefore we resort to validation by numerical
+follows the behavior of the measured excitation currents.                      convergence. Fig. 8 compares EMT simulation results with
+   As demonstrated above for both 3- and 5-limb cases, the                     time-steps 50, 10, and 1 µs for the 3- and 5-limb cases. It is
+non-reversible nature of the models does not prevent them                      clear from the figure that both 3- and 5-limb models have
+from producing accurate open-circuit test results when ener-                   numerically converged to their unique solutions. This also
+gized from a winding other than winding 1. This is consistent                  demonstrates the numerical robustness of the models against
+
+153360                                                                                                                                         VOLUME 8, 2020
+M. Shafieipour et al.: Application of Duality-Based Equivalent Circuits for Modeling Multilimb Transformers
+
+
+
+
+                                                                                    FIGURE 10. The hysteresis loop for the middle winding-limb of the 5-limb
+FIGURE 8. Comparing the simulated inrush current using the (a) 3-limb               transformer. Due to symmetry and for better clarity, only positive λ is
+and (b) 5-limb models with different EMT time-steps.                                depicted.
+
+TABLE 4. Worst-case peak inrush current values computed with different
+methods.
+
+
+
+
+                                                                                    FIGURE 11. Excitation current simulated using different methods for
+                                                                                    (a) 3-limb and (b) 5-limb cases. In both cases, winding 1 is energized with
+                                                                                    V1 = 1 pu.
+
+
+                                                                                    are differences in the modeling and calculation techniques
+                                                                                    presented in Table 4. For example, the analytical formulas
+FIGURE 9. The hysteresis loop for the middle winding-limb of the 3-limb             [31] are developed based on single-phase transformers and
+transformer. Due to symmetry and for better clarity, only positive λ is             empirical scaling factors are used to approximate worst-case
+depicted.
+                                                                                    inrush current. The UMEC model neglects the hysteresis
+                                                                                    effect and the presence of the buried tertiary winding in the
+increased time-steps when inrush current is simulated. This                         3-limb case. Moreover, the UMEC model requires manual
+prevents the models from becoming a time-step bottleneck                            incorporation of residual flux by injecting DC currents at the
+which can significantly impact runtime in EMT simulation                            line level [37] whereas the presented duality-based models
+of large systems.                                                                   enforce the remanent flux in different sections of the iron core
+                                                                                    using (6). Nevertheless, there is a general agreement among
+2) WORST-CASE REMANENCE                                                             the results and the findings may be considered satisfactory.
+Different potential residual flux values are investigated
+according to [33]. The worst-case scenario is found to be                            D. HYSTERESIS LOOP CALCULATION
+(0.8,0,-0.8) pu for both 3- and 5-limb cases. Results are sum-                      The λ–i hysteresis loop for different core sections can be
+marized in Table 4 in terms of the peak values. For compari-                        computed using (6). As an example, Figs. 9 and 10 plot
+son, the table also includes simulation results from the unified                    the open-circuit λ–i results for the middle winding-limb of
+magnetic equivalent circuit (UMEC) model [12], [13] as well                         3-limb and 5-limb transformers, respectively. Here, wind-
+as the values provided by the manufacturer based on analyt-                         ing 1 is energized with V1 = 1 pu in both 3- and 5-limb cases.
+ical calculations [31]. However, it should be noted that there                      For comparison, results from the Jiles–Atherton method are
+
+VOLUME 8, 2020                                                                                                                                         153361
+                                                         M. Shafieipour et al.: Application of Duality-Based Equivalent Circuits for Modeling Multilimb Transformers
+
+
+
+
+also included where the magnetizing branches in the equiv-                           [10] S. N. Talukdar and J. R. Bailey, ‘‘Hysteresis models for system stud-
+alent circuits of Fig. 2 are formulated using the magnetic                                ies,’’ IEEE Trans. Power App. Syst., vol. PAS-95, no. 4, pp. 1429–1434,
+                                                                                          Jul. 1976.
+characteristic of the material [21]. While some deviations                           [11] H. W. Dommel, S. Bhattacharya, V. Brandwajn, H. K. Lauw, and L. Martí,
+exist between the simulated hysteresis loops especially in the                            Electromagnetic Transients Program Reference Manual (EMTP Theory
+non-major loops and around the shoulder area, the overall                                 Book). Portland, OR, USA: Bonneville Power, 1992.
+                                                                                     [12] W. G. Enright, ‘‘Transformer models for electromagnetic transient studies
+behavior match to a reasonable degree for both 3-limb and                                 with particular reference to HVdc transmission,’’ Ph.D. dissertation, Dept.
+5-limb cases. This is consistent with the results shown in                                Elect. Electron. Eng., Univ. Canterbury, Christchurch, New Zealand, 1996.
+Fig. 11, where it is observed that the methods have produced                              [Online]. Available: https://ir.canterbury.ac.nz/handle/10092/3279
+                                                                                     [13] Manitoba Hydro International Ltd. (Dec. 4, 2017). PSCAD/EMTDC Man-
+matching excitation currents. Therefore, the disagreements in                             ual. [Online]. Available: https://hvdc.ca/pscad/
+Figs. 9 and 10 may be considered tolerable.                                          [14] C. Alvarez-Marino, F. de Leon, and X. M. Lopez-Fernandez, ‘‘Equivalent
+                                                                                          circuit for the leakage inductance of multiwinding transformers: Unifica-
+                                                                                          tion of terminal and duality models,’’ IEEE Trans. Power Del., vol. 27,
+IV. CONCLUSION                                                                            no. 1, pp. 353–361, Jan. 2012.
+In this paper, application of duality-based equivalent circuits                      [15] M. Shafieipour, J. C. G. Alonso, R. P. Jayasinghe, and A. M. Gole,
+                                                                                          ‘‘Principle of duality with normalized core concept for modeling multi-
+for EMT simulation of positive-sequence leakage inductance,                               limb transformers,’’ in Proc. Int. Conf. Power Syst. Transients, Perpignan,
+excitation current, inrush current, and hysteresis loop per-                              France, Jun. 2019, pp. 1–6.
+tinent to multilimb multiwinding transformers is presented.                          [16] M. R. Iravani, A. K. S. Chaudhary, W. J. Giesbrecht, I. E. Hassan,
+                                                                                          A. J. F. Keri, K. C. Lee, J. A. Martinez, A. S. Morched, B. A. Mork,
+Saturation, hysteresis, deep-saturation, and remanent flux                                M. Parniani, A. Sharshar, D. Shirmohammadi, R. A. Walling, and
+are modeled while the required input parameters are either                                D. A. Woodford, ‘‘Modeling and analysis guidelines for slow transients.
+provided by the manufacturer or can be reliably estimated.                                III. The study of ferroresonance,’’ IEEE Trans. Power Del., vol. 15, no. 1,
+                                                                                          pp. 255–265, Jan. 2000.
+Several experiments confirm the accuracy of the models. This                         [17] S. Jazebi, F. de Leon, A. Farazmand, and D. Deswal, ‘‘Dual reversible
+makes them attractive alternatives for existing low-frequency                             transformer model for the calculation of low-frequency transients,’’ IEEE
+models particularly when only limited information about the                               Trans. Power Del., vol. 28, no. 4, pp. 2509–2517, Oct. 2013.
+                                                                                     [18] S. Jazebi and F. de León, ‘‘Experimentally validated reversible single-
+transformer is available or arbitrary number of windings are                              phase multiwinding transformer model for the accurate calculation of low-
+required. It is important to note that the lack of considering                            frequency transients,’’ IEEE Trans. Power Del., vol. 30, no. 1, pp. 193–201,
+zero-sequence tests in the 3-limb case may impose limitations                             Feb. 2015.
+                                                                                     [19] IEEE Standard Test Code for Liquid-Immersed Distribution, Power, and
+in its application in unbalance operation, a subject that is left
+                                                                                          Regulating Transformers, IEEE Standard C57.12.90-2015 (Revision of
+for future work.                                                                          IEEE Std C57.12.90-2010), Mar. 2016, pp. 1–120.
+                                                                                     [20] Y. Gao, Y. Matsuo, and K. Muramatsu, ‘‘Investigation on simple numeric
+                                                                                          modeling of anomalous eddy current loss in steel plate using modified
+REFERENCES                                                                                conductivity,’’ IEEE Trans. Magn., vol. 48, no. 2, pp. 635–638, Feb. 2012.
+ [1] B. Gustavsen and Y. Vernay, ‘‘Measurement-based frequency-dependent             [21] U. D. Annakkage, P. G. McLaren, E. Dirks, R. P. Jayasinghe, and
+     model of a HVDC transformer for electromagnetic transient studies,’’                 A. D. Parker, ‘‘A current transformer model based on the Jiles–Atherton
+     Electr. Power Syst. Res., vol. 180, Mar. 2020, Art. no. 106141.                      theory of ferromagnetic hysteresis,’’ IEEE Trans. Power Del., vol. 15, no. 1,
+ [2] S. Jazebi, S. E. Zirka, M. Lambert, A. Rezaei-Zare, N. Chiesa, Y. Moroz,             pp. 57–61, Jan. 2000.
+     X. Chen, M. Martinez-Duro, C. M. Arturi, E. P. Dick, A. Narang,                 [22] M. Salimi, A. M. Gole, and R. P. Jayasinghe, ‘‘Improvement of transformer
+     R. A. Walling, J. Mahseredjian, J. A. Martinez, and F. de Leon,                      saturation modeling for electromagnetic transient programs,’’ in Proc. Int.
+     ‘‘Duality derived transformer models for low-frequency electromagnetic               Conf. Power Syst. Transients, Vancouver, BC, Canada, Jul. 2013, pp. 1–6.
+     transients—Part I: Topological models,’’ IEEE Trans. Power Del., vol. 31,       [23] F. M. Uriarte, V. A. Centeno, J. De Laree Lopez, and J. Depablos, ‘‘Contin-
+     no. 5, pp. 2410–2419, Oct. 2016.                                                     uous vs. piecewise hysterisis model of a current transformer,’’ Ph.D. Res.
+ [3] S. Jazebi, A. Rezaei-Zare, M. Lambert, S. E. Zirka, N. Chiesa,                       Microelectron. Electron., Otranto, Italy, 2006, pp. 29–32.
+     Y. I. Moroz, X. Chen, M. Martinez-Duro, C. M. Arturi, E. P. Dick,               [24] J. R. Lucas, ‘‘Representation of magnetisation curves over a wide region
+     A. Narang, R. A. Walling, J. Mahseredjian, J. A. Martinez, and F. de Leon,           using a non-integer power series,’’ Int. J. Electr. Eng. Educ., vol. 25, no. 4,
+     ‘‘Duality-derived transformer models for low-frequency electromagnetic               pp. 335–340, Oct. 1988.
+     transients—Part II: Complementary modeling guidelines,’’ IEEE Trans.            [25] (May 21, 2020). Custom-Made Duality-Based Transformer Models
+     Power Del., vol. 31, no. 5, pp. 2420–2430, Oct. 2016.                                for PSCAD. [Online]. Available: https://www.pscad.com/knowledge-
+                                                                                          base/article/597
+ [4] J. Zhao, S. E. Zirka, Y. I. Moroz, C. M. Arturi, R. A. Walling, N. Tleis,
+                                                                                     [26] S. D. Mitchell and J. S. Welsh, ‘‘Initial parameter estimates and constraints
+     and O. L. Tarchutkin, ‘‘Topological transient models of three-phase, three-
+                                                                                          to support gray box modeling of power transformers,’’ IEEE Trans. Power
+     legged transformer,’’ IEEE Access, vol. 7, pp. 102519–102529, 2019.
+                                                                                          Del., vol. 28, no. 4, pp. 2411–2418, Oct. 2013.
+ [5] A. Rezaei-Zare, ‘‘Enhanced transformer model for low- and mid-frequency
+                                                                                     [27] V. M. Jimenez-Mondragon, R. Escarela-Perez, E. Melgoza, M. A. Arjona,
+     transients—Part I: Model development,’’ IEEE Trans. Power Del., vol. 30,
+                                                                                          and J. Olivares-Galvan, ‘‘Quasi-3-D finite-element modeling of a
+     no. 1, pp. 307–315, Feb. 2015.
+                                                                                          power transformer,’’ IEEE Trans. Magn., vol. 53, no. 6, Jun. 2017,
+ [6] Q. Wu, S. Jazebi, and F. de Leon, ‘‘Parameter estimation of three-phase              Art. no. 7401604.
+     transformer models for low-frequency transient studies from terminal mea-       [28] M. Shafieipour, Z. Chen, A. Menshov, J. De Silva, and V. Okhmatovski,
+     surements,’’ IEEE Trans. Magn., vol. 53, no. 7, pp. 1–8, Jul. 2017.                  ‘‘Efficiently computing the electrical parameters of cables with arbitrary
+ [7] J. A. Martinez, R. Walling, B. A. Mork, J. Martin-Arnedo, and D. Durbak,             cross-sections using the method-of-moments,’’ Electr. Power Syst. Res.,
+     ‘‘Parameter determination for modeling system transients—Part III: Trans-            vol. 162, pp. 37–49, Sep. 2018.
+     formers,’’ IEEE Trans. Power Del., vol. 20, no. 3, pp. 2051–2062,               [29] R. M. Del Vecchio, B. Poulin, P. T. Feghali, D. M. Shah, and R. Ahuja,
+     Jul. 2005.                                                                           Transformer Design Principles, 3rd ed. Boca Raton, FL, USA: CRC Press,
+ [8] F. de Leon and J. A. Martinez, ‘‘Dual three-winding transformer equivalent           Aug. 2017.
+     circuit matching leakage measurements,’’ IEEE Trans. Power Del., vol. 24,       [30] F. de León, S. Jazebi, and A. Farazmand, ‘‘Accurate measurement of the
+     no. 1, pp. 160–168, Jan. 2009.                                                       air-core inductance of iron-core transformers with a non-ideal low-power
+ [9] N. Chiesa, B. A. Mork, and H. K. Høidalen, ‘‘Transformer model for inrush            rectifier,’’ IEEE Trans. Power Del., vol. 29, no. 1, pp. 294–296, Feb. 2014.
+     current calculations: Simulations, measurements and sensitivity analysis,’’     [31] T. R. Specht, ‘‘Transformer magnetizing inrush currents,’’ Elect. Eng.,
+     IEEE Trans. Power Del., vol. 25, no. 4, pp. 2599–2608, Oct. 2010.                    vol. 70, no. 4, pp. 324–324, Apr. 1951, doi: 10.1109/EE.1951.6437380.
+
+153362                                                                                                                                                   VOLUME 8, 2020
+M. Shafieipour et al.: Application of Duality-Based Equivalent Circuits for Modeling Multilimb Transformers
+
+
+
+
+[32] J. E. Holcomb, ‘‘Distribution transformer magnetizing inrush current,’’                               ROHITHA P. JAYASINGHE (Member, IEEE)
+     Trans. Amer. Inst. Electr. Eng. III, Power App. Syst., vol. 80, no. 3,                                received the B.Sc. (Eng.) degree in electrical engi-
+     pp. 697–702, Apr. 1961.                                                                               neering from the University of Moratuwa, Sri
+[33] Transformer Energization in Power Systems: A Study Guide, CIGRE Work-                                 Lanka, in 1987, and the Ph.D. degree in electri-
+     ing Group, Paris, France, Feb. 2014, pp. 65–66.                                                       cal engineering from the University of Manitoba,
+[34] (Feb. 7, 2020). Transformer Saturation Curve Matching in                                              Winnipeg, MB, Canada, in 1997.
+     PSCAD/EMTDC. [Online]. Available: https://hvdc.ca/knowledge-base/                                        He is currently with the Manitoba Hydro Inter-
+     read,article/561/transformer-saturation-curve-matching-in-pscad-
+                                                                                                           national Ltd., Winnipeg, and plays a major role in
+     emtdc/v:
+                                                                                                           the current developments of the PSCAD/EMTDC
+[35] PTI Transformers LP, Winnipeg, MB, Canada. (Feb. 2020). Power Trans-
+     formers. [Online]. Available: https://www.partnertechnologies.net/                                    simulation program.
+[36] Directional Electromagnetic Steel Strip/Grainoriented Electrical                Dr. Jayasinghe is a Registered Professional Engineer in the Province of
+     Steel Sheets, Nippon Steel Corp., Tokyo, Japan, Jan. 2020, p. 68.              Manitoba, Canada.
+     [Online].     Available:   https://www.nipponsteel.com/product/catalog_
+     download/pdf/D004je.pdf
+[37] Applications of PSCAD/EMTDC, Manitoba HVDC Res. Centre,
+     Winnipeg, MB, Canada, 2008, pp. 45–46. [Online]. Available: https://
+     www.pscad.com/uploads/knowledge_base/application_20guide_202008_
+     1.pdf?t=1470241744
+
+
+                         MOHAMMAD SHAFIEIPOUR (Member, IEEE)
+                                                                                                              JUAN CARLOS GARCIA ALONSO received the
+                         received the B.Eng. (Hons.) and M.Eng.Sc.
+                                                                                                              bachelor’s degree in electrical engineering from
+                         degrees in electrical and computer engineering
+                                                                                                              the National University of Colombia, in 1996, and
+                         from Multimedia University, Cyberjaya, Malaysia,
+                                                                                                              the M.Sc. degree from the University of Manitoba,
+                         in 2008 and 2010, respectively, and the Ph.D.
+                                                                                                              Winnipeg, MB, Canada, in 2006.
+                         degree in electrical and computer engineering
+                                                                                                                 From 2002 to 2005, he worked as a Large Power
+                         from the University of Manitoba, Winnipeg, MB,
+                                                                                                              Transformers Designer with Pauwels Transform-
+                         Canada, in 2016.
+                                                                                                              ers, Winnipeg. Since 2006, he has been with Man-
+                            From 2016 to 2020, he was with the Mani-
+                                                                                                              itoba Hydro International Ltd., Winnipeg. During
+                         toba Hydro International Ltd., Winnipeg, where
+                                                                                                              this period, he has worked in the development of
+he contributed to the support and development of PSCAD, FACE, and
+                                                                                    transformer, HVDC, MMC, and Wind Farm models. He has also participated
+PRSIM software products. He recently joined Safe Engineering Services &
+                                                                                    in numerous system studies in the same areas. He is currently based in
+Technologies, Laval, QC, Canada, as a Senior Research Scientist of electro-
+                                                                                    Brisbane, Australia, working in a secondment for Powerlink Queensland.
+magnetics, electromagnetic interference, and electrical engineering.
+                                                                                    As part of this secondment, he has been working on the development of
+  Dr. Shafieipour is a Registered Professional Engineer in the Province of
+                                                                                    a PSCAD model for the state of Queensland which is being used to study
+Manitoba, Canada.
+                                                                                    control interactions as well as the assessment of new connections of Solar
+                                                                                    and Wind farms.
+                          WALDEMAR ZIOMEK (Senior Member, IEEE)
+                          received the M.Sc. degree in electrical engineering
+                          and the Ph.D. degree in electric power and high
+                          voltage engineering from the Poznan University
+                          of Technology, Poland, in 1987 and 1992, respec-
+                          tively. In 2013–2015, he worked for CG Power
+                          Systems, an International T&D Equipment Com-
+                          pany, as a Global Senior Expert, specializing in                                    ANIRUDDHA M. GOLE (Life Fellow, IEEE)
+                          large power transformers and high voltage insu-                                     is currently a Distinguished Professor and the
+                          lation. Till 2013, he was employed by CG Power                                      NSERC Industrial Chair of power systems simu-
+Systems Canada Inc. (formerly Pauwels Canada Inc.) as a Manager of                                            lation with the Department of Electrical and Com-
+Engineering. He started with Pauwels Canada in 1997 as a Transformer                                          puter Engineering, University of Manitoba. He has
+Electrical Designer, then in 1999 as an Electrical Engineering Manager,                                       over 30 years’ experience in the development of
+and since 2003 as a Manager of Engineering. Since 2001, he has been an                                        modeling tools for power networks incorporating
+Adjunct Professor with the University of Manitoba, Winnipeg, MB, Canada,                                      power-electronic equipment, such as HVDC and
+where previously he worked in 1995–1997 as a Postdoctoral Fellow. In 1995,                                    FACTS converters. He is one of the original devel-
+he was with Stuttgart University, Germany, as a Visiting Researcher. In 1993–                                 opers of the widely used PSCAD/EMTDC simula-
+1994, he was a Visiting Researcher with the University of Strathclyde,              tion program. He has also made important contributions to the development
+Glasgow, U.K. Previously, he worked with the Institute of Electrical Power          of the real-time digital simulator RTDS from RTDS Technologies of
+Engineering, Poznan University of Technology, where in 1992–1997, he was            Winnipeg, Canada.
+an Assistant Professor and in 1987–1992, he was a Teaching Assistant and a             Dr. Gole is a member of the Long Range Planning Committee of the IEEE
+Researcher. He has also been working as the Director of the Research and            Power and Energy Society. He is a Fellow of the Canadian Academy of
+Development for PTI Transformers LP, Canadian Manufacturer of Large                 Engineering. For his contributions to the modeling of Flexible Ac Transmis-
+Power Transformers, since 2015. He is the author and coauthor of more               sion System (FACTS) devices, he received the IEEE Nari Hingorani FACTS
+than 70 scientific and technical articles. He is a member of CSA, IEC, and          Award in 2007.
+CIGRE.
+
+
+
+
+VOLUME 8, 2020                                                                                                                                          153363
+

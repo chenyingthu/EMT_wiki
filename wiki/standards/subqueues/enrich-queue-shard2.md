@@ -49,20 +49,20 @@
 | 289 | large-scale-grid-simulation.md | topics | topics/simulation/large-scale-grid-simulation.md | P1 | 999 | 3484 | 7 | 51 | completed |
 | 341 | layered-connection.md | methods | methods/transmission-line/layered-connection.md | P1 | 999 | 1823 | 5 | 13 | completed |
 | 388 | load-and-dg-modeling.md | topics | topics/component-modeling/load-and-dg-modeling.md | P1 | 999 | 3618 | 31 | 27 | completed |
-| 362 | lumped-parameter-model.md | methods | methods/transmission-line/lumped-parameter-model.md | P1 | 999 | 1460 | 6 | 14 | pending |
-| 160 | mbsm.md | methods | methods/power-electronics/mbsm.md | P0 | 999 | 4374 | 22 | 8 | pending |
+| 362 | lumped-parameter-model.md | methods | methods/transmission-line/lumped-parameter-model.md | P1 | 999 | 3569 | 17 | 14 | completed |
+| 160 | mbsm.md | methods | methods/power-electronics/mbsm.md | P0 | 999 | 4374 | 22 | 8 | completed |
 | 57 | mmc-hvdc-5-level.md | models | models/submodule/mmc-hvdc-5-level.md | P0 | 999 | 1660 | 10 | 12 | pending |
 | 358 | modal-transformation.md | methods | methods/transmission-line/modal-transformation.md | P1 | 999 | 1519 | 6 | 12 | pending |
-| 276 | mppt-control.md | methods | methods/control/mppt-control.md | P1 | 999 | 4172 | 10 | 13 | pending |
+| 276 | mppt-control.md | methods | methods/control/mppt-control.md | P1 | 999 | 4172 | 10 | 13 | completed |
 | 70 | multirate-and-network-partitioning.md | topics | topics/modeling-methods/multirate-and-network-partitioning.md | P0 | 999 | 1871 | 16 | 12 | pending |
-| 231 | n-port-network.md | methods | methods/network-solution/n-port-network.md | P0 | 999 | 13295 | 22 | 11 | pending |
+| 231 | n-port-network.md | methods | methods/network-solution/n-port-network.md | P0 | 999 | 13295 | 22 | 11 | completed |
 | 342 | new-england-test-system.md | topics | topics/test-system/new-england-test-system.md | P1 | 999 | 1819 | 11 | 10 | pending |
 | 172 | numerical-damping-optimization.md | methods | methods/numerical-methods/numerical-damping-optimization.md | P0 | 999 | 4818 | 17 | 10 | pending |
 | 413 | numerical-oscillation-suppression.md | methods | methods/numerical-methods/numerical-oscillation-suppression.md | P1 | 999 | 637 | 4 | 12 | pending |
 | 213 | parallel-in-time.md | methods | methods/simulation-technology/parallel-in-time.md | P0 | 999 | 9098 | 36 | 15 | pending |
 | 161 | passivity-enforcement.md | methods | methods/signal-processing/passivity-enforcement.md | P0 | 999 | 4401 | 20 | 19 | pending |
 | 233 | phase-domain-modeling.md | topics | topics/modeling-methods/phase-domain-modeling.md | P0 | 999 | 15473 | 21 | 30 | pending |
-| 318 | pi-model.md | methods | methods/transmission-line/pi-model.md | P1 | 999 | 2617 | 8 | 9 | pending |
+| 318 | pi-model.md | methods | methods/transmission-line/pi-model.md | P1 | 999 | 2617 | 8 | 9 | completed |
 | 53 | power-electronic-device-modeling.md | topics | topics/modeling-methods/power-electronic-device-modeling.md | P0 | 999 | 1556 | 12 | 35 | pending |
 | 173 | power-quality.md | topics | topics/renewable-storage/power-quality.md | P0 | 999 | 4869 | 28 | 22 | pending |
 | 49 | protection-relay-modeling.md | topics | topics/protection-lightning/protection-relay-modeling.md | P0 | 999 | 1453 | 3 | 23 | pending |
@@ -87,3 +87,5 @@
 |||| 421 | 1 | 1 | 0 | extinction-angle-calculation.md bc=4513, bf=19 |
 |||| 485 | 1 | 1 | 0 | harmonic-transfer-coefficient.md bc=3284, bf=12, 3 broken src wikilinks fixed |
 ||||| 485 | 1 | 1 | 0 | ibr.md bc=13677, bf=16, skip — footer remnant DUP_BLOCK, QG pass |
+||||| 500 | 1 | 1 | 0 | lumped-parameter-model.md bc=3569, bf=17, 5-method taxonomy + CDA + VF + quant boundaries, QG pass |
+

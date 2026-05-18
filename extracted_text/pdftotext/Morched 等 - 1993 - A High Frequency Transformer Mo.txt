@@ -1,0 +1,838 @@
+ IEEE Transactions on Power Delivery. Vol. 8, No.3. July 1993                                                                            1615
+
+                           A High Frequency Transformer Model for the EMTP
+                           A. Morched (SM)                     L. M a d (M)                     J. Ottevangers
+
+                                                           Ontario Hydro, Canada
+
+
+Abstract - A model to simulate the high frequency behaviour of a         A substantial number of transformer models have been proposed to
+power transformer is presented. This model is based on the               date. While it is probably inaccurate to categorize all work done in
+frequency characteristics of the transformer admittance matrix           high fresuency transformer modelling, it is convenient to identify
+between its tcnninals over a given range of frequencies. The             two broad trends to describe the model presented in this paper within
+transformer admittance characteristics can be obtained from              the context of earlier work.
+measurements or from detailed internal models based on the physical
+layout of the transformer. The elements of the nodal admittance              Detailed internal winding models. This type of model consists
+matrix are approximated with rational functions consisting of real as        of large networks of capacitances and coupled inductances
+well as complex conjugate poles and zeroes. These approximations             obtained from the discrethtion of distriiuted self and mutual
+are nalized in the form of an RLC network in a format suitable for           winding inductances and                         The calculation of
+direct use with EMTP. The high frequency transformer model can               these parameters involves the solution of complex field problems
+be used as a stand-alone linear model or as an add-on module of a            and quires informationon the physical layout and construction
+more comprehensive model where iron core nonlinearities are                  details of the transformer. This information is not generally
+represented in detail.                                                       available as it is considered proprietary by transfonner
+                                                                             manufacturers. These models have the advantage of allowing
+Keywords - Transformer, High frequency, Frequency dependence,                access to intend points along the winding, making it possible to
+Electromagnetictransients, EMTP.                                             assess internal winding stresses. In general, internal winding
+                                                                             models can predict transformer resonances but cannot reproduce
+                                                                             the associated clamping. This makes this class of models suitable
+                       1. INTRODUCTION                                       for the calculation of initial voltage distriiution along a winding
+                                                                             due to impulse excitation, but unsuitable for the calculation of
+The transformer is probably one of the most familiar components of           transients involving the interaction between the system and the
+a power system, but it is also one of the most dficult to model              transformer. Furthermore. the size of the matrices involved
+accurately. A recent survey comparing EMTP simulations with field            (typically 100 x 100 or larger) makes this kind of representation
+measurements indica- that studies where transformerbehaviour has             impractical for EMTP system studies.
+the,greatest influence on the results are those where EMTP
+simulations tend to be the least accurate’.                                  Terminal models. Models belonging to this class are based on
+                                                                             the simulation of the frequency and/or time domain
+To model a transformerin a transient simulation, nonlinearbehaviour          characteristics at the terminals of the transformer by means of
+as well as frequencydependent effects must be taken into account.            complex equivalent circuits or other closed-form
+Standard EMTP transformer models such as BCTRAN and                          representations’-’’. These ”terminal“ models have had varying
+TRELEG~     can accurately reproduce the response of a transformer at        degrees of success in reproducing the frequency behaviour of
+the frequency at which the short-circuit and open-circuit Wts are            singlephase transformers accurately. The main drawback of the
+made; namely, at power frequency. However, theae models do not               methods proposed to date appears to be that they are not
+account for the frequency dependence of copper and iron losses, or           sufficiently general to be applicable to threephase transformers.
+the effect of stray capacitances.
+
+The behaviour of the transformer at higher frequencies can be           The high-frequency transformer model described here belongs to the
+approximated, to some extent, by modelling the distributed stray        class of models where the frequency dependent response at the
+capacitancesalong the windings with lumped capacitances ~ o ~ e c t e d terminals of the transformer is reproduced by means of equivalent
+across the terminals of the transformer. This type of representation    networks. Unlike earlier frequencydependent transformer models,
+cannot reproduce the behaviour of the transformer beyond the first      the new model can simulate any type of multi-phase, multi-winding
+resonance frequencies. The calculation of the capacitances is not       transformer as long as its frequency characteristics are known either
+straightforward, and it is difficult to obtain accurate values, except  from measurementsor h m calculationsbased on the physical layout
+for simple transformer designs’~~.                                      of the transformer. The generation of the parameters for the model
+                                                                        is automatic, and it does not require special skills on the part of the
+                                                                        user. This model has been developed and implemented at Ontario
+92 SM 359-0 PWRD A paper recommended and approved                       Hydro as part of a new and comprehensive transformer model
+by the IEEE Transformers Committee of the IEEE Power                    sponsored by the EMTP Development Coordination Group - DCG
+Engineering Society for presentation at the IEEE/PES
+1992 Summer Meeting, Seattle, UA, July 12-16, 1992.                     for the DCG/EPRI version of the EMTP. Although originally
+Kanuscript submitted February 3, 1992; made available                   developedas a high-frequencyrepresentation, thii model can also be
+for printing May 1, 1992.                                               used as a stand-alonelinear model, if the frequency characteristicsof
+                                                                        the transformer are known over a sufficiently broad frequency range.
+                                                     0885-8977/93$03.00 Q 1992 IEEE
+ 1616
+
+                         2. OVERVIEW                                     The elements of Iyij,J are approximated with rational functions
+                                                                         which contain real as well as complex conjugate poles and zeroes.
+Consider a multi-phase, multi-winding transformer.       The nodal       The rationalfunctions can then be realized with RLC networks which
+equations which relate the voltages and currents at the accessible       can be combined using (4) and (5) to produce the parameters of the
+terminals of the transformer can be expressed as                         equivalent r-circuit.
+
+
+
+
+where the nodal admittance matrix M is complex, symmetric, and
+frequency dependent. In a threephase system, equation (I) can be
+expressed as
+
+
+
+
+                                                                                        Fig: 2: Structure of an RLC module.
+                              yu.=   yu+   yuw                           A typical RLC network used in the approximationof the elements of
+                      va = yUb vu# yV&                             (3)   flij,Jis shown in Figure 2. The general structure of these RLC
+                                                                         networks reflects the known frequency characteristics of the
+                             ?U-     yusb yuw.                           admittance functions of a transformer:
+
+
+
+
+The basic idea behind the new transfomr model is to produce an
+                                                                             predominantly capacitive behaviour at high frequencies,
+equivalentnetwork whose nodal admittancematrix matches the nodal
+                                                                             represented by the single RC branch.
+admittance matrix of the original transformer over the frequency
+range of interest. Such representation would correctly reproducethe
+transient response of the transformer at its terminals. Consider then
+                                                                                      3. PRACTICAL CONSIDERATIONS
+the multi-phase network shown in Figure 1. This network will be
+referred to as a multi-terminal r-equivalent. The parameters of this
+                                                                         The transformer model must be sufficiently robust to produce
+circuit can be calculated from its nodal admittance ma& using the
+                                                                         consistentand numerically stable equivalentnetworks even when data
+well-known relationships
+                                                                         are obtained from noisy or inconsistent measurements. To this
+                                                                   (4)   effect, the following steps are taken:
+
+                                                                            Fitting the elements ofwd   and calculating VE,J by adding the
+                                                                            fitted functions US% (4). instead of fitting WkT1directly.
+
+                                                                            Averaging the diagonal and off-diagonal elements of   wd   SO that
+                                                                            Wd become bazancad matrices.
+                                                                         The explicit approximation of the elements flE,J,  would result in
+                                                                         models of lower order than those obtained by first appmximating
+                                                                         v$   and then adding the results. However. it has been found that
+                                                                         models obrained by fitting           directly. may be numerically
+                                                                         unstable.
+
+
+
+
+   Fig. 1: Single-line diagram of a multi-terminal r-equivalent.
+If the sub-matrices of M arc balanced, they can be diagonalizad by
+a constant transformation [Ql such that                                      0.80-
+
+                                                                         m
+                                                                         *
+                                                                         0
+                                                                         d
+                                                                             0.40-
+
+                                                                  (7)
+                                                                      -  I
+
+                                                                         M
+                                                                         Y
+
+
+
+                                                                         t
+                                                                                0    . ...
+                                                                                     \
+                                                                                                 0 a . r
+
+
+Subscriptss and m in (6) stand for "ser  and "mutual", respactively;                                                                               d
+subscripts "0" and "1" in (7)stand for the familiar zero and positive                                          Frequency Hz
+sequence components. Matrix [Ql could be any of a numbex of
+transformation matrices which diagonalize a balanced matrix. Note            1-00
+that even though each sub-matrix in M can be diagonalized, M                                                                                   I
+itself will not be diagonal. For example, for a thrcuphase, two-
+winding transformer
+
+
+
+
+                                                                                                               Frequency Hz
+
+
+
+
+                                                                         To validate the transformermodel, frequency domain as well as time
+                                                                         domain measurementswere conducted on a 125 MVA, 215/44 kV,
+                                                                         threelimbed coretype transformer. The transformer is YY-
+Introducing into equation (2) we finally obtain                          connected with grounded neutrals at the high and low voltage sides.
+                                                                         The transformer has a deltaconnected tertiary winding with no
+                                                                         accessible terminals.
+
+                                                                         The effect of averaging the elements of Cyd for the transformer
+                                                                         indicated above, is illustrated in Figure 3, where the solid trace
+             [a-'
+                v, = VH&         ;    [a-'I,
+                                           = I,&                         corresponds to the averaged functions, and the dashed tractx
+                                                                         correspond to the raw measurements.
+             [a-'
+                'V = -V          ;    [QpZ'    = -z
+
+The admittancesto be approximated with rational functions are now                                   4. FITTING PROCESS
+the elements of Cy,,,,,& instead of that the elements of Cy$. Since
+the parameters of the positive and negative sequence networks are        The elements of Cy&               in (8) are approximated with rational
+
+admittance elements, rather than 3m.(3m+1)/2.
+                                                         +
+identical, the problem reducte to the fitting of only m-(m 1) distinct   functions given by
+                                                                                      YGr)   -    Y*(s) = Y=(.s)   +   Y&)   +   Y l S )    (10)
+
+Averaging the elements of Cyd to produce balanced matrices has
+obvious merits from the point of view of computationalsped. For
+example, for a two-winding, threephase transformer, 6 rather than
+21 distinct function8 would have to be approximated with RLC
+networks. Also, the timastep loop calculationsin the EMTP are also
+substantially reduced. Averaging the elements of Cya also adds
+some robustness and consistency to the raw measurements, and
+contributes further to the numerical stability of the model. While
+averaging may, in some instan-,      mask the effect of legitimate       where k,,, hj,bcand                                     L hCtue
+                                                                                                         are real constants; ~ R and
+asymmetries in the transformer, the differences observed in the          real poles; "/o is a real zero; pi and q are complex poles and
+transformers studied appear to be relatively small (see Figure 3).       ze-,    and p; and z'~are their respective complex conjugates. For
+  1618
+
+the practical example given. the number of real poles NR and the       The step8 followed in the approximation of Y(s) are:
+number of complex conjupb poles NC m (11) and (13) are typically
+6 and 15, rrapoctively. AU polcs arc confined to the left hand side    1) Numerical noise in Y(s) is removed.      whose magnitude fall
+of the compltx ptaae aad s=jo. YJs) can be described with the             below a user-controledpercentageof the largest peak in Y(s) are
+equivalent circuit shown m F i i 2. where YRLcomspon&to the               dismissed.
+RL branches. YRc correspondr, to the RC branch and :Y,
+corresponds to the RLC brancher. The single resistive branch comes     2) Initialize YRc. The reaponse of an RC branch is
+from & in equation (11). and its conductance is normally very small.
+
+Let us now define fa as the frequency where the first parallel
+resonance of Y(8) occurs (seeFigure 4). At frequencies below f-,
+the admittance function8 behave as combmation8 of RL branches
+without resonances. At frequencies above fm, stray capacitances
+come into play and a number of resonancesarc present. Therefore,
+for an initial estimate of P&), it b asaumed that the region b e e n      The RC branch represents the asymptotic behaviour of the
+the first measured data point       and fa contains real poles only,      m f o n n c r at very high m y . To oalcuku R and C, it k
+while the region from f- to the last measured point & contains            assumed that for the frequency range of intcmst oRC < < 1 and
+complex conjugate pairs only.                                             that the imaginary prut of YRc=oC. The value of C is found by
+
+
+
+                                                                           lo6    U
+
+
+
+
+    0.00    ,',(
+                    \'
+                          '!k,
+                          \I
+                            l lj/
+e 0 . 2110 2 4 I d 2 4 I d 2 4 10'2 4 I ,,.,;
+                                        d2 4
+                                Frequency Hz
+                                             ,,.,I   I       I
+                                                                            1U'
+
+                                                                                                      Frequency Hz
+
+                                                                       Fi.5: Approximation of^^,^. Solid trace:jirredjuncrion
+                                                                                  Dashed trace: raw data
+
+
+
+
+                                                                             2
+                                                                           1U'
+
+                                Frequency Hz                                                          Frequency Hz
+
+Fig.4: Elrmenr Y ~ J Solid
+                      .    trace: raw data;                            Fig. 6     @proxi"       of yu,o. Solid trace:fittedficncrio
+           Dashed trace: low frequency mudel                                      Dashed trace: raw data.
+                                                                                                                                         1619
+
+   fitting the imaginary part of Y(s) with OC in the least squares       large, no causal rational function will be able to approximate the
+   sense. With C known, R is found by matching YRc to a point on         transition region and still produce a negligible contribution at 60 Hz.
+   the lower envelope of the d part of Y(s). This technique is           In these cases, the approximation in the neighbourhood of f,, will
+   very simple but surprisingly effective: optimization seldom           be somewhat degraded.
+   changes this initial estimate by more than five percent.
+                                                                         When the response of the low fresuency model is subtracted from the
+3) InitializeYw: by identifyingthe local maxima and minima of the        measureddata, the region between 60 Hz and f- defines a transition
+   magnitude of the real part of Y(s). Each local maximum or peak        area where the magnitude of Y(s)=Y,,-Y,,,,,, is determined by the
+   comsponds to a complex conjugate pole pi=q+j&, and each               consistencybetween measured data and the low frequency model and
+   local minimum or valley comeponds to a complex conjugate              where the magnitude of Y(s) at 60 Hz should be zero. If the low
+   zero q=vi+j6p The angular frequency at which a maximum and            frequency model were accurate from 60 Hz to & and the
+   minimum occurs determines Bi and 4 (&=2rLk,        4=2rLby).          measurements were error free,then the magnitude of F(s) would be
+   The real parts are arbitrarily initialized to 2.5% of their           very small at L. The smaller the difference the better the fit
+   compondmg imaginary parts. The real zero v0 is initialid to           around f-     If the difference is very large, then is not possible to
+   y0=21-f,.     The number of poles and zeroes assigned is              approximatethis transition region accurately and some compromises
+   determined by the shape of Y(s) and by the tolerance that             are necessary, namely, a larger error between & and fa and a
+   determines which peah are considered meaningful.                      relatively large Y,(s).
+
+3) Optimize the initial guess of Yl(s)=YRc+Ym, assuming                  A high firesuency model was developed for the measured transformer
+   YRL=O, over the fresuency range from            to LX   using a       as an add-on module to a TRELEG model of the same transformer.
+   modified Marquardt algorithm'2. The error function is defined         Figures 5 and 6 show the approximation of the elements Ym,o, and
+   as the magnitude of the difference function Y(s)-Y,(s).               YU,,produced by the combined model. These illustrate the best and
+                                                                         the worst fits, respectively, obtained for this particular transformer.
+4) Initialize YRL(s)from 60 Hz to f,    using the asymptotic fitting
+   procedure described in the Appendix. This initialization
+   algorithm does not require that the function to be approximated                          6. TRANSIENT RESPONSE
+   be a minimum p b s h i f t function in order to produce an
+   accurate initial fit. The default number of poles is four, but this   With the elements of [y ] available in a closed form, inclusion of the
+   number is under user's control.                                       high frequency model in the EMTP is conceptually straightforward.
+                                                                         Each branch in the equivalent network shown in Figure 1 is
+5) Optimize the entire function Y,(s) from 60 Hz to f,  using the        represented by a constant conductance matrix in parallel with a past
+   same optimization algorithm indicated in item 3 above.                history current source. During a transient simulation, modal
+                                                                         voltages and currents are calculated from terminal voltages and the
+During the optimization process, all poles are confined to the left      uncoupled sequence networks are solved to produce an updated set
+hand side of the complex plane. Zeroes are not so constrained. This      of modal history current sources. These current sources are
+often leads to the realization of branches with negative values of R,    tmnsformed into phase quantities and used by the EMTP for the
+L and C. Nevertheless, because of the constraints indicated above,       solution of the system in the next time step.
+these branches still have a positively damped response.
+                                                                         The approximationsgenerated with the techniques described above,
+The entire fitting process is fully automatic and no user input or       are ultimately combined using equations (1)and (2)to produce the
+special skills are necessary to initialize it. Some of the fitting       branches of the equivalent sequence representation of the
+parameters can be overridden by the user to control the number of        transformer. These networks can be simulated in the EMTP by
+poles and zeroes of Y,(s) and to control the desirable error levels in   means of the new FDB (Frequency Dependent Branch) model. This
+the approximations.                                                      model was designed as a general-purposetool to simulate multi-phase
+                                                                         coupled RLC networks in the EMTP. The type of networks which
+                                                                         can be modelled with the FDB model are more general than those
+             5. USAGE AS AN ADD-ON MODULE                                required by the high frequency transformer model. In fact, even the
+                                                                         EMTP implementation of the FDNE (Frequency dependentNetwork
+When the high frequency model is used as an add-on module of a           Equivalent) is a sub-set of the FDB model.
+more complex representation with linear and nonlinear components,
+the nsponse of the low frequency components Yb must be                   It is not within the scope of this paper to describethe implementation
+subtracted from the measured response YmW before it is                   of the FDB model in the EMTP or Ontario Hydro's experience with
+approximated. In a typical application, the frequencyresponseof the      the new high frequency transformer model. Due to space limitations
+low frequency nameplate model (e.g., BCTRAN or TRELEG),                  these topics will have to be part of a separate paper.
+including iron core losses, is subtracted.
+                                                                         To verify the EMTP implementation and to validate the developed
+The subtraction of the effect of the low frequency models introduces     model, a comparison between simulated versus measured transients
+some complications if the difference between their low frequency         on the same 125 MVA, 215/44kV unit used earlier was conducted.
+iesponse and the measurements is not negligiile in the transition        Figure 7 shows the measured response of the transformer measured
+region around the lowest measured frequency f& (see Figure 4).           on phase 1 of the high voltage terminals when a step voltage is
+Ideally, an add-on high frequency model should have no effect on         applied on phase 3 of the high voltage terminals. All other terminals
+the response at power frequency. If the difference at f- is too          are grounded. Figure 8 shows the results of the corresponding EMTP
+      1620
+                                                                                        ~     ~   ~~
+
+
+
+
+                                                                                            Cherryrood 125 HVR 215/4'1 k V .             Voltage a t H3
+        0.90,                                                           1                   v o l tages: Scale IO** l * J I
+                4
+                                                                               8.00--
+
+
+
+
+                                                                              -b.OO
+
+                                                                            0 -8.00
+                                                                                   0 . 0 0 0.02 0.04 0.06 0.08.O.IO 0 . 1 2 0 . l r 0 . 1 6 0 . 1 8 0 . 2 0
+                                                                                                                     Tine 1 0 n w (-2)
+                       Fig. 7: Step response. Aeld test.                                               Fi. 8: Step response. EMTP simulation.
+
+      transient simulation. Numerical stability has been verified for this      would like to thank A. Narang from Ontario Hydro's Electrical
+      and other similar tests by allowing the simulation to run for             Research Division for providing the measurements for the
+      extremely long times (several seconds).                                   transformer used in the numerical examples. Thanlrs are also due to
+                                                                                CEA for permission, on behalf of DCG, to publish this work.
+                                                                                Funding for this project was provided by DCG.
+                              7. CONCLUSIONS
+                                                                                REFERENCES
+      This paper presents a model to simulate the behaviour of a multi-
+      phase, multi-winding transformer over a wide frequency range. This         [l]    J. Skliutas, and J. Panek, "Electromagnetic Transients Program
+      model reproduces the behaviour of the transformer by means of                     (FMTP) - Field Test Comparisons". EPRI EL-6768, March 1990.
+      combmations of RLC nemorks that match the frequency response of
+                                                                                 [2] H. W. Dommel, Electromagnetic Transients Program Reference
+      the transformer at its terminals. The fresuency response of the                Manual          THEORY BOOK), Printed by The University of
+                                                                                                        ~~
+
+
+
+
+      transformer is assumed to be known from measurements, or from                  British Columbia, Vancouver B.C.,Canada, August 1986,pp. 6-
+      calculations with models based on geometry and construction details.           62 - 6-63.
+      Its most,important featurea are:
+                                                                                 [3] R. C Degeneff, "A Method for Calculating Terminal Models of
+                                                                                     Single Phase n-winding transformers". Paper No. A 78 539-9
+      1) It can be used to model multi-winding, multi-phase transformers
+         for which the frequency response is known.                                  presented at the IEEE PES Summer meeting in Los Angeles, July
+                                                                                     1978.
+      2) It can be used as an add-on module for a more complex                   [4] T. Adielson, A. Carlson, H. B. Matgolis, and J. A. Hallady,
+         transformer repmentation. It can also be used as a stand-alone              "Resonant Overvoltages in EHV Transformers - Modelling and
+         linear model if the frequency response of the transformer is                Application",IEEE Transactionson Power ApparatmmdSystmr,
+         known over a sufficiently wide fresuency range.                             vol. PAS-100,pp. 3563-3572,July 1981.
+                                                                                 [5]    P.I. Fergerstadand T. Henriksen, 'Inductancesfor the Calculation
+      3) The fitting techniquee developed to approximate the admittance                 of Transient Oscillations in Transformers", ZEEE Transactions on
+         functions of the transformer produce approximations of                         Power Apparatus and Systems, vol. PAS-93,No. 2,pp. 500-509,
+         exceptional quality.                                                           MarcWApril 1974.
+      4)              tests performed indicate that the models produced a x      L61        R. c*Degeneff, "A           Method for m i n i n g Resonances
+                                                                                            in Transformer Windings", IEEE TransactionsonPower Apparatus
+           accurate and numerically stable.
+                                                                                            and Systems, vol. PAS-%, No., pp. 423-430,MarcWApril 1977.
+      5 ) The process to generate parameters for the model is completely         [7] R. C. Degeneff, W.S. McNult, W.Neugebauer, J. Pan&, M.E.
+          automatic: no special skills or experience are required from the           McCallum, and C. C. Honey, "Transformer Response to System
+          user.                                                                      Switching Voltages" ,IEEE Transactionson Power Apparatus and
+                                                                                     Systems, vol. PAS,No. 6,pp. 1457-1470,June 1982.
+
+      AcknowIedgements                                                           [8]    P. T. M.Vaessen, "Transformer Model for High Frequencies',
+                                                                                        IEEE Transactions on Power Delivery, vol. 3, No. 4, pp. 1761-
+      The authors would like to acknowledge the use of the Marquardt                    1768,October 1988.
+      optimization routine from the Harwell Subroutine Library. Also we
+
+
+
+
+- _
+                                                                                                                                         1621
+
+[9]   Q. Su, R. E. Jamcs, and D. Sutanto, "A ZTransform Model of
+      Transformersfor the Study of ElccttomagneticTransientsin Power
+      Systems",IEEE TransactionsonPower Systems. vol. 5 , No. 1, pp.
+      27-33, Febr~ary1990.
+[lo] A. Keyhani, H. Tesai, and A. Abur, "Maximum Lkelyhood
+     Estiimation of High FrequencyMachine and TransformerWinding
+     Parameters", IEEE Transactionson Power Systems, vol. 5 , No. 1,
+     pp. 212-219, January 1990.
+1111 A. Keyhani, S. Cbua, and S. &bo,       "Maximum Likdyhood
+      W i i o n of Transformer High Frequency Parameters from Test             h3
+      Data", IEEE Transactionson Power Drlivery, vol. 6, No. 2, pp.
+      858-865, April 1991.                                                \/;.I.'
+1121 D. W.Marquardt, "AnAlgorithm for --Square         Estimation of           h4
+     Nonlinear Parameters", J. Soc. Indust. Appl. Math, vol. 11, No.
+     2, pp. 431-441, June 1963.                                                                                                   frequency
+[13] J. R. Marti, "Accurate Modelling of Frequency-Dependent              1) Calculate R(s), where
+     Transmission Lines in Electromagnetic Transient Calculations".                             Rcs) = 4WHOI - c
+     IEEE TransactionsonPowerApparatusandSystems,pp. 147-157,
+     January 1982.                                                          where C is an arbitrary constant such that Re{H(s)} > 0 V o 2 0
+1141 L. Ma", "Low-order approximation of Transmission Line
+     Parametersfor Frequency-DependentModels". IEEE Transactions          2) Use the fitting technique described above to approximate R(s) with
+     on PowerApparatusandSystems, pp. 3584-3589,November1983.               R(S).
+
+
+                                                                          3) Calculate the partial fraction expansion of the rational function
+                                                                             R'(s)
+                            APPENDIX
+                                                                                               R'(s) = ke +    *-
+                                                                                                                4
+To approximate a minimum phaseshift function H(s) with a rational
+                                                                                                               1-1   b - PJ
+function P(s) that contains only real poles and zeroes which lie in the   4) The approximation of H(s) is then given by
+left hand side of the complex plane, it is sufficient to match the
+magnitude functions of H(s) and P(s). This is possible because the                             H(s) .I A', +         -
+                                                                                                                     kJP,
+phaseangle of a minimum phaseshift function is uniquely determined                                             1-1   (s   - PJ
+by its magnitude function: if IH(s) I and IP(s) I match, their phase
+angles will also match.                                                     where kb = k,     +C
+                   H(s)    P(s) = ko  n-
+                                       - PJ
+                                       i-1
+                                             (s-zJ
+                                             (s                           BIOGRAPHIES
+A very effective technique to match the magnitude of a minimum
+phaseshift function is suggested in [13] and [14]:                        Atef S. Morched (M'77SM'90) received a BSc. in Electrical
+                                                                          Engineering from Cairo University in 1964, a Ph.D. and a D.Sc.
+1)    Subdivide the magnitude function into N equally-spaced              from the Norwegian Institute of Technology in Trodheim in 1970 and
+      segments. These segments define the location of the horizontal      1972. He has been with Ontario Hydro since 1975 where he
+      asymptotes hi, (i=l, ...,N+1) of IP(s)l.                            currently holds the position of Section Head - Electromagnetic
+                                                                          Transients in the Power System Planning Division.
+2)    Place the corresponding vertical asymptotes at the frequency
+      where IH(s)l equals the geometric mean of two adjacent              Luis M a d (M'79) received an undergraduate degree in Electrical
+      horizontal asymptotes.                                              Engineering from the Central University of Venezuela in 1979,
+                                                                          MA% and PhD degrees in Electrical Engineering in 1983 and 1987,
+3)    The initial location of poles and zeroes is d e h e d by the        respectively, from The University of British Columbia. He did post-
+      intersection of vertical and horizontal asymptotes.                 doctoral work in cable modelling in 1987-1988, and joined Ontario
+                                                                          Hydro in 1989, where he is currently working in the Analytical
+4)    O p t i m i i the initial location of the poles and z e m by        Methods & Specialized Studies Department of the Power System
+      reducing the error function in the least squares sense.             Planning Division.
+
+                                                                          Jan H. Ottevaneers received an MSc. in Electrical Engineering from
+Thii technique can be extended to approximate any analytical, non-        the Delft Institute of Technology in 1956. He has been with Ontario
+minimum phaseshift function. The basic premise is that the                Hydro since 1967 where he is currently working in the Analytical
+imaginary part of an analytical function is uniquely determined by its    Methods and Specialized Studies Department of the Power System
+real part. The modified method proceeds as follows:                       Planning Division.
+1622
+
+                                   Discussion                                       different parameters than the other two phases.) Then, as a result of the
+                                                                                    balancing, a real, constant, transformation            [e]
+                                                                                                                                      can be used to obtain
+Q. Su (Monash University, Clayton, Australia): The authors are to be                the desired modes. After fitting, the modal approximations are
+congratulated in having presented a comprehensive high frequency                    transformed back to the original phase domain. They now correspond
+transformer model of equivalent networks. In electrical power systems,              to the given matrix [U of frequency domain measurements. My first
+the transient overvoltages of high voltage power transformers, either               question is whether a final refinement of the fitted results is performed
+at the terminals or inside the windings, are of great importance for the            or contemplated for obtaining a best match with the original set of
+reliability of electricity supply. The model developed by the authors               data, in order to compensate for the approximation made by the initial
+will be useful for the study of system transients in which the high                 balancing process?
+frequency characteristics of transformer winding are to be considered.
+   Obviously, the model represented by a number of R, L. C compo-                   The transformer connection used in the paper is Y-Y, with the
+nents can easily fit in EMTP programs. For a detailed internal winding              particular feature that the [Tj]block can in fact be balanced by a small
+model, several hundred components may be used resulting in a large                  adjustment. This is so because the connection does not produce an
+size of matrix impractical for EMTP system studies, as mentioned in                 internal phase shift. When this is not the case, for instance in the
+the paper. The authors’ RLC module in Figure 2 consists of at least 1.5             important class of Y-A or Y-Z (zig-zag) connected transformers, the
+components and 12 such modules are used to represent a three-phase,                 offdiagonal block [qj] has cyclic symmetry. For instance, in one
+two-winding transformer. It is therefore necessary to simulate each
+transformer of interest in power system with a network of 180 or more               particular Y-A connection (with an admittance y associated to each
+RLC components. Would this be a problem with EMTP system                            phase of the Y-connected winding), we have
+studies?
+   In my previous papers [1,2], a closed-form transformer high fre-
+quency model was presented, as shown in Figure A(a). Extended to
+the mode form in Figure A(b), the model has also been used for three
+phase transformers. From my experience, the computing time for
+system transient studies increases significantly for a transformer repre-
+sented by RLC networks rather than closed-form models.
+   Another question concerns the higher frequency response of a                     Eigenanalysis of this matrix leads to the symmetrical component
+transformer under step voltages. The functions in Figures 5 and 6 fit               transformation matrix with three, rather two, decoupled modes.
+measured data up to about 200 kHz and the calculated step voltage                   Balancing would yield the zero matrix. An a-type input gives a &type
+response in Figure 8 agrees with the measured in Figure 7. This                     output and vice versa (as expected, see for instance PI; thus the (real)
+confirms the fitting accuracy of the authors’ method. Could the au-
+thors indicate the rise time of the step voltage and the time step                  Clarke transformation does not result in modal decoupling). Positive or
+interval used for the calculations of the step voltage responses?                   negative sequence voltages result in currents of the same sequence with
+                                                                                    the expected phase rotation. In the modal domain there is of course no
+                                   References                                       strict symmetry, as reciprocity now implies a rotation in the opposite
+                                                                                    direction if the voltages are applied to the secondary rather than to the
+     Q. Su, R. E. James and D. Sutanto, “A Z-transform Model of                     primary winding.
+     Transformers for the Study of Electromagnetic Transients in
+     Power Systems”, CO-authored with R. E. James and D. Sutanto,                   Clearly, transformers with internal phase shifting effects pose more
+     IEEE Transactions on Power System, No. 1, Vol. 5 , 1990, pp.                   complex problems. Could the authors please elaborate on their thoughts
+     27733.                                                                         regarding the solution of these problems?
+     Q. Su and T. Blackburn, “Application of Z-Transform Method                     Finally, I wish to reassert my appreciation regarding the merits of this
+     for Study of Lightning Protection in Electrical Power Systems,”
+     Proceedings of the 7th Intemntional Symposium on High Voltage                  paper and would like to congratulate the authors for their fine
+     Engineen‘ng, Dresden, Germany, Aug. 26-30, 1991, pp. 139-142.                  contribution.
+                                                                                    [A]A.S. Morched, J.H. Ottevangers, and L. Marti, “Multi-Port
+                                                                                       Frequency Dependent Network Equivalents for the E M ” ” , IEEE
+                                                                                       paper no. 92 SM 4614 PWRD, presented at the 1992 IEEEPES
+                                                                                       Summer Meeting, in Seattle, WA.
+                                                                                    [B] Edith Clarke, ”Circuit Analysis of A-C Power Systems, Volume I:
+                                                                                        Symmetrical and Related Components“, John Wiley & Sons, Inc.,
+                                                                                        New York, 1943.
+
+                                                                                     M a n u s c r i p t r e c e i v e d J u l y 2 7 , 1992.
+              ( a )                                           ( b )
+   Fig. A   A close-formhigh lrequency model for two-winding, (a) single-phaseand
+            (b) Ihree-phase Iranslormers.
+
+
+                                                                                    X. Chen (Department of Electrical Engineering, Seattle University,
+                                                                                    Seattle, WA): This paper is very impressive in scope and in detail. The
+Adam Semlyen (University of Toronto): This is an interesting and                    authors and their organization must be commended for their contribu-
+useful paper as it solves the problem of providing a realistic model for            tions to the accurate modeling of the high frequency behavior of
+multi-phase transformers for the purpose of EMTP simulations. It has                multi-winding, multi-phase transformers. The fitting techniques to
+                                                                                    approximate the admittance functions of a transformer is both novel
+benefited of the authors’ expertise and experience in fitting stable                and practical. This discussor has learned a lot from their paper and
+circuit models to frequency domain data [A]. One of its outstanding                 the authors’ earlier papers on transformer modeling. I would appreci-
+features is the modal decomposition they have used: it has not only                 ate the authors’ comments on the following questions:
+simplified the problem of fitting but, more importantly, it has reduced
+the dynamic size of the model to that of a minimal realization. The                 (a) I have developed a computer program which can form the induc-
+following remarks and questions are mainly related to the problem of                    tance matrix for a two-winding, three-phase, multi-legged trans-
+modal decomposition.                                                                    former.
+                                                                                           The inductance matrix for the primary winding of an unsatur-
+I note that the authors assume that the offdiagonal block [qj]can be                    ated three-phase three-legged transformer computed by BC-
+adjusted to become a balanced matrix. This, of course, implies an                       TRAN (pages XIX-C-15 to 20, ATP Rule Book, 1987-1992,
+approximation. (The central phase may, for instance, have somewhat                      BPA) is shown in Eqn. (A).
+                                                                                                                                                                               1623
+
+
+
+: :1 2 I: i
+ La,    L,,   Lo,
+
+                    =
+                           879.72
+                         -438.02
+                         -438.02
+                                        -438.02
+                                          879.72
+                                        -438.02
+                                                   -483.02
+                                                   -438.02
+                                                     879.12   I
+    The inductance matrix computed by my program is shown in Eqn.
+                                                                  Henry (A)
+                                                                              R. Malewski (Westmount, Quebec, Canada): This study can serve as an
+                                                                              excellent example of successful and realistic approach to modeling of a
+                                                                              large HV power transformer complex internal circuit. The authors
+                                                                              recognize a necessity of taking measurements of the examined trans-
+                                                                              former characteristics in order to develop the EMTP model. As an
+                                                                              alternative, they refer to the transformer design parameters; these
+    (B).                                                                      however, are considered proprietary by the manufacturer and not
+
+
+
+;:1 2: 2.j i
+                                                                               accessible to the utility engineers.
+
+
+                                                              1
+ La,    Lab   Lac          879.80       -584.68    -292.14                        The paper title includes the mention of high frequency, and at the
+                         -584.68         1172.06   -584.68        Henry (B)    end of paragraph #2 a statement is made on the predominantly
+                    =    -292.14        -584.68      879.80                   capacitive behavior of the winding at high frequencies. This is correct
+                                                                               if the f,, is set at some 200 kHz, as indicated in Fig. 1. After all, it
+    It is striking to note that Lo, is two times greater than L,,, and
+    L,, is 1.33 times greater than La, and Lee. Because of the                            T r a n e f e r Cunstlon.   d l e c t o dlec. svmry sscond d1.c
+    asymmetry of the iron core of a three-legged, core-type trans-
+    former, my work is very possibly correct. If this is the case, then
+    Eqs. (6) to (8) of the authors' paper might not be valid. It is
+    common practice to represent a transformer by its sequence
+    impedances for short circuit analysis. To apply the symmetrical
+    components method to an unloaded three-phase core-type trans-
+    former is not always valid, even if there is no saturation involved.
+(b) Figures 7 and 8 of the paper showed the comparison between the
+    computed and measured step response of a 125 MVA, 215/44
+    kV transformer. The applied step voltage is much lower than the
+    rated voltage of the high voltage terminals. The main objective of
+                                                                              .
+                                                                              I
+                                                                              fn
+
+                                                                              5    0.2
+    developing high frequency transformer models is to study trans-           >
+                                                                              0
+
+
+    former overvoltages caused by switching and lightning. Although
+    many researchers claimed that magnetic saturation of the core
+                                                                                   0.1
+    has minor influence on fast transients, and therefore can be
+    disregarded, this discussor is interested in knowing if the authors
+    have compared the results of their model to the field test or
+    measurements for overvoltages caused by a lightning surge on a                 0.0
+                                                                                                  2 5 . OkHz           5 0 . OhHr          7 5 . OhHz          LOO. OkHz
+    transmission line which is connected to a transformer and operat-
+    ing at rated voltage. This discussor has a strong opinion that
+    harmonic analysis is valid for linear and slightly nonlinear sys-
+    tems. Wherever severe nonlinearity is involved, differential equa-
+    tions should be used and nothing else.
+Again, the authors are to be congratulated for their effort in develop-
+ing a comprehensive transformer model.
+  Manuscript received August 7, 1992.
+
+
+                                                                              I
+                                                                              ;;   0.2
+H. M. Beides and A. P. Sakis Meliopoulos (Georgia                             c
+                                                                              _I
+                                                                              z
+                                                                              0
+Institute of Technology). The authors should be commended
+for revisiting the problem of power transformer modeling.
+                                                                                   0. 1
+As it is widely known, a comprehensive and generally
+acceptable transformer model for transient simulation does
+not exist. One of the reasons is that transformers come in
+different designs and configurations and with different                            0.0
+                                                                                                               1 0 0 . OhHz                     2 0 0 . OhHz
+parameters of parasitic capacitances, etc. We would                                                                           FRED
+
+appreciate the authors response to the following comments
+and questions:
+
+Has the proposed modeling method been tested using
+transformers with tertiary windings? If yes, the authors'
+comments on the accuracy and performance of the derived
+models will be appreciated. What are the effects of                            U    0.1
+hysteresis losses and skin effect on the accuracy of the                       .
+                                                                               P
+
+
+
+estimated resistive components of the transformer model?
+
+The method requires measuring the frequency response of                            0.05
+
+the transformers. Is the frequency response dependent on
+the design of the transformer alone (i.e. two transformers of
+the same manufacturer and type will have identical                                            5 0 0 . OhHi        1 . OUHz           I . SMHr           2. OYHz       2.5YHz
+frequency response)? If this is not the case, it appears to us                                                                  FRED
+
+that it will be necessary to measure the frequency response                   Fig. 1. Transfer function of five first discs of an interleaved HV transformer
+of each transformer to be modeled.                                              winding presented at three frequency scales. These transfer functions were
+                                                                                deconvoluted in frequency domain from transients recorded on the un-
+ Manuscript received August 11, 1992.                                           tanked winding.
+ 1624
+ has been known since the time of Wagner [l] that the “standing wave”          practice may not be necessary and the phase data of the measured
+ type of resonant frequencies is confined to a few hundred kilohertz           transformer admittances should be used for the transfer function
+ interval.                                                                     estimation, because by including the phase data in the estimation
+    A distinctly different behavior of typical HV transformer windings         process does not increase the number of unknown parameters which
+ starts some 2 to 5 MHz, where the internal disc resonances come to            determines the size of the estimation problem. Furthermore it adds an
+ play. It may be of interest to inspect a typical winding transfer             important constraint on the variation of the estimated parameters.
+ function spanning all the four frequency intervals. Such a graph was             Another important aspect of the high frequency transfer function
+ obtained from an impulse voltage distribution measured along the              estimation is the numerical stiffness problem. This problem becomes
+ discs on an untanked medium voltage unit. The transfer function was           more severe if the resonant points are spreaded in a wide frequency
+ deconvoluted from the digitally recorded transients and the applied           range. In general, this problem can be resolved if a proper scaling
+ (low voltage) impulse. First five disc characteristic is shown in Fig. 1 at   scheme is adopted during the curve fitting. It would be interesting to
+threefrequency scales: 125 kHz, 300 kHz and 2.8 MHz. It can be seen            know if any frequency scaling was performed or needed for this
+ that the interval from some 500 kHz to nearly 2 MHz can be modeled            particular study.
+ by a real pole circuit, but beyond that limit a different representation         The authors have provided the power industry with a valuable and
+ is required.                                                                  practical technique for modeling the transformer high frequency dy-
+    Clearly, this paper does not address the issue of very high frequency      namics for the EMTP. We would appreciate the authors’ comments
+ phenomena, although they are of practical importance for transform-           concerning the questions and issues raised in this discussion.
+ ers directly connected to SF6 insulated bus bars [2].                            Manuscript received October 16, 1992
+    Practical implementation of the EMTP model presented in this
+ paper calls for measurements of the transformer transfer function in
+ the frequency range of at least 200 kHz.Such measurements can not             A. S. Morched, L. Marti, and J. Ottevangers: We would like to thank
+ be easily taken on a large unit in substation, but the required mea-          the discussers for their interest and their many relevant questions
+ sured characteristics can be obtained from an industrial laboratory           presented.
+ performing the acceptance test of new transformers. At present, many             Regarding Dr. Su’s questions, we would like to make the following
+ laboratories use a digital recorder for monitoring the impulse test           comments: After the admittance functions are approximated with
+ [3,4]. The obtained records are usually processed in order to enhance         rational functions, they become closed-form representations of the
+ the efficiency of fault detection. The processing often includes calcula-     original functions. Expressing the admittance functions in terms of
+ tion of the frequency spectrum of the output and input impulses, and
+ finding the transformer transfer function as quotient of these two            RLC modules is a convenient form of visualization and it does not
+                                                                               imply that a number of RLC branches have to be connected explicitly
+ spectra.                                                                      in the EMTP. Inside the EM”, the fitted functions are modeled with
+    An analysis of the transfer function required for the dielectric fault
+ detection, is not pertinent to the study presented by the authors.            FDB modules. Each n-phase FDB module consists of a constant
+ However, at a reduced voltage level, additional records can be taken          conductance matrix and a set of past history current sources. Figure I
+ during the impulse test, if requested by the utility purchasing the           illustrates the EMTP representation of a two-winding transformer
+ transformer. Such additional measurements can be included in the test         using FDB modules.
+ program, on demand of the utility system planning department. An                 Therefore, the presence of a high frequency transformer (HFT) in
+                                                                               the EMTP does not increase the size of the nodal admittance matrix
+ incremental cost of the additional measurement is negligible, since the       of the system modeled, and it only adds n entries to the EMTP branch
+ impulse generator and recording system are anyhow prepared for the
+ acceptance test.                                                              tables for each n-phase FDB module. For example, the transformer
+    The algorithms for measuring the HV to LV transfer function, and           shown in Figure I only adds 9 branches to the EMTP branch tables.
+ for retrieving the parameters required for modeling can be imple-             Additional storage is needed to keep track of the updating of the past
+ mented on existing commercial digital impulse recorders, or a special-        history current sources. In broad terms, this additional storage amounts
+ ized recording and signal processing system can be developed using            to 2 cells for each complex conjugate pole in (13) and one cell for each
+ the accumulated experience in high frequency measurement of trans-            real pole in (11) and (12).
+ former winding characteristics.                                                  The computational burden of Dr. Su’s transformer model should be
+                                                                               comparable with that of the HFT model. For a single-phase, two-wind-
+                                                                               ing transformer Dr. Su’s model requires the approximation of three
+                                References                                     functions and four numerical convolutions per time step of a transient
+     Wagner, K. “Das Eindringen einer elektromagnetischen Welle in             solution. The HFT model, also requires the approximation of three
+     eine Spule mit Windungkapazitat,” Elektrotechnik und Maschi-              distinct functions, but only three numerical convolutions per time step
+                                                                               are needed. A comparison of the performance of both representations
+     nenbau, 1915, p. 89.                                                      will depend largely on the number of terms needed in the fitting
+     Muller, W. “Fast Transients in Transformers,” CIGRE SC12,                 process.
+     WG12.11 Report presented at the Transformer Colloquim in                     The time step used in the EMTP simulation of the step response
+     Graz, 1990.
+     Malewski, R., Poulin, B., “Impulse Testing of Power Transformers          shown in Figures 7 and 8 of the paper, was the sampling rate used in
+                                                                               the field measurement, i.e., 0.5 ys. An EMTP step function was used
+     using the Transfer Function Method,” IEEE Trans. Vol. PWRD-3,             in the simulation ( A t rise time). In the field test, the input step
+     1988, p. 476.
+     Malewski, R., Gockenbach, E., Maier, R., Fellmann, K. H., Claudi,         reached 95% of its peak value in 1 ys.
+                                                                                  We agree with Messrs Keyhani and Tsai when they indicate that a
+     A., “Five Years of Monitoring the Impulse Test of Power Trans-            non-minimum phase shift function cannot be described uniquely with
+     formers with Digital Recorders and the Transfer Function                  the magnitude function alone. However, any causal function is uniquely
+     Method”, CIGRE Paper 12-201, 1992.                                        defined if its real part is known. In the identification/optimization
+   Manuscript received August 21, 1992                                         process described in the paper, both real and imaginary parts are used
+                                                                               to compensate for possible inconsistencies in measured data. Fre-
+
+ A. Keyhani and T. Tsai (The Ohio State University, Electrical Engr.,
+ Columbus, OH): We would like to commend the authors for a well-
+ written paper and for their efforts to develop a practical high fre-
+ quency transformer model for the EMTP.
+    The essential ingredient of high frequency transformer modeling is
+ to represent the transformer admittances as frequency dependent
+ nonlinear functions. In general, these transfer functions are non-
+ minimum phase system. Therefore both magnitude and phase of the
+ transfer function are needed to uniquely identify the transfer function
+ model. In this paper, since only the magnitude data were used for the
+ transfer function identification, the transfer function model had to be        Fig. I. Single-line diagram representation of a two-winding transformer with
+ modified into a minimum-phase plant. It is our belief that such                                               the FDB model.
+                                                                                                                                               1625
+
+quency scaling is commonly used in the solution of least squares
+optimization problems. However, its use would not be advantageous
+within the context of the modified Marquardt optimization algorithm.
+   Messrs Beides and Meliopoulos ask whether the frequency response
+of a transformer depends on its design alone. We have observed that
+transformers of the same design and make show essentially the same
+frequency behaviour. It is unclear to us, at this point in time, how far
+to generalize these observations. In absence of actual measurements, it
+might be better to use the HFT model of a similar transformer than to
+use no high frequency model at all. While the transformer used in the
+paper has a buried delta winding, we have not yet modeled a delta-
+connected tertiary winding explicitly. This requires some special con-
+siderations which will be explained in more detail in our response to
+Prof. Semlyen's questions. Hysteresis and eddy current effects are
+normally taken into account by dedicated models (e.g., [il) when the                 1 U'
+HFT is used as an add-on module. In this case, the HFT model will                                                                          d
+match the difference between the measured data and the frequency                                             Frequency Hz
+response of the linear portions of these models.                                                  Fig. 11. Magnitude of ylrIh1.
+   We will now address Dr. Malewski's comments. The choice of 200
+kHz as the maximum frequency was based on the simulation needs of
+the transient simulations for which the transformer model was re-
+quired. Figure I1 shows the magnitude of yhlh from 400 Hz to 1 MHz.
+Other than additional poles and zeros and the added computational
+burden, we do not feel that the extended frequency range presents a
+problem that the HFT model cannot handle. The graphs shown by Dr.
+Malewski also suggest to us that frequency range beyond 1 MHz does
+not pose any special problems either.
+   With regard to the techniques used to obtain the frequency re-
+sponses, we feel that direct, low voltage frequency domain admittance
+measurements are probably simpler, cheaper and more reliable for the
+purposes of the HFT model. This type of measurements can be made
+with relative ease in the field. It would probably be difficult to
+persuade manufacturers to perform all the full scale chopped-wave
+tests required to obtain all the data required by the HFT model.
+Nevertheless, Dr. Malewski's measurement techniques could provide
+an alternative way to obtain data for the H F I model since some of
+them are normally done in acceptance tests anyway.
+                                                                                            Fig. 111. Off-diagonal elements of [ Y H ] .
+   Professor Semlyen suggests an adjustment of the final fitted func-
+tions to account for phase asymmetries. It is not clear to us how this
+adjustment could be made after the fitted functions are obtained. It
+should be possible, however, to choose a real constant transformation
+matrix other than a , p, o to account for unbalances. This would be        differ only by a constant. For example,
+roughly the same type of approximation used to model frequency
+dependent unbalanced lines. Whether this constant transformation                                                                               (iii)
+matrix would also give acceptable answers at higher frequencies is
+probably a subject of further research. Another possibility is to ap-
+proximate each element of the Y matrix. This would not rely on any
+assumptions of symmetry, but the additional computational burden
+would be substantial.
+    Professor Semlyen correctly points out that in the case of Y-D or
+                                                                                             [ Y ~ =~ Y,(~ w~) .iJ5
+                                                                                                                ~ I0
+                                                                                                                       [:    1
+                                                                                                                                 I!-
+                                                                           In this case, only one admittance function yo( o)has to be approxi-
+                                                                                                                                               (iv)
+
+
+ Y-Z-connections, the off-diagonal [E: ] sub-matrices do not lend them-    mated. In the time-step loop of the EMTP the complex algebra does
+ selves to be approximated by a baianced matrix. Depending on the          not present a problem because even if intermediate functions are
+ type of delta connection and node numbering scheme, variations of a       nominally complex, the final phase voltages and currents are always
+ cyclic matrix can be obtained. For instance,                              real. In other words, the existing FDB model can easily be modified to
+                                                                           account for cyclic symmetric modules.
+                                                                              Professor Chen correctly points out that a multi-legged transformer
+                                                                           should show some asymmetry, which would degrade the accuracy of
+                                                                           the assumption that the sub-matrices of [Y] are balanced. However,
+                                                                           the measurements available to us do not show the severe asymmetry
+                                                                           indicated in Prof. Chen's calculations. Figure 3 in the paper shows that
+                                                                           the diagonal elements of the high voltage winding block are nearly
+                                                                           identical over a wide frequency range. Figure 111 below, shows the
+                                                                           measured off-diagonal elements of the same sub-matrix.
+                                                                              From this plot it can be seen that      while one element is indeed
+                                                                           different, the unbalance ratio at low frequencies is in the order of 1.2
+There are several ways in which this situation can be handled: The         to 1.3 rather, 2.0 as Professor Chen's calculations suggest. Based on
+most obvious one is to fall back on the approximation of every             these measurements we are inclined to accept the balancing procedure
+element of [Y]. On the other hand, it might be more practical to use a     as a reasonable simplification. It is clear, however, that the use of
+constant transformation matrix [Q] whose elements qi,kfor a n-phase        modal transformation matrix that accounts for center phase asymme-
+system are given by                                                        tries would be desirable. Strictly speaking, this transformation matrix
+                                                                           would also be frequency dependent. Therefore, further investigation
+                                                                           would be needed to find what constant transformation matrix would
+                                                                           represent an acceptable compromise over the entire frequency range
+                                                                           of interest.
+ The well-known symmetrical components transformation matrix is just          The question of the validity of superimposing linear high frequency
+ a special case of the matrix defined by equation (ii). The resulting      behaviour on the nonlinear response due to saturation does not have a
+ modal admittance matrix only has two non-zero elements, and these         simple answer. Short of solving the nonlinear field problem with
+1626
+detailed knowledge of core and winding design, accounting for nonlin-    requirements. This may contribute to the lack of field measurements
+ear and frequency dependent effects will always involve a certain        that would validate the assumption of superposition under near-
+degree of approximation. If the transformer is unsaturated, high         saturation conditions.
+frequency excitation cannot drive the transformer into saturation as                                   Reference
+the flux produced by a voltage input is inversely proportional to its
+frequency. If a transient of sufficient magnitude is impressed on a      [i] E. Tarasiewicz, A, S. Morched, A. Narang and E. P. Dick,
+transformer which is already saturated or near saturation, then super-       “Frequency Dependent Eddy Current Models for Nonlinear Iron
+position is not strictly valid. On the other hand, situations where a        Cores,” Paper No. 92 WM 177-6 PWRS, Presented at the IEEE-
+transient is impressed on a transformer which is already in saturation       PES Winter Meeting, New York, Feb. 1992.
+may not be all that common. It is Ontario Hydro’s practice not no
+operate transformers near saturation because of acoustic pollution         Manuscript received October 16, 1992.
+

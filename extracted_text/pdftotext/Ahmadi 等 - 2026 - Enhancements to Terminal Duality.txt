@@ -1,0 +1,537 @@
+                                                       Electric Power Systems Research 251 (2026) 112204
+
+
+                                                           Contents lists available at ScienceDirect
+
+
+                                                  Electric Power Systems Research
+                                                    journal homepage: www.elsevier.com/locate/epsr
+
+
+
+
+Enhancements to Terminal Duality-based models for three-phase multi-limb
+multi-winding transformersI , II
+                              ∗
+Meysam Ahmadi                  , Ali Dehkordi, Yi Zhang
+RTDS Technologies Inc., Winnipeg, Canada
+
+
+
+ARTICLE              INFO                          ABSTRACT
+
+Keywords:                                          This paper introduces an enhanced electromagnetic transient (EMT) model for three-phase multi-limb multi-
+Terminal Duality Method                            winding transformers based on the Terminal Duality Method (TDM). The proposed model improves accuracy by
+EMT model for three-phase multi-limb               incorporating zero-sequence path inductances, specifically for three-limb transformers, which are formulated
+multi-winding transformers
+                                                   for the first time. A closed-form formula is developed to precisely calculate the zero-sequence path inductance,
+Zero-sequence impedance
+                                                   ensuring that the transformer’s open-circuit zero-sequence impedance aligns with the user-provided value.
+                                                   Additionally, the inductances of the yoke sections beneath the winding stacks are considered by distributing
+                                                   the yoke inductances across each winding. Furthermore, a stabilization technique is implemented for nonlinear
+                                                   inductive cutsets by introducing a reference node to represent the tank voltage. The proposed model is imple-
+                                                   mented in RSCAD-RTDS and validated through extensive simulations and comparative studies, demonstrating
+                                                   its effectiveness and accuracy.
+
+
+
+1. Introduction                                                                     in significantly different zero-sequence impedance compared to five-
+                                                                                    limb or shell-type transformers. Ignoring this can lead to inaccuracies
+    The electromagnetic transient (EMT) modeling of three-phase trans-              in fault analysis and unbalanced operating conditions, compromising
+formers is a cornerstone of power system analysis, providing insights               EMT simulations.
+into critical phenomena such as inrush currents, short circuits, and                    Prior works, such as [6], acknowledge that existing three-limb TDM
+harmonic generation [1–5]. Among the diverse methodologies avail-                   models cannot handle unbalanced voltage applications. This highlights
+able for transformer modeling, the Terminal Duality Method (TDM)                    the need for models incorporating zero-sequence path inductances to
+has gained prominence due to its ability to construct equivalent circuit            fully capture transformer behavior under unbalanced conditions.
+models with high accuracy and computational efficiency [6–9]. This ap-                  This paper presents an enhanced TDM-based model for multi-limb
+proach effectively translates the magnetic behavior of the transformer              transformers, including zero-sequence path inductances with a closed-
+core into an equivalent electrical circuit by leveraging the princi-                form calculation, allowing users to specify arbitrary zero-sequence
+ple of duality, which captures the fundamental relationships between                impedance values. This improvement enhances applicability to real-
+magnetic flux, reluctance, and winding currents [6].                                world unbalanced conditions. Additionally, the yoke inductance can be
+    Transformer modeling remains complex, especially for multi-limb
+                                                                                    distributed based on the winding stack-to-yoke length ratio.
+transformers, due to intricate core-limb interactions. TDM simplifies
+                                                                                        Another enhancement corrects an error in the phase connections of
+this by relying on manufacturer-provided parameters – such as magne-
+                                                                                    the [6] model from the PSCAD library. To mitigate numerical chatter
+tizing characteristics, core aspect ratios, and test data – rather than core
+                                                                                    from nonlinear inductive cutsets, the tank node voltage is designated
+dimensions or material properties. The incorporation of the Normalized
+                                                                                    as the reference point.
+Core Concept (NCC) further enhances TDM by improving core-limb
+                                                                                        The proposed model is implemented in RSCAD-RTDS and validated
+interaction modeling and capturing nonlinearities like saturation and
+                                                                                    through cross-EMT verification against a similar PSCAD model. The
+hysteresis [6,10–12].
+                                                                                    validation includes open-circuit, short-circuit, excitation, inrush cur-
+    Accurate zero-sequence impedance representation is critical for
+three-limb transformers, widely used in distributed generation (DG) in-             rent studies, and an open-phase case scenario. However, experimental
+terconnections due to cost-effectiveness [4]. Their core structure results          validation is left for future work.
+
+
+ I This article is part of a Special issue entitled: ‘IPST 2025’ published in Electric Power Systems Research.
+II Paper submitted to the International Conference on Power Systems Transients (IPST2025) in Guadalajara, Mexico, June 8–12, 2025.
+ ∗ Corresponding author.
+     E-mail address: meysam.ahmadi@ametek.com (M. Ahmadi).
+
+https://doi.org/10.1016/j.epsr.2025.112204
+Received 4 January 2025; Received in revised form 9 April 2025; Accepted 4 September 2025
+Available online 17 September 2025
+0378-7796/© 2025 Elsevier B.V. All rights are reserved, including those for text and data mining, AI training, and similar technologies.
+M. Ahmadi et al.                                                                                                    Electric Power Systems Research 251 (2026) 112204
+
+
+    This paper is organized as follows: Section 2 covers the normal-             where in (7), 𝛿 = (3𝐾𝑟2 + 6𝐾𝑟 + 4)𝐾𝑟𝑜
+                                                                                                                    2 + (6𝐾 + 8)𝐾 + 4. The yoke and
+                                                                                                                           𝑟      𝑟𝑜
+ized core concept. Section 3 derives the electric dual for multi-limb            outer limb reactances of 3-limb, 4-limb, and 5-limb transformers can
+transformers, focusing on zero-sequence paths and numerical chat-                be obtained from 𝑋𝑙𝑚𝑏 using (3) and (4).
+ter mitigation. Section 4 presents validation results, and Section 5                 It should be mentioned that this work introduces the concept of
+concludes.                                                                       distributed yoke inductances, which will be discussed in subsequent
+                                                                                 sections. To apply the method from [6] in the presence of distributed
+2. Normalized core concept                                                       yoke inductances, certain modifications were required.
+
+    The normalized core concept (NCC) was developed for modeling                 3. Derivation of TDM-based model and incorporating the zero
+multi-limb transformers within the Unified Magnetic Equivalent Circuit           sequence path
+(UMEC) framework. Introduced by Enright et al. in [12,13], NCC
+enhances accuracy by normalizing core reluctances and fluxes, elim-                  Fig. 1 illustrates the overlaid graph of the magnetic circuit and its
+inating dependence on physical dimensions and material properties.               electric dual for a three-phase, three-winding, three-limb core config-
+Instead, it relies on normalized parameters derived from standard                uration, assuming concentric windings. The detailed magnetic paths
+transformer test data.                                                           and their corresponding reluctances are shown in orange, while the
+    In [12], NCC was applied to multi-limb transformers by normalizing           electric equivalent circuit, derived by converting reluctances to their
+limb and yoke reluctances, ensuring accuracy across different core sat-          corresponding inductances, is depicted in black.
+uration and hysteresis levels. [13] extended this approach to five-limb              In Fig. 1, the zero-sequence flux paths for the three-limb trans-
+transformers, broadening its applicability.                                      former are explicitly represented and labeled as ‘‘airin’’ and ‘‘airout’’
+    Later, [11] adapted NCC for the TDM-based multi-limb transformer             in the magnetic circuit. In practice, a portion of the zero-sequence
+model, using magnetizing current and yoke-to-limb ratios to compute              flux flows through the leakage path. However, since the fluxes in all
+limb and yoke inductances in 3-limb transformers and outer limb                  three limbs are in phase, no flux passes through the yokes. Correspond-
+inductances in 4-limb and 5-limb configurations.                                 ingly, in the electric dual, inductances are introduced to account for
+    This work further employs NCC to determine essential parameters              these zero-sequence paths, ensuring an accurate representation of the
+for the proposed TDM-based model. Eq. (1) outlines the fundamental               transformer’s electromagnetic behavior.
+relationships for winding limb, yoke, and outer limb inductances.                    Additionally, as shown in Fig. 1, for each winding, there is a
+             𝑎                  𝑎𝑦𝑜𝑘             𝑎                               corresponding yoke reluctance, denoted as ℜ𝑌 𝑜𝑘𝑖 , which accounts for
+𝐿𝑙𝑚𝑏 = 𝑁 2 𝜇 𝑙𝑚𝑏 , 𝐿𝑦𝑜𝑘 = 𝑁 2 𝜇      , 𝐿𝑜 = 𝑁 2 𝜇 𝑜                  (1)         the reluctance of the portion of the yoke beneath each winding stack.
+             𝑙𝑙𝑚𝑏               𝑙𝑦𝑜𝑘             𝑙𝑜
+                                                                                 This approach is optional in the proposed modeling method. If the
+   Next, let us consider the following aspect ratios between the cross-
+                                                                                 required data, i.e., the thickness of the winding stacks relative to the
+sectional area and length of the limb, yoke, and outer limb:
+                                                                                 yoke length, is unavailable, all the yoke reluctance can be lumped into
+       𝑎𝑦𝑜𝑘              𝑙𝑦𝑜𝑘               𝑎𝑦𝑜𝑘               𝑙𝑦𝑜𝑘              a single component, as done in conventional TDM-based models [6].
+𝑟𝑎 =          ,   𝑟𝑙 =          ,   𝑟𝑎𝑜 =          ,   𝑟𝑙𝑜 =           (2)
+       𝑎𝑙𝑚𝑏              𝑙𝑙𝑚𝑏               𝑎𝑜                  𝑙𝑜                   In order to fully implement the TDM-based electric equivalent net-
+                                                                                 work of the three-phase transformer into EMT simulations, certain
+   Considering (2), the relationship between 𝐿𝑙𝑚𝑏 and 𝐿𝑦𝑜𝑘 can be
+                                                                                 simplifications and modifications are necessary. In Fig. 1, some induc-
+expressed as shown in (3):
+                                                                                 tances, such as 𝐿𝑙0 , are negligible and are typically not provided by
+𝐿𝑦𝑜𝑘       𝑎𝑦𝑜𝑘     𝑙     𝑟                                                      manufacturers; thus, they are ignored in the simplification process.
+       =          ⋅ 𝑙𝑚𝑏 = 𝑎 = 𝐾𝑟                                       (3)
+𝐿𝑙𝑚𝑏       𝑎𝑙𝑚𝑏     𝑙𝑦𝑜𝑘  𝑟𝑙                                                         Additionally, the leakage and mutual inductances, i.e., for the case
+    Similarly, the relationship between 𝐿𝑙𝑚𝑏 and 𝐿𝑜 is given by (4):             of three windings, 𝐿𝑙12 , 𝐿𝑙23 , and 𝑀, must be calculated from the
+                                                                                 short-circuit reactances, 𝑋𝑠𝑐 , of each pair of windings, as shown in
+ 𝐿𝑜     𝐿𝑜 𝐿𝑦𝑜𝑘    𝑟   𝑟                                                         (8) and (9). Note that in the per-unit system, inductances and their
+     =     ⋅     = 𝑙𝑜 ⋅ 𝑎 = 𝐾𝑟𝑜 𝐾𝑟                                     (4)
+𝐿𝑙𝑚𝑏   𝐿𝑦𝑜𝑘 𝐿𝑙𝑚𝑏  𝑟𝑎𝑜 𝑟𝑙                                                         corresponding reactances are numerically equivalent.
+    As explained in [11], the average magnetizing current, 𝐼𝑚 =                      It is important to mention that the short-circuit reactances of three-
+(|𝐼𝑎 | + |𝐼𝑏 | + |𝐼𝑐 |)∕3, along with the ratios 𝐾𝑟 and 𝐾𝑟𝑜 , can be used        phase transformers are the same across all phases, meaning that 𝐿𝑙12 ,
+to compute the values of the limb, yoke, and outer limb’s linear                 𝐿𝑙23 , and 𝑀 remain consistent for phases A, B, and C.
+inductances, 𝐿𝑙𝑚𝑏 and 𝐿𝑦𝑜𝑘 and 𝐿𝑜 . The details of this approach are                 These calculations are well-documented in the literature [6,7] and
+discussed in [11] for 3-limb and 5-limb transformers. In this paper,             are beyond the primary focus of this paper.
+the case of a 4-limb transformer is explained in the Appendix, where             𝐿𝑖,𝑖+1 = 𝐿𝑠𝑐𝑖,𝑖+1                                                               (8)
+the closed-form formula for 𝑋𝑙𝑚𝑏 = 2𝜋𝑓 ⋅ 𝐿𝑙𝑚𝑏 is derived. The result is
+presented in (5):                                                                         1
+               √                    √                                            𝑀𝑖,𝑗 =     (𝐿𝑠𝑐𝑖,𝑗+1 + 𝐿𝑠𝑐𝑖+1,𝑗 − 𝐿𝑠𝑐𝑖,𝑗 − 𝐿𝑠𝑐𝑖+1,𝑗+1 )                         (9)
+                                                                                          2
+                  3𝐾𝑟2 + 3𝐾𝑟 + 1 + 𝐾𝑟2 + 𝐾𝑟 + 1
+𝑋𝑙𝑚𝑏 = 𝑉𝑠 ⋅                                                           (5)            Fig. 2(a) illustrates the simplified electric equivalent of the 3-
+                                3𝐼𝑚
+                                                                                 winding, 3-limb transformer. The components 𝐿𝑎𝑖𝑟𝑖𝑛 and 𝐿𝑎𝑖𝑟𝑜𝑢𝑡 are
+   In (5), 𝑉𝑠 represents the nominal line-to-neutral voltage, 𝐼𝑚 is the          combined into a single element for each phase, denoted as 𝐿𝑎𝑖𝑟 , as they
+average magnetizing current and the parameters 𝐾𝑟 is defined in (3).             are connected in series. Similarly, the leakage and mutual inductances
+   By following a similar approach, the formula for 𝑋𝑙𝑚𝑏 in the 3-limb           are merged into one component per phase, as they are also in series.
+case is derived and shown in (6):                                                    With similar approach, we get the equivalent circuit for 4-limb and
+                      √                                                          5-limb transformer in Fig. 2(b) and Fig. 2(c) respectively.
+            (𝐾𝑟 + 3) + 28𝐾𝑟2 + 60𝐾𝑟 + 36
+                                                                                     Also, as previously mentioned, the yoke inductances on each wind-
+𝑋𝑙𝑚𝑏 = 𝑉𝑠 ⋅                                                         (6)
+                         9𝐼𝑚                                                     ing are optional and depend on the availability of the required data. If
+                                                                                 such data is not provided, the entire yoke reluctances can be lumped
+   Similarly, the closed-form relation for 𝑋𝑙𝑚𝑏 in the 5-limb case is
+                                                                                 into two yoke inductances, 𝐿𝑌 𝑜𝑘𝐴𝐵 and 𝐿𝑌 𝑜𝑘𝐵𝐶 .
+given in (7):
+            ( √               )                                                      Lastly, the electric dual circuits in Fig. 2 is connected to the exter-
+         𝑉        𝛿     𝐾 +2                                                     nal electrical nodes through ideal transformers with appropriate turn
+𝑋𝑙𝑚𝑏 = 𝑠              + 𝑟                                         (7)
+        3𝐼𝑚 𝐾𝑟𝑜 + 1        2                                                     ratios. Additionally, a node labeled ‘‘TANK’’ is included in this figure.
+
+                                                                             2
+M. Ahmadi et al.                                                                                                        Electric Power Systems Research 251 (2026) 112204
+
+
+
+
+        Fig. 1. The magnetic circuit and its electric dual for a three-phase, three-winding, three-limb core structure, considering the zero-sequence path.
+
+
+
+This node represents the outer ring in the electric dual circuit shown in
+Fig. 1, which magnetically corresponds to the flux return path through
+the tank of the transformer.
+    The inclusion of the ‘‘TANK’’ node as an external node addresses
+the issue of the floating circuit, which contains multiple inductive cut-
+sets, some of which are non-linear. Such a configuration can cause
+numerical chatter and make the simulation unstable. By providing the
+‘‘TANK’’ node, a voltage reference is established for this floating net-
+work, thereby enhancing simulation stability in the case of a saturable
+core. It is notable that under no circumstances will current flow into
+or out of the ‘‘TANK’’ node. This is because the entire black network in
+Fig. 2 is floating, with no path for current to enter or leave the network.
+As a result, no current flows through the ‘‘TANK’’ node, and grounding
+this node does not compromise simulation accuracy.
+    Note that in Fig. 2 and other figures, only inductive circuits are de-
+picted. However, in the implementation, resistive branches are included
+across the limb and yoke inductances to model the core loss.
+
+3.1. Zero sequence inductance of 3-limb transformers
+
+   From the simplified network shown in Fig. 3(b), we derive the
+network loop equations, where the loop currents correspond to the
+three-phase terminal currents, as given in (10).
+   It is important to note that, for simplicity, the effects of limb induc-
+tances are not included in (10), as they are in parallel with the voltage
+sources. These effects are incorporated after solving the equation. Also,
+since it is a simulation of zero sequence test, it is considered that
+𝑉𝑎 = 𝑉𝑏 = 𝑉𝑐 = 𝑉𝑠 ∠0.
+                                    −1
+⎡𝐼𝑎 ⎤       ⎡ 𝛼        −𝑋𝑦       0 ⎤       ⎡𝑉𝑠 ∠0⎤
+⎢𝐼 ⎥ = −𝑗 ⋅ ⎢−𝑋         𝛽       −𝑋𝑦 ⎥    ⋅ ⎢𝑉𝑠 ∠0⎥                        (10)
+⎢ 𝑏⎥        ⎢ 𝑦                     ⎥      ⎢     ⎥
+⎣𝐼𝑐 ⎦       ⎣ 0        −𝑋𝑦       𝛼 ⎦       ⎣𝑉𝑠 ∠0⎦                                   Fig. 2. The simplified electric equivalent circuit of a three phase, three-
+                                                                                     winding (a) 3-limb, (b) 4-limb, with the outer limb close to phase A and (c)
+In (10), 𝛼 = 𝑋13 + 𝑋𝑎𝑖𝑟 + 𝑋𝑦 and 𝛽 = 𝑋13 + 𝑋𝑎𝑖𝑟 + 2 ⋅ 𝑋𝑦 .
+                                                                                     5-limb transformer.
+    By analytically solving (10), we obtain the expression presented in
+(11) for 𝐼𝑎 , 𝐼𝑏 , and 𝐼𝑐 .
+                       𝑉𝑠
+𝐼𝑎 = 𝐼𝑏 = 𝐼𝑐 =                                                            (11)       values) divided by the arithmetic mean of the phase currents, the zero-
+                   𝑋𝑎𝑖𝑟 + 𝑋13
+                                                                                     sequence impedance of the three-limb transformer is determined, as
+    Next, we incorporate the effect of limb inductances into the analysis            shown in (12).
+to account for their contribution to the overall phase currents. With
+                                                                                                         𝑉𝑠
+this adjustment, and recognizing that the zero-sequence impedance is                 𝑋𝑧𝑟𝑜 =                                                                        (12)
+                                                                                              1                 3⋅𝑉
+defined as the excitation voltage (three in-phase voltages of nominal                           (𝐼
+                                                                                              3 𝑎
+                                                                                                   + 𝐼 𝑏 + 𝐼𝑐 + 𝑋 𝑠 )
+                                                                                                                 𝑙𝑚𝑏
+
+
+                                                                                 3
+M. Ahmadi et al.                                                                                                           Electric Power Systems Research 251 (2026) 112204
+
+
+
+
+                                                                                       Fig. 4. The open circuit excitation of the three phase, three-winding (a) 4-
+                                                                                       limb, 4th limb close to phase A, (b) 4-limb, 4th limb close to phase C, and (c)
+Fig. 3. (a) The open circuit excitation of the three phase, three-winding three-       5-limb .
+limb transformer and (b) its simplified equivalent network.
+
+
+                                                                                       limb is positioned near phase A or phase C, as shown in Fig. 4(a) and
+Substituting (11) in (12),                                                             (b).
+                  𝑉𝑠                                                                                     9𝑋𝑧𝑟𝑜 𝑋𝑙𝑚𝑏 𝑋𝑦𝑜𝑘
+𝑋𝑧𝑟𝑜 =                                                                     (13)        𝑋𝑜4 =                                                                          (16)
+         1   3⋅𝑉𝑠     3⋅𝑉                                                                      3𝑋𝑙𝑚𝑏 𝑋𝑦𝑜𝑘 − 3𝑋𝑧𝑟𝑜 𝑋𝑦𝑜𝑘 − 5𝑋𝑙𝑚𝑏 𝑋𝑧𝑟𝑜
+           (
+         3 𝑋𝑎𝑖𝑟 +𝑋13
+                     +𝑋 𝑠)
+                       𝑙𝑚𝑏
+                                                                                                         9𝑋𝑧𝑟𝑜 𝑋𝑙𝑚𝑏 𝑋𝑦𝑜𝑘
+   Canceling out 𝑉𝑠 from (13), the closed-form expression for the zero-                𝑋𝑜5 =                                                                          (17)
+sequence impedance of three-limb transformer in (14) will be achieved.                         6𝑋𝑙𝑚𝑏 𝑋𝑦𝑜𝑘 − 6𝑋𝑧𝑟𝑜 𝑋𝑦𝑜𝑘 − 𝑋𝑙𝑚𝑏 𝑋𝑧𝑟𝑜
+                                                                                           Note that in (16) and (17), it is assumed that the leakage reactance
+      𝑋 ⋅ (𝑋𝑎𝑖𝑟 + 𝑋13 )                                                                𝑋𝑙13 is negligible compared to other magnetizing reactances, which is a
+𝑋𝑧𝑟𝑜 = 𝑙𝑚𝑏                                                                 (14)        valid assumption. However, in (15), this assumption is not considered
+      𝑋𝑙𝑚𝑏 + 𝑋𝑎𝑖𝑟 + 𝑋13
+                                                                                       valid, as 𝑋𝑙13 and 𝑋𝑎𝑖𝑟 are comparable.
+    Eq. (15) is rewritten to express the relationship for 𝑋𝑎𝑖𝑟 as a function               Note that unlike the 3-limb core configuration, in the case of 4-limb
+of the limb inductance, 𝑋𝑙𝑚𝑏 , the zero-sequence impedance, 𝑋𝑧𝑟𝑜 , and                 and 5-limb transformers, the yoke inductances appear in the equations
+the leakage inductance between the first and the last winding, 𝑋1𝑛 ,                   of zero-sequence inductance. This is expected, as the zero-sequence flux
+which in this case is 𝑋13 .                                                            must flow through the yokes to reach the outer limbs and complete the
+         𝑋𝑙𝑚𝑏 ⋅ 𝑋𝑧𝑟𝑜                                                                   path.
+𝑋𝑎𝑖𝑟 =               − 𝑋13                                                 (15)
+         𝑋𝑙𝑚𝑏 − 𝑋𝑧𝑟𝑜
+                                                                                       4. Simulation results and model verification
+    It is notable that in (14), the yoke impedances do not appear in
+the equation for the zero-sequence impedance, 𝑋𝑧𝑟𝑜 , which emphasizes                      To validate the proposed method for modeling multi-limb trans-
+the fact that the zero-sequence current does not flow through the yoke                 formers, the TDM-based model introduced in the previous section is
+impedances. Instead, the current circulates in the outer loop of the                   implemented in RSCAD-RTDS, an EMT-type simulation program. Mul-
+network depicted in Fig. 3(b). This observation is expected, as it is well             tiple simulations are performed to compare the model with the input
+known that in the 3-limb transformers, the zero-sequence flux does not                 data, and additional comparisons are conducted against similar models
+pass through the yokes; instead, it flows out of the limbs and into the                from the PSCAD library as well as some measurements taken from [6].
+air and the tank of the transformer.                                                       A three-winding 3-limb transformer data extracted from [6], with
+                                                                                       specifications listed in Table 1, is considered. The same 3-limb trans-
+                                                                                       former is subsequently treated as a 4-limb and 5-limb transformer solely
+3.2. Zero sequence inductance of 4-limb and 5-limb transformers
+                                                                                       for simulation purposes, to validate the proposed method and the zero
+                                                                                       sequence impedance formulas.
+    Using a similar approach as employed for the 3-limb transformer,
+closed-form formulas for the outer-limb inductance of 4-limb and 5-                    4.1. Steady state studies
+limb transformers can be derived. This method is particularly advan-
+tageous in scenarios where the open-circuit zero-sequence impedance,                       Firstly, the short circuit simulations were carried out, resulting in
+𝑍𝑧𝑟𝑜 , is provided instead of the outer-limb ratios, 𝑟𝑎𝑦𝑜 and 𝑟𝑙𝑦𝑜 .                   𝑋1,2 = 0.07604, pu, 𝑋1,3 = 0.114067, pu, and 𝑋2,3 = 0.136086, pu, which
+    Fig. 4 illustrates the equivalent open-circuit networks for the three-             are very close to the values specified for the transformer in Table 1.
+phase, three-winding, 4-limb, and 5-limb transformers. The closed-form                     The open-circuit magnetizing current and no-load loss were also
+formulas for these configurations are derived using the same principles                recorded, yielding 𝐼𝑚 = 0.14051% and 𝐶𝑜𝑟𝑒𝐿𝑜𝑠𝑠 = 37.098kW, respec-
+as those applied to the 3-limb case and are presented in (16) and (17),                tively, which align closely with the data provided in Table 1.
+respectively. It is noteworthy that for the 4-limb configuration, the                      Additionally, Table 2 presents the simulation results for open-
+expression for 𝐿𝑜 remains unchanged, regardless of whether the outer                   circuit (o.c.) zero-sequence reactance. In these cases, it is assumed
+
+                                                                                   4
+M. Ahmadi et al.                                                                                                    Electric Power Systems Research 251 (2026) 112204
+
+
+       Table 1                                                                         Table 3
+       3-Limb transformer specifications and parameters.                               Hysteresis curve parameters of the transformer under study.
+        Tmva                 50 MVA         𝑅1,3           0.4011%                      Parameter                                             Value
+        Freq.                60 Hz          𝑅2,3           0.4785%
+                                                                                        𝐼𝑚 , (Magnetizing Current)                            0.140641%
+        Core Loss            37.1 kW        𝑎𝑦𝑜𝑘           310045 mm2
+                                                                                        𝑘, (Knee Voltage)                                     1.2633 pu
+        𝑉1                   138 kV         𝑎𝑙𝑚𝑏           310045 mm2
+                                                                                        𝑋𝑎𝑖𝑟 , (Air Core Inductance)                          0.255408 pu
+        𝑉2                   13.8 kV        𝑟𝑎             1
+                                                                                        𝐿𝑤 , (Hysteresis Loop-width in % of 𝐼𝑚 )              14.29%
+        𝑉3                   6.972 kV       𝑙𝑦𝑜𝑘           2370 mm
+        𝑋1,2                 0.076 pu       𝑙𝑙𝑚𝑏           2276 mm
+        𝑋1,3                 0.114 pu       𝑟𝑙             1.041301
+        𝑋2,3                 0.136 pu       𝑁1             574
+        𝑅1,2                 0.2674%        𝐼𝑚             0.140641%
+
+
+       Table 2
+       O.C. zero sequence reactance simulation results.
+        Case                     3-Limb        4-Limb         5-Limb
+        Input value (p.u.)       0.125         221.0          379.0
+        Simulation (p.u.)        0.125080      220.947        379.056
+
+
+
+
+                                                                                 Fig. 6. The open circuit excitation simulation of the proposed transformer
+                                                                                 model in RSCAD, PSCAD and from the experimental measurement [6].
+
+
+
+
+Fig. 5. The open circuit excitation simulation of the proposed three limb,
+three-winding transformer in RSCAD.                                              Fig. 7. The inrush current simulation of the proposed transformer model in
+                                                                                 RSCAD versus the one from PSCAD.
+
+
+the same transformer described in Table 1 had 3-limb, 4-limb, or
+                                                                                 from the proposed RSCAD model, the PSCAD model, and the mea-
+5-limb core configurations. As mentioned before, this assumption is
+                                                                                 surements. While the two models show similar behavior, both deviate
+solely for simulation purposes, to validate the proposed zero sequence
+                                                                                 from the measured data. This may result from using the basic hystere-
+impedance formulas. Practical data was used as input for the zero-
+                                                                                 sis curve, which may not accurately capture the magnetizing branch
+sequence impedance, and the simulation results show an excellent
+                                                                                 non-linearity.
+match with the calculated values. These results demonstrate that the
+                                                                                     Fig. 7 shows the comparison of the inrush current simulation be-
+closed-form equations proposed in this paper for the zero-sequence
+                                                                                 tween the proposed model and the corresponding model from PSCAD. A
+path reactances accurately represent the zero-sequence behavior of the
+                                                                                 slight difference can be observed, which could be attributed to the way
+transformer in an EMT environment.
+                                                                                 the models account for winding resistances, zero-sequence impedances
+                                                                                 and other minor modeling tweaks.
+4.2. Transient behaviors
+                                                                                 4.3. Observations on yoke flux during short-circuit
+    In order to evaluate the proposed model’s transient response, two
+case studies are considered: the transformer excitation and the inrush               One key advantage of the proposed model is its accurate repre-
+current.                                                                         sentation of yoke flux during short-circuit conditions. During a short
+    Fig. 5 illustrates the transformer of Table 1 under a no-load scenario       circuit, flux becomes trapped in the leakage path between energized
+in the RSCAD environment, where winding 2 is energized while the                 and shorted windings. This phenomenon is captured by the proposed
+other two windings remain open. Here, the transformer is configured              model while is absent in the PSCAD model. As discussed earlier, this
+as 3-limb with O.C. zero-sequence impedance of 0.125 pu. A similar               discrepancy stems from an error in [6], where phase A is connected
+network was developed in PSCAD using their TDM-based transformer                 to phase B, causing the yoke inductances to appear in parallel to the
+model to facilitate a comparison. The measurement data is also sourced           limbs. In reality, short-circuit reactances exist between them, as shown
+from [6].                                                                        in Fig. 2.
+    In addition, to perform the transient simulations, the transformer               Fig. 8 illustrates this phenomenon in PSCAD model by showing
+is configured with both saturation and hysteresis. A basic model is em-          flux versus magnetizing current during a short-circuit study. In this
+ployed for representing these effects; however, the detailed formulation         case, nominal voltage is applied to winding 1, and the third winding is
+is beyond the scope of this paper. Table 3 presents the parameters of            shorted. It is evident that the flux in the yoke is as significant as in the
+the hysteresis curve used for the transformer under study.                       limb. In contrast, Fig. 9 shows similar curves for the proposed model
+    For excitation validation, the voltage source is gradually increased         in RSCAD, where the yoke flux is nearly zero, accurately reflecting
+to nominal value. Fig. 6 compares the three-phase excitation currents            physical behavior during a short circuit.
+
+                                                                             5
+M. Ahmadi et al.                                                                                                    Electric Power Systems Research 251 (2026) 112204
+
+
+
+
+Fig. 8. The limb and yoke flux versus their magnetizing currents during short
+circuit study from PSCAD.
+
+
+                                                                                    Fig. 10. Flux distribution in an open-phase scenario for (a) a 3-limb trans-
+                                                                                    former and (b) a 5-limb transformer.
+
+
+
+
+Fig. 9. The limb and yoke flux versus their magnetizing currents during short
+circuit study from proposed model in RSCAD.
+
+
+       Table 4
+       5-Limb transformer specifications and parameters.
+        Tmva               390 MVA           𝐵             1.741 Tesla
+        Freq.              60 Hz             𝑎𝑦𝑜𝑘          464469 mm2
+        Core Loss          171.3 kW          𝑎𝑙𝑚𝑏          832250 mm2
+        Vector group       Yny               𝑙𝑦𝑜𝑘          3601.974 mm
+        𝑉1                 238 kV            𝑙𝑙𝑚𝑏          3382.01 mm
+        𝑉2                 22.13 kV          𝑟𝑎            0.558088
+        𝑋1,2               0.068 pu          𝑟𝑙            1.065039
+        𝑅1,2               0.1297%           𝑟𝑎𝑜           1.116176
+        𝑋𝑎𝑖𝑟               0.210684 pu       𝑟𝑙𝑜           0.57891
+        𝐿𝑤                 0.89% of 𝐼𝑚       𝑁1            338
+        𝑘                  1.08497 pu        𝐼𝑚            0.125743%
+
+
+
+
+4.4. Investigating special winding configurations
+
+    The response of the transformer model with a ‘‘Yg-y’’ winding con-
+figuration in multi-limb transformers is of particular interest in certain
+cases. This section compares the behavior of a 3-limb transformer
+(Table 1) and a 5-limb transformer (Table 4) – both sourced from [6]
+– under an open-phase condition.
+    In an open-phase condition, a 3-limb transformer can continue                   Fig. 11. From top, limbs’ fluxes, primary, and secondary voltages, and cur-
+to operate as the flux from the other two phases compensates for                    rents during an open-phase scenario for the 3-limb transformer, comparing
+the missing phase, as illustrated in Fig. 10(a). In contrast, a 5-limb              RSCAD and PSCAD results.
+transformer experiences a voltage drop in the missing phase due to the
+outer limbs providing a path for zero-sequence flux, as shown in Fig.
+10(b).                                                                              current is maintained on the secondary side. The proposed model in
+    This phenomenon is analyzed using the proposed models in RSCAD                  RSCAD produces results consistent with those obtained from the PSCAD
+and PSCAD for validation and comparison. Both 3-limb and 5-limb                     model, demonstrating similar responses.
+transformers are connected to nominal voltage sources on the primary                    Similar open phase simulation is performed on the 5-limb trans-
+side, unless the phase A which is disconnected. They are also lightly               former, shown in Fig. 12. In this case, flux on phase limbs are no longer
+loaded to have some currents in the windings.                                       balanced and significant amount of flux goes through the 4th and 5th
+    Fig. 11 presents the three-phase flux, primary and secondary volt-              limbs. Consequently, voltage of phase A is much smaller in magnitude
+ages, and currents for the 3-limb transformer with phase A left open.               as well as shifted in angle. Phase A current is also zero in primary (since
+As shown, the primary current in phase A is zero, yet a fully balanced              it was open) and very small in the secondary as expected.
+
+                                                                                6
+M. Ahmadi et al.                                                                                                   Electric Power Systems Research 251 (2026) 112204
+
+
+
+
+                                                                                 Fig. 13. Equivalent network for open-circuit excitation of a three-phase 4-limb
+                                                                                 transformer.
+
+
+
+                                                                                 CRediT authorship contribution statement
+
+                                                                                    Meysam Ahmadi: Visualization, Resources, Investigation, Writing
+                                                                                 – review & editing, Validation, Formal analysis, Conceptualization,
+                                                                                 Writing – original draft, Data curation, Software, Methodology, Project
+                                                                                 administration. Ali Dehkordi: Supervision, Conceptualization, Writing
+                                                                                 – review & editing, Data curation, Methodology. Yi Zhang: Writing –
+                                                                                 review & editing, Supervision.
+
+                                                                                 Declaration of competing interest
+
+                                                                                     The authors declare that they have no known competing finan-
+                                                                                 cial interests or personal relationships that could have appeared to
+                                                                                 influence the work reported in this paper.
+
+                                                                                 Appendix
+
+                                                                                     To compute the values of 𝐿𝑙𝑚𝑏 and 𝐿𝑦𝑜𝑘 from the magnetizing cur-
+                                                                                 rent 𝐼𝑚 and the core aspect ratios 𝐾𝑟 and 𝐾𝑟𝑜 for the 4-limb transformer
+                                                                                 in Fig. 2(b), we consider its open-circuit excitation network as shown
+                                                                                 in Fig. 13. This figure is a simplified version of Fig. 4(a), ignoring the
+Fig. 12. From top, phase limbs’ and outer limbs’ fluxes, primary, and sec-       leakage inductances.
+ondary voltages, and currents during an open-phase scenario for the 5-limb
+                                                                                     Assuming a balanced three-phase voltage (i.e. 𝑉𝑎 + 𝑉𝑏 + 𝑉𝑐 = 0) and
+transformer, comparing RSCAD and PSCAD results.
+                                                                                 using the corresponding admittances, the nodal equations are written
+                                                                                 as follows:
+                                                                                 ⎡𝐼𝑎𝑏 ⎤ ⎡ 𝛼          −𝑌𝑙𝑚𝑏   −𝑌𝑦𝑜𝑘 ⎤ ⎡ 𝑉𝑎 ⎤
+5. Conclusion                                                                    ⎢𝐼 ⎥ = ⎢−𝑌           𝛼       𝛾 ⎥ ⎢−𝑉𝑐 ⎥                                      (18)
+                                                                                 ⎢ 𝑏𝑐 ⎥ ⎢ 𝑙𝑚𝑏                      ⎥⎢     ⎥
+                                                                                 ⎣ 𝐼𝑐 ⎦ ⎣−𝑌𝑦𝑜𝑘         𝛾      𝛽 ⎦⎣ 0 ⎦
+    This paper presents a comprehensive TDM-based transformer model                 In (18), the parameters are defined as 𝛼 = 2𝑌𝑙𝑚𝑏 + 𝑌𝑦𝑜𝑘 , 𝛽 = 𝑌𝑙𝑚𝑏 +
+implemented in RSCAD-RTDS, designed for real-time simulation pur-                2𝑌𝑦𝑜𝑘 + 𝑌𝑜4 , and 𝛾 = −𝑌𝑙𝑚𝑏 − 𝑌𝑦𝑜𝑘 .
+poses. The proposed model incorporates advanced features such as                    Multiplying both sides of (18) by 𝑋𝑙𝑚𝑏 = 1∕𝑌𝑙𝑚𝑏 , the left-hand side
+multi-limb configurations, multi-windings, distributed magnetizing               becomes:
+branches, saturation, hysteresis, and more, making it highly versatile                  ⎡𝐼𝑎𝑏 ⎤
+and robust. The model has been extensively validated against offline             𝑋𝑙𝑚𝑏 ⋅ ⎢𝐼𝑏𝑐 ⎥ = ⋯                                                            (19)
+tools like MathCAD and other simulation platforms such as PSCAD,                        ⎢ ⎥
+                                                                                        ⎣ 𝐼𝑐 ⎦
+demonstrating excellent accuracy and reliability.
+                                                                                    The right-hand side is transformed into:
+    The model utilizes the Normalized Core Characteristics (NCC) to
+calculate the limb and yoke inductances. Additionally, it incorporates           ⎡2 + 𝐾𝑟       −1             −𝐾𝑟        ⎤ ⎡ 𝑉𝑎 ⎤
+                                                                                 ⎢ −1        2 + 𝐾𝑟         −1 − 𝐾𝑟      ⎥ ⎢−𝑉 ⎥                              (20)
+zero-sequence impedance for the 3-limb configuration and, for the first          ⎢                                       ⎥ ⎢ 𝑐⎥
+time, presents a closed-form formula to calculate the zero-sequence              ⎣ −𝐾𝑟      −1 − 𝐾𝑟     1 + 2𝐾𝑟 + 𝐾𝑟 𝐾𝑟𝑜 ⎦ ⎣ 0 ⎦
+inductances for various core configurations.                                         Using the relation 𝐼𝑚 = (|𝐼𝑎 | + |𝐼𝑏 | + |𝐼𝑐 |)∕3 and analytically solving
+    The validation studies, including steady-state assessments such as           for 𝐼𝑎 , 𝐼𝑏 and 𝐼𝑐 from (19) and (20), we obtain the final expression as
+short-circuit and zero-sequence scenarios, as well as transient studies          in (21).
+like excitation and inrush current comparisons, demonstrate that the                          √                  √
+                                                                                                3𝐾𝑟2 + 3𝐾𝑟 + 1 + 𝐾𝑟2 + 𝐾𝑟 + 1
+proposed model closely matches results obtained from other established
+                                                                                 𝑋𝑙𝑚𝑏 = 𝑉𝑠 ⋅                                                               (21)
+tools, i.e. PSCAD.                                                                                          3𝐼𝑚
+    Furthermore, the model exhibits unique capabilities, such as accu-
+rately representing yoke flux behavior during short-circuit conditions—          Data availability
+an aspect not captured by other models like PSCAD. These features
+highlight the model’s ability to handle complex transformer dynamics,               No data was used for the research described in the article.
+making it suitable for various transient and steady-state studies.
+
+                                                                             7
+M. Ahmadi et al.                                                                                                                 Electric Power Systems Research 251 (2026) 112204
+
+
+References                                                                                     [8] C. Alvarez-Marino, F. de Leon, X.M. Lopez-Fernandez, Equivalent circuit for the
+                                                                                                   leakage inductance of multiwinding transformers: Unification of terminal and
+ [1] G.R. Slemon, Equivalent circuits for transformers and machines including                      duality models, IEEE Trans. Power Deliv. 27 (1) (2012) 353–361.
+     nonlinear effects, Proc. IEE - Part IV: Inst. Monogr. 47 (7) (1959) 1228–1232.            [9] S. Jazebi, F. de León, Duality-based transformer model including eddy current
+ [2] D.C. Jiles, D.L. Atherton, Theory of ferromagnetic hysteresis, J. Magn. Magn.                 effects in the windings, IEEE Trans. Power Deliv. 30 (5) 2312–2320, Books.
+     Mater. 61 (1986) 48–60.                                                                  [10] P. Kundur, Power System Stability and Control, McGraw-Hill, New York, NY,
+ [3] F. de Leon, A. Semlyen, Complete transformer model for electromagnetic                        USA, 1994, Papers Presented at Conferences (Unpublished).
+     transients, IEEE Trans. Power Deliv. 9 (1) (1994) 231–239.                               [11] M. Shafieipour, J.C. Garcia Alonso, R.P. Jayasinghe, A.M. Gole, Principle of
+ [4] J.S. Song, J.S. Kim, G.J. Cho, C.H. Kim, N.H. Cho, Determination method for                   duality with normalized core concept for modeling multi-limb transformers, in:
+     zero-sequence impedance of 3-limb core transformer, in: Proc. Int. Conf. on                   Proc. Int. Conf. Power Syst. Transients, IPST, 2019, pp. 1–6.
+     Power Systems Transients, IPST, 2019.                                                    [12] W. Enright, O.B. Nayak, G.D. Irwin, J. Arrillaga, An electromagnetic transients
+ [5] J.A. Martinez-Velasco, B.A. Mork, Transformer modeling for low frequency
+                                                                                                   model of multi-limb transformers using normalized core concept, in: Proc. Int.
+     transients - The state of the art, in: Proceedings of the International Conference
+                                                                                                   Conf. Power Syst. Transients, Seattle, USA, 1997, pp. 93–98.
+     on Power Systems Transients, IPST, New Orleans, USA, 2003.
+                                                                                              [13] W.G. Enright, O. Nayak, N.R. Watson, Three-phase five-limb unified magnetic
+ [6] M. Shafieipour, W. Ziomek, R.P. Jayasinghe, J.C. Garcia Alonso, A.M. Gole, Ap-
+                                                                                                   equivalent circuit transformer models for PSCAD V3, in: Proceedings of the
+     plication of duality-based equivalent circuits for modeling multilimb transformers
+     using alternative input parameters, IEEE Access 8 (2020) 157046–157060.                       International Conference on Power System Transients, IPST, Budapest, Hungary,
+ [7] F. de León, J.A. Martinez, Dual three-winding transformer equivalent circuit                  1999.
+     matching leakage measurements, IEEE Trans. Power Deliv. 24 (1) (2009)
+     160–168.
+
+
+
+
+                                                                                          8
+
