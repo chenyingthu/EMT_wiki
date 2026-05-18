@@ -66,7 +66,7 @@
 | 295 | pmsg-single-unit.md | methods | methods/system-studies/pmsg-single-unit.md | P1 | 999 | 3286 | 18 | 5 | completed |
 | 337 | power-electronics.md | topics | topics/component-modeling/power-electronics.md | P1 | 999 | 2025 | 10 | 33 | completed |
 | 237 | power-system.md | topics | topics/tools-software/power-system.md | P1 | 999 | 13957 | 14 | 15 | completed |
-| 239 | pv-power-plant.md | topics | topics/renewable-storage/pv-power-plant.md | P1 | 999 | 12468 | 15 | 27 | pending |
+| 239 | pv-power-plant.md | topics | topics/renewable-storage/pv-power-plant.md | P1 | 999 | 12468 | 15 | 28 | completed |
 | 188 | quasi-tem-approximation.md | methods | methods/transmission-line/quasi-tem-approximation.md | P0 | 999 | 5571 | 26 | 13 | completed |
 | 264 | renewable-energy-units.md | topics | topics/renewable-storage/renewable-energy-units.md | P1 | 999 | 4768 | 14 | 35 | completed |
 | 350 | sensitivity-analysis.md | methods | methods/stability-analysis/sensitivity-analysis.md | P1 | 999 | 1672 | 6 | 13 | pending |
