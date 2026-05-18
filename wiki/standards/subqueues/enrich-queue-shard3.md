@@ -88,7 +88,8 @@
 | 73 | switch-modeling.md | methods | methods/power-electronics/switch-modeling.md | P0 | 999 | 3186 | 15 | 7 | completed |
 | 211 | tbs.md | methods | methods/power-electronics/tbs.md | P0 | 999 | 8727 | 14 | 18 | completed |
 | 147 | three-phase-instantaneous-model.md | methods | methods/system-studies/three-phase-instantaneous-model.md | P0 | 999 | 3992 | 19 | 10 | completed |
-| 308 | tools-comparison-guide.md | topics | topics/tools-software/tools-comparison-guide.md | P1 | 999 | 2980 | 3 | 19 | pending |
+| 308 | tools-comparison-guide.md | topics | topics/tools-software/tools-comparison-guide.md | P1 | 999 | 2852 | 6 | 19 | completed |
+
 | 249 | transient-stability.md | methods | methods/stability-analysis/transient-stability.md | P1 | 999 | 8233 | 10 | 14 | completed |
 | 63 | underground-cable-modeling.md | methods | methods/transmission-line/underground-cable-modeling.md | P0 | 999 | 1744 | 4 | 17 | pending |
 | 251 | vector-control-model.md | models | models/control/vector-control-model.md | P1 | 999 | 7202 | 32 | 5 | pending |
@@ -122,3 +123,4 @@
 
 |||| Cycle 21 | rotating-machine-modeling.md | P1 ENRICH (bc=2943→11840, bf=15→13, mermaid→SVG, fixed 2 broken wikilinks, added quant tables, 5-layer SVG) | 2026-05-19 02:41 |
 ||||| Cycle 13 | power-electronics-control.md | P1 INCR (wikilink fix: broken source page link repaired to sources/ path, Quality Gate PASS bc=5494≥2000 bf=16≥5 no placeholder) | 2026-05-18 22:05 |
+|||||| Cycle 21 | tools-comparison-guide.md | P1 INCR (bc=2455→2852, bf=3→6, added 4 block formulas: BBD parallel efficiency, FPGA step model, numerical damping, Amdahl's law, from real-time-simulation/hardware-acceleration cross-ref) | 2026-05-19 06:29 |
