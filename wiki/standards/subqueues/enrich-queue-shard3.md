@@ -80,7 +80,7 @@
 | 116 | pwm-modulation.md | methods | methods/power-electronics/pwm-modulation.md | P0 | 999 | 3049 | 10 | 8 | completed |
 | 47 | relay-protection.md | topics | topics/protection-lightning/relay-protection.md | P0 | 999 | 4285 | 9 | 14 | completed |
 | 301 | rotating-machine-modeling.md | topics | topics/component-modeling/rotating-machine-modeling.md | P1 | 999 | 11840 | 13 | 23 | completed |
-| 351 | shifted-frequency-analysis.md | topics | topics/modeling-methods/shifted-frequency-analysis.md | P1 | 999 | 1646 | 11 | 11 | pending |
+| 351 | shifted-frequency-analysis.md | topics | topics/modeling-methods/shifted-frequency-analysis.md | P1 | 999 | 3704 | 13 | 7 | completed |
 | 328 | small-perturbation-linearization.md | methods | methods/stability-analysis/small-perturbation-linearization.md | P1 | 999 | 2129 | 6 | 11 | pending |
 | 45 | sparse-matrix-techniques.md | methods | methods/network-solution/sparse-matrix-techniques.md | P0 | 999 | 1339 | 2 | 8 | pending |
 | 272 | state-space-average-method.md | methods | methods/numerical-methods/state-space-average-method.md | P1 | 999 | 4295 | 15 | 15 | completed |
