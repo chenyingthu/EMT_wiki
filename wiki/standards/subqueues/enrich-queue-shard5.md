@@ -69,7 +69,7 @@
 | 239 | pv-power-plant.md | topics | topics/renewable-storage/pv-power-plant.md | P1 | 999 | 12468 | 15 | 28 | completed |
 | 188 | quasi-tem-approximation.md | methods | methods/transmission-line/quasi-tem-approximation.md | P0 | 999 | 5571 | 26 | 13 | completed |
 | 264 | renewable-energy-units.md | topics | topics/renewable-storage/renewable-energy-units.md | P1 | 999 | 4768 | 14 | 35 | completed |
-| 350 | sensitivity-analysis.md | methods | methods/stability-analysis/sensitivity-analysis.md | P1 | 999 | 1672 | 6 | 13 | pending |
+| 350 | sensitivity-analysis.md | methods | methods/stability-analysis/sensitivity-analysis.md | P1 | 999 | 7896 | 6 | 13 | completed |
 | 137 | simulation-practice-guide.md | topics | topics/tools-software/simulation-practice-guide.md | P0 | 999 | 3640 | 9 | 14 | completed |
 | 166 | small-signal-stability-analysis.md | methods | methods/stability-analysis/small-signal-stability-analysis.md | P0 | 999 | 4630 | 18 | 12 | completed |
 | 378 | statcom-model.md | models | models/compensation/statcom-model.md | P1 | 999 | 1275 | 4 | 16 | pending |
