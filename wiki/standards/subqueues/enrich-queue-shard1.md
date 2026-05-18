@@ -53,8 +53,7 @@
 | 163 | low-rank-solver.md | methods | methods/network-solution/low-rank-solver.md | P0 | 999 | 4516 | 22 | 22 | completed |
 | 177 | magnetic-saturation-modeling.md | methods | methods/power-electronics/magnetic-saturation-modeling.md | P0 | 999 | 5075 | 25 | 18 | pending | completed 
 | 385 | mixed-sensitivity-optimization.md | methods | methods/control/mixed-sensitivity-optimization.md | P1 | 999 | 3961 | 17 | 11 | completed |
-| 354 | modal-domain-decoupling.md | methods | methods/transmission-line/modal-domain-decoupling.md | P1 | 999 | 1581 | 5 | 13 | pending |
-| 52 | modeling-language.md | methods | methods/simulation-technology/modeling-language.md | P0 | 999 | 4108 | 5 | 36 | completed |
+| 354 | modal-domain-decoupling.md | methods | methods/transmission-line/modal-domain-decoupling.md | P1 | 999 | 4192 | 14 | 26 | completed |
 | 375 | multi-winding-transformer.md | models | models/transformer/multi-winding-transformer.md | P1 | 999 | 1360 | 3 | 15 | pending |
 | 194 | mutual-impedance.md | methods | methods/transmission-line/mutual-impedance.md | P0 | 999 | 5825 | 19 | 10 | pending | completed 
 | 257 | network-partitioning.md | topics | topics/modeling-methods/network-partitioning.md | P1 | 999 | 5774 | 13 | 27 | pending | completed 
