@@ -36,7 +36,7 @@
 | 129 | fourier-filtering.md | methods | methods/signal-processing/fourier-filtering.md | P0 | 999 | 3441 | 17 | 24 | completed |
 | 133 | frequency-dependent-network-equivalent.md | methods | methods/transmission-line/frequency-dependent-network-equivalent.md | P0 | 999 | 3538 | 7 | 11 | completed |
 | 324 | frequency-scan.md | methods | methods/stability-analysis/frequency-scan.md | P1 | 999 | 2318 | 9 | 16 | completed |
-| 226 | gis.md | methods | methods/protection-fault/gis.md | P0 | 999 | 12261 | 18 | 9 | pending |
+| 226 | gis.md | methods | methods/protection-fault/gis.md | P0 | 999 | 12261 | 18 | 9 | completed |
 | 292 | grid-forming-control.md | methods | methods/control/grid-forming-control.md | P1 | 999 | 3366 | 10 | 14 | pending |
 | 214 | grounding-system-modeling.md | methods | methods/protection-fault/grounding-system-modeling.md | P0 | 999 | 9241 | 15 | 11 | pending |
 | 182 | half-bridge-smb.md | models | models/submodule/half-bridge-smb.md | P0 | 999 | 5302 | 42 | 15 | pending |
