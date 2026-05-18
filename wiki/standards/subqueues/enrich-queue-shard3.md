@@ -76,7 +76,7 @@
 | 399 | pll-design.md | methods | methods/control/pll-design.md | P1 | 999 | 940 | 5 | 7 | completed |
 | 193 | power-electronics-control.md | methods | methods/control/power-electronics-control.md | P0 | 999 | 5494 | 16 | 1 | completed |
 | 268 | power-system-network.md | topics | topics/tools-software/power-system-network.md | P1 | 999 | 4366 | 17 | 10 | completed |
-| 368 | protection-system.md | topics | topics/protection-lightning/protection-system.md | P1 | 999 | 1431 | 11 | 13 | pending |
+| 368 | protection-system.md | topics | topics/protection-lightning/protection-system.md | P1 | 999 | 2130 | 8 | 16 | completed |
 | 116 | pwm-modulation.md | methods | methods/power-electronics/pwm-modulation.md | P0 | 999 | 3049 | 10 | 8 | completed |
 | 47 | relay-protection.md | topics | topics/protection-lightning/relay-protection.md | P0 | 999 | 1404 | 10 | 17 | pending |
 | 301 | rotating-machine-modeling.md | topics | topics/component-modeling/rotating-machine-modeling.md | P1 | 999 | 3139 | 15 | 16 | pending |
