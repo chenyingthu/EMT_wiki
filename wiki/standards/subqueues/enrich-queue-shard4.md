@@ -56,7 +56,7 @@
 | 371 | microgrid-test-system.md | topics | topics/test-system/microgrid-test-system.md | P1 | 999 | 1415 | 2264 | 9 | 9 | completed |
 
 | 335 | modal-analysis.md | methods | methods/signal-processing/modal-analysis.md | P1 | 999 | 2536 | 10 | 12 | completed |
-| 81 | model-order-reduction.md | topics | topics/modeling-methods/model-order-reduction.md | P0 | 999 | 2139 | 19 | 41 | pending |
+| 81 | model-order-reduction.md | topics | topics/modeling-methods/model-order-reduction.md | P0 | 999 | 9970 | 19 | 45 | completed |
 | 121 | mtdc-model.md | models | models/equivalent/mtdc-model.md | P0 | 999 | 3190 | 31 | 17 | pending |
 | 101 | multiscale-modeling.md | models | models/equivalent/multiscale-modeling.md | P0 | 999 | 2620 | 13 | 9 | pending |
 | 325 | network-equation-solution.md | topics | topics/modeling-methods/network-equation-solution.md | P1 | 999 | 2297 | 15 | 19 | pending |

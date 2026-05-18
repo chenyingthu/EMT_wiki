@@ -9,15 +9,93 @@ book-chapter: "16"
 # 模型降阶与动态等值 (Model Order Reduction and Dynamic Equivalents)
 
 
-```mermaid
-graph TD
-    subgraph Ncmp[模型降阶与动态等值 (Model Order Reduc…]
-        N0[轻度降阶: $\eta < 50\%$]
-        N1[中度降阶: $50\% \leq \eta < 90\%$]
-        N2[深度降阶: $90\% \leq \eta < 99\%$]
-        N3[极限降阶: $\eta \geq 99\%$]
-    end
-```
+<div style="text-align:center;margin:16px 0;">
+<svg viewBox="0 0 900 520" xmlns="http://www.w3.org/2000/svg">
+  <rect width="900" height="520" fill="#ffffff"/>
+  <text x="450" y="25" font-family="Arial,sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#333">图1 · 模型降阶与动态等值方法体系架构</text>
+  
+  <rect x="20" y="45" width="160" height="70" rx="6" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="100" y="65" font-family="Arial,sans-serif" font-size="11" font-weight="bold" text-anchor="middle" fill="#1e40af">原始高阶系统</text>
+  <text x="100" y="80" font-family="Arial,sans-serif" font-size="9" text-anchor="middle" fill="#374151">状态空间 N 阶</text>
+  <text x="100" y="95" font-family="Arial,sans-serif" font-size="9" text-anchor="middle" fill="#374151">电磁暂态详细模型</text>
+  
+  <rect x="220" y="45" width="660" height="70" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="550" y="58" font-family="Arial,sans-serif" font-size="11" font-weight="bold" text-anchor="middle" fill="#166534">降阶方法选择</text>
+  <rect x="235" y="68" width="100" height="38" rx="4" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
+  <text x="285" y="82" font-family="Arial,sans-serif" font-size="9" text-anchor="middle" fill="#166534">Krylov子空间</text>
+  <text x="285" y="95" font-family="Arial,sans-serif" font-size="8" text-anchor="middle" fill="#166534">矩匹配</text>
+  <rect x="345" y="68" width="100" height="38" rx="4" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
+  <text x="395" y="82" font-family="Arial,sans-serif" font-size="9" text-anchor="middle" fill="#166534">平衡截断</text>
+  <text x="395" y="95" font-family="Arial,sans-serif" font-size="8" text-anchor="middle" fill="#166534">Hankel奇异值</text>
+  <rect x="455" y="68" width="100" height="38" rx="4" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
+  <text x="505" y="82" font-family="Arial,sans-serif" font-size="9" text-anchor="middle" fill="#166534">模态分析</text>
+  <text x="505" y="95" font-family="Arial,sans-serif" font-size="8" text-anchor="middle" fill="#166534">特征值筛选</text>
+  <rect x="565" y="68" width="100" height="38" rx="4" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
+  <text x="615" y="82" font-family="Arial,sans-serif" font-size="9" text-anchor="middle" fill="#166534">奇异摄动</text>
+  <text x="615" y="95" font-family="Arial,sans-serif" font-size="8" text-anchor="middle" fill="#166534">时间尺度分离</text>
+  <rect x="675" y="68" width="100" height="38" rx="4" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
+  <text x="725" y="82" font-family="Arial,sans-serif" font-size="9" text-anchor="middle" fill="#166534">Brune综合</text>
+  <text x="725" y="95" font-family="Arial,sans-serif" font-size="8" text-anchor="middle" fill="#166534">无源网络综合</text>
+  <rect x="785" y="68" width="85" height="38" rx="4" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
+  <text x="827" y="82" font-family="Arial,sans-serif" font-size="9" text-anchor="middle" fill="#166534">Kron消去</text>
+  <text x="827" y="95" font-family="Arial,sans-serif" font-size="8" text-anchor="middle" fill="#166534">节点消除</text>
+  
+  <rect x="220" y="135" width="660" height="55" rx="6" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+  <text x="550" y="150" font-family="Arial,sans-serif" font-size="11" font-weight="bold" text-anchor="middle" fill="#92400e">降阶核心流程</text>
+  <text x="300" y="170" font-family="Arial,sans-serif" font-size="9" text-anchor="middle" fill="#78350f">可控/可观</text>
+  <text x="400" y="170" font-family="Arial,sans-serif" font-size="9" text-anchor="middle" fill="#78350f">Gramian矩阵</text>
+  <text x="510" y="170" font-family="Arial,sans-serif" font-size="9" text-anchor="middle" fill="#78350f">SVD分解</text>
+  <text x="620" y="170" font-family="Arial,sans-serif" font-size="9" text-anchor="middle" fill="#78350f">投影变换</text>
+  <text x="730" y="170" font-family="Arial,sans-serif" font-size="9" text-anchor="middle" fill="#78350f">状态截断</text>
+  
+  <rect x="220" y="210" width="660" height="55" rx="6" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.5"/>
+  <text x="550" y="225" font-family="Arial,sans-serif" font-size="11" font-weight="bold" text-anchor="middle" fill="#5b21b6">降阶后低阶模型</text>
+  <text x="300" y="245" font-family="Arial,sans-serif" font-size="9" text-anchor="middle" fill="#5b21b6">降阶比 70-99%</text>
+  <text x="450" y="245" font-family="Arial,sans-serif" font-size="9" text-anchor="middle" fill="#5b21b6">精度误差</text>
+  <text x="580" y="245" font-family="Arial,sans-serif" font-size="9" text-anchor="middle" fill="#5b21b6">计算效率提升</text>
+  <text x="720" y="245" font-family="Arial,sans-serif" font-size="9" text-anchor="middle" fill="#5b21b6">端口特性保持</text>
+  
+  <rect x="20" y="285" width="860" height="55" rx="6" fill="#fce7f3" stroke="#be185d" stroke-width="1.5"/>
+  <text x="450" y="300" font-family="Arial,sans-serif" font-size="11" font-weight="bold" text-anchor="middle" fill="#9d174d">EMT仿真应用场景</text>
+  <text x="130" y="320" font-family="Arial,sans-serif" font-size="9" text-anchor="middle" fill="#be185d">MMC-HVDC</text>
+  <text x="280" y="320" font-family="Arial,sans-serif" font-size="9" text-anchor="middle" fill="#be185d">新能源场站聚合</text>
+  <text x="430" y="320" font-family="Arial,sans-serif" font-size="9" text-anchor="middle" fill="#be185d">实时仿真</text>
+  <text x="570" y="320" font-family="Arial,sans-serif" font-size="9" text-anchor="middle" fill="#be185d">小信号稳定性</text>
+  <text x="700" y="320" font-family="Arial,sans-serif" font-size="9" text-anchor="middle" fill="#be185d">FDNE等值</text>
+  
+  <rect x="20" y="360" width="200" height="55" rx="6" fill="#fee2e2" stroke="#dc2626" stroke-width="1.5"/>
+  <text x="120" y="378" font-family="Arial,sans-serif" font-size="11" font-weight="bold" text-anchor="middle" fill="#991b1b">失效边界</text>
+  <text x="120" y="395" font-family="Arial,sans-serif" font-size="9" text-anchor="middle" fill="#991b1b">强非线性 · 故障穿越</text>
+  <text x="120" y="407" font-family="Arial,sans-serif" font-size="9" text-anchor="middle" fill="#991b1b">宽频全域 · 拓扑变化</text>
+  
+  <rect x="240" y="360" width="200" height="55" rx="6" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="340" y="378" font-family="Arial,sans-serif" font-size="11" font-weight="bold" text-anchor="middle" fill="#1e40af">适用边界</text>
+  <text x="340" y="395" font-family="Arial,sans-serif" font-size="9" text-anchor="middle" fill="#1e40af">线性/弱非线性系统</text>
+  <text x="340" y="407" font-family="Arial,sans-serif" font-size="9" text-anchor="middle" fill="#1e40af">明确频段 · 固定拓扑</text>
+  
+  <rect x="470" y="365" width="14" height="14" rx="2" fill="#dbeafe" stroke="#2563eb" stroke-width="1"/>
+  <text x="490" y="376" font-family="Arial,sans-serif" font-size="9" fill="#374151">原始系统</text>
+  <rect x="565" y="365" width="14" height="14" rx="2" fill="#dcfce7" stroke="#16a34a" stroke-width="1"/>
+  <text x="585" y="376" font-family="Arial,sans-serif" font-size="9" fill="#374151">降阶方法</text>
+  <rect x="655" y="365" width="14" height="14" rx="2" fill="#fef3c7" stroke="#d97706" stroke-width="1"/>
+  <text x="675" y="376" font-family="Arial,sans-serif" font-size="9" fill="#374151">核心流程</text>
+  <rect x="745" y="365" width="14" height="14" rx="2" fill="#ede9fe" stroke="#7c3aed" stroke-width="1"/>
+  <text x="765" y="376" font-family="Arial,sans-serif" font-size="9" fill="#374151">降阶结果</text>
+  <rect x="830" y="365" width="14" height="14" rx="2" fill="#fce7f3" stroke="#be185d" stroke-width="1"/>
+  <text x="850" y="376" font-family="Arial,sans-serif" font-size="9" fill="#374151">应用</text>
+  
+  <line x1="100" y1="115" x2="100" y2="135" stroke="#333" stroke-width="1.5"/>
+  <line x1="340" y1="115" x2="340" y2="135" stroke="#333" stroke-width="1.5"/>
+  <line x1="580" y1="115" x2="580" y2="135" stroke="#333" stroke-width="1.5"/>
+  <line x1="820" y1="115" x2="820" y2="135" stroke="#333" stroke-width="1.5"/>
+  <line x1="100" y1="190" x2="100" y2="210" stroke="#333" stroke-width="1.5"/>
+  <line x1="550" y1="190" x2="550" y2="210" stroke="#333" stroke-width="1.5"/>
+  <line x1="340" y1="265" x2="340" y2="285" stroke="#333" stroke-width="1.5"/>
+  <line x1="550" y1="265" x2="550" y2="285" stroke="#333" stroke-width="1.5"/>
+  <line x1="720" y1="265" x2="720" y2="285" stroke="#333" stroke-width="1.5"/>
+</svg>
+</div>
+<p style="text-align:center;font-size:12px;color:#666;margin-top:8px;">图1 · 模型降阶与动态等值五层方法体系架构</p>
 
 
 ## 概述
@@ -326,34 +404,28 @@ $$\text{Re}\{u^*Y(s)u\} > 0, \quad \forall \text{Re}\{s\} > 0$$
 
 ## 来源论文
 
-| 论文 | 年份 |
-|------|------|
-| [[noda-a-binary-frequency-region-partitioning-algorithm-for-the-identification-of-|Noda | A Binary Frequency-Region Partitioning Algorithm for ]] | 2007 |
-| [[39pes20116039582|39/pes.2011.6039582]] | 2011 |
-| [[39pes20116039582|39/pes.2011.6039582]] | 2011 |
-| [[a-type-4-wind-power-plant-equivalent-model|A Type-4 Wind Power Plant Equivalent Model]] | 2012 |
-| [[electromechanical-transient-modeling-of-modular-multilevel-converter-based-multi|Electromechanical Transient Modeling of Modular Multilevel C]] | 2013 |
-| [[comparative-study-on-electromechanical-and-electromagnetic-transient-model-for-g|Comparative study on electromechanical and electromagnetic t]] | 2014 |
-| [[a-wideband-equivalent-model-of-type-3-wind-power-plants-for-emt-studies|A Wideband Equivalent Model of Type-3 Wind Power Plants for ]] | 2016 |
-| [[flexible-extended-harmonic-domain-approach-for-transient-state-analysis-of-switc|Flexible extended harmonic domain approach for transient sta]] | 2017 |
-| [[development-and-applicability-of-online-passivity-enforced-wide-band-multi-port-|Development and Applicability of Online Passivity Enforced W]] | 2018 |
-| [[dual-band-reduced-order-model-of-an-hvdc-link-embedded-into-a-power-network-for-|Dual-Band Reduced-Order Model of an HVDC Link Embedded into ]] | 2019 |
-| [[dynamic-model-reduction-of-power-electronic-interfaced-generators-based-on-singu|Dynamic model reduction of power electronic interfaced gener]] | 2019 |
-| [[dynamic-model-reduction-of-power-electronic-interfaced-generators-based-on-singu|Dynamic model reduction of power electronic interfaced gener]] | 2019 |
-| [[analysis-of-frequency-dependent-network-equivalents-in-dynamic-harmonic-domain|Analysis of Frequency-Dependent Network Equivalents in Dynam]] | 2021 |
-| [[hierarchical-modeling-scheme-for-high-speed-electromagnetic-transient-emt-simula|Hierarchical Modeling Scheme for High-Speed Electromagnetic ]] | 2021 |
-| [[exhaustive-modal-analysis-of-large-scale-power-systems-using-model-order-reducti|Exhaustive modal analysis of large-scale power systems using]] | 2022 |
-| [[new-compact-white-box-transformer-model-for-the-calculation-of-electromagnetic-t|New Compact White-Box Transformer Model for the Calculation ]] | 2022 |
-| [[fast-electromagnetic-transient-simulation-of-modular-multilevel-converter-based-|Fast electromagnetic transient simulation of modular multile]] | 2023 |
-| [[modeling-and-simulation-of-vsc-hvdc-with-dynamic-phasors|Modeling and simulation of VSC-HVDC with dynamic phasors]] | 2023 |
-| [[optimized-high-frequency-white-box-transformer-model-for-implementation-in-atp-e|Optimized high-frequency white-box transformer model for imp]] | 2023 |
-| [[adaptive-variable-step-size-calculation-method-for-transient-temperature-rise-and-fall|Adaptive Variable Step Size Calculation Method for Transient]] | 2024 |
-| [[enhancing-computation-performance-of-rational-approximation-for-frequency-depend|Enhancing computation performance of rational approximation ]] | 2024 |
-| [[a-state-variables-elimination-based-emtp-type-constant-admittance-equivalent-mod|A State Variables Elimination-Based EMTP-Type Constant Admit]] | 2025 |
-| [[a-state-space-approach-for-accelerated-simulation-of-modular-multilevel-converte|A state-space approach for accelerated simulation of modular]] | 2025 |
-| [[a-state-variable-preserving-method-for-the-efficient-modelling-of-inverter-based|A state-variable-preserving method for the efficient modelli]] | 2025 |
-| [[improving-numerical-efficiency-of-frequency-dependent-transmission-line-models-f-23|Improving numerical efficiency of frequency dependent transm]] | 2025 |
-| [[improving-numerical-efficiency-of-frequency-dependent-transmission-line-models-f-23|Improving numerical efficiency of frequency dependent transm]] | 2025 |
-| [[improving-numerical-efficiency-of-frequency-dependent-transmission-line-models-f|Improving numerical efficiency of frequency dependent transm]] | 2025 |
-| [[improving-numerical-efficiency-of-frequency-dependent-transmission-line-models-f|Improving numerical efficiency of frequency dependent transm]] | 2025 |
-| [[emt-model-boundary-determination-using-floquet-theory-based-participation-factor|EMT Model Boundary Determination Using Floquet Theory-based ]] | 2026 |
+| 论文 | 年份 | 关联要点 |
+|------|------|----------|
+| [[noda-a-binary-frequency-region-partitioning-algorithm-for-the-identification-of-.md|Noda 2007]] | 2007 | 频域区域划分算法用于MOR |
+| [[a-type-4-wind-power-plant-equivalent-model|Type-4 Wind Power Plant Equivalent]] | 2012 | 风电厂等值建模 |
+| [[electromechanical-transient-modeling-of-modular-multilevel-converter-based-multi|Electromechanical Transient Modeling of MMC]] | 2013 | MMC机电暂态建模 |
+| [[comparative-study-on-electromechanical-and-electromagnetic-transient-model-for-g|Comparative Study EMT vs EMT]] | 2014 | 机电电磁暂态对比 |
+| [[a-wideband-equivalent-model-of-type-3-wind-power-plants-for-emt-studies|Wideband Equivalent Type-3 WP]] | 2016 | 风电场宽频等值 |
+| [[flexible-extended-harmonic-domain-approach-for-transient-state-analysis-of-switc|Flexible Extended Harmonic Domain]] | 2017 | 谐波域暂态分析 |
+| [[development-and-applicability-of-online-passivity-enforced-wide-band-multi-port-.md|Online Passivity Enforced Wideband FDNE]] | 2018 | 在线无源性FDNE |
+| [[dual-band-reduced-order-model-of-an-hvdc-link-embedded-into-a-power-network-for-.md|Dual-Band Reduced-Order HVDC Model]] | 2019 | 双频段降阶HVDC等值 |
+| [[dynamic-model-reduction-of-power-electronic-interfaced-generators-based-on-singu|Dynamic Model Reduction of PEIG]] | 2019 | 电力电子接口发电机降阶 |
+| [[analysis-of-frequency-dependent-network-equivalents-in-dynamic-harmonic-domain|Analysis of FDNE in Dynamic Harmonic Domain]] | 2021 | 动态谐波域FDNE分析 |
+| [[hierarchical-modeling-scheme-for-high-speed-electromagnetic-transient-emt-simula|Hierarchical Modeling for High-Speed EMT]] | 2021 | 高速EMT分层建模 |
+| [[exhaustive-modal-analysis-of-large-scale-power-systems-using-model-order-reducti|Exhaustive Modal Analysis using MOR]] | 2022 | 穷尽式模态分析MOR |
+| [[new-compact-white-box-transformer-model-for-the-calculation-of-electromagnetic-t|New Compact White-Box Transformer Model]] | 2022 | 紧凑白盒变压器模型 |
+| [[fast-electromagnetic-transient-simulation-of-modular-multilevel-converter-based-.md|Fast EMT Simulation of MMC]] | 2023 | MMC快速电磁暂态仿真 |
+| [[modeling-and-simulation-of-vsc-hvdc-with-dynamic-phasors|VSC-HVDC with Dynamic Phasors]] | 2023 | 动态相量VSC-HVDC建模 |
+| [[optimized-high-frequency-white-box-transformer-model-for-implementation-in-atp-e|Optimized High-Frequency White-Box Transformer]] | 2023 | 高频白盒变压器优化 |
+| [[adaptive-variable-step-size-calculation-method-for-transient-temperature-rise-and-fall|Adaptive Variable Step Size]] | 2024 | 自适应变步长计算 |
+| [[enhancing-computation-performance-of-rational-approximation-for-frequency-depend|Enhancing Rational Approximation Performance]] | 2024 | 有理逼近计算性能提升 |
+| [[a-state-variables-elimination-based-emtp-type-constant-admittance-equivalent-mod|State Variables Elimination EMTP Constant Admittance]] | 2025 | 状态变量消除恒定导纳 |
+| [[a-state-space-approach-for-accelerated-simulation-of-modular-multilevel-converte|State-Space Approach for Accelerated MMC]] | 2025 | 状态空间加速MMC仿真 |
+| [[a-state-variable-preserving-method-for-the-efficient-modelling-of-inverter-based|State-Variable Preserving Method for IBR]] | 2025 | 保状态变量IBR建模 |
+| [[improving-numerical-efficiency-of-frequency-dependent-transmission-line-models-f|Improving Numerical Efficiency of FD Line Models]] | 2025 | 频变线路模型数值效率 |
+| [[emt-model-boundary-determination-using-floquet-theory-based-participation-factor|EMT Model Boundary Using Floquet Theory]] | 2026 | Floquet理论EMT模型边界 |
