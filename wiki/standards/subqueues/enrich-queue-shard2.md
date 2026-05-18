@@ -58,7 +58,7 @@
 | 231 | n-port-network.md | methods | methods/network-solution/n-port-network.md | P0 | 999 | 13295 | 22 | 11 | completed |
 | 342 | new-england-test-system.md | topics | topics/test-system/new-england-test-system.md | P1 | 999 | 2128 | 7 | 18 | completed |
 
-| 172 | numerical-damping-optimization.md | methods | methods/numerical-methods/numerical-damping-optimization.md | P0 | 999 | 4818 | 17 | 10 | pending |
+| 172 | numerical-damping-optimization.md | methods | methods/numerical-methods/numerical-damping-optimization.md | P0 | 999 | 4818 | 17 | 10 | completed |
 | 413 | numerical-oscillation-suppression.md | methods | methods/numerical-methods/numerical-oscillation-suppression.md | P1 | 999 | 637 | 4 | 12 | pending |
 | 213 | parallel-in-time.md | methods | methods/simulation-technology/parallel-in-time.md | P0 | 999 | 9098 | 36 | 15 | pending |
 | 161 | passivity-enforcement.md | methods | methods/signal-processing/passivity-enforcement.md | P0 | 999 | 4401 | 20 | 19 | pending |
@@ -91,3 +91,4 @@
 ||||| 500 | 1 | 1 | 0 | lumped-parameter-model.md bc=3569, bf=17, 5-method taxonomy + CDA + VF + quant boundaries, QG pass |
 |||| 504 | 1 | 1 | 0 | multirate-and-network-partitioning.md bc=8926, bf=11, mermaid->SVG, Shu 2018 deep-review injected, QG pass |
 
+|||| 522 | 1 | 1 | 0 | numerical-damping-optimization.md bc=4765, bf=17, QG PASS (sep_count=2, real_dup=False) |
