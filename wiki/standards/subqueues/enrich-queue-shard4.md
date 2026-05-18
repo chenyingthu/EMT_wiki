@@ -67,7 +67,7 @@
 | 62 | pet-sst-model.md | models | models/transformer/pet-sst-model.md | P0 | 999 | 2598 | 17 | 16 | completed |
 | 110 | phasor-measurement-unit.md | methods | methods/system-studies/phasor-measurement-unit.md | P0 | 999 | 2862 | 10 | 8 | completed |
 | 75 | pll-model.md | models | models/control/pll-model.md | P0 | 999 | 1967 | 15 | 7 | completed |
-| 103 | power-electronics-modeling.md | models | models/converter/power-electronics-modeling.md | P0 | 999 | 2700 | 15 | 15 | pending |
+| 103 | power-electronics-modeling.md | models | models/converter/power-electronics-modeling.md | P0 | 999 | 2700 | 15 | 15 | completed |
 | 148 | power-system-stabilizer.md | methods | methods/stability-analysis/power-system-stabilizer.md | P0 | 999 | 3995 | 13 | 11 | pending |
 | 155 | pss-model.md | methods | methods/stability-analysis/pss-model.md | P0 | 999 | 4231 | 13 | 12 | pending |
 | 162 | pwm-modulator-model.md | models | models/converter/pwm-modulator-model.md | P0 | 999 | 4493 | 18 | 8 | pending |

@@ -281,12 +281,12 @@ $$CFI = \frac{\cos\alpha - \cos(\alpha+\mu)}{\cos\alpha - \cos\beta}$$
 
 | 论文 | 年份 | 核心贡献 |
 |------|------|---------|
-| [[sano-2022-comparison|Sano 等 - Comparison and Selection of Grid-Tied Inverter Models for Accurate and Efficient EMT Simulations]] | 2022 | 五类模型框架（SW/VI/AV/CCI/SCI），步长-精度映射，500×加速比数据 |
-| [[ebrahimi-2023-average-value|Ebrahimi 和 Jatskevich - Average-Value Model for Voltage-Source Converters With Direct Interfacing in EMTP-Type Solution]] | 2023 | DI-AVM节点formulation，消除一拍延迟，1000 μs步长稳定 |
-| [[hong-2022-average-value|Hong 等 - Average-Value Modeling of Line-Commutated Inverter Systems With Commutation Failure]] | 2022 | LCC换相失败AVM，CFI指标，故障暂态验证 |
-| [[ebrahimi-2021-average-value|Ebrahimi 等 - Average-Value Modeling of Line-Commutated AC-DC Converters With Unbalanced AC Network]] | 2021 | 不平衡交流网络下LCC平均值模型 |
-| [[beddard-2015-comparison|Beddard 等 - Comparison of Detailed Modeling Techniques for MMC Employed on VSC-HVDC Schemes]] | 2015 | MMC详细建模技术对比 |
-| [[na-2023-bilinear|Cao 等 - BAM双线性伴随模型]] | 2023 | 开关时刻数值无损耗特性，ρ=0 |
+| Sano 等 (2022) — Comparison and Selection of Grid-Tied Inverter Models for Accurate and Efficient EMT Simulations | 2022 | 五类模型框架（SW/VI/AV/CCI/SCI），步长-精度映射，500×加速比数据 |
+| Ebrahimi & Jatskevich (2023) — Average-Value Model for Voltage-Source Converters With Direct Interfacing in EMTP-Type Solution | 2023 | DI-AVM节点formulation，消除一拍延迟，1000 μs步长稳定 |
+| Hong 等 (2022) — Average-Value Modeling of Line-Commutated Inverter Systems With Commutation Failure | 2022 | LCC换相失败AVM，CFI指标，故障暂态验证 |
+| Ebrahimi 等 (2021) — Average-Value Modeling of Line-Commutated AC-DC Converters With Unbalanced AC Network | 2021 | 不平衡交流网络下LCC平均值模型 |
+| Beddard 等 (2015) — Comparison of Detailed Modeling Techniques for MMC Employed on VSC-HVDC Schemes | 2015 | MMC详细建模技术对比 |
+| Na 等 (2023) — BAM双线性伴随模型 (Bilinear Adjoint Model for Switch Timing) | 2023 | 开关时刻数值无损耗特性，ρ=0 |
 
 ---
 
