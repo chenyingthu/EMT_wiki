@@ -8,16 +8,87 @@ book-chapter: "8"
 
 # 模块化多电平换流器(MMC)建模 (Modular Multilevel Converter Modeling)
 
-
-```mermaid
-graph TD
-    subgraph Ncmp[模块化多电平换流器(MMC)建模 (Modular Mu…]
-        N0[半桥(HBSM): 2开关+电容]
-        N1[全桥(FBSM): 4开关+电容]
-        N2[箝位双子模块(CDSM): 4开关+2电容]
-    end
-```
-
+<div style="text-align:center;margin:16px 0;">
+<svg viewBox="0 0 960 420" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arr" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto">
+      <polygon points="0 0,7 2.5,0 5" fill="#333"/>
+    </marker>
+    <marker id="arr-blue" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto">
+      <polygon points="0 0,7 2.5,0 5" fill="#2563eb"/>
+    </marker>
+    <marker id="arr-green" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto">
+      <polygon points="0 0,7 2.5,0 5" fill="#16a34a"/>
+    </marker>
+    <marker id="arr-purple" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto">
+      <polygon points="0 0,7 2.5,0 5" fill="#7c3aed"/>
+    </marker>
+    <filter id="shadow" x="-2%" y="-2%" width="104%" height="104%">
+      <feDropShadow dx="1" dy="1" stdDeviation="1" flood-color="#00000022"/>
+    </filter>
+  </defs>
+  <!-- DC Bus -->
+  <rect x="400" y="15" width="160" height="32" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="2" filter="url(#shadow)"/>
+  <text x="480" y="35" fill="#1e3a5f" font-size="13" font-weight="bold" text-anchor="middle">直流母线</text>
+  <!-- Sub-Module Types -->
+  <text x="480" y="75" fill="#333" font-size="12" font-weight="bold" text-anchor="middle">子模块类型</text>
+  <rect x="80" y="85" width="120" height="56" rx="4" fill="#dcfce7" stroke="#16a34a" stroke-width="2" filter="url(#shadow)"/>
+  <text x="140" y="105" fill="#14532d" font-size="12" font-weight="bold" text-anchor="middle">半桥 (HBSM)</text>
+  <text x="140" y="123" fill="#3a7a5a" font-size="10" text-anchor="middle">2 开关 + 电容</text>
+  <text x="140" y="136" fill="#6b7280" font-size="9" text-anchor="middle">无直流故障自清除</text>
+  <rect x="240" y="85" width="120" height="56" rx="4" fill="#fef3c7" stroke="#d97706" stroke-width="2" filter="url(#shadow)"/>
+  <text x="300" y="105" fill="#78350f" font-size="12" font-weight="bold" text-anchor="middle">全桥 (FBSM)</text>
+  <text x="300" y="123" fill="#a16207" font-size="10" text-anchor="middle">4 开关 + 电容</text>
+  <text x="300" y="136" fill="#6b7280" font-size="9" text-anchor="middle">可闭锁清除故障</text>
+  <rect x="400" y="85" width="160" height="56" rx="4" fill="#ede9fe" stroke="#7c3aed" stroke-width="2" filter="url(#shadow)"/>
+  <text x="480" y="105" fill="#3b0764" font-size="12" font-weight="bold" text-anchor="middle">箝位双子模块 (CDSM)</text>
+  <text x="480" y="123" fill="#6b21a8" font-size="10" text-anchor="middle">4 开关 + 2 电容</text>
+  <text x="480" y="136" fill="#6b7280" font-size="9" text-anchor="middle">多电平输出/故障能力</text>
+  <!-- Upper Arm -->
+  <rect x="170" y="175" width="120" height="70" rx="4" fill="#e0e7ff" stroke="#4338ca" stroke-width="2" filter="url(#shadow)"/>
+  <text x="230" y="195" fill="#3730a3" font-size="12" font-weight="bold" text-anchor="middle">上桥臂</text>
+  <text x="230" y="213" fill="#6b7280" font-size="10" text-anchor="middle">N 个子模块级联</text>
+  <text x="230" y="230" fill="#6b7280" font-size="10" text-anchor="middle">Larm / Rarm 等效</text>
+  <!-- Lower Arm -->
+  <rect x="170" y="270" width="120" height="70" rx="4" fill="#e0e7ff" stroke="#4338ca" stroke-width="2" filter="url(#shadow)"/>
+  <text x="230" y="290" fill="#3730a3" font-size="12" font-weight="bold" text-anchor="middle">下桥臂</text>
+  <text x="230" y="308" fill="#6b7280" font-size="10" text-anchor="middle">N 个子模块级联</text>
+  <text x="230" y="325" fill="#6b7280" font-size="10" text-anchor="middle">Larm / Rarm 等效</text>
+  <!-- AC Terminal -->
+  <rect x="620" y="195" width="120" height="70" rx="4" fill="#dcfce7" stroke="#16a34a" stroke-width="2" filter="url(#shadow)"/>
+  <text x="680" y="215" fill="#14532d" font-size="12" font-weight="bold" text-anchor="middle">交流端口</text>
+  <text x="680" y="233" fill="#6b7280" font-size="10" text-anchor="middle">PCC / 换流变压器</text>
+  <text x="680" y="250" fill="#6b7280" font-size="10" text-anchor="middle">vac, iac</text>
+  <!-- Models -->
+  <text x="420" y="175" fill="#333" font-size="11" font-weight="bold" text-anchor="middle">EMT 建模方法</text>
+  <rect x="340" y="185" width="160" height="54" rx="4" fill="#fef3c7" stroke="#d97706" stroke-width="2" filter="url(#shadow)"/>
+  <text x="420" y="203" fill="#78350f" font-size="11" font-weight="bold" text-anchor="middle">DSM / DEM / AVM</text>
+  <text x="420" y="220" fill="#a16207" font-size="10" text-anchor="middle">详细 → 等效 → 平均值</text>
+  <text x="420" y="235" fill="#6b7280" font-size="9" text-anchor="middle">30–2770× 加速比</text>
+  <!-- Arrows -->
+  <line x1="200" y1="141" x2="200" y2="173" stroke="#333" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="300" y1="141" x2="300" y2="173" stroke="#333" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="420" y1="141" x2="420" y2="173" stroke="#333" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="290" y1="210" x2="338" y2="210" stroke="#333" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="290" y1="305" x2="338" y2="305" stroke="#333" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="500" y1="212" x2="618" y2="230" stroke="#333" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="500" y1="220" x2="618" y2="232" stroke="#333" stroke-width="1.5" marker-end="url(#arr)"/>
+  <!-- Legend -->
+  <text x="30" y="385" fill="#333" font-size="11" font-weight="bold">图例</text>
+  <rect x="30" y="393" width="14" height="9" rx="2" fill="#dbeafe" stroke="#2563eb" stroke-width="1"/>
+  <text x="50" y="402" fill="#555" font-size="10">输入/源</text>
+  <rect x="110" y="393" width="14" height="9" rx="2" fill="#dcfce7" stroke="#16a34a" stroke-width="1"/>
+  <text x="130" y="402" fill="#555" font-size="10">处理/模型</text>
+  <rect x="200" y="393" width="14" height="9" rx="2" fill="#fef3c7" stroke="#d97706" stroke-width="1"/>
+  <text x="220" y="402" fill="#555" font-size="10">算法/方法</text>
+  <rect x="290" y="393" width="14" height="9" rx="2" fill="#ede9fe" stroke="#7c3aed" stroke-width="1"/>
+  <text x="310" y="402" fill="#555" font-size="10">输出/结果</text>
+  <rect x="380" y="393" width="14" height="9" rx="2" fill="#e0e7ff" stroke="#4338ca" stroke-width="1"/>
+  <text x="400" y="402" fill="#555" font-size="10">桥臂/端口</text>
+  <!-- Caption -->
+  <text x="480" y="415" fill="#888" font-size="10" text-anchor="middle">图1 · MMC拓扑结构与子模块类型分类（半桥/全桥/箝位双子模块）及EMT建模方法层次</text>
+</svg>
+</div>
 
 ## 概述
 
@@ -68,6 +139,7 @@ v_{SM,j} = S_j \cdot v_{C,j} + (1-S_j) \cdot 0
 $$
 
 **桥臂电压**：
+
 $$
 v_{arm} = \sum_{j=1}^{N} v_{SM,j} = \sum_{j=1}^{N} S_j \cdot v_{C,j}
 $$
@@ -216,18 +288,15 @@ $$
 
 基于暂态严重程度自动选择模型：
 
-```
-if (|di/dt| > threshold):
-    model = DEM    # 严重故障
-elif (|v_err| > limit):
-    model = AEM    # 电压偏差大
-else:
-    model = EAVM   # 正常运行
-```
+$$
+\text{model} = \begin{cases}
+\text{DEM} & |di/dt| > threshold \\
+\text{AEM} & |v_{err}| > limit \\
+\text{EAVM} & \text{正常运行}
+\end{cases}
+$$
 
 切换冲击<0.1%，实现全工况高效仿真。
-
----
 
 ## 适用边界
 
@@ -236,8 +305,6 @@ else:
 - DEM的恒定导纳策略在正常工况高效，但闭锁时需重新因子化
 - 虚假功率问题在经典AEM中显著，需采用联立求解或改进实现
 - 机电暂态模型仅适用于低频振荡分析，不适用于开关暂态
-
----
 
 ## 代表性来源
 
@@ -359,27 +426,19 @@ else:
 
 ### 3. 模型选择决策树
 
-```
-研究目标？
-├── 器件级分析（损耗、热、阀控）
-│   └── DSM或DEM（N<50）
-├── 直流故障穿越分析
-│   └── DEM或EAVM（闭锁精度）
-├── 系统级控制策略
-│   └── AVM或动态相量（50μs-1ms）
-├── 大规模MTDC电网
-│   └── 机电暂态模型（10ms）
-├── 实时HIL测试
-│   └── SPM或固定导纳模型（1-5μs）
-└── 全工况综合研究
-    └── 自适应多模型框架
+**研究目标？**
+- 器件级分析（损耗、热、阀控）→ DSM或DEM（N<50）
+- 直流故障穿越分析 → DEM或EAVM（闭锁精度）
+- 系统级控制策略 → AVM或动态相量（50μs-1ms）
+- 大规模MTDC电网 → 机电暂态模型（10ms）
+- 实时HIL测试 → SPM或固定导纳模型（1-5μs）
+- 全工况综合研究 → 自适应多模型框架
 
-系统规模？
-├── N < 50 → DSM/DEM
-├── 50 ≤ N ≤ 200 → DEM/AEM
-├── N > 200 → AVM/自适应/机电
-└── 多端MTDC → 多速率协同
-```
+**系统规模？**
+- N < 50 → DSM/DEM
+- 50 ≤ N ≤ 200 → DEM/AEM
+- N > 200 → AVM/自适应/机电
+- 多端MTDC → 多速率协同
 
 ### 4. MMC建模检查清单
 
@@ -418,28 +477,23 @@ else:
 | 双映射死区建模 | 死区效应精确表征 | 混合MMC适用 | 2026 |
 
 ## 相关方法
-- [[average-value-model]] - 桥臂整体等效方法
-- [[thevenin-norton-equivalent]] - 网络等效核心技术
-- [[fixed-admittance]] - ADC避免矩阵重构
-- [[dynamic-phasor]] - 频域建模与机电接口
-- [[state-space-method]] - MMC状态方程降阶
-- [[multirate-method]] - 交直流协同仿真
+- [[methods/power-electronics/average-value-model.md|average-value-model]] - 桥臂整体等效方法
+- [[methods/network-solution/thevenin-norton-equivalent.md|thevenin-norton-equivalent]] - 网络等效核心技术
+- [[methods/numerical-methods/fixed-admittance.md|fixed-admittance]] - ADC避免矩阵重构
+- [[methods/system-studies/dynamic-phasor.md|dynamic-phasor]] - 频域建模与机电接口
+- [[methods/numerical-methods/state-space-method.md|state-space-method]] - MMC状态方程降阶
+- [[methods/simulation-technology/multirate-method.md|multirate-method]] - 交直流协同仿真
 
 ## 相关模型
-- [[vsc-model]] - 两电平换流器对比
-- [[mtdc-model]] - 多端直流系统
-- [[converter-transformer-model]] - MMC换流变
-- [[cable-model]] - 直流电缆连接
-- [[fdne-model]] - MMC外部网络等值
+- [[models/converter/vsc-model.md|vsc-model]] - 两电平换流器对比
+- [[models/equivalent/mtdc-model.md|mtdc-model]] - 多端直流系统
+- [[models/transformer/converter-transformer-model.md|converter-transformer-model]] - MMC换流变
+- [[models/transmission-line/cable-model.md|cable-model]] - 直流电缆连接
+- [[models/equivalent/fdne-model.md|fdne-model]] - MMC外部网络等值
 
 ## 相关主题
-- [[vsc-hvdc]] - 柔性直流输电
-- [[real-time-simulation]] - MMC实时模型
-- [[co-simulation]] - 机电-电磁协同
-- [[parallel-computing]] - MMC并行加速
-- [[wind-farm-modeling]] - 海上风电MMC并网
-
----
-
-*本页面基于Karpathy LLM Wiki Pattern构建，内容来自EMT领域学术文献的深度分析*
-*支撑书籍第三篇第8章"模块化多电平换流器(MMC)建模"*
+- [[topics/hvdc-facts/vsc-hvdc.md|vsc-hvdc]] - 柔性直流输电
+- [[methods/simulation-technology/fpga-real-time-simulation.md|real-time-simulation]] - MMC实时模型
+- [[topics/simulation/co-simulation.md|co-simulation]] - 机电-电磁协同
+- [[methods/simulation-technology/multithreaded-parallel-computing.md|parallel-computing]] - MMC并行加速
+- [[topics/renewable-storage/wind-farm-modeling.md|wind-farm-modeling]] - 海上风电MMC并网
