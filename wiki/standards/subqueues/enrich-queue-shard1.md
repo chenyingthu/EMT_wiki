@@ -54,7 +54,8 @@
 | 177 | magnetic-saturation-modeling.md | methods | methods/power-electronics/magnetic-saturation-modeling.md | P0 | 999 | 5075 | 25 | 18 | pending | completed 
 | 385 | mixed-sensitivity-optimization.md | methods | methods/control/mixed-sensitivity-optimization.md | P1 | 999 | 3961 | 17 | 11 | completed |
 | 354 | modal-domain-decoupling.md | methods | methods/transmission-line/modal-domain-decoupling.md | P1 | 999 | 4192 | 14 | 26 | completed |
-| 375 | multi-winding-transformer.md | models | models/transformer/multi-winding-transformer.md | P1 | 999 | 1360 | 3 | 15 | pending |
+| 375 | multi-winding-transformer.md | models | models/transformer/multi-winding-transformer.md | P1 | 999 | 1360 | 12 | 15 | completed |
+
 | 194 | mutual-impedance.md | methods | methods/transmission-line/mutual-impedance.md | P0 | 999 | 5825 | 19 | 10 | pending | completed 
 | 257 | network-partitioning.md | topics | topics/modeling-methods/network-partitioning.md | P1 | 999 | 5774 | 13 | 27 | pending | completed 
 | 379 | norton-equivalent.md | methods | methods/network-solution/norton-equivalent.md | P1 | 999 | 4363 | 18 | 12 | completed |
