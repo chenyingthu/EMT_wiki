@@ -86,5 +86,6 @@
 | 364 | universal-line-model.md | methods | methods/transmission-line/universal-line-model.md | P1 | 999 | 3285 | 21 | 13 | completed |
 | 327 | vector-control.md | methods | methods/control/vector-control.md | P1 | 999 | 2172 | 6 | 12 | completed |
 | 130 | vsc-control.md | methods | methods/control/vsc-control.md | P0 | 999 | 3447 | 6 | 11 | completed |
-| 68 | wideband-modeling.md | methods | methods/transmission-line/wideband-modeling.md | P0 | 999 | 1808 | 11 | 25 | pending |
+| 68 | wideband-modeling.md | methods | methods/transmission-line/wideband-modeling.md | P0 | 999 | 6293 | 14 | 20 | completed |
+
 ||| Cycle 504 | 1 | 1 | 0 | vector-control.md SKIP (bc=2033≥2000, bf=6≥5, all wikilinks valid, no dup_block) |
