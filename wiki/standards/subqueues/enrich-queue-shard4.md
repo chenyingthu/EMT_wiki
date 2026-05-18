@@ -64,7 +64,7 @@
 | 112 | numerical-integration-methods.md | topics | topics/simulation/numerical-integration-methods.md | P0 | 999 | 2919 | 19 | 22 | pending |
 | 312 | offline-to-realtime-porting.md | methods | methods/simulation-technology/offline-to-realtime-porting.md | P1 | 999 | 2793 | 5 | 16 | completed |
 | 265 | parallel-transmission-line.md | methods | methods/transmission-line/parallel-transmission-line.md | P1 | 999 | 4762 | 9 | 14 | completed |
-| 62 | pet-sst-model.md | models | models/transformer/pet-sst-model.md | P0 | 999 | 1739 | 17 | 16 | pending |
+| 62 | pet-sst-model.md | models | models/transformer/pet-sst-model.md | P0 | 999 | 2598 | 17 | 16 | completed |
 | 110 | phasor-measurement-unit.md | methods | methods/system-studies/phasor-measurement-unit.md | P0 | 999 | 2862 | 10 | 8 | completed |
 | 75 | pll-model.md | models | models/control/pll-model.md | P0 | 999 | 1967 | 15 | 7 | pending |
 | 103 | power-electronics-modeling.md | models | models/converter/power-electronics-modeling.md | P0 | 999 | 2700 | 15 | 15 | pending |

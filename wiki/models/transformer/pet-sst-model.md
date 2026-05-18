@@ -1,338 +1,275 @@
 ---
 title: "电力电子变压器 (PET/SST)"
 type: model
-tags: [pet, sst, solid-state-transformer, power-electronics, high-frequency, isolation]
+tags: [pet, sst, solid-state-transformer, power-electronics, high-frequency, isolation, dab, chb, sab, mab]
 created: "2026-04-29"
-updated: "2026-05-12"
+updated: "2026-05-18"
 ---
 
 # 电力电子变压器 (Power Electronic Transformer / Solid-State Transformer)
 
-
-
-
 ## 定义与概述
 
-电力电子变压器（PET）也称固态变压器（SST），是基于电力电子技术的新型智能变压器，通过AC-DC-AC多级变换实现电压等级转换和电气隔离。相比传统变压器，PET具有体积重量小、功率双向流动、功率因数可控、谐波隔离和故障限流等优势。本模型涵盖DAB/CLLC隔离级拓扑、移相控制、整流级和逆变级控制，适用于配电系统、新能源接入和电动汽车充电应用。
+电力电子变压器（PET）也称固态变压器（SST），是基于电力电子技术的新型智能变压器，通过 AC-DC-AC 多级变换实现电压等级转换和电气隔离。相比传统变压器，PET 具有体积小、功率双向流动、功率因数可控、谐波隔离和故障限流等优势。按拓扑结构划分，PET 主要分为三级式 AC-DC-DC-AC（整流级+隔离级+逆变级），隔离级按功率模块类型分为 CHB-DAB、CHB-SAB、CHB-MAB 三种路线。按等效建模粒度划分，EMT 仿真模型分为详细开关模型（SFB-DEM）、开关函数平均值模型（SFB-AVM）、恒导纳等效模型和多速率协同仿真模型。
 
-## 1. 物理对象概述
+**核心挑战**：大规模 ISOP/ISOS 级联 PET 的节点导纳矩阵阶数高、开关频率 10-100 kHz 导致步长受限微秒级，详细模型计算代价很高。不同隔离级拓扑（DAB/CLLC/SAB/MAB）的等效电路结构和 EMT 接口方式存在显著差异，需要针对性建模方法。
 
-### 1.1 功能与定义
+**关键需求**：
+- 保留高频开关暂态（开关瞬态、触发脉冲时序）
+- 减少 ISOP/ISOS 级联带来的网络矩阵节点膨胀
+- 支持大步长实时仿真（RT-HIL）同时保持数值稳定性
+- 多速率子系统协同（CHB 低频侧与 DAB 高频侧步长解耦）
 
-电力电子变压器（PET）也称固态变压器（SST），是基于电力电子技术的新型智能变压器：
+## EMT 中的角色
 
-**核心功能**：
-- **电压变换**：AC-DC-AC多级变换，实现电压等级转换
-- **电气隔离**：高频隔离，体积重量大幅减小
-- **功率双向流动**：支持能量双向传输
-- **功率因数校正**：网侧单位功率因数
-- **谐波隔离**：阻止谐波传播
-- **故障限流**：限流保护功能
+PET 在 EMT 仿真中承担多电压等级变换和电气隔离的核心功能：
 
-**与传统变压器对比**：
-| 特性 | 传统变压器 | 电力电子变压器 |
-|------|-----------|--------------|
-| 频率 | 50/60Hz | 高频(10-100kHz) |
-| 体积/重量 | 基准 | 1/5 - 1/10 |
-| 效率 | 98-99% | 96-98% |
-| 功率流向 | 单向 | 双向 |
-| 功率因数 | 负载决定 | 可控(≈1) |
-| 谐波 | 传递 | 隔离 |
-| 保护功能 | 无 | 故障限流 |
-| 成本 | 低 | 高(5-10倍) |
+1. **配电系统接入**：10 kV/35 kV 中压输入 → 380 V/750 V 低压输出，连接配电网与微网/电动汽车充电
+2. **新能源并网**：作为分布式能源与配电网之间的接口，实现 DC link 与 AC bus 的电压变换和功率控制
+3. **HVDC 穿通**：MMC 型 SST 的 DAB 高频链路（HFL）在柔性直流输电中实现 DC-DC 隔离
+4. **系统级仿真**：大步长等效模型用于保护继电器配合、谐波传播分析、电能质量评估
 
-### 1.2 拓扑结构
+**EMT 建模的三个层级**：
+- **详细开关层**（开关级，100 ns-1 μs）：保留 IGBT/MOSFET 开关暂态，用于器件级损耗分析和控制验证
+- **等效端口层**（端口级，10-100 μs）：保留端口外特性，隐藏内部开关状态，用于系统级动态响应
+- **平均等效层**（周期平均，100-500 μs）：基于开关函数平均化，用于稳态功率流和长期动态
 
-#### 1.2.1 三级式PET (AC-DC-DC-AC)
+## EMT 建模方法
 
-```
-AC Input → Rectifier → DC Link 1 → DAB → DC Link 2 → Inverter → AC Output
-                           ↕
-                    High Freq Transformer
-```
+### 方法 1：开关函数详细等效模型（SFB-DEM）
 
-**各级功能**：
-1. **整流级**：AC/DC变换，功率因数校正
-2. **隔离级**：DC/DC变换，高频隔离
-3. **逆变级**：DC/AC变换，输出电压控制
+**核心思想**：用开关函数 $s(t) \in \{-1, 0, 1\}$ 描述各桥臂对直流电容电压和端口电压的映射，将开关半导体网络改写为等效电路接口，使网络求解的节点导纳矩阵 **G 矩阵不随开关动作变化**，避免每步 LU 分解。
 
-#### 1.2.2 典型隔离级拓扑
+**DAB 桥臂电压**：
 
-**DAB (Dual Active Bridge)**：
-- 双H桥+高频变压器
-- 移相控制功率传输
-- 软开关能力（ZVS）
+$$
+v_{p}(t) = V_{dc1} \cdot s_1(t), \quad s_1 \in \{-1, 0, 1\}
+$$
 
-**CLLC谐振变换器**：
-- 谐振槽实现软开关
-- 高效率（>98%）
-- 适合宽电压范围
+$$
+v_{s}(t) = n \cdot V_{dc2} \cdot s_2(t), \quad s_2 \in \{-1, 0, 1\}
+$$
 
-**双有源桥+串联谐振**：
-- 变频控制
-- 双向功率传输
-- 变压器漏感利用
+**变压器漏感方程**：
 
-### 1.3 运行激励
+$$
+v_{p} - v_{s} = L_{leak} \frac{di_{L}}{dt}
+$$
 
-**电压等级**：
-- 输入：10kV/35kV中压
-- 输出：380V/750V低压
-- 中间直流：1000-4000V
+**SFB-DEM 的 G 矩阵固定化机制**：利用 DAB 桥臂互补导通特性 $G_{ON} + G_{OFF} = G_x$ 为常数，使内部节点块可预先计算并在端口层面递归消除（Kron 消去）。ISOP 配置下多 DAB 模块可在端口层面聚合进入 EMT 网络求解，节点数从 $6N+1$ 降至 $2N+3$。
 
-**功率等级**：
-- 分布式：10-100kW
-- 配电级：100kW-1MW
-- 牵引应用：1-5MW
+**适用范围**：ISOP/ISOS/IPOP/IPOS 多种串并联配置、多模块 SST 系统级仿真、RT-HIL 实时仿真
+**失效场景**：开关器件的非理想特性（反向恢复、结电容）、磁芯饱和故障、热耦合动态
 
-**控制目标**：
-- 网侧：单位功率因数、低THD
-- 隔离级：软开关、高效率
-- 负荷侧：电压稳定、快速响应
+### 方法 2：开关函数平均值模型（SFB-AVM）
 
-## 2. 物理模型与数学描述
+**核心思想**：对开关函数在一个仿真步长内按触发占空比 $\beta$ 做时间平均，将离散的开关状态转化为连续等效：
 
-### 2.1 DAB变换器模型
+$$
+\bar{s} = \frac{\tau_{on}}{T_s} = \beta
+$$
 
-#### 2.1.1 基本工作原理
+**DAB 等效电压源**：
 
-**H桥输出电压**：
-$$v_{p} = V_{dc1} \cdot s_1(t), \quad s_1 \in \{-1, 0, 1\}$$
-$$v_{s} = n \cdot V_{dc2} \cdot s_2(t), \quad s_2 \in \{-1, 0, 1\}$$
+$$
+\bar{v}_p = \beta_1 V_{dc1}, \quad \bar{v}_s = n \beta_2 V_{dc2}
+$$
 
-其中$n$为变压器变比，$s_1, s_2$为开关函数。
+**平均传输功率**：
 
-**变压器方程**：
-$$v_{p} - v_{s} = L_{leak} \frac{di_L}{dt}$$
+$$
+\bar{P} = \frac{n V_{dc1} V_{dc2}}{2 f_s L_{leak}} \phi (1 - \frac{|\phi|}{\pi})
+$$
 
-其中$L_{leak}$为折算到原边的漏感。
+**IFP（interpolated firing pulse）机制**：触发脉冲在步长内部发生时，用 $\beta = \tau_{on}/T_s$ 代替整步长恒定假设，避免步端触发延迟引入直流偏置。
 
-#### 2.1.2 移相控制
+**适用范围**：控制参数设计、稳态效率评估、长期动态（热松弛）仿真
+**失效场景**：需要保留开关谐波和高频暂态的场景、快速故障暂态
 
-**单移相(SPS)控制**：
+### 方法 3：恒导纳等效模型
 
-副边相对原边移相角$\phi$，传输功率：
-$$P = \frac{n V_{dc1} V_{dc2}}{2 f_s L_{leak}} \phi (1 - \frac{|\phi|}{\pi})$$
+**核心思想**：将 DAB 高频链路等效为端口导纳 $G_{eq}$ 和历史电流源的并联，接口方程为：
 
-其中$f_s$为开关频率，$\phi \in [-\pi/2, \pi/2]$。
+$$
+i_{port} = G_{eq} \cdot v_{port} + i_{hist}(t-\Delta t)
+$$
 
-**功率方向**：
-- $\phi > 0$：正向传输（原边→副边）
-- $\phi < 0$：反向传输（副边→原边）
+**DAB 恒导纳**：
+
+$$
+G_{eq,DAB} = \frac{P_{rated}}{V_{dc1}^2 - V_{dc2}^2/n^2}
+$$
+
+**优势**：单步矩阵求逆运算量为 $O(N)$ 而非 $O(N^3)$，适合大规模 ISOP 级联 PET 的系统级 EMT 仿真。
+
+**适用范围**：需要快速仿真的系统级 EMT 场景、保护继电器配合仿真
+**失效场景**：开关暂态详细分析、非线性磁芯动态
+
+### 方法 4：多速率协同仿真模型
+
+**核心思想**：利用 PET 多级变换电路的固有频率差异，将 CHB 慢速子系统（~500 Hz）与 DAB 快速子系统（kHz 级）分配不同步长，避免低频部分被迫以高频步长求解。
+
+**步长比例**：CHB 取 50-100 μs，DAB 取 1-10 μs，比例 10:1~20:1。
+
+**跨速率数据传输机制**：接口处用等效电压/电流边界量传递信息，使各子系统可独立组装和求解，避免因开关状态变化或跨区耦合频繁重构整个系统矩阵。
+
+**DAB 端口等效**：以高频变压器两侧电流 $i_L(t)$ 作为状态变量，由改进节点分析（MNA）建立方程：
+
+$$
+\mathbf{A} \mathbf{x}_{DAB} = \mathbf{b}(v_{port}, i_{hist})
+$$
+
+高精度触发信号进入 DAB 方程后，开关发生时刻不必完全受固定仿真步长网格限制。
+
+**适用范围**：含 CHB-DAB 拓扑的大规模 PET 仿真、兼顾慢速控制和快速开关的协同仿真
+**失效场景**：强非线性耦合、故障暂态下多速率稳定性边界不清晰
+
+### 方法 5：广义状态空间平均模型（GSSA/GSSM）
+
+**核心思想**：对 DAB 交流链路电流/电压的开关周期波形展开为傅里叶系数（动态相量），将周期信号转化为随时间缓慢变化的相量：
+
+$$
+x(t) = \sum_{k} X_k(t) e^{jk\omega_s t}
+$$
+
+**动态相量微分性质**（引入 $-jk\omega_s$ 频移项）：
+
+$$
+\frac{dX_k}{dt} = \frac{1}{T_s}\left[ -jk\omega_s X_k + (x(t) e^{-jk\omega_s t}\right]_{avg}
+$$
+
+**混合 SSA/GSSA 小信号建模**：直流端口用 SSA 表示，变压器交流侧用 GSSA 表示，形成混合框架用于求取 3p-DAB 开环传递函数 $G_{vd}(s)$、$G_{vg}(s)$、驱动点输入阻抗 $Z_D(s)$、输出阻抗 $Z_o(s)$ 等。
+
+**适用范围**：小信号稳定性分析、DAB 阻抗建模、控制器带宽设计
+**失效场景**：大信号故障暂态、非周期谐波动态
+
+## 形式化表达
+
+### DAB 移相控制方程
+
+**单移相（SPS）传输功率**：
+
+$$
+P_{SPS} = \frac{n V_{dc1} V_{dc2}}{2 f_s L_{leak}} \phi \left(1 - \frac{|\phi|}{\pi}\right), \quad \phi \in [-\frac{\pi}{2}, \frac{\pi}{2}]
+$$
 
 **回流功率**：
-$$Q = \frac{n V_{dc1} V_{dc2}}{2 f_s L_{leak}} \left[\phi(1-\frac{\phi}{\pi}) - \frac{d(1-d)^2\pi}{4}\right]$$
 
-其中$d = V_{dc2}/(nV_{dc1})$为电压传输比。
+$$
+Q = \frac{n V_{dc1} V_{dc2}}{2 f_s L_{leak}} \left[ \phi\left(1-\frac{\phi}{\pi}\right) - \frac{d(1-d)^2 \pi}{4} \right]
+$$
 
-#### 2.1.3 扩展移相(EPS)控制
+其中 $d = V_{dc2}/(nV_{dc1})$ 为电压传输比。
 
-内移相$\phi_1$（原边H桥）和外移相$\phi_2$（两桥间）：
-$$P = \frac{n V_{dc1} V_{dc2}}{2 f_s L_{leak}} \phi_2 (1 - \phi_2 - \frac{\phi_1}{2})$$
+**扩展移相（EPS）传输功率**：
 
-**优势**：减小回流功率，提高效率
+$$
+P_{EPS} = \frac{n V_{dc1} V_{dc2}}{2 f_s L_{leak}} \phi_2 \left(1 - \phi_2 - \frac{\phi_1}{2}\right)
+$$
 
-### 2.2 CLLC谐振变换器模型
+其中 $\phi_1$ 为原边 H 桥内移相，$\phi_2$ 为两桥间外移相。
 
-#### 2.2.1 谐振槽参数
+### CLLC 谐振变换器
 
-谐振频率：
-$$f_r = \frac{1}{2\pi \sqrt{L_r C_r}}$$
+**谐振频率**：
 
-归一化频率：
-$$F = \frac{f_s}{f_r}$$
+$$
+f_r = \frac{1}{2\pi\sqrt{L_r C_r}}
+$$
 
 **电压增益**：
-$$M_g = \frac{V_{out}}{n V_{in}} = \frac{1}{\sqrt{(1 + k - \frac{k}{F^2})^2 + Q^2 (F - \frac{1}{F})^2}}$$
 
-其中：
-- $k = L_m/L_r$：电感比
-- $Q = \sqrt{L_r/C_r}/R_{eq}$：品质因数
+$$
+M_g = \frac{V_{out}}{n V_{in}} = \frac{1}{\sqrt{\left(1+k-\frac{k}{F^2}\right)^2 + Q^2\left(F-\frac{1}{F}\right)^2}}
+$$
 
-#### 2.2.2 软开关条件
+其中 $k = L_m/L_r$，$Q = \sqrt{L_r/C_r}/R_{eq}$，$F = f_s/f_r$。
 
-**原边ZVS条件**：
-$$f_s \geq f_r \quad \text{或} \quad I_{mag} > \frac{2 C_{oss} V_{dc}}{t_{dead}}$$
+**ZVS 软开关条件（原边）**：
 
-**副边ZCS条件**（同步整流）：
-$$f_s \leq f_r$$
+$$
+f_s \geq f_r \quad \text{或} \quad I_{mag} > \frac{2 C_{oss} V_{dc}}{t_{dead}}
+$$
 
-### 2.3 整流级模型
+## 关键技术挑战
 
-#### 2.3.1 两电平整流器
+### 挑战 1：ISOP/ISOS 级联网络的矩阵膨胀
 
-**电压方程**：
-$$v_{abc} = R_f i_{abc} + L_f \frac{di_{abc}}{dt} + v_{conv,abc}$$
+当 PET 采用输入串联、输出并联（ISOP）或输入串联、输出串联（ISOS）配置时，$N$ 个子模块的串联导致节点导纳矩阵规模为 $O(N)$，开关状态变化引起的矩阵重构成为实时仿真的主要瓶颈。**解法**：利用互补导通特性实现 G 矩阵固定化，通过 Kron 消去在端口层面聚合。
 
-**调制电压**：
-$$v_{conv} = m \cdot \frac{V_{dc}}{2}$$
+### 挑战 2：步内开关事件的时序精度
 
-**功率平衡**：
-$$P_{ac} = \frac{3}{2} V_{sd} I_{sd} = V_{dc} I_{dc} = P_{dc}$$
+百 kHz 级 DAB 的触发脉冲可能落在仿真步长内部，若只在步长起点更新开关状态，会造成触发时刻误差并在交流变压器电流中引入直流偏置。**解法**：IFP（步内触发等效）和开关插值算法（对切换时刻附近状态量修正）。
 
-#### 2.3.2 级联H桥整流器
+### 挑战 3：Stage I/II 两级耦合
 
-用于中压输入（10kV+），每相多模块串联：
-$$V_{phase} = \sum_{i=1}^{N} V_{H,i} = N \cdot m_i \cdot V_{dc,mod}$$
+整流级（Stage I）与隔离级（Stage II）通过直流电容强耦合，电容电压作为两级共享状态导致联立求解时的数值刚性增加。**解法**：DC-link 解耦（在直流电容处切断两级直接耦合）或 ImEx-Gear 显隐多步法（显式处理电容变量，隐式处理电感/电阻网络）。
 
-模块数：$N \approx V_{LL}/(V_{IGBT,rated})$，典型为10-20级
+### 挑战 4：多速率稳定性边界
 
-## 3. EMT仿真模型
+多速率仿真中，慢速 CHB 与快速 DAB 子系统的交互边界在故障暂态下可能失稳。**解法**：精确的接口等效和时序交错（interleaved equivalence multirate interaction algorithm）。
 
-### 3.1 详细开关模型
+### 挑战 5：磁芯非线性和热耦合
 
-**整流级**：
-- IGBT/MOSFET开关器件
-- PWM调制（载波频率2-20kHz）
-- LCL滤波器
-
-**隔离级**：
-- 高频变压器（铁氧体磁芯）
-- DAB/CLLC拓扑
-- 开关频率10-100kHz
-
-**逆变级**：
-- 两电平/三电平拓扑
-- 输出LC滤波
-- 电压/电流双环控制
-
-### 3.2 平均值模型
-
-**整流级等效**：
-- 受控电流源：$i_d = k_p(v_{dc}^* - v_{dc}) + k_i \int (v_{dc}^* - v_{dc})dt$
-- 功率因数≈1
-
-**隔离级等效**：
-- 理想变压器+等效阻抗
-- 效率损失：$P_{loss} = (1-\eta) P_{rated} (P/P_{rated})^2$
-
-**逆变级等效**：
-- 受控电压源：$v_{out} = v_{ref}$
-- 响应延时：1-2个开关周期
-
-### 3.3 恒导纳模型
-
-适用于大规模系统仿真：
-
-**整流级**：
-$$G_{eq} = \frac{3}{2} \frac{m^2}{R_{eq}}$$
-
-**隔离级**：
-$$G_{eq,DAB} = \frac{P}{V_{dc1}^2 - V_{dc2}^2/n^2}$$
-
-## 4. 典型参数
-
-### 4.1 10kV/400V配电级PET
-
-| 参数 | 数值 | 单位 |
-|------|------|------|
-| 额定功率 | 100 | kW |
-| 输入电压 | 10 | kV |
-| 输出电压 | 380/400 | V |
-| 中间直流 | 1500 | V |
-| 开关频率(整流) | 10 | kHz |
-| 开关频率(DAB) | 20 | kHz |
-| 变压器频率 | 20 | kHz |
-| 效率 | 96-97 | % |
-| 功率密度 | 3-5 | kW/kg |
-
-**模块配置**：
-- 整流级：级联H桥，每相12模块
-- 隔离级：12个DAB并联
-- 逆变级：三相两电平逆变器
-
-### 4.2 模型选择指南
-
-| 应用场景 | 推荐模型 | 步长 |
-|---------|---------|------|
-| 软开关分析 | 详细开关 | 100ns-1μs |
-| 控制验证 | 平均值 | 10-100μs |
-| 系统级研究 | 等效功率源 | 100-500μs |
-| 电能质量 | 谐波源模型 | 10μs |
-
-### 4.3 损耗构成
-
-| 损耗类型 | 占比 | 说明 |
-|---------|------|------|
-| IGBT导通 | 30-40% | $I^2 R_{on}$ |
-| IGBT开关 | 25-35% | 开关瞬态 |
-| 变压器 | 15-25% | 铁损+铜损 |
-| 电感/电容 | 5-10% | 寄生电阻 |
-| 其他 | 5% | 辅助电源等 |
-
-## 5. 适用边界与限制
-
-### 5.1 适用条件
-- **功率等级**：10kW-10MW（配电级，高压输电需级联）
-- **电压等级**：输入≤35kV，输出≤1kV（低压配电）
-- **开关频率**：整流级2-20kHz，隔离级10-100kHz
-- **控制模式**：正常双向运行，支持孤岛和并网模式
-
-### 5.2 模型限制
-- **开关细节**：平均值模型不捕捉开关瞬态
-- **磁芯非线性**：简化磁芯模型，饱和特性需单独考虑
-- **热效应**：损耗-热耦合简化处理
-- **故障保护**：内部故障模型需额外开发
+SST 高频变压器的磁芯饱和特性与开关损耗产生的热耦合，在 EMT 中通常简化处理。**解法**：需要额外的饱和模型和热网络，目前文献中尚未系统验证。
 
 ## 量化性能边界
 
-**Gao 2022 SST高频链路加速等效模型**（DAB功率模块，MMC型SST）:
-- 基于节点导纳方程预处理与Kron消去法，消除DAB模块内部节点，构建多端口等效电路
-- 仿真速度较详细模型提升 **1~2个数量级**（10~100倍），特定工况可达2~3个数量级
-- 利用IGBT互补导通特性（$G_{ON}+G_{OFF}=G_x$为常数），实现单步矩阵求逆运算量为0
-- 支持ISOP/ISOS/IPOP/IPOS等多种串并联连接配置的参数统一转换
-- 验证平台：PSCAD/EMTDC + 硬件实验验证，端口波形与详细模型高度一致
-- 数据缺口：速度提升范围（1~2个数量级）来自摘要概述，原文未在不同SST功率等级下给出精确加速比
+### 加速比数据
 
-**Li 2026 SFB-DEM + ImEx-Gear实时仿真模型**（60模块ISOP SST, OPAL-RT）:
-- 采用隐显多步Gear法，实现 **171x** 加速比（vs 详细模型）， **7.5x**（vs VG-DEM传统戴维南等效）
-- **3阶ImEx-G3O**格式，稳态误差 **<0.5%**，开关定位精度<1μs
-- 恒定导纳矩阵 + 节点缩减约 **60%**，单步计算复杂度从 $O(N^3)$ 降至 $O(N)$
-- 数据缺口：验证仅基于60 SM ISOP SST，故障工况和非线性磁芯尚未验证
+| 建模方法 | 测试配置 | 步长 | 加速比 | 来源 |
+|---------|---------|------|--------|------|
+| SFB-DEM + ImEx-G3O | 60 SM ISOP SST | 20-50 μs | **171×** vs 详细模型；**7.5×** vs VG-DEM | Li 2026 |
+| 端口导纳预处理 + Kron 消去 | MMC型SST DAB-HFL | 1-10 μs | **10-100×**（1-2 数量级），特定工况达 2-3 数量级 | Gao 2022 |
+| SFB-DEM / SFB-AVM | 10相 FBSM + 30 DAB + NPC三电平 | 20-50 μs | 波形偏差 **<0.5%**，相关系数 >0.99 | Li 2025 |
+| 多速率（CHB-DAB）| CHB-DAB ISOP PET | CHB 50-100 μs, DAB 1-10 μs | 数值运算次数减少（原文未量化） | Wang 2025 |
 
-**Li 2025 通用解耦等效电路模型**（SFB-DEM / SFB-AVM, ISOP SST）:
-- SFB-DEM节点数从 **6N+1降至2N+3**，SFB-AVM进一步降至 **3-5节点**
-- 恒定等效导纳 $G_{eq}=C/h$，导纳矩阵呈块对角（三级独立）
-- 步长20-50μs时波形偏差 **<0.5%**（vs 1μs详细模型），相关系数>0.99
-- 验证平台：PSCAD/EMTDC，10相FBSM + 30 DAB + NPC三电平
-- 数据缺口：保护继电器配合、其他硬件平台（RTDS/FPGA）未覆盖
+### 节点数缩减
 
-**Wang 2025 多速率PET仿真**（CHB-DAB拓扑）:
-- 基于频率的子网划分：CHB慢速子系统（~500Hz）与DAB快速子系统（kHz级）
-- 步长比例 **10:1~20:1**（CHB 50-100μs, DAB 1-10μs）
-- 数据缺口：具体加速比数值在原文摘要中未量化报告
+| 等效方法 | 原始节点数 | 等效后节点数 | 缩减比例 |
+|---------|-----------|-------------|---------|
+| SFB-DEM（ISOP） | $6N+1$ | $2N+3$ | ~67% |
+| SFB-AVM（ISOP） | $6N+1$ | 3-5 | ~95% |
+| 恒定导纳等效（ISOP） | $6N+1$ | 块对角三级独立 | ~60%（矩阵稀疏化） |
 
-**数据缺口声明**：PET/SST建模的加速比高度依赖于具体拓扑（ISOP/ISOS/CHB-DAB）、子模块数量和仿真平台。不同模型间的横向对比缺乏统一基准（详细模型步长、硬件配置不同）。大多数验证在离线EMT环境完成，实时硬件平台（FPGA/RTDS）下的数据仅Li 2026在OPAL-RT上报告。
+**数据缺口声明**：不同论文的测试基准不统一（详细模型步长从 1 μs 到详细开关级别不一致），横向对比加速比时需注意基准定义差异。大多数验证在离线 EMT 环境（PSCAD/EMTDC）完成，实时硬件平台（OPAL-RT/RTDS/FPGA）数据仅 Li 2026 报告。
+
+## 适用边界与选择指南
+
+| 应用场景 | 推荐模型 | 步长 | 精度目标 | 关键判据 |
+|---------|---------|------|---------|---------|
+| 器件级损耗分析 | SFB-DEM | 100 ns-1 μs | 开关瞬态精度 | 触发脉冲时序精度 |
+| 控制参数设计 | SFB-AVM / GSSA | 10-100 μs | 周期平均精度 | 控制传递函数匹配 |
+| 系统级稳态/长期动态 | 恒导纳等效 | 100-500 μs | 端口外特性 | 功率平衡误差 <1% |
+| RT-HIL 实时仿真 | SFB-DEM + ImEx-Gear | 20-50 μs | 稳态误差 <0.5% | 单步 $O(N)$ 复杂度 |
+| 小信号稳定性分析 | GSSA/动态相量 | 频域扫频 | 阻抗精度 | 频率分辨率 |
+| 多速率协同仿真 | CHB-DAB 多速率 | CHB 50-100 μs, DAB 1-10 μs | 子系统接口精度 | 步长比例 10:1~20:1 |
+
+**拓扑选型参考**：
+- **CHB-DAB**：适合高压输入（10 kV+）多级串联场景，控制成熟，但 DAB 高频开关仍是仿真瓶颈
+- **CHB-SAB**（双主动桥串联谐振）：适合宽电压范围、高效率（>98%）需求
+- **CHB-MAB**（多主动桥）：适合需要双向功率灵活分配的多端口应用
 
 ## 相关方法
-- [[average-value-model|平均值模型]] - DAB/CLLC平均值建模
-- [[state-space-method|状态空间法]] - SST状态空间建模
-- [[fixed-admittance|恒导纳模型]] - 高频变换器恒导纳实现
-- [[dynamic-phasor|动态相量法]] - SST动态相量简化
+- [[methods/power-electronics/average-value-model.md|average-value-model]] - DAB/CLLC 平均值建模
+- [[methods/numerical-methods/state-space-method.md|state-space-method]] - SST 状态空间建模
+- [[methods/numerical-methods/fixed-admittance.md|fixed-admittance]] - 高频变换器恒导纳实现
+- [[methods/system-studies/dynamic-phasor.md|dynamic-phasor]] - SST 动态相量简化
 
 ## 相关模型
-- [[vsc-model|VSC模型]] - 整流/逆变级建模
-- [[mmc-model|MMC模型]] - MMC型SST对比
-- [[transformer-model|变压器模型]] - 高频变压器建模
-- [[emi-filter-model|EMI滤波器]] - 高频噪声滤波
+- [[models/converter/vsc-model.md|vsc-model]] - 整流/逆变级建模
+- [[models/converter/mmc-model.md|mmc-model]] - MMC 型 SST 对比
+- [[models/transformer/transformer-model.md|transformer-model]] - 高频变压器建模
+- [[models/compensation/emi-filter-model.md|emi-filter-model]] - 高频噪声滤波
 
 ## 相关主题
-- [[vsc-hvdc]] - 柔性直流输电
-- [[real-time-simulation]] - SST实时仿真
-- [[co-simulation]] - SST多域混合仿真
-- [[frequency-dependent-modeling]] - 宽频变压器建模
-
----
+- [[topics/hvdc-facts/vsc-hvdc.md|vsc-hvdc]] - 柔性直流输电
+- [[topics/simulation/real-time-simulation.md|real-time-simulation]] - SST 实时仿真
+- [[topics/simulation/co-simulation.md|co-simulation]] - SST 多域混合仿真
+- [[topics/modeling-methods/frequency-dependent-modeling.md|frequency-dependent-modeling]] - 宽频变压器建模
 
 ## 来源论文
-
-| 论文 | 年份 |
-|------|------|
-| [[accelerated-electromagnetic-transient-emt-equivalent-model-of-solid-state-transf|Accelerated EMT Equivalent Model of Solid-State Transformer]] | 2022 |
-| [[a-numerically-efficient-and-accurate-model-for-real-time-simulation-of-solid-sta|A numerically efficient and accurate model for real-time simulation of solid-state transformer]] | 2026 |
-| [[universal-decoupled-equivalent-circuit-models-of-solid-state-transformer-for-acc|Universal decoupled equivalent circuit models of solid-state transformer]] | 2025 |
-| [[multirate-emt-simulation-of-power-electronic-transformers-with-high-precision-fi|Multirate EMT Simulation of Power Electronic Transformers]] | 2025 |
-
----
-
-*本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*
+- [[sources/accelerated-electromagnetic-transient-emt-equivalent-model-of-solid-state-transf.md]] — Gao 2022, MMC型SST DAB高频链路端口导纳等效，Kron消去加速
+- [[sources/a-numerically-efficient-and-accurate-model-for-real-time-simulation-of-solid-sta.md]] — Li 2026, SFB-DEM + ImEx-Gear 实时仿真，60模块ISOP SST
+- [[sources/universal-decoupled-equivalent-circuit-models-of-solid-state-transformer-for-acc.md]] — Li 2025, 通用解耦等效电路模型，恒定G矩阵
+- [[sources/multirate-emt-simulation-of-power-electronic-transformers-with-high-precision-fi.md]] — Wang 2025, CHB-DAB多速率EMT仿真，步长比例10:1~20:1
