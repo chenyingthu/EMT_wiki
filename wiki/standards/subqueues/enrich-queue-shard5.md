@@ -72,7 +72,7 @@
 | 350 | sensitivity-analysis.md | methods | methods/stability-analysis/sensitivity-analysis.md | P1 | 999 | 7896 | 6 | 13 | completed |
 | 137 | simulation-practice-guide.md | topics | topics/tools-software/simulation-practice-guide.md | P0 | 999 | 3640 | 9 | 14 | completed |
 | 166 | small-signal-stability-analysis.md | methods | methods/stability-analysis/small-signal-stability-analysis.md | P0 | 999 | 4630 | 18 | 12 | completed |
-| 378 | statcom-model.md | models | models/compensation/statcom-model.md | P1 | 999 | 1275 | 4 | 16 | pending |
+| 378 | statcom-model.md | models | models/compensation/statcom-model.md | P1 | 999 | 3371 | 14 | 25 | completed |
 | 340 | steady-state-initialization.md | topics | topics/simulation/steady-state-initialization.md | P1 | 999 | 9487 | 16 | 15 | completed |
 
 
@@ -99,3 +99,5 @@
 ||||||||| 456 | 1 | 1 | 0 | steady-state-initialization.md enriched: bc 1825→9487, bf 14→16 pass, mermaid→SVG 4-layer flowchart, added shooting method + MTDC + MMC SM init, 15 wikilinks all valid |
 
 |||||||||| 456 | 1 | 1 | 0 | power-system.md wikilink fix: 15 bare filenames → full relative paths (topics/, methods/), all wikilinks now valid. Page already PASSED Quality Gate (bc=13957≥2000, bf=14≥5, no placeholder, no DUP_BLOCK). Incremental fix only. |
+
+|||||| 457 | 1 | 1 | 0 | statcom-model.md enriched: bc 1275→3371, bf 4→14 pass, added chain-STATCOM fast equivalent (Zhang 2019, O(4N), 80% speedup, <1.2% error), MMC-STATCOM ESS interface (Stepanov 2023, 4-level DM/DEM/AEM/AVM, 0.05s/0.1s/0.3s decoupling), 10 sections, all 25 wikilinks valid |
