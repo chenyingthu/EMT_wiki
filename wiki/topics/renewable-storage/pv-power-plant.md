@@ -390,16 +390,16 @@ PV 单二极管模型的隐式 $I$-$V$ 方程在 EMT 线性网络求解中引入
 
 ## 与相关页面的关系
 
-- [[pv-system-model]] 解释光伏系统等效模型；本页组织电站级对象和应用边界。
-- [[inverter-model]]、[[gfl-inverter-model]]、[[gfm-inverter-model]] 讨论逆变器控制和接口；本页不重复控制器内部方程。
-- [[renewable-energy-integration]] 关注新能源并网总体问题；本页聚焦光伏电站。
-- [[frequency-domain-analysis]] 和 [[harmonic-analysis]] 可用于识别阻抗耦合和谐波风险，但不能替代大扰动 EMT 验证。
-- [[co-simulation]] 和 [[multirate-method]] 是解决光伏电站多时间尺度仿真的核心方法。
-- [[eigenvalue-analysis]] 和 [[small-signal-analysis]] 是控制交互风险筛查的工具。
-- [[average-value-model]] 是逆变器建模层级的关键方法。
-- [[parallel-in-time]] 和 [[gpu-parallel-acceleration]] 是加速大规模 PV 仿真的计算技术。
-- [[ieee-39-bus-system]] 是 PV 基准模型验证的标准测试系统。
-- [[power-quality]] 是评估 PV 并网电能质量的主题。
+- [[models/renewable-storage/pv-system-model]] 解释光伏系统等效模型；本页组织电站级对象和应用边界。
+- [[models/converter/inverter-model]]、[[models/converter/gfl-inverter-model]]、[[models/converter/gfm-inverter-model]] 讨论逆变器控制和接口；本页不重复控制器内部方程。
+- [[topics/renewable-storage/renewable-energy-integration]] 关注新能源并网总体问题；本页聚焦光伏电站。
+- [[topics/tools-software/frequency-domain-analysis]] 和 [[methods/signal-processing/harmonic-analysis-methods]] 可用于识别阻抗耦合和谐波风险，但不能替代大扰动 EMT 验证。
+- [[topics/simulation/co-simulation]] 和 [[methods/simulation-technology/multirate-method]] 是解决光伏电站多时间尺度仿真的核心方法。
+- [[methods/stability-analysis/eigenvalue-analysis]] 和 [[methods/stability-analysis/small-signal-analysis]] 是控制交互风险筛查的工具。
+- [[methods/power-electronics/average-value-model]] 是逆变器建模层级的关键方法。
+- [[methods/simulation-technology/parallel-in-time]] 和 [[methods/simulation-technology/gpu-parallel-acceleration]] 是加速大规模 PV 仿真的计算技术。
+- [[topics/test-system/ieee-39-bus-system]] 是 PV 基准模型验证的标准测试系统。
+- [[topics/renewable-storage/power-quality]] 是评估 PV 并网电能质量的主题。
 
 ## 开放问题
 
@@ -409,7 +409,7 @@ PV 单二极管模型的隐式 $I$-$V$ 方程在 EMT 线性网络求解中引入
 - 如何在 FD-AVM 中定量刻画开关平均对谐波传播和 EMI 分析的边界影响。
 - 如何建立标准化的 PV 场站 EMT 基准模型库（参考 Marthi 2024 的 ORNL 工作），覆盖不同逆变器拓扑、集电网络拓扑和控制策略。
 
-## 来源论文
+## 主要引用论文
 
 - **Di Fazio & Russo 2012** — 提出扩展线性系统技术 (ELST)，解决 PV 单二极管模型在 EMT 线性网络中的数值不稳定性问题，通过局部线性化消除 BLST 的单步延迟误差。
 - **Agudelo 2023** — 提出基于 NLT 的开关平均频域仿真方法 (FD-AVM)，通过分时窗、开关函数平均和样本重叠技术，将步长从 μs 提升至 ms 级（100-1000 倍加速），RMS 误差 <2%。
@@ -418,19 +418,18 @@ PV 单二极管模型的隐式 $I$-$V$ 方程在 EMT 线性网络求解中引入
 - **Hariri & Faruque 2017** — 提出 EMT-相量域混合仿真架构，EMT 侧（微秒级）求解 PV 和逆变器动态，OpenDSS 侧（分钟级）执行 QSTS 潮流，实现配电网 PV 接入影响的多速率协同分析。
 - **Marthi, Debnath & Choi 2024** — 提出 ORNL 基准高保真 EMT 模型，包含 IEEE 39 节点系统 + 三个 PV 厂站（125+125+250 MW，134 台逆变器，5 条辐射状集电线路），用于测试不同故障条件和 SCR 下的 PV 并网动态。
 
-## 来源论文
+## 来源页面索引
 
 | 论文 | 年份 |
 |------|------|
-| [[flexible-extended-harmonic-domain-approach-for-transient-state-analysis-of-switc|Flexible extended harmonic domain approach for transient sta]] | 2017 |
-| [[damping-of-subsynchronous-control-interactions-in-large-scale-pv-installations-t|Damping of Subsynchronous Control Interactions in Large-Scal]] | 2021 |
-| [[damping-of-subsynchronous-control-interactions-in-large-scale-pv-installations-t|Damping of Subsynchronous Control Interactions in Large-Scal]] | 2021 |
-| [[a-piecewise-generalized-state-space-model-of-power-converters-for-electromagneti|A Piecewise Generalized State Space Model of Power Converter]] | 2022 |
-| [[benchmark-high-fidelity-emt-models-for-power|Benchmark High-Fidelity EMT Models for Power]] | 2023 |
-| [[portal-analysis-approach-used-for-the-efficient-electromagnetic-transient-emt-si|Portal Analysis Approach Used for the Efficient Electromagne]] | 2023 |
-| [[advanced-dsogi-pll-with-adaptive-bandwidth-for-improved-transient-performance-of|Advanced DSOGI PLL with Adaptive Bandwidth for Improved Tran]] | 2024 |
-| [[a-state-variable-preserving-method-for-the-efficient-modelling-of-inverter-based|A state-variable-preserving method for the efficient modelli]] | 2025 |
-| [[design-and-implementation-of-scalable-communication-interfaces-for-reliable-and-|Design and Implementation of Scalable Communication Interfac]] | 2025 |
-| [[electromagnetic-transient-modeling-and-simulation-of-large-power-systems-emt-sim|Electromagnetic Transient Modeling and Simulation of Large P]] | 2025 |
-| [[electromagnetic-transient-emt-and-quasi-static-time-series-qsts-co-simulation-fo|Electromagnetic transient (EMT) and quasi static time series]] | 2026 |
-| [[nuclear-powered-hybrid-energy-system-for-clean-hydrogen-production-time-step-opt|Nuclear-Powered Hybrid Energy System for Clean Hydrogen Prod]] | 2026 |
+| [[sources/flexible-extended-harmonic-domain-approach-for-transient-state-analysis-of-switc]] | 2017 |
+| [[sources/damping-of-subsynchronous-control-interactions-in-large-scale-pv-installations-t]] | 2021 |
+| [[sources/a-piecewise-generalized-state-space-model-of-power-converters-for-electromagneti]] | 2022 |
+| [[sources/benchmark-high-fidelity-emt-models-for-power]] | 2023 |
+| [[sources/portal-analysis-approach-used-for-the-efficient-electromagnetic-transient-emt-si]] | 2023 |
+| [[sources/advanced-dsogi-pll-with-adaptive-bandwidth-for-improved-transient-performance-of]] | 2024 |
+| [[sources/a-state-variable-preserving-method-for-the-efficient-modelling-of-inverter-based]] | 2025 |
+| [[sources/design-and-implementation-of-scalable-communication-interfaces-for-reliable-and-]] | 2025 |
+| [[sources/electromagnetic-transient-modeling-and-simulation-of-large-power-systems-emt-sim]] | 2025 |
+| [[sources/electromagnetic-transient-emt-and-quasi-static-time-series-qsts-co-simulation-fo]] | 2026 |
+| [[sources/nuclear-powered-hybrid-energy-system-for-clean-hydrogen-production-time-step-opt]] | 2026 |
