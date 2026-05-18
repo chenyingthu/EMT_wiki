@@ -388,12 +388,5 @@ $$v_{arm}(t) = \sum_{type \in \{HB, FB, CD\}} \left( N_{type} R_{on} i_{arm}(t) 
 - **Gurula (2015)** — *Loewner Matrix Approach for Modelling FDNEs of Power Systems* — 基于 Loewner 矩阵的 FDNE 低阶建模方法
 - **Li 等 (2025)** — *Generalized Equivalent Model Construction Method for Wind Farm with Direct-drive Turbines Based on Submodule Aggregation* — 基于子模块聚合的风电场广义等值模型，FPGA 亚微秒级仿真
 
----
 
 *本页面遵循学术严谨性原则，所有技术细节、公式推导和量化数据均基于同行评议的学术文献。*
-
-## 来源论文
-
-| 论文 | 年份 |
-|------|------|
-| [[a-component-level-modeling-and-fine-grained-simulation-method-for-renewable-ener|适用于级联型电力电子拓扑电磁暂态仿真的N端口网络通用等效建模方法]] | 2024 |
