@@ -44,7 +44,7 @@
 | 58 | hilbert-transform.md | methods | methods/signal-processing/hilbert-transform.md | P0 | 999 | 1665 | 10 | 14 | completed |
 | 171 | hybrid-modeling.md | methods | methods/simulation-technology/hybrid-modeling.md | P0 | 999 | 4720 | 20 | 8 | completed |
 | 60 | ieee-1547.md | methods | methods/protection-fault/ieee-1547.md | P0 | 999 | 4806 | 15 | 9 | completed |
-| 373 | impedance-modeling.md | methods | methods/stability-analysis/impedance-modeling.md | P1 | 999 | 1387 | 9 | 17 | pending |
+| 373 | impedance-modeling.md | methods | methods/stability-analysis/impedance-modeling.md | P1 | 999 | 3539 | 54 | 10 | completed |
 | 397 | inertia-control.md | methods | methods/control/inertia-control.md | P1 | 999 | 963 | 5 | 11 | pending |
 | 106 | iterative-solvers.md | methods | methods/network-solution/iterative-solvers.md | P0 | 999 | 2770 | 4 | 10 | pending |
 | 156 | large-scale-system-simulation.md | topics | topics/simulation/large-scale-system-simulation.md | P0 | 999 | 4264 | 10 | 58 | pending |
