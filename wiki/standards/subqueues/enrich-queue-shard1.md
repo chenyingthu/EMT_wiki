@@ -66,7 +66,7 @@
 | 144 | pi-controller-model.md | models | models/control/pi-controller-model.md | P0 | 999 | 3936 | 30 | 9 | completed |
 | 105 | pmsm-model.md | models | models/rotating-machine/pmsm-model.md | P0 | 999 | 2739 | 14 | 23 | pending | completed 
 | 201 | power-flow-calculation.md | methods | methods/system-studies/power-flow-calculation.md | P0 | 999 | 6755 | 18 | 13 | pending | completed 
-| 86 | prony-analysis.md | methods | methods/signal-processing/prony-analysis.md | P0 | 999 | 2283 | 10 | 13 | pending |
+| 86 | prony-analysis.md | methods | methods/signal-processing/prony-analysis.md | P0 | 999 | 2283 | 10 | 13 | completed |
 | 146 | pv-statcom.md | methods | methods/system-studies/pv-statcom.md | P0 | 999 | 3985 | 17 | 9 | pending | completed 
 | 42 | real-time-simulation.md | topics | topics/simulation/real-time-simulation.md | P0 | 999 | 1250 | 1 | 129 | completed |
 | 320 | renewable-integration.md | methods | methods/system-studies/renewable-integration.md | P1 | 999 | 2535 | 10 | 13 | pending | completed 

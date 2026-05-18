@@ -8,16 +8,96 @@ created: "2026-04-14"
 # Prony 分析 (Prony Analysis)
 
 
-```mermaid
-graph TD
-    subgraph Ncmp[Prony 分析 (Prony Analysis)]
-        N0[经典 Prony: 短时无噪或低噪响应的指数拟合]
-        N1[SVD/改进 Prony: 用奇异值截断确定有效阶数]
-        N2[矩阵束方法: 暂态模态和故障参数估计]
-        N3[递推/在线 Prony: 在线振荡监测]
-        N4[Prony 等值: 外部网络时域脉冲响应等值]
-    end
-```
+<div style="text-align:center;margin:16px 0;">
+<svg viewBox="0 0 800 380" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="800" height="380" fill="#ffffff"/>
+
+  <!-- Title -->
+  <text x="400" y="28" text-anchor="middle" font-family="Times New Roman" font-size="16" font-weight="bold" fill="#1a1a2e">Prony 分析方法体系</text>
+
+  <!-- Top header box -->
+  <rect x="240" y="40" width="320" height="36" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="400" y="64" text-anchor="middle" font-family="Times New Roman" font-size="13" fill="#1e3a8a">经典 Prony：短时无噪或低噪响应的指数拟合</text>
+
+  <!-- Arrow from header to 5 variants -->
+  <line x1="400" y1="76" x2="400" y2="100" stroke="#333" stroke-width="1.5"/>
+  <polygon points="400,108 395,100 405,100" fill="#333"/>
+
+  <!-- 5 variant boxes -->
+  <rect x="30" y="115" width="145" height="55" rx="4" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="102" y="137" text-anchor="middle" font-family="Times New Roman" font-size="12" font-weight="bold" fill="#166534">经典 Prony</text>
+  <text x="102" y="155" text-anchor="middle" font-family="Times New Roman" font-size="10" fill="#166534">指数拟合</text>
+
+  <rect x="185" y="115" width="145" height="55" rx="4" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="257" y="137" text-anchor="middle" font-family="Times New Roman" font-size="12" font-weight="bold" fill="#166534">SVD / 改进 Prony</text>
+  <text x="257" y="155" text-anchor="middle" font-family="Times New Roman" font-size="10" fill="#166534">奇异值截断定阶</text>
+
+  <rect x="340" y="115" width="145" height="55" rx="4" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="412" y="137" text-anchor="middle" font-family="Times New Roman" font-size="12" font-weight="bold" fill="#166534">矩阵束方法</text>
+  <text x="412" y="155" text-anchor="middle" font-family="Times New Roman" font-size="10" fill="#166534">暂态模态估计</text>
+
+  <rect x="495" y="115" width="145" height="55" rx="4" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="567" y="137" text-anchor="middle" font-family="Times New Roman" font-size="12" font-weight="bold" fill="#166534">递推 / 在线 Prony</text>
+  <text x="567" y="155" text-anchor="middle" font-family="Times New Roman" font-size="10" fill="#166534">在线振荡监测</text>
+
+  <rect x="650" y="115" width="120" height="55" rx="4" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="710" y="137" text-anchor="middle" font-family="Times New Roman" font-size="12" font-weight="bold" fill="#166534">Prony 等值</text>
+  <text x="710" y="155" text-anchor="middle" font-family="Times New Roman" font-size="10" fill="#166534">外部网络等值</text>
+
+  <!-- Output layer -->
+  <line x1="102" y1="170" x2="102" y2="200" stroke="#333" stroke-width="1.2"/>
+  <line x1="257" y1="170" x2="257" y2="200" stroke="#333" stroke-width="1.2"/>
+  <line x1="412" y1="170" x2="412" y2="200" stroke="#333" stroke-width="1.2"/>
+  <line x1="567" y1="170" x2="567" y2="200" stroke="#333" stroke-width="1.2"/>
+  <line x1="710" y1="170" x2="710" y2="200" stroke="#333" stroke-width="1.2"/>
+  <polygon points="102,208 97,200 107,200" fill="#333"/>
+  <polygon points="257,208 252,200 262,200" fill="#333"/>
+  <polygon points="412,208 407,200 417,200" fill="#333"/>
+  <polygon points="567,208 562,200 572,200" fill="#333"/>
+  <polygon points="710,208 705,200 715,200" fill="#333"/>
+
+  <!-- Common output box -->
+  <rect x="165" y="210" width="470" height="44" rx="4" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.5"/>
+  <text x="400" y="232" text-anchor="middle" font-family="Times New Roman" font-size="13" font-weight="bold" fill="#5b21b6">输出：极点 zₘ · 留数 Rₘ · 频率 fₘ · 阻尼比 ζₘ</text>
+
+  <!-- Down arrow to applications -->
+  <line x1="400" y1="254" x2="400" y2="278" stroke="#333" stroke-width="1.5"/>
+  <polygon points="400,286 395,278 405,278" fill="#333"/>
+
+  <!-- Application boxes (2 rows x 3) -->
+  <rect x="50" y="290" width="140" height="40" rx="4" fill="#fef3c7" stroke="#d97706" stroke-width="1.2"/>
+  <text x="120" y="308" text-anchor="middle" font-family="Times New Roman" font-size="11" fill="#92400e">网络等值</text>
+  <text x="120" y="322" text-anchor="middle" font-family="Times New Roman" font-size="10" fill="#92400e">外部系统降阶</text>
+
+  <rect x="210" y="290" width="140" height="40" rx="4" fill="#fef3c7" stroke="#d97706" stroke-width="1.2"/>
+  <text x="280" y="308" text-anchor="middle" font-family="Times New Roman" font-size="11" fill="#92400e">振荡监测</text>
+  <text x="280" y="322" text-anchor="middle" font-family="Times New Roman" font-size="10" fill="#92400e">次同步/超同步</text>
+
+  <rect x="370" y="290" width="140" height="40" rx="4" fill="#fef3c7" stroke="#d97706" stroke-width="1.2"/>
+  <text x="440" y="308" text-anchor="middle" font-family="Times New Roman" font-size="11" fill="#92400e">模态辨识</text>
+  <text x="440" y="322" text-anchor="middle" font-family="Times New Roman" font-size="10" fill="#92400e">故障暂态特征</text>
+
+  <rect x="530" y="290" width="140" height="40" rx="4" fill="#fef3c7" stroke="#d97706" stroke-width="1.2"/>
+  <text x="600" y="308" text-anchor="middle" font-family="Times New Roman" font-size="11" fill="#92400e">状态空间</text>
+  <text x="600" y="322" text-anchor="middle" font-family="Times New Roman" font-size="10" fill="#92400e">极点到SSM转换</text>
+
+  <rect x="690" y="290" width="80" height="40" rx="4" fill="#fef3c7" stroke="#d97706" stroke-width="1.2"/>
+  <text x="730" y="308" text-anchor="middle" font-family="Times New Roman" font-size="11" fill="#92400e">模型降阶</text>
+  <text x="730" y="322" text-anchor="middle" font-family="Times New Roman" font-size="10" fill="#92400e">主导模态</text>
+
+  <!-- Color legend -->
+  <rect x="50" y="345" width="12" height="12" fill="#dbeafe"/>
+  <text x="68" y="356" font-family="Times New Roman" font-size="10" fill="#333">输入方法</text>
+  <rect x="160" y="345" width="12" height="12" fill="#dcfce7"/>
+  <text x="178" y="356" font-family="Times New Roman" font-size="10" fill="#333">Prony 变体</text>
+  <rect x="280" y="345" width="12" height="12" fill="#ede9fe"/>
+  <text x="298" y="356" font-family="Times New Roman" font-size="10" fill="#333">输出参数</text>
+  <rect x="390" y="345" width="12" height="12" fill="#fef3c7"/>
+  <text x="408" y="356" font-family="Times New Roman" font-size="10" fill="#333">典型应用</text>
+</svg>
+</div>
+<p style="text-align:center;font-size:12px;color:#666;margin-top:8px;">图1 · Prony 分析方法体系：5类变体及其典型应用</p>
 
 
 ## 定义与边界
@@ -146,7 +226,7 @@ $$\frac{\sigma_{M_{eff}}}{\sigma_{max}} > \epsilon_{threshold}$$
 
 ## 来源论文
 
-| 论文 | 年份 |
-|------|------|
-| [[a-time-domain-approach-to-transmission-network-equivalents-via-prony-analysts-fo|A TIME-DOMAIN APPROACH TO TRANSMISSION NETWORK EQUIVALENTS V]] | 2004 |
-| [[双导体有损频变均匀传输线的电磁暂态时域仿真模型研究|双导体有损频变均匀传输线的电磁暂态时域仿真模型研究]] | 2023 |
+|| 论文 | 年份 |
+||------|------|
+|| [[a-time-domain-approach-to-transmission-network-equivalents-via-prony-analysts-fo]] | 2004 |
+|| [[双导体有损频变均匀传输线的电磁暂态时域仿真模型研究]] | 2023 |
