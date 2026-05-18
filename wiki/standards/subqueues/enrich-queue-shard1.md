@@ -31,8 +31,8 @@
 | 48 | emtp-atp.md | methods | methods/system-studies/emtp-atp.md | P0 | 999 | 1432 | 4 | 8 | completed |
 || 361 | equal-area-criterion.md | methods | methods/stability-analysis/equal-area-criterion.md | P1 | 999 | 9748 | 23 | 25 | completed |
 | 168 | exponential-integrator.md | methods | methods/numerical-methods/exponential-integrator.md | P0 | 999 | 4685 | 14 | 10 | completed |
-| 154 | fault-analysis.md | methods | methods/protection-fault/fault-analysis.md | P0 | 999 | 4163 | 13 | 15 | pending |
-| 314 | filtering.md | methods | methods/signal-processing/filtering.md | P1 | 999 | 2732 | 6 | 13 | pending |
+| 154 | fault-analysis.md | methods | methods/protection-fault/fault-analysis.md | P0 | 999 | 4163 | 13 | 15 | completed |
+| 314 | filtering.md | methods | methods/signal-processing/filtering.md | P1 | 999 | 2732 | 6 | 13 | completed |
 | 129 | fourier-filtering.md | methods | methods/signal-processing/fourier-filtering.md | P0 | 999 | 3441 | 17 | 24 | pending |
 | 133 | frequency-dependent-network-equivalent.md | methods | methods/transmission-line/frequency-dependent-network-equivalent.md | P0 | 999 | 3538 | 7 | 11 | pending |
 | 324 | frequency-scan.md | methods | methods/stability-analysis/frequency-scan.md | P1 | 999 | 2318 | 9 | 16 | pending |
