@@ -43,7 +43,7 @@
 | 360 | h-infinity-control.md | methods | methods/control/h-infinity-control.md | P1 | 999 | 8760 | 9 | 27 | completed |
 | 241 | hardware-in-loop.md | topics | topics/simulation/hardware-in-loop.md | P1 | 999 | 11005 | 8 | 11 | completed |
 | 150 | heidler-function.md | methods | methods/signal-processing/heidler-function.md | P0 | 999 | 4026 | 19 | 10 | completed |
-| 51 | hil-simulation.md | topics | topics/simulation/hil-simulation.md | P0 | 999 | 1515 | 2 | 33 | pending |
+| 51 | hil-simulation.md | topics | topics/simulation/hil-simulation.md | P0 | 999 | 3661 | 6 | 18 | completed |
 | 321 | hybrid-converter-model.md | models | models/converter/hybrid-converter-model.md | P1 | 999 | 2423 | 13 | 5 | pending |
 | 202 | ieee-118-bus-system.md | topics | topics/test-system/ieee-118-bus-system.md | P0 | 999 | 6909 | 9 | 20 | completed |
 | 184 | impedance-measurement.md | methods | methods/signal-processing/impedance-measurement.md | P0 | 999 | 5416 | 24 | 13 | completed |
