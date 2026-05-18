@@ -34,9 +34,8 @@
 | 185 | fault-ride-through.md | topics | topics/hvdc-facts/fault-ride-through.md | P0 | 999 | 5520 | 6 | 8 | completed |
 | 235 | finite-element-method.md | methods | methods/network-solution/finite-element-method.md | P1 | 999 | 14893 | 14 | 19 | completed |
 | 100 | fourier-series.md | methods | methods/signal-processing/fourier-series.md | P0 | 999 | 2619 | 10 | 15 | completed |
-| 376 | frequency-dependent-soil-model.md | methods | methods/transmission-line/frequency-dependent-soil-model.md | P1 | 999 | 1346 | 4 | 15 | pending |
+| 376 | frequency-dependent-soil-model.md | methods | methods/transmission-line/frequency-dependent-soil-model.md | P1 | 999 | 1346 | 3523 | 19 | 13 | completed |
 | 159 | full-bridge-smb.md | models | models/submodule/full-bridge-smb.md | P0 | 999 | 4354 | 46 | 20 | completed |
-| 299 | gnanarathna-2011-efficient-mmc.md | models | models/equivalent/gnanarathna-2011-efficient-mmc.md | P1 | 999 | 3222 | 17 | 11 | pending |
 | 118 | grid-forming-inverter.md | models | models/converter/grid-forming-inverter.md | P0 | 999 | 3146 | 20 | 12 | pending |
 | 158 | grounding-system.md | topics | topics/protection-lightning/grounding-system.md | P0 | 999 | 4342 | 39 | 10 | completed |
 | 89 | half-bridge-submodule.md | methods | methods/power-electronics/half-bridge-submodule.md | P0 | 999 | 2377 | 8 | 12 | pending |
