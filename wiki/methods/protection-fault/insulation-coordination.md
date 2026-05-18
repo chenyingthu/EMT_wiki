@@ -1,23 +1,12 @@
 ---
 title: "绝缘配合 (Insulation Coordination)"
 type: method
-tags: [insulation, coordination, overvoltage, lightning, protection, bco, statistical-method]
+tags: [insulation, coordination, overvoltage, lightning, protection, bco, statistical-method, MOV, ZnO, protective-level, BIL, BSL]
 created: "2026-05-02"
+updated: "2026-05-18"
 ---
 
 # 绝缘配合 (Insulation Coordination)
-
-
-```mermaid
-graph TD
-    subgraph Ncmp[绝缘配合 (Insulation Coordination)]
-        N0[确定性配合: 代表性过电压与耐受水平加裕度比较]
-        N1[统计配合: 过电压分布与闪络概率积分]
-        N2[EMT 参数扫描: 对关键参数做条件仿真]
-        N3[保护器能量校核: 积分计算吸收能量和热应力]
-    end
-```
-
 
 ## 定义与边界
 
@@ -38,77 +27,188 @@ graph TD
 
 ## 核心机制
 
+### 确定性配合
+
 确定性配合可概念性写成：
 
-$$U_\text{withstand} \ge K_c U_\text{protective}$$
+$$U_\text{withstand} \ge K_c \cdot U_\text{protective}$$
 
 其中 $U_\text{withstand}$ 是设备耐受水平，$U_\text{protective}$ 是受保护设备端口处的代表性过电压或保护水平，$K_c$ 是考虑不确定性、老化、环境和统计离散性的配合因子。该式只是结构表达，不能替代标准给定的具体取值。
 
+### 统计配合
+
 统计配合关注过电压概率分布与绝缘闪络概率的重叠。若 $f_U(u)$ 是过电压概率密度，$P_f(u)$ 是给定电压下的闪络概率，则风险指标可写为：
 
-$$R=\int_0^\infty f_U(u)P_f(u)\,du$$
+$$R = \int_0^\infty f_U(u) P_f(u)\,du$$
 
 EMT 的角色是给出 $U$ 的条件分布或代表性波形：雷电流、入射点、土壤、接地、电缆长度、开关相角、重燃状态和保护器模型都会改变结果。
 
+### 保护器能量校核
+
 保护器能量也需要检查：
 
-$$W=\int_{t_0}^{t_1}u_a(t)i_a(t)\,dt$$
+$$W = \int_{t_0}^{t_1} u_a(t) i_a(t)\,dt$$
 
 其中 $u_a$、$i_a$ 是避雷器或护层保护器端口波形。
 
+### 绝缘配合因子
+
+配合因子 $K_c$ 通常分解为多个分项系数的乘积：
+
+$$K_c = K_\text{老化} \cdot K_\text{环境} \cdot K_\text{统计} \cdot K_\text{不确定度}$$
+
+各分项的含义：
+
+| 系数 | 含义 | 典型取值范围 |
+|------|------|-------------|
+| $K_\text{老化}$ | 绝缘老化导致的耐受水平衰减 | 1.0–1.15 |
+| $K_\text{环境}$ | 海拔、温度、污秽等环境修正 | 1.0–1.2（海拔） |
+| $K_\text{统计}$ | 统计离散性（标准差倍数） | 1.0–1.3 |
+| $K_\text{不确定度}$ | 模型误差和参数不确定性 | 1.0–1.1 |
+
+## 过电压分类与EMT建模
+
+### 雷电过电压
+
+雷电过电压包括直击雷（反击/绕击）和感应雷两类。EMT建模需要：
+
+- **雷电流源模型**：双指数函数 $i(t) = I_m (e^{-\alpha t} - e^{-\beta t})$
+- **杆塔接地阻抗**：频变接地阻抗模型（见 [[earth-return-impedance]]）
+- **线路传输模型**：频率相关线路模型（见 [[frequency-dependent-line-model]]）
+
+典型雷电冲击波形参数：
+
+| 波形 | 波前时间 | 波尾时间 | 峰值电流 |
+|------|---------|---------|---------|
+| 1.2/50 μs（电压） | 1.2 μs | 50 μs | — |
+| 8/20 μs（电流） | 8 μs | 20 μs | 5–200 kA |
+
+### 操作过电压
+
+操作过电压产生于断路器动作（合闸、分闸、重燃），其频率范围从数百Hz到数MHz。EMT建模需要：
+
+- **统计合闸**：多相合闸时随机相角分布（见 [[switching-transient]]）
+- **陷落电荷源**：重合闸前线路电容残余电荷建模（PTCS模型，Akafi-Mobarakeh 2025）
+- **并联电抗器**：补偿电容电流，抑制工频暂时过电压
+
+操作过电压典型幅值：2.0–4.0 p.u.（相对系统最高运行相电压）。
+
+### 超快暂态（VFT）
+
+GIS中隔离开关操作产生的超快暂态（VFT/VFTO）频率可达数MHz至100 MHz以上（Ametani 2018）：
+
+| 回路类型 | VFT振荡频率 | 峰峰值电压 | 典型威胁 |
+|---------|-----------|----------|---------|
+| 高压主回路 | 1–140 MHz | — | 绝缘击穿 |
+| 特高压(UHV)主回路 | 1–5 MHz至8–118 MHz | — | 变压器绝缘 |
+| 低压控制回路 | 2–80 MHz | 10–700 V | 控制回路误动 |
+| 金属外壳 | 与主回路频率相近 | 0.1–0.7 p.u. | 二次设备干扰 |
+
+VFT的EMT建模准则（Ametani 2018）：
+- 超高频下大地视为理想导体，仅采用同轴模参数
+- 分支母线等效为集中电容 $C_b = 1/(z_{oc} c_c)$ 以抑制数值振荡
+- 垂直接地引线采用分布参数模型 $Z_{ov} = 60[\ln(h/r)-1]$
+- CT/VT在绝缘配合分析中可简化为等效电容
+
+## 保护装置与EMT建模
+
+### 金属氧化物避雷器（MOV/ZnO）
+
+金属氧化物避雷器是现代绝缘配合的核心保护装置，其非线性V-I特性满足：
+
+$$I = k \cdot V^\alpha$$
+
+其中非线性指数 $\alpha$ 典型值为30以上（ZnO阀片），远高于碳化硅的4–7。MOV的主要优势：无间隙设计、ns级响应、无续流。
+
+**IEEE/IEC避雷器模型**（等效电路）：
+- **参考电压** $U_{1mA}$：电流为1 mA时测得的压敏电阻电压
+- **保护水平**：操作冲击保护水平 $U_{pl(op)}$、雷电冲击保护水平 $U_{pl(li)}$
+- **能量耐量**：单次雷击能量 $W = \int u(t) i(t)\, dt$，典型值为10–40 kJ/kV（额定电压）
+
+**ZnO避雷器在EMT仿真中的关键参数**（Cao & Chen 2007, EMTP-RV验证案例）：
+- 在35 kV系统中，加装ZnO避雷器后晶闸管两端峰值过电压由110.03 kV降至62.29 kV，电压应力削减幅度达43.4%
+- 避雷器两端峰值62.29 kV即为该点的保护水平，对应设备所需BIL为62.29 × $K_c$
+
+### 接地网频变阻抗
+
+传统绝缘配合将接地极简化为固定电阻，但高频暂态下接地网呈现显著的频变特性（Manunza 2019）：
+
+- 频域响应：20 Hz至2 MHz范围内阻抗幅值变化可达10倍以上
+- 等效电路：二端口π型网络，$Z_1(\omega)$、$Z_2(\omega)$、$Z_3(\omega)$ 均为频变参数
+- 工程意义：雷电流从避雷器接地点到变压器接地点的传播过程中，不同频率成分受到不同程度的衰减
+
+在绝缘配合EMT仿真中，接地网应使用频变等效电路而非工频接地电阻，以准确计算GPR（ground potential rise）和设备端口过电压。
+
 ## 配合流程
 
-1. 定义受保护对象和端口：变压器绕组、GIS 间隔、电缆终端、绝缘接头、护套、换流站设备或配电负荷。
-2. 选择过电压类型：[[lightning-transient-analysis]]、[[switching-transient]]、暂时过电压、铁磁谐振或故障恢复。
-3. 建立 EMT 模型：线路/电缆、接地系统、保护器、变压器/设备端口和边界网络。
-4. 生成工况集合：雷电参数、开关相角、故障位置、土壤参数、保护器特性和端接条件。
-5. 提取指标：峰值、陡度、波头/波尾、持续时间、能量、端口间电压和 GPR。
-6. 与标准或设备耐受数据比较，并明确确定性或统计性解释。
-7. 记录剩余不确定性：模型频带、设备内部模型、保护器老化、现场接地和测量缺口。
+1. **定义受保护对象和端口**：变压器绕组、GIS间隔、电缆终端、绝缘接头、护套、换流站设备或配电负荷。
+2. **选择过电压类型**：
+   - 雷电过电压 → [[lightning-transient-analysis]]
+   - 操作过电压 → [[switching-transient]]
+   - VFT/EMD → 高频暂态分析（Ametani 2018）
+   - 暂时过电压、铁磁谐振或故障恢复
+3. **建立EMT模型**：线路/电缆、接地系统、保护器、变压器/设备端口和边界网络。
+4. **生成工况集合**：雷电参数、开关相角、故障位置、土壤参数、保护器特性和端接条件。
+5. **提取指标**：峰值、陡度、波头/波尾、持续时间、能量、端口间电压和GPR。
+6. **与标准或设备耐受数据比较**，并明确确定性或统计性解释。
+7. **记录剩余不确定性**：模型频带、设备内部模型、保护器老化、现场接地和测量缺口。
 
 ## 方法变体
 
 | 方法 | 核心思想 | 适合用途 | 主要边界 |
-|------|----------|----------|----------|
+|------|---------|---------|---------|
 | 确定性配合 | 代表性过电压与耐受水平加裕度比较 | 工程初设、标准化设备 | 工况和裕度来源必须明确 |
 | 统计配合 | 过电压分布与闪络概率积分 | 雷电风险、线路绝缘设计 | 需要可靠统计输入 |
-| EMT 参数扫描 | 对关键参数做条件仿真 | 设备端口波形和保护器应力 | 不自动等于概率结论 |
+| EMT参数扫描 | 对关键参数做条件仿真 | 设备端口波形和保护器应力 | 不自动等于概率结论 |
 | 保护器能量校核 | 积分计算吸收能量和热应力 | MOV、护层保护器、SPD | 设备热模型和额定数据需来源 |
+
+## 量化性能边界
+
+### 避雷器保护效果量化
+
+| 系统参数 | 指标 | 数值 | 来源 |
+|---------|------|------|------|
+| 35 kV系统 | 无避雷器峰值电压 | 110.03 kV | Cao & Chen 2007 |
+| 35 kV系统 | 加ZnO避雷器后峰值 | 62.29 kV | Cao & Chen 2007 |
+| 35 kV系统 | 保护效率 | 43.4% | Cao & Chen 2007 |
+| 35 kV系统 | ZnO避雷器保护水平 | 62.29 kV | Cao & Chen 2007 |
+
+### GIS-VFT频率量化
+
+| 系统类型 | VFT主频范围 | 金属外壳电压 |
+|---------|-----------|------------|
+| 500–550 kV GIS | 1–140 MHz | 0.1–0.7 p.u. |
+| UHV系统 | 1–5 MHz至8–118 MHz | 与主回路相近 |
+| 低压控制回路 | 2–80 MHz | 10–700 V（峰峰值） |
+
+### 接地网频变阻抗量化
+
+| 频段 | 阻抗特性 | 测试条件 |
+|------|---------|---------|
+| 20 Hz–2 MHz | 频变π型二端口 | XGSLab电磁场计算 |
 
 ## 适用边界与失败模式
 
-- 不应把单个 EMT 工况的最大峰值写成系统绝缘风险，除非已说明采样范围和代表性。
+- **不应把单个EMT工况的最大峰值写成系统绝缘风险**，除非已说明采样范围和代表性。
 - 避雷器残压、能量和老化特性依赖型号、波形和标准试验条件；无资料时只能保守描述。
-- 设备内部绕组、GIS 陡波传播、电缆终端局部场强等可能不是外部端口 EMT 模型能直接覆盖的。
+- 设备内部绕组、GIS陡波传播、电缆终端局部场强等可能不是外部端口EMT模型能直接覆盖的。
 - 接地系统和电缆护套边界会影响端口过电压；理想接地假设必须说明。
-- 标准绝缘水平和试验波形会随地区、标准版本和设备类型变化，wiki 页不应维护无来源通用表。
+- 标准绝缘水平和试验波形会随地区、标准版本和设备类型变化，wiki页不应维护无来源通用表。
+- **VFT/EMD风险**：GIS高频暂态可能通过耦合影响控制回路，导致二次设备误动；纯峰值绝缘配合不足以覆盖此类风险。
 
-## 代表性证据
+## 关键技术挑战
 
-- [[lightning-transient-analysis]] 和 [[high-frequency-transient-analysis]]：提供 EMT 过电压波形生成和频带边界。
-- [[calculation-of-lightning-induced-voltages-on-a-large-scale-distribution-network-]]：支撑配电网雷击感应过电压研究中线路频变损耗、拓扑反射和非线性元件会影响低压端口电压；量化结果只能绑定其原文网络和土壤工况。
-- [[ground-potential-rise-in-wind-farms-due-to-direct-lightning]]：支撑直击雷下接地电位升和接地网络模型会影响设备端口应力；趋势不能外推为所有风电场设计结论。
-- [[surge-arrester-model]]：是保护器非线性模型入口，具体参数应取自设备资料或原文。
-
-## 与相关页面的关系
-
-- [[lightning-transient-analysis]]、[[switching-transient]] 和 [[high-frequency-transient-analysis]] 生成配合输入波形。
-- [[grounding-system-modeling]] 与 [[ground-potential-rise]] 决定接地端口电位。
-- [[underground-cable-modeling]] 和 [[cross-bonded-cable]] 决定电缆终端、护套和绝缘接头应力。
-- [[frequency-dependent-line-model]]、[[universal-line-model]] 和 [[earth-return-impedance]] 决定线路/电缆传播和衰减。
-
-## 开放问题
-
-- 设备内部绝缘模型和外部 EMT 端口模型之间的映射常需要厂家资料或专门试验。
-- 多风险源联合统计，如雷电位置、土壤状态、开关相角和保护器离散性，往往缺少统一公开数据。
-- 保护器能量和热恢复在重复暂态下的建模应避免用单次波形结论外推。
+1. **频变接地建模**：接地网在雷击高频下的阻抗不是固定值，需用频变π型网络建模才能准确计算GPR和端口电压分布。工频接地电阻测量值（通常为数Ω到数十Ω）在雷电高频下可能增加到数百Ω，偏差超过一个数量级，直接影响杆塔电位升和线路端口电压的评估准确性。
+2. **统计合闸的最恶劣初始条件**：重合闸时线路残余电荷与断路器相角的随机组合使最大操作过电压呈统计分布，需要大量仿真样本（>1000次）才能获得可信的概率分布尾部。初始条件的微小变化（残余电压±5%、合闸相角±5°）可使最大过电压峰值变化10%–20%，因此参数扫描必须覆盖完整工况空间。
+3. **多风险源联合统计**：雷电位置、土壤状态、开关相角和保护器离散性往往缺少统一公开数据，导致多风险源联合概率难以量化。雷电日（Thunderstorm Day）统计法虽广泛使用，但其与每年雷击次数的对应关系随地区差异显著，不可直接外推。
+4. **VFT高频建模与数值振荡**：GIS中数MHz至100 MHz的VFT对EMTP数值算法提出严格要求，分支等效电容等技巧虽可抑制振荡但会改变高频响应特性。当采样步长与VFT特征周期可比拟时（步长>0.1 μs），数值色散可能导致波形峰值被低估5%–15%。
+5. **保护器能量累积**：多次雷击或连续操作暂态下MOV吸能累积，热恢复特性可能影响下次保护动作的钳位效果。能量累积效应在多雷区或频繁操作的系统中的定量评估，目前仍是工程设计中的难点，主要依赖厂家提供的热稳定曲线进行保守估算。
 
 ## 来源论文
 
-| 论文 | 年份 |
-|------|------|
-| [[application-of-emtp-rv-graphic-software-of-electromagnetic-transient-simulation|Application of EMTP-RV graphic software of electromagnetic t]] | 2007 |
-| [[electromagnetic-disturbances-in-gas-insulated-substations-and-vft-calculations|Electromagnetic disturbances in gas-insulated substations an]] | 2018 |
-| [[grounding-grids-in-electro-magnetic-transient-simulations-with-frequency-depende|Grounding grids in electro-magnetic transient simulations wi]] | 2019 |
-| [[development-of-a-voltage-dependent-line-model-to-represent-the-corona-effect-in-|Development of a Voltage-Dependent Line Model to Represent t]] | 2020 |
-| [[a-new-model-of-trapped-charge-sources-in-switching-transient-studies-in-the-pres|A New Model of Trapped Charge Sources in Switching Transient]] | 2025 |
+| 论文 | 年份 | 贡献 |
+|------|------|------|
+| [[application-of-emtp-rv-graphic-software-of-electromagnetic-transient-simulation|Cao & Chen]] | 2007 | EMTP-RV中SVC-TCR开关暂态仿真；ZnO避雷器保护使过电压峰值从110.03 kV降至62.29 kV（43.4%削减效率） |
+| [[electromagnetic-disturbances-in-gas-insulated-substations-and-vft-calculations|Ametani]] | 2018 | GIS VFT/EMD频率特性研究；高压主回路1–140 MHz、低压控制回路2–80 MHz；分支电容等效公式 $C_b = 1/(z_{oc}c_c)$ |
+| [[grounding-grids-in-electro-magnetic-transient-simulations-with-frequency-depende|Manunza]] | 2019 | 接地网频变阻抗二端口π型模型；20 Hz–2 MHz宽频特性；ATP-EMTP频变支路实现 |
+| [[a-new-model-of-trapped-charge-sources-in-switching-transient-studies-in-the-pres|Akafi-Mobarakeh等]] | 2025 | PTCS陷落电荷源新模型；消除含并联电抗器线路重合闸的虚假电压振荡；2%偏差验证 |
