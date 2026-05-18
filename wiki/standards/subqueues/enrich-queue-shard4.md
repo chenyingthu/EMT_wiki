@@ -79,7 +79,7 @@
 | 84 | state-space-method.md | methods | methods/numerical-methods/state-space-method.md | P0 | 999 | 2214 | 0 | 107 | pending |
 | 377 | surge-arrester-model.md | models | models/protection/surge-arrester-model.md | P1 | 999 | 1331 | 13 | 25 | pending |
 | 111 | switching-function-method.md | methods | methods/power-electronics/switching-function-method.md | P0 | 999 | 2885 | 10 | 18 | completed |
-| 407 | thevenin-equivalent-model.md | models | models/equivalent/thevenin-equivalent-model.md | P1 | 999 | 809 | 10 | 18 | pending |
+| 407 | thevenin-equivalent-model.md | models | models/equivalent/thevenin-equivalent-model.md | P1 | 999 | 3583 | 13 | 13 | completed |
 | 127 | thyristor-control.md | methods | methods/control/thyristor-control.md | P0 | 999 | 3359 | 10 | 10 | completed |
 | 113 | transformer-model.md | models | models/transformer/transformer-model.md | P0 | 999 | 2921 | 18 | 137 | pending |
 | 79 | transmission-line-model.md | models | models/transmission-line/transmission-line-model.md | P0 | 999 | 2105 | 21 | 210 | pending |

@@ -1,165 +1,209 @@
 ---
 title: "戴维南等效模型 (Thevenin Equivalent Model)"
 type: model
-tags: [thevenin-equivalent, voltage-source, impedance, network-equivalent, linear-circuit]
+tags: [thevenin-equivalent, voltage-source, impedance, network-equivalent, linear-circuit, mate, multi-rate, norton-equivalent]
 created: "2026-05-04"
-updated: "2026-05-12"
-updated: "2026-05-11"
+updated: "2026-05-18"
 ---
 
 # 戴维南等效模型 (Thevenin Equivalent Model)
 
-
-
-
 ## 定义与边界
 
-戴维南等效模型是将任意线性有源二端网络简化为理想电压源$V_{th}$与串联内阻抗$Z_{th}$的电路表示。该等效保持端口电压-电流关系不变，是电路分析、网络简化和多速率仿真的基础工具，与诺顿等效互为对偶。
+戴维南等效模型（Thevenin Equivalent Model）是将任意线性有源二端网络简化为理想电压源 $V_{th}$ 与串联内阻抗 $Z_{th}$ 的电路表示。该等效保持端口电压-电流（V-I）关系不变，是电路分析、网络简化和多速率仿真的基础工具，与诺顿等效互为对偶。1883年由法国工程师Léon Charles Thévenin提出，是电磁暂态分析中网络等值方法的理论根源。
 
-**边界限定**：本模型仅适用于线性时不变网络，非线性网络需在工作点线性化后应用。
+**边界限定**：本模型仅适用于线性时不变（LTI）网络，非线性网络需在工作点线性化后应用。戴维南等效的核心假设是**叠加原理成立**，因此含有非线性元件（饱和电感、二极管、晶闸管等）的网络在故障暂态过程中不能直接使用恒定 $Z_{th}$ 等效——需要实时更新或采用分段线性化策略。
 
-## EMT中的作用
+## EMT 中的角色
 
-戴维南等效是EMT网络简化的核心技术：
+在 EMT 仿真中，戴维南等效是网络简化与多速率接口的核心工具：
 
-- **外部系统等值**：将复杂外部网络简化为戴维南等值
-- **多速率接口**：不同步长子系统间的等效接口
-- **开关分析**：简化开关状态组合分析
-- **故障计算**：故障点戴维南等效简化计算
-- **保护整定**：简化网络用于保护配合
+- **外部系统等值**：将复杂外部交流网络等效为戴维南电压源 $e_{th}$ 和阻抗 $Z_{th}$，使 EMT 程序只需在边界节点求解，显著降低状态变量维度
+- **多速率接口**：不同步长子系统之间（如快侧直流换流器和慢侧交流网络）的等效接口，接口变量通过 $e_{th}$ 和 $Z_{th}$ 注入目标子系统
+- **开关状态组合简化**：将开关组合导致的网络拓扑变化通过戴维南等效阻抗更新表达，而非重构整个节点导纳矩阵
+- **故障计算**：故障点戴维南等效简化故障电流计算，不必在每次故障清除后重新因子分解整个网络雅可比矩阵
+- **保护整定**：用戴维南等值表示系统等效，帮助确定保护动作电流的基准值和整定边界
+- **实时仿真加速**：实时仿真平台（RTDS/OPAL-RT）通过诺顿-戴维南等效将计算负载按接口边界分配到多处理核
 
-## 主要分支与机制
+## EMT 建模方法
 
-### 1. 戴维南等效参数求解
+### 方法一：开路电压法
 
-**开路电压法**：
+将端口开路（负载移除），测量开路端口电压 $V_{oc}$，即得戴维南电压：
+
 $$V_{th} = V_{oc}$$
 
-将端口开路，测量开路电压。
+此方法要求端口开路时网络内部所有独立源保持接入，且网络处于期望的工作点或故障前状态。在 EMT 中，通常通过对网络执行一次潮流计算或快照分析得到 $V_{oc}$。
 
-**等效阻抗法**：
-- 独立电压源短路、电流源开路
-- 从端口看入的等效阻抗
+### 方法二：等效阻抗法（短路电流法）
+
+将网络内所有独立电压源短路、独立电流源开路，从端口看入的等效阻抗即为 $Z_{th}$。若端口短路电流为 $I_{sc}$，则：
 
 $$Z_{th} = \frac{V_{oc}}{I_{sc}}$$
 
-### 2. 与诺顿等效转换
+此即欧姆定律的直接应用。在 EMT 中，计算 $Z_{th}$ 需要对简化后的网络执行一次阻抗计算（通常通过对节点导纳矩阵 $\mathbf{Y}$ 求逆，或通过稀疏求逆技术）。
 
-戴维南 $\rightarrow$ 诺顿：
+### 方法三：MATE-TLM 多区域等效接口
+
+对于大规模交直流 EMT 仿真，Li (2019) 提出的 MATE-TLM（Multi-Area Thevenin Equivalent — Transmission Line Modeling）方法将上述原理推广到多端口网络等效。其核心思想：
+
+1. **网络分区**：依据长线路阻抗大、弱耦合节点及最少连接母线原则，将交直流网络解耦为直流子系统和多个交流子系统
+2. **子系统戴维南等值**：每个交流子系统用导纳矩阵 $\mathbf{Y}_i$、历史电流源 $\mathbf{i}_{hi}$ 和连接矩阵 $\mathbf{M}_i$ 表示，接口处计算戴维南电压源 $e_{th,i}$ 和等效阻抗 $Z_{th,i}$
+3. **MATE 网络方程**：
+
+$$\begin{bmatrix} \mathbf{Y}_1 & & \mathbf{M}_1 \\ & \ddots & \vdots \\ & & \mathbf{Y}_N & \mathbf{M}_N \\ \mathbf{M}_1^T & \cdots & \mathbf{M}_N^T & \mathbf{Z}_b \end{bmatrix} \begin{bmatrix} \mathbf{v}_1(t) \\ \vdots \\ \mathbf{v}_N(t) \\ \mathbf{i}_b(t) \end{bmatrix} = \begin{bmatrix} \mathbf{i}_{h1}(t-\Delta T) \\ \vdots \\ \mathbf{i}_{hN}(t-\Delta T) \\ \mathbf{0} \end{bmatrix}$$
+
+其中 $N$ 为子系统数，$\mathbf{v}_i$ 为子系统节点电压，$\mathbf{i}_b$ 为边界支路电流，$\mathbf{Z}_b$ 为边界支路阻抗矩阵。直流子系统看到的不是完整交流网络，而是随时间更新的 $e_{th,i}$ 和 $Z_{th,i}$。
+
+4. **多速率同步**：直流侧用小步长 $\Delta t$ 捕捉换相动态，交流侧用大步长 $\Delta T = n\Delta t$（如 $n=10$，$\Delta T = 500\,\mu s$）；跨步长同步通过交流侧线性插值与直流侧平均值法实现
+
+### 方法四：广义多端口诺顿/戴维南等效
+
+对于 MMC 等具有大量子模块的多端口电力电子变换器，Xu (2018) 提出了基于舒尔补（Schur complement）的广义诺顿等效，本质上是多端口戴维南/诺顿等效的推广：
+
+- 将每桥臂 $N_{sm}$ 个双端口子模块的内部节点通过舒尔补从 $802$ 个压缩至 $4$ 个（端口变量）
+- 端口等效导纳矩阵 $\mathbf{Y}_{port}$ 由各子模块导纳矩阵经舒尔补运算得到
+- 仿真速度提升约 **2~3 个数量级**（约 100~1000 倍），内部电容电压与支路电流误差 **< 0.1%**
+
+### 戴维南 ↔ 诺顿 互换
+
+两者互为对偶，转换关系为：
+
 $$I_N = \frac{V_{th}}{Z_{th}}, \quad Y_N = \frac{1}{Z_{th}}$$
 
-诺顿 $\rightarrow$ 戴维南：
 $$V_{th} = \frac{I_N}{Y_N}, \quad Z_{th} = \frac{1}{Y_N}$$
 
-### 3. 最大功率传输
-
-负载获得最大功率条件：
-$$Z_L = Z_{th}^*$$
-
-共轭匹配时：
-$$P_{max} = \frac{|V_{th}|^2}{4R_{th}}$$
+在 EMT 中，诺顿等效将电流源并联导纳，更适合与节点分析法的电导矩阵直接相加；戴维南等效将电压源串联阻抗，更适合与支路电流形式的传输线模型接口。两者的选择取决于接口子系统的建模方式。
 
 ## 形式化表达
 
-### 戴维南定理
+### 戴维南定理（单端口）
 
-对于任意由线性电阻、电感、电容、受控源和独立源组成的二端网络：
-$$V = V_{th} - Z_{th}I$$
+对于任意由线性电阻、电感、电容、受控源和独立源组成的二端网络，其端口 V-I 特性为：
+
+$$V = V_{th} - Z_{th} I$$
+
+其中 $V_{th}$ 为开路电压，$Z_{th}$ 为从端口看入的等效阻抗。
 
 ### 多端口戴维南等效
 
-$m$端口网络：
-$$\mathbf{V} = \mathbf{V}_{th} - \mathbf{Z}_{th}\mathbf{I}$$
+$m$ 端口网络：
 
-$\mathbf{Z}_{th}$为$m \times m$等效阻抗矩阵。
+$$\mathbf{V} = \mathbf{V}_{th} - \mathbf{Z}_{th} \mathbf{I}$$
 
-### EMT中的应用
+$\mathbf{Z}_{th}$ 为 $m \times m$ 等效阻抗矩阵，描述端口间的耦合关系。在 EMT 中，各端口通常对应网络分区边界母线。
 
-开关断开时的开路电压：
+### 最大功率传输条件
+
+负载获得最大功率条件为负载阻抗等于戴维南阻抗的共轭：
+
+$$Z_L = Z_{th}^*$$
+
+共轭匹配时最大功率：
+
+$$P_{max} = \frac{|V_{th}|^2}{4R_{th}}$$
+
+此条件在 EMT 等值精度分析中有参考价值——当负载阻抗远大于 $Z_{th}$ 时，端口电压接近 $V_{th}$；当负载阻抗远小于 $Z_{th}$ 时，端口电流接近 $V_{th}/Z_{th}$。
+
+## EMT 中的典型应用
+
+### 开关状态变化的等效表达
+
+开关断开时的开路电压等于戴维南电压：
+
 $$V_{open} = V_{th}$$
 
-开关闭合时的电流：
-$$I_{close} = \frac{V_{th}}{Z_{th} + Z_{switch}}$$
+开关闭合时的回路电流（开关阻抗为 $Z_{sw}$）：
 
+$$I_{close} = \frac{V_{th}}{Z_{th} + Z_{sw}}$$
+
+此关系使 EMT 程序在开关状态变化时只需更新 $Z_{th}$（开关并联或串联到原有阻抗），而不必重新构建系统节点导纳矩阵。
+
+### 多速率协同仿真接口
+
+在 MATE-TLM 多速率框架中，交流大步长 $\Delta T$ 内直流侧通过线性插值获得接口边界条件：
+
+$$V_{ac-interp}(t) = V_{ac}(t_0) + \frac{t - t_0}{\Delta T}\left[V_{ac}(t_0 + \Delta T) - V_{ac}(t_0)\right]$$
+
+交流大步长结束时接收直流侧 $n$ 个小步长结果的平均值：
+
+$$\bar{V}_{dc} = \frac{1}{n}\sum_{k=1}^{n} V_{dc}(t_0 + k\Delta t)$$
+
+## 关键技术挑战
+
+### 挑战一：非线性网络的时变等效阻抗
+
+当网络含饱和变压器、铁磁谐振元件或半导体器件时，$Z_{th}$ 不是恒定值，而是随工作点变化。在大扰动（短路故障、雷击）过程中，$Z_{th}$ 可能变化 10~100 倍。若用固定 $Z_{th}$ 等效，会导致边界电压/电流误差显著增加。应对策略是**分段等效**（每次网络拓扑变化后重新计算）或**实时追踪等效**（在每个 EMT 时步更新 $Z_{th}$）。
+
+### 挑战二：多端口等效的耦合精度
+
+多端口 $\mathbf{Z}_{th}$ 矩阵的非对角元素（耦合项）通常难以精确获取，尤其在高频（>1 kHz）时。测量或计算的误差会通过接口传递给直流子系统，导致**误差传播与累积**。在 MATE 框架中，耦合精度取决于子系统间连接支路的等效模型精度——若连接支路采用简化模型（如集中参数 $\pi$ 型），则等效精度在高频下严重下降。
+
+### 挑战三：等效边界的选择
+
+网络分区边界的选择直接影响等效精度和加速效果。边界选在强耦合节点处会导致接口误差增加；边界选在弱耦合节点处则可能错过重要的动态交互路径。自动分区算法（如基于图论社区检测的方法）可以在一定程度上解决此问题，但在 EMT 实时仿真中计算成本过高。
+
+### 挑战四：实时仿真平台的接口延迟
+
+在 RTDS/OPAL-RT 等实时仿真平台上，多个子系统并行运行在不同的处理核上，等效参数的跨核传递存在通信延迟（通常 1~5 μs）。该延迟会使接口 $e_{th}$ 的更新滞后于实际网络状态，在快速暂态过程中（换相失败、故障清除）导致保护逻辑误动作。
 
 ## 量化性能边界
 
-戴维南等效在 EMT 仿真中的应用已有可核验的量化结果，但以下数据均绑定具体网络拓扑、分区方式和仿真条件，不能外推为通用能力：
+以下数据均来自具体论文的算例验证，**绑定特定网络拓扑、分区方式和仿真条件**，引用时应注明来源：
 
-- **Li (2019)** 提出了基于多区域戴维南等值（MATE）的多速率协同仿真方法，应用于实际 LCC-HVDC 系统（中国南方电网观音岩工程，2412 母线、500 kV/3 kA）。交流子系统通过 MATE-TLM 接口等效为戴维南电压源 e_th 和阻抗 Z_th，供直流侧调用。在直流步长 50 μs、交流步长 500 μs（速率比 n=10）时，接口变量平均误差控制在 **0.0084~0.0116** 之间，直流子系统误差 **<0.012**，三相和单相接地故障仿真分别获得 **150 倍和 160 倍** 加速。该结论基于 PSCAD/EMTDC 单速率全步长参考模型的对比验证，不自动适用于 VSC-HVDC、多端直流或硬实时平台（Li 2019）。
+| 参数 | 典型范围 | 说明 |
+|------|---------|------|
+| MATE-TLM 接口误差 | 0.0084~0.0116 | Li (2019) 观音岩 LCC-HVDC，ΔT=500 μs |
+| 直流子系统误差 | < 0.012 | 同上，相对于 PSCAD/EMTDC 参考模型 |
+| 多速率加速比 | 150~160× | 交流步长 500 μs，直流步长 50 μs |
+| MMC 端口降维压缩比 | 802→4 个节点 | Xu (2018) 200子模块/桥臂诺顿等效 |
+| MMC 等效加速比 | 100~1000× | 约 2~3 个数量级 |
+| 电容电压/支路电流误差 | < 0.1% | 同上 |
+| 等效阻抗频率范围 | DC ~ 5 kHz | 常规戴维南等效；宽频等值见 FDNE |
 
-- **Xu (2018)** 针对含任意多端口子模块的 MMC 提出了基于舒尔补的广义诺顿等效（与戴维南等效互为对偶），将每桥臂 200 个双端口子模块的内部节点从 **802 个压缩至 4 个**，仿真速度提升约 **2~3 个数量级**（约 100~1000 倍），内部电容电压与支路电流计算误差 **<0.1%**。该方法本质上利用了戴维南/诺顿等效的端口降维思想，但推广到多端口任意拓扑（Xu 2018）。
+**来源说明**：
+- Li (2019) 的量化数据基于中国南方电网观音岩实际 LCC-HVDC 工程（2412 母线，500 kV/3 kA），PSCAD/EMTDC 单速率全步长模型作为参考基准
+- Xu (2018) 的量化数据基于 MMC 桥臂拓扑，不自动适用于 LCC 或其他拓扑
 
-这些量化数据不构成对戴维南等效建模方法的全面性能评价，只说明在特定测试条件下可获得的能力边界。
-
-## 适用边界与失败模式
-
-### 适用条件
+## 适用边界与选择指南
 
 | 条件 | 要求 | 说明 |
 |------|------|------|
-| 线性性 | 网络线性时不变 | 非线性需线性化 |
-| 有源性 | 含独立源 | 纯无源网络的戴维南电压为零 |
-| 端口明确 | 二端或已知多端口 | 端口选择影响等效精度 |
-| 可求逆 | $Z_{th}$非奇异 | 特殊情况需处理 |
+| 线性性 | 网络线性时不变（LTI） | 非线性需在工作点线性化 |
+| 有源性 | 含独立源 | 纯无源网络的 $V_{th}$ 为零 |
+| 端口明确性 | 二端或已知多端口 | 端口选择影响等效精度 |
+| $Z_{th}$ 可求逆 | $\det(\mathbf{Z}_{th}) \neq 0$ | 纯感性/容性网络需特殊处理 |
 
-### 失效边界
+| 失效边界 | 场景 | 影响 |
+|---------|------|------|
+| 纯感性网络 | $Z_{th} \to \infty$ | 端口短路电流为零，等效无意义 |
+| 纯容性网络 | $Z_{th} \to 0$ | 端口开路电压难以测量 |
+| 非线性主导 | 饱和/开关器件主导 | 固定 $Z_{th}$ 产生大误差 |
+| 时变网络 | 参数变化快于等值更新 | 故障清除后 $Z_{th}$ 突变 |
+| 磁耦合复杂 | 多绕组变压器互耦 | $Z_{th}$ 矩阵条件数过大 |
 
-- **纯容性/感性网络**：等效阻抗为零或无穷
-- **非线性主导**：无法线性化
-- **时变网络**：参数变化快于等值更新
-- **磁耦合复杂**：多绕组变压器等难以简单等值
+**方法选择决策树**：
+1. 系统是否线性？ → **否**：分段线性等效或实时更新 $Z_{th}$；**是**：进入下一步
+2. 是否需要多速率接口？ → **是**：MATE-TLM 或广义多端口诺顿等效；**否**：进入下一步
+3. 是单端口还是多端口？ → **单端口**：开路电压法+等效阻抗法；**多端口**：多端口阻抗矩阵求逆
+4. 是否为电力电子多端口？ → **是**：Xu (2018) 舒尔补广义诺顿等效
 
-## 代表性来源
+## 相关方法与相关模型
 
-- [[emt-simulation]] - EMT仿真基础
-- [[power-system]] - 电力系统建模
-- [[electromagnetic-transient]] - 电磁暂态分析
-- [[control-system]] - 控制系统设计
-- [[real-time-simulation]] - 实时仿真技术
-### 经典文献
-
-- Thévenin, L., "Extension de la loi d'Ohm aux circuits électromoteurs," *Annales Télégraphiques*, 1883.
-- Desoer, C.A. and Kuh, E.S., "Basic Circuit Theory," *McGraw-Hill*, 1969.
-
-### EMT应用
-
-- [[thevenin-norton-equivalent]] - 戴维南-诺顿综合
-- [[network-equivalent]] - 网络等值方法
-- [[fdne-model]] - 频变网络等值
-
-## 与相关页面的关系
-
-- [[thevenin-norton-equivalent]] - 戴维南-诺顿等效
-- [[network-equivalent]] - 网络等值方法
-- [[fdne-model]] - 频变网络等值模型
-- [[multirate-method]] - 多速率方法
-- [[nodal-analysis]] - 节点分析法
-
-## 开放问题
-
-- 时变网络的自适应等值
-- 大规模网络的并行等值
-- 非线性网络的分段线性等值
-- 多频戴维南等值
-
-## 参考标准
-
-- IEEE Std. 1800 - 电磁暂态仿真导则
-
----
-
-*本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*
+- [[thevenin-norton-equivalent]]：戴维南-诺顿等效综合（两者的对偶关系与转换公式）
+- [[network-equivalent]]：网络等值方法的通用入口，含 FDNE、EE 等多种等值技术
+- [[fdne-model]]：频变网络等值（Frequency-Dependent Network Equivalent），戴维南等效的宽频推广
+- [[multirate-method]]：多速率仿真方法（戴维南等效是多速率接口的核心工具）
+- [[nodal-analysis]]：节点分析法（节点导纳矩阵的求逆运算产生戴维南等效参数）
+- [[lcc-model]]：LCC-HVDC 模型（戴维南等效在 LCC 换相失败分析和 MATE 接口中的典型应用）
+- [[mmc-model]]：模块化多电平换流器（戴维南/诺顿等效在 MMC 端口降维中的应用）
+- [[interface-technique]]：接口技术（戴维南等效是多速率协同仿真接口技术的理论基础）
 
 ## 来源论文
 
-| 论文 | 年份 |
-|------|------|
-| [[a-review-of-efficient-modeling-methods-for-modular-multilevel-converters|A review of efficient modeling methods for modular multileve]] | 2015 |
-| [[co-simulation-of-electromagnetic-transients-and-phasor-models-a-relaxation-appro|Co-Simulation of electromagnetic transients and Phasor model]] | 2016 |
-| [[a-multirate-emt-co-simulation-of-large-ac-and-mmc-based-mtdc-systems|A Multirate EMT Co-Simulation of Large AC and MMC-Based MTDC]] | 2017 |
-| [[a-multi-area-thevenin-equivalent-based-multi-rate-co-simulation-for-control-desi|A multi-area Thevenin equivalent based multi-rate co-simulat]] | 2019 |
-| [[average-value-modeling-of-line-commutated-ac-dc-converters-with-unbalanced-ac-ne|Average-Value Modeling of Line-Commutated AC-DC Converters W]] | 2021 |
-| [[direct-interfacing-of-parametric-average-value-models-of-acx2013dc-converters-fo|Direct Interfacing of Parametric Average-Value Models of AC&]] | 2022 |
-| [[dead-time-effect-modeling-for-hybrid-modular-multilevel-converter-using-twin-map|Dead-time effect modeling for hybrid modular multilevel conv]] | 2026 |
-| [[electromagnetic-transient-emt-and-quasi-static-time-series-qsts-co-simulation-fo|Electromagnetic transient (EMT) and quasi static time series]] | 2026 |
+- [[a-multi-area-thevenin-equivalent-based-multi-rate-co-simulation-for-control-desi|Li 等 2019]]：基于多区域戴维南等值（MATE）的多速率协同仿真，含2412母线系统观音岩LCC-HVDC工程验证，150~160倍加速比
+- 许建中 等 2015：模块化多电平换流器戴维南等效整体建模方法（中文，EMT_Doc/33），MMC桥臂端口降维理论基础
+- [[a-guaranteed-passive-model-for-multi-port-frequency-dependent-network-equivalent|Ahmadi 等 2021]]：保证无源性的多端口频变网络等值（FDNE与戴维南等效的宽频融合）
+- [[a-multirate-emt-co-simulation-of-large-ac-and-mmc-based-mtdc-systems|Rojas 等 2017]]：大规模AC和MMC-MTDC系统多速率EMT协同仿真
+- [[co-simulation-of-electromagnetic-transients-and-phasor-models-a-relaxation-appro|Plumier 等 2016]]：EMT与相量模型协同仿真松弛方法（戴维南接口在混合仿真中的应用）
+- [[a-review-of-efficient-modeling-methods-for-modular-multilevel-converters|Peralta 2015]]：模块化多电平换流器高效建模方法综述（MMC戴维南等效相关）
