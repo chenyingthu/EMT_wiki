@@ -52,7 +52,7 @@
 | 97 | large-scale-power-system.md | topics | topics/simulation/large-scale-power-system.md | P0 | 999 | 2561 | 11 | 26 | completed |
 | 331 | least-squares-method.md | methods | methods/signal-processing/least-squares-method.md | P1 | 999 | 2031 | 8 | 13 | completed |
 | 141 | load-modeling.md | topics | topics/component-modeling/load-modeling.md | P0 | 999 | 3733 | 10 | 18 | completed |
-| 64 | lvrt-control.md | methods | methods/control/lvrt-control.md | P0 | 999 | 1746 | 6 | 13 | pending |
+| 64 | lvrt-control.md | methods | methods/control/lvrt-control.md | P0 | 999 | 3385 | 12 | 15 | completed |
 | 371 | microgrid-test-system.md | topics | topics/test-system/microgrid-test-system.md | P1 | 999 | 1415 | 11 | 10 | pending |
 | 335 | modal-analysis.md | methods | methods/signal-processing/modal-analysis.md | P1 | 999 | 2536 | 10 | 12 | completed |
 | 81 | model-order-reduction.md | topics | topics/modeling-methods/model-order-reduction.md | P0 | 999 | 2139 | 19 | 41 | pending |
