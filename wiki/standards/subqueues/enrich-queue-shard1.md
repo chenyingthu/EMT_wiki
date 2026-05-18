@@ -74,7 +74,7 @@
 | 393 | single-phase-induction-machine.md | models | models/rotating-machine/single-phase-induction-machine.md | P1 | 999 | 2283 | 16 | 5 | completed |
 | 180 | small-signal-stability.md | methods | methods/stability-analysis/small-signal-stability.md | P0 | 999 | 5224 | 17 | 21 | pending | completed 
 | 305 | statcom.md | models | models/compensation/statcom.md | P1 | 999 | 3064 | 31 | 11 | pending | completed 
-| 411 | stiff-system-handling.md | methods | methods/numerical-methods/stiff-system-handling.md | P1 | 999 | 679 | 8 | 12 | pending |
+| 411 | stiff-system-handling.md | methods | methods/numerical-methods/stiff-system-handling.md | P1 | 999 | 2122 | 8 | 12 | completed |
 | 383 | svc-test-system.md | topics | topics/test-system/svc-test-system.md | P1 | 999 | 1206 | 7 | 10 | pending |
 | 244 | symmetrical-components.md | methods | methods/protection-fault/symmetrical-components.md | P1 | 999 | 9706 | 7 | 20 | pending | completed 
 | 322 | thevenin-norton-equivalent.md | methods | methods/network-solution/thevenin-norton-equivalent.md | P1 | 999 | 2399 | 8 | 12 | pending | completed 
