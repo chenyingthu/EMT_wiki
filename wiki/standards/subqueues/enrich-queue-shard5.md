@@ -80,7 +80,7 @@
 | 65 | switching-transient.md | topics | topics/stability-analysis/switching-transient.md | P0 | 999 | 1758 | 10 | 19 | completed |
 | 344 | thevenin-equivalent.md | methods | methods/network-solution/thevenin-equivalent.md | P1 | 999 | 4053 | 13 | 14 | completed |
 | 347 | time-domain-formulation.md | methods | methods/system-studies/time-domain-formulation.md | P1 | 999 | 1718 | 5 | 14 | completed |
-| 357 | transformer-modeling.md | topics | topics/component-modeling/transformer-modeling.md | P1 | 999 | 1521 | 9 | 18 | pending |
+| 357 | transformer-modeling.md | topics | topics/component-modeling/transformer-modeling.md | P1 | 999 | 3773 | 12 | 24 | completed |
 | 317 | transmission-line-modeling.md | topics | topics/component-modeling/transmission-line-modeling.md | P1 | 999 | 2642 | 18 | 20 | pending |
 | 294 | upfc-model.md | models | models/compensation/upfc-model.md | P1 | 999 | 3262 | 16 | 14 | completed |
 
@@ -102,3 +102,4 @@
 
 |||||| 457 | 1 | 1 | 0 | statcom-model.md enriched: bc 1275→3371, bf 4→14 pass, added chain-STATCOM fast equivalent (Zhang 2019, O(4N), 80% speedup, <1.2% error), MMC-STATCOM ESS interface (Stepanov 2023, 4-level DM/DEM/AEM/AVM, 0.05s/0.1s/0.3s decoupling), 10 sections, all 25 wikilinks valid |
 ||||||||||| 458 | 1 | 1 | 0 | thevenin-equivalent.md enriched: bc 1590→4053, bf 6→13 pass, removed mermaid, added 5 EMT methods (static/EMT time-domain/multi-port/frequency-dependent/modulation-index dependent), 60 inline formulas, 10 sections, all 14 wikilinks valid |
+||||||||||| 459 | 1 | 1 | 0 | transformer-modeling.md enriched: bc 1290→3773, bf 9→12 pass, mermaid→removed, added Z-transform (Su1990), duality (Shafieipour2020), white-box reduction (Mombello2022), inrush quantification (Velásquez2023), Jiles-Atherton, 9 sections, all 24 wikilinks valid |
