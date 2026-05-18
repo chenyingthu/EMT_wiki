@@ -9,13 +9,75 @@ book-chapter: "2"
 # 数值积分方法 (Numerical Integration Methods)
 
 
-```mermaid
-graph TD
-    subgraph Ncmp[数值积分方法 (Numerical Integratio…]
-        N0[$\omega \Delta t \ll 1$: 畸变小…]
-        N1[$\omega \Delta t \to \pi$: 畸…]
-    end
-```
+<div style="text-align:center;margin:16px 0;">
+<svg viewBox="0 0 820 420" xmlns="http://www.w3.org/2000/svg">
+  <rect x="300" y="8" width="220" height="36" rx="6" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="410" y="30" text-anchor="middle" font-family="Arial" font-size="13" fill="#1e40af">数值积分方法选择决策树</text>
+
+  <rect x="270" y="58" width="280" height="40" rx="6" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+  <text x="410" y="83" text-anchor="middle" font-family="Arial" font-size="13" fill="#92400e">是否含频繁开关/电力电子？</text>
+
+  <line x1="270" y1="78" x2="150" y2="78" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="190" y="72" text-anchor="middle" font-family="Arial" font-size="12" fill="#333">是</text>
+
+  <line x1="550" y1="78" x2="670" y2="78" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="620" y="72" text-anchor="middle" font-family="Arial" font-size="12" fill="#333">否</text>
+
+  <rect x="40" y="102" width="220" height="40" rx="6" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+  <text x="150" y="127" text-anchor="middle" font-family="Arial" font-size="13" fill="#92400e">是否需求大步长？</text>
+
+  <line x1="40" y1="122" x2="40" y2="172" stroke="#333" stroke-width="1.5"/>
+  <line x1="40" y1="172" x2="40" y2="192" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="55" y="166" font-family="Arial" font-size="12" fill="#333">是</text>
+  <rect x="0" y="196" width="80" height="44" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="40" y="218" text-anchor="middle" font-family="Arial" font-size="11" fill="#166534">3S-SDIRK</text>
+  <text x="40" y="232" text-anchor="middle" font-family="Arial" font-size="10" fill="#166534">三阶L稳定</text>
+
+  <line x1="260" y1="122" x2="260" y2="172" stroke="#333" stroke-width="1.5"/>
+  <line x1="260" y1="172" x2="260" y2="192" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="275" y="166" font-family="Arial" font-size="12" fill="#333">否</text>
+  <rect x="220" y="196" width="80" height="44" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="260" y="218" text-anchor="middle" font-family="Arial" font-size="11" fill="#166534">2S-DIRK</text>
+  <text x="260" y="232" text-anchor="middle" font-family="Arial" font-size="10" fill="#166534">二阶L稳定</text>
+
+  <rect x="560" y="102" width="220" height="40" rx="6" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+  <text x="670" y="127" text-anchor="middle" font-family="Arial" font-size="13" fill="#92400e">是否为刚性系统？</text>
+
+  <line x1="560" y1="122" x2="560" y2="172" stroke="#333" stroke-width="1.5"/>
+  <line x1="560" y1="172" x2="560" y2="192" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="575" y="166" font-family="Arial" font-size="12" fill="#333">是</text>
+  <rect x="520" y="196" width="80" height="44" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="560" y="218" text-anchor="middle" font-family="Arial" font-size="11" fill="#166534">Gear/BDF</text>
+  <text x="560" y="232" text-anchor="middle" font-family="Arial" font-size="10" fill="#166534">变阶变步长</text>
+
+  <line x1="780" y1="122" x2="780" y2="172" stroke="#333" stroke-width="1.5"/>
+  <line x1="780" y1="172" x2="780" y2="192" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="795" y="166" font-family="Arial" font-size="12" fill="#333">否</text>
+  <rect x="740" y="196" width="80" height="44" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="780" y="218" text-anchor="middle" font-family="Arial" font-size="11" fill="#166534">梯形法</text>
+  <text x="780" y="232" text-anchor="middle" font-family="Arial" font-size="10" fill="#166534">二阶A稳定</text>
+
+  <rect x="280" y="290" width="260" height="110" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="410" y="310" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold" fill="#334155">图例 Legend</text>
+  <rect x="295" y="320" width="18" height="14" rx="3" fill="#dbeafe" stroke="#2563eb" stroke-width="1"/>
+  <text x="320" y="331" font-family="Arial" font-size="11" fill="#334155">定义/标题</text>
+  <rect x="295" y="342" width="18" height="14" rx="3" fill="#fef3c7" stroke="#d97706" stroke-width="1"/>
+  <text x="320" y="353" font-family="Arial" font-size="11" fill="#334155">判断节点</text>
+  <rect x="295" y="364" width="18" height="14" rx="3" fill="#dcfce7" stroke="#16a34a" stroke-width="1"/>
+  <text x="320" y="375" font-family="Arial" font-size="11" fill="#334155">推荐方法</text>
+  <line x1="295" y1="390" x2="313" y2="390" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="320" y="394" font-family="Arial" font-size="11" fill="#334155">决策流向</text>
+
+  <text x="410" y="415" text-anchor="middle" font-family="Arial" font-size="11" fill="#64748b">* CDA/指数积分器等作为特殊场景补充，见正文适用边界章节</text>
+
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#333"/>
+    </marker>
+  </defs>
+</svg>
+</div>
+<p style="text-align:center;font-size:12px;color:#666;margin-top:8px;">图1 · 数值积分方法选择决策树</p>
 
 
 ## 概述
