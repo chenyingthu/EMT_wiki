@@ -49,7 +49,7 @@
 | 66 | gruson-2011-reduced-mmc.md | models | models/equivalent/gruson-2011-reduced-mmc.md | P0 | 999 | 2369 | 8 | 9 | completed |
 | 311 | hardware-acceleration.md | methods | methods/simulation-technology/hardware-acceleration.md | P1 | 999 | 2761 | 6 | 22 | completed |
 | 190 | hbsm.md | methods | methods/power-electronics/hbsm.md | P0 | 999 | 1718 | 12 | 13 | completed |
-| 192 | high-performance-computing.md | methods | methods/simulation-technology/high-performance-computing.md | P0 | 999 | 5691 | 10 | 12 | pending |
+| 192 | high-performance-computing.md | methods | methods/simulation-technology/high-performance-computing.md | P0 | 999 | 5691 | 10 | 12 | completed |
 | 234 | hybrid-acdc-system.md | topics | topics/hvdc-facts/hybrid-acdc-system.md | P0 | 999 | 18632 | 27 | 14 | pending |
 | 384 | ideal-transformer-equivalent.md | methods | methods/network-solution/ideal-transformer-equivalent.md | P1 | 999 | 1199 | 7 | 12 | pending |
 | 145 | igbt-model.md | models | models/basic-component/igbt-model.md | P0 | 999 | 3959 | 30 | 13 | pending |
@@ -109,4 +109,3 @@
 ||| Cycle 6 | distance-relay.md | P0 SKIP (Quality Gate PASS: bc=2752≥2000, bf=10≥5, no placeholder, src=0≤5000, max_block=5895≤15000) | 2026-05-18 02:59 |
 
 ||| Cycle 7 | distribution-network.md | P0 SKIP (bc=11491≥2000, bf=16≥5, max_block=18248 is natural single-block size, no DUP) | 2026-05-18 03:00 ||||| Cycle 9 | frequency-dependent-soil.md | P0 SKIP (Quality Gate PASS: bc=10063≥2000, bf=13≥5, no placeholder, no DUP_BLOCK, wikilinks all valid, src=0≤5000, max_block=14632≤15000) | 2026-05-18 06:54 |
-
