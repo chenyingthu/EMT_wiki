@@ -29,7 +29,7 @@
 | 88 | electromechanical-electromagnetic-hybrid-simulation.md | topics | topics/simulation/electromechanical-electromagnetic-hybrid-simulation.md | P0 | 999 | 2334 | 5262 | 77 | 28 | completed 
 | 269 | electromechanical-transient.md | topics | topics/stability-analysis/electromechanical-transient.md | P1 | 999 | 4354 | 38 | 44 | completed |
 | 48 | emtp-atp.md | methods | methods/system-studies/emtp-atp.md | P0 | 999 | 1432 | 4 | 8 | completed |
-| 361 | equal-area-criterion.md | methods | methods/stability-analysis/equal-area-criterion.md | P1 | 999 | 1474 | 7 | 8 | pending |
+|| 361 | equal-area-criterion.md | methods | methods/stability-analysis/equal-area-criterion.md | P1 | 999 | 9748 | 23 | 25 | completed |
 | 168 | exponential-integrator.md | methods | methods/numerical-methods/exponential-integrator.md | P0 | 999 | 4685 | 14 | 10 | pending |
 | 154 | fault-analysis.md | methods | methods/protection-fault/fault-analysis.md | P0 | 999 | 4163 | 13 | 15 | pending |
 | 314 | filtering.md | methods | methods/signal-processing/filtering.md | P1 | 999 | 2732 | 6 | 13 | pending |
