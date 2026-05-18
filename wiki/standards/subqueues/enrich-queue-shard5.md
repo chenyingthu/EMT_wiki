@@ -45,7 +45,7 @@
 | 171 | hybrid-modeling.md | methods | methods/simulation-technology/hybrid-modeling.md | P0 | 999 | 4720 | 20 | 8 | completed |
 | 60 | ieee-1547.md | methods | methods/protection-fault/ieee-1547.md | P0 | 999 | 4806 | 15 | 9 | completed |
 | 373 | impedance-modeling.md | methods | methods/stability-analysis/impedance-modeling.md | P1 | 999 | 3539 | 54 | 10 | completed |
-| 397 | inertia-control.md | methods | methods/control/inertia-control.md | P1 | 999 | 963 | 5 | 11 | pending |
+| 397 | inertia-control.md | methods | methods/control/inertia-control.md | P1 | 963 | 5227 | 15 | 11 | completed |
 | 106 | iterative-solvers.md | methods | methods/network-solution/iterative-solvers.md | P0 | 999 | 2770 | 4 | 10 | pending |
 | 156 | large-scale-system-simulation.md | topics | topics/simulation/large-scale-system-simulation.md | P0 | 999 | 4264 | 10 | 58 | pending |
 | 43 | lightning-induced-voltage.md | topics | topics/protection-lightning/lightning-induced-voltage.md | P0 | 999 | 1286 | 8 | 17 | pending |
@@ -89,3 +89,4 @@
 |||| 411 | 1 | 1 | 0 | grounding-lightning-overvoltage.md enriched: bc 1657→3258, bf 17≥5 pass, removed DUP_BLOCK mermaid, added Alipio2023/Lima2026/Meyberg2026/DeAraujo2021 grounding models |
 ||||| 412 | 1 | 0 | 0 | hilbert-transform.md enriched: bc 1217→4692, bf 10→22 pass, removed mermaid, added SFA/HHT deep-review content, 4 EMT methods |
 ||||| 413 | 1 | 0 | 0 | ieee-1547.md enriched: bc 1695→4806, bf 3→15 pass, added Nurunnabi2025 PQ capability + EVR metrics + IEEE 1547-2018 voltage/frequency ride-through tables, 9 wikilinks |
+|||||| 430 | 1 | 0 | 0 | inertia-control.md enriched: bc 963→5227, bf 5→15 pass, 6 EMT methods (A-F), 15 block+83 inline formulas, 10 sections, all wikilinks valid |
