@@ -51,7 +51,7 @@
 | 388 | load-and-dg-modeling.md | topics | topics/component-modeling/load-and-dg-modeling.md | P1 | 999 | 3618 | 31 | 27 | completed |
 | 362 | lumped-parameter-model.md | methods | methods/transmission-line/lumped-parameter-model.md | P1 | 999 | 3569 | 17 | 14 | completed |
 | 160 | mbsm.md | methods | methods/power-electronics/mbsm.md | P0 | 999 | 4374 | 22 | 8 | completed |
-| 57 | mmc-hvdc-5-level.md | models | models/submodule/mmc-hvdc-5-level.md | P0 | 999 | 1660 | 10 | 12 | pending |
+| 57 | mmc-hvdc-5-level.md | models | models/submodule/mmc-hvdc-5-level.md | P0 | 999 | 2896 | 19 | 15 | completed |
 | 358 | modal-transformation.md | methods | methods/transmission-line/modal-transformation.md | P1 | 999 | 1519 | 6 | 12 | pending |
 | 276 | mppt-control.md | methods | methods/control/mppt-control.md | P1 | 999 | 4172 | 10 | 13 | completed |
 | 70 | multirate-and-network-partitioning.md | topics | topics/modeling-methods/multirate-and-network-partitioning.md | P0 | 999 | 1871 | 16 | 12 | pending |

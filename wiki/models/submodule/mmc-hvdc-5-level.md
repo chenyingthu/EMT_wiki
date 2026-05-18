@@ -3,18 +3,23 @@ title: "5电平MMC-HVDC系统 (5-Level MMC-HVDC)"
 type: model
 tags: [mmc, hvdc, 5-level, multi-level, modular-multilevel-converter]
 created: "2026-05-04"
-updated: "2026-05-16"
+updated: "2026-05-19"
 ---
 
 # 5电平MMC-HVDC系统 (5-Level MMC-HVDC)
 
 ## 概述
 
-5电平MMC-HVDC系统是模块化多电平换流器在高压直流输电中的一种基础配置，每桥臂含4个子模块（N=4），通过级联半桥或全桥子模块在交流侧输出5电平阶梯波。作为MMC的入门级电平配置，5电平MMC常用于教学验证、小功率MMC-HVDC实验平台和算法初步验证。虽然工程级MMC通常采用数十至数百电平，5电平配置涵盖了MMC的核心工作原理，包括子模块电容均压、桥臂环流、NLM调制及直流故障特性等基本问题。
+5电平MMC-HVDC系统是模块化多电平换流器（MMC）在高压直流输电中的一种基础配置，每桥臂含4个子模块（N=4），通过级联半桥或全桥子模块在交流侧输出5电平阶梯波。作为MMC的入门级电平配置，5电平MMC常用于教学验证、小功率MMC-HVDC实验平台和算法初步验证。虽然工程级MMC通常采用数十至数百电平，5电平配置涵盖了MMC的核心工作原理，包括子模块电容均压、桥臂环流、NLM调制及直流故障特性等基本问题。
+
+MMC最早由Marquardt于2001年提出，旨在克服传统两电平和三电平VSC的谐波含量高、开关损耗大等缺点。5电平配置虽然谐波性能不及高电平系统，但其拓扑结构完整保留了三相上下桥臂架构，便于在教学和初等研究中对MMC的工作机理建立清晰认知。
 
 ## 拓扑结构
 
+### 基本参数关系
+
 5电平MMC的基本参数关系：
+
 - 每桥臂子模块数：$N = 4$
 - 交流侧输出电平数：$N_{level} = N + 1 = 5$
 - 子模块电容电压额定值：$V_C = V_{dc} / N = V_{dc} / 4$
@@ -26,6 +31,14 @@ $$v_{ac} = M \cdot \frac{V_{dc}}{2} \cdot \sin(\omega t)$$
 
 其中 $M \in [0, 1]$ 为调制比。
 
+### 拓扑变体
+
+| 拓扑类型 | 子模块结构 | 直流故障能力 | 应用场景 |
+|---------|-----------|------------|---------|
+| 半桥MMC（HBC） | 半桥子模块（2个IGBT+2个二极管） | 无直流故障清除能力 | 成本敏感、无直流断路器场景 |
+| 全桥MMC（FBC） | 全桥子模块（4个IGBT+4个二极管） | 具备直流故障清除能力 | 需要直流故障穿越的场景 |
+| 混合MMC | 上桥臂全桥、下桥臂半桥 | 有限直流故障清除 | 妥协方案 |
+
 ## EMT中的角色
 
 5电平MMC-HVDC系统在EMT仿真中主要用于：
@@ -35,13 +48,76 @@ $$v_{ac} = M \cdot \frac{V_{dc}}{2} \cdot \sin(\omega t)$$
 - **模型接口**：提供5电平MMC-HVDC系统的端口变量、状态方程和边界条件
 - **验证基准**：可作为5电平MMC-HVDC系统仿真模型正确性的验证基准
 
+由于5电平系统的状态变量少（仅4个电容电压状态），它是在EMT软件（如PSCAD/EMTDC、EMTPx）中验证MMC数值模型、接口算法和环流抑制控制的理想基准系统。
+
+## EMT建模方法
+
+### 方法1：详细开关模型（TDM）
+
+**Traditional Detailed Model (TDM)** 将每个子模块的IGBT和二极管作为独立开关器件建模，每个子模块电容作为独立状态变量。TDM的导纳矩阵包含所有器件节点，矩阵维度随电平数N线性增长：
+
+$$\mathbf{Y}_{TDM} \in \mathbb{R}^{(3N + 6) \times (3N + 6)}$$
+
+对5电平系统，状态向量包含4个电容电压×6桥臂 = 24个状态量。开关状态更新时需重新分解导纳矩阵，计算复杂度 $O(N^3)$。
+
+**优点**：物理透明，可观测每个子模块的电容电压和开关状态
+**缺点**：计算负担随电平数快速增加，不适合高电平系统
+
+### 方法2：详细等效模型（DEM）
+
+**Detailed Equivalent Model (DEM)** 采用嵌套求解思想，将MMC桥臂从主网络中分离为较小子网络，主系统只看到桥臂端口等效量。子网络内部根据开关状态和电容历史项计算等效电压/电流，通过Schur补将子网络信息凝聚到主网络方程中。
+
+对N=5系统，等效桥臂电压：
+
+$$v_{th,j} = \sum_{i=1}^{N} S_{i,j} \cdot \bar{v}_{C,i,j}$$
+
+等效阻抗（基于叠加原理）：
+
+$$Z_{th,j} = \frac{N}{j\omega C_{eq}} + R_{arm} + j\omega L_{arm}$$
+
+矩阵维度降至 $O(N)$ 而非 $O(N^3)$，61电平时加速比约43倍（Beddard 2015）。
+
+### 方法3：加速模型（AM）
+
+**Accelerated Model (AM)** 的核心接口是桥臂电流和桥臂等效电压：主网络用受控电压源代表一串子模块，独立子模块网络由等于桥臂电流的电流源驱动，按开关状态更新各子模块电容电压，再将投入子模块的电容电压求和反馈为桥臂电压。
+
+主网络与子模块网络同步求解：
+
+$$\mathbf{v}_{arm} = \sum_{i=1}^{N} S_i \cdot \mathbf{v}_{C,i}$$
+$$\mathbf{i}_{sm,i} = \mathbf{i}_{arm} \quad (\text{所有子模块同电流})$$
+
+优点：保留对子模块级状态的访问能力，同时提升速度14倍（Beddard 2015）。
+
+### 方法4：平均值模型（AVM）
+
+**Average-Value Model (AVM)** 不逐个计算每个子模块电容电压和开关状态，而是用交流侧受控电压源、直流侧受控电流源和等效电容表示换流器对外接口：
+
+$$v_{up,j} = \text{Mod}\left[\frac{V_{dc}}{2} - v_{ref,j}\right]$$
+$$i_{dc} = \frac{\sum_{i=a,b,c} v_{ref,i} \cdot i_{ac,i}}{V_{dc}}$$
+$$C_{eq} = \frac{N \cdot C_{sm}}{2}$$
+
+改进的故障阻断AVM（Xu 2014）引入受控开关（S1-S4）和二极管（D1-D3），在直流故障和闭锁时激活续流路径，使AVM在保持高效的同时能够准确模拟故障暂态：
+
+- 正常运行：退化为传统AVM
+- 换流器闭锁：二极管D1续流，D3钳位直流电压
+- 极间直流故障：电容经 $R_{eq} = 2R_{on}/3$、$L_{eq} = 2L_{arm}/3$ 放电
+- 单极接地故障：拓扑耦合生成交流侧直流偏置
+
+### 方法5：自适应模型切换（ASM）
+
+**Adaptive Submodule Model (ASM)** 在不同工况下自动切换建模粒度（Stepanov 2020）：
+
+$$M_{switch} = \begin{cases} \text{TDM} & \text{故障/暂态期} \\ \text{DEM/AM} & \text{稳态前期} \\ \text{AVM} & \text{稳态运行} \end{cases}$$
+
+切换过程外部电气特性误差<0.5%，切换后计算耗时降低65%~75%，整体加速比>3.5×（401电平系统）。
+
 ## 数学模型
 
 ### 桥臂电压方程
 
 MMC每相上下桥臂电压由各子模块输出电压叠加：
 
-$$v_{p,j} = \sum_{i=1}^{N} S_{p,i,j} \cdot v_{C,p,i,j}, \quad v_{n,j} = \sum_{i=1}^{N} S_{n,i,j} \sum_{i=1}^{N} S_{n,i,j} \cdot v_{C,n,i,j}$$
+$$v_{p,j} = \sum_{i=1}^{N} S_{p,i,j} \cdot v_{C,p,i,j}, \quad v_{n,j} = \sum_{i=1}^{N} S_{n,i,j} \cdot v_{C,n,i,j}$$
 
 其中 $S \in \{0,1\}$ 为子模块开关状态，$v_C$ 为电容电压，下标 $p$/$n$ 表示上下桥臂，$j \in \{a,b,c\}$ 表示三相。
 
@@ -55,11 +131,11 @@ $$\frac{dv_{C}}{dt} = \frac{i_{sm}}{C_{sm}} = \frac{S_i \cdot i_{arm}}{C_{sm}}$$
 
 $$\hat{V}_{C,i} = 1 + \Delta v_i, \quad i = 1,2,3,4$$
 
-其中 $\Delta v_i$ 为纹波分量，均压算法使 $|\Delta v_i| < 0.1$（即 $<10\%$ 纹波）。
+其中 $\Delta v_i$ 为纹波分量，均压算法使 $|\Delta v_i| < 0.1$（即 <10% 纹波）。
 
 ### 环流抑制控制
 
-桥臂环流 $i_{cirj}$ 主要为二次谐波分量：
+桥臂环流 $i_{cir,j}$ 主要为二次谐波分量：
 
 $$i_{cir,j} = \frac{i_{p,j} - i_{n,j}}{2}$$
 
@@ -95,48 +171,60 @@ $$\dot{\mathbf{x}} = \mathbf{A}\mathbf{x} + \mathbf{B}\mathbf{u}$$
 
 其中状态向量 $\mathbf{x} = [v_{C,1}, v_{C,2}, v_{C,3}, v_{C,4}, i_{cir,a}, i_{cir,b}, i_{cir,c}]^T$，输入向量 $\mathbf{u} = [v_{ac,a}, v_{ac,b}, v_{ac,c}, V_{dc}]^T$。
 
-## 5电平与高电平MMC的主要区别
-
-| 特性 | 5电平(N=4) | 高电平(N=100~400) |
-|------|-----------|------------------|
-| **阶梯波质量** | 粗糙，谐波含量高 | 平滑，近正弦波 |
-| **等效开关频率** | 低 | 高（N倍） |
-| **输出滤波器需求** | 需要LC滤波器 | 可省略或简化 |
-| **电容电压纹波** | 较大（~10-15%） | 较小（<5%） |
-| **环流幅值** | 比例较大 | 比例较小 |
-| **控制复杂度** | 低 | 高（需均压算法） |
-| **应用场景** | 教学、小功率实验 | 工程级HVDC输电 |
-
 ## 量化性能边界
 
-**MMC AVM在低电平系统中的精度**（Xu 2014, 11电平四端MMC-MTDC）：
+### 建模方法精度对比（Beddard 2015, 31~61电平）
+
+| 模型类型 | 稳态误差 | 暂态误差 | 61电平加速比 | 子模块状态访问 |
+|---------|---------|---------|------------|-------------|
+| TDM（基准） | — | — | 1×（基准） | 完全访问 |
+| DEM | <1% | ~2.5% | ~43× | 不可直接访问 |
+| AM | <1% | ~2.5% | ~14× | 可访问 |
+| AVM | <2.5% | 失效场景 | >>100× | 不可访问 |
+
+注：Beddard 2015的测试系统为31电平MMC-VSC-HVDC方案，交流侧SCR=3.5，直流侧300 kV、100 km XLPE电缆，PSCAD/EMTDC X4平台。
+
+### AVM精度边界（Xu 2014, 11电平四端MMC-MTDC）
+
 - 子模块电容 $C_{sm} \geq 20$ mF（电压纹波<2%）时AVM误差<2.5%
 - 启动充电工况直流电压误差1%，交流充电电流误差<1%
 - 极间直流故障下，改进AVM直流电压最大误差2.5%，交流电压误差2%
-- 验证平台：PSCAD/EMTDC
+- AVM计算耗时较传统AVM增加约37%，但仍远快于详细模型
 
-**MMC戴维南等效模型加速比**（Xu 2015, 48电平系统）：
+### 戴维南等效加速（Xu 2015, 48电平系统）
+
 - 戴维南等效模型仿真速度比详细模型快15~20倍（$N=200$时）
 - 排序算法复杂度从 $O(N^2)$ 降至 $O(N)$，仿真耗时与子模块数线性正比
 - 对于5电平（N=4）的低电平系统，加速比不如高电平显著，但仍可通过各子模块独立建模获益
 
-**MMC自适应模型精度**（Stepanov 2020, 401电平系统）：
+### 自适应模型精度（Stepanov 2020, 401电平系统）
+
 - AVM/AEM/DEM三档自适应切换，模型切换过程外部电气特性误差<0.5%
-- 稳态时切换至AVM/AEM可降低单步计算耗时65%~75%，整体加速比>3.5x
+- 稳态时切换至AVM/AEM可降低单步计算耗时65%~75%，整体加速比>3.5×
 - 阻塞模式求解器迭代上限30次，实际收敛<6次
 
-**MMC打靶法初始化**（del Giudice 2024, 128电平）：
+### 打靶法初始化（del Giudice 2024, 128电平）
+
 - 两阶段AVM到Thévenin映射的打靶法初始化，直接从接近稳态启动
 - 消除传统初始化所需的长时间仿真过渡，减少仿真启动等待时间
 
-**数据缺口声明**：5电平MMC作为入门级配置，其相关模型数据大多来自高电平（48~400电平）系统外推，缺乏专门针对5电平（N=4）的定量加速比和精度基准测试。
+### 电容电压均衡效率（Fan 2020, N=100子模块）
+
+| 均衡方法 | 电压范围（kV） | 开关频率（Hz） | 排序时钟 | 比较器数量 |
+|---------|--------------|--------------|---------|-----------|
+| 本文分组均衡 | 2.917~3.490 | ~1140 | 10 | 990 |
+| 冒泡排序 | 2.917~3.502 | ~1220 | 随N增长 | $N(N-1)$ |
+| 并行全比较 | 2.917~3.480 | ~1110 | 4 | 9900 |
+
+分组均衡方法将比较器从9900降至990（固定，与N无关），同时保持均衡效果。
 
 ## 关键技术挑战
 
-- **电容电压纹波控制**：低电平配置下纹波比例更高，需更精确的均压算法
-- **开关动作谐波**：5电平阶梯波谐波含量高，输出滤波器设计复杂
+- **电容电压纹波控制**：低电平配置下纹波比例更高，需更精确的均压算法。5电平时 $|\Delta v_i|$ 通常控制在10%以内，高电平可<5%
+- **开关动作谐波**：5电平阶梯波谐波含量高，输出滤波器设计复杂；THD约1.35%~1.36%（31电平基准）
 - **环流抑制带宽**：低电平系统环流幅值比例大，需要更高带宽的抑制策略
-- **初始化瞬态**：5电平系统启动时电容充电过程更长
+- **初始化瞬态**：5电平系统启动时电容充电过程更长，打靶法初始化可有效缩短此阶段
+- **计算效率与精度权衡**：TDM精度最高但最慢，AVM最快但有适用范围限制，DEM/AM在中间提供较好平衡
 
 ## 适用边界
 
@@ -144,11 +232,22 @@ $$\dot{\mathbf{x}} = \mathbf{A}\mathbf{x} + \mathbf{B}\mathbf{u}$$
 - 教学演示和算法验证
 - 小功率实验平台（<1 MW）
 - 控制策略初步验证
+- EMT数值方法基准测试
 
 不适用于：
 - 工程级HVDC输电（需>100电平）
-- 高频开关暂态分析
+- 高频开关暂态分析（需>200电平）
 - 精确谐波评估（需>21电平）
+
+## 建模方法选择指南
+
+| 应用场景 | 推荐模型 | 步长范围 | 精度目标 |
+|---------|---------|---------|---------|
+| 教学/验证 | TDM | 1~10 μs | 基准精度 |
+| 系统级快速研究 | DEM | 10~50 μs | <2.5%误差 |
+| 子模块状态监测 | AM | 10~50 μs | <2.5%误差 |
+| 稳态长过程仿真 | AVM | 50~100 μs | <2.5%（需大电容） |
+| 多种工况切换 | ASM | 自适应 | <0.5%切换误差 |
 
 ## 相关模型
 
@@ -161,19 +260,22 @@ $$\dot{\mathbf{x}} = \mathbf{A}\mathbf{x} + \mathbf{B}\mathbf{u}$$
 
 - [[average-value-model]] - 平均值模型
 - [[nearest-level-modulation]] - 最近电平调制
+- [[circulating-current-suppression]] - 环流抑制控制
 
 ## 相关主题
 
 - [[real-time-simulation]] - 实时仿真
 - [[co-simulation]] - 混合仿真
+- [[multirate-and-network-partitioning]] - 多速率仿真
 
 ## 来源论文
 
 | 论文 | 年份 | 贡献 |
 |------|------|------|
-| [[average-value-models-for-modular-multilevel-converters-operating-in-a-vsc-hvdc-grid|Xu等 - Average-Value Models for Modular Multilevel Converters]] | 2014 | 提出11电平四端MMC-MTDC的AVM精度基准 |
-| [[a-review-of-efficient-modeling-methods-for-modular-multilevel-converters|Xu等 - A review of efficient modeling methods for MMC]] | 2015 | 综述MMC高效建模方法，给出15~20×加速数据 |
-| [[adaptive-modular-multilevel-converter-model-for-electromagnetic-transient-simula|Stepanov等 - Adaptive MMC Model]] | 2020 | 提出AVM/AEM/DEM三档自适应切换，<0.5%误差 |
-| [[shooting-method-based-modular-multilevel-converter-initialization-for-electromag|del Giudice等 - Shooting method based MMC initialization]] | 2024 | 提出打靶法初始化，消除启动过渡过程 |
+| [[average-value-models-for-modular-multilevel-converters-operating-in-a-vsc-hvdc-grid]] | 2014 | 提出改进AVM故障拓扑，11电平四端MMC-MTDC精度基准 |
+| [[a-review-of-efficient-modeling-methods-for-modular-multilevel-converters]] | 2015 | 综述MMC高效建模方法，给出15~20×加速数据 |
+| [[comparison-of-detailed-modeling-techniques-for-mmc-employed-on-vsc-hvdc-schemes]] | 2015 | TDM/DEM/AM三模型对比，61电平DEM加速43× |
+| [[adaptive-modular-multilevel-converter-model-for-electromagnetic-transient-simula]] | 2020 | 提出AVM/AEM/DEM三档自适应切换 |
+| [[shooting-method-based-modular-multilevel-converter-initialization-for-electromag]] | 2024 | 提出打靶法初始化，消除启动过渡过程 |
 
 *本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*
