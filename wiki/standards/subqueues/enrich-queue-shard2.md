@@ -44,7 +44,7 @@
 | 74 | hybrid-acdc-network.md | topics | topics/hvdc-facts/hybrid-acdc-network.md | P0 | 999 | 12494 | 15 | 15 | completed |
 | 232 | ibr.md | methods | methods/system-studies/ibr.md | P0 | 999 | 13677 | 16 | 14 | completed |
 | 330 | ieee-39-bus-system.md | topics | topics/test-system/ieee-39-bus-system.md | P1 | 999 | 2083 | 7 | 11 | completed |
-| 390 | induction-machine-model.md | models | models/rotating-machine/induction-machine-model.md | P1 | 999 | 1093 | 10 | 27 | pending |
+| 390 | induction-machine-model.md | models | models/rotating-machine/induction-machine-model.md | P1 | 999 | 2550 | 14 | 17 | completed |
 | 181 | interface-technique.md | methods | methods/simulation-technology/interface-technique.md | P0 | 999 | 5234 | 10 | 19 | pending |
 | 289 | large-scale-grid-simulation.md | topics | topics/simulation/large-scale-grid-simulation.md | P1 | 999 | 3484 | 7 | 51 | pending |
 | 341 | layered-connection.md | methods | methods/transmission-line/layered-connection.md | P1 | 999 | 1823 | 5 | 13 | pending |
