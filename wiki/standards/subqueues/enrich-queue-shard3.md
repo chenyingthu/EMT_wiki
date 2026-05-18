@@ -53,7 +53,7 @@
 | 234 | hybrid-acdc-system.md | topics | topics/hvdc-facts/hybrid-acdc-system.md | P0 | 999 | 18632 | 27 | 14 | completed |
 | 384 | ideal-transformer-equivalent.md | methods | methods/network-solution/ideal-transformer-equivalent.md | P1 | 999 | 1199 | 7 | 12 | completed |
 | 145 | igbt-model.md | models | models/basic-component/igbt-model.md | P0 | 999 | 3959 | 30 | 13 | completed |
-| 412 | induction-machine.md | models | models/rotating-machine/induction-machine.md | P1 | 999 | 650 | 10 | 10 | pending |
+| 412 | induction-machine.md | models | models/rotating-machine/induction-machine.md | P1 | 999 | 4514 | 22 | 15 | completed |
 | 157 | interpolation-method.md | methods | methods/numerical-methods/interpolation-method.md | P0 | 999 | 4276 | 10 | 22 | pending |
 | 274 | large-scale-hybrid-acdc-simulation.md | topics | topics/simulation/large-scale-hybrid-acdc-simulation.md | P1 | 999 | 4242 | 10 | 15 | pending |
 | 282 | lcl-filter.md | methods | methods/power-electronics/lcl-filter.md | P1 | 999 | 3685 | 17 | 8 | pending |
