@@ -82,7 +82,7 @@
 | 317 | transmission-line-modeling.md | topics | topics/component-modeling/transmission-line-modeling.md | P1 | 999 | 2642 | 18 | 20 | pending |
 | 294 | upfc-model.md | models | models/compensation/upfc-model.md | P1 | 999 | 3334 | 16 | 9 | pending |
 | 209 | vector-fitting.md | methods | methods/signal-processing/vector-fitting.md | P0 | 999 | 8394 | 15 | 14 | completed |
-| 46 | vsc-hvdc.md | topics | topics/hvdc-facts/vsc-hvdc.md | P0 | 999 | 1392 | 7 | 126 | pending |
+| 46 | vsc-hvdc.md | topics | topics/hvdc-facts/vsc-hvdc.md | P0 | 999 | 1392 | 7 | 126 | completed |
 | 83 | wideband-oscillation-stability.md | topics | topics/stability-analysis/wideband-oscillation-stability.md | P0 | 999 | 2187 | 11 | 15 | pending |
 
 

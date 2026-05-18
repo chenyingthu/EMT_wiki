@@ -8,18 +8,84 @@ created: "2026-04-14"
 # VSC-HVDC（柔性直流输电）
 
 
-```mermaid
-graph TD
-    subgraph Ncmp[VSC-HVDC]
-        N0[[[a-vsc-hvdc-model-with-redu…]
-        N1[[[average-value-models-for-m…]
-        N2[[[advanced-hybrid-transient-…]
-        N3[[[comparison-of-detailed-mod…]
-        N4[[[含vsc-hvdc交直流系统多尺度暂态建模与仿真研究…]
-        N5[[[modeling-and-electromagnet…]
-        N6[[[modeling-and-simulation-of…]
-    end
-```
+
+<div style="text-align:center;margin:12px 0;">
+<svg viewBox="0 0 760 220" xmlns="http://www.w3.org/2000/svg">
+  <text x="380" y="18" text-anchor="middle" font-size="12" font-weight="bold" fill="#333" font-family="sans-serif">VSC-HVDC 系统建模方法体系架构</text>
+  
+  <rect x="10" y="26" width="170" height="32" rx="3" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="95" y="40" text-anchor="middle" font-size="9" fill="#1e40af" font-weight="bold" font-family="sans-serif">器件级应力分析</text>
+  <text x="95" y="52" text-anchor="middle" font-size="8" fill="#3b82f6" font-family="sans-serif">Δt=1–10μs</text>
+  
+  <rect x="190" y="26" width="170" height="32" rx="3" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="275" y="40" text-anchor="middle" font-size="9" fill="#1e40af" font-weight="bold" font-family="sans-serif">系统级暂态分析</text>
+  <text x="275" y="52" text-anchor="middle" font-size="8" fill="#3b82f6" font-family="sans-serif">功率阶跃/故障穿越</text>
+  
+  <rect x="370" y="26" width="170" height="32" rx="3" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="455" y="40" text-anchor="middle" font-size="9" fill="#1e40af" font-weight="bold" font-family="sans-serif">保护与控制</text>
+  <text x="455" y="52" text-anchor="middle" font-size="8" fill="#3b82f6" font-family="sans-serif">闭锁/解锁/环流</text>
+  
+  <rect x="550" y="26" width="170" height="32" rx="3" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="635" y="40" text-anchor="middle" font-size="9" fill="#1e40af" font-weight="bold" font-family="sans-serif">实时HIL测试</text>
+  <text x="635" y="52" text-anchor="middle" font-size="8" fill="#3b82f6" font-family="sans-serif">Δt=20–50μs</text>
+
+  <line x1="380" y1="58" x2="380" y2="68" stroke="#333" stroke-width="1.5" marker-end="url(#arr)"/>
+  
+  <rect x="10" y="72" width="170" height="32" rx="3" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="95" y="86" text-anchor="middle" font-size="9" fill="#166534" font-weight="bold" font-family="sans-serif">TDM 详细开关</text>
+  <text x="95" y="98" text-anchor="middle" font-size="8" fill="#22c55e" font-family="sans-serif">逐器件/最高精度</text>
+  
+  <rect x="190" y="72" width="170" height="32" rx="3" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+  <text x="275" y="86" text-anchor="middle" font-size="9" fill="#92400e" font-weight="bold" font-family="sans-serif">DEM 详细等效</text>
+  <text x="275" y="98" text-anchor="middle" font-size="8" fill="#f59e0b" font-family="sans-serif">嵌套求解/43×加速</text>
+  
+  <rect x="370" y="72" width="170" height="32" rx="3" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+  <text x="455" y="86" text-anchor="middle" font-size="9" fill="#92400e" font-weight="bold" font-family="sans-serif">AM/EAM 加速模型</text>
+  <text x="455" y="98" text-anchor="middle" font-size="8" fill="#f59e0b" font-family="sans-serif">子模块分组/14×</text>
+  
+  <rect x="550" y="72" width="170" height="32" rx="3" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="635" y="86" text-anchor="middle" font-size="9" fill="#166534" font-weight="bold" font-family="sans-serif">DAVM 动态平均</text>
+  <text x="635" y="98" text-anchor="middle" font-size="8" fill="#22c55e" font-family="sans-serif">Δt=20–1000μs</text>
+
+  <line x1="380" y1="104" x2="380" y2="114" stroke="#333" stroke-width="1.5" marker-end="url(#arr)"/>
+  
+  <rect x="10" y="118" width="230" height="32" rx="3" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.5"/>
+  <text x="125" y="132" text-anchor="middle" font-size="9" fill="#5b21b6" font-weight="bold" font-family="sans-serif">矢量控制 (dq坐标)</text>
+  <text x="125" y="144" text-anchor="middle" font-size="8" fill="#8b5cf6" font-family="sans-serif">i_d/i_q解耦/PLL同步</text>
+  
+  <rect x="250" y="118" width="230" height="32" rx="3" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.5"/>
+  <text x="365" y="132" text-anchor="middle" font-size="9" fill="#5b21b6" font-weight="bold" font-family="sans-serif">环流抑制 (CCC)</text>
+  <text x="365" y="144" text-anchor="middle" font-size="8" fill="#8b5cf6" font-family="sans-serif">2n次谐波/dq域解耦</text>
+
+  <rect x="490" y="118" width="230" height="32" rx="3" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.5"/>
+  <text x="605" y="132" text-anchor="middle" font-size="9" fill="#5b21b6" font-weight="bold" font-family="sans-serif">直流电压控制</text>
+  <text x="605" y="144" text-anchor="middle" font-size="8" fill="#8b5cf6" font-family="sans-serif">功率平衡/电容等效</text>
+
+  <line x1="380" y1="150" x2="380" y2="160" stroke="#333" stroke-width="1.5" marker-end="url(#arr)"/>
+  
+  <rect x="10" y="164" width="230" height="28" rx="3" fill="#fee2e2" stroke="#dc2626" stroke-width="1.5"/>
+  <text x="125" y="178" text-anchor="middle" font-size="9" fill="#991b1b" font-weight="bold" font-family="sans-serif">直流电缆/架空线</text>
+  <text x="125" y="188" text-anchor="middle" font-size="8" fill="#ef4444" font-family="sans-serif">频变模型/行波</text>
+  
+  <rect x="250" y="164" width="230" height="28" rx="3" fill="#fee2e2" stroke="#dc2626" stroke-width="1.5"/>
+  <text x="365" y="178" text-anchor="middle" font-size="9" fill="#991b1b" font-weight="bold" font-family="sans-serif">直流断路器 (DCCB)</text>
+  <text x="365" y="188" text-anchor="middle" font-size="8" fill="#ef4444" font-family="sans-serif">故障隔离/耗能</text>
+
+  <rect x="490" y="164" width="230" height="28" rx="3" fill="#fee2e2" stroke="#dc2626" stroke-width="1.5"/>
+  <text x="605" y="178" text-anchor="middle" font-size="9" fill="#991b1b" font-weight="bold" font-family="sans-serif">多端互联 (MTDC)</text>
+  <text x="605" y="188" text-anchor="middle" font-size="8" fill="#ef4444" font-family="sans-serif">电压分配/站间通信</text>
+
+  <defs>
+    <marker id="arr" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto">
+      <polygon points="0 0, 7 2.5, 0 5" fill="#333"/>
+    </marker>
+  </defs>
+  
+  <text x="380" y="210" text-anchor="middle" font-size="8" fill="#999" font-family="sans-serif">数据来源: Beddard 2015, Gnanarathna 2011, van der Meer 2015</text>
+</svg>
+</div>
+<p style="text-align:center;font-size:12px;color:#666;margin-top:8px;">图1 · VSC-HVDC 系统建模方法体系架构</p>
+
 
 
 ## 定义与概述
@@ -274,132 +340,49 @@ $$
 
 | 论文 | 年份 |
 |------|------|
-| [[37s0142-061528962900045-2|37/s0142-0615%2896%2900045-2]] | 2003 |
-| [[37s0142-061528962900045-2|37/s0142-0615%2896%2900045-2]] | 2003 |
-| [[combined-transient-and-dynamic-analysis-of-hvdc-and-facts-systems|Combined transient and dynamic analysis of HVDC and FACTS sy]] | 2004 |
-| [[comparison-of-the-atp-version-of-the-emtp-and-the-netomac-program-for-simulation|Comparison of the ATP version of the EMTP and the NETOMAC pr]] | 2004 |
-| [[improved-control-systems-simulation-in-the-emtp-through-compensation|Improved control systems simulation in the EMTP through comp]] | 2004 |
-| [[modelling-of-circuit-breakers-in-the-electromagnetic-transients-program-power-sy|Modelling of circuit breakers in the Electromagnetic Transie]] | 2004 |
-| [[real-time-digital-simulator-of-the-electromagnetic-transients-of-power-transmiss|Real-time digital simulator of the electromagnetic transient]] | 2004 |
-| [[2728nested-fast-and-simultaneous-solution-for-time-domain-simulation-of-integrat|Nested fast and simultaneous solution for time-domain simula]] | 2006 |
-| [[interfacing-techniques-for-transient-stability-and-electromagnetic-transient-hyb-fix|Interfacing Techniques for Transient Stability and Electroma]] | 2009 |
-| [[interfacing-techniques-for-transient-stability-and-electromagnetic-transient-hyb-fix|Interfacing Techniques for Transient Stability and Electroma]] | 2009 |
-| [[interfacing-techniques-for-transient-stability-and-electromagnetic-transient-hyb|Interfacing Techniques for Transient Stability and Electroma]] | 2009 |
-| [[interfacing-techniques-for-transient-stability-and-electromagnetic-transient-hyb|Interfacing Techniques for Transient Stability and Electroma]] | 2009 |
-| [[第29-卷-第34-期-中-国-电-机-工-程-学-报-vol29-no34-dec-5-2009|考虑任意重事件发生的多步变步长电磁暂态仿真算法]] | 2009 |
-| [[第29-卷-第34-期-中-国-电-机-工-程-学-报-vol29-no34-dec-5-2009|考虑任意重事件发生的多步变步长电磁暂态仿真算法]] | 2009 |
-| [[efcient-modeling-of-modular-multilevel-hvdc-15|Efﬁcient Modeling of Modular Multilevel HVDC]] | 2010 |
-| [[robust-passivity-enforcement-scheme-for|Robust Passivity Enforcement Scheme for]] | 2010 |
-| [[39pes20116039582|39/pes.2011.6039582]] | 2011 |
-| [[a-vsc-hvdc-model-with-reduced-computational-intensity|A VSC-HVDC Model with Reduced Computational Intensity]] | 2012 |
-| [[基于频率相关网络等值的电磁-机电暂态解耦混合仿真|基于频率相关网络等值的电磁-机电暂态解耦混合仿真]] | 2012 |
-| [[modular-multilevel-converter-models|Modular Multilevel Converter Models]] | 2013 |
-| [[ahmed-等-a-computationally-efficient-continuous-model-for-the-modular-multilevel-|Ahmed 等 | A Computationally Efficient Continuous Model for t]] | 2014 |
-| [[analysis-and-mitigation-of-subsynchronous-resonance-in-series-compensated-wind-p|Analysis and Mitigation of Subsynchronous Resonance in Serie]] | 2014 |
-| [[dynamic-average-value-modeling-of-13&14|Dynamic Average-Value Modeling of]] | 2014 |
-| [[fast-voltage-balancing-control-and-fast-19、20、21|Fast Voltage-Balancing Control and Fast]] | 2014 |
-| [[the-use-of-averaged-value-model-of-modular-37|The Use of Averaged-Value Model of Modular]] | 2014 |
-| [[the-use-of-averaged-value-model-of-modular-37|The Use of Averaged-Value Model of Modular]] | 2014 |
-| [[dynamic-performance-of-embedded-hvdc-with-13&14|Dynamic Performance of Embedded HVDC with]] | 2015 |
-| [[transient-stability-analysis-of-mmc-hvdc-system-considering-dc-side-fault|Transient Stability Analysis of MMC-HVDC System Considering ]] | 2015 |
-| [[模块化多电平换流器戴维南等效整体建模方法|模块化多电平换流器戴维南等效整体建模方法]] | 2015 |
-| [[模块化多电平换流器戴维南等效整体建模方法|模块化多电平换流器戴维南等效整体建模方法]] | 2015 |
-| [[含vsc-hvdc交直流系统多尺度暂态建模与仿真研究-40|含VSC-HVDC交直流系统多尺度暂态建模与仿真研究]] | 2017 |
-| [[a-dynamic-phasor-model-of-an-mmc-with-extended-frequency-range-for-emt-simulatio|A Dynamic Phasor Model of an MMC with Extended Frequency Ran]] | 2018 |
-| [[a-new-topology-for-current-limiting-hvdc-circuit-breaker|A new topology for current limiting HVDC circuit breaker]] | 2018 |
-| [[high-speed-emt-modeling-of-mmcs-with-arbitrary-multiport-submodule-structures-us|High-Speed EMT Modeling of MMCs With Arbitrary Multiport Sub]] | 2018 |
-| [[partitioned-fitting-and-dc-correction-for-the-simulation-of-electromagnetic-tran|Partitioned Fitting and DC Correction for the Simulation of ]] | 2018 |
-| [[partitioned-fitting-and-dc-correction-for-the-simulation-of-electromagnetic-tran|Partitioned Fitting and DC Correction for the Simulation of ]] | 2018 |
-| [[unified-high-speed-emt-equivalent-and-implementation-method-of-mmcs-with-single-|Unified High-Speed EMT Equivalent and Implementation Method ]] | 2018 |
-| [[unified-high-speed-emt-equivalent-and-implementation-method-of-mmcs-with-single-|Unified High-Speed EMT Equivalent and Implementation Method ]] | 2018 |
-| [[双端口子模块mmc电磁暂态通用等效建模方法|双端口子模块MMC电磁暂态通用等效建模方法]] | 2018 |
-| [[双端口子模块mmc电磁暂态通用等效建模方法|双端口子模块MMC电磁暂态通用等效建模方法]] | 2018 |
-| [[a-multi-area-thevenin-equivalent-based-multi-rate-co-simulation-for-control-desi|A multi-area Thevenin equivalent based multi-rate co-simulat]] | 2019 |
-| [[dual-band-reduced-order-model-of-an-hvdc-link-embedded-into-a-power-network-for-|Dual-Band Reduced-Order Model of an HVDC Link Embedded into ]] | 2019 |
-| [[hybrid-transient-stability-simulation-using-dynamic-phasor-based-interface-model|Hybrid Transient Stability Simulation Using Dynamic Phasor B]] | 2019 |
-| [[measurement-based-frequency-dependent-model-of-a-hvdc-transformer-for-electromag|Measurement-based frequency-dependent model of a HVDC transf]] | 2019 |
-| [[reduced-order-dynamic-model-of-modular|Reduced-Order Dynamic Model of Modular]] | 2019 |
-| [[reduced-order-dynamic-model-of-modular|Reduced-Order Dynamic Model of Modular]] | 2019 |
-| [[spurious-power-losses-in-modular-multilevel-converter-arm-equivalent-model|Spurious Power Losses in Modular Multilevel Converter Arm Eq]] | 2019 |
-| [[基于状态空间法的高压直流输电系统电磁暂态简化模型的解析算法|基于状态空间法的高压直流输电系统电磁暂态简化模型的解析算法]] | 2019 |
-| [[基于状态空间法的高压直流输电系统电磁暂态简化模型的解析算法|基于状态空间法的高压直流输电系统电磁暂态简化模型的解析算法]] | 2019 |
-| [[考虑换流器内部故障的lcc-hvdc动态平均化建模方法-13&14|考虑换流器内部故障的LCC-HVDC动态平均化建模方法]] | 2019 |
-| [[适用于交直流混联电网的ch-mmc电磁暂态快速仿真模型-15|适用于交直流混联电网的CH-MMC电磁暂态快速仿真模型]] | 2019 |
-| [[适用于交直流混联电网的ch-mmc电磁暂态快速仿真模型-15|适用于交直流混联电网的CH-MMC电磁暂态快速仿真模型]] | 2019 |
-| [[characteristics-and-optimal-configuration-of-capacitive-current-limiter-consider|Characteristics and Optimal Configuration of Capacitive Curr]] | 2020 |
-| [[combining-detailed-equivalent-model-with-switching-function-based-average-value-|Combining Detailed Equivalent Model With Switching-Function-]] | 2020 |
-| [[hierarchical-device-level-modular-multilevel-converter-modeling-for-parallel-and|Hierarchical Device-Level Modular Multilevel Converter Model]] | 2020 |
-| [[hierarchical-device-level-modular-multilevel-converter-modeling-for-parallel-and|Hierarchical Device-Level Modular Multilevel Converter Model]] | 2020 |
-| [[interface-displacement-and-mapping-equivalence-based-hybrid-simulation-for-hvacd-24|Interface Displacement and Mapping Equivalence Based Hybrid ]] | 2020 |
-| [[partitioned-fitting-and-dc-correction-in-transmission-linecable-models-for-wideb|Partitioned fitting and DC correction in transmission line/c]] | 2020 |
-| [[real-time-simulation-with-an-industrial-dccb-controller-in-a-hvdc-grid|Real-time simulation with an industrial DCCB controller in a]] | 2020 |
-| [[real-time-simulation-with-an-industrial-dccb-controller-in-a-hvdc-grid|Real-time simulation with an industrial DCCB controller in a]] | 2020 |
-| [[spurious-power-and-its-elimination-in-modular-multilevel-converter-models|Spurious power and its elimination in modular multilevel con]] | 2020 |
-| [[spurious-power-and-its-elimination-in-modular-multilevel-converter-models|Spurious power and its elimination in modular multilevel con]] | 2020 |
-| [[use-of-efficient-task-allocation-algorithm-for-parallel-real-time-emt-simulation|Use of efficient task allocation algorithm for parallel real]] | 2020 |
-| [[a-comparative-study-of-electromagnetic-transient-simulations-using-companion-cir|A Comparative Study of Electromagnetic Transient Simulations]] | 2021 |
-| [[compensation-method-for-parallel-real-time-emt-studies|Compensation method for parallel real-time EMT studies✰]] | 2021 |
-| [[extending-the-frequency-bandwidth-of-transient-stability-simulation-using-dynami|Extending the Frequency Bandwidth of Transient Stability Sim]] | 2021 |
-| [[flexible-time-stepping-dynamic-emulation-of-acdc-grid-for-faster-than-scada-appl|Flexible Time-Stepping Dynamic Emulation of AC/DC Grid for F]] | 2021 |
-| [[large-scale-hybrid-real-time-simulation-modeling-and-benchmark-for-nelson-river-|Large-scale hybrid real time simulation modeling and benchma]] | 2021 |
-| [[large-scale-hybrid-real-time-simulation-modeling-and-benchmark-for-nelson-river-|Large-scale hybrid real time simulation modeling and benchma]] | 2021 |
-| [[mitigation-of-subsynchronous-interactions-in-hybrid-acdc-grid-with-renewable-ene|Mitigation of Subsynchronous Interactions in Hybrid AC/DC Gr]] | 2021 |
-| [[wave-function-and-multiscale-modeling-of-mmc-hvdc-system-for-wide-frequency-tran|Wave Function and Multiscale Modeling of MMC-HVdc System for]] | 2021 |
-| [[级联h桥型电力电子变压器的闭锁状态等效建模方法-33|级联H桥型电力电子变压器的闭锁状态等效建模方法]] | 2021 |
-| [[a-transformer-model-with-hysteresis-characteristics-for-electromagnetic-transien|A Transformer Model With Hysteresis Characteristics for Elec]] | 2022 |
-| [[average-value-modeling-of-line-commutated-inverter-systems-with-commutation-fail|Average-Value Modeling of Line-Commutated Inverter Systems W]] | 2022 |
-| [[design-of-hybrid-series-converter-valve-considering-device-switching-characteris|Design of hybrid series converter valve considering device s]] | 2022 |
-| [[electromechanical-electromagnetic-hybrid-simulation-technology-with-large-number|Electromechanical-electromagnetic Hybrid Simulation Technolo]] | 2022 |
-| [[electromechanical-electromagnetic-hybrid-simulation-technology-with-large-number|Electromechanical-electromagnetic Hybrid Simulation Technolo]] | 2022 |
-| [[electromechanical-electromagnetic-transient-hybrid-simulation-of-an-acdc-hybrid-|Electromechanical-electromagnetic transient hybrid simulatio]] | 2022 |
-| [[full-state-arm-average-value-model-for-simulation-of-active-modular-multilevel-c|Full-state Arm Average Value Model for Simulation of Active ]] | 2022 |
-| [[2728modeling|Modeling_of_LCC_HVDC_Systems_Using_Dynam]] | 2022 |
-| [[the-averaged-value-model-of-a-flexible-power-electronics-based-substation-in-hyb|The Averaged-value Model of a Flexible Power Electronics Bas]] | 2022 |
-| [[中-国-电-机-工-程-学-报-34|中  国  电  机  工  程  学  报]] | 2022 |
-| [[中-国-电-机-工-程-学-报-34|中  国  电  机  工  程  学  报]] | 2022 |
-| [[中-国-电-机-工-程-学-报-36|中  国  电  机  工  程  学  报]] | 2022 |
-| [[中-国-电-机-工-程-学-报|中  国  电  机  工  程  学  报]] | 2022 |
-| [[中-国-电-机-工-程-学-报|中  国  电  机  工  程  学  报]] | 2022 |
-| [[大规模电力电子设备接入的电力系统混合仿真接口技术综述|大规模电力电子设备接入的电力系统混合仿真接口技术综述]] | 2022 |
-| [[模块化多电平换流器电磁暂态模型研究综述|模块化多电平换流器电磁暂态模型研究综述]] | 2022 |
-| [[模块化多电平换流器的高效电磁暂态仿真方法研究|模块化多电平换流器的高效电磁暂态仿真方法研究]] | 2022 |
-| [[混合型mmc全状态高效电磁暂态仿真方法研究|混合型MMC全状态高效电磁暂态仿真方法研究]] | 2022 |
-| [[电力系统机电-电磁混合仿真边界解耦算法研究|电力系统机电-电磁混合仿真边界解耦算法研究]] | 2022 |
-| [[电力系统机电-电磁混合仿真边界解耦算法研究|电力系统机电-电磁混合仿真边界解耦算法研究]] | 2022 |
-| [[计及电容过渡过程的双钳位型mmc电磁暂态高效仿真方法|计及电容过渡过程的双钳位型MMC电磁暂态高效仿真方法]] | 2022 |
-| [[高频隔离型电力电子变压器电磁暂态加速仿真方法与展望|高频隔离型电力电子变压器电磁暂态加速仿真方法与展望]] | 2022 |
-| [[an-enhanced-method-to-achieve-exact-dc-values-for-frequency-dependent-transmissi|An Enhanced Method to Achieve Exact DC Values for Frequency-]] | 2023 |
-| [[an-accelerated-detailed-equivalent-model-for-modular-multilevel-converters|An accelerated detailed equivalent model for modular multile]] | 2023 |
-| [[generalized-electromagnetic-transient-equivalent-modeling-and-implementation-of-|Generalized Electromagnetic Transient Equivalent Modeling an]] | 2023 |
-| [[lessons-learned-in-porting-offline-large-scale-power-system-simulation-to-real-t|Lessons learned in porting offline large-scale power system ]] | 2023 |
-| [[real-time-simulation-of-power-system-electromagnetic-transients-on-fpga-using-ad|Real-Time Simulation of Power System Electromagnetic Transie]] | 2023 |
-| [[交直流电力系统分割并行电磁暂态数字仿真方法|交直流电力系统分割并行电磁暂态数字仿真方法]] | 2023 |
-| [[多样性子模块混合型mmc统一外特性高效电磁暂态模型|多样性子模块混合型MMC统一外特性高效电磁暂态模型]] | 2023 |
-| [[多样性子模块混合型mmc统一外特性高效电磁暂态模型|多样性子模块混合型MMC统一外特性高效电磁暂态模型]] | 2023 |
-| [[多类型子模块mmc电磁暂态通用建模和实现方法|多类型子模块MMC电磁暂态通用建模和实现方法]] | 2023 |
-| [[多类型子模块mmc电磁暂态通用建模和实现方法|多类型子模块MMC电磁暂态通用建模和实现方法]] | 2023 |
-| [[电力系统数字混合仿真技术综述及展望|电力系统数字混合仿真技术综述及展望]] | 2023 |
-| [[analytical-calculation-method-of-outer-loop-controller-parameters-of-hvdc-conver|Analytical Calculation Method of Outer Loop Controller Param]] | 2024 |
-| [[基于mmc平均值仿真模型的损耗快速评估方法|Fast Loss Evaluation Method Based on MMC Average Simulation ]] | 2024 |
-| [[key-technologies-and-prospects-for-electromagnetic-transient-parallel-simulation|Key Technologies and Prospects for Electromagnetic Transient]] | 2024 |
-| [[shooting-method-based-modular-multilevel-converter-initialization-for-electromag|Shooting method based modular multilevel converter initializ]] | 2024 |
-| [[shooting-method-based-modular-multilevel-converter-initialization-for-electromag|Shooting method based modular multilevel converter initializ]] | 2024 |
-| [[time-domain-modeling-of-a-subsea-buried-cable|Time-domain modeling of a subsea buried cable]] | 2024 |
-| [[基于模块化多电平换流器的超级电容储能系统高效仿真方法|基于模块化多电平换流器的超级电容储能系统高效仿真方法]] | 2024 |
-| [[新能源电力系统细粒度并行与多速率电磁暂态仿真|新能源电力系统细粒度并行与多速率电磁暂态仿真]] | 2024 |
-| [[考虑死区特性的全桥型mmc状态空间平均化建模方法|考虑死区特性的全桥型MMC状态空间平均化建模方法]] | 2024 |
-| [[非隔离型直流变压器的快速电磁暂态等效建模方法|非隔离型直流变压器的快速电磁暂态等效建模方法]] | 2024 |
-| [[analysis-on-dynamic-characteristic-of-control-mode-for-800-kv-yun-guang-uhvdc|Analysis on dynamic characteristic of control mode for +/-80]] | 2025 |
-| [[electromagnetic-transient-modeling-and-simulation-of-large-power-systems-emt-sim|Electromagnetic Transient Modeling and Simulation of Large P]] | 2025 |
-| [[impedance-based-stability-analysis-of-the-multi-terminal-cascaded-hybrid-hvdc-sy|Impedance Based Stability Analysis of the Multi-terminal Cas]] | 2025 |
-| [[sfa-emt-hybrid-simulation-of-power-systems-application-to-hvdc-systems|SFA-EMT hybrid simulation of power systems: Application to H]] | 2025 |
-| [[sfa-emt-hybrid-simulation-of-power-systems-application-to-hvdc-systems|SFA-EMT hybrid simulation of power systems: Application to H]] | 2025 |
-| [[z-tool-frequency-domain-characterization-of-emt-models-for-small-signal-stabilit|Z-Tool: Frequency-domain characterization of EMT models for ]] | 2025 |
-| [[z-tool-frequency-domain-characterization-of-emt-models-for-small-signal-stabilit|Z-Tool: Frequency-domain characterization of EMT models for ]] | 2025 |
-| [[大规模交直流电网电磁暂态数模混合仿真平台构建及验证-40|大规模交直流电网电磁暂态数模混合仿真平台构建及验证]] | 2025 |
-| [[dead-time-effect-modeling-for-hybrid-modular-multilevel-converter-using-twin-map|Dead-time effect modeling for hybrid modular multilevel conv]] | 2026 |
-| [[electromechanical-transientelectromagnetic-transient-hybrid-simulation-method-co|Electromechanical transientelectromagnetic transient hybrid ]] | 2026 |
-| [[fast-electromagnetic-transient-simulation-models-of-modular-multilevel-converter|Fast electromagnetic transient simulation models of modular ]] | 2026 |
-| [[vsc-hvdc-系统的动态相量法建模仿真分析|VSC-HVDC 系统的动态相量法建模仿真分析]] | 2026 |
-| [[适用于实时仿真的mmc子模块电容电压优化均衡方法|适用于实时仿真的MMC子模块电容电压优化均衡方法]] | 2026 |
-| [[大电网仿真工具现状及其在华北电网推广应用的思考|大电网仿真工具现状及其在华北电网推广应用的思考]] | 未知 |
+
+| Dead-time effect modeling for hybrid modular multilevel conv | 2026 |
+| Electromechanical transientelectromagnetic transient hybrid  | 2026 |
+| Fast electromagnetic transient simulation models of modular  | 2026 |
+| VSC-HVDC 系统的动态相量法建模仿真分析 | 2026 |
+| 适用于实时仿真的MMC子模块电容电压优化均衡方法 | 2026 |
+| Analysis on dynamic characteristic of control mode for +/-80 | 2025 |
+| Electromagnetic Transient Modeling and Simulation of Large P | 2025 |
+| Impedance Based Stability Analysis of the Multi-terminal Cas | 2025 |
+| SFA-EMT hybrid simulation of power systems: Application to H | 2025 |
+| Z-Tool: Frequency-domain characterization of EMT models for  | 2025 |
+| 大规模交直流电网电磁暂态数模混合仿真平台构建及验证 | 2025 |
+| Analytical Calculation Method of Outer Loop Controller Param | 2024 |
+| Fast Loss Evaluation Method Based on MMC Average Simulation  | 2024 |
+| Key Technologies and Prospects for Electromagnetic Transient | 2024 |
+| Shooting method based modular multilevel converter initializ | 2024 |
+| Time-domain modeling of a subsea buried cable | 2024 |
+| 基于模块化多电平换流器的超级电容储能系统高效仿真方法 | 2024 |
+| 新能源电力系统细粒度并行与多速率电磁暂态仿真 | 2024 |
+| 考虑死区特性的全桥型MMC状态空间平均化建模方法 | 2024 |
+| 非隔离型直流变压器的快速电磁暂态等效建模方法 | 2024 |
+| An Enhanced Method to Achieve Exact DC Values for Frequency- | 2023 |
+| An accelerated detailed equivalent model for modular multile | 2023 |
+| Generalized Electromagnetic Transient Equivalent Modeling an | 2023 |
+| Lessons learned in porting offline large-scale power system  | 2023 |
+| Real-Time Simulation of Power System Electromagnetic Transie | 2023 |
+| 交直流电力系统分割并行电磁暂态数字仿真方法 | 2023 |
+| 多样性子模块混合型MMC统一外特性高效电磁暂态模型 | 2023 |
+| 多类型子模块MMC电磁暂态通用建模和实现方法 | 2023 |
+| 电力系统数字混合仿真技术综述及展望 | 2023 |
+| A Transformer Model With Hysteresis Characteristics for Elec | 2022 |
+| Average-Value Modeling of Line-Commutated Inverter Systems W | 2022 |
+| Design of hybrid series converter valve considering device s | 2022 |
+| Electromechanical-electromagnetic Hybrid Simulation Technolo | 2022 |
+| Electromechanical-electromagnetic transient hybrid simulatio | 2022 |
+| Full-state Arm Average Value Model for Simulation of Active  | 2022 |
+| Modeling_of_LCC_HVDC_Systems_Using_Dynam | 2022 |
+| The Averaged-value Model of a Flexible Power Electronics Bas | 2022 |
+| 中  国  电  机  工  程  学  报 | 2022 |
+| 大规模电力电子设备接入的电力系统混合仿真接口技术综述 | 2022 |
+| 模块化多电平换流器电磁暂态模型研究综述 | 2022 |
+| 模块化多电平换流器的高效电磁暂态仿真方法研究 | 2022 |
+| 混合型MMC全状态高效电磁暂态仿真方法研究 | 2022 |
+| 电力系统机电-电磁混合仿真边界解耦算法研究 | 2022 |
+| 计及电容过渡过程的双钳位型MMC电磁暂态高效仿真方法 | 2022 |
+| 高频隔离型电力电子变压器电磁暂态加速仿真方法与展望 | 2022 |
