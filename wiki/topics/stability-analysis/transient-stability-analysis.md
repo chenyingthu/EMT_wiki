@@ -9,18 +9,66 @@ updated: "2026-05-03"
 # 暂态稳定性分析 (Transient Stability Analysis)
 
 
-```mermaid
-graph TD
-    subgraph Ncmp[暂态稳定性分析 (Transient Stability…]
-        N0[系统规划设计: 评估网络结构、机组配置的稳定性]
-        N1[运行方式安排: 确定安全运行边界和传输极限]
-        N2[保护整定配合: 验证保护动作时间满足稳定要求]
-        N3[紧急控制策略: 制定切机、切负荷等控制措施]
-        N4[安全稳定计算: 在线安全评估和预防控制]
-    end
-```
 
-
+<div style="text-align:center;margin:16px 0;">
+<svg viewBox="0 0 900 420" xmlns="http://www.w3.org/2000/svg">
+  <rect x="10" y="10" width="880" height="70" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="bold" fill="#1e40af">应用场景</text>
+  <rect x="30" y="40" width="150" height="30" rx="6" fill="#fff" stroke="#2563eb" stroke-width="1"/>
+  <text x="105" y="59" text-anchor="middle" font-size="11" fill="#1e40af">系统规划设计</text>
+  <rect x="195" y="40" width="150" height="30" rx="6" fill="#fff" stroke="#2563eb" stroke-width="1"/>
+  <text x="270" y="59" text-anchor="middle" font-size="11" fill="#1e40af">运行方式安排</text>
+  <rect x="360" y="40" width="150" height="30" rx="6" fill="#fff" stroke="#2563eb" stroke-width="1"/>
+  <text x="435" y="59" text-anchor="middle" font-size="11" fill="#1e40af">保护整定配合</text>
+  <rect x="525" y="40" width="150" height="30" rx="6" fill="#fff" stroke="#2563eb" stroke-width="1"/>
+  <text x="600" y="59" text-anchor="middle" font-size="11" fill="#1e40af">紧急控制策略</text>
+  <rect x="690" y="40" width="150" height="30" rx="6" fill="#fff" stroke="#2563eb" stroke-width="1"/>
+  <text x="765" y="59" text-anchor="middle" font-size="11" fill="#1e40af">安全稳定计算</text>
+  <line x1="450" y1="80" x2="450" y2="105" stroke="#333" stroke-width="1.5" marker-end="url(#arr1)"/>
+  <defs><marker id="arr1" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#333"/></marker></defs>
+  <rect x="10" y="110" width="880" height="70" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="450" y="128" text-anchor="middle" font-size="13" font-weight="bold" fill="#166534">分析方法</text>
+  <rect x="30" y="140" width="250" height="30" rx="6" fill="#fff" stroke="#16a34a" stroke-width="1"/>
+  <text x="155" y="159" text-anchor="middle" font-size="11" fill="#166534">时域仿真法 (TDS)</text>
+  <rect x="295" y="140" width="250" height="30" rx="6" fill="#fff" stroke="#16a34a" stroke-width="1"/>
+  <text x="420" y="159" text-anchor="middle" font-size="11" fill="#166534">直接法 (EAC/能量函数)</text>
+  <rect x="560" y="140" width="300" height="30" rx="6" fill="#fff" stroke="#16a34a" stroke-width="1"/>
+  <text x="710" y="159" text-anchor="middle" font-size="11" fill="#166534">混合方法 (SIME/BCU)</text>
+  <line x1="450" y1="180" x2="450" y2="205" stroke="#333" stroke-width="1.5" marker-end="url(#arr1)"/>
+  <rect x="10" y="210" width="880" height="70" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+  <text x="450" y="228" text-anchor="middle" font-size="13" font-weight="bold" fill="#92400e">稳定判据与指标</text>
+  <rect x="30" y="240" width="160" height="30" rx="6" fill="#fff" stroke="#d97706" stroke-width="1"/>
+  <text x="110" y="259" text-anchor="middle" font-size="11" fill="#92400e">转子角/角速度判据</text>
+  <rect x="205" y="240" width="160" height="30" rx="6" fill="#fff" stroke="#d97706" stroke-width="1"/>
+  <text x="285" y="259" text-anchor="middle" font-size="11" fill="#92400e">临界清除时间 (CCT)</text>
+  <rect x="380" y="240" width="160" height="30" rx="6" fill="#fff" stroke="#d97706" stroke-width="1"/>
+  <text x="460" y="259" text-anchor="middle" font-size="11" fill="#92400e">能量裕度指标</text>
+  <rect x="555" y="240" width="160" height="30" rx="6" fill="#fff" stroke="#d97706" stroke-width="1"/>
+  <text x="635" y="259" text-anchor="middle" font-size="11" fill="#92400e">稳定裕度灵敏度</text>
+  <rect x="730" y="240" width="130" height="30" rx="6" fill="#fff" stroke="#d97706" stroke-width="1"/>
+  <text x="795" y="259" text-anchor="middle" font-size="11" fill="#92400e">TSI 综合指标</text>
+  <line x1="450" y1="280" x2="450" y2="305" stroke="#333" stroke-width="1.5" marker-end="url(#arr1)"/>
+  <rect x="10" y="310" width="880" height="70" rx="8" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.5"/>
+  <text x="450" y="328" text-anchor="middle" font-size="13" font-weight="bold" fill="#5b21b6">控制措施</text>
+  <rect x="30" y="340" width="180" height="30" rx="6" fill="#fff" stroke="#7c3aed" stroke-width="1"/>
+  <text x="120" y="359" text-anchor="middle" font-size="11" fill="#5b21b6">预防控制 (发电再调度)</text>
+  <rect x="225" y="340" width="180" height="30" rx="6" fill="#fff" stroke="#7c3aed" stroke-width="1"/>
+  <text x="315" y="359" text-anchor="middle" font-size="11" fill="#5b21b6">紧急控制 (切机/切负荷)</text>
+  <rect x="420" y="340" width="180" height="30" rx="6" fill="#fff" stroke="#7c3aed" stroke-width="1"/>
+  <text x="510" y="359" text-anchor="middle" font-size="11" fill="#5b21b6">直流功率调制</text>
+  <rect x="615" y="340" width="250" height="30" rx="6" fill="#fff" stroke="#7c3aed" stroke-width="1"/>
+  <text x="740" y="359" text-anchor="middle" font-size="11" fill="#5b21b6">WAMS广域监测与控制</text>
+  <rect x="10" y="400" width="12" height="12" rx="2" fill="#dbeafe" stroke="#2563eb"/>
+  <text x="27" y="410" font-size="10" fill="#333">应用场景</text>
+  <rect x="120" y="400" width="12" height="12" rx="2" fill="#dcfce7" stroke="#16a34a"/>
+  <text x="137" y="410" font-size="10" fill="#333">分析方法</text>
+  <rect x="230" y="400" width="12" height="12" rx="2" fill="#fef3c7" stroke="#d97706"/>
+  <text x="247" y="410" font-size="10" fill="#333">稳定判据</text>
+  <rect x="340" y="400" width="12" height="12" rx="2" fill="#ede9fe" stroke="#7c3aed"/>
+  <text x="357" y="410" font-size="10" fill="#333">控制措施</text>
+</svg>
+</div>
+<p style="text-align:center;font-size:12px;color:#666;margin-top:8px;">图1 · 暂态稳定性分析：应用场景→分析方法→稳定判据→控制措施四层体系架构</p>
 ## 核心原理详解
 
 ### 技术概述
@@ -61,7 +109,6 @@ graph TD
 | 紧急控制策略 | 制定切机、切负荷等控制措施 |
 | 安全稳定计算 | 在线安全评估和预防控制 |
 
----
 
 ## EMT中的作用
 
@@ -76,7 +123,10 @@ graph TD
 从EMT仿真角度，暂态稳定性分析 (Transient Stability Analysis)可形式化表达为：
 
 $$
-\text{待补充：暂态稳定性分析 (Transient Stability Analysis)的数学形式化描述}
+\begin{cases}
+\dot{\delta}_i = \omega_i - \omega_0 \\
+\frac{2H_i}{\omega_0}\dot{\omega}_i = P_{mi} - P_{ei} - D_i(\omega_i - \omega_0) \quad (i = 1, 2, \ldots, n)
+\end{cases}
 $$
 ## 摇摆方程 (Swing Equation)
 
@@ -128,7 +178,6 @@ $$
 - $X_{eq}$：等值电抗
 - $P_{max}$：最大传输功率
 
----
 
 ## 时域仿真方法 (Time-Domain Simulation)
 
@@ -209,7 +258,6 @@ $$
 - **相对角度判据**：最大相对摆幅逐渐衰减
 - **同步力矩判据**：系统在平衡点处恢复力矩为正
 
----
 
 ## 直接法 (Direct Methods)
 
@@ -328,7 +376,6 @@ $$
 \eta_{OMIB} = \frac{A_{dec} - A_{acc}}{A_{acc}} \times 100\%
 $$
 
----
 
 ## 混合方法 (Hybrid Methods)
 
@@ -394,7 +441,6 @@ $$
 | PEBS | 中等 | 快 | 大规模 | 近似 | 适合 |
 | 直接法 | 依赖模型 | 最快 | 中小规模 | 有 | 适合 |
 
----
 
 ## 稳定判据与指标
 
@@ -456,7 +502,6 @@ $$
 
 其中 $w_i$ 为权重系数。
 
----
 
 ## 临界清除时间计算 (CCT)
 
@@ -505,7 +550,6 @@ $$
 | 220kV | >120ms | >200ms |
 | 110kV | >100ms | >180ms |
 
----
 
 ## 灵敏度分析
 
@@ -552,7 +596,6 @@ $$
 - **规划决策支持**：指导网络扩展和机组配置
 - **参数整定**：优化保护和安全自动装置定值
 
----
 
 ## 预防控制与紧急控制
 
@@ -637,7 +680,6 @@ $$
 | 暂态控制 | 100-200ms | 切机、直流调制 |
 | 紧急控制 | 200-500ms | 切负荷、解列 |
 
----
 
 ## 工具与软件
 
@@ -667,7 +709,6 @@ $$
 - **EMS/DMS集成**：与能量管理系统集成的稳定分析
 - **云端分析平台**：基于云计算的大规模并行稳定计算
 
----
 
 ## 相关方法
 
@@ -683,7 +724,6 @@ $$
 - [[numerical-integration]] - 数值积分：时域仿真计算方法
 - `critical-clearing-time` - 临界清除时间：稳定判据关键参数
 
----
 
 ## 相关主题
 
@@ -699,7 +739,6 @@ $$
 - [[wide-area-monitoring-protection]] - 广域监测：WAMS在稳定分析中的应用
 - [[real-time-simulation]] - 实时仿真：硬件在环稳定测试
 
----
 
 ## 相关模型
 
@@ -712,7 +751,6 @@ $$
 - [[transformer-model]] - 变压器模型：变压器饱和特性
 - [[a-vsc-hvdc-model-with-reduced-computational-intensity]] - HVDC模型：直流系统控制模型
 
----
 
 ## 理论基础
 
@@ -735,7 +773,6 @@ $$
 
 其中 $\theta$ 和 $V$ 为负荷母线相角和电压。
 
----
 
 ## 研究前沿
 
@@ -759,32 +796,6 @@ $$
 
 ---
 
-## 来源论文
-
-| 论文 | 年份 |
-|------|------|
-| [[interfacing-techniques-for-transient-stability-and-electromagnetic-transient-hyb-fix|Interfacing Techniques for Transient Stability and Electroma]] | 2009 |
-| [[half-wavelength-system-transients-stability-simulation-using-dynamic-phasor-mode|输电线路工频动态相量模型在半波长交流输电系统机电暂态仿真中的应用研究]] | 2017 |
-| [[comparison-and-selection-of-grid-tied-inverter-models-for-accurate-and-efficient|Comparison and Selection of Grid-Tied Inverter Models for Ac]] | 2021 |
-| [[electromechanical-transient-modelling-and-application-of-modular-multilevel-conv|Electromechanical transient modelling and application of mod]] | 2021 |
-| [[electromechanical-transient-electromagnetic-transient-hybrid-simulation-of-doubl|Electromechanical transient-electromagnetic transient hybrid]] | 2022 |
-| [[evaluation-of-time-domain-and-phasor-domain-methods-for-power-system-transients|Evaluation of time-domain and phasor-domain methods for powe]] | 2022 |
-| [[2728基于电压源换流器的高压直流输电系统多尺度暂态建模与仿真研究|基于电压源换流器的高压直流输电系统多尺度暂态建模与仿真研究]] | 2022 |
-| [[a-multi-solver-framework-for-co-simulation-of-transients-in-modern-power-systems|A multi-solver framework for co-simulation of transients in ]] | 2023 |
-| [[massively-parallel-modeling-of-battery-energy-storage-systems-for-acdc-grid-high|Massively Parallel Modeling of Battery Energy Storage System]] | 2023 |
-## 来源论文
-
-| 论文 | 年份 |
-|------|------|
-| [[interfacing-techniques-for-transient-stability-and-electromagnetic-transient-hyb-fix|Interfacing Techniques for Transient Stability and Electroma]] | 2009 |
-| [[half-wavelength-system-transients-stability-simulation-using-dynamic-phasor-mode|输电线路工频动态相量模型在半波长交流输电系统机电暂态仿真中的应用研究]] | 2017 |
-| [[comparison-and-selection-of-grid-tied-inverter-models-for-accurate-and-efficient|Comparison and Selection of Grid-Tied Inverter Models for Ac]] | 2021 |
-| [[electromechanical-transient-modelling-and-application-of-modular-multilevel-conv|Electromechanical transient modelling and application of mod]] | 2021 |
-| [[electromechanical-transient-electromagnetic-transient-hybrid-simulation-of-doubl|Electromechanical transient-electromagnetic transient hybrid]] | 2022 |
-| [[evaluation-of-time-domain-and-phasor-domain-methods-for-power-system-transients|Evaluation of time-domain and phasor-domain methods for powe]] | 2022 |
-| [[2728基于电压源换流器的高压直流输电系统多尺度暂态建模与仿真研究|基于电压源换流器的高压直流输电系统多尺度暂态建模与仿真研究]] | 2022 |
-| [[a-multi-solver-framework-for-co-simulation-of-transients-in-modern-power-systems|A multi-solver framework for co-simulation of transients in ]] | 2023 |
-| [[massively-parallel-modeling-of-battery-energy-storage-systems-for-acdc-grid-high|Massively Parallel Modeling of Battery Energy Storage System]] | 2023 |
 ## 来源论文
 
 | 论文 | 年份 |
