@@ -74,7 +74,7 @@
 | 414 | sparse-matrix-solver.md | methods | methods/network-solution/sparse-matrix-solver.md | P1 | 999 | 2316 | 7 | 19 | completed |
 | 319 | state-estimation.md | methods | methods/system-studies/state-estimation.md | P1 | 999 | 2565 | 15 | 5 | completed |
 | 408 | submodule-model.md | models | models/submodule/submodule-model.md | P1 | 999 | 809 | 7 | 20 | completed |
-| 281 | swing-equation.md | methods | methods/stability-analysis/swing-equation.md | P1 | 999 | 3762 | 18 | 14 | pending |
+| 281 | swing-equation.md | methods | methods/stability-analysis/swing-equation.md | P1 | 999 | 3674 | 18 | 14 | completed |
 | 310 | synchronous-machine-model.md | models | models/rotating-machine/synchronous-machine-model.md | P1 | 999 | 2820 | 13 | 81 | pending |
 | 392 | three-phase-bridge-inverter.md | models | models/converter/three-phase-bridge-inverter.md | P1 | 999 | 1034 | 3 | 13 | pending |
 | 191 | time-domain-simulation.md | topics | topics/simulation/time-domain-simulation.md | P0 | 999 | 5656 | 36 | 23 | pending |
