@@ -101,7 +101,7 @@
 | 91 | large-timestep-simulation.md | methods | methods/numerical-methods/large-timestep-simulation.md | P0 | 999 | 2392 | 6 | 16 | completed |
 | 92 | pet.md | methods | methods/power-electronics/pet.md | P0 | 999 | 2392 | 5 | 13 | completed |
 | 93 | distribution-transformer.md | models | models/transformer/distribution-transformer.md | P0 | 999 | 2420 | 13 | 21 | completed |
-| 94 | resistor-model.md | models | models/basic-component/resistor-model.md | P0 | 999 | 2427 | 21 | 7 | pending |
+| 94 | resistor-model.md | models | models/basic-component/resistor-model.md | P0 | 999 | 2560 | 25 | 5 | completed |
 | 95 | mmc-modeling.md | topics | topics/component-modeling/mmc-modeling.md | P0 | 999 | 2475 | 14 | 30 | completed |
 | 96 | transient-stability-analysis.md | topics | topics/stability-analysis/transient-stability-analysis.md | P0 | 999 | 2476 | 46 | 27 | pending |
 | 97 | large-scale-power-system.md | topics | topics/simulation/large-scale-power-system.md | P0 | 999 | 2561 | 11 | 26 | completed |
