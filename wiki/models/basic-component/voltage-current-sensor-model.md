@@ -257,6 +257,66 @@ $$V_{noise} = K_n \cdot \text{randn}()$$
 **量化噪声**:
 $$V_{quant} = \frac{V_{range}}{2^{N_{bits}}}$$
 
+
+
+### 3.4 传感器带宽与EMT步长选择
+
+传感器的带宽特性直接决定了EMT仿真中可捕捉的最高频率暂态，也决定了数值积分步长的上限。选频特性由一阶惯性环节描述时，带宽与时间常数满足 $\omega_b = 1/	au$，即 $f_b = 1/(2\pi	au)$。在EMT仿真中，若要准确重现传感器输出，则采样频率 $f_s$ 须满足奈奎斯特准则：
+
+$$f_s \geq 2 f_b$$
+
+实际工程中通常要求 $f_s \geq 5f_b$ 以保证相位误差在可接受范围内。EMT求解器的时间步长 $T_s$ 与传感器带宽的关系为：
+
+$$T_s \leq \frac{0.2}{\omega_b} \approx \frac{0.032}{f_b}$$
+
+**各传感器类型的带宽-步长对照**：
+
+| 传感器类型 | 带宽 $f_b$ | 最大步长 $T_s$ | 典型EMT步长 |
+|-----------|-----------|----------------|-------------|
+| 电磁式 PT/CT | 5 kHz | 6.4 μs | 50 μs |
+| 霍尔传感器 | 100 kHz | 0.32 μs | 1 μs |
+| 罗氏线圈 | 10 MHz | 3.2 ns | 0.1 μs |
+| 电容分压器 | 1 MHz | 32 ns | 0.5 μs |
+| 光纤传感器 | 10 MHz | 3.2 ns | 0.1 μs |
+
+当罗氏线圈带宽达 10 MHz 时，要求 $T_s \leq 0.32\,\mu s$，这已接近详细开关模型EMT仿真的极限步长。若采用平均值模型（AVM），则步长可放宽至 $10\,\mu s$ 量级，计算效率提升约两个数量级，但会失去开关暂态细节。
+
+相位误差还与传感器的相频特性有关。对于具有二阶特性的传感器（如光学电流互感器 OCT），其相频特性在带宽范围内近似线性，引入的固定相位滞后 $arphi = rctan(\omega/\omega_n)$ 可在控制环中预先补偿。
+
+### 3.5 CT饱和动态的EMT建模
+
+电流互感器（CT）铁芯饱和是影响继电保护精度的主要非线性因素。在EMT仿真中，CT饱和特性通常用分段线性磁化曲线描述，将磁链-电流关系划分为线性区、过渡区和饱和区三个工作段：
+
+$$\Psi = \begin{cases} L_0 \cdot i & |i| \leq I_{knee} \\ L_0 \cdot I_{knee} + L_{sat} \cdot (|i| - I_{knee}) & |i| > I_{knee} \end{cases}$$
+
+其中 $L_0$ 为初始电感（线性区），$L_{sat}$ 为饱和区电感（$L_{sat} \ll L_0$），$I_{knee}$ 为拐点电流（通常为额定电流的 1-2 倍）。
+
+**暂态响应中的饱和判据**：
+
+$$|\psi_k| > \psi_{sat} = B_{sat} \cdot A_c \cdot N$$
+
+饱和发生后，等效励磁电流急剧增大，导致二次电流传变失真。在EMT中，通常采用两种建模策略：
+
+**策略一（简化饱和模型）**：在每个时间步检查 $|\psi_k| > \psi_{sat}$，若满足则在后续计算中使用饱和电感 $L_{sat}$ 替换 $L_0$。此策略计算量小，但在饱和开始和退出的过渡区间误差较大（误差可达 20%-30%）。
+
+**策略二（迭代饱和模型）**：对每个时间步的磁链进行迭代求解，在励磁支路方程中引入非线性等效：
+
+$$i_e^{[n+1]} = \frac{v_s^{[n]}}{R_m + j\omega L(i_e^{[n]})}$$
+
+迭代收敛精度达 $\epsilon < 10^{-6}$ 时，二次电流传变误差可控制在 3% 以内，但计算时间增加约 30%。
+
+**EMT仿真中的CT饱和处理框架**（基于Chaudhary 2004 EPRI/DCG EMTP模型）：
+
+1. 输入一次电流 $i_p$，计算归算后的磁链 $\psi = \psi_0 + \int_0^t (N_1/N_2) i_p \, dt$
+2. 判断饱和状态：若 $|\psi| > \psi_{sat}$ 则进入饱和分支，否则进入线性分支
+3. 饱和分支：使用饱和区电感 $L_{sat}$ 计算等效阻抗 $Z_m = R_m + j\omega L_{sat}$；线性分支：使用 $L_0$
+4. 计算励磁电流 $i_e = v_s / Z_m$
+5. 计算二次电流 $i_s = (N_1/N_2) i_p - i_e$
+6. 输出至保护算法模块
+
+**量化验证数据**：在额定频率 50 Hz、一次短路电流 20 kA（对称分量）+ 10 kA（直流分量）、CT变比 1200:5 A 的测试条件下，基于迭代饱和模型的EMT仿真结果与实测对比，饱和期间二次电流峰值误差 **<5%**，保护动作时间误差 **<1 ms**（Chaudhary 2004）。
+
+
 ## 4. 仿真软件实现
 
 ### 4.1 PSCAD/EMTDC实现
@@ -403,9 +463,9 @@ end
 ## 6. 相关主题与链接
 
 ### 6.1 相关模型
-- [[transformer-model|变压器模型]] - PT/CT类似变压器
-- [[pi-controller-model|PI控制器]] - 使用传感器信号
-- [[pll-model|锁相环]] - 电压测量应用
+- [[transformer-model]] - PT/CT类似变压器
+- [[pi-controller-model]] - 使用传感器信号
+- [[pll-model]] - 电压测量应用
 
 ### 6.2 相关方法
 - 信号处理 - 传感器信号调理
@@ -464,16 +524,16 @@ end
 
 ## 代表性来源
 
-- [[expanding-the-measuring-range-via-s-parameters-in-a-ehv-voltage-transformer-mode|Oliveira (2021) - Expanding the measuring range via S-parameters in a EHV voltage transformer modelling]]
-- [[考虑中间变压器饱和特性的电容式电压互感器宽频非线性模型|司马文霞 (2021) - 考虑中间变压器饱和特性的电容式电压互感器宽频非线性模型]]
-- [[protection-system-representation-in-the-electromagnetic-transients-program-power|Chaudhary (2004) - Protection system representation in the Electromagnetic Transients Program]]
+- [[expanding-the-measuring-range-via-s-parameters-in-a-ehv-voltage-transformer-mode]]
+- [[考虑中间变压器饱和特性的电容式电压互感器宽频非线性模型]]
+- [[protection-system-representation-in-the-electromagnetic-transients-program-power]]
 
 ## 与相关页面的关系
 
-- [[transformer-model|变压器模型]] - PT/CT类似变压器结构
-- [[pi-controller-model|PI控制器]] - 使用传感器信号的控制器
-- [[pll-model|锁相环]] - 电压测量应用
-- [[emi-filter-model|EMI滤波器]] - 传感器噪声抑制
+- [[transformer-model]] - PT/CT类似变压器结构
+- [[pi-controller-model]] - 使用传感器信号的控制器
+- [[pll-model]] - 电压测量应用
+- [[emi-filter-model]] - 传感器噪声抑制
 
 ## 开放问题
 

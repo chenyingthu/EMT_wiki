@@ -81,7 +81,7 @@
 | 176 | unbalanced-fault-analysis.md | topics | topics/protection-lightning/unbalanced-fault-analysis.md | P0 | 999 | 4947 | 14 | 19 | completed |
 | 176 | unbalanced-fault-analysis.md | topics | topics/protection-lightning/unbalanced-fault-analysis.md | P0 | 999 | 5021 | 14 | 19 | pending |
 | 224 | variable-time-step-solver.md | methods | methods/numerical-methods/variable-time-step-solver.md | P0 | 999 | 11743 | 22 | 17 | completed |
-| 125 | voltage-current-sensor-model.md | models | models/basic-component/voltage-current-sensor-model.md | P0 | 999 | 3333 | 22 | 7 | pending |
+| 125 | voltage-current-sensor-model.md | models | models/basic-component/voltage-current-sensor-model.md | P0 | 999 | 3333 | 22 | 7 | completed |
 | 178 | weak-grid-vsc.md | models | models/equivalent/weak-grid-vsc.md | P0 | 999 | 5139 | 32 | 14 | completed |
 ||| 420 | 1 | emtp-atpdraw.md | bc=5167, bf=11, real_dup_fix + sinkar/colqui enrichment |
 |||| 421 | 1 | 1 | 0 | extinction-angle-calculation.md bc=4513, bf=19 |
