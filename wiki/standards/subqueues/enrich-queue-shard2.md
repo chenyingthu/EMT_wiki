@@ -68,7 +68,7 @@
 | 49 | protection-relay-modeling.md | topics | topics/protection-lightning/protection-relay-modeling.md | P0 | 999 | 1453 | 3 | 23 | completed |
 | 396 | pv-system-model.md | models | models/renewable-storage/pv-system-model.md | P1 | 999 | 979 | 3071 | 22 | 11 | completed 
 | 394 | recursive-convolution.md | methods | methods/signal-processing/recursive-convolution.md | P1 | 999 | 7096 | 14 | 8 | completed |
-| 94 | resistor-model.md | models | models/basic-component/resistor-model.md | P0 | 999 | 2427 | 21 | 7 | pending |
+| 94 | resistor-model.md | models | models/basic-component/resistor-model.md | P0 | 999 | 2542 | 25 | 13 | completed |
 | 261 | sequence-network-model.md | methods | methods/protection-fault/sequence-network-model.md | P1 | 999 | 5137 | 10 | 12 | pending |
 | 170 | single-phase-line-model.md | methods | methods/transmission-line/single-phase-line-model.md | P0 | 999 | 4738 | 25 | 12 | pending |
 | 414 | sparse-matrix-solver.md | methods | methods/network-solution/sparse-matrix-solver.md | P1 | 999 | 519 | 3 | 28 | pending |
