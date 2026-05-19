@@ -197,7 +197,7 @@
 | 187 | lightning-overvoltage.md | topics | topics/protection-lightning/lightning-overvoltage.md | P0 | 999 | 5528 | 17 | 22 | completed |
 | 188 | quasi-tem-approximation.md | methods | methods/transmission-line/quasi-tem-approximation.md | P0 | 999 | 5571 | 26 | 13 | completed |
 | 189 | csg.md | methods | methods/power-electronics/csg.md | P0 | 999 | 5593 | 6 | 10 | completed |
-| 190 | hbsm.md | methods | methods/power-electronics/hbsm.md | P0 | 999 | 5623 | 12 | 15 | pending |
+| 190 | hbsm.md | methods | methods/power-electronics/hbsm.md | P0 | 999 | 2016 | 12 | 13 | completed |
 | 191 | time-domain-simulation.md | topics | topics/simulation/time-domain-simulation.md | P0 | 999 | 5656 | 36 | 23 | pending |
 | 192 | high-performance-computing.md | methods | methods/simulation-technology/high-performance-computing.md | P0 | 999 | 5691 | 10 | 12 | completed |
 | 193 | power-electronics-control.md | methods | methods/control/power-electronics-control.md | P0 | 999 | 5713 | 16 | 1 | completed |
