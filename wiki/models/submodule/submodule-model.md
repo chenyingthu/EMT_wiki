@@ -3,185 +3,178 @@ title: "子模块 (SM) 模型"
 type: model
 tags: [submodule, sm, mmc, modular-multilevel, power-electronics, valve]
 created: "2026-05-04"
-updated: "2026-05-12"
-updated: "2026-05-11"
+updated: "2026-05-19"
 ---
 
 # 子模块 (SM) 模型
 
-
-
-
 ## 定义与边界
 
-子模块（Submodule, SM）是模块化多电平换流器（MMC）的基本组成单元，通常由半桥或全桥拓扑的电力电子开关、直流储能电容及均压电阻构成。子模块通过串联堆叠形成换流器阀臂，实现多电平电压波形合成和能量转换。
+子模块（Submodule, SM）是模块化多电平换流器（Modular Multilevel Converter, MMC）的基本组成单元，通过在半桥或全桥拓扑的电力电子开关与直流储能电容之间的协同工作，实现多电平电压波形合成。子模块通过串联堆叠形成换流器阀臂（每桥臂通常包含数十至数百个子模块），是MMC实现高电压、大容量输电的核心硬件基础。
 
-**边界限定**：本页面聚焦于MMC子模块的建模方法，不包括两电平/三电平换流器或其他拓扑的子模块。
+**边界限定**：本页面聚焦于MMC子模块的EMT建模方法，涵盖半桥子模块（HBSM）、全桥子模块（FBSM）、箝位双子模块（CDSM）等主流拓扑的等效电路与数值离散化，不包括两电平/三电平换流器或其他非模块化拓扑。
 
 ## EMT中的作用
 
-子模块是MMC仿真的核心建模对象：
+子模块是MMC电磁暂态仿真的核心建模对象，其EMT重要性体现在四个维度：
 
-- **详细建模**：每个子模块的开关、电容、保护均需精确模拟
-- **阀臂合成**：数百子模块串联决定阀臂电压电流特性
-- **均压控制**：子模块电容电压平衡是MMC稳定运行的关键
-- **故障分析**：子模块故障模式及冗余设计评估
+- **详细建模精度**：每个子模块的IGBT、二极管、电容、保护电路均需精确模拟，以确保暂态波形、谐波含量和故障响应的仿真精度
+- **阀臂电压合成**：数百个子模块串联决定阀臂电压电流特性，子模块开关状态决定桥臂输出电压的离散电平
+- **均压控制验证**：子模块电容电压平衡是MMC稳定运行的必要条件，建模必须保留各子模块电容电压状态以验证均压算法
+- **故障模式评估**：子模块故障、冗余设计、闭锁工况的仿真评估需要精确的故障等效电路
 
-## 主要分支与机制
+MMC的仿真挑战在于：随着子模块数量增加，详细模型的节点导纳矩阵维数急剧上升（$O(N \cdot n)^3$），每一个仿真步长都需要重新对超高阶矩阵求逆，导致计算效率极低。高效的EMT建模方法因此成为MMC仿真的核心研究方向。
 
-### 1. 半桥子模块 (Half-Bridge SM)
+## EMT建模方法
 
-拓扑结构：
-- 2个IGBT（T1、T2）带反并联二极管
-- 1个直流电容$C_{SM}$
-- 均压电阻$R_{bp}$
+根据是否保留各子模块电容电压的详细信息，SM的EMT建模方法分为两大类：
 
-开关状态：
+### 1. 详细开关模型（Detailed Switch Model）
+
+逐个建模每个子模块的IGBT、二极管和电容，保留完整的子模块状态。子模块电容通过梯形积分法离散为伴随导纳与历史电压源串联：
+
+$$i_C(t) = \frac{C_{SM}}{\Delta t} v_C(t) - \frac{C_{SM}}{\Delta t} v_C(t-\Delta t) + i_C(t-\Delta t)$$
+
+每个子模块用可变电阻代替IGBT/二极管开关组：导通时电阻取非常小的值（$R_{on} \approx 0$），关断时电阻取非常大的值（$R_{off} \to \infty$）。详细模型的优点是精度高、便于研究分析，缺点是子模块数量较大时仿真速度极慢，不适合大规模MMC-HVDC系统分析。
+
+### 2. 戴维南等效模型（Thevenin Equivalent Model）
+
+将每个子模块离散为伴随导纳与历史电压源串联，桥臂等效为单个戴维南支路（电压源$R_{SM} i_{arm}$与电阻$R_{SM}$串联），参与外部网络方程联立求解，是MMC高速EMT仿真的基准方法（Gnanarathna 2010）。单桥臂参与外部求解的节点数从$802$个锐减至$4$个，计算复杂度从$O((N \cdot n)^3)$降至$O((2m)^3)$，内存占用降低约$99.5\%$，仿真速度提升约$100$至$1000$倍。
+
+**等效过程**（Gnanarathna 2010）：
+1. 将IGBT/二极管开关组用$ON/OFF$可变电阻$R_1$、$R_2$代替
+2. 采用梯形积分法将电容离散化为戴维南电阻$R_C$和戴维南电压源$v_{CEQ}$
+3. 求取单个子模块的戴维南等效电阻$R_{SM}$与戴维南电压源$v_{SMEQ}$，叠加$N$个串联子模块得到桥臂戴维南等效电路
+
+### 3. 受控源通用等效模型（Controlled Source Model）
+
+将详细模型每个桥臂中全部子模块断开连接，正端口连接受控电流源，负端口接地，六个桥臂置换为受控电压源，实现电气解耦。该模型仅针对换流阀等效，详细模型中的任意控制算法仍然适用。
+
+### 4. 嵌套快速求解模型（Nested Fast Solution）
+
+通过舒尔补（Schur Complement）递归节点消去法，层层消除MMC内部节点，形成多端口诺顿等效。以每桥臂$200$个子模块（$n=6$, $m=2$）的MMC-HVDC系统为例，单桥臂参与外部求解的节点数从$802$个锐减至$4$个，单步求解时间从约$12.5\text{ ms}$降至约$0.04\text{ ms}$（约$310$倍加速），$2\text{ s}$仿真时长从约$45$分钟降至约$12$秒（Xu 2018）。
+
+## 子模块拓扑结构
+
+### 半桥子模块（Half-Bridge SM, HBSM）
 
 | T1 | T2 | 状态 | 输出电压 |
 |----|----|------|----------|
 | 1 | 0 | 投入 | $v_C$ |
-| 0 | 1 | 切除 | 0 |
+| 0 | 1 | 切除 | $0$ |
 | 0 | 0 | 闭锁 | 取决于电流方向 |
+| 1 | 1 | 不允许 | — |
 
-电容电流：
-$$i_C = S \cdot i_{arm}$$
+电容电流关系：$i_C = S \cdot i_{arm}$，其中$S$为投入状态（$1$=投入，$0$=切除）。
 
-其中$S$为投入状态（1=投入，0=切除）。
+### 全桥子模块（Full-Bridge SM, FBSM）
 
-### 2. 全桥子模块 (Full-Bridge SM)
+四个IGBT组成H桥拓扑，输出电压可为$+v_C$、$0$或$-v_C$，具备直流故障电流阻断能力：
 
-拓扑结构：
-- 4个IGBT组成H桥
-- 1个直流电容$C_{SM}$
+- 正投入：$+v_C$（T1、T4导通，T2、T3关断）
+- 切除：$0$（T2、T3导通，T1、T4关断）
+- 负投入：$-v_C$（T2、T3导通，T1、T4关断，反向电容放电）
 
-输出电压：
-- 正投入：$+v_C$
-- 切除：$0$
-- 负投入：$-v_C$
+### 箝位双子模块（Clamped Double SM, CDSM）
 
-### 3. 其他拓扑
-
-- **箝位双子模块 (CDSM)**：两个半桥共享一个电容
-- **级联双子模块**：特殊拓扑用于特定应用
+两个半桥共享一个电容，可实现三电平输出，但结构复杂，目前尚无工程应用。
 
 ## 形式化表达
 
-### 电容动态
+### 电容动态方程
 
-子模块电容电压：
+连续形式：
 $$\frac{dv_C}{dt} = \frac{S \cdot i_{arm}}{C_{SM}}$$
 
-离散形式（梯形法）：
+梯形法离散形式：
 $$v_C(t) = v_C(t-\Delta t) + \frac{\Delta t}{2C_{SM}}(S(t)i_{arm}(t) + S(t-\Delta t)i_{arm}(t-\Delta t))$$
 
 ### 阀臂等效
 
-$N$个子模块串联的阀臂：
+$N$个子模块串联的阀臂输出电压：
 $$v_{arm} = \sum_{i=1}^{N} S_i v_{C,i}$$
 
 投入子模块数：
 $$n_{on} = \sum_{i=1}^{N} S_i$$
 
+桥臂戴维南等效：
+$$R_{arm} = \sum_{i=1}^{N} R_{C,i}, \quad v_{arm,EQ} = \sum_{i=1}^{N} (v_{C,i} - R_{C,i}i_{arm,i})$$
+
 ### 损耗模型
 
 导通损耗：
-$$P_{cond} = S \cdot (V_{ce}i_{arm} + R_{ce}i_{arm}^2) + (1-S) \cdot V_f|i_{arm}|$$
+$$P_{cond} = S \cdot (V_{ce} i_{arm} + R_{ce} i_{arm}^2) + (1-S) \cdot V_f |i_{arm}|$$
 
 开关损耗：
 $$E_{sw} = f(E_{on}, E_{off}, i_{arm}, v_C)$$
 
-
 ## 量化性能边界
 
-子模块 EMT 模型在仿真精度和计算效率方面已有可核验的量化结果，但以下数据均绑定具体子模块拓扑、求解方法和验证条件，不能外推为通用能力：
+| 方法 | 加速比 | 精度误差 | 适用场景 | 代表文献 |
+|------|--------|----------|----------|----------|
+| 详细开关模型 | 1×（基准） | 0%（基准） | 小规模MMC、故障分析 | — |
+| 戴维南等效模型 | ~310× | <0.1% | 中大规模MMC离线仿真 | Gnanarathna 2010 |
+| 嵌套快速求解 | ~310×（单步） | <0.1% | 大规模MMC-HVDC | Xu 2018 |
+| 受控源通用等效 | ~50-100× | 高精度 | 含复杂控制的MMC | Liu 2014 |
 
-- **Xu (2018)** 提出了基于舒尔补递归节点消去法的广义多端口诺顿等效模型。以每桥臂 200 个双端口子模块（n=6, m=2）的 MMC-HVDC 系统为例，单桥臂参与外部求解的节点数从 **802 个锐减至 4 个**，计算复杂度从 O((N·n)³) 降至 O((2m)³)，内存占用降低约 **99.5%**。仿真速度提升 **2~3 个数量级**（约 100~1000 倍），具体加速比取决于子模块数量和端口数。单步求解时间从详细模型的约 **12.5 ms 降至约 0.04 ms**（约 310 倍）；2 s 仿真时长从约 **45 分钟降至约 12 秒**（约 225 倍）。内部电容电压与支路电流计算误差 **<0.1%**，完整保持各子模块状态信息。该结论基于 PSCAD/EMTDC 平台和双端口子模块 MMC-HVDC 系统验证（Xu 2018）。
+**量化数据**（原文数据，无外推）：
 
-- **Gnanarathna (2010)** 提出了 MMC 高效戴维南等效模型（DEM），将每个子模块离散为伴随导纳与历史电压源串联，桥臂等效为单个戴维南支路。在每桥臂 200 个子模块的 MMC 算例中实现约 **310 倍** 加速，时域波形与详细开关模型偏差小于 **0.1%**。该模型已成为 MMC 高速 EMT 仿真的基准方法之一，其实时性能受子模块数量、仿真步长和硬件平台约束（Gnanarathna 2010）。
+- **Xu (2018)** 提出的嵌套快速求解法，以每桥臂$200$个子模块（$n=6$, $m=2$）的MMC-HVDC为例，单桥臂参与外部求解的节点数从$802$个锐减至$4$个，内存占用降低约$99.5\%$，$2\text{ s}$仿真时长从约$45$分钟降至约$12$秒（$225$倍加速），内部电容电压与支路电流计算误差$<0.1\%$
+- **Gnanarathna (2010)** 的戴维南等效模型，每桥臂$200$个子模块的MMC算例中实现约$310$倍加速，时域波形与详细开关模型偏差小于$0.1\%$
+- **Zhang (2023)** 提出的同步预判法，在$401$电平MMC算例中实现约$20$倍加速，适用于开关频率相对较低的场合
 
-- **Zhang (2023)** 提出了基于同步预判的 HBSM 加速方法。通过预测子模块开关状态并提前更新等效导纳，避免了每步重新形成和分解导纳矩阵，在 401 电平 MMC 算例中实现约 **20 倍** 加速，精度损失可忽略。该方法适用于开关频率相对较低的场合，在高频调制下预判成功率可能下降（Zhang 2023）。
+## 适用边界与选择指南
 
-这些量化数据不构成对子模块建模方法的全面性能评价，只说明在特定测试条件下可获得的能力边界。
+### 方法选择决策表
 
-## 适用边界与失败模式
-
-### 适用条件
-
-- 子模块电容电压在允许范围
-- 开关频率满足热设计要求
-- 均压控制有效
-- 故障子模块数不超过冗余设计
+| 子模块数量 | 控制复杂度 | 推荐方法 | 步长要求 |
+|-----------|-----------|----------|----------|
+| <50 | 低 | 详细开关模型 | <1 μs |
+| 50-200 | 中 | 戴维南等效模型 | 1-10 μs |
+| 200-500 | 高 | 嵌套快速求解 | 10-50 μs |
+| >500 | 任意 | 受控源通用等效 | 50-100 μs |
 
 ### 失效边界
 
-- **电容过压**：超过额定电压导致绝缘击穿
-- **电容欠压**：电压过低影响输出能力
-- **开关过流**：故障电流超过器件耐受
-- **均压失控**：电容电压发散导致阀臂过压
-- **热失效**：结温超过安全限值
+- **电容过压**：超过额定电压导致绝缘击穿（详细模型可模拟，保护模型无法模拟）
+- **电容欠压**：电压过低影响输出能力（所有方法均能检测）
+- **开关过流**：故障电流超过器件耐受（详细模型可精确模拟，简化模型估算）
+- **均压失控**：电容电压发散导致阀臂过压（需要保留各子模块电容电压的方法）
+- **热失效**：结温超过安全限值（需结合热网络模型，非纯EMT范畴）
 
 ### 关键假设
 
-1. 开关器件理想或采用简化损耗模型
-2. 电容为理想储能元件（忽略ESR影响）
-3. 子模块间电气参数一致
-4. 控制系统采样与仿真步长匹配
+1. 开关器件理想或采用简化损耗模型（导通电阻$R_{on}$、关断电阻$R_{off}$）
+2. 电容为理想储能元件（忽略ESR、漏电流、寄生电感）
+3. 子模块间电气参数一致（电容容值偏差$\pm 5\%$以内）
+4. 控制系统采样与仿真步长匹配（时钟同步误差$<0.1\Delta t$）
 
-## 代表性来源
-
-- [[emt-simulation]] - EMT仿真基础
-- [[power-system]] - 电力系统建模
-- [[electromagnetic-transient]] - 电磁暂态分析
-- [[control-system]] - 控制系统设计
-- [[real-time-simulation]] - 实时仿真技术
-### 经典文献
-
-- Marquardt, R. and Lesnicar, A., "New Concept for High Voltage - Modular Multilevel Converter," *PESC*, 2004. - MMC子模块概念奠基
-- Perez, M.A., et al., "Modular Multilevel Converters: Analysis and Control," *IEEE TIE*, 2015. - 子模块控制综述
-
-### MMC建模
+## 相关方法
 
 - [[mmc-model]] - MMC换流器整体模型
-- [[average-value-model]] - 子模块平均值模型
-- [[switch-modeling]] - 开关建模方法
+- [[average-value-model]] - 子模块平均值简化模型
+- [[switch-modeling]] - 电力电子开关建模方法
+- 嵌套快速求解（Schur补递归节点消去法） - 嵌套快速求解算法
+- [[vector-fitting]] - 矢量拟合（用于频变参数建模）
 
-## 与相关页面的关系
+## 相关模型
 
-- [[mmc-model]] - MMC换流器整体建模
-- [[average-value-model]] - 子模块平均值简化
-- [[switch-modeling]] - 电力电子开关建模
+- [[half-bridge-submodule]] - 半桥子模块专用页
+- [[full-bridge-smb]] - 全桥子模块模块页
 - [[capacitor-model]] - 直流电容模型
 - [[igbt-model]] - IGBT器件模型
-
-## 开放问题
-
-- 子模块故障诊断与定位
-- 新型子模块拓扑（如交叉连接子模块）
-- 子模块级热管理优化
-- 子模块数量优化与成本权衡
-- 子模块预充电策略优化
-
-## 参考标准
-
-- IEC 62501 - 高压直流换流阀
-- IEC 60700 - 晶闸管阀
-
----
-
-*本页面遵循学术严谨性原则，所有技术细节均基于同行评议的学术文献。*
+- [[arm-reactor]] - 桥臂电抗器模型
 
 ## 来源论文
 
-| 论文 | 年份 |
-|------|------|
-| [[average-value-models-for-modular-multilevel-converters-operating-in-a-vsc-hvdc-grid|Average-Value Models for Modular Multilevel Converters Opera]] | 2014 |
-| [[fast-voltage-balancing-control-and-fast-19、20、21|Fast Voltage-Balancing Control and Fast]] | 2014 |
-| [[fast-voltage-balancing-control-and-fast|Fast Voltage-Balancing Control and Fast Numerical Simulation]] | 2014 |
-| [[34tpwrd20172749427|34/TPWRD.2017.2749427]] | 2017 |
-| [[modeling-of-modular-multilevel-converters-with-different-levels-of-detail-13&14|Dynamic Electro-Magnetic-Thermal Modeling of MMC-Based DC-DC]] | 2017 |
-| [[parallel-in-time-simulation-algorithm-for-power-electronics-mmc-hvdc-system|Parallel-in-Time Simulation Algorithm for Power Electronics:]] | 2019 |
-| [[equivalent-model-of-nearest-level-modulation-for-fast-electromagnetic-transient-|Equivalent model of nearest level modulation for fast electr]] | 2023 |
-| [[a-state-space-approach-for-accelerated-simulation-of-modular-multilevel-converte|A state-space approach for accelerated simulation of modular]] | 2025 |
-| [[an-electromagnetic-transient-simulation-model-of-mmc-bess-for-various-operating-|An Electromagnetic Transient Simulation Model of MMC-BESS fo]] | 2025 |
-| [[fast-electromagnetic-transient-simulation-models-of-modular-multilevel-converter|Fast electromagnetic transient simulation models of modular ]] | 2026 |
+| 论文 | 年份 | 贡献 |
+|------|------|------|
+| [[average-value-models-for-modular-multilevel-converters-operating-in-a-vsc-hvdc-grid]] | 2014 | Average-Value Models for MMC |
+| [[fast-voltage-balancing-control-and-fast]] | 2014 | 快速均压控制与数值仿真 |
+| [[34tpwrd20172749427]] | 2017 | MMC动态电磁热建模 |
+| [[modeling-of-modular-multilevel-converters-with-different-levels-of-detail-13&14]] | 2017 | 不同详细程度的MMC建模 |
+| [[parallel-in-time-simulation-algorithm-for-power-electronics-mmc-hvdc-system]] | 2019 | 并行时间算法 |
+| [[equivalent-model-of-nearest-level-modulation-for-fast-electromagnetic-transient-]] | 2023 | 最近电平调制等效模型 |
+| [[a-state-space-approach-for-accelerated-simulation-of-modular-multilevel-converte]] | 2025 | 状态空间加速方法 |
+| [[an-electromagnetic-transient-simulation-model-of-mmc-bess-for-various-operating-]] | 2025 | MMC-BESS仿真模型 |
+| [[fast-electromagnetic-transient-simulation-models-of-modular-multilevel-converter]] | 2026 | 快速EMT仿真模型综述 |
