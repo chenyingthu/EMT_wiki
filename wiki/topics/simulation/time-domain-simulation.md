@@ -9,15 +9,67 @@ updated: "2026-05-03"
 # 时域仿真 (Time-Domain Simulation)
 
 
-```mermaid
-graph TD
-    subgraph Ncmp[时域仿真 (Time-Domain Simulation)]
-        N0[电磁暂态仿真 (EMT): 微秒至秒级]
-        N1[机电暂态仿真: 毫秒至分钟级]
-        N2[中长期动态仿真: 秒至小时级]
-        N3[实时仿真: 与实际时间同步]
-    end
-```
+<div style="text-align:center;margin:16px 0;">
+<svg viewBox="0 0 900 340" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#333"/>
+    </marker>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="1" dy="1" stdDeviation="1.5" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+
+  <!-- Title -->
+  <text x="450" y="28" text-anchor="middle" font-family="Arial,sans-serif" font-size="16" font-weight="bold" fill="#1a1a2e">时域仿真分类体系 — 时间尺度视角</text>
+
+  <!-- Layer 0: Time scale bar -->
+  <rect x="50" y="45" width="800" height="22" rx="4" fill="#e8e8f4" stroke="#aaa" stroke-width="1"/>
+  <text x="80" y="60" font-family="Arial,sans-serif" font-size="10" fill="#555">微秒</text>
+  <text x="280" y="60" font-family="Arial,sans-serif" font-size="10" fill="#555">毫秒</text>
+  <text x="500" y="60" font-family="Arial,sans-serif" font-size="10" fill="#555">秒</text>
+  <text x="720" y="60" font-family="Arial,sans-serif" font-size="10" fill="#555">分钟~小时</text>
+
+  <!-- Node: EMT (main focus) -->
+  <rect x="60" y="85" width="220" height="65" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="2" filter="url(#shadow)"/>
+  <text x="170" y="106" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" font-weight="bold" fill="#1e40af">电磁暂态仿真 (EMT)</text>
+  <text x="170" y="122" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#3b82f6">微秒 ~ 秒级</text>
+  <text x="170" y="136" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#1e40af">开关暂态 / 故障分析</text>
+
+  <!-- Node: Transient Stability -->
+  <rect x="340" y="85" width="220" height="65" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="2" filter="url(#shadow)"/>
+  <text x="450" y="106" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" font-weight="bold" fill="#166534">机电暂态仿真</text>
+  <text x="450" y="122" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#22c55e">毫秒 ~ 分钟级</text>
+  <text x="450" y="136" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#166534">转子动态 / 稳定性</text>
+
+  <!-- Node: Mid-Long Term -->
+  <rect x="620" y="85" width="220" height="65" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="2" filter="url(#shadow)"/>
+  <text x="730" y="106" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" font-weight="bold" fill="#92400e">中长期动态仿真</text>
+  <text x="730" y="122" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#f59e0b">秒 ~ 小时级</text>
+  <text x="730" y="136" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#92400e">慢动态 / AGC / 调压</text>
+
+  <!-- Node: Real-time Simulation -->
+  <rect x="190" y="175" width="240" height="65" rx="8" fill="#ede9fe" stroke="#7c3aed" stroke-width="2" filter="url(#shadow)"/>
+  <text x="310" y="196" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" font-weight="bold" fill="#5b21b6">实时仿真 (HIL/RT)</text>
+  <text x="310" y="212" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#8b5cf6">与实际时间同步</text>
+  <text x="310" y="226" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#5b21b6">控制测试 / 保护验证</text>
+
+  <!-- Arrows from main nodes to RT -->
+  <line x1="170" y1="150" x2="310" y2="175" stroke="#7c3aed" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrowhead)"/>
+  <line x1="450" y1="150" x2="310" y2="175" stroke="#7c3aed" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrowhead)"/>
+
+  <!-- Layer 2: Key methods for each -->
+  <text x="170" y="268" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#333">隐式积分 · 梯形法 · BDF</text>
+  <text x="450" y="268" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#333">变步长 · 事件检测</text>
+  <text x="730" y="268" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#333">慢动态积分 · 代数求解</text>
+  <text x="310" y="268" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#333">并行计算 · 硬件加速</text>
+
+  <!-- Bottom time arrow -->
+  <line x1="60" y1="310" x2="840" y2="310" stroke="#aaa" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <text x="840" y="325" font-family="Arial,sans-serif" font-size="10" fill="#666">时间 →</text>
+</svg>
+</div>
+<p style="text-align:center;font-size:12px;color:#666;margin-top:8px;">图1 · 时域仿真分类体系 — 按时间尺度和研究对象划分</p>
 
 
 ## EMT中的作用
@@ -30,10 +82,28 @@ graph TD
 - **仿真验证**：为时域仿真 (Time-Domain Simulation)相关研究提供仿真验证框架
 ## 形式化表达
 
-从EMT仿真角度，时域仿真 (Time-Domain Simulation)可形式化表达为：
+时域仿真将连续的微分代数方程系统在时间维度上离散化，通过逐步求解获得系统动态响应。其核心是**分段常数近似**——在每个时间步 $\Delta t$ 内，将连续时间 $t \in [t_n, t_{n+1}]$ 上的状态导数 $\dot{x}(t)$ 用差商近似：
 
 $$
-\text{待补充：时域仿真 (Time-Domain Simulation)的数学形式化描述}
+x_{n+1} = x_n + \Delta t \cdot \dot{x}(\tau), \quad \tau \in [t_n, t_{n+1}]
+$$
+
+**EMT 仿真的离散化框架**可统一写为：
+
+$$
+\underbrace{\begin{bmatrix} G & 0 \\ 0 & I \end{bmatrix}}_{\text{网络方程}} \begin{bmatrix} v_{n+1} \\ x_{n+1} \end{bmatrix} = \begin{bmatrix} i_{n+1}(x_{n+1}, v_{n+1}) \\ f(x_{n+1}, v_{n+1}, t_{n+1}) \end{bmatrix}
+$$
+
+其中：
+- $G$ 为节点导纳矩阵（$Y$），由基尔霍夫电流定律（KCL）导出
+- $x_{n+1}$ 为状态变量（电感磁链、电容电压等），由微分方程 $dx/dt = f(x,v,t)$ 决定
+- $i_{n+1}$ 为非线性元件（电力电子开关等）的等效注入电流
+- 隐式积分法（如梯形法）将微分方程转化为代数约束，使 $x_{n+1}$ 和 $v_{n+1}$ 耦合求解
+
+**步进流程**：
+
+$$
+\underbrace{t_0 \xrightarrow{\text{初始化}} (x_0, v_0)}_{\text{潮流/稳态初始化}} \rightarrow \forall n \geq 0: \underbrace{\text{网络方程组装} \rightarrow \text{状态更新} \rightarrow \text{事件检测} \rightarrow \text{步长调整}}_{\text{逐步求解}}
 $$
 ## 核心原理详解
 
@@ -776,20 +846,3 @@ $$
 - 并行和实时仿真的最新进展
 
 参见 [[index]] 获取更多时域仿真相关文献索引。
-
-## 来源论文
-
-### 经典文献
-1. Dommel, H.W. "Digital Computer Solution of Electromagnetic Transients in Single-and Multiphase Networks", IEEE Trans. PAS, 1969
-2. Kundur, P. "Power System Stability and Control", McGraw-Hill, 1994
-3. Martinez-Velasco, J.A. (Ed.) "Power System Transients: Parameter Determination", CRC Press, 2009
-
-### 标准与指南
-- IEEE Std C37.233 - 电力系统暂态仿真指南
-- CIGRE WG 33.02 - 电磁暂态分析指南
-- IEC 60071 - 绝缘配合
-
-### 在线资源
-- EMTP官方网站: https://www.emtp.org
-- PSCAD用户社区和技术文档
-- MATLAB Simscape Electrical文档
