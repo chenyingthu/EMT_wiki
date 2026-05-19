@@ -132,7 +132,7 @@
 | 122 | optimal-power-flow.md | methods | methods/system-studies/optimal-power-flow.md | P0 | 999 | 3207 | 9 | 13 | completed |
 | 123 | frequency-response.md | methods | methods/stability-analysis/frequency-response.md | P0 | 999 | 3214 | 12 | 11 | completed |
 | 124 | discretization-methods.md | methods | methods/numerical-methods/discretization-methods.md | P0 | 999 | 3219 | 8 | 11 | completed |
-| 125 | voltage-current-sensor-model.md | models | models/basic-component/voltage-current-sensor-model.md | P0 | 999 | 3333 | 22 | 7 | pending |
+| 125 | voltage-current-sensor-model.md | models | models/basic-component/voltage-current-sensor-model.md | P0 | 999 | 3333 | 22 | 7 | completed |
 | 126 | nearest-level-control.md | methods | methods/power-electronics/nearest-level-control.md | P0 | 999 | 3353 | 17 | 13 | completed |
 | 127 | thyristor-control.md | methods | methods/control/thyristor-control.md | P0 | 999 | 3359 | 10 | 10 | completed |
 | 128 | back-to-back-hvdc.md | methods | methods/system-studies/back-to-back-hvdc.md | P0 | 999 | 3426 | 8 | 20 | completed |
