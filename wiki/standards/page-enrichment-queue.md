@@ -92,7 +92,7 @@
 | 82 | numerical-integration-error.md | methods | methods/numerical-methods/numerical-integration-error.md | P0 | 999 | 2150 | 4 | 13 | completed |
 | 83 | wideband-oscillation-stability.md | topics | topics/stability-analysis/wideband-oscillation-stability.md | P0 | 999 | 2187 | 11 | 15 | completed |
 | 84 | state-space-method.md | methods | methods/numerical-methods/state-space-method.md | P0 | 999 | 2214 | 0 | 107 | completed |
-| 85 | nodal-analysis.md | methods | methods/network-solution/nodal-analysis.md | P0 | 999 | 2241 | 13 | 205 | pending |
+| 85 | nodal-analysis.md | methods | methods/network-solution/nodal-analysis.md | P0 | 999 | 12735 | 13 | 205 | completed |
 | 86 | prony-analysis.md | methods | methods/signal-processing/prony-analysis.md | P0 | 999 | 2283 | 10 | 13 | completed |
 | 87 | parameter-identification.md | methods | methods/signal-processing/parameter-identification.md | P0 | 999 | 2311 | 9 | 16 | completed |
 | 88 | electromechanical-electromagnetic-hybrid-simulation.md | topics | topics/simulation/electromechanical-electromagnetic-hybrid-simulation.md | P0 | 999 | 2334 | 15 | 47 | completed |
