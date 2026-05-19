@@ -70,8 +70,8 @@
 | 394 | recursive-convolution.md | methods | methods/signal-processing/recursive-convolution.md | P1 | 999 | 7096 | 14 | 8 | completed |
 | 94 | resistor-model.md | models | models/basic-component/resistor-model.md | P0 | 999 | 2542 | 25 | 13 | completed |
 | 261 | sequence-network-model.md | methods | methods/protection-fault/sequence-network-model.md | P1 | 999 | 5083 | 10 | 17 | completed |
-| 170 | single-phase-line-model.md | methods | methods/transmission-line/single-phase-line-model.md | P0 | 999 | 4738 | 25 | 12 | pending |
-| 414 | sparse-matrix-solver.md | methods | methods/network-solution/sparse-matrix-solver.md | P1 | 999 | 519 | 3 | 28 | pending |
+| 170 | single-phase-line-model.md | methods | methods/transmission-line/single-phase-line-model.md | P0 | 999 | 4738 | 25 | 12 | completed |
+| 414 | sparse-matrix-solver.md | methods | methods/network-solution/sparse-matrix-solver.md | P1 | 999 | 2316 | 7 | 19 | completed |
 | 319 | state-estimation.md | methods | methods/system-studies/state-estimation.md | P1 | 999 | 2565 | 15 | 5 | pending |
 | 408 | submodule-model.md | models | models/submodule/submodule-model.md | P1 | 999 | 809 | 7 | 20 | pending |
 | 281 | swing-equation.md | methods | methods/stability-analysis/swing-equation.md | P1 | 999 | 3762 | 18 | 14 | pending |
@@ -91,3 +91,5 @@
 |||| 504 | 1 | 1 | 0 | multirate-and-network-partitioning.md bc=8926, bf=11, mermaid->SVG, Shu 2018 deep-review injected, QG pass |
 
 |||| 522 | 1 | 1 | 0 | numerical-damping-optimization.md bc=4765, bf=17, QG PASS (sep_count=2, real_dup=False) |
+||||| 525 | 1 | 1 | 0 | single-phase-line-model.md bc=4667, bf=25, QG PASS — already complete, no PDF scan needed |
+||||| 525 | 1 | 1 | 0 | sparse-matrix-solver.md bc=2316, bf=7, DUP_BLOCK cleanup (6 intra-section --- removed) + section 8/9 from Abusalah 2019 + Bruned 2023 source pages, QG PASS |
