@@ -76,7 +76,7 @@
 | 408 | submodule-model.md | models | models/submodule/submodule-model.md | P1 | 999 | 809 | 7 | 20 | completed |
 | 281 | swing-equation.md | methods | methods/stability-analysis/swing-equation.md | P1 | 999 | 3674 | 18 | 14 | completed |
 | 310 | synchronous-machine-model.md | models | models/rotating-machine/synchronous-machine-model.md | P1 | 999 | 4629 | 12 | 13 | completed |
-| 392 | three-phase-bridge-inverter.md | models | models/converter/three-phase-bridge-inverter.md | P1 | 999 | 1034 | 3 | 13 | pending |
+| 392 | three-phase-bridge-inverter.md | models | models/converter/three-phase-bridge-inverter.md | P1 | 999 | 2833 | 12 | 17 | completed |
 | 191 | time-domain-simulation.md | topics | topics/simulation/time-domain-simulation.md | P0 | 999 | 5656 | 36 | 23 | pending |
 | 96 | transient-stability-analysis.md | topics | topics/stability-analysis/transient-stability-analysis.md | P0 | 999 | 2476 | 46 | 27 | pending |
 | 176 | unbalanced-fault-analysis.md | topics | topics/protection-lightning/unbalanced-fault-analysis.md | P0 | 999 | 5021 | 14 | 19 | pending |
