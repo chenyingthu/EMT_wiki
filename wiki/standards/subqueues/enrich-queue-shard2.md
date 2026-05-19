@@ -72,7 +72,7 @@
 | 261 | sequence-network-model.md | methods | methods/protection-fault/sequence-network-model.md | P1 | 999 | 5083 | 10 | 17 | completed |
 | 170 | single-phase-line-model.md | methods | methods/transmission-line/single-phase-line-model.md | P0 | 999 | 4738 | 25 | 12 | completed |
 | 414 | sparse-matrix-solver.md | methods | methods/network-solution/sparse-matrix-solver.md | P1 | 999 | 2316 | 7 | 19 | completed |
-| 319 | state-estimation.md | methods | methods/system-studies/state-estimation.md | P1 | 999 | 2565 | 15 | 5 | pending |
+| 319 | state-estimation.md | methods | methods/system-studies/state-estimation.md | P1 | 999 | 2565 | 15 | 5 | completed |
 | 408 | submodule-model.md | models | models/submodule/submodule-model.md | P1 | 999 | 809 | 7 | 20 | pending |
 | 281 | swing-equation.md | methods | methods/stability-analysis/swing-equation.md | P1 | 999 | 3762 | 18 | 14 | pending |
 | 310 | synchronous-machine-model.md | models | models/rotating-machine/synchronous-machine-model.md | P1 | 999 | 2820 | 13 | 81 | pending |
