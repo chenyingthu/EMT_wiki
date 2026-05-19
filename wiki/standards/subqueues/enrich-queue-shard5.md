@@ -13,8 +13,8 @@
 | 380 | bess-model.md | models | models/renewable-storage/bess-model.md | P1 | 999 | 1262 | 13 | 15 | completed |
 | 218 | ccvt.md | methods | methods/protection-fault/ccvt.md | P0 | 999 | 10207 | 18 | 13 | completed |
 | 153 | circulating-current-suppression.md | methods | methods/control/circulating-current-suppression.md | P0 | 999 | 4112 | 20 | 15 | completed |
-| 263 | companion-model.md | methods | methods/numerical-methods/companion-model
-| 323 | control-system.md | methods | methods/control/control-system.md | P1 | 9
+| 263 | companion-model.md | methods | methods/numerical-methods/companion-model.md | P0 | 999 | 4889 | 11 | 16 | completed |
+| 323 | control-system.md | methods | methods/control/control-system.md | P1 | 999 | 2360 | 8 | 13 | completed |
 | 266 | corona-effect-modeling.md | methods | methods/transmission-line/corona-effect-modeling.md | P1 | 999 | 4680 | 29 | 15 | completed |
 | 216 | current-trajectory-similarity.md | methods | methods/system-studies/current-trajectory-similarity.md | P0 | 999 | 9880 | 10 | 10 | completed |
 | 132 | dc-fcl.md | methods | methods/power-electronics/dc-fcl.md | P0 | 999 | 3489 | 6 | 13 | completed |
@@ -106,3 +106,7 @@
 ||||||||||| 459 | 1 | 1 | 0 | transformer-modeling.md enriched: bc 1290→3773, bf 9→12 pass, mermaid→removed, added Z-transform (Su1990), duality (Shafieipour2020), white-box reduction (Mombello2022), inrush quantification (Velásquez2023), Jiles-Atherton, 9 sections, all 24 wikilinks valid |
 |||||||||| 460 | 1 | 1 | 0 | transmission-line-modeling.md enriched: bc 2130→3844, bf 18→28 pass, removed mermaid→replaced with 5-method table, added FLE+MCNR, FPGA-FDPD, Gustavsen parallel line coupling, 8 sections, all 18 wikilinks valid, Quality Gate PASS |
 |||||||||| 461 | 1 | 1 | 0 | wideband-oscillation-stability.md enriched: bc 1167→2824, bf 11→9, removed mermaid (replaced with flowchart), added 5 oscillation mechanisms (negative damping/impedance coupling/time-delay/mode coupling/resonance), 6 EMT modeling methods, Z-Tool quantitative data (<2% error, 8x speedup), 12 sections, all 14 wikilinks valid, Quality Gate PASS |
+||||||||||| 462 | 1 | 0 | 0 | companion-model.md completed: already PASSED Quality Gate (bc=4889≥2000, bf=11≥5, no placeholder, no DUP_BLOCK), queue entry was truncated.
+
+|||||||||||| 462 | 1 | 0 | 0 | control-system.md completed: already PASSED Quality Gate (bc=2360≥2000, bf=8≥5, no placeholder, no DUP_BLOCK), queue entry was truncated.
+
