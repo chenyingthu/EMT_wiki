@@ -66,7 +66,7 @@
 | 53 | power-electronic-device-modeling.md | topics | topics/modeling-methods/power-electronic-device-modeling.md | P0 | 999 | 2573 | 30 | 14 | completed |
 | 173 | power-quality.md | topics | topics/renewable-storage/power-quality.md | P0 | 999 | 4869 | 28 | 22 | completed |
 | 49 | protection-relay-modeling.md | topics | topics/protection-lightning/protection-relay-modeling.md | P0 | 999 | 1453 | 3 | 23 | completed |
-| 396 | pv-system-model.md | models | models/renewable-storage/pv-system-model.md | P1 | 999 | 979 | 11 | 12 | pending |
+| 396 | pv-system-model.md | models | models/renewable-storage/pv-system-model.md | P1 | 999 | 979 | 3071 | 22 | 11 | completed 
 | 394 | recursive-convolution.md | methods | methods/signal-processing/recursive-convolution.md | P1 | 999 | 1003 | 8 | 10 | pending |
 | 94 | resistor-model.md | models | models/basic-component/resistor-model.md | P0 | 999 | 2427 | 21 | 7 | pending |
 | 261 | sequence-network-model.md | methods | methods/protection-fault/sequence-network-model.md | P1 | 999 | 5137 | 10 | 12 | pending |
