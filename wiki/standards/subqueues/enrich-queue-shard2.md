@@ -61,7 +61,7 @@
 | 172 | numerical-damping-optimization.md | methods | methods/numerical-methods/numerical-damping-optimization.md | P0 | 999 | 4818 | 17 | 10 | completed |
 | 413 | numerical-oscillation-suppression.md | methods | methods/numerical-methods/numerical-oscillation-suppression.md | P1 | 999 | 637 | 2267 | 10 | 12 | completed 
 | 213 | parallel-in-time.md | methods | methods/simulation-technology/parallel-in-time.md | P0 | 999 | 9098 | 8862 | 36 | 15 | completed |
-| 233 | phase-domain-modeling.md | topics | topics/modeling-methods/phase-domain-modeling.md | P0 | 999 | 15473 | 21 | 30 | pending |
+| 233 | phase-domain-modeling.md | topics | topics/modeling-methods/phase-domain-modeling.md | P0 | 999 | 15473 | 21 | 30 | completed |
 | 318 | pi-model.md | methods | methods/transmission-line/pi-model.md | P1 | 999 | 2617 | 8 | 9 | completed |
 | 53 | power-electronic-device-modeling.md | topics | topics/modeling-methods/power-electronic-device-modeling.md | P0 | 999 | 1556 | 12 | 35 | pending |
 | 173 | power-quality.md | topics | topics/renewable-storage/power-quality.md | P0 | 999 | 4869 | 28 | 22 | pending |
