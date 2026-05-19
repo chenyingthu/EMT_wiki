@@ -169,7 +169,7 @@
 | 159 | full-bridge-smb.md | models | models/submodule/full-bridge-smb.md | P0 | 999 | 4354 | 46 | 20 | completed |
 | 160 | mbsm.md | methods | methods/power-electronics/mbsm.md | P0 | 999 | 4374 | 22 | 8 | completed |
 | 161 | passivity-enforcement.md | methods | methods/signal-processing/passivity-enforcement.md | P0 | 999 | 4401 | 20 | 19 | completed |
-| 162 | pwm-modulator-model.md | models | models/converter/pwm-modulator-model.md | P0 | 999 | 4493 | 18 | 8 | pending |
+| 162 | pwm-modulator-model.md | models | models/converter/pwm-modulator-model.md | P0 | 999 | 3767 | 25 | 8 | completed |
 | 163 | low-rank-solver.md | methods | methods/network-solution/low-rank-solver.md | P0 | 999 | 4516 | 22 | 22 | completed |
 | 164 | algebraic-characterization.md | methods | methods/system-studies/algebraic-characterization.md | P0 | 999 | 4528 | 23 | 8 | completed |
 | 165 | multithreaded-parallel-computing.md | methods | methods/simulation-technology/multithreaded-parallel-computing.md | P0 | 999 | 4593 | 9 | 15 | completed |
