@@ -69,7 +69,7 @@
 | 396 | pv-system-model.md | models | models/renewable-storage/pv-system-model.md | P1 | 999 | 979 | 3071 | 22 | 11 | completed 
 | 394 | recursive-convolution.md | methods | methods/signal-processing/recursive-convolution.md | P1 | 999 | 7096 | 14 | 8 | completed |
 | 94 | resistor-model.md | models | models/basic-component/resistor-model.md | P0 | 999 | 2542 | 25 | 13 | completed |
-| 261 | sequence-network-model.md | methods | methods/protection-fault/sequence-network-model.md | P1 | 999 | 5137 | 10 | 12 | pending |
+| 261 | sequence-network-model.md | methods | methods/protection-fault/sequence-network-model.md | P1 | 999 | 5083 | 10 | 17 | completed |
 | 170 | single-phase-line-model.md | methods | methods/transmission-line/single-phase-line-model.md | P0 | 999 | 4738 | 25 | 12 | pending |
 | 414 | sparse-matrix-solver.md | methods | methods/network-solution/sparse-matrix-solver.md | P1 | 999 | 519 | 3 | 28 | pending |
 | 319 | state-estimation.md | methods | methods/system-studies/state-estimation.md | P1 | 999 | 2565 | 15 | 5 | pending |
